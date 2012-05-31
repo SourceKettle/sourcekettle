@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <head> 
     <title>
-        gProj - <?= $title_for_layout ?>
+        DevTrack - <?= $title_for_layout ?>
     </title> 
     <?= $this->Html->charset('UTF-8') . "\n" ?>
     <?= $this->Html->css('bootstrap.min') ?>
-    <?= $this->Html->script('bootstrap.min') ?>
-    <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');?>
     <? if (isset($css_for_layout)): foreach ($css_for_layout as $css): ?>
             <?= $this->Html->css(array($css)) ?>
         <? endforeach;
@@ -26,7 +24,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">gProj</a>
+          <a class="brand" href="#">DevTrack</a>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
@@ -44,5 +42,10 @@
             <?= $content_for_layout ?>
         </div>
     </div>
+    
+    <!-- JavaScript! Placed at the end of the file for faster page loading -->
+    <?= $this->Html->script('bootstrap.min') ?>
+    <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');?>
+    
 </body>
 </html>

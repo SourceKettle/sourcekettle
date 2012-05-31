@@ -3,3 +3,6 @@ config/database.php
 app/tmp/*
 app/config/database.php
 !empty
+nbproject/
+*.DS_Store
+build.*
