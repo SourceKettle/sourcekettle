@@ -29,7 +29,7 @@ $found = false;
 foreach ($modules as $module){
     if ($module == 'mod_rewrite'){
         echo '<div class="alert alert-success">';
-            echo __d('cake_dev', 'URL rewriting is properly configured for your server');
+            echo __d('cake_dev', 'mod_rewrite is enabled on your server');
         echo '</div>';
         $found = true;
         break;
@@ -126,11 +126,11 @@ if (isset($filePresent)):
 	<?php
 		if ($connected && $connected->isConnected()):
 			echo '<div class="alert alert-success">';
-	 			echo __d('cake_dev', 'Cake is able to connect to the database.');
+	 			echo __d('cake_dev', 'DevTrack is able to connect to the database.');
 			echo '</div>';
 		else:
 			echo '<div class="alert alert-error">';
-				echo __d('cake_dev', 'Cake is NOT able to connect to the database.');
+				echo __d('cake_dev', 'DevTrack is NOT able to connect to the database.');
 				echo '<br /><br />';
 				echo $connectionError->getMessage();
 			echo '</div>';
