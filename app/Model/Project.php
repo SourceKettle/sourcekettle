@@ -1,4 +1,18 @@
 <?php
+/**
+*
+* Project model for the DevTrack system
+* Represents a project in the system
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+* 
+* @copyright     DevTrack Development Team 2012
+* @link          http://github.com/chrisbulmer/devtrack
+* @package       DevTrack.Model
+* @since         DevTrack v 0.1
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
 App::uses('AppModel', 'Model');
 /**
  * Project Model
@@ -22,7 +36,7 @@ class Project extends AppModel {
 		'name' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
-				//'message' => 'Your custom message here',
+				'message' => 'Please enter a name for the project',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -32,7 +46,7 @@ class Project extends AppModel {
 		'public' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
-				//'message' => 'Your custom message here',
+				'message' => 'Please select the visibility of the project',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -42,7 +56,7 @@ class Project extends AppModel {
 		'repo_type' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
+				'message' => 'Please select a repository type',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -52,7 +66,7 @@ class Project extends AppModel {
 		'wiki_enabled' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
-				//'message' => 'Your custom message here',
+				'message' => 'Please enter a boolean value for wiki enabled',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -62,7 +76,7 @@ class Project extends AppModel {
 		'task_tracking_enabled' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
-				//'message' => 'Your custom message here',
+				'message' => 'Please enter a boolean value for task tracking enabled',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -72,7 +86,7 @@ class Project extends AppModel {
 		'time_management_enabled' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
-				//'message' => 'Your custom message here',
+				'message' => 'Please enter a boolean value for time management enabled',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule

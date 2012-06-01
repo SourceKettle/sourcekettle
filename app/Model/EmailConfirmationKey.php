@@ -1,4 +1,18 @@
 <?php
+/**
+*
+* Email Confirmation Key model for the DevTrack system
+* Used for validating users by emails. Stores the key used to authenticate with.
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+* 
+* @copyright     DevTrack Development Team 2012
+* @link          http://github.com/chrisbulmer/devtrack
+* @package       DevTrack.Model
+* @since         DevTrack v 0.1
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
 App::uses('AppModel', 'Model');
 /**
  * EmailConfirmationKey Model
@@ -15,7 +29,7 @@ class EmailConfirmationKey extends AppModel {
 		'user_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
+				'message' => 'A valid user id was not given',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -25,7 +39,7 @@ class EmailConfirmationKey extends AppModel {
 		'key' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
-				//'message' => 'Your custom message here',
+				'message' => 'A key was not given',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule

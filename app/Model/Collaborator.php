@@ -1,4 +1,19 @@
 <?php
+/**
+*
+* Collaborator model for the DevTrack system
+* Represents a project collaborator in the system
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+* 
+* @copyright     DevTrack Development Team 2012
+* @link          http://github.com/chrisbulmer/devtrack
+* @package       DevTrack.Model
+* @since         DevTrack v 0.1
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
+
 App::uses('AppModel', 'Model');
 /**
  * Collaborator Model
@@ -16,7 +31,7 @@ class Collaborator extends AppModel {
 		'project_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
+				'message' => 'A valid project id was not entered',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -26,7 +41,7 @@ class Collaborator extends AppModel {
 		'user_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
+				'message' => 'A valid user id was not entered',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -36,7 +51,7 @@ class Collaborator extends AppModel {
 		'access_level' => array(
 			'inlist' => array(
 				'rule' => array('inlist', array(0, 1, 2)),
-				//'message' => 'Your custom message here',
+				'message' => 'The user access level was not in the defined types',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
