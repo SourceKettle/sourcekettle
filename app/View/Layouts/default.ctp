@@ -31,6 +31,9 @@
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
+            <form style="float: right"  class="navbar-search pull-left">
+                <input type="text" class="search-query" placeholder="Search">
+            </form>
           </div>
         </div>
       </div>
