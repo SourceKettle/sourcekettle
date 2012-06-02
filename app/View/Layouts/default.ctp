@@ -55,9 +55,9 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/user/">Profile</a></li>
+                            <li><a href="<?=$this->Html->url('/user', false)?>">Profile</a></li>
                             <li class="divider"></li>
-                            <li><a href="/login/logout">Log Out</a></li>
+                            <li><a href="<?=$this->Html->url('/logout', false)?>">Log Out</a></li>
                         </ul>
                     </div>
                     <?
@@ -66,11 +66,8 @@
                     <a class='btn pull-right' id='login-button' href="<?=$this->Html->url('/login', false)?>">
                         <i class='icon-user'></i>Login
                     </a>
-
                     <?php
                     }?>
-                    
-                    
                     <div class="nav-collapse">
                         <ul class="nav">
                             <?php
@@ -83,23 +80,6 @@
                             <i class="icon-search"></i>
                             <input type="text" class="search-query" placeholder="Search">
                         </form>
-                        <?php /*
-                          if (isset($user_name)) {
-                          echo $this->Bootstrap->button_dropdown($user_name, array(
-                          "split" => true,
-                          "dropup" => true,
-                          "right" => true,
-                          "links" => array(
-                          $this->Html->link("Link 1", "#"),
-                          array("Link 2", "#"),
-                          null, // Will produce a divider line
-                          array("Link 3", "#")
-                          )
-                          ));
-                          } else {
-                          echo $this->Bootstrap->button_link("Login", "/login", array("size" => "medium", 'id' => 'user_button', 'class' => 'pull-right'));
-                          } */
-                        ?>
                     </div>
                 </div>
             </div>
@@ -107,10 +87,11 @@
     </header> 
     <div class="container">
         <div id="content">
-            <?= $this->Bootstrap->flashes() ?>
+            <?= $this->Bootstrap->flashes(); //Bootstrap equivalent of $this->Session->flash() ?>
             <?= $content_for_layout ?>
         </div>
         <div id='footer'>
+            <hr>
             <?=$this->Html->link('About DevTrack', '/about');?>
             <?=$this->Html->link('Git help', '/git_help');?>
             <?=$this->Html->link('SVN help', '/svn_help');?>
