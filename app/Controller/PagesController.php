@@ -22,13 +22,19 @@
 App::uses('AppController', 'Controller');
 
 /**
- * Static content controller
- *
- * Override this controller by placing a copy in controllers directory of an application
- *
- * @package       app.Controller
- * @link http://book.cakephp.org/2.0/en/controllers/pages-controller.html
- */
+*
+* PagesController for the DevTrack system
+* Controller for static pages
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+* 
+* @copyright     DevTrack Development Team 2012
+* @link          http://github.com/chrisbulmer/devtrack
+* @package       DevTrack.Controller
+* @since         DevTrack v 0.1
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
 class PagesController extends AppController {
 
 /**
@@ -58,6 +64,12 @@ class PagesController extends AppController {
  * @param mixed What page to display
  * @return void
  */
+        
+        public function beforeFilter() {
+            parent::beforeFilter();
+            $this->Auth->allow(); //does not require login to use all actions in this controller
+        }
+        
 	public function display() {
 		$path = func_get_args();
 
