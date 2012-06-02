@@ -110,6 +110,11 @@
             <?= $this->Bootstrap->flashes() ?>
             <?= $content_for_layout ?>
         </div>
+        <div id='footer'>
+            <?=$this->Html->link('About DevTrack', '/about');?>
+            <?=$this->Html->link('Git help', '/git_help');?>
+            <?=$this->Html->link('SVN help', '/svn_help');?>
+        </div>
     </div>
 
     <!-- JavaScript! Placed at the end of the file for faster page loading -->

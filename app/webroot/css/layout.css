@@ -14,10 +14,21 @@
 */
 
 body{
-    padding-top: 40px;
+    padding-top: 60px;
 }
 
 #user_button {
     margin-right: 40px;
     margin-left: 40px;
+}
+
+#footer, #footer a {
+    text-align: center;
+    font-size: small;
+    color: #cccccc;
+}
+
+#footer a {
+    padding-left: 15px;
+    padding-right: 15px;
 }

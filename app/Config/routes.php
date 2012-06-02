@@ -27,6 +27,20 @@
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 	Router::connect('/setup', array('controller' => 'pages', 'action' => 'display', 'setup'));
+        
+        /*
+         * Defined to make the logging in/out etc look less retarded that /login/logout
+         */
+        Router::connect('/logout', array('controller' => 'login', 'action' => 'logout'));
+        Router::connect('/forgot_password', array('controller' => 'login', 'action' => 'forgot_password'));
+        Router::connect('/register', array('controller' => 'login', 'action' => 'register'));
+        
+        /*
+         * Define some more to make the footer pages work
+         */
+        Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'about'));
+        Router::connect('/svn_help', array('controller' => 'pages', 'action' => 'display', 'svn_help'));
+        Router::connect('/git_help', array('controller' => 'pages', 'action' => 'display', 'git_help'));
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */
