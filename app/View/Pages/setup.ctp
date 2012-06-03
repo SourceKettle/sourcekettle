@@ -42,7 +42,7 @@ function modRewriteCheck() {
     }
     if (!$found){
         echo '<div class="alert alert-error">';
-        echo "<?php echo __d('cake_dev', 'URL rewriting is not properly configured on your server.'); ?>";
+        echo __d('cake_dev', 'URL rewriting is not properly configured on your server.');
         echo '1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/advanced-installation.html#apache-and-mod-rewrite-and-htaccess">Help me configure it</a>';
         echo '2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration">I don\'t / can\'t use URL rewriting</a>';
         echo '</div>';
@@ -60,19 +60,19 @@ function saltCipherCheck() {
     $changed = true;
     if (Configure::read('Security.salt') == 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
         echo '<div class="alert alert-error">';
-        echo __d('cake_dev', 'Please change the value of \'Security.salt\' in app/Config/core.php to a salt value specific to your application');
+        echo __d('cake_dev', 'Please change the value of \'Security.salt\' in app/Config/core.php to a salt value specific to your application.');
         echo '</div>';
         $changed = false;     
     }
     if (Configure::read('Security.cipherSeed') === '76859309657453542496749683645') {
         echo '<div class="alert alert-error">';    
-        echo __d('cake_dev', 'Please change the value of \'Security.cipherSeed\' in app/Config/core.php to a numeric (digits only) seed value specific to your application');
+        echo __d('cake_dev', 'Please change the value of \'Security.cipherSeed\' in app/Config/core.php to a numeric (digits only) seed value specific to your application.');
         echo '</div>';
         $changed = false;     
     } 
     if ( $changed ) {
         echo '<div class="alert alert-success">';    
-        echo __d('cake_dev', 'The values of \'Security.cipherSeed\' and \'Security.salt\' have been changed from the default values');
+        echo __d('cake_dev', 'The values of \'Security.cipherSeed\' and \'Security.salt\' have been changed from the default values.');
         echo '</div>';
         return 1;
     }
@@ -111,7 +111,7 @@ function tmpCheck() {
         return 1;
     } else {
         echo '<div class="alert alert-error">';
-        echo __d('cake_dev', 'Your tmp directory is NOT writable.<br>The tmp directory can be found in app/tmp/');
+        echo __d('cake_dev', 'Your tmp directory is NOT writable. The tmp directory can be found in app/tmp/');
         echo '</div>';
         return 0;
     }
@@ -173,6 +173,15 @@ function databaseCheck() {
         echo '</div>';
         return 0;
     }
+    $db = ConnectionManager::getDataSource('default');
+    $tables = $db->listSources();
+    if ( empty($tables) ) {
+        echo '<div class="alert alert-error">';
+        echo __d('cake_dev', 'The database tables required for DevTracks operation, are missing. ');
+        echo __d('cake_dev', 'Please use the \'db.sql\' script to initialise the database.');
+        echo '</div>';
+        return 0;
+    }
     return 1;
 }
 
@@ -187,7 +196,7 @@ function unicodeCheck() {
         echo '<p><div class="alert alert-error">';
         echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');
         echo '<br/>';
-        echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+        echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring.');
         echo '</div></p>';
         return 0;
     }
@@ -225,8 +234,7 @@ if ( $complete ) {
     echo '<div class="alert alert-info">';
     echo '<strong>';
     echo 'DevTrack is set up and ready to go!';
-    echo '<br>';
-    echo 'Just change the value of \'debug\' in app/Config/core.php to a \'0\' to place DevTrack in production mode';
     echo '</strong>';
+    echo 'Just change the value of \'debug\' in app/Config/core.php to a \'0\' to place DevTrack in production mode.';
     echo '</div>';
 }
