@@ -96,14 +96,14 @@ class LoginController extends AppController{
                             $id = $this->User->getLastInsertID();
                             
                             //Check to see if an SSH key was added and save it
-                            if (!empty($this->data['User']['ssh_key'])){
+                            /*if (!empty($this->data['User']['ssh_key'])){
                                 $this->SshKey->create();
                                 $data = array('SshKey');
                                 $data['SshKey']['user_id'] = $id;
                                 $data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
                                 $data['SshKey']['comment'] = 'Default key';
                                 $this->SshKey->save($data);
-                            }
+                            }*/
                             
                             //Now to create the key and send the email
                             
@@ -119,11 +119,11 @@ class LoginController extends AppController{
                             
                             $message = "Dear " . $this->data['User']['name'] . " ,\n\nThank you for registering with DevTrack. In order to use your account, we require you to activate your account using the link below.\n\n" . $link . "\n\nWe hope you enjoy using DevTrack";
 
-                            $email = new CakeEmail();
+                            /*$email = new CakeEmail();
                             $email->config('default');
                             $email->to($this->data['User']['email']);
                             $email->subject('DevTrack activation');
-                            $email->send($message);
+                            $email->send($message);*/
                             echo $message; //TODO remove this line when emailing enabled
                             
                             $this->render('email_sent');
@@ -179,7 +179,12 @@ class LoginController extends AppController{
         $record = $this->EmailConfirmationKey->find('first', array('conditions' => array('key' => $key), 'recursive' => 1));
         if(!empty($record)){
             $record['User']['is_active'] = 1;
-            if ($this->User->save($record['User'])){
+            
+            //create a new record to stop it rehashing the password
+            $newrecord['User'] = array();
+            $newrecord['User']['id'] = $record['User']['id'];
+            $newrecord['User']['is_active'] = '1';
+            if ($this->User->save($newrecord['User'])){
                 $this->EmailConfirmationKey->delete($record['EmailConfirmationKey']['id'], false); //delete the email confirmation key
                 $this->Session->setFlash(__("<h4 class='alert-heading'>Success</h4>Your account is now activated. You can now login."), 'default', array(), 'success');
                 $this->redirect('/login');
