@@ -233,7 +233,7 @@ if ( !unicodeCheck() ) $complete = false;
 if ( $complete ) {
     echo '<div class="alert alert-info">';
     echo '<strong>';
-    echo 'DevTrack is set up and ready to go!';
+    echo 'DevTrack is set up and ready to go! ';
     echo '</strong>';
     echo 'Just change the value of \'debug\' in app/Config/core.php to a \'0\' to place DevTrack in production mode.';
     echo '</div>';
