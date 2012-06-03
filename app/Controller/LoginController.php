@@ -35,7 +35,7 @@ class LoginController extends AppController{
     
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('register', 'lost_password', 'login'); //Allow register to be outside the auth zone
+        $this->Auth->allow('register', 'lost_password', 'login', 'logout'); //Allow register to be outside the auth zone
     }
     
     /**
@@ -44,12 +44,16 @@ class LoginController extends AppController{
      * Allows users to login using their username and password.
      */
     public function index(){
-        if ($this->request->is('post')) {
-            if ($this->Auth->login()) {
-                $this->redirect($this->Auth->redirect());
-            } else {
-                $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The credentials supplied were not valid. Please try again."), 'default', array(), 'error');
+        if (!$this->Auth->loggedIn()){
+            if ($this->request->is('post')) {
+                if ($this->Auth->login()) {
+                    $this->redirect($this->Auth->redirect());
+                } else {
+                    $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The credentials supplied were not valid. Please try again."), 'default', array(), 'error');
+                }
             }
+        } else {
+            //$this->redirect())
         }
     }
     
@@ -59,7 +63,8 @@ class LoginController extends AppController{
      * Allows users to logout of DevTrack.
      */
     public function logout(){
-        $this->redirect($this->Auth->logout());
+        $this->Auth->logout();
+        
     }
     
     /**

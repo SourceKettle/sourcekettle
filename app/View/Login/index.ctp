@@ -14,7 +14,6 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-echo $this->Session->flash('auth');
 ?>
 <div class="row">
     <div class="span6 offset3">
