@@ -1,0 +1,3 @@
+[submodule "plugins/TwitterBootstrap"]
+	path = plugins/TwitterBootstrap
+	url = git://github.com/loadsys/twitter-bootstrap-helper.git
