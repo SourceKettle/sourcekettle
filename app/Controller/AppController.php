@@ -53,7 +53,9 @@ class AppController extends Controller {
                     'fields' => array ('username' => 'email', 'password' => 'password')
                 )
             )
-        ));
+        ),
+        'Security'
+        );
     
     
     /**
@@ -63,7 +65,7 @@ class AppController extends Controller {
      */
     public function beforeFilter() {
         parent::beforeFilter();
-        
+
         $this->Auth->userModel = 'User';
         
         //Customise the login error
