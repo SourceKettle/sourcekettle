@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * ActiveNav helper for the DevTrack system
