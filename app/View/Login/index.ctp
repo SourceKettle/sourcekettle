@@ -15,26 +15,19 @@
 */
 
 echo $this->Session->flash('auth');
-
-/*echo $this->Form->create('Login');
-echo $this->Form->input('email');
-echo $this->Form->input('password');
-echo $this->Form->end('Login');*/
-
 ?>
-<br>
 <div class="row">
     <div class="span6 offset3">
         <?php
-        echo $this->Form->create('login', array('class' => 'well form-horizontal'));
+        echo $this->Form->create('User', array('class' => 'well form-horizontal'));
         echo '<h1>Login to DevTrack</h1>';
 
         echo $this->Bootstrap->input("email", array(
-            "input" => $this->Form->text("Email"),
+            "input" => $this->Form->text("email"),
         ));
         
         echo $this->Bootstrap->input("password", array(
-            "input" => $this->Form->password("Password"),
+            "input" => $this->Form->password("password"),
         ));
 
         echo $this->Bootstrap->button("Login", array("style" => "primary", "size" => "large", 'class' => 'controls'));

@@ -87,7 +87,7 @@
     </header> 
     <div class="container">
         <div id="content">
-            <?= $this->Bootstrap->flashes(); //Bootstrap equivalent of $this->Session->flash() ?>
+            <?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
             <?= $content_for_layout ?>
         </div>
         <div id='footer'>

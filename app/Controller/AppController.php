@@ -59,7 +59,11 @@ class AppController extends Controller {
                 'action' => 'index',
                 'plugin' => false,
                 'admin' => false,
-            )
+            ),
+            'loginRedirect' => array(
+                'controller' => 'dashboard',
+                'action' => 'index'
+            ),
         ));
     
     
@@ -71,10 +75,7 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
         
-        $this->Auth->fields = array(
-            'username' => 'email',
-            'password' => 'password'
-        );
+        
         //Customise the login error
         $this->Auth->loginError = 'The credentials you entered were incorrect. Please try again or have you<a href="lost_password">lost your password"</a>';
         

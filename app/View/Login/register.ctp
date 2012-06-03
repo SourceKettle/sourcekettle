@@ -18,31 +18,31 @@
 <div class="row">
     <div class="span8">
         <?php
-        echo $this->Form->create('register', array('class' => 'well form-horizontal'));
+        echo $this->Form->create('User', array('class' => 'well form-horizontal'));
         echo '<h3>Create your account</h3>';
 
         echo $this->Bootstrap->input("name", array(
-            "input" => $this->Form->text("Name"),
+            "input" => $this->Form->text("name"),
             "help_block" => "Text under the input"
         ));
         
         echo $this->Bootstrap->input("email", array(
-            "input" => $this->Form->text("Email Address"),
+            "input" => $this->Form->text("email"),
             "help_block" => "Your email address will not be shared."
         ));
         
         echo $this->Bootstrap->input("password", array(
-            "input" => $this->Form->password("Password"),
+            "input" => $this->Form->password("password"),
             "help_block" => "Must be at least 8 characters and contain at least one number and letter."
         ));
         
-        echo $this->Bootstrap->input("password_confirm", array(
-            "input" => $this->Form->password("Confirm Password"),
+        echo $this->Bootstrap->input("Confirm Password", array(
+            "input" => $this->Form->password("password_confirm"),
             "help_block" => "Just to make sure."
         ));
         
         echo $this->Bootstrap->input("ssh_key", array(
-            "input" => $this->Form->textarea("SSH_key"),
+            "input" => $this->Form->textarea("ssh_key"),
             "label" => "SSH Key",
             "help_inline" => "(Optional)",
             "help_block" => "SSH keys make working with a repository easier. You can add one at any time."
