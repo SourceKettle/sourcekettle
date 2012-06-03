@@ -24,25 +24,26 @@
         ?>
     </div>
     <div class="span6">
-        <div class="control-group">
-            <label class="control-label" for="featuresCheckboxList">Features</label>
-            <div class="controls">
-                <label class="checkbox">
-		            <?=$this->Form->checkbox('wiki_enabled')?> Wiki?
-                </label>
-                <label class="checkbox">
-		            <?=$this->Form->checkbox('task_tracking_enabled')?> Task Tracking?
-                </label>
-                <label class="checkbox">
-		            <?=$this->Form->checkbox('time_management_enabled')?> Time Management?
-                </label>
-                <p class="help-block"><strong>Note:</strong> Features can be enabled and disabled in the project page later.</p>
-            </div>
+        <div>
+		    <h4>Fully-Fledged Project Wiki</h4>
+            <p>From time to time it may be necessary to document your project with more than just a handful of README files. Our Project Wikis allow you to create documentation to your hearts content.</p>
+            <p><?=$this->Form->checkbox('wiki_enabled')?> Yes Please!</p>
         </div>
+        <div>
+            <h4>Dynamic Task Tracking</h4>
+            <p>When it's more than just you working on a project, it can become troublesome keeping track of who's doing what. DevTrack provides task/bug tracking to manage your collaborators.</p>
+		    <p><?=$this->Form->checkbox('task_tracking_enabled')?> Yes Please!</p>
+        </div>
+		<div>
+            <h4>Time Tracking</h4>
+            <p>Sometimes, spreadsheets just aren't the best way of logging how much time you've spent on a task. Heres where we introduce our simple to use time logging system.
+            <p><?=$this->Form->checkbox('time_management_enabled')?> Yes Please!</p>
+        </div>
+        <p class="help-block"><strong>Note:</strong> Features can be enabled and disabled in the project page later.</p>
     </div>
 </div>
 <div class="row">
-    <div class="span6"> 
+    <div class="span12" style="text-align:center"> 
         <?php echo $this->Bootstrap->button("Create Project", array("style" => "primary", "size" => "large", 'class' => 'controls')); ?>
     </div>
 </div>
