@@ -48,6 +48,11 @@ class AppController extends Controller {
                 'controller' => 'dashboard',
                 'action' => 'index'
             ),
+            'authenticate' => array(
+                'Form' => array(
+                    'fields' => array ('username' => 'email')
+                )
+            )
         ));
     
     
@@ -59,6 +64,7 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
         
+        $this->Auth->userModel = 'User';
         
         //Customise the login error
         $this->Auth->loginError = 'The credentials you entered were incorrect. Please try again or have you<a href="lost_password">lost your password"</a>';

@@ -141,5 +141,4 @@ class User extends AppModel {
             }
             return true;
         }
-
 }

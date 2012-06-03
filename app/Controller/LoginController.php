@@ -36,12 +36,6 @@ class LoginController extends AppController{
     public function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('register', 'lost_password', 'login'); //Allow register to be outside the auth zone
-        
-        // Alias the username field to be email instead
-        $this->Auth->fields = array(
-            'username' => 'email',
-            'password' => 'password'
-        );
     }
     
     /**
@@ -51,7 +45,6 @@ class LoginController extends AppController{
      */
     public function index(){
         if ($this->request->is('post')) {
-            //$this->Auth->password($this->request->data['User']['password']);
             if ($this->Auth->login()) {
                 $this->redirect($this->Auth->redirect());
             } else {
