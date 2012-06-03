@@ -36,7 +36,7 @@ class AppController extends Controller {
         'Acl', 
         'Session', 
         'Auth' => array(
-            'authorize' => 'actions',
+            //'authorize' => 'actions',
             'actionPath' => 'controllers/',
             'loginAction' => array(
                 'controller' => 'login',
@@ -50,7 +50,7 @@ class AppController extends Controller {
             ),
             'authenticate' => array(
                 'Form' => array(
-                    'fields' => array ('username' => 'email')
+                    'fields' => array ('username' => 'email', 'password' => 'password')
                 )
             )
         ));

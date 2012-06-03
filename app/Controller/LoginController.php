@@ -36,7 +36,7 @@ class LoginController extends AppController{
     
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow(); //Allow all to be outside the auth zone
+        $this->Auth->allow('register', 'lost_password', 'login', 'activate'); //Allow all to be outside the auth zone
     }
     
     /**
@@ -45,8 +45,10 @@ class LoginController extends AppController{
      * Allows users to login using their username and password.
      */
     public function index(){
-        if (!$this->Auth->loggedIn()){
+        
+        //if (!$this->Auth->loggedIn()){
             if ($this->request->is('post')) {
+                
                 //Get the user they are trying to log in as
                 $user = $this->User->find('first', array('conditions' => array('email' => $this->request->data['User']['email']), 'recursive' => -1));
                 
@@ -61,9 +63,9 @@ class LoginController extends AppController{
                     $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The credentials supplied were not valid. Please try again."), 'default', array(), 'error');
                 }
             }
-        } else {
+        /*} else {
             //$this->redirect())
-        }
+        }*/
     }
     
     /**
@@ -73,7 +75,7 @@ class LoginController extends AppController{
      */
     public function logout(){
         $this->Auth->logout();
-        
+        $this->redirect('/');
     }
     
     /**
@@ -90,7 +92,7 @@ class LoginController extends AppController{
                 if ($this->data['User']['password'] == $this->data['User']['password_confirm']) {
                     if ($this->data['User']['password'] != 'password'){
                         $this->User->create();
-                        if ($this->User->save($this->request->data)){
+                        if ($this->User->save($this->request->data['User'])){
                             $id = $this->User->getLastInsertID();
                             
                             //Check to see if an SSH key was added and save it
