@@ -43,8 +43,8 @@
 class EmailConfig {
 
 	public $default = array(
-		'transport' => 'debug',
-		'from' => 'you@localhost',
+		'transport' => 'Debug',
+		'from' => 'devtrack@localhost.com',
 		//'charset' => 'utf-8',
 		//'headerCharset' => 'utf-8',
 	);

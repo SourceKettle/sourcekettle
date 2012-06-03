@@ -33,7 +33,7 @@
         
         echo $this->Bootstrap->input("password", array(
             "input" => $this->Form->password("password"),
-            "help_block" => "Must be at least 8 characters and contain at least one number and letter."
+            "help_block" => "Must be at least 8 characters."
         ));
         
         echo $this->Bootstrap->input("Confirm Password", array(
