@@ -19,7 +19,7 @@ class LoginController extends AppController{
      * The name of the controller
      * @var type String
      */
-    public $name = 'login';
+    public $name = 'Login';
     
     /**
      * Uses the Users model
