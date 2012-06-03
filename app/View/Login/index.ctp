@@ -15,8 +15,36 @@
 */
 
 echo $this->Session->flash('auth');
-echo $this->Form->create('Login');
+
+/*echo $this->Form->create('Login');
 echo $this->Form->input('email');
 echo $this->Form->input('password');
-echo $this->Form->end('Login');
+echo $this->Form->end('Login');*/
+
+?>
+<br>
+<div class="row">
+    <div class="span6 offset3">
+        <?php
+        echo $this->Form->create('login', array('class' => 'well form-horizontal'));
+        echo '<h1>Login to DevTrack</h1>';
+
+        echo $this->Bootstrap->input("email", array(
+            "input" => $this->Form->text("Email"),
+        ));
+        
+        echo $this->Bootstrap->input("password", array(
+            "input" => $this->Form->password("Password"),
+        ));
+
+        echo $this->Bootstrap->button("Login", array("style" => "primary", "size" => "large", 'class' => 'controls'));
+        
+        //echo "<br><br>";
+        //echo $this->Bootstrap->button_link("Register", "/register", array("style" => "default", "size" => "small", 'class' => 'controls'));
+        echo $this->Bootstrap->button_link("I forgot my password", "/login/lost_password", array("style" => "default", "size" => "small", 'class' => 'controls'));
+
+        echo $this->Form->end();
+        ?>
+    </div>
+</div>
 

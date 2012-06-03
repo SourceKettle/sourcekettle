@@ -35,7 +35,7 @@ class LoginController extends AppController{
     
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('register'); //Allow register to be outside the auth zone
+        $this->Auth->allow('register', 'lost_password'); //Allow register to be outside the auth zone
     }
     
     /**
@@ -71,10 +71,21 @@ class LoginController extends AppController{
         $enabled = $this->Setting->find('first', array('conditions' => array('name' => 'register_enabled')));
         if ($enabled['Setting']['value']){ //Check the setting
             //Registration part
+            if($this->request->is('post')){
+                //if data was posted therefore a submitted form
+                //$
+            }
         } else {
             //Display an error saying that registration is not allowed
             $this->render('registration_disabled');
         }
+    }
+    
+    /**
+     * Function to allow for users to reset their passwords
+     */
+    public function lost_password(){
+        
     }
 }
 
