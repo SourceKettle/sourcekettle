@@ -1,4 +1,5 @@
-<h1>Add a Project</h1>
+<?php echo $this->Bootstrap->page_header("New Project <small>where baby projects are made</small>"); ?>
+
 <div class="row">
     <div class="span6">
         <?php echo $this->Form->create('Project', array('class' => 'well form-horizontal')); ?>
@@ -26,17 +27,20 @@
     <div class="span6">
         <div>
 		    <h4>Fully-Fledged Project Wiki</h4>
-            <p>From time to time it may be necessary to document your project with more than just a handful of README files. Our Project Wikis allow you to create documentation to your hearts content.</p>
+            <p>From time to time it may be necessary to document your project with more than just a handful of README files. 
+            Our Project Wikis allow you to create documentation to your hearts content.</p>
             <p><?=$this->Form->checkbox('wiki_enabled')?> Yes Please!</p>
         </div>
         <div>
             <h4>Dynamic Task Tracking</h4>
-            <p>When it's more than just you working on a project, it can become troublesome keeping track of who's doing what. DevTrack provides task/bug tracking to manage your collaborators.</p>
+            <p>When it's more than just you working on a project, it can become troublesome keeping track of who's doing what. 
+            DevTrack provides task/bug tracking to manage your collaborators.</p>
 		    <p><?=$this->Form->checkbox('task_tracking_enabled')?> Yes Please!</p>
         </div>
 		<div>
             <h4>Time Tracking</h4>
-            <p>Sometimes, spreadsheets just aren't the best way of logging how much time you've spent on a task. Heres where we introduce our simple to use time logging system.
+            <p>Sometimes, spreadsheets just aren't the best way of logging how much time you've spent on a task. 
+            Heres where we introduce our simple to use time logging system.
             <p><?=$this->Form->checkbox('time_management_enabled')?> Yes Please!</p>
         </div>
         <p class="help-block"><strong>Note:</strong> Features can be enabled and disabled in the project page later.</p>
