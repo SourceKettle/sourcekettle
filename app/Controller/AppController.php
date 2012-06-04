@@ -53,9 +53,7 @@ class AppController extends Controller {
                     'fields' => array ('username' => 'email', 'password' => 'password')
                 )
             )
-        ),
-        'Security'
-        );
+        ));
     
     
     /**
@@ -80,5 +78,5 @@ class AppController extends Controller {
         if($this->Auth->loggedIn()){
             $this->set('user_name', $this->Auth->user('name'));
         }
-    }
+    } 
 }
