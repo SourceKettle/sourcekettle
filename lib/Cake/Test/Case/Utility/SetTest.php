@@ -1388,6 +1388,33 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * Test that extract() + matching can hit null things.
+ */
+	public function testExtractMatchesNull() {
+		$data = array(
+			'Country' => array(
+				array('name' => 'Canada'),
+				array('name' => 'Australia'),
+				array('name' => null),
+			)
+		);
+		$result = Set::extract('/Country[name=/Canada|^$/]', $data);
+		$expected = array(
+			array(
+				'Country' => array(
+					'name' => 'Canada',
+				),
+			),
+			array(
+				'Country' => array(
+					'name' => null,
+				),
+			),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testMatches method
  *
  * @return void
@@ -1655,6 +1682,20 @@ class SetTest extends CakeTestCase {
 		$result = Set::extract($a, 'articles.0.Article.title');
 		$expected = 'Article 1';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test classicExtract with keys that exceed 32bit max int.
+ *
+ * @return void
+ */
+	public function testClassicExtractMaxInt() {
+		$data = array(
+			'Data' => array(
+				'13376924712' => 'abc'
+			)
+		);
+		$this->assertEquals('abc', Set::classicExtract($data, 'Data.13376924712'));
 	}
 
 /**
