@@ -32,9 +32,9 @@
          * Defined to make the logging in/out etc look less retarded that /login/logout
          */
         Router::connect('/logout', array('controller' => 'login', 'action' => 'logout'));
-        Router::connect('/forgot_password', array('controller' => 'login', 'action' => 'forgot_password'));
-        Router::connect('/register', array('controller' => 'login', 'action' => 'register'));
-        Router::connect('/activate/*', array('controller' => 'login', 'action' => 'activate'));
+        Router::connect('/forgot_password', array('controller' => 'users', 'action' => 'forgot_password'));
+        Router::connect('/register', array('controller' => 'users', 'action' => 'register'));
+        Router::connect('/activate/*', array('controller' => 'users', 'action' => 'activate'));
         
         /*
          * Define some more to make the footer pages work
