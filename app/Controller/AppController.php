@@ -26,7 +26,7 @@ class AppController extends Controller {
      * The global helpers
      * @var type 
      */
-    public $helpers = array('Html', 'Session', 'Form', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'ActiveNav');
+    public $helpers = array('Html', 'Session', 'Form', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'));
     
     /**
      * Global components used for authentication, authorisation and session management.
@@ -53,7 +53,9 @@ class AppController extends Controller {
                     'fields' => array ('username' => 'email', 'password' => 'password')
                 )
             )
-        ));
+        ),
+        'Security'
+        );
     
     
     /**
@@ -63,7 +65,7 @@ class AppController extends Controller {
      */
     public function beforeFilter() {
         parent::beforeFilter();
-        
+
         $this->Auth->userModel = 'User';
         
         //Customise the login error
