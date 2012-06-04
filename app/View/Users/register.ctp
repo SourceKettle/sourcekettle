@@ -13,39 +13,38 @@
 * @since         DevTrack v 0.1
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
+
+echo $this->Bootstrap->page_header("Register with DevTrack <small>Hello! Bonjour! Willkommen!..</small>");
 ?>
-<h1>Register with DevTrack</h1>
 <div class="row">
     <div class="span8">
         <?php
         echo $this->Form->create('User', array('class' => 'well form-horizontal'));
-        echo '<h3>Create your account</h3>';
-
+        
         echo $this->Bootstrap->input("name", array(
-            "input" => $this->Form->text("name"),
-            "help_block" => "Text under the input"
+            "input" => $this->Form->text("name", array("class" => "input-xlarge", "placeholder" => "John Smith")),
         ));
         
         echo $this->Bootstrap->input("email", array(
-            "input" => $this->Form->text("email"),
+            "input" => $this->Form->text("email", array("class" => "input-xlarge", "placeholder" => "john.smith@example.com")),
             "help_block" => "Your email address will not be shared."
         ));
         
         echo $this->Bootstrap->input("password", array(
-            "input" => $this->Form->password("password"),
+            "input" => $this->Form->password("password", array("class" => "input-xlarge")),
             "help_block" => "Must be at least 8 characters."
         ));
         
         echo $this->Bootstrap->input("Confirm Password", array(
-            "input" => $this->Form->password("password_confirm"),
+            "input" => $this->Form->password("password_confirm", array("class" => "input-xlarge")),
             "help_block" => "Just to make sure."
         ));
         
         echo $this->Bootstrap->input("ssh_key", array(
-            "input" => $this->Form->textarea("ssh_key"),
+            "input" => $this->Form->textarea("ssh_key", array("class" => "input-xlarge")),
             "label" => "SSH Key",
             "help_inline" => "(Optional)",
-            "help_block" => "SSH keys make working with a repository easier. You can add one at any time."
+            "help_block" => "SSH keys make working with a repository easier.<br>You can add one at any time."
         ));
         
         echo $this->Bootstrap->button("Signup", array("style" => "primary", "size" => "large", 'class' => 'controls'));
@@ -55,11 +54,27 @@
     </div>
     <div class="span4">
         <h3>What is DevTrack?</h3>
-        <br>
         <p>
-            DevTrack is a project management and source code management tool designed to make developing applications simpler.
-            It allows you to use an Subversion or Git repository to host your code and allows for easily managing tasks, the 
+            DevTrack is a <strong>project management</strong> and <strong>source code management</strong> tool designed to make developing applications simpler.
+            It allows you to use an <strong>Subversion</strong> or <strong>Git</strong> repository to host your code and allows for easily managing tasks, the 
             time spent developing and documentation throughout your projects.
         </p>
+        <br>
+        <h3>What makes DevTrack special?</h3>
+        <p>
+            DevTrack is <strong>all</strong> of the following:
+            <ul>
+                <li>Open Source</li>
+                <li>Simple to use</li>
+                <li>Easy to install</li>
+                <li>Developer and Admin friendly</li>
+            </ul>
+        </p>
+        <br>
+        <h3>What do our developers think?</h3>
+        <blockquote>
+            <p>I wish DevTrack was around when we were developing DevTrack!</p>
+            <small>@pwhittlesea</small>
+        </blockquote>
     </div>
 </div>

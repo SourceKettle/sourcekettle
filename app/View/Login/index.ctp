@@ -19,7 +19,7 @@
     <div class="span6 offset3">
         <?php
         echo $this->Form->create('User', array('class' => 'well form-horizontal'));
-        echo '<h1>Login to DevTrack</h1>';
+        echo "<h1>Login to DevTrack</h1><p>Don't have an account? ".$this->Html->link('Register here', '/register')."</p>";
 
         echo $this->Bootstrap->input("email", array(
             "input" => $this->Form->text("email"),
@@ -31,10 +31,8 @@
 
         echo $this->Bootstrap->button("Login", array("style" => "primary", "size" => "large", 'class' => 'controls'));
         
-        //echo "<br><br>";
-        //echo $this->Bootstrap->button_link("Register", "/register", array("style" => "default", "size" => "small", 'class' => 'controls'));
-        echo $this->Bootstrap->button_link("I forgot my password", "/login/lost_password", array("style" => "default", "size" => "small", 'class' => 'controls'));
-
+        echo $this->Bootstrap->button_link("I forgot my password", "/login/lost_password", array("style" => "default", "size" => "normal", 'class' => 'pull-right'));
+        
         echo $this->Form->end();
         ?>
     </div>
