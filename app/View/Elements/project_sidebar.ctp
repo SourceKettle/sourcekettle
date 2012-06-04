@@ -1,46 +1,50 @@
-<ul class="well nav nav-list">
+<?php
+    $features = array(
+        'view' => array('icon' => 'home', 'text' => 'home'),
+        'time' => array('icon' => 'book'),
+        'source' => array('icon' => 'pencil'),
+        'tasks' => array('icon' => 'file'),
+    );
+    $admin = array(
+        'collaborators' => array('icon' => 'user'),
+        'edit' => array('icon' => 'cog', 'text' => 'Settings'),
+    );
+?>
+<ul class="well nav nav-list" style="padding: 8px 14px;">
     <li class="nav-header">Project Features</li>
-    <li class="active">
-        <a href="#">
-            <i class="icon-white icon-home"></i> Home
-        </a>
-    </li>
-    <li>
+    
+    <? // Iterate over the sidebar options in $features
+    foreach ( $features as $feature => $options ): ?>
+    
+    <li<?= ($feature == $action) ? ' class="active"' : '' ?>>
         <?=$this->Html->link(
-            '<i class="icon-book"></i> Time',
-            array('action' => 'time', $id),
+            '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
+                ' icon-' . $options['icon'] . '"></i> ' . 
+                ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
+            array('controller' => 'projects', 'action' => $feature, $id),
             array('escape' => false)
         )?>
     </li>
-    <li>
-        <?=$this->Html->link(
-            '<i class="icon-pencil"></i> Source',
-            array('action' => 'source', $id),
-            array('escape' => false)
-        )?>
-    </li>
-    <li>
-        <?=$this->Html->link(
-            '<i class="icon-file"></i> Tasks',
-            array('action' => 'tasks', $id),
-            array('escape' => false)
-        )?>
-    </li>
+    
+    <? endforeach; ?>
+    
     <li class="nav-header">Administration</li>
-    <li>
+    
+    <? // Iterate over the sidebar options in $admin
+    foreach ( $admin as $feature => $options ): ?>
+    
+    <li<?= ($feature == $action) ? ' class="active"' : '' ?>>
         <?=$this->Html->link(
-            '<i class="icon-user"></i> Collaborators',
-            array('action' => 'collaborators', $id),
+            '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
+                ' icon-' . $options['icon'] . '"></i> ' . 
+                ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
+            array('controller' => 'projects', 'action' => $feature, $id),
             array('escape' => false)
         )?>
     </li>
-    <li>
-        <?=$this->Html->link(
-            '<i class="icon-cog"></i> Settings',
-            array('action' => 'edit', $id),
-            array('escape' => false)
-        )?>
-    </li>
+    
+    <? endforeach; ?>
+    
     <li class="divider"></li>
     <li>
         <?=$this->Html->link(
