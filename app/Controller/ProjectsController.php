@@ -18,6 +18,8 @@ App::uses('AppController', 'Controller');
 
 class ProjectsController extends AppController {
 
+	public $helpers = array('Time');
+	
     /**
      * index method
      *

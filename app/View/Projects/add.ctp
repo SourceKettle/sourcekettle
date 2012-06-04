@@ -1,4 +1,20 @@
-<?php echo $this->Bootstrap->page_header("New Project <small>where baby projects are made</small>"); ?>
+<?php
+/**
+ *
+ * View class for APP/projects/add for the DevTrack system
+ * View will allow user to create a new project
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ * 
+ * @copyright     DevTrack Development Team 2012
+ * @link          http://github.com/chrisbulmer/devtrack
+ * @package       DevTrack.View.Projects
+ * @since         DevTrack v 0.1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+ 
+echo $this->Bootstrap->page_header("New Project <small>where baby projects are made</small>"); ?>
 
 <div class="row">
     <div class="span6">
@@ -24,6 +40,7 @@
         ));
         ?>
     </div>
+    
     <div class="span6">
         <div>
 		    <h4>Fully-Fledged Project Wiki</h4>
@@ -46,6 +63,7 @@
         <p class="help-block"><strong>Note:</strong> Features can be enabled and disabled in the project page later.</p>
     </div>
 </div>
+
 <div class="row">
     <div class="span12" style="text-align:center"> 
         <?php echo $this->Bootstrap->button("Create Project", array("style" => "primary", "size" => "large", 'class' => 'controls')); ?>
