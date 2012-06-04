@@ -71,23 +71,16 @@
                     <div class="nav-collapse">
                         <ul class="nav">
                             <?php
-                            /*
-                            $this->ActiveNav->markLink('dashboard', 'Dashboard');
-                            $this->ActiveNav->markLink('projects', 'Projects');
-                            $this->ActiveNav->markLink('tasks', 'Tasks');
-                             */
-                            //$this->params['controller']
-                            $navItems = array('dashboard' => 'Dashboard', 'projects' => 'projects', 'tasks' => 'tasks');
-                            foreach ($navItems as $controller => $text){
-                                if ($controller == $this->params['controller']){
-                                    echo "<li class='active'>";
-                                } else {
-                                    echo "<li>";
-                                }
+                            $navItems = array(
+                            	'dashboard' => 'Dashboard',
+                            	'projects' => 'Projects',
+                            	'tasks' => 'Tasks',
+                            );
+                            foreach ($navItems as $controller => $text) {
+                                echo "<li" . ($controller == $this->params['controller'] ? " class='active'>" : ">");
                                 echo $this->Html->link($text, array('controller' => $controller));
                                 echo "</li>";
                             }
-                            
                             ?>
                         </ul>
                         <form class="navbar-search pull-right">
