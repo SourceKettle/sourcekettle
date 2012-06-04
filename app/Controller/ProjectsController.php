@@ -58,7 +58,7 @@ class ProjectsController extends AppController {
         }
         $this->set('project', $this->Project->read(null, $id));
     }
-
+        
     /**
      * admin_view method
      *
@@ -89,13 +89,13 @@ class ProjectsController extends AppController {
                 $data = array('Collaborator');
                 $data['Collaborator']['user_id'] = $this->Auth->user('id');
                 $data['Collaborator']['project_id'] = $this->Project->id;
-                $data['Collaborator']['access_level'] = 2;
+                $data['Collaborator']['access_level'] = 2; //Project admin
                 $this->Project->Collaborator->save($data);
 
-                $this->Session->setFlash(__('The project has been saved'));
+                $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The project could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         }
         $repoTypes = $this->Project->RepoType->find('list');
@@ -111,10 +111,10 @@ class ProjectsController extends AppController {
         if ($this->request->is('post')) {
             $this->Project->create();
             if ($this->Project->save($this->request->data)) {
-                $this->Session->setFlash(__('The project has been saved'));
+                $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The project could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         }
         $repoTypes = $this->Project->RepoType->find('list');
@@ -134,10 +134,10 @@ class ProjectsController extends AppController {
         }
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Project->save($this->request->data)) {
-                $this->Session->setFlash(__('The project has been saved'));
+                $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The project could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
             $this->request->data = $this->Project->read(null, $id);
@@ -159,10 +159,10 @@ class ProjectsController extends AppController {
         }
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Project->save($this->request->data)) {
-                $this->Session->setFlash(__('The project has been saved'));
+                $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The project could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
             $this->request->data = $this->Project->read(null, $id);
@@ -186,10 +186,10 @@ class ProjectsController extends AppController {
             throw new NotFoundException(__('Invalid project'));
         }
         if ($this->Project->delete()) {
-            $this->Session->setFlash(__('Project deleted'));
+            $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
             $this->redirect(array('action' => 'index'));
         }
-        $this->Session->setFlash(__('Project was not deleted'));
+        $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
         $this->redirect(array('action' => 'index'));
     }
 
@@ -208,10 +208,10 @@ class ProjectsController extends AppController {
             throw new NotFoundException(__('Invalid project'));
         }
         if ($this->Project->delete()) {
-            $this->Session->setFlash(__('Project deleted'));
+            $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
             $this->redirect(array('action' => 'index'));
         }
-        $this->Session->setFlash(__('Project was not deleted'));
+        $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
         $this->redirect(array('action' => 'index'));
     }
 }

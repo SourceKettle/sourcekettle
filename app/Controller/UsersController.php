@@ -21,34 +21,9 @@ class UsersController extends AppController {
     
     public $uses = array('User', 'Setting', 'EmailConfirmationKey', 'SshKey');
     
-    /**
-     * Tell the ACL that this object will request access to objects
-     * @var type 
-     */
-    public $actsAs = array('Acl' => array('type' => 'requester'));
-    
     public function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('register', 'activate', 'lost_password');
-    }
-    
-    /**
-     * Tells the ACL what the parent node is
-     */
-    public function parentNode(){
-        if (!$this->id && empty($this->data)) {
-            return null;
-        }
-        if (isset($this->data['User']['is_admin'])) {
-            $is_admin = $this->data['User']['is_admin'];
-        } else {
-            $is_admin = $this->field('is_admin');
-        }
-        if (!$is_admin) {
-            return null;
-        } else {
-            return $is_admin;
-        }
     }
     
     /**
@@ -181,6 +156,11 @@ class UsersController extends AppController {
     public function lost_password(){
         
     }
+    
+    /**
+     * Allows users to view their profile
+     */
+    public function index(){
+        
+    } 
 }
-
-?>

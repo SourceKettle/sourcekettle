@@ -32,8 +32,7 @@ class AppController extends Controller {
      * Global components used for authentication, authorisation and session management.
      * @var type 
      */
-    public $components = array(
-        'Acl', 
+    public $components = array( 
         'Session', 
         'Auth' => array(
             //'authorize' => 'actions',
