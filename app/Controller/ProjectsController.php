@@ -26,12 +26,6 @@ class ProjectsController extends AppController {
     public $helpers = array('Time');
 
     /**
-     * Components required
-     * @var type 
-     */
-    public $components = array('RouteByName');
-
-    /**
      * index method
      *
      * @return void
@@ -63,7 +57,7 @@ class ProjectsController extends AppController {
             throw new NotFoundException(__('Invalid project'));
         } else {
 
-            $project = $this->RouteByName->getProject($name);
+            $project = $this->Project->getProject($name);
             if (empty($project)) {
                 throw new NotFoundException(__('Invalid project'));
             } else {
@@ -83,7 +77,7 @@ class ProjectsController extends AppController {
             throw new NotFoundException(__('Invalid project'));
         } else {
 
-            $project = $this->RouteByName->getProject($name);
+            $project = $this->Project->getProject($name);
             if (empty($project)) {
                 throw new NotFoundException(__('Invalid project'));
             } else {
@@ -147,9 +141,9 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function edit($name = null) {
-        $project = $this->RouteByName->getProject($name);
-
-        $this->Project->id = $project['Project']['id'];
+        $project = $this->Project->getProject($name);
+        $id = $project['Project']['id'];
+        $this->Project->id = $id;
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
         }
@@ -174,8 +168,9 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function admin_edit($name = null) {
-        $project = $this->RouteByName->getProject($name);
-        $this->Project->id = $project['Project']['id'];
+        $project = $this->Project->getProject($name);
+        $id = $project['Project']['id'];
+        $this->Project->id = $id;
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
         }
@@ -200,7 +195,7 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function delete($name = null) {
-        $project = $this->RouteByName->getProject($name);
+        $project = $this->Project->getProject($name);
         $id = $project['Project']['id'];
 
         if (!$this->request->is('post')) {
