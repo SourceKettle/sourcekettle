@@ -10,7 +10,7 @@
             <h3>Delete your account</h3>
             <p>Please note, this action is not reversible. This will also delete any projects for which you are the only contributor.</p>
             <?php
-            echo $this->Bootstrap->button_link("Delete my account", array("controller" => "users", "action" => "delete"), array("style" => "danger", "size" => "large"), "Are you sure you want to delete your account?");
+            echo $this->Bootstrap->button_form("Delete my account", array("action" => "delete"), array("style" => "danger", "size" => "large"), "Are you sure you want to delete your account?");
             ?>
         </div>
     </div>
