@@ -165,11 +165,7 @@ class UsersController extends AppController {
      * Allows users to view their profile
      */
     public function index() {
-        $user = $this->Auth->user();
-        $this->set('user', $user);
-        $this->User->id = $user['id'];
-        $this->request->data = $this->User->read();
-        $this->request->data['User']['password'] = null;
+        $this->redirect('editdetails');
     }
     
     
@@ -201,12 +197,16 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
                 $this->Session->write('Auth.User.name', $this->request->data['User']['name']);
                 $this->Session->write('Auth.User.email', $this->request->data['User']['email']);
+                $this->set('user_name', $this->request->data['User']['name']);
             } else {
                 $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
             }
         }
-        
-        $this->redirect('index');
+        $user = $this->Auth->user();
+        $this->set('user', $user);
+        $this->User->id = $user['id'];
+        $this->request->data = $this->User->read();
+        $this->request->data['User']['password'] = null;
     }
 
     /**
@@ -230,11 +230,63 @@ class UsersController extends AppController {
                 }      
             } else {
                 $this->Session->setFlash(__('Your current password was incorrect. Please try again.'), 'default', array(), 'error');
+            } 
+        }
+        $user = $this->Auth->user();
+        $this->set('user', $user);
+        $this->User->id = $user['id'];
+        $this->request->data = $this->User->read();
+        $this->request->data['User']['password'] = null;
+    }
+    
+    public function addkey(){
+        if ($this->request->is('post')){
+            $this->request->data['SshKey']['user_id'] = $this->Auth->user('id');
+            if ($this->SshKey->save($this->request->data)){
+                $this->Session->setFlash(__('Your key was added successfully.'), 'default', array(), 'success');
+            } else {
+                $this->Session->setFlash(__('There was a problem saving your key. Please try again.'), 'default', array(), 'error');
             }
+        } 
+        $user = $this->Auth->user();
+        $this->User->id = $user['id'];
+        $this->request->data = $this->User->read();
+        $this->request->data['User']['password'] = null;
+        
+    }
+    
+    public function deletekey($id = null){
+        if ($this->request->is('post') && $id != null){
+            $key = $this->SshKey->find('first', array(
+                'conditions' => array('SshKey.id' => $id)
+            ));
             
-            
+            if ($key['SshKey']['user_id'] == $this->Auth->user('id')){
+                if ($this->SshKey->delete($key['SshKey'])){
+                    $this->Session->setFlash(__('Your key was removed successfully.'), 'default', array(), 'success');
+                } else {
+                    $this->Session->setFlash(__('There was a problem removing your key. Please try again.'), 'default', array(), 'error');
+                }
+            } else {
+                $this->Session->setFlash(__('2There was a problem removing your key. Please try again.'), 'default', array(), 'error');
+            }
         }
         
-        $this->redirect('index');
+        $user = $this->Auth->user();
+        $this->User->id = $user['id'];
+        $this->request->data = $this->User->read();
+        $this->request->data['User']['password'] = null;
+    }
+    
+    public function delete(){
+        if($this->request->is('post')){
+            $this->User->id = $this->Auth->user('id');
+            
+        } else {
+            $user = $this->Auth->user();
+            $this->User->id = $user['id'];
+            $this->request->data = $this->User->read();
+            $this->request->data['User']['password'] = null;
+        }
     }
 }

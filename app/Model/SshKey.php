@@ -46,8 +46,8 @@ class SshKey extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Please enter your SSH key',
-				//'allowEmpty' => false,
-				//'required' => false,
+				'allowEmpty' => false,
+				'required' => false,
 				//'last' => false, // Stop validation after this rule
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
@@ -56,8 +56,8 @@ class SshKey extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Please enter a comment for the SSH key to identify it',
-				//'allowEmpty' => false,
-				//'required' => false,
+				'allowEmpty' => false,
+				'required' => false,
 				//'last' => false, // Stop validation after this rule
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
