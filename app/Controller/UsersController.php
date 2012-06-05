@@ -189,5 +189,19 @@ class UsersController extends AppController {
         }
         $this->set('user', $this->User->read(null, $id));
     }
+    
+    public function editdetails(){
+        $this->User->id = $this->Auth->user('id');
+        
+        if ($this->request->is('post')){
+            if ($this->User->save($this->request->data)){
+                $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+            } else {
+                $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
+            }
+        }
+        
+        $this->redirect('index');
+    }
 
 }

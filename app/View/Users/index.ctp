@@ -20,7 +20,7 @@
             echo $this->Bootstrap->input("email", array(
                 "input" => $this->Form->text("email"),
             ));
-            echo $this->Bootstrap->button("User", array("style" => "primary", "size" => "large", 'class' => 'controls'));
+            echo $this->Bootstrap->button("Update", array("style" => "primary", "size" => "large", 'class' => 'controls'));
 
             echo $this->Form->end();
             ?>
