@@ -78,7 +78,7 @@
                             );
                             foreach ($navItems as $controller => $text) {
                                 echo "<li" . ($controller == $this->params['controller'] ? " class='active'>" : ">");
-                                echo $this->Html->link($text, array('controller' => $controller));
+                                echo $this->Html->link($text, '/'.$controller);
                                 echo "</li>";
                             }
                             ?>
