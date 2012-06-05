@@ -22,7 +22,7 @@ class ProjectsController extends AppController {
      * Project helpers
      * @var type 
      */
-    public $helpers = array('Time');
+    public $helpers = array('Time', 'GoogleChart.GoogleChart');
 
     /**
      * fetch_id_from_name

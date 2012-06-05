@@ -133,9 +133,6 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `description` text CHARACTER SET utf8 COLLATE utf8_bin,
   `public` tinyint(1) NOT NULL,
   `repo_type` int(2) NOT NULL,
-  `wiki_enabled` tinyint(1) NOT NULL,
-  `task_tracking_enabled` tinyint(1) NOT NULL,
-  `time_management_enabled` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
