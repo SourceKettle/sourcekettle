@@ -167,10 +167,9 @@ class ProjectsController extends AppController {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
+            $this->set('project', $project);
             $this->request->data = $this->Project->read(null, $id);
         }
-        $repoTypes = $this->Project->RepoType->find('list');
-        $this->set(compact('repoTypes'));
     }
 
     /**
