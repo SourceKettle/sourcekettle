@@ -44,18 +44,33 @@
         Router::connect('/git_help', array('controller' => 'pages', 'action' => 'display', 'git_help'));
         
         /*
-         * Defined urls to allow for projects to be referenced using a GitHub 'style' URL pattern
-         * The first block of four routes define the controllers for given in the
-         * URL (not the projects controller as it would normally route to.
+         * The below routes allow all projects to be accessed at APP/project/project_name/[controller_to_use/]?[action/]?[params]?
          * 
-         * The second block state routes for if the URL routes to the project controller
+         * Where controller_to_use allows another controller to be used whilst still appearing at APP/project/project_name/...
+         * If this is blank (APP/project/project_name/action) then ProjectsController will be used
+         * e.g. APP/project/project_name/tasks will route to the TasksController instead of the ProjectsController
+         * 
+         * The action is the action to perform in the given controller. If no action is set, it will call index()
+         * e.g. APP/project/project_name/tasks/add will call the add() function in TasksController
+         * 
+         * The params are any additional params to be pass
+         * 
          */
+        Router::connect('/project/:project/tasks/:action/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/tasks/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
+
+        Router::connect('/project/:project/time/:action/*', array('controller' => 'time'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/time/*', array('controller' => 'time'), array('pass' => array('project'), 'project' => '[\w]+'));
+        
+        Router::connect('/project/:project/source/:action/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/source/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));
+
+        Router::connect('/project/:project/collaborators/:action/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/collaborators/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[\w]+'));
         
-        
+        /*
+         * If no other controller is to be used, use the projects controller
+         */
         Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[\w]+'));
          
