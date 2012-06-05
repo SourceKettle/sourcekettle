@@ -50,6 +50,9 @@ class ProjectActivityHelper extends AppHelper {
         // Pick a date that cant have happened yet
         $currentDate = strtotime('+1 Day');
         
+        // Number of events shown
+        $number = 0;
+        
         foreach ( $events as $event ) {
         
             // If we change day, print out a date header
@@ -77,6 +80,8 @@ class ProjectActivityHelper extends AppHelper {
                 case 'Download':
                     break;
             }
+            // Number of events to display
+            if (++$number >= 10) break;
         }
         return $return;
     }
