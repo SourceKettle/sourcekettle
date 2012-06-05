@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * ProjectsController Controller for the DevTrack system
@@ -25,29 +26,11 @@ class ProjectsController extends AppController {
     public $helpers = array('Time');
 
     /**
-     * fetch_id_from_name
-     * Translate all Project names to ids
-     * If onld style URL is requested, ensure redirect to the new format
-     *
-     * @param $name type id or name of project
-     * @param $redirect boolean true if a redirect is desired
-     *
-     * @return int project id
+     * Components required
+     * @var type 
      */
-    private function fetch_id_from_name($name = null, $redirect = false) {
-        // Allow for dual routing
-        if ( is_numeric($name) ) {
-            // Ensure all Project URLs are in the new format, if not, redirect based on id
-            if ($redirect) {
-                $project = $this->Project->find('first', array('conditions' => array('Project.id' => $name)));
-                $this->redirect(array('action' => $this->params['action'], 'controller' => 'projects', 'project' => $project['Project']['name']));
-            }
-            return $name;
-        }
-        $project = $this->Project->find('first', array('conditions' => array('Project.name' => $name)));
-        return $project['Project']['id'];
-    }
-    
+    public $components = array('RouteByName');
+
     /**
      * index method
      *
@@ -76,15 +59,19 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function view($name = null) {
-        $id = $this->fetch_id_from_name($name, true);
-        
-        $this->Project->id = $id;
-        if (!$this->Project->exists()) {
+        if ($name == null) {
             throw new NotFoundException(__('Invalid project'));
+        } else {
+
+            $project = $this->RouteByName->getProject($name);
+            if (empty($project)) {
+                throw new NotFoundException(__('Invalid project'));
+            } else {
+                $this->set('project', $project);
+            }
         }
-        $this->set('project', $this->Project->read(null, $id));
     }
-        
+
     /**
      * admin_view method
      *
@@ -92,13 +79,17 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function admin_view($name = null) {
-        $id = $this->fetch_id_from_name($name);
-
-        $this->Project->id = $id;
-        if (!$this->Project->exists()) {
+        if ($name == null) {
             throw new NotFoundException(__('Invalid project'));
+        } else {
+
+            $project = $this->RouteByName->getProject($name);
+            if (empty($project)) {
+                throw new NotFoundException(__('Invalid project'));
+            } else {
+                $this->set('project', $project);
+            }
         }
-        $this->set('project', $this->Project->read(null, $id));
     }
 
     /**
@@ -112,8 +103,8 @@ class ProjectsController extends AppController {
             $this->Project->create();
             if ($this->Project->save($this->request->data)) {
 
-                // Project has been saved
-                // Now to add the creator as the first admin user on the project
+// Project has been saved
+// Now to add the creator as the first admin user on the project
                 $data = array('Collaborator');
                 $data['Collaborator']['user_id'] = $this->Auth->user('id');
                 $data['Collaborator']['project_id'] = $this->Project->id;
@@ -156,9 +147,9 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function edit($name = null) {
-        $id = $this->fetch_id_from_name($name, true);
-        
-        $this->Project->id = $id;
+        $project = $this->RouteByName->getProject($name);
+
+        $this->Project->id = $project['Project']['id'];
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
         }
@@ -183,9 +174,8 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function admin_edit($name = null) {
-        $id = $this->fetch_id_from_name($name);
-
-        $this->Project->id = $id;
+        $project = $this->RouteByName->getProject($name);
+        $this->Project->id = $project['Project']['id'];
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
         }
@@ -210,7 +200,8 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function delete($name = null) {
-        $id = $this->fetch_id_from_name($name);
+        $project = $this->RouteByName->getProject($name);
+        $id = $project['Project']['id'];
 
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
@@ -234,7 +225,8 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function admin_delete($name = null) {
-        $id = $this->fetch_id_from_name($name);
+        $project = $this->RouteByName->getProject($name);
+        $id = $project['Project']['id'];
 
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
@@ -250,4 +242,5 @@ class ProjectsController extends AppController {
         $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
         $this->redirect(array('action' => 'index'));
     }
+
 }
