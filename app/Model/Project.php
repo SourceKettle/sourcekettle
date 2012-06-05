@@ -102,5 +102,31 @@ class Project extends AppModel {
 			'counterQuery' => ''
 		)
 	);
+        
+    /**
+     * Fetches a project from either its name or its id
+     *
+     * @param $key string id or name of project to fetch
+     *
+     * @return Project The project found by the given key, null if no project is found
+     */
+    public function getProject($key) {
+        if ($key == null){ //Sanity check
+            return null; 
+        }
+        //Being cheeky and loading a model into a component which CakePHP doesn't allow for some reason
+        $this->Project = ClassRegistry::init("Project"); 
+        
+        $project = null;
+        if (is_numeric($key)) {
+            $project = $this->Project->find('first', array('conditions' => array('Project.id' => $key)));
+        } else {    
+            $project = $this->Project->find('first', array('conditions' => array('Project.name' => $key)));
+        }
+        if (empty($project)){
+            $project = null;
+        }
+        return $project;
+    }
 
 }
