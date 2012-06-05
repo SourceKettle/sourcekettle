@@ -47,8 +47,8 @@
          * Defined urls to allow for projects to be referenced using a GitHub 'style' URL pattern
          * Two routes needed until someone can figure out how to define an action if one is not specified
          */
-        Router::connect('/project/:name/:action/*', array('controller' => 'projects'), array('pass' => array('name'), 'name' => '[\w]+'));
-        Router::connect('/project/:name/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('name'), 'name' => '[\w]+'));
+        Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[\w]+'));
+        Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[\w]+'));
          
 /**
  * ...and connect the rest of 'Pages' controller's urls.
