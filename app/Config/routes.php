@@ -45,8 +45,17 @@
         
         /*
          * Defined urls to allow for projects to be referenced using a GitHub 'style' URL pattern
-         * Two routes needed until someone can figure out how to define an action if one is not specified
+         * The first block of four routes define the controllers for given in the
+         * URL (not the projects controller as it would normally route to.
+         * 
+         * The second block state routes for if the URL routes to the project controller
          */
+        Router::connect('/project/:project/tasks/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
+        Router::connect('/project/:project/time/*', array('controller' => 'time'), array('pass' => array('project'), 'project' => '[\w]+'));
+        Router::connect('/project/:project/source/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));
+        Router::connect('/project/:project/collaborators/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[\w]+'));
+        
+        
         Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[\w]+'));
          
