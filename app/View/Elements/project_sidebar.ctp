@@ -21,7 +21,7 @@
             '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
                 ' icon-' . $options['icon'] . '"></i> ' . 
                 ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
-            array('controller' => 'projects', 'action' => $feature, $id),
+            array('controller' => 'projects', 'action' => $feature, 'project' => $project),
             array('escape' => false)
         )?>
     </li>
@@ -38,7 +38,7 @@
             '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
                 ' icon-' . $options['icon'] . '"></i> ' . 
                 ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
-            array('controller' => 'projects', 'action' => $feature, $id),
+            array('controller' => 'projects', 'action' => $feature, 'project' => $project),
             array('escape' => false)
         )?>
     </li>

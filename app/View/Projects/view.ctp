@@ -21,7 +21,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText . $o
 	
 <div class="row">
     <div class="span2">
-        <?= $this->element('project_sidebar', array('id' => $project['Project']['id'], 'action' => 'view')) ?>
+        <?= $this->element('project_sidebar', array('project' => $project['Project']['name'], 'action' => 'view')) ?>
     </div>
     <div class="span9">
     <h2><?php  echo __('Project');?></h2>

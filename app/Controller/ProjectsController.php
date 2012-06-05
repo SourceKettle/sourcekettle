@@ -25,6 +25,30 @@ class ProjectsController extends AppController {
     public $helpers = array('Time');
 
     /**
+     * fetch_id_from_name
+     * Translate all Project names to ids
+     * If onld style URL is requested, ensure redirect to the new format
+     *
+     * @param $name type id or name of project
+     * @param $redirect boolean true if a redirect is desired
+     *
+     * @return int project id
+     */
+    private function fetch_id_from_name($name = null, $redirect = false) {
+        // Allow for dual routing
+        if ( is_numeric($name) ) {
+            // Ensure all Project URLs are in the new format, if not, redirect based on id
+            if ($redirect) {
+                $project = $this->Project->find('first', array('conditions' => array('Project.id' => $name)));
+                $this->redirect(array('action' => $this->params['action'], 'controller' => 'projects', 'project' => $project['Project']['name']));
+            }
+            return $name;
+        }
+        $project = $this->Project->find('first', array('conditions' => array('Project.name' => $name)));
+        return $project['Project']['id'];
+    }
+    
+    /**
      * index method
      *
      * @return void
@@ -51,7 +75,9 @@ class ProjectsController extends AppController {
      * @param string $id
      * @return void
      */
-    public function view($id = null) {
+    public function view($name = null) {
+        $id = $this->fetch_id_from_name($name, true);
+        
         $this->Project->id = $id;
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
@@ -65,7 +91,9 @@ class ProjectsController extends AppController {
      * @param string $id
      * @return void
      */
-    public function admin_view($id = null) {
+    public function admin_view($name = null) {
+        $id = $this->fetch_id_from_name($name);
+
         $this->Project->id = $id;
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
@@ -127,7 +155,9 @@ class ProjectsController extends AppController {
      * @param string $id
      * @return void
      */
-    public function edit($id = null) {
+    public function edit($name = null) {
+        $id = $this->fetch_id_from_name($name, true);
+        
         $this->Project->id = $id;
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
@@ -152,7 +182,9 @@ class ProjectsController extends AppController {
      * @param string $id
      * @return void
      */
-    public function admin_edit($id = null) {
+    public function admin_edit($name = null) {
+        $id = $this->fetch_id_from_name($name);
+
         $this->Project->id = $id;
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
@@ -177,7 +209,9 @@ class ProjectsController extends AppController {
      * @param string $id
      * @return void
      */
-    public function delete($id = null) {
+    public function delete($name = null) {
+        $id = $this->fetch_id_from_name($name);
+
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
         }
@@ -199,7 +233,9 @@ class ProjectsController extends AppController {
      * @param string $id
      * @return void
      */
-    public function admin_delete($id = null) {
+    public function admin_delete($name = null) {
+        $id = $this->fetch_id_from_name($name);
+
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
         }
