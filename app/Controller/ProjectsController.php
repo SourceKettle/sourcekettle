@@ -109,8 +109,8 @@ class ProjectsController extends AppController {
             $this->Project->create();
             if ($this->Project->save($this->request->data)) {
 
-// Project has been saved
-// Now to add the creator as the first admin user on the project
+                // Project has been saved
+                // Now to add the creator as the first admin user on the project
                 $data = array('Collaborator');
                 $data['Collaborator']['user_id'] = $this->Auth->user('id');
                 $data['Collaborator']['project_id'] = $this->Project->id;

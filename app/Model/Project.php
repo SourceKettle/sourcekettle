@@ -13,6 +13,7 @@
 * @since         DevTrack v 0.1
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
+
 App::uses('AppModel', 'Model');
 /**
  * Project Model
@@ -21,88 +22,94 @@ App::uses('AppModel', 'Model');
  * @property Collaborator $Collaborator
  */
 class Project extends AppModel {
-/**
- * Display field
- *
- * @var string
- */
-	public $displayField = 'name';
-/**
- * Validation rules
- *
- * @var array
- */
-	public $validate = array(
-		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-				'message' => 'Please enter a name for the project',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'public' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
-				'message' => 'Please select the visibility of the project',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'repo_type' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => 'Please select a repository type',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-	);
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
+    /**
+     * Display field
+     *
+     * @var string
+     */
+    public $displayField = 'name';
 
-/**
- * belongsTo associations
- *
- * @var array
- */
-	public $belongsTo = array(
-		'RepoType' => array(
-			'className' => 'RepoType',
-			'foreignKey' => 'repo_type',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		)
-	);
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public $validate = array(
+        'name' => array(
+            'notempty' => array(
+                'rule' => array('notempty'),
+                'message' => 'Please enter a name for the project',
+            ),
+            'isUnique' => array(
+                'rule' => array('isUnique'),
+                'message' => 'This project name has already been taken',
+            ),
+            'minLength' => array(
+                'rule' => array('minLength', 4),
+                'message' => 'Project names must be at least 4 characters long',
+            ),
+            'alphaNumericDashUnderscore' => array(
+                'rule' => '/[0-9a-zA-Z_-]+$/',
+                'message' => 'May contain only letters, numbers, dashes and underscores',
+            ),
+            'startWithALetter' => array(
+                'rule' => '/^[a-zA-Z].+$/',
+                'message' => 'Project names must start with a letter',
+            ),
+        ),
+        'public' => array(
+            'boolean' => array(
+                'rule' => array('boolean'),
+                'message' => 'Please select the visibility of the project',
+            ),
+        ),
+        'repo_type' => array(
+            'numeric' => array(
+                'rule' => array('numeric'),
+                'message' => 'Please select a repository type',
+            ),
+        ),
+    );
 
-/**
- * hasMany associations
- *
- * @var array
- */
-	public $hasMany = array(
-		'Collaborator' => array(
-			'className' => 'Collaborator',
-			'foreignKey' => 'project_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		)
-	);
-        
+    //The Associations below have been created with all possible keys, those that are not needed can be removed
+
+    /**
+     * belongsTo associations
+     *
+     * @var array
+     */
+    public $belongsTo = array(
+        'RepoType' => array(
+            'className' => 'RepoType',
+            'foreignKey' => 'repo_type',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
+        )
+    );
+
+    /**
+     * hasMany associations
+     *
+     * @var array
+     */
+    public $hasMany = array(
+        'Collaborator' => array(
+            'className' => 'Collaborator',
+            'foreignKey' => 'project_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        )
+    );
+
     /**
      * Fetches a project from either its name or its id
      *
@@ -116,7 +123,7 @@ class Project extends AppModel {
         }
         //Being cheeky and loading a model into a component which CakePHP doesn't allow for some reason
         $this->Project = ClassRegistry::init("Project"); 
-        
+
         $project = null;
         if (is_numeric($key)) {
             $project = $this->Project->find('first', array('conditions' => array('Project.id' => $key)));
