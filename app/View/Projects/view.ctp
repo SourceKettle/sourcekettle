@@ -16,7 +16,7 @@
  
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 
-echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText . $open); ?>
+echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
 	
 <div class="row">
     <div class="span2">

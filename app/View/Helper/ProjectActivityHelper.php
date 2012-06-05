@@ -53,7 +53,7 @@ class ProjectActivityHelper extends AppHelper {
         
             // If we change day, print out a date header
             if (date('Y-m-d', $currentDate) != date('Y-m-d', strtotime($event['modified']))) {
-                $return .= '<p>'.date('l jS \of F Y', strtotime($event['modified'])).'</p>';
+                $return .= '<p><strong>'.date('l jS \of F Y', strtotime($event['modified'])).'</strong></p>';
             }
             
             $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
