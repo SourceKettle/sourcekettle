@@ -190,12 +190,17 @@ class UsersController extends AppController {
         $this->set('user', $this->User->read(null, $id));
     }
     
+    /**
+     * Edit the name and the email address of the current user
+     */
     public function editdetails(){
         $this->User->id = $this->Auth->user('id');
         
         if ($this->request->is('post')){
             if ($this->User->save($this->request->data)){
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+                $this->Session->write('Auth.User.name', $this->request->data['User']['name']);
+                $this->Session->write('Auth.User.email', $this->request->data['User']['email']);
             } else {
                 $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
             }
@@ -204,4 +209,32 @@ class UsersController extends AppController {
         $this->redirect('index');
     }
 
+    /**
+     * Edit the current users password
+     */
+    public function editpassword(){
+        $this->User->id = $this->Auth->user('id');
+        $user = $this->User->read(null, $this->User->id);
+        $user = $user['User'];
+        if ($this->request->is('post')){
+            if ($user['password'] == $this->Auth->password($this->request->data['User']['password_current'])){
+                if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']){
+                    
+                    if ($this->User->save($this->request->data)){
+                        $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+                    } else {
+                        $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
+                    } 
+                } else {
+                    $this->Session->setFlash(__('Your passwords did not match. Please try again.'), 'default', array(), 'error');
+                }      
+            } else {
+                $this->Session->setFlash(__('Your current password was incorrect. Please try again.'), 'default', array(), 'error');
+            }
+            
+            
+        }
+        
+        $this->redirect('index');
+    }
 }

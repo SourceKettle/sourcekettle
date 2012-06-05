@@ -36,7 +36,7 @@
             ));
 
             echo $this->Bootstrap->input("new password", array(
-                "input" => $this->Form->password("password_new"),
+                "input" => $this->Form->password("password"),
             ));
 
             echo $this->Bootstrap->input("Confirm password", array(
