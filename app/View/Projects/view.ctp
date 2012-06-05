@@ -15,7 +15,6 @@
  */
  
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
-$open = "<i style='margin-top:15px' class=\"icon-" . (($project['Project']['public']) ? 'globe' : 'lock') . "\"></i>";
 
 echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText . $open); ?>
 	
@@ -66,6 +65,11 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText . $o
                             <li>Last activity was <strong>29 days ago</strong>.</li>
                         </ul>
                     </div>
+                </div>
+            </div>
+            <div class="span9">
+                <div class="span9">
+                    <?= $this->ProjectActivity->displayActivity($events) ?>
                 </div>
             </div>
         </div>

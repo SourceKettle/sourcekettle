@@ -23,7 +23,7 @@ class ProjectsController extends AppController {
      * Project helpers
      * @var type 
      */
-    public $helpers = array('Time', 'GoogleChart.GoogleChart');
+    public $helpers = array('Time', 'GoogleChart.GoogleChart', 'ProjectActivity');
 
     /**
      * index method
@@ -56,11 +56,23 @@ class ProjectsController extends AppController {
         if ($name == null) {
             throw new NotFoundException(__('Invalid project'));
         } else {
-
             $project = $this->Project->getProject($name);
             if (empty($project)) {
                 throw new NotFoundException(__('Invalid project'));
             } else {
+            
+                $events = array();
+                
+                // Collect collaborator events
+                foreach ( $project['Collaborator'] as $a ) {
+                    $user = $this->Project->Collaborator->User->find('first', array('conditions' => array('User.id' => $a['user_id'])));
+                    $a['Type'] = 'Collaborator';
+                    $a['user_name'] = $user['User']['name'];
+                    $a['project_name'] = $project['Project']['name'];
+                    array_push($events, $a);
+                }
+                
+                $this->set('events', $events);
                 $this->set('project', $project);
             }
         }
