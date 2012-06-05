@@ -52,9 +52,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                             <li>Due: 22/10/2012</li>
                             <li>0% complete</li>
                         </ul>
-                        <div class="progress progress-striped">
-                            <div class="bar" style="width: 40%;"></div>
-                        </div>
+                        <?= $this->Bootstrap->progress(array("width" => 40, "striped" => true)) ?>
                     </div>
                     <div class="span3">
                         <h3 style="margin: 0px;">Quick Stats</h3>
