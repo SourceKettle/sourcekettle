@@ -20,7 +20,7 @@ App::uses('CakeEmail', 'Network/Email');
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Setting', 'EmailConfirmationKey', 'SshKey');
+    public $uses = array('User', 'Setting', 'EmailConfirmationKey', 'SshKey', 'Project', 'Collaborator');
 
     public function beforeFilter() {
         parent::beforeFilter();
@@ -275,6 +275,27 @@ class UsersController extends AppController {
     public function delete(){
         if($this->request->is('post')){
             $this->User->id = $this->Auth->user('id');
+            
+            //Delete all of their projects for which they are the only collaborator
+            $collaborators = $this->Collaborator->find('all', array('conditions'=> array('user_id' => $this->User->id)));
+            
+            foreach ($collaborators as $collaborator){
+                $num_collabs = $this->Collaborator->find('count', array('conditions' => array('project_id' => $collaborator['Project']['id'])));
+                if ($num_collabs <= 1){
+                    //delete the project as 1 (or less) collaborators
+                    //TODO Call delete function (to be implemented in projects that deletes all attached resources) 
+                } else {
+                    $this->Collaborator->delete($collaborator['Collaborator']['id']);
+                }
+            }
+            
+            //Now delete the user
+            $this->User->delete($this->Auth->id);
+            
+            //Now log them out of the system
+            $this->Auth->logout();
+            $this->redirect('/');
+            
             
         } else {
             $user = $this->Auth->user();
