@@ -120,7 +120,7 @@ class ProjectActivityHelper extends AppHelper {
         $project = $this->Html->link($event['project_name'], array('controller' => 'users', 'action' => 'view', $event['project_id']));
             
         $return .= $this->Bootstrap->label("Time ".$this->Bootstrap->icon($this->prefs['Time']['icon'], "white"), $this->prefs['Time']['color']);
-        $return .= ' '.$user.' logged some time spent'
+        $return .= ' '.$user.' logged some time spent';
         if ($context) $return .= ' on '.$project;
         
         return $return;
