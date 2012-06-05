@@ -23,6 +23,7 @@ class ProjectActivityHelper extends AppHelper {
      */
     var $prefs = array(
         'Collaborator' => array('icon' => 'user', 'color' => 'warning'),
+        'Time'         => array('icon' => 'time', 'color' => 'info'),
     );
     
     /**
@@ -67,6 +68,7 @@ class ProjectActivityHelper extends AppHelper {
                 case 'Commit':
                     break;
                 case 'Time':
+                    $return .= '<p>' . $this->content_time($event, $context) . ' - <small>'.$this->Time->timeAgoInWords($event['modified']).'</small></p>';
                     break;
                 case 'Task':
                     break;
@@ -81,7 +83,7 @@ class ProjectActivityHelper extends AppHelper {
     
     /**
      * content_collaborator
-     * Will coutput the content row for a collaborator block
+     * Will output the content row for a collaborator block
      * 
      * @param $event array event to display
      * @param $context boolean do we need context
@@ -98,6 +100,28 @@ class ProjectActivityHelper extends AppHelper {
         $return .= ' '.$user.' was added';
         if ($context) $return .= ' to '.$project;
         $return .= ' as a collaborator';
+        
+        return $return;
+    }
+    
+    /**
+     * content_time
+     * Will output the content row for a time block
+     * 
+     * @param $event array event to display
+     * @param $context boolean do we need context
+     *
+     * @return string the element to print
+     */
+    private function content_time ( $event, $context ) {
+        $return = '';
+        
+        $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
+        $project = $this->Html->link($event['project_name'], array('controller' => 'users', 'action' => 'view', $event['project_id']));
+            
+        $return .= $this->Bootstrap->label("Time ".$this->Bootstrap->icon($this->prefs['Time']['icon'], "white"), $this->prefs['Time']['color']);
+        $return .= ' '.$user.' logged some time spent'
+        if ($context) $return .= ' on '.$project;
         
         return $return;
     }
