@@ -37,60 +37,54 @@ class UsersController extends AppController {
         if ($enabled['Setting']['value']) { //Check the setting
             //Registration part
             if ($this->request->is('post')) {
-                $user = $this->User->findByEmail($this->request->data['User']['email']);
-                if (!empty($user)) {
-                    $this->Session->setFlash("A user already exists with the email address specified.", 'default', array(), 'error');
-                } else {
+                //if data was posted therefore a submitted form
+                if ($this->data['User']['password'] == $this->data['User']['password_confirm']) {
+                    if ($this->data['User']['password'] != 'password') {
+                        $this->User->create();
+                        if ($this->User->save($this->request->data['User'])) {
+                            $id = $this->User->getLastInsertID();
 
-                    //if data was posted therefore a submitted form
-                    if ($this->data['User']['password'] == $this->data['User']['password_confirm']) {
-                        if ($this->data['User']['password'] != 'password') {
-                            $this->User->create();
-                            if ($this->User->save($this->request->data['User'])) {
-                                $id = $this->User->getLastInsertID();
-
-                                //Check to see if an SSH key was added and save it
-                                if (!empty($this->data['User']['ssh_key'])) {
-                                    $this->SshKey->create();
-                                    $data = array('SshKey');
-                                    $data['SshKey']['user_id'] = $id;
-                                    $data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
-                                    $data['SshKey']['comment'] = 'Default key';
-                                    $this->SshKey->save($data);
-                                }
-
-                                //Now to create the key and send the email
-
-                                $key = $this->generate_key(20);
-
-                                $emailkey = $this->EmailConfirmationKey->create();
-                                $data = array('EmailConfirmationKey');
-                                $data['EmailConfirmationKey']['user_id'] = $id;
-                                $data['EmailConfirmationKey']['key'] = $key;
-                                $this->EmailConfirmationKey->save($data);
-
-                                $link = Router::url('/activate/' . $key, true);
-
-                                $message = "Dear " . $this->data['User']['name'] . " ,\n\nThank you for registering with DevTrack. In order to use your account, we require you to activate your account using the link below.\n\n" . $link . "\n\nWe hope you enjoy using DevTrack";
-
-                                $email = new CakeEmail();
-                                $email->config('default');
-                                $email->to($this->data['User']['email']);
-                                $email->subject('DevTrack activation');
-                                $email->send($message);
-                                echo $message; //TODO remove this line when emailing enabled
-
-                                $this->render('email_sent');
-                            } else {
-                                $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+                            //Check to see if an SSH key was added and save it
+                            if (!empty($this->data['User']['ssh_key'])) {
+                                $this->SshKey->create();
+                                $data = array('SshKey');
+                                $data['SshKey']['user_id'] = $id;
+                                $data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
+                                $data['SshKey']['comment'] = 'Default key';
+                                $this->SshKey->save($data);
                             }
+
+                            //Now to create the key and send the email
+
+                            $key = $this->generate_key(20);
+
+                            $emailkey = $this->EmailConfirmationKey->create();
+                            $data = array('EmailConfirmationKey');
+                            $data['EmailConfirmationKey']['user_id'] = $id;
+                            $data['EmailConfirmationKey']['key'] = $key;
+                            $this->EmailConfirmationKey->save($data);
+
+                            $link = Router::url('/activate/' . $key, true);
+
+                            $message = "Dear " . $this->data['User']['name'] . " ,\n\nThank you for registering with DevTrack. In order to use your account, we require you to activate your account using the link below.\n\n" . $link . "\n\nWe hope you enjoy using DevTrack";
+
+                            $email = new CakeEmail();
+                            $email->config('default');
+                            $email->to($this->data['User']['email']);
+                            $email->subject('DevTrack activation');
+                            $email->send($message);
+                            echo $message; //TODO remove this line when emailing enabled
+
+                            $this->render('email_sent');
                         } else {
-                            $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>I see what you did there. '" . $this->data['User']['password'] . "' is not a good password. Try a different one."), 'default', array(), 'error');
+                            $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
                         }
                     } else {
-                        $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The passwords do not match. Please try again."), 'default', array(), 'error');
+                        $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>I see what you did there. '" . $this->data['User']['password'] . "' is not a good password. Try a different one."), 'default', array(), 'error');
                     }
-                }
+                } else {
+                    $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The passwords do not match. Please try again."), 'default', array(), 'error');
+                }                
             }
         } else {
             //Display an error saying that registration is not allowed

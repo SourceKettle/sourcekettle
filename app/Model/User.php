@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * User model for the DevTrack system
@@ -42,58 +41,36 @@ class User extends AppModel {
             'notempty' => array(
                 'rule' => array('notempty'),
                 'message' => 'Please enter your name',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
             ),
         ),
         'email' => array(
             'email' => array(
                 'rule' => array('email'),
                 'message' => 'Please enter your email',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
+            ),
+            'isUnique' => array(
+                'rule' => array('isUnique'),
+                'message' => 'An account already exists for this email address',
             ),
         ),
         'password' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
                 'message' => 'Please enter a password',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
             ),
             'minlength' => array(
                 'rule' => array('minlength', 8),
                 'message' => 'Your password must be at least 8 characters',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
             ),
         ),
         'is_admin' => array(
             'boolean' => array(
                 'rule' => array('boolean'),
-            //'message' => 'Your custom message here',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
             ),
         ),
         'is_active' => array(
             'boolean' => array(
                 'rule' => array('boolean'),
-            //'message' => 'Your custom message here',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
             ),
         ),
     );

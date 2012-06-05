@@ -15,9 +15,8 @@
  */
  
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
-$open = "<i style='margin-top:15px' class=\"icon-" . (($project['Project']['public']) ? 'globe' : 'lock') . "\"></i>";
 
-echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText . $open); ?>
+echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
 	
 <div class="row">
     <div class="span2">
@@ -53,9 +52,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText . $o
                             <li>Due: 22/10/2012</li>
                             <li>0% complete</li>
                         </ul>
-                        <div class="progress progress-striped">
-                            <div class="bar" style="width: 40%;"></div>
-                        </div>
+                        <?= $this->Bootstrap->progress(array("width" => 40, "striped" => true)) ?>
                     </div>
                     <div class="span3">
                         <h3 style="margin: 0px;">Quick Stats</h3>
@@ -66,6 +63,11 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText . $o
                             <li>Last activity was <strong>29 days ago</strong>.</li>
                         </ul>
                     </div>
+                </div>
+            </div>
+            <div class="span9">
+                <div class="span9">
+                    <?= $this->ProjectActivity->displayActivity($events) ?>
                 </div>
             </div>
         </div>

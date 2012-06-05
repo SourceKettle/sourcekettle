@@ -23,7 +23,7 @@ class ProjectsController extends AppController {
      * Project helpers
      * @var type 
      */
-    public $helpers = array('Time', 'GoogleChart.GoogleChart');
+    public $helpers = array('Time', 'GoogleChart.GoogleChart', 'ProjectActivity');
 
     /**
      * index method
@@ -56,11 +56,23 @@ class ProjectsController extends AppController {
         if ($name == null) {
             throw new NotFoundException(__('Invalid project'));
         } else {
-
             $project = $this->Project->getProject($name);
             if (empty($project)) {
                 throw new NotFoundException(__('Invalid project'));
             } else {
+            
+                $events = array();
+                
+                // Collect collaborator events
+                foreach ( $project['Collaborator'] as $a ) {
+                    $user = $this->Project->Collaborator->User->find('first', array('conditions' => array('User.id' => $a['user_id'])));
+                    $a['Type'] = 'Collaborator';
+                    $a['user_name'] = $user['User']['name'];
+                    $a['project_name'] = $project['Project']['name'];
+                    array_push($events, $a);
+                }
+                
+                $this->set('events', $events);
                 $this->set('project', $project);
             }
         }
@@ -97,8 +109,8 @@ class ProjectsController extends AppController {
             $this->Project->create();
             if ($this->Project->save($this->request->data)) {
 
-// Project has been saved
-// Now to add the creator as the first admin user on the project
+                // Project has been saved
+                // Now to add the creator as the first admin user on the project
                 $data = array('Collaborator');
                 $data['Collaborator']['user_id'] = $this->Auth->user('id');
                 $data['Collaborator']['project_id'] = $this->Project->id;

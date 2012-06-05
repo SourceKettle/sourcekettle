@@ -18,8 +18,7 @@
     
     <li<?= ($feature == $action) ? ' class="active"' : '' ?>>
         <?=$this->Html->link(
-            '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
-                ' icon-' . $options['icon'] . '"></i> ' . 
+            $this->Bootstrap->icon($options['icon'], (($feature == $action) ? 'white' : 'black')).' '. 
                 ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
             array('controller' => 'projects', 'action' => $feature, 'project' => $project),
             array('escape' => false)
@@ -35,8 +34,7 @@
     
     <li<?= ($feature == $action) ? ' class="active"' : '' ?>>
         <?=$this->Html->link(
-            '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
-                ' icon-' . $options['icon'] . '"></i> ' . 
+            $this->Bootstrap->icon($options['icon'], (($feature == $action) ? 'white' : 'black')).' '. 
                 ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
             array('controller' => 'projects', 'action' => $feature, 'project' => $project),
             array('escape' => false)
@@ -48,7 +46,7 @@
     <li class="divider"></li>
     <li>
         <?=$this->Html->link(
-            '<i class="icon-flag"></i> Help',
+            $this->Bootstrap->icon('flag').' Help',
             array('controller' => 'help', 'action' => 'project'),
             array('escape' => false)
         )?>
