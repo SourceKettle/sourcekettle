@@ -46,7 +46,7 @@
     <li class="divider"></li>
     <li>
         <?=$this->Html->link(
-            '<i class="icon-flag"></i> Help',
+            $this->Bootstrap->icon('flag').' Help',
             array('controller' => 'help', 'action' => 'project'),
             array('escape' => false)
         )?>
