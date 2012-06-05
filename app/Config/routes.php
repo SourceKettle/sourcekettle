@@ -42,6 +42,14 @@
         Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'about'));
         Router::connect('/svn_help', array('controller' => 'pages', 'action' => 'display', 'svn_help'));
         Router::connect('/git_help', array('controller' => 'pages', 'action' => 'display', 'git_help'));
+        
+        /*
+         * Defined urls to allow for projects to be referenced using a GitHub 'style' URL pattern
+         * Two routes needed until someone can figure out how to define an action if one is not specified
+         */
+        Router::connect('/project/:name/:action/*', array('controller' => 'projects'), array('pass' => array('name'), 'name' => '[\w]+'));
+        Router::connect('/project/:name/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('name'), 'name' => '[\w]+'));
+         
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */
