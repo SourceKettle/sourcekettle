@@ -27,7 +27,6 @@ echo $this->Bootstrap->page_header("Register with DevTrack <small>Hello! Bonjour
         
         echo $this->Bootstrap->input("email", array(
             "input" => $this->Form->text("email", array("class" => "input-xlarge", "placeholder" => "john.smith@example.com")),
-            "help_block" => "Your email address will not be shared."
         ));
         
         echo $this->Bootstrap->input("password", array(
