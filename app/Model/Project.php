@@ -63,36 +63,6 @@ class Project extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
-		'wiki_enabled' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
-				'message' => 'Please enter a boolean value for wiki enabled',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'task_tracking_enabled' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
-				'message' => 'Please enter a boolean value for task tracking enabled',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'time_management_enabled' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
-				'message' => 'Please enter a boolean value for time management enabled',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
