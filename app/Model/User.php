@@ -86,7 +86,7 @@ class User extends AppModel {
         'Collaborator' => array(
             'className' => 'Collaborator',
             'foreignKey' => 'user_id',
-            'dependent' => false,
+            'dependent' => true,
             'conditions' => '',
             'fields' => '',
             'order' => '',
@@ -99,7 +99,7 @@ class User extends AppModel {
         'EmailConfirmationKey' => array(
             'className' => 'EmailConfirmationKey',
             'foreignKey' => 'user_id',
-            'dependent' => false,
+            'dependent' => true,
             'conditions' => '',
             'fields' => '',
             'order' => '',
@@ -112,7 +112,7 @@ class User extends AppModel {
         'SshKey' => array(
             'className' => 'SshKey',
             'foreignKey' => 'user_id',
-            'dependent' => false,
+            'dependent' => true,
             'conditions' => '',
             'fields' => '',
             'order' => '',
