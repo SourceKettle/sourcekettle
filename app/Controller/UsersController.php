@@ -20,7 +20,7 @@ App::uses('CakeEmail', 'Network/Email');
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Setting', 'EmailConfirmationKey', 'SshKey', 'Project', 'Collaborator');
+    public $uses = array('User', 'Setting', );
 
     public function beforeFilter() {
         parent::beforeFilter();
@@ -46,23 +46,21 @@ class UsersController extends AppController {
 
                             //Check to see if an SSH key was added and save it
                             if (!empty($this->data['User']['ssh_key'])) {
-                                $this->SshKey->create();
+                                $this->User->SshKey->create();
                                 $data = array('SshKey');
                                 $data['SshKey']['user_id'] = $id;
                                 $data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
                                 $data['SshKey']['comment'] = 'Default key';
-                                $this->SshKey->save($data);
+                                $this->User->SshKey->save($data);
                             }
 
                             //Now to create the key and send the email
 
                             $key = $this->generate_key(20);
-
-                            $emailkey = $this->EmailConfirmationKey->create();
                             $data = array('EmailConfirmationKey');
                             $data['EmailConfirmationKey']['user_id'] = $id;
                             $data['EmailConfirmationKey']['key'] = $key;
-                            $this->EmailConfirmationKey->save($data);
+                            $this->User->EmailConfirmationKey->save($data);
 
                             $link = Router::url('/activate/' . $key, true);
 
@@ -73,7 +71,7 @@ class UsersController extends AppController {
                             $email->to($this->data['User']['email']);
                             $email->subject('DevTrack activation');
                             $email->send($message);
-                            echo $message; //TODO remove this line when emailing enabled
+                            echo($message); //TODO remove this line when emailing enabled
 
                             $this->render('email_sent');
                         } else {
@@ -92,6 +90,9 @@ class UsersController extends AppController {
         }
     }
 
+    /**
+     * Register a user via an API call
+     */
     public function api_register() {
         
     }
@@ -126,7 +127,7 @@ class UsersController extends AppController {
             $this->Session->setFlash("The key given was not a valid activation key.", 'default', array(), 'error');
             $this->redirect('/');
         } else {
-            $record = $this->EmailConfirmationKey->find('first', array('conditions' => array('key' => $key), 'recursive' => 1));
+            $record = $this->User->EmailConfirmationKey->find('first', array('conditions' => array('key' => $key), 'recursive' => 1));
             if (!empty($record)) {
                 $record['User']['is_active'] = 1;
 
@@ -135,7 +136,7 @@ class UsersController extends AppController {
                 $newrecord['User']['id'] = $record['User']['id'];
                 $newrecord['User']['is_active'] = '1';
                 if ($this->User->save($newrecord['User'])) {
-                    $this->EmailConfirmationKey->delete($record['EmailConfirmationKey']['id'], false); //delete the email confirmation key
+                    $this->User->EmailConfirmationKey->delete($record['EmailConfirmationKey']['id'], false); //delete the email confirmation key
                     $this->Session->setFlash(__("<h4 class='alert-heading'>Success</h4>Your account is now activated. You can now login."), 'default', array(), 'success');
                     $this->redirect('/login');
                 } else {
@@ -151,8 +152,54 @@ class UsersController extends AppController {
     /**
      * Function to allow for users to reset their passwords
      */
-    public function lost_password() {
-        
+    public function lost_password($key = null) {
+        if ($this->request->is('post')){
+            //generate random password and email it to them
+            $user = $this->User->findByEmail($this->request->data['User']['email']); //Get the user attached to the given email
+            
+            if (empty($user)){
+                // Just pretend to send the user an email
+                $this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
+            } else {
+                //Create a lost password key object
+                $this->User->LostPasswordKey->create();
+                $data['LostPasswordKey'] = array();
+                $data['LostPasswordKey']['user_id'] = $user['User']['id'];
+                $data['LostPasswordKey']['key'] = $this->generate_key(25);
+                $this->User->LostPasswordKey->save($data);
+                
+                //Create the message
+                $message = "Dear " . $user['User']['name'] . ",\n\n";
+                $message .= "A request to reset your password was made, if this was by you then please click the link below.\n\n";
+                $message .= Router::url('/users/lost_password/' . $data['LostPasswordKey']['key'], true);
+                $message .= "\n\nIf this request was not made by you then please ignore this email.\n\n";
+                
+                //Send the email
+                $email = new CakeEmail();
+                $email->config('default');
+                $email->to($user['User']['email']);
+                $email->subject('DevTrack password reset');
+                $email->send($message);
+                echo($message); //TODO remove this line when emailing enabled
+            }
+            $this->redirect('/login');
+        } else if($this->request->is('get')){
+            //display the form or act on the link
+            if ($key == null){
+                // Display the form
+                $this->render('lost_password');
+            } else {
+                // act on the key
+                $passwordkey = $this->User->LostPasswordKey->findByKey($key);
+                if (empty($passwordkey)){
+                    $this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
+                    $this->render('lost_password');
+                } else {
+                    
+                }
+            }
+            
+        }
     }
 
     /**
@@ -163,7 +210,6 @@ class UsersController extends AppController {
     }
     
     
-
     /**
      * Allows admins to see all users
      */
@@ -172,6 +218,10 @@ class UsersController extends AppController {
         $this->set('users', $this->paginate());
     }
 
+    /**
+     * View a user in admin mode
+     * @param type $id The id of the user to view
+     */
     public function admin_view($id = null) {
         $this->User->id = $id;
         if (!$this->User->exists()) {
@@ -184,7 +234,7 @@ class UsersController extends AppController {
      * Edit the name and the email address of the current user
      */
     public function editdetails(){
-        $this->User->id = $this->Auth->user('id');
+        $this->User->id = $this->Auth->user('id'); //get the current user
         
         if ($this->request->is('post')){
             if ($this->User->save($this->request->data)){
@@ -196,6 +246,8 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
             }
         }
+        
+        //update the page
         $user = $this->Auth->user();
         $this->set('user', $user);
         $this->User->id = $user['id'];
@@ -207,12 +259,12 @@ class UsersController extends AppController {
      * Edit the current users password
      */
     public function editpassword(){
-        $this->User->id = $this->Auth->user('id');
+        $this->User->id = $this->Auth->user('id'); //get the current user
         $user = $this->User->read(null, $this->User->id);
-        $user = $user['User'];
+        $user = $user['User']; 
         if ($this->request->is('post')){
-            if ($user['password'] == $this->Auth->password($this->request->data['User']['password_current'])){
-                if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']){
+            if ($user['password'] == $this->Auth->password($this->request->data['User']['password_current'])){ //check their current password
+                if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']){ //check passwords match
                     
                     if ($this->User->save($this->request->data)){
                         $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
@@ -226,6 +278,8 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('Your current password was incorrect. Please try again.'), 'default', array(), 'error');
             } 
         }
+        
+        //Update the page details
         $user = $this->Auth->user();
         $this->set('user', $user);
         $this->User->id = $user['id'];
@@ -233,15 +287,20 @@ class UsersController extends AppController {
         $this->request->data['User']['password'] = null;
     }
     
+    /**
+     * Add an SSH key for the current user
+     */
     public function addkey(){
         if ($this->request->is('post')){
-            $this->request->data['SshKey']['user_id'] = $this->Auth->user('id');
-            if ($this->SshKey->save($this->request->data)){
+            $this->request->data['SshKey']['user_id'] = $this->Auth->user('id'); //Set the key to belong to the current user
+            if ($this->User->SshKey->save($this->request->data)){
                 $this->Session->setFlash(__('Your key was added successfully.'), 'default', array(), 'success');
             } else {
                 $this->Session->setFlash(__('There was a problem saving your key. Please try again.'), 'default', array(), 'error');
             }
         } 
+        
+        //update the page
         $user = $this->Auth->user();
         $this->User->id = $user['id'];
         $this->request->data = $this->User->read();
@@ -249,14 +308,19 @@ class UsersController extends AppController {
         
     }
     
+    /**
+     * Deletes a ssh key of the current user
+     * @param type $id The id of the key to delete
+     */
     public function deletekey($id = null){
         if ($this->request->is('post') && $id != null){
-            $key = $this->SshKey->find('first', array(
+            //Find the key object
+            $key = $this->User->SshKey->find('first', array(
                 'conditions' => array('SshKey.id' => $id)
             ));
             
-            if ($key['SshKey']['user_id'] == $this->Auth->user('id')){
-                if ($this->SshKey->delete($key['SshKey'])){
+            if ($key['SshKey']['user_id'] == $this->Auth->user('id')){ //check the key belongs to the current user
+                if ($this->User->SshKey->delete($key['SshKey'])){
                     $this->Session->setFlash(__('Your key was removed successfully.'), 'default', array(), 'success');
                 } else {
                     $this->Session->setFlash(__('There was a problem removing your key. Please try again.'), 'default', array(), 'error');
@@ -266,12 +330,20 @@ class UsersController extends AppController {
             }
         }
         
+        //update the page
         $user = $this->Auth->user();
         $this->User->id = $user['id'];
         $this->request->data = $this->User->read();
         $this->request->data['User']['password'] = null;
     }
     
+    /**
+     * Function to delete a user
+     * Use at your own peril
+     * 
+     * Deletes the current user (the one that is authenticated with the system) and any projects for which there are no other
+     * collaborators
+     */
     public function delete(){
         if($this->request->is('post')){
             $this->User->id = $this->Auth->user('id');
@@ -280,14 +352,16 @@ class UsersController extends AppController {
             $collaborators = $this->Collaborator->find('all', array('conditions'=> array('user_id' => $this->User->id)));
             
             foreach ($collaborators as $collaborator){
-                $num_collabs = $this->Collaborator->find('count', array('conditions' => array('project_id' => $collaborator['Project']['id'])));
+                $num_collabs = $this->User->Collaborator->find('count', array('conditions' => array('project_id' => $collaborator['Project']['id'])));
                 if ($num_collabs <= 1){
                     //delete the project as 1 (or less) collaborators
                     //TODO Call delete function (to be implemented in projects that deletes all attached resources) 
                 } else {
-                    $this->Collaborator->delete($collaborator['Collaborator']['id']);
+                    $this->User->Collaborator->delete($collaborator['Collaborator']['id']);
                 }
             }
+            
+            //Delete their SSH keys
             
             //Now delete the user
             $this->User->delete($this->Auth->id);
@@ -305,15 +379,19 @@ class UsersController extends AppController {
         }
     }
     
+    /**
+     * Function for viewing a user's public page
+     * @param type $id The id of the user to view
+     */
     public function view($id = null){
         $this->helpers[] = 'Time'; //load time helper
         $this->User->id = $id;
         if (!$this->User->exists()) {
             throw new NotFoundException(__('Invalid user'));
         }
-        $this->Project->Collaborator->recursive = 0;
-        $this->set('projects', $this->Project->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $this->Auth->user('id'), 'public' => true))));
-        $this->paginate();
+        //Find the users public projects or public projects they are working on
+        $this->User->Collaborator->Project->Collaborator->recursive = 0;
+        $this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $this->Auth->user('id'), 'public' => true))));
         $this->set('user', $this->User->read(null, $id));
     }
 }
