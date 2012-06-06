@@ -82,7 +82,7 @@ class UsersController extends AppController {
                     }
                 } else {
                     $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The passwords do not match. Please try again."), 'default', array(), 'error');
-                }                
+                }
             }
         } else {
             //Display an error saying that registration is not allowed
@@ -167,13 +167,13 @@ class UsersController extends AppController {
                 $data['LostPasswordKey']['user_id'] = $user['User']['id'];
                 $data['LostPasswordKey']['key'] = $this->generate_key(25);
                 $this->User->LostPasswordKey->save($data);
-                
+
                 //Create the message
                 $message = "Dear " . $user['User']['name'] . ",\n\n";
                 $message .= "A request to reset your password was made, if this was by you then please click the link below.\n\n";
                 $message .= Router::url('/users/lost_password/' . $data['LostPasswordKey']['key'], true);
                 $message .= "\n\nIf this request was not made by you then please ignore this email.\n\n";
-                
+
                 //Send the email
                 $email = new CakeEmail();
                 $email->config('default');
@@ -363,21 +363,6 @@ class UsersController extends AppController {
     public function delete(){
         if($this->request->is('post')){
             $this->User->id = $this->Auth->user('id');
-            
-            //Delete all of their projects for which they are the only collaborator
-            $collaborators = $this->Collaborator->find('all', array('conditions'=> array('user_id' => $this->User->id)));
-            
-            foreach ($collaborators as $collaborator){
-                $num_collabs = $this->User->Collaborator->find('count', array('conditions' => array('project_id' => $collaborator['Project']['id'])));
-                if ($num_collabs <= 1){
-                    //delete the project as 1 (or less) collaborators
-                    //TODO Call delete function (to be implemented in projects that deletes all attached resources) 
-                } else {
-                    $this->User->Collaborator->delete($collaborator['Collaborator']['id']);
-                }
-            }
-            
-            //Delete their SSH keys
             
             //Now delete the user
             $this->User->delete($this->Auth->id);
