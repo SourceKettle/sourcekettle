@@ -200,9 +200,11 @@ class ProjectsController extends AppController {
     }
 
     /**
-     * delete method
+     * delete
+     * remove a project and its sub components from the database
      *
-     * @param string $id
+     * @param string $name
+     *
      * @return void
      */
     public function delete($name = null) {

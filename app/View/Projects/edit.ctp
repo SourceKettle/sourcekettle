@@ -38,16 +38,16 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                         "input" => $this->Form->checkbox("public"),
                     ));
 
-                    echo $this->Bootstrap->button("Update Project", array("style" => "primary", "size" => "large", 'class' => 'controls')); ?>
+                    echo $this->Bootstrap->button("Update Project", array("style" => "primary", "size" => "large", 'class' => 'controls')); 
+
+                    echo $this->Form->end(); ?>
                 </div>
             </div>
             <div class="span4">
                 <div class="well">
                     <h3>Delete this project</h3>
                     <p>Please note, this action is <strong>not</strong> reversible. This will also delete any material associate with this project (e.g. Wikis).</p>
-                    <?php
-                    echo $this->Bootstrap->button_form("Delete this project", array("controller" => "projects", "action" => "delete", $this->Form->value('Project.id')), array("style" => "danger", "size" => "large"), "Yep, one final time. Are you sure you want to delete this project?");
-                    ?>
+                    <?= $this->Bootstrap->button_form("Delete this project", array("controller" => "projects", "action" => "delete", $this->Form->value('Project.id')), array("style" => "danger", "size" => "large"), "Yep, one final time. Are you sure you want to delete this project?") ?>
                 </div>
             </div>
         </div>

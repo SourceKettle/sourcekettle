@@ -98,7 +98,7 @@ class Project extends AppModel {
         'Collaborator' => array(
             'className' => 'Collaborator',
             'foreignKey' => 'project_id',
-            'dependent' => false,
+            'dependent' => true,
             'conditions' => '',
             'fields' => '',
             'order' => '',
