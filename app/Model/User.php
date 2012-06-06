@@ -143,5 +143,24 @@ class User extends AppModel {
         }
         return true;
     }
+    
+    public function beforeDelete() {
+        // Check to ensure that this user is not the only admin on multi-collaborator projects
+        $projects = $this->Collaborator->find('list', array('fields' => array('Collaborator.project_id'), 'conditions' => array('Collaborator.user_id' => $this->id)));
+        foreach ( $projects as $row => $project_id ) {
+            $admins = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $project_id, 'Collaborator.access_level' => '2', 'Collaborator.user_id <>' => $this->id)));
+            if ( $admins == 0 ) {
+                $users = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $project_id, 'Collaborator.access_level <>' => '2', 'Collaborator.user_id <>' => $this->id)));
+                if ( $users > 0 ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public function afterDelete() {
+        // Delete all the projects that the user is the only collaborator on
+    }
 
 }

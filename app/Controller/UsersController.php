@@ -365,13 +365,15 @@ class UsersController extends AppController {
             $this->User->id = $this->Auth->user('id');
             
             //Now delete the user
-            $this->User->delete($this->Auth->id);
-            
-            //Now log them out of the system
-            $this->Auth->logout();
-            $this->redirect('/');
-            
-            
+            if ($this->User->delete($this->Auth->id)) {
+                $this->Session->setFlash(__('Account deleted'), 'default', array(), 'success');
+                //Now log them out of the system
+                $this->Auth->logout();
+                $this->redirect('/');
+            }
+            // TODO check what projects made this fail
+            $this->Session->setFlash(__('Account was not deleted'), 'default', array(), 'error');
+            $this->redirect(array('action' => 'delete'));
         } else {
             $user = $this->Auth->user();
             $this->User->id = $user['id'];
