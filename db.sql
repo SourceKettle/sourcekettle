@@ -161,3 +161,17 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Dumping data for table `users`
 --
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lost_password_keys`
+--
+
+CREATE TABLE IF NOT EXISTS `lost_password_keys` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) NOT NULL,
+  `key` varchar(25) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1;

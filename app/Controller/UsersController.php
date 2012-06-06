@@ -150,7 +150,7 @@ class UsersController extends AppController {
     }
 
     /**
-     * Function to allow for users to reset their passwords
+     * Function to allow for users to reset their passwords. Will generate a key and an email. 
      */
     public function lost_password($key = null) {
         if ($this->request->is('post')){
@@ -195,10 +195,26 @@ class UsersController extends AppController {
                     $this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
                     $this->render('lost_password');
                 } else {
-                    
+                    $this->reset_password($key);
                 }
             }
-            
+        }
+    }
+    
+    /**
+     * The function to reset a password
+     * @param type $key The LostPasswordKey to use
+     */
+    public function reset_password($key = null){
+        if ($key == null){
+            $this->Session->setFlash("A valid password reset key was not given.", 'default', array(), 'error');
+            $this->redirect('/');
+        } else {
+            $passwordkey = $this->User->LostPasswordKey->findByKey($key);
+            if (empty($passwordkey)){
+                $this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
+                $this->redirect('lost_password');
+            }
         }
     }
 
