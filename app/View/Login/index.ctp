@@ -31,7 +31,7 @@
 
         echo $this->Bootstrap->button("Login", array("style" => "primary", "size" => "large", 'class' => 'controls'));
         
-        echo $this->Bootstrap->button_link("I forgot my password", "/login/lost_password", array("style" => "default", "size" => "normal", 'class' => 'pull-right'));
+        echo $this->Bootstrap->button_link("I forgot my password", "/users/lost_password", array("style" => "default", "size" => "normal", 'class' => 'pull-right'));
         
         echo $this->Form->end();
         ?>
