@@ -18,13 +18,14 @@
 App::uses('AppController', 'Controller');
 App::uses('CakeEmail', 'Network/Email');
 
+
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Setting', );
+    public $uses = array('User', 'Setting');
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('register', 'activate', 'lost_password');
+        $this->Auth->allow('register', 'activate', 'lost_password', 'reset_password');
     }
 
     /**
@@ -170,9 +171,9 @@ class UsersController extends AppController {
 
                 //Create the message
                 $message = "Dear " . $user['User']['name'] . ",\n\n";
-                $message .= "A request to reset your password was made, if this was by you then please click the link below.\n\n";
-                $message .= Router::url('/users/lost_password/' . $data['LostPasswordKey']['key'], true);
-                $message .= "\n\nIf this request was not made by you then please ignore this email.\n\n";
+                $message .= "A request to reset your password was made, if this was by you then please click the link below within the next 30 minutes.\n\n";
+                $message .= Router::url('/users/reset_password/' . $data['LostPasswordKey']['key'], true);
+                $message .= "\n\nIf this request was not made by you then please ignore this email and the key will expire shortly.\n\n";
 
                 //Send the email
                 $email = new CakeEmail();
@@ -214,6 +215,28 @@ class UsersController extends AppController {
             if (empty($passwordkey)){
                 $this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
                 $this->redirect('lost_password');
+            } else if ($this->request->is('post')){
+                //Check if the key has expired
+                
+                App::uses('CakeTime', 'Utility');
+                $keytime = CakeTime::toUnix($passwordkey['LostPasswordKey']['created']);
+                if ($keytime + 1800 <= time()){
+                    if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']){ //if the passwords match
+                        $this->User->id = $passwordkey['User']['id'];
+                        if ($this->User->save($this->request->data)){
+                            $this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
+                            $this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
+                            $this->redirect('/login');
+                        } else {
+                            $this->Session->setFlash("There was problem resetting your password. Please try again.", 'default', array(), 'error');
+                        }
+                    } else {
+                        $this->Session->setFlash("Your passwords do not match. Please try again.", 'default', array(), 'error');
+                    }
+                } else {
+                    $this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
+                    $this->redirect('lost_password');
+                }    
             }
         }
     }
