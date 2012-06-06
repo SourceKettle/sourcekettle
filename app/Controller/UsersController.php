@@ -304,4 +304,16 @@ class UsersController extends AppController {
             $this->request->data['User']['password'] = null;
         }
     }
+    
+    public function view($id = null){
+        $this->helpers[] = 'Time'; //load time helper
+        $this->User->id = $id;
+        if (!$this->User->exists()) {
+            throw new NotFoundException(__('Invalid user'));
+        }
+        $this->Project->Collaborator->recursive = 0;
+        $this->set('projects', $this->Project->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $this->Auth->user('id'), 'public' => true))));
+        $this->paginate();
+        $this->set('user', $this->User->read(null, $id));
+    }
 }
