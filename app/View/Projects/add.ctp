@@ -23,7 +23,7 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
 
         echo $this->Bootstrap->input("name", array(
             "input" => $this->Form->text("name"),
-            "help_block" => "The 'short' name your project will be known by"
+            "help_block" => "The 'short' name your project will be known by<br>(must be a valid UNIX name)"
         ));
 
         echo $this->Bootstrap->input("description", array(
