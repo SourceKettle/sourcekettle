@@ -22,65 +22,54 @@ App::uses('AppModel', 'Model');
  * @property User $User
  */
 class Collaborator extends AppModel {
-/**
- * Validation rules
- *
- * @var array
- */
-	public $validate = array(
-		'project_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => 'A valid project id was not entered',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'user_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => 'A valid user id was not entered',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'access_level' => array(
-			'inlist' => array(
-				'rule' => array('inlist', array(0, 1, 2)),
-				'message' => 'The user access level was not in the defined types',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-	);
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public $validate = array(
+        'project_id' => array(
+            'numeric' => array(
+                'rule' => array('numeric'),
+                'message' => 'A valid project id was not entered',
+            ),
+        ),
+        'user_id' => array(
+            'numeric' => array(
+                'rule' => array('numeric'),
+                'message' => 'A valid user id was not entered',
+            ),
+        ),
+        'access_level' => array(
+            'inlist' => array(
+                'rule' => array('inlist', array(0, 1, 2)),
+                'message' => 'The user access level was not in the defined types',
+            ),
+        ),
+    );
 
-/**
- * belongsTo associations
- *
- * @var array
- */
-	public $belongsTo = array(
-		'Project' => array(
-			'className' => 'Project',
-			'foreignKey' => 'project_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
-		'User' => array(
-			'className' => 'User',
-			'foreignKey' => 'user_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		)
-	);
+    //The Associations below have been created with all possible keys, those that are not needed can be removed
+
+    /**
+     * belongsTo associations
+     *
+     * @var array
+     */
+    public $belongsTo = array(
+        'Project' => array(
+            'className' => 'Project',
+            'foreignKey' => 'project_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
+        ),
+        'User' => array(
+            'className' => 'User',
+            'foreignKey' => 'user_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
+        )
+    );
 }
