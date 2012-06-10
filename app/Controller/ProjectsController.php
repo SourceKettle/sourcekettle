@@ -71,9 +71,11 @@ class ProjectsController extends AppController {
                     $a['project_name'] = $project['Project']['name'];
                     array_push($events, $a);
                 }
-                
+
                 $this->set('events', $events);
                 $this->set('project', $project);
+
+                $this->log("[ProjectController.view] project[".$project['Project']['id']."] viewed by user[".$this->Auth->user('id')."]", 'devtrack');
             }
         }
     }
@@ -118,6 +120,9 @@ class ProjectsController extends AppController {
                 $this->Project->Collaborator->save($data);
 
                 $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
+                $this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Auth->user('id')."]", 'devtrack');
+                $this->log("[ProjectController.add] user[".$this->Auth->user('id')."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
+
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
@@ -162,6 +167,8 @@ class ProjectsController extends AppController {
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Project->save($this->request->data)) {
                 $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
+                $this->log("[ProjectController.edit] user[".$this->Auth->user('id')."] edited project[".$this->Project->id."]", 'devtrack');
+
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
@@ -220,6 +227,8 @@ class ProjectsController extends AppController {
         }
         if ($this->Project->delete()) {
             $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
+            $this->log("[ProjectController.delete] project[".$this->Project->id."] was deleted by user[".$this->Auth->user('id')."]", 'devtrack');
+
             $this->redirect(array('action' => 'index'));
         }
         $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
