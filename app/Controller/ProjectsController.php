@@ -8,7 +8,7 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.Controller
@@ -21,7 +21,7 @@ class ProjectsController extends AppController {
 
     /**
      * Project helpers
-     * @var type 
+     * @var type
      */
     public $helpers = array('Time', 'GoogleChart.GoogleChart', 'ProjectActivity');
 
@@ -60,9 +60,9 @@ class ProjectsController extends AppController {
             if (empty($project)) {
                 throw new NotFoundException(__('Invalid project'));
             } else {
-            
+
                 $events = array();
-                
+
                 // Collect collaborator events
                 foreach ( $project['Collaborator'] as $a ) {
                     $user = $this->Project->Collaborator->User->find('first', array('conditions' => array('User.id' => $a['user_id'])));
@@ -217,16 +217,18 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function delete($name = null) {
+        // Check for valid project name
         $project = $this->Project->getProject($name);
-        $id = $project['Project']['id'];
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
-        }
-        $this->Project->id = $id;
-        if (!$this->Project->exists()) {
-            throw new NotFoundException(__('Invalid project'));
-        }
+        $this->Project->id = $project['Project']['id'];
+
+        // Lock out those who arnt admins
+        if ( !$this->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not an admin of this project'));
+
+        // Only allow form submissions
+        if ( !$this->request->is('post') ) throw new MethodNotAllowedException();
+
         if ($this->Project->delete()) {
             $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
             $this->log("[ProjectController.delete] project[".$this->Project->id."] was deleted by user[".$this->Auth->user('id')."]", 'devtrack');
