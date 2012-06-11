@@ -159,11 +159,13 @@ class ProjectsController extends AppController {
      */
     public function edit($name = null) {
         $project = $this->Project->getProject($name);
-        $id = $project['Project']['id'];
-        $this->Project->id = $id;
-        if (!$this->Project->exists()) {
-            throw new NotFoundException(__('Invalid project'));
-        }
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
+        $this->Project->id = $project['Project']['id'];
+
+        // Lock out those who arnt admins
+        if ( !$this->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not an admin of this project'));
+
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Project->save($this->request->data)) {
                 $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
@@ -175,7 +177,7 @@ class ProjectsController extends AppController {
             }
         } else {
             $this->set('project', $project);
-            $this->request->data = $this->Project->read(null, $id);
+            $this->request->data = $this->Project->read(null, $this->Project->id);
         }
     }
 
