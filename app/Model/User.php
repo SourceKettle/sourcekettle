@@ -162,6 +162,7 @@ class User extends AppModel {
             $users = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $project_id)));
             if ( $users == 1 ) {
                 $this->Collaborator->Project->delete($project_id);
+                $this->log("[UsersModel.beforeDelete] project[".$project_id."] deleted as user[".$this->id."] is being deleted", 'devtrack')
             }
         }
         return true;
