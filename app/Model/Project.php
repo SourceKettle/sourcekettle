@@ -134,4 +134,21 @@ class Project extends AppModel {
         return $project;
     }
 
+    /**
+     * Checks to see if a user is an admin of this project
+     *
+     * @param $user int id of the user to check
+     * @return boolean true if admin
+     */
+    public function isAdmin($user = null) {
+        if ( $user == null ) return false;
+
+        $admins = $this->Collaborator->find('first', array('conditions' => array('Collaborator.user_id' => $user, 'Collaborator.project_id' => $this->id), 'fields' => array('Collaborator.access_level')));
+        if ( $admins['Collaborator']['access_level'] == 2 ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
