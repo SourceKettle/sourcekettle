@@ -54,6 +54,8 @@ class LoginController extends AppController{
                 //Check if the user has activated their account
                 if ($user['User']['is_active']){
                     if ($this->Auth->login()) { //if login works
+                        $this->log("[LoginController.logout] user[".$this->Auth->user('id')."] logged in", 'devtrack');
+
                         $this->redirect($this->Auth->redirect()); //send them to the dashboard
                     } else { //else error!
                         $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The credentials supplied were not valid. Please try again."), 'default', array(), 'error');
