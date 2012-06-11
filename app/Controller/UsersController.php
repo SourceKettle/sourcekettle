@@ -86,6 +86,60 @@ class UsersController extends AppController {
      * Register a user via an API call
      */
     public function api_register() {
+        $this->set('data', array(1,2,3));
+        $this->layout = 'ajax';
+        $this->render('/Elements/json');
+    }
+
+    public function api_view($id = null) {
+        $this->layout = 'ajax';
+        if ($id == null) {
+            $this->set('data',array(
+                'error' => 400,
+                'message' => 'Bad request, no user id specified',
+                ));
+        } else {
+            $this->User->id = $id;
+            if (!$this->User->exists()) {
+                $this->set('data',array(
+                    'error' => 404,
+                    'message' => 'No user found of that ID.',
+                    'id' => $id,
+                ));
+            } else {
+                //$this->set('data',$this->User->read(null, $id));
+                $user = $this->User->find("first", array(
+                    'conditions' => array('id' => $id),
+                    'recursive' => -1, // Don't recurse other models
+                ));
+
+                unset($user['User']['password']); // goodbye password hash :'(
+                $this->set('data',$user['User']);
+            }
+        }
+
+        $this->render('/Elements/json');
+    }
+
+    public function api_all() {
+        // Only admins should be able to call this
+        $this->layout = 'ajax';
+
+        $all = $this->User->find("all", array(
+            'recursive' => -1,
+        ));
+
+        $new = array();
+
+        foreach ($all as $item) {
+            unset($item['User']['password']);
+            array_push($new,$item['User']);
+        }
+
+        $this->set('data',$new);
+
+        $this->render('/Elements/json');
+    }
 
     }
 
