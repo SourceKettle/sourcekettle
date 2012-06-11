@@ -6,7 +6,7 @@
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
-* 
+*
 * @copyright     DevTrack Development Team 2012
 * @link          http://github.com/chrisbulmer/devtrack
 * @package       DevTrack.Model
@@ -119,16 +119,14 @@ class Project extends AppModel {
      */
     public function getProject($key) {
         if ($key == null){ //Sanity check
-            return null; 
+            return null;
         }
-        //Being cheeky and loading a model into a component which CakePHP doesn't allow for some reason
-        $this->Project = ClassRegistry::init("Project"); 
 
         $project = null;
         if (is_numeric($key)) {
-            $project = $this->Project->find('first', array('conditions' => array('Project.id' => $key)));
-        } else {    
-            $project = $this->Project->find('first', array('conditions' => array('Project.name' => $key)));
+            $project = $this->find('first', array('conditions' => array('Project.id' => $key)));
+        } else {
+            $project = $this->find('first', array('conditions' => array('Project.name' => $key)));
         }
         if (empty($project)){
             $project = null;

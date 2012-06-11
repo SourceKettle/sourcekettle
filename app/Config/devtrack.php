@@ -16,7 +16,7 @@
 
  // Tool name
  // value will be string that will be shown across the system in place of 'DevTrack'
- $config['devtrack']['global']['alias'] = 'PhillTrack';
+ $config['devtrack']['global']['alias'] = 'DevTrack';
  
  // Registration
  // set to true to allow new users to register with the system
