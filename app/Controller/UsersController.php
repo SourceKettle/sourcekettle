@@ -8,7 +8,7 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.Controller
@@ -34,8 +34,7 @@ class UsersController extends AppController {
     public function register() {
         $this->set('title_for_layout', 'Register');
         //Check if registration is allowed by the user
-        $enabled = $this->Setting->find('first', array('conditions' => array('name' => 'register_enabled')));
-        if ($enabled['Setting']['value']) { //Check the setting
+        if ($this->devtrack_config['login']['registration']) { //Check the setting
             //Registration part
             if ($this->request->is('post')) {
                 //if data was posted therefore a submitted form
@@ -44,6 +43,7 @@ class UsersController extends AppController {
                         $this->User->create();
                         if ($this->User->save($this->request->data['User'])) {
                             $id = $this->User->getLastInsertID();
+                            $this->log("[UsersController.register] user[${id}] created", 'devtrack');
 
                             //Check to see if an SSH key was added and save it
                             if (!empty($this->data['User']['ssh_key'])) {
@@ -53,6 +53,7 @@ class UsersController extends AppController {
                                 $data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
                                 $data['SshKey']['comment'] = 'Default key';
                                 $this->User->SshKey->save($data);
+                                $this->log("[UsersController.register] sshkey[".$this->User->SshKey->getLastInsertID()."] aedded to user[${id}]", 'devtrack');
                             }
 
                             //Now to create the key and send the email
@@ -72,7 +73,7 @@ class UsersController extends AppController {
                             $email->to($this->data['User']['email']);
                             $email->subject('DevTrack activation');
                             $email->send($message);
-                            echo($message); //TODO remove this line when emailing enabled
+                            if ( Configure::read('debug') > 1 ) echo($message);
 
                             $this->render('email_sent');
                         } else {
@@ -95,13 +96,13 @@ class UsersController extends AppController {
      * Register a user via an API call
      */
     public function api_register() {
-        
+
     }
 
     /**
      * Generates a random key of a given length
      * @param type $length The length of the key
-     * @return string The random key 
+     * @return string The random key
      */
     private function generate_key($length) {
         $key = "";
@@ -151,13 +152,13 @@ class UsersController extends AppController {
     }
 
     /**
-     * Function to allow for users to reset their passwords. Will generate a key and an email. 
+     * Function to allow for users to reset their passwords. Will generate a key and an email.
      */
     public function lost_password($key = null) {
         if ($this->request->is('post')){
             //generate random password and email it to them
             $user = $this->User->findByEmail($this->request->data['User']['email']); //Get the user attached to the given email
-            
+
             if (empty($user)){
                 // Just pretend to send the user an email
                 $this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
@@ -201,7 +202,7 @@ class UsersController extends AppController {
             }
         }
     }
-    
+
     /**
      * The function to reset a password
      * @param type $key The LostPasswordKey to use
@@ -217,7 +218,7 @@ class UsersController extends AppController {
                 $this->redirect('lost_password');
             } else if ($this->request->is('post')){
                 //Check if the key has expired
-                
+
                 App::uses('CakeTime', 'Utility');
                 $keytime = CakeTime::toUnix($passwordkey['LostPasswordKey']['created']);
                 if ($keytime + 1800 <= time()){
@@ -236,7 +237,7 @@ class UsersController extends AppController {
                 } else {
                     $this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
                     $this->redirect('lost_password');
-                }    
+                }
             }
         }
     }
@@ -247,8 +248,8 @@ class UsersController extends AppController {
     public function index() {
         $this->redirect('editdetails');
     }
-    
-    
+
+
     /**
      * Allows admins to see all users
      */
@@ -268,13 +269,13 @@ class UsersController extends AppController {
         }
         $this->set('user', $this->User->read(null, $id));
     }
-    
+
     /**
      * Edit the name and the email address of the current user
      */
     public function editdetails(){
         $this->User->id = $this->Auth->user('id'); //get the current user
-        
+
         if ($this->request->is('post')){
             if ($this->User->save($this->request->data)){
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
@@ -285,7 +286,7 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
             }
         }
-        
+
         //update the page
         $user = $this->Auth->user();
         $this->set('user', $user);
@@ -300,24 +301,24 @@ class UsersController extends AppController {
     public function editpassword(){
         $this->User->id = $this->Auth->user('id'); //get the current user
         $user = $this->User->read(null, $this->User->id);
-        $user = $user['User']; 
+        $user = $user['User'];
         if ($this->request->is('post')){
             if ($user['password'] == $this->Auth->password($this->request->data['User']['password_current'])){ //check their current password
                 if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']){ //check passwords match
-                    
+
                     if ($this->User->save($this->request->data)){
                         $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
                     } else {
                         $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
-                    } 
+                    }
                 } else {
                     $this->Session->setFlash(__('Your passwords did not match. Please try again.'), 'default', array(), 'error');
-                }      
+                }
             } else {
                 $this->Session->setFlash(__('Your current password was incorrect. Please try again.'), 'default', array(), 'error');
-            } 
+            }
         }
-        
+
         //Update the page details
         $user = $this->Auth->user();
         $this->set('user', $user);
@@ -325,7 +326,7 @@ class UsersController extends AppController {
         $this->request->data = $this->User->read();
         $this->request->data['User']['password'] = null;
     }
-    
+
     /**
      * Add an SSH key for the current user
      */
@@ -337,16 +338,16 @@ class UsersController extends AppController {
             } else {
                 $this->Session->setFlash(__('There was a problem saving your key. Please try again.'), 'default', array(), 'error');
             }
-        } 
-        
+        }
+
         //update the page
         $user = $this->Auth->user();
         $this->User->id = $user['id'];
         $this->request->data = $this->User->read();
         $this->request->data['User']['password'] = null;
-        
+
     }
-    
+
     /**
      * Deletes a ssh key of the current user
      * @param type $id The id of the key to delete
@@ -357,7 +358,7 @@ class UsersController extends AppController {
             $key = $this->User->SshKey->find('first', array(
                 'conditions' => array('SshKey.id' => $id)
             ));
-            
+
             if ($key['SshKey']['user_id'] == $this->Auth->user('id')){ //check the key belongs to the current user
                 if ($this->User->SshKey->delete($key['SshKey'])){
                     $this->Session->setFlash(__('Your key was removed successfully.'), 'default', array(), 'success');
@@ -368,25 +369,25 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('2There was a problem removing your key. Please try again.'), 'default', array(), 'error');
             }
         }
-        
+
         //update the page
         $user = $this->Auth->user();
         $this->User->id = $user['id'];
         $this->request->data = $this->User->read();
         $this->request->data['User']['password'] = null;
     }
-    
+
     /**
      * Function to delete a user
      * Use at your own peril
-     * 
+     *
      * Deletes the current user (the one that is authenticated with the system) and any projects for which there are no other
      * collaborators
      */
     public function delete(){
         if($this->request->is('post')){
             $this->User->id = $this->Auth->user('id');
-            
+
             //Now delete the user
             if ($this->User->delete($this->Auth->id)) {
                 $this->Session->setFlash(__('Account deleted'), 'default', array(), 'success');
@@ -404,7 +405,7 @@ class UsersController extends AppController {
             $this->request->data['User']['password'] = null;
         }
     }
-    
+
     /**
      * Function for viewing a user's public page
      * @param type $id The id of the user to view

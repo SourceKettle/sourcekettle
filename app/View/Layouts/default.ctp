@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <head> 
     <title>
-        DevTrack - <?= $title_for_layout ?>
+        <?= $devtrack_config['global']['alias'] ?> - <?= $title_for_layout ?>
     </title> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->Html->charset('UTF-8') . "\n" ?>
@@ -44,7 +44,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <?= $this->Html->link('DevTrack', '/', array('class' => 'brand')); ?>
+                    <?= $this->Html->link($devtrack_config['global']['alias'], '/', array('class' => 'brand')); ?>
                     
                     <?php
                     if(isset($user_name)){

@@ -37,7 +37,7 @@ class LoginController extends AppController{
     public function beforeFilter() {
         parent::beforeFilter();
     }
-    
+
     /**
      * The login function.
      * 
@@ -68,7 +68,7 @@ class LoginController extends AppController{
             //$this->redirect())
         }*/
     }
-    
+
     /**
      * The logout function.
      * 
@@ -78,8 +78,7 @@ class LoginController extends AppController{
         $this->Auth->logout();
         $this->redirect('/');
     }
-    
-    
+
 }
 
 ?>

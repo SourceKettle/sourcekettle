@@ -98,29 +98,6 @@ CREATE TABLE IF NOT EXISTS `repo_types` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `settings`
---
-
-CREATE TABLE IF NOT EXISTS `settings` (
-  `id` int(4) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `value` varchar(255) NOT NULL,
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `settings`
---
-
-INSERT INTO `settings` (`id`, `name`, `value`, `created`, `modified`) VALUES
-(1, 'register_enabled', '0', '2012-06-02 22:03:59', '2012-06-02 22:04:01');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `ssh_keys`
 --
 
