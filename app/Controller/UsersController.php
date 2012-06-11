@@ -53,7 +53,7 @@ class UsersController extends AppController {
                                 $data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
                                 $data['SshKey']['comment'] = 'Default key';
                                 $this->User->SshKey->save($data);
-                                $this->log("[UsersController.register] sshkey[".$this->User->SshKey->getLastInsertID()."] aedded to user[${id}]", 'devtrack');
+                                $this->log("[UsersController.register] sshkey[".$this->User->SshKey->getLastInsertID()."] added to user[${id}]", 'devtrack');
                             }
 
                             //Now to create the key and send the email
@@ -140,6 +140,8 @@ class UsersController extends AppController {
                 if ($this->User->save($newrecord['User'])) {
                     $this->User->EmailConfirmationKey->delete($record['EmailConfirmationKey']['id'], false); //delete the email confirmation key
                     $this->Session->setFlash(__("<h4 class='alert-heading'>Success</h4>Your account is now activated. You can now login."), 'default', array(), 'success');
+                    $this->log("[UsersController.activate] user[".$newrecord['User']['id']."] activated", 'devtrack');
+
                     $this->redirect('/login');
                 } else {
                     $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>An error occured, please contact your system administrator."), 'default', array(), 'error');
@@ -182,7 +184,9 @@ class UsersController extends AppController {
                 $email->to($user['User']['email']);
                 $email->subject('DevTrack password reset');
                 $email->send($message);
-                echo($message); //TODO remove this line when emailing enabled
+                $this->log("[UsersController.lost_password] lost password email sent to user[".$user['User']['id']."]", 'devtrack');
+
+                if ( Configure::read('debug') > 1 ) echo($message); //TODO remove this line when emailing enabled
             }
             $this->redirect('/login');
         } else if($this->request->is('get')){
@@ -227,6 +231,8 @@ class UsersController extends AppController {
                         if ($this->User->save($this->request->data)){
                             $this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
                             $this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
+                            $this->log("[UsersController.reset_password] password reset for user[".$passwordkey['User']['id']."]", 'devtrack');
+
                             $this->redirect('/login');
                         } else {
                             $this->Session->setFlash("There was problem resetting your password. Please try again.", 'default', array(), 'error');
@@ -279,6 +285,8 @@ class UsersController extends AppController {
         if ($this->request->is('post')){
             if ($this->User->save($this->request->data)){
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+                $this->log("[UsersController.editdetails] user[".$this->User->id."] edited details", 'devtrack');
+
                 $this->Session->write('Auth.User.name', $this->request->data['User']['name']);
                 $this->Session->write('Auth.User.email', $this->request->data['User']['email']);
                 $this->set('user_name', $this->request->data['User']['name']);
@@ -308,6 +316,7 @@ class UsersController extends AppController {
 
                     if ($this->User->save($this->request->data)){
                         $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+                        $this->log("[UsersController.editpassword] user[".$this->Auth->user('id')."] changed password", 'devtrack');
                     } else {
                         $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
                     }
@@ -335,6 +344,7 @@ class UsersController extends AppController {
             $this->request->data['SshKey']['user_id'] = $this->Auth->user('id'); //Set the key to belong to the current user
             if ($this->User->SshKey->save($this->request->data)){
                 $this->Session->setFlash(__('Your key was added successfully.'), 'default', array(), 'success');
+                $this->log("[UsersController.addkey] sshkey[".$this->User->SshKey->getLastInsertID()."] added to user[".$this->Auth->user('id')."]", 'devtrack');
             } else {
                 $this->Session->setFlash(__('There was a problem saving your key. Please try again.'), 'default', array(), 'error');
             }
@@ -362,6 +372,7 @@ class UsersController extends AppController {
             if ($key['SshKey']['user_id'] == $this->Auth->user('id')){ //check the key belongs to the current user
                 if ($this->User->SshKey->delete($key['SshKey'])){
                     $this->Session->setFlash(__('Your key was removed successfully.'), 'default', array(), 'success');
+                    $this->log("[UsersController.deletekey] sshkey[".$id."] deleted by user[".$this->Auth->user('id')."]", 'devtrack');
                 } else {
                     $this->Session->setFlash(__('There was a problem removing your key. Please try again.'), 'default', array(), 'error');
                 }
@@ -391,6 +402,8 @@ class UsersController extends AppController {
             //Now delete the user
             if ($this->User->delete($this->Auth->id)) {
                 $this->Session->setFlash(__('Account deleted'), 'default', array(), 'success');
+                $this->log("[UsersController.delete] user[".$this->Auth->user('id')."] deleted", 'devtrack');
+
                 //Now log them out of the system
                 $this->Auth->logout();
                 $this->redirect('/');
