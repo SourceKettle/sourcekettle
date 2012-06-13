@@ -151,4 +151,51 @@ class Project extends AppModel {
         }
     }
 
+    /**
+     * Checks to see if a user is a member of this project
+     *
+     * @param $user int id of the user to check
+     * @return boolean true if member
+     */
+    public function isMember($user = null) {
+        if ( $user == null ) return false;
+
+        $members = $this->Collaborator->find('first', array('conditions' => array('Collaborator.user_id' => $user, 'Collaborator.project_id' => $this->id), 'fields' => array('Collaborator.access_level')));
+        if ( !empty($members) ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function fetchEventsForProject() {
+        $this->recursive = 2;
+        $project = $this->getProject($this->id);
+
+        $events = array();
+
+        // Collect collaborator events
+        foreach ( $project['Collaborator'] as $a ) {
+            array_push($events, array(
+                'Type' => 'Collaborator',
+                'user_name' => $a['User']['name'],
+                'project_name' => $project['Project']['name'],
+                'user_id' => $a['User']['id'],
+                'project_id' => $project['Project']['id'],
+                'modified' => $a['modified'],
+            ));
+        }
+
+        // Sort function for events
+        // assumes $array{ $array{ 'modified' => 'date' }, ... }
+        $cmp = function($a, $b) {
+            if ($a['modified'] == $b['modified']) return 0;
+            if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
+            return -1;
+        };
+        usort($events, $cmp);
+
+        return $events;
+    }
+
 }

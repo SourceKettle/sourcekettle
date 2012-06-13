@@ -33,7 +33,6 @@ class ProjectsController extends AppController {
     public function index() {
         $this->Project->Collaborator->recursive = 0;
         $this->set('projects', $this->Project->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $this->Auth->user('id')))));
-        $this->paginate();
     }
 
     /**
@@ -53,31 +52,17 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function view($name = null) {
-        if ($name == null) {
-            throw new NotFoundException(__('Invalid project'));
-        } else {
-            $project = $this->Project->getProject($name);
-            if (empty($project)) {
-                throw new NotFoundException(__('Invalid project'));
-            } else {
+        // Check for valid project name
+        $project = $this->Project->getProject($name);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
-                $events = array();
+        $this->Project->id = $project['Project']['id'];
 
-                // Collect collaborator events
-                foreach ( $project['Collaborator'] as $a ) {
-                    $user = $this->Project->Collaborator->User->find('first', array('conditions' => array('User.id' => $a['user_id'])));
-                    $a['Type'] = 'Collaborator';
-                    $a['user_name'] = $user['User']['name'];
-                    $a['project_name'] = $project['Project']['name'];
-                    array_push($events, $a);
-                }
+        // Lock out those who arnt members
+        if ( !$this->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
-                $this->set('events', $events);
-                $this->set('project', $project);
-
-                $this->log("[ProjectController.view] project[".$project['Project']['id']."] viewed by user[".$this->Auth->user('id')."]", 'devtrack');
-            }
-        }
+        $this->set('events', $this->Project->fetchEventsForProject());
+        $this->set('project', $project);
     }
 
     /**
@@ -158,6 +143,7 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function edit($name = null) {
+        // Check for valid project name
         $project = $this->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
@@ -232,10 +218,9 @@ class ProjectsController extends AppController {
         if ($this->Project->delete()) {
             $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
             $this->log("[ProjectController.delete] project[".$this->Project->id."] was deleted by user[".$this->Auth->user('id')."]", 'devtrack');
-
-            $this->redirect(array('action' => 'index'));
+        } else {
+            $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
         }
-        $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
         $this->redirect(array('action' => 'index'));
     }
 

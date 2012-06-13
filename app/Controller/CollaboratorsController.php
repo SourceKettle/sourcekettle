@@ -38,7 +38,6 @@ class CollaboratorsController extends AppController {
 
         $this->Collaborator->Project->recursive = 2;
         $this->set('project', $this->Collaborator->Project->find('first', array('conditions' => array('Project.id' => $project['Project']['id']))));
-        $this->paginate();
     }
 
     /**
