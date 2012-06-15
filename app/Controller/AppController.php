@@ -78,7 +78,14 @@ class AppController extends Controller {
             $this->set('user_name', $this->Auth->user('name'));
         }
 
+        // Load config file in
         $this->devtrack_config = Configure::read('devtrack');
         $this->set('devtrack_config', $this->devtrack_config);
+
+        // if admin pages are being requested
+        if(isset($this->params['admin'])) {
+            // check the admin is logged in
+            if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
+        }
     }
 }

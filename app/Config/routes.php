@@ -35,6 +35,7 @@
         Router::connect('/forgot_password', array('controller' => 'users', 'action' => 'forgot_password'));
         Router::connect('/register', array('controller' => 'users', 'action' => 'register'));
         Router::connect('/activate/*', array('controller' => 'users', 'action' => 'activate'));
+        Router::connect('/admin', array('controller' => 'admin', 'action' => 'index', 'admin' => true));
         
         /*
          * Define some more to make the footer pages work
