@@ -34,7 +34,8 @@ class UsersController extends AppController {
     public function register() {
         $this->set('title_for_layout', 'Register');
         //Check if registration is allowed by the user
-        if ($this->devtrack_config['login']['registration']) { //Check the setting
+        $enabled = $this->Setting->find('first', array('conditions' => array('name' => 'register_enabled')));
+        if ($enabled['Setting']['value']) {
             //Registration part
             if ($this->request->is('post')) {
                 //if data was posted therefore a submitted form
