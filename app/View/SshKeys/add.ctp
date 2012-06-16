@@ -7,7 +7,7 @@
 
     <div class="span6 offset1">
         <?php
-        echo $this->Form->create('SshKey', array('class' => 'well form-horizontal', 'url' => array('controller' => 'users', 'action' => 'addkey')));
+        echo $this->Form->create('SshKey', array('class' => 'well form-horizontal', 'url' => array('controller' => 'sshKeys', 'action' => 'add')));
         echo '<h3>Add an SSH key</h3>';
         echo $this->Bootstrap->input("key", array(
             "input" => $this->Form->textarea("key", array("class" => "input-xlarge")),

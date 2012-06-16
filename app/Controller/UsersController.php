@@ -338,58 +338,6 @@ class UsersController extends AppController {
     }
 
     /**
-     * Add an SSH key for the current user
-     */
-    public function addkey(){
-        if ($this->request->is('post')){
-            $this->request->data['SshKey']['user_id'] = $this->Auth->user('id'); //Set the key to belong to the current user
-            if ($this->User->SshKey->save($this->request->data)){
-                $this->Session->setFlash(__('Your key was added successfully.'), 'default', array(), 'success');
-                $this->log("[UsersController.addkey] sshkey[".$this->User->SshKey->getLastInsertID()."] added to user[".$this->Auth->user('id')."]", 'devtrack');
-            } else {
-                $this->Session->setFlash(__('There was a problem saving your key. Please try again.'), 'default', array(), 'error');
-            }
-        }
-
-        //update the page
-        $user = $this->Auth->user();
-        $this->User->id = $user['id'];
-        $this->request->data = $this->User->read();
-        $this->request->data['User']['password'] = null;
-
-    }
-
-    /**
-     * Deletes a ssh key of the current user
-     * @param type $id The id of the key to delete
-     */
-    public function deletekey($id = null){
-        if ($this->request->is('post') && $id != null){
-            //Find the key object
-            $key = $this->User->SshKey->find('first', array(
-                'conditions' => array('SshKey.id' => $id)
-            ));
-
-            if ($key['SshKey']['user_id'] == $this->Auth->user('id')){ //check the key belongs to the current user
-                if ($this->User->SshKey->delete($key['SshKey'])){
-                    $this->Session->setFlash(__('Your key was removed successfully.'), 'default', array(), 'success');
-                    $this->log("[UsersController.deletekey] sshkey[".$id."] deleted by user[".$this->Auth->user('id')."]", 'devtrack');
-                } else {
-                    $this->Session->setFlash(__('There was a problem removing your key. Please try again.'), 'default', array(), 'error');
-                }
-            } else {
-                $this->Session->setFlash(__('2There was a problem removing your key. Please try again.'), 'default', array(), 'error');
-            }
-        }
-
-        //update the page
-        $user = $this->Auth->user();
-        $this->User->id = $user['id'];
-        $this->request->data = $this->User->read();
-        $this->request->data['User']['password'] = null;
-    }
-
-    /**
      * Function to delete a user
      * Use at your own peril
      *

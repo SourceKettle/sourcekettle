@@ -5,8 +5,8 @@
         'delete' => array('icon' => 'remove', 'text' => 'Delete account'),
     );
     $sshkey = array(
-        'addkey' => array('icon' => 'plus-sign', 'text' => 'Add key'),
-        'deletekey' => array('icon' => 'minus-sign', 'text' => 'Edit keys'),
+        'addkey' => array('icon' => 'plus-sign', 'text' => 'Add key', 'action' => 'add'),
+        'viewkeys' => array('icon' => 'minus-sign', 'text' => 'Edit keys', 'action' => 'view'),
     );
 ?>
 <ul class="well nav nav-list" style="padding: 8px 14px;">
@@ -37,7 +37,7 @@
             '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
                 ' icon-' . $options['icon'] . '"></i> ' . 
                 ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
-            array('controller' => 'users', 'action' => $feature),
+            array('controller' => 'sshKeys', 'action' => $options['action']),
             array('escape' => false)
         )?>
     </li>

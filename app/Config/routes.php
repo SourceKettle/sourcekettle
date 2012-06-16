@@ -27,7 +27,7 @@
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 	Router::connect('/setup', array('controller' => 'pages', 'action' => 'display', 'setup'));
-        
+
         /*
          * Defined to make the logging in/out etc look less retarded that /login/logout
          */
@@ -36,52 +36,58 @@
         Router::connect('/register', array('controller' => 'users', 'action' => 'register'));
         Router::connect('/activate/*', array('controller' => 'users', 'action' => 'activate'));
         Router::connect('/admin', array('controller' => 'admin', 'action' => 'index', 'admin' => true));
-        
+
         /*
          * Define some more to make the footer pages work
          */
         Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'about'));
         Router::connect('/svn_help', array('controller' => 'pages', 'action' => 'display', 'svn_help'));
         Router::connect('/git_help', array('controller' => 'pages', 'action' => 'display', 'git_help'));
-        
+
         /*
          * The below routes allow all projects to be accessed at APP/project/project_name/[controller_to_use/]?[action/]?[params]?
-         * 
+         *
          * Where controller_to_use allows another controller to be used whilst still appearing at APP/project/project_name/...
          * If this is blank (APP/project/project_name/action) then ProjectsController will be used
          * e.g. APP/project/project_name/tasks will route to the TasksController instead of the ProjectsController
-         * 
+         *
          * The action is the action to perform in the given controller. If no action is set, it will call index()
          * e.g. APP/project/project_name/tasks/add will call the add() function in TasksController
-         * 
+         *
          * The params are any additional params to be pass
-         * 
+         *
          */
         Router::connect('/project/:project/tasks/:action/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/tasks/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
 
         Router::connect('/project/:project/time/:action/*', array('controller' => 'time'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/time/*', array('controller' => 'time'), array('pass' => array('project'), 'project' => '[\w]+'));
-        
+
         Router::connect('/project/:project/source/:action/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/source/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));
 
         Router::connect('/project/:project/collaborators/:action/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/collaborators/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[\w]+'));
-        
+
         /*
          * If no other controller is to be used, use the projects controller
          */
         Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[\w]+'));
-         
+
+        /*
+         * Add custom route for editing the sshkeys associated to a user
+         */
+        Router::connect('/users/sshkeys/:action/*', array('controller' => 'sshKeys'));
+
+
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
 /**
- * Load all plugin routes.  See the CakePlugin documentation on 
+ * Load all plugin routes.  See the CakePlugin documentation on
  * how to customize the loading of plugin routes.
  */
 	CakePlugin::routes();
