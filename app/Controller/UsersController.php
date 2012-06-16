@@ -125,18 +125,38 @@ class UsersController extends AppController {
         // Only admins should be able to call this
         $this->layout = 'ajax';
 
-        $all = $this->User->find("all", array(
-            'recursive' => -1,
-        ));
-
-        $new = array();
-
-        foreach ($all as $item) {
-            unset($item['User']['password']);
-            array_push($new,$item['User']);
+        if (array_key_exists('key', $this->request->query)) {
+            $api_key = $this->request->query['key'];
+        } else {
+            $api_key = null;
         }
 
-        $this->set('data',$new);
+        // Get User with this API key
+        //
+        $user_id = $this->User->ApiKey->field('user_id',
+            array('key' => $api_key));
+
+        $user = $this->User->findById($user_id);
+
+        if ($user != FALSE && $user['User']['is_admin']) {
+            $all = $this->User->find("all", array(
+                'recursive' => -1,
+            ));
+
+            $new = array();
+
+            foreach ($all as $item) {
+                unset($item['User']['password']);
+                array_push($new,$item['User']);
+            }
+
+            $this->set('data',$new);
+        } else {
+            $this->set('data',array(
+                'error' => 403,
+                'message' => 'You are not authorised to access this.',
+            ));
+        }
 
         $this->render('/Elements/json');
     }

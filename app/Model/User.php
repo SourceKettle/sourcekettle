@@ -122,6 +122,19 @@ class User extends AppModel {
             'finderQuery' => '',
             'counterQuery' => ''
         ), 
+        'ApiKey' => array(
+            'className' => 'ApiKey',
+            'foreignKey' => 'user_id',
+            'dependent' => true,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ), 
         'LostPasswordKey' => array(
             'className' => 'LostPasswordKey',
             'foreignKey' => 'user_id',
