@@ -36,8 +36,11 @@ class CollaboratorsController extends AppController {
         $project = $this->Collaborator->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
-        $this->Collaborator->Project->recursive = 2;
+        // Lock out those who arnt admins
         $this->Collaborator->Project->id = $project['Project']['id'];
+        if ( !$this->Collaborator->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
+
+        $this->Collaborator->Project->recursive = 2;
         $this->set('project', $this->Collaborator->Project->read());
         $this->set('isAdmin', $this->Collaborator->Project->isAdmin($this->Auth->user('id')));
     }
@@ -52,6 +55,10 @@ class CollaboratorsController extends AppController {
         // Check for existant project
         $project = $this->Collaborator->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
+        // Lock out those who arnt admins
+        $this->Collaborator->Project->id = $project['Project']['id'];
+        if ( !$this->Collaborator->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
 
         if ($this->request->is('post')) {
             // Check for existant user
@@ -128,6 +135,10 @@ class CollaboratorsController extends AppController {
         // Check for existant project
         $project = $this->Collaborator->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
+        // Lock out those who arnt admins
+        $this->Collaborator->Project->id = $project['Project']['id'];
+        if ( !$this->Collaborator->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
 
         // Check for existant collaborator for the user and this project
         $this->Collaborator->id = $this->Collaborator->field('id', array('user_id' => $id, 'project_id' => $project['Project']['id']));
