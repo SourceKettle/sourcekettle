@@ -8,7 +8,7 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.Controller
@@ -37,7 +37,9 @@ class CollaboratorsController extends AppController {
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
         $this->Collaborator->Project->recursive = 2;
-        $this->set('project', $this->Collaborator->Project->find('first', array('conditions' => array('Project.id' => $project['Project']['id']))));
+        $this->Collaborator->Project->id = $project['Project']['id'];
+        $this->set('project', $this->Collaborator->Project->read());
+        $this->set('isAdmin', $this->Collaborator->Project->isAdmin($this->Auth->user('id')));
     }
 
     /**
@@ -53,7 +55,9 @@ class CollaboratorsController extends AppController {
 
         if ($this->request->is('post')) {
             // Check for existant user
-            $user = $this->Collaborator->User->find('first', array('conditions' => array('User.email' => $this->request->data['Collaborator']['name']), 'fields' => array('User.id', 'User.name')));
+            $this->Collaborator->User->recursive = -1;
+            $user = $this->Collaborator->User->findByEmail($this->request->data['Collaborator']['name'], array('User.id', 'User.name'));
+
             if ( empty($user) ) {
                 $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
             } else {
@@ -126,27 +130,27 @@ class CollaboratorsController extends AppController {
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
         // Check for existant collaborator for the user and this project
-        $collaborator = $this->Collaborator->find('first', array('conditions' => array('Collaborator.user_id' => $id, 'Collaborator.project_id' => $project['Project']['id']), 'fields' => array('Collaborator.id', 'Collaborator.access_level')));
-        $this->Collaborator->id = $collaborator['Collaborator']['id'];
+        $this->Collaborator->id = $this->Collaborator->field('id', array('user_id' => $id, 'project_id' => $project['Project']['id']));
 
         if (!$this->Collaborator->exists()) {
             $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
         } else {
             // Find additional details for the user being changed - only needed for flash message
-            $user = $this->Collaborator->User->find('first', array('conditions' => array('User.id' => $id), 'fields' => array('User.name')));
+            $user_name = $this->Collaborator->User->field('name', array('User.id' => $id));
 
             // Create new details to paste over existing ones
-            $newuser = array();
-            $newuser['Collaborator']['id'] = $collaborator['Collaborator']['id'];
-            $newuser['Collaborator']['project_id'] = $project['Project']['id'];
-            $newuser['Collaborator']['user_id'] = $id;
-            $newuser['Collaborator']['access_level'] = $newaccesslevel;
+            $newuser = array( 'Collaborator' => array(
+                'id' => $this->Collaborator->id,
+                'project_id' => $project['Project']['id'],
+                'user_id' => $id,
+                'access_level' => $newaccesslevel,
+            ));
 
             // Save the changes to the user
             if ($this->Collaborator->save($newuser)) {
-                $this->Session->setFlash(__("Permissions level successfully changed for '".$user['User']['name']."'.", 'default', array(), 'success'));
+                $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'", 'default', array(), 'success'));
             } else {
-                $this->Session->setFlash(__("Permissions level for '".$user['User']['name']."' not be updated. Please, try again.", 'default', array(), 'error'));
+                $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again.", 'default', array(), 'error'));
             }
         }
         $this->redirect(array('project' => $name, 'action' => '.'));

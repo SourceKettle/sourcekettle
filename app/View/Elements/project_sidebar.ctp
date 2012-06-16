@@ -48,7 +48,13 @@
                 ),
             ),
         ),
-        'Administration' => array(
+        'help' => array(
+            'action' => 'project',
+        ),
+    );
+    
+    if(isset($isAdmin) && $isAdmin) {
+        $options['Administration'] = array(
             'Collaborators' => array(
                 'icon' => 'user',
                 'url' => array(
@@ -65,10 +71,7 @@
                     'project' => $project,
                 ),
             ),
-        ),
-        'help' => array(
-            'action' => 'project',
-        ),
-    );
+        );
+    }
 
     echo $this->element('generic_sidebar', array('options' => $options));

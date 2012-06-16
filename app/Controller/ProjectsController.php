@@ -62,6 +62,7 @@ class ProjectsController extends AppController {
         if ( !$this->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
         $this->set('events', $this->Project->fetchEventsForProject());
+        $this->set('isAdmin', $this->Project->isAdmin($this->Auth->user('id')));
         $this->set('project', $project);
     }
 
@@ -163,6 +164,7 @@ class ProjectsController extends AppController {
             }
         } else {
             $this->set('project', $project);
+            $this->set('isAdmin', $this->Project->isAdmin($this->Auth->user('id')));
             $this->request->data = $this->Project->read(null, $this->Project->id);
         }
     }
