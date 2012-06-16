@@ -1,55 +1,61 @@
 <?php
-    $account = array(
-        'editdetails' => array('icon' => 'user', 'text' => 'Basic details'),
-        'editpassword' => array('icon' => 'lock', 'text' => 'Change password'),
-        'delete' => array('icon' => 'remove', 'text' => 'Delete account'),
+
+/**
+ *
+ * Element for displaying the user sidebar for the DevTrack system
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ * 
+ * @copyright     DevTrack Development Team 2012
+ * @link          http://github.com/chrisbulmer/devtrack
+ * @package       DevTrack.View.Elements
+ * @since         DevTrack v 0.1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+    $options = array(
+        'Your Account' => array(
+            'Basic details' => array(
+                'icon' => 'user',
+                'url' => array(
+                    'action' => 'editdetails',
+                    'controller' => 'users',
+                ),
+            ),
+            'Change Password' => array(
+                'icon' => 'lock',
+                'url' => array(
+                    'action' => 'editpassword',
+                    'controller' => 'users',
+                ),
+            ),
+            'Delete Account' => array(
+                'icon' => 'remove',
+                'url' => array(
+                    'action' => 'delete',
+                    'controller' => 'users',
+                ),
+            ),
+        ),
+        'SSH Keys' => array(
+            'Add Key' => array(
+                'icon' => 'plus-sign',
+                'url' => array(
+                    'action' => 'add',
+                    'controller' => 'sshKeys',
+                ),
+            ),
+            'Edit Keys' => array(
+                'icon' => 'minus-sign',
+                'url' => array(
+                    'action' => 'view',
+                    'controller' => 'sshKeys',
+                ),
+            ),
+        ),
+        'help' => array(
+            'action' => 'user',
+        ),
     );
-    $sshkey = array(
-        'addkey' => array('icon' => 'plus-sign', 'text' => 'Add key', 'action' => 'add'),
-        'viewkeys' => array('icon' => 'minus-sign', 'text' => 'Edit keys', 'action' => 'view'),
-    );
-?>
-<ul class="well nav nav-list" style="padding: 8px 14px;">
-    <li class="nav-header">Your account</li>
-    
-    <? // Iterate over the sidebar options in $account
-    foreach ( $account as $feature => $options ): ?>
-    
-    <li<?= ($feature == $action) ? ' class="active"' : '' ?>>
-        <?=$this->Html->link(
-            '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
-                ' icon-' . $options['icon'] . '"></i> ' . 
-                ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
-            array('controller' => 'users', 'action' => $feature),
-            array('escape' => false)
-        )?>
-    </li>
-    
-    <? endforeach; ?>
-    
-    <li class="nav-header">SSH Keys</li>
-    
-    <? // Iterate over the sidebar options in $sshkey
-    foreach ( $sshkey as $feature => $options ): ?>
-    
-    <li<?= ($feature == $action) ? ' class="active"' : '' ?>>
-        <?=$this->Html->link(
-            '<i class="' . (($feature == $action) ? 'icon-white' : '') . 
-                ' icon-' . $options['icon'] . '"></i> ' . 
-                ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
-            array('controller' => 'sshKeys', 'action' => $options['action']),
-            array('escape' => false)
-        )?>
-    </li>
-    
-    <? endforeach; ?>
-    
-    <li class="divider"></li>
-    <li>
-        <?=$this->Html->link(
-            '<i class="icon-flag"></i> Help',
-            array('controller' => 'help', 'action' => 'user'),
-            array('escape' => false)
-        )?>
-    </li>
-</ul>
+
+    echo $this->element('generic_sidebar', array('options' => $options));

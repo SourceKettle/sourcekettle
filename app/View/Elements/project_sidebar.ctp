@@ -1,54 +1,74 @@
 <?php
-    $features = array(
-        'view' => array('icon' => 'home', 'text' => 'home'),
-        'time' => array('icon' => 'book'),
-        'source' => array('icon' => 'pencil'),
-        'tasks' => array('icon' => 'file'),
+
+/**
+ *
+ * Element for displaying the project sidebar for the DevTrack system
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ * 
+ * @copyright     DevTrack Development Team 2012
+ * @link          http://github.com/chrisbulmer/devtrack
+ * @package       DevTrack.View.Elements
+ * @since         DevTrack v 0.1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+    $options = array(
+        'Features' => array(
+            'Overview' => array(
+                'icon' => 'home',
+                'url' => array(
+                    'action' => 'view',
+                    'controller' => 'projects',
+                    'project' => $project,
+                ),
+            ),
+            'Time' => array(
+                'icon' => 'book',
+                'url' => array(
+                    'action' => 'time',
+                    'controller' => 'projects',
+                    'project' => $project,
+                ),
+            ),
+            'Source' => array(
+                'icon' => 'pencil',
+                'url' => array(
+                    'action' => 'source',
+                    'controller' => 'projects',
+                    'project' => $project,
+                ),
+            ),
+            'Tasks' => array(
+                'icon' => 'file',
+                'url' => array(
+                    'action' => 'tasks',
+                    'controller' => 'projects',
+                    'project' => $project,
+                ),
+            ),
+        ),
+        'Administration' => array(
+            'Collaborators' => array(
+                'icon' => 'user',
+                'url' => array(
+                    'action' => '.',
+                    'controller' => 'collaborators',
+                    'project' => $project,
+                ),
+            ),
+            'Settings' => array(
+                'icon' => 'cog',
+                'url' => array(
+                    'action' => 'edit',
+                    'controller' => 'projects',
+                    'project' => $project,
+                ),
+            ),
+        ),
+        'help' => array(
+            'action' => 'project',
+        ),
     );
-    $admin = array(
-        'collaborators' => array('icon' => 'user'),
-        'edit' => array('icon' => 'cog', 'text' => 'Settings'),
-    );
-?>
-<ul class="well nav nav-list" style="padding: 8px 14px;">
-    <li class="nav-header">Project Features</li>
-    
-    <? // Iterate over the sidebar options in $features
-    foreach ( $features as $feature => $options ): ?>
-    
-    <li<?= ($feature == $action) ? ' class="active"' : '' ?>>
-        <?=$this->Html->link(
-            $this->Bootstrap->icon($options['icon'], (($feature == $action) ? 'white' : 'black')).' '. 
-                ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
-            array('controller' => 'projects', 'action' => $feature, 'project' => $project),
-            array('escape' => false)
-        )?>
-    </li>
-    
-    <? endforeach; ?>
-    
-    <li class="nav-header">Administration</li>
-    
-    <? // Iterate over the sidebar options in $admin
-    foreach ( $admin as $feature => $options ): ?>
-    
-    <li<?= ($feature == $action) ? ' class="active"' : '' ?>>
-        <?=$this->Html->link(
-            $this->Bootstrap->icon($options['icon'], (($feature == $action) ? 'white' : 'black')).' '. 
-                ((isset($options['text']) ? ucwords($options['text']) : ucwords($feature))),
-            array('controller' => 'projects', 'action' => $feature, 'project' => $project),
-            array('escape' => false)
-        )?>
-    </li>
-    
-    <? endforeach; ?>
-    
-    <li class="divider"></li>
-    <li>
-        <?=$this->Html->link(
-            $this->Bootstrap->icon('flag').' Help',
-            array('controller' => 'help', 'action' => 'project'),
-            array('escape' => false)
-        )?>
-    </li>
-</ul>
+
+    echo $this->element('generic_sidebar', array('options' => $options));
