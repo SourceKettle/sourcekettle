@@ -19,13 +19,38 @@ App::uses('AppController', 'Controller');
 class SettingsController extends AppController {
 
     /**
-     * index method
+     * admin_index method
      *
      * @return void
      */
     public function admin_index() {
         $this->Setting->recursive = 0;
-        $this->set('settings', $this->paginate());
+        $this->set('register', $this->Setting->field('value', array('name' => 'register_enabled')));
+    }
+
+    /**
+     * admin_edit method
+     *
+     * @return void
+     */
+    public function admin_edit($change = null) {
+        foreach ( json_decode($change, true) as $key => $value ) {
+
+            if ( !($setting_id = $this->Setting->field('id', array('name' => $key))) ) {
+                $this->log("ERROR: [SettingsController.admin_edit] user[".$this->Auth->user('id')."] tried to set setting[".$key."] which does not exist", 'devtrack');
+            }
+            $data = array();
+            $data['Setting']['id'] = $setting_id;
+            $data['Setting']['value'] = $value;
+
+            if ($this->Setting->save($data)) {
+                $this->Session->setFlash(__('Setting "'.$key.'" updated'), 'default', array(), 'success');
+                $this->log("[SettingsController.admin_edit] user[".$this->Auth->user('id')."] changed setting[".$key."] to value \"".$value."\"", 'devtrack');
+            } else {
+                $this->Session->setFlash(__('Setting "'.$key.'" could not be saved. Please, try again.'), 'default', array(), 'error');
+            }
+        }
+        $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
     }
 
 }
