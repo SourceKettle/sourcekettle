@@ -73,17 +73,13 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function admin_view($name = null) {
-        if ($name == null) {
-            throw new NotFoundException(__('Invalid project'));
-        } else {
+        // Check for valid project name
+        $project = $this->Project->getProject($name);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
-            $project = $this->Project->getProject($name);
-            if (empty($project)) {
-                throw new NotFoundException(__('Invalid project'));
-            } else {
-                $this->set('project', $project);
-            }
-        }
+        $this->Project->recursive = 2;
+        $this->Project->id = $project['Project']['id'];
+        $this->request->data = $this->Project->read();
     }
 
     /**
