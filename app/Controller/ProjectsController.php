@@ -233,22 +233,21 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function admin_delete($name = null) {
-        $project = $this->RouteByName->getProject($name);
-        $id = $project['Project']['id'];
+        $project = $this->Project->getProject($name);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
-        }
-        $this->Project->id = $id;
-        if (!$this->Project->exists()) {
-            throw new NotFoundException(__('Invalid project'));
-        }
+        $this->Project->id = $project['Project']['id'];
+
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+
+        if (!$this->Project->exists()) throw new NotFoundException(__('Invalid project'));
+
         if ($this->Project->delete()) {
             $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
-            $this->redirect(array('action' => 'index'));
+            $this->redirect(array('action' => 'admin_index'));
         }
         $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
-        $this->redirect(array('action' => 'index'));
+        $this->redirect(array('action' => 'admin_index'));
     }
 
 }
