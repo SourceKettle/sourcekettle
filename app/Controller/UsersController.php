@@ -16,12 +16,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppController', 'Controller');
-App::uses('CakeEmail', 'Network/Email');
-
 
 class UsersController extends AppController {
 
     public $helpers = array('Time');
+    public $components = array('Email');
 
     public $uses = array('User', 'Setting');
 
@@ -36,8 +35,7 @@ class UsersController extends AppController {
     public function register() {
         $this->set('title_for_layout', 'Register');
         //Check if registration is allowed by the user
-        $enabled = $this->Setting->find('first', array('conditions' => array('name' => 'register_enabled')));
-        if ($enabled['Setting']['value']) {
+        if ($this->Setting->field('value', array('name' => 'register_enabled'))) {
             //Registration part
             if ($this->request->is('post')) {
                 //if data was posted therefore a submitted form
@@ -60,30 +58,19 @@ class UsersController extends AppController {
                             }
 
                             //Now to create the key and send the email
-
-                            $key = $this->generate_key(20);
-                            $data = array('EmailConfirmationKey');
-                            $data['EmailConfirmationKey']['user_id'] = $id;
-                            $data['EmailConfirmationKey']['key'] = $key;
-                            $this->User->EmailConfirmationKey->save($data);
-
-                            $link = Router::url('/activate/' . $key, true);
-
-                            $message = "Dear " . $this->data['User']['name'] . " ,\n\nThank you for registering with DevTrack. In order to use your account, we require you to activate your account using the link below.\n\n" . $link . "\n\nWe hope you enjoy using DevTrack";
-
-                            $email = new CakeEmail();
-                            $email->config('default');
-                            $email->to($this->data['User']['email']);
-                            $email->subject('DevTrack activation');
-                            $email->send($message);
-                            if ( Configure::read('debug') > 1 ) echo($message);
-
+                            $this->User->EmailConfirmationKey->save(
+                                array('EmailConfirmationKey' => array(
+                                    'user_id' => $id,
+                                    'key' => $this->_generate_key(20),
+                                ))
+                            );
+                            $this->_sendNewUserMail($id);
                             $this->render('email_sent');
                         } else {
                             $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
                         }
                     } else {
-                        $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>I see what you did there. '" . $this->data['User']['password'] . "' is not a good password. Try a different one."), 'default', array(), 'error');
+                        $this->Session->setFlash(__("<h4 class='alert-heading'>Oh Dear...</h4>I see what you did there. 'password' is not a good password. Be more original!"), 'default', array(), 'error');
                     }
                 } else {
                     $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The passwords do not match. Please try again."), 'default', array(), 'error');
@@ -100,27 +87,6 @@ class UsersController extends AppController {
      */
     public function api_register() {
 
-    }
-
-    /**
-     * Generates a random key of a given length
-     * @param type $length The length of the key
-     * @return string The random key
-     */
-    private function generate_key($length) {
-        $key = "";
-        $i = 0;
-        $possible = "0123456789abcdfghjkmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-        while ($i < $length) {
-            $char = substr($possible, mt_rand(0, strlen($possible) - 1), 1);
-
-            if (!strstr($key, $char)) {
-                $key .= $char;
-                $i++;
-            }
-        }
-        return $key;
     }
 
     /**
@@ -164,33 +130,18 @@ class UsersController extends AppController {
             //generate random password and email it to them
             $user = $this->User->findByEmail($this->request->data['User']['email']); //Get the user attached to the given email
 
-            if (empty($user)){
-                // Just pretend to send the user an email
-                $this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
-            } else {
-                //Create a lost password key object
-                $this->User->LostPasswordKey->create();
-                $data['LostPasswordKey'] = array();
-                $data['LostPasswordKey']['user_id'] = $user['User']['id'];
-                $data['LostPasswordKey']['key'] = $this->generate_key(25);
-                $this->User->LostPasswordKey->save($data);
-
-                //Create the message
-                $message = "Dear " . $user['User']['name'] . ",\n\n";
-                $message .= "A request to reset your password was made, if this was by you then please click the link below within the next 30 minutes.\n\n";
-                $message .= Router::url('/users/reset_password/' . $data['LostPasswordKey']['key'], true);
-                $message .= "\n\nIf this request was not made by you then please ignore this email and the key will expire shortly.\n\n";
-
-                //Send the email
-                $email = new CakeEmail();
-                $email->config('default');
-                $email->to($user['User']['email']);
-                $email->subject('DevTrack password reset');
-                $email->send($message);
+            if (!empty($user)){
+                //Now to create the key and send the email
+                $this->User->LostPasswordKey->save(
+                    array('LostPasswordKey' => array(
+                        'user_id' => $user['User']['id'],
+                        'key' => $this->_generate_key(25),
+                    ))
+                );
+                $this->_sendForgottenPasswordMail($user['User']['id'], $this->User->LostPasswordKey->getLastInsertID());
                 $this->log("[UsersController.lost_password] lost password email sent to user[".$user['User']['id']."]", 'devtrack');
-
-                if ( Configure::read('debug') > 1 ) echo($message); //TODO remove this line when emailing enabled
             }
+            $this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
             $this->redirect('/login');
         } else if($this->request->is('get')){
             //display the form or act on the link
@@ -252,19 +203,18 @@ class UsersController extends AppController {
     }
 
     /**
-     * Allows users to view their profile
-     */
-    public function index() {
-        $this->redirect('editdetails');
-    }
-
-
-    /**
      * Allows admins to see all users
      */
     public function admin_index() {
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
+    }
+
+    /**
+     * Allows users to view their profile
+     */
+    public function index() {
+        $this->redirect('editdetails');
     }
 
     /**
@@ -280,6 +230,55 @@ class UsersController extends AppController {
         $this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
         $this->request->data = $this->User->read();
         $this->request->data['User']['password'] = null;
+    }
+
+    /**
+     * Function for viewing a user's public page
+     * @param type $id The id of the user to view
+     */
+    public function view($id = null){
+        $this->User->id = $id;
+
+        if (!$this->User->exists()) throw new NotFoundException(__('Invalid user'));
+
+        //Find the users public projects or public projects they are working on
+        $this->User->Collaborator->Project->Collaborator->recursive = 0;
+        $this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $this->Auth->user('id'), 'public' => true))));
+        $this->set('user', $this->User->read(null, $id));
+    }
+
+    /**
+     * Create a new user
+     */
+    public function add() {
+        $this->redirect('register');
+    }
+
+    /**
+     * Create a new user
+     */
+    public function admin_add() {
+        if ($this->request->is('post')) { // if data was posted therefore a submitted form
+            $this->User->create();
+            if ($this->User->save($this->request->data['User'])) {
+                $id = $this->User->getLastInsertID();
+                $this->log("[UsersController.admin_add] user[${id}] created by user[".$this->Auth->user('id')."]", 'devtrack');
+
+                //Now to create the key and send the email
+                $this->User->EmailConfirmationKey->save(
+                    array('EmailConfirmationKey' => array(
+                        'user_id' => $id,
+                        'key' => $this->_generate_key(20),
+                    ))
+                );
+                $this->_sendAdminCreatedUserMail($id, $this->User->LostPasswordKey->getLastInsertID());
+                $this->Session->setFlash(__('New User added successfully.'), 'default', array(), 'success');
+                $this->log("[UsersController.admin_add] user[".$id."] added by user[".$this->Auth->user('id')."]", 'devtrack');
+                $this->redirect(array('action' => 'view', $id));
+            } else {
+                $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+            }
+        }
     }
 
     /**
@@ -394,18 +393,124 @@ class UsersController extends AppController {
     }
 
     /**
-     * Function for viewing a user's public page
-     * @param type $id The id of the user to view
+     * Generates a random key of a given length
+     * @param type $length The length of the key
+     * @return string The random key
      */
-    public function view($id = null){
-        $this->helpers[] = 'Time'; //load time helper
-        $this->User->id = $id;
-        if (!$this->User->exists()) {
-            throw new NotFoundException(__('Invalid user'));
+    private function _generate_key($length) {
+        $key = "";
+        $i = 0;
+        $possible = "0123456789abcdfghjkmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        while ($i < $length) {
+            $char = substr($possible, mt_rand(0, strlen($possible) - 1), 1);
+
+            if (!strstr($key, $char)) {
+                $key .= $char;
+                $i++;
+            }
         }
-        //Find the users public projects or public projects they are working on
-        $this->User->Collaborator->Project->Collaborator->recursive = 0;
-        $this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $this->Auth->user('id'), 'public' => true))));
-        $this->set('user', $this->User->read(null, $id));
+        return $key;
+    }
+
+    /*
+     * _sendNewUserMail
+     * Send a user a registration email
+     *
+     * @param $id int the id of the user to email
+     */
+    private function _sendNewUserMail($id) {
+        // No sending emails in debug mode
+        if ( Configure::read('debug') > 1 ) {
+            $this->Email->delivery = 'debug';
+        }
+        $User = $this->User->read(null,$id);
+        $Addr = $this->Setting->field('value', array('name' => 'sysadmin_email'));
+        $Key  = $this->User->EmailConfirmationKey->field('key', array('user_id' => $id));
+
+        $this->Email->to = $User['User']['email'];
+        $this->Email->bcc = array('secret@example.com');
+        $this->Email->subject = 'Welcome to DevTrack - Account activation';
+        $this->Email->replyTo = $Addr;
+        $this->Email->from = 'DevTrack Admin <'.$Addr.'>';
+        $this->Email->template = 'email_activation';
+
+        $this->Email->sendAs = 'text'; // because we hate to send pretty mail
+
+        //Set view variables as normal
+        $this->set('User', $User);
+        $this->set('Key', $Key);
+        if ($this->Email->send()) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * _sendForgottenPasswordMail
+     * Send a user a forgotten password email
+     *
+     * @param $id int the id of the user to email
+     * @param $key int the id of the key to send
+     */
+    private function _sendForgottenPasswordMail($id, $key) {
+        // No sending emails in debug mode
+        if ( Configure::read('debug') > 1 ) {
+            $this->Email->delivery = 'debug';
+        }
+        $User = $this->User->read(null,$id);
+        $Key  = $this->User->LostPasswordKey->read(null,$id);
+        $Addr = $this->Setting->field('value', array('name' => 'sysadmin_email'));
+
+        $this->Email->to = $User['User']['email'];
+        //$this->Email->bcc = array('secret@example.com');
+        $this->Email->subject = 'DevTrack - Forgotten Password';
+        $this->Email->replyTo = $Addr;
+        $this->Email->from = 'DevTrack Admin <'.$Addr.'>';
+        $this->Email->template = 'email_forgotten_password';
+
+        $this->Email->sendAs = 'text'; // because we hate to send pretty mail
+
+        //Set view variables as normal
+        $this->set('User', $User);
+        $this->set('Key', $Key);
+        if ($this->Email->send()) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * _sendAdminCreatedUserMail
+     * Send a user a email saying an account has been created
+     *
+     * @param $id int the id of the user to email
+     * @param $key int the id of the key to send
+     */
+    private function _sendAdminCreatedUserMail($id, $key) {
+        // No sending emails in debug mode
+        if ( Configure::read('debug') > 1 ) {
+            $this->Email->delivery = 'debug';
+        }
+        $User = $this->User->read(null,$id);
+        $Key  = $this->User->LostPasswordKey->read(null,$id);
+        $Addr = $this->Setting->field('value', array('name' => 'sysadmin_email'));
+
+        $this->Email->to = $User['User']['email'];
+        //$this->Email->bcc = array('secret@example.com');
+        $this->Email->subject = 'Welcome to DevTrack - Suprise!';
+        $this->Email->replyTo = $Addr;
+        $this->Email->from = 'DevTrack Admin <'.$Addr.'>';
+        $this->Email->template = 'email_admin_create';
+
+        $this->Email->sendAs = 'text'; // because we hate to send pretty mail
+
+        //Set view variables as normal
+        $this->set('User', $User);
+        $this->set('Key', $Key);
+        if ($this->Email->send()) {
+            return true;
+        }
+        return false;
     }
 }
