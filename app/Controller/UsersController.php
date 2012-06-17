@@ -228,7 +228,7 @@ class UsersController extends AppController {
 
                 App::uses('CakeTime', 'Utility');
                 $keytime = CakeTime::toUnix($passwordkey['LostPasswordKey']['created']);
-                if ($keytime + 1800 <= time()){
+                if ($keytime + 1800 >= time()){
                     if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']){ //if the passwords match
                         $this->User->id = $passwordkey['User']['id'];
                         if ($this->User->save($this->request->data)){
