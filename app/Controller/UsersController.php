@@ -21,6 +21,8 @@ App::uses('CakeEmail', 'Network/Email');
 
 class UsersController extends AppController {
 
+    public $helpers = array('Time');
+
     public $uses = array('User', 'Setting');
 
     public function beforeFilter() {
@@ -271,10 +273,33 @@ class UsersController extends AppController {
      */
     public function admin_view($id = null) {
         $this->User->id = $id;
-        if (!$this->User->exists()) {
-            throw new NotFoundException(__('Invalid user'));
+
+        if (!$this->User->exists()) throw new NotFoundException(__('Invalid user'));
+
+        //Find the users projects they are working on
+        $this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
+        $this->request->data = $this->User->read();
+        $this->request->data['User']['password'] = null;
+    }
+
+    /**
+     * Edit the name and the email address of a user
+     * @param type $id The id of the user to edit
+     */
+    public function admin_edit($id = null){
+        $this->User->id = $id;
+
+        if (!$this->User->exists()) throw new NotFoundException(__('Invalid user'));
+
+        if ($this->request->is('post')){
+            if ($this->User->save($this->request->data)){
+                $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+                $this->log("[UsersController.admin_edit] user[".$this->Auth->user('id')."] edited details of user[".$this->User->id."]", 'devtrack');
+            } else {
+                $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
+            }
         }
-        $this->set('user', $this->User->read(null, $id));
+        $this->redirect(array('controller' => 'users', 'action' => 'admin_view', $this->User->id));
     }
 
     /**
