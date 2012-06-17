@@ -32,7 +32,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                 <? foreach ( $projects as $project ) : ?>
                     <tr>
                         <td>
-                            <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['id']))?>
+                            <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['id']))?> - <?= $project['Project']['description'] ?>
                         </td>
                         <td>
                         <?php
