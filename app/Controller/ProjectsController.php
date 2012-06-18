@@ -181,7 +181,7 @@ class ProjectsController extends AppController {
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Project->save($this->request->data)) {
                 $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
-                $this->redirect(array('action' => 'index'));
+                $this->redirect(array('action' => 'admin_view', $this->Project->id));
             } else {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }

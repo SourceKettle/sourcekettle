@@ -189,4 +189,28 @@ class CollaboratorsController extends AppController {
         }
         $this->redirect(array('project' => $name, 'action' => '.'));
     }
+
+    /**
+     * admin_delete method
+     *
+     * @param string $name project name
+     * @param string $id
+     * @return void
+     */
+    public function admin_delete($id = null) {
+        if (!$this->request->is('post')) {
+            throw new MethodNotAllowedException();
+        }
+        $this->Collaborator->id = $id;
+        $project_id = $this->Collaborator->field('project_id', array('id' => $this->Collaborator->id));
+        if (!$this->Collaborator->exists()) {
+            throw new NotFoundException(__('Invalid collaborator'));
+        }
+        if ($this->Collaborator->delete()) {
+            $this->Session->setFlash(__('Collaborator deleted', 'default', array(), 'success'));
+        } else {
+            $this->Session->setFlash(__('Collaborator was not deleted', 'default', array(), 'error'));
+        }
+        $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $project_id));
+    }
 }

@@ -90,7 +90,7 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                             <?php
                                 echo $this->Bootstrap->button_form(
                                     $this->Bootstrap->icon('eject', 'white'),
-                                    $this->Html->url(array('controller' => 'collaborator', 'action' => 'admin_delete', $c['id']), true),
+                                    $this->Html->url(array('controller' => 'collaborators', 'action' => 'admin_delete', $c['id']), true),
                                     array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => 'pull-right'),
                                     "Are you sure you want to remove " . $c['User']['name'] . "?"
                                 );
