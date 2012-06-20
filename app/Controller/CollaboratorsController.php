@@ -100,6 +100,18 @@ class CollaboratorsController extends AppController {
     }
 
     /**
+     * admin_makeadmin
+     * Allows admin to premote a user to an admin of
+     * a project
+     *
+     * @param string $id collaborator to change
+     * @return void
+     */
+    public function admin_makeadmin($id = null) {
+        $this->_admin_changepermissionlevel($id, 2);
+    }
+
+    /**
      * makeuser
      * Allows users to premote a user to a regular user
      *
@@ -112,6 +124,18 @@ class CollaboratorsController extends AppController {
     }
 
     /**
+     * admin_makeuser
+     * Allows admin to premote a user to a regular user
+     *
+     * @param string $name project name
+     * @param string $id user to change
+     * @return void
+     */
+    public function admin_makeuser($id = null) {
+        $this->_admin_changepermissionlevel($id, 1);
+    }
+
+    /**
      * makeguest
      * Allows users to premote a user to an observer
      *
@@ -121,6 +145,18 @@ class CollaboratorsController extends AppController {
      */
     public function makeguest($name = null, $id = null) {
         $this->changepermissionlevel($name, $id, 0);
+    }
+
+    /**
+     * admin_makeguest
+     * Allows admin to premote a user to an observer
+     *
+     * @param string $name project name
+     * @param string $id user to change
+     * @return void
+     */
+    public function admin_makeguest($id = null) {
+        $this->_admin_changepermissionlevel($id, 0);
     }
 
     /**
@@ -146,25 +182,52 @@ class CollaboratorsController extends AppController {
         if (!$this->Collaborator->exists()) {
             $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
         } else {
+            $collaborator = $this->Collaborator->read();
+
             // Find additional details for the user being changed - only needed for flash message
             $user_name = $this->Collaborator->User->field('name', array('User.id' => $id));
 
-            // Create new details to paste over existing ones
-            $newuser = array( 'Collaborator' => array(
-                'id' => $this->Collaborator->id,
-                'project_id' => $project['Project']['id'],
-                'user_id' => $id,
-                'access_level' => $newaccesslevel,
-            ));
+            $this->Collaborator->set('access_level', $newaccesslevel);
 
             // Save the changes to the user
-            if ($this->Collaborator->save($newuser)) {
+            if ($this->Collaborator->save(null, true, array('access_level'))) {
                 $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'", 'default', array(), 'success'));
             } else {
                 $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again.", 'default', array(), 'error'));
             }
         }
         $this->redirect(array('project' => $name, 'action' => '.'));
+    }
+
+    /**
+     * admin_changepermissionlevel
+     *
+     * @param string $id collaborator to change
+     * @param string $newaccesslevel new access level to assign
+     * @return void
+     */
+    private function _admin_changepermissionlevel($id = null, $newaccesslevel = 0){
+        // Check for existant collaborator for the user and this project
+        $this->Collaborator->id = $id;
+
+        if (!$this->Collaborator->exists()) {
+            $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
+        } else {
+            $collaborator = $this->Collaborator->read();
+
+            // Find additional details for the user being changed - only needed for flash message
+            $user_name = $this->Collaborator->User->field('name', array('User.id' => $collaborator['Collaborator']['user_id']));
+
+            $this->Collaborator->set('access_level', $newaccesslevel);
+
+            // Save the changes to the user
+            if ($this->Collaborator->save(null, true, array('access_level'))) {
+                $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'", 'default', array(), 'success'));
+            } else {
+                $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again.", 'default', array(), 'error'));
+            }
+        }
+        $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $collaborator['Collaborator']['project_id']));
     }
 
     /**
