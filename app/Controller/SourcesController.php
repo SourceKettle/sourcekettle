@@ -25,7 +25,7 @@ class SourcesController extends AppController {
         $files = $repo->run('ls-files --cached');
         $pattern = '/^'.$folder.'/';
 
-        return = preg_grep($pattern, explode("\n", $files));
+        return preg_grep($pattern, explode("\n", $files));
     }
 
     private function _RepoForProject($name = null) {
