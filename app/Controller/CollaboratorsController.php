@@ -52,6 +52,8 @@ class CollaboratorsController extends AppController {
      * @return void
      */
     public function add($name = null) {
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+
         // Check for existant project
         $project = $this->Collaborator->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
