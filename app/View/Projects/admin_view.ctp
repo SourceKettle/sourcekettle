@@ -68,8 +68,23 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                     <dt>Updated</dt><dd><?= $this->Time->timeAgoInWords($this->request->data['Project']['modified']) ?></dd>
 
                     <dt>Type</dt><dd><?= $this->request->data['RepoType']['name'] ?></dd>
-
                 </dl>
+            </div>
+            <div class="span5 well">
+                <h3>Add a user</h3>
+                <?php echo $this->Form->create('Collaborator', array('url' => array('action' => 'admin_add'), 'class' => 'form-inline')); ?>
+                <?php
+
+                echo $this->Bootstrap->basic_input("name", array(
+                    "input" => $this->Form->text("name", array('class' => 'input-large', "placeholder" => "john.smith@example.com", "data-provide" => "typeahead")),
+                    "label" => false,
+                ));
+                echo $this->Form->hidden('Project.id');
+
+                echo " ".$this->Bootstrap->button($this->Bootstrap->icon('plus', 'white')." Add", array('escape' => false, 'style' => 'success', 'size' => 'mini'));
+
+                echo $this->Form->end(); ?>
+
                 <? foreach ( $details as $level => $detail ) : ?>
                 <h3>Project <?= $detail['text'] ?>s</h3>
                 <table class="table table-striped">
@@ -84,7 +99,7 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                             <?php
                                 echo $this->Bootstrap->button_form(
                                     $this->Bootstrap->icon('eject', 'white'),
-                                    $this->Html->url(array('controller' => 'collaborator', 'action' => 'admin_delete', $c['id']), true),
+                                    $this->Html->url(array('controller' => 'collaborators', 'action' => 'admin_delete', $c['id']), true),
                                     array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => 'pull-right'),
                                     "Are you sure you want to remove " . $c['User']['name'] . "?"
                                 );

@@ -90,6 +90,42 @@ class CollaboratorsController extends AppController {
     }
 
     /**
+     * admin_add method
+     *
+     * @return void
+     */
+    public function admin_add() {
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+
+        // Check for existant project
+        $project = $this->Collaborator->Project->getProject($this->request->data['Project']['id']);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
+        // Check for existant user
+        $this->Collaborator->User->recursive = -1;
+        $user = $this->Collaborator->User->findByEmail($this->request->data['Collaborator']['name'], array('User.id', 'User.name'));
+
+        if ( empty($user) ) {
+            $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
+        } else {
+            // Create details to attach user to this project
+            unset($this->request->data['Collaborator']['name']);
+            $this->request->data['Collaborator']['project_id'] = $project['Project']['id'];
+            $this->request->data['Collaborator']['user_id'] = $user['User']['id'];
+            $this->request->data['Collaborator']['access_level'] = 1;
+
+            // Save the new collaborator
+            $this->Collaborator->create();
+            if ($this->Collaborator->save($this->request->data, true, array('project_id', 'user_id', 'access_level'))) {
+                $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project', 'default', array(), 'success'));
+            } else {
+                $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.', 'default', array(), 'error'));
+            }
+        }
+        $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $project['Project']['id']));
+    }
+
+    /**
      * makeadmin
      * Allows users to premote a user to an admin
      *
