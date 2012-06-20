@@ -62,28 +62,26 @@ class CollaboratorsController extends AppController {
         $this->Collaborator->Project->id = $project['Project']['id'];
         if ( !$this->Collaborator->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
 
-        if ($this->request->is('post')) {
-            // Check for existant user
-            $this->Collaborator->User->recursive = -1;
-            $user = $this->Collaborator->User->findByEmail($this->request->data['Collaborator']['name'], array('User.id', 'User.name'));
+        // Check for existant user
+        $this->Collaborator->User->recursive = -1;
+        $user = $this->Collaborator->User->findByEmail($this->request->data['Collaborator']['name'], array('User.id', 'User.name'));
 
-            if ( empty($user) ) {
-                $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
+        if ( empty($user) ) {
+            $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
+        } else {
+
+            // Create details to attach user to this project
+            unset($this->request->data['Collaborator']['name']);
+            $this->request->data['Collaborator']['project_id'] = $project['Project']['id'];
+            $this->request->data['Collaborator']['user_id'] = $user['User']['id'];
+            $this->request->data['Collaborator']['access_level'] = 1;
+
+            // Save the new collaborator
+            $this->Collaborator->create();
+            if ($this->Collaborator->save($this->request->data)) {
+                $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project', 'default', array(), 'success'));
             } else {
-
-                // Create details to attach user to this project
-                unset($this->request->data['Collaborator']['name']);
-                $this->request->data['Collaborator']['project_id'] = $project['Project']['id'];
-                $this->request->data['Collaborator']['user_id'] = $user['User']['id'];
-                $this->request->data['Collaborator']['access_level'] = 1;
-
-                // Save the new collaborator
-                $this->Collaborator->create();
-                if ($this->Collaborator->save($this->request->data)) {
-                    $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project', 'default', array(), 'success'));
-                } else {
-                    $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.', 'default', array(), 'error'));
-                }
+                $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.', 'default', array(), 'error'));
             }
         }
         $this->redirect(array('project' => $name, 'action' => '.'));
