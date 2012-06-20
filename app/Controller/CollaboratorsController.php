@@ -238,13 +238,19 @@ class CollaboratorsController extends AppController {
      * @return void
      */
     public function delete($name = null, $id = null) {
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
-        }
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+
+        // Check for existant project
+        $project = $this->Collaborator->Project->getProject($name);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
         $this->Collaborator->id = $id;
-        if (!$this->Collaborator->exists()) {
-            throw new NotFoundException(__('Invalid collaborator'));
-        }
+        if (!$this->Collaborator->exists()) throw new NotFoundException(__('Invalid collaborator'));
+
+        // Lock out those who arnt admins
+        $this->Collaborator->Project->id = $project['Project']['id'];
+        if ( !$this->Collaborator->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
+
         if ($this->Collaborator->delete()) {
             $this->Session->setFlash(__('Collaborator deleted', 'default', array(), 'success'));
         } else {
