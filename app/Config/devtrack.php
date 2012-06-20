@@ -6,7 +6,7 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.Config
@@ -17,8 +17,7 @@
  // Tool name
  // value will be string that will be shown across the system in place of 'DevTrack'
  $config['devtrack']['global']['alias'] = 'DevTrack';
- 
- // Registration
- // set to true to allow new users to register with the system
- // set to false to prevent any new users
- $config['devtrack']['login']['registration'] = true;
+
+ // Repository folder
+ // set to folder where you would like repositories placed
+ $config['devtrack']['repo']['base'] = '/path/to/repos';
