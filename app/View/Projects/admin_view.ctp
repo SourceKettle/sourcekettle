@@ -13,6 +13,23 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$details = array(
+    '2' => array(
+        'icon' => 'wrench',
+        'text' => 'Admin',
+        'action' => 'admin_makeadmin',
+    ),
+    '1' => array(
+        'icon' => 'user',
+        'text' => 'User',
+        'action' => 'admin_makeuser',
+    ),
+    '0' => array(
+        'icon' => 'search',
+        'text' => 'Guest',
+        'action' => 'admin_makeguest',
+    ),
+);
 
 echo $this->Bootstrap->page_header('Administration <small>what does this bit do</small>'); ?>
 
@@ -53,11 +70,12 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                     <dt>Type</dt><dd><?= $this->request->data['RepoType']['name'] ?></dd>
 
                 </dl>
-                <h3>Project Admins</h3>
+                <? foreach ( $details as $level => $detail ) : ?>
+                <h3>Project <?= $detail['text'] ?>s</h3>
                 <table class="table table-striped">
                     <tbody>
                     <? foreach ( $this->request->data['Collaborator'] as $c ) : ?>
-                        <? if ( $c['access_level'] == 2 ) : ?>
+                        <? if ( $c['access_level'] == $level ) : ?>
                         <tr>
                             <td>
                                 <?= $this->Html->link($c['User']['name'], array('controllers' => 'users', 'action' => 'admin_view', $c['User']['id'])) ?>
@@ -70,6 +88,23 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                                     array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => 'pull-right'),
                                     "Are you sure you want to remove " . $c['User']['name'] . "?"
                                 );
+                                echo $this->Bootstrap->button_dropdown($this->Bootstrap->icon($details[$c['access_level']]['icon'], 'white'), array(
+                                    "style" => "primary",
+                                    "size" => "mini",
+                                    'class' => 'pull-right',
+                                    "links" => array(
+                                        $this->Html->link($this->Bootstrap->icon($details[2]['icon'])." Make an ".$details[2]['text'],
+                                                array('controller' => 'collaborators', 'action' => $details[2]['action'], $c['id']),
+                                                array('escape' => false)),
+                                        $this->Html->link($this->Bootstrap->icon($details[1]['icon'])." Make a " .$details[1]['text'],
+                                                array('controller' => 'collaborators', 'action' => $details[1]['action'], $c['id']),
+                                                array('escape' => false)),
+                                        null,
+                                        $this->Html->link($this->Bootstrap->icon($details[0]['icon'])." Make a " .$details[0]['text'],
+                                                array('controller' => 'collaborators', 'action' => $details[0]['action'], $c['id']),
+                                                array('escape' => false)),
+                                    )
+                                ));
                             ?>
                             </td>
                         </tr>
@@ -77,31 +112,9 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                     <? endforeach; ?>
                     </tbody>
                 </table>
-                <h3>Project Members</h3>
-                    <table class="table table-striped">
-                    <tbody>
-                    <? foreach ( $this->request->data['Collaborator'] as $c ) : ?>
-                        <? if ( $c['access_level'] < 2 ) : ?>
-                        <tr>
-                            <td>
-                                <?= $this->Html->link($c['User']['name'], array('controllers' => 'users', 'action' => 'admin_view', $c['User']['id'])) ?>
-                            </td>
-                            <td>
-                            <?php
-                                echo $this->Bootstrap->button_form(
-                                    $this->Bootstrap->icon('eject', 'white'),
-                                    $this->Html->url(array('controller' => 'collaborators', 'action' => 'admin_delete', $c['id']), true),
-                                    array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => 'pull-right'),
-                                    "Are you sure you want to remove " . $c['User']['name'] . "?"
-                                );
-                            ?>
-                            </td>
-                        </tr>
-                        <? endif; ?>
-                    <? endforeach; ?>
-                    </tbody>
-                </table>
+                <? endforeach; ?>
             </div>
         </div>
     </div>
 </div>
+<style type="text/css">.btn-group {float: right; margin-right: 10px;}</style>
