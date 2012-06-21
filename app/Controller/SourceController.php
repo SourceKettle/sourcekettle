@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Sources controller for the DevTrack system
+ * Source controller for the DevTrack system
  * Provides access to the code behind projects
  *
  * Licensed under The MIT License
@@ -17,48 +17,24 @@
 App::uses('AppController', 'Controller');
 App::import("Vendor", "Git", array("file"=>"Git/Git.php"));
 
-class SourcesController extends AppController {
+class SourceController extends AppController {
 
-    private function _ls($name = null, $folder = '') {
-        $repo = $this->_RepoForProject($name);
-
-        $files = $repo->run('ls-files --cached');
-        $pattern = '/^'.$folder.'/';
-
-        return preg_grep($pattern, explode("\n", $files));
-    }
-
-    private function _RepoForProject($name = null) {
-        $base = $this->devtrack_config['repo']['base'];
-        if ($base[strlen($base)-1] != '/') {
-            $base .= '/';
-        }
-
-        // Check for existant project
+    public function index($name = null, $folder = null) {
+         // Check for existant project
         $project = $this->Source->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
-        $base .= $project['Project']['name'];
-
-        try {
-            $repo = Git::open($base);
-        } catch (Exception $e) {
-            $repo = $this->_createRepo($base);
-        }
-        if (! Git::is_repo($repo)) {
-            throw new Exception('Something has gone wrong with repo collection');
-        }
-        return $repo;
+        $this->set("project", $project);
+        $this->set("source_files", $this->_ls($name, $folder));
     }
 
-    private function _createRepo($base = null) {
-        if ($base == null) return null;
+    private function _ls($name = null, $folder = '') {
+        $repo = $this->Source->RepoForProject($name);
 
-        if (!file_exists($base)) {
-            mkdir($base, 0777);
-        }
+        $files = $repo->run('ls-tree HEAD');
+        $pattern = '/^'.$folder.'/';
 
-        return Git::create($base);
+        return preg_grep($pattern, explode("\n", $files));
     }
 
 }
