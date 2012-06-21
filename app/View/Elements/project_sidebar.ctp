@@ -34,8 +34,8 @@
             'Source' => array(
                 'icon' => 'pencil',
                 'url' => array(
-                    'action' => 'source',
-                    'controller' => 'projects',
+                    'action' => '.',
+                    'controller' => 'source',
                     'project' => $project,
                 ),
             ),
