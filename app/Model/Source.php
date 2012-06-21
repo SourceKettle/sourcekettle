@@ -92,7 +92,6 @@ class Source extends AppModel {
         if ($base == null) return null;
 
         if (!file_exists($base)) {
-            var_dump($base);die;
             mkdir($base, 0777);
         }
 
