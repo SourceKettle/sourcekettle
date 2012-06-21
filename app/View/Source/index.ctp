@@ -30,7 +30,16 @@ echo $this->Bootstrap->page_header($pname . $smallText);?>
                 <table class="table table-striped">
                 <? foreach ($source_files as $source_file) : ?>
                 <tr>
-                    <td><?= $this->Html->link($source_file, array('action' => 'tree', $source_file)) ?></td>
+                    <td>
+                    <?php
+                    $source_file['url']['project'] = $project['Project']['name'];
+                    $source_file['url']['action'] = 'index';
+                    echo $this->Html->link(
+                        $source_file['name'], 
+                        $source_file['url'], 
+                        array('escape' => false)
+                    ); 
+                    ?></td>
                 </tr>
                 <? endforeach; ?>
                 </table>
