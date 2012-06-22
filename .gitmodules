@@ -7,3 +7,9 @@
 [submodule "app/Vendor/Git"]
 	path = app/Vendor/Git
 	url = git://github.com/kbjr/Git.php.git
+[submodule "app/Plugin/Geshi"]
+	path = app/Plugin/Geshi
+	url = git://github.com/pwhittlesea/cakephp_geshi.git
+[submodule "app/Vendor/GeSHi"]
+	path = app/Vendor/GeSHi
+	url = git://github.com/mattprice/GeSHi.git

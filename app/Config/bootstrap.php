@@ -85,6 +85,7 @@
  */
 Cache::config('default', array('engine' => 'File'));
 Configure::load('devtrack');
+Configure::load('geshi');
 
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
@@ -133,3 +134,4 @@ Configure::load('devtrack');
 
 CakePlugin::load('TwitterBootstrap');
 CakePlugin::load('GoogleChart');
+CakePlugin::load('Geshi');

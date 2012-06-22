@@ -19,54 +19,98 @@ App::import("Vendor", "Git", array("file"=>"Git/Git.php"));
 
 class SourceController extends AppController {
 
+    public $helpers = array('Geshi.Geshi');
+
     public function index($name = null, $folder = '') {
          // Check for existant project
         $project = $this->Source->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-        
+
+        // Lock out those who are not guests
+        $this->Source->Project->id = $project['Project']['id'];
+        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
+
+        $repo = $this->Source->RepoForProject($name);
+
+        $node = $this->_getCurrentNode($repo);
+
         $this->set("project", $project);
-        $this->set("source_files", $this->_lsFolder($this->Source->RepoForProject($name)));
+        $this->set("location", $this->params['pass']);
+        $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
+        switch ($node['type']) {
+            case 'tree':
+                $this->set("source_files", $this->_lsFolder($repo, $node['hash']));
+                $this->render('tree_folder');
+                break;
+            case 'blob':
+                $this->set("source_files", $this->_lsFile($repo, $node['name']));
+                $this->render('tree_blob');
+                break;
+        }
     }
 
-    private function _lsFolder($repo, $index = 1, $parent_hash = 'HEAD') {
-        $route = $this->params['pass'];
+    private function _getCurrentNode($repo) {
+        $path = $this->_buildPath();
 
-        $files = $repo->run('ls-tree '.$parent_hash);
+        // If we are looking at the root of the project
+        if ($path == '') {
+            return array(
+                'type' => 'tree',
+                'hash' => 'HEAD',
+            );
+        }
+
+        $files = $repo->run('ls-tree HEAD ' . $path);
+
         $nodes = explode("\n", $files);
 
-        if ( !isset($route[$index]) ) {
-            $route[$index] = '.';
+        return $this->_proccessNode($nodes[0]);
+    }
 
-            unset($nodes[sizeof($nodes)-1]);
-            $return = array();
-            $url = array();
-            for ($i = 1; $i <= $index-1; $i++) {
-                $url[] = $route[$i];
-            }
-
-            foreach ( $nodes as $node ) {
-                $node = preg_split('/\s+/', $node);
-                $url[$index-1] = $node[3];
-                $node = array(
-                    'permissions' => $node[0],
-                    'type'        => $node[1],
-                    'hash'        => $node[2],
-                    'name'        => $node[3],
-                    'parent_hash' => $parent_hash,
-                    'source_id'   => $this->Source->id,
-                    'url'         => $url,
-                );
-                array_push($return, $node);
-            }
-            return $return;
-        } else {
-            foreach ( $nodes as $node ) {
-                $node = preg_split('/\s+/', $node);
-                if ( $node[3] == $route[$index] && $node[1] == 'tree' ) {
-                    return $this->_lsFolder($repo, $index + 1, $node[2]);
-                }
-            }
+    private function _buildPath() {
+        $route = $this->params['pass'];
+        $url = '';
+        for ($i = 1; $i <= sizeof($route)-1; $i++) {
+            $url .= $route[$i] . '/';
         }
+        if ($url == '') return $url;
+        $url[strlen($url)-1] = '';
+        return $url;
+    }
+
+    private function _proccessNode($node) {
+        $node = preg_split('/\s+/', $node);
+
+        if ( !isset($node[0]) ||
+             !isset($node[1]) ||
+             !isset($node[2]) ||
+             !isset($node[3]) ) {
+            return null;
+        }
+        return array(
+            'permissions' => $node[0],
+            'type'        => $node[1],
+            'hash'        => $node[2],
+            'name'        => $node[3],
+        );
+    }
+
+    private function _lsFolder($repo, $hash = 'HEAD') {
+        $files = $repo->run('ls-tree ' . $hash);
+        $nodes = explode("\n", $files);
+
+        unset($nodes[sizeof($nodes)-1]);
+
+        foreach ( $nodes as $node ) {
+            $return[] = $this->_proccessNode($node);
+        }
+        return $return;
+    }
+
+    private function _lsFile($repo, $path) {
+        $base = $this->Source->RepoLocationOnFileSystem($this->Source->Project->id);
+        $nodes = file_get_contents($base.'/'.$path);
+        return $nodes;
     }
 
 }

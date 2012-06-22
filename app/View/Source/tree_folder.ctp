@@ -17,33 +17,48 @@
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
 
-echo $this->Bootstrap->page_header($pname . $smallText);?>
+// Base url for the view
+$url = array('project' => $project['Project']['name'], 'action' => 'index');
+$this->Bootstrap->add_crumb($project['Project']['name'], $url);
 
+// Create the base url to be used for all links and add breadcrumbs
+for ($i = 1; $i <= sizeof($location)-1; $i++) {
+    $url[] = $location[$i];
+    $this->Bootstrap->add_crumb($location[$i], $url);
+}
+// Cheat to get file pointer working later on
+$url[] = 'file.php';
+
+// Header for the page
+echo $this->Bootstrap->page_header($pname . $smallText);
+
+?>
 <div class="row">
     <div class="span2">
         <?= $this->element('project_sidebar', array('project' => $pname, 'action' => 'collaborators')) ?>
     </div>
     <div class="row">
         <div class="span10">
-            <div class="well">
-                <h3>Source</h3>
-                <table class="table table-striped">
-                <? foreach ($source_files as $source_file) : ?>
+            <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
+            <table class="well table table-striped">
+            <? foreach ($source_files as $source_file) : ?>
                 <tr>
                     <td>
                     <?php
-                    $source_file['url']['project'] = $project['Project']['name'];
-                    $source_file['url']['action'] = 'index';
+                    $icon = 'warning-sign';
+                    if ($source_file['type'] == 'blob') $icon = 'file';
+                    if ($source_file['type'] == 'tree') $icon = 'folder-open';
+                    echo $this->Bootstrap->icon($icon).' ';
+                    $url[sizeof($location)-1] = $source_file['name'];
                     echo $this->Html->link(
                         $source_file['name'], 
-                        $source_file['url'], 
+                        $url, 
                         array('escape' => false)
                     ); 
                     ?></td>
                 </tr>
-                <? endforeach; ?>
-                </table>
-            </div>
+            <? endforeach; ?>
+            </table>
         </div>
     </div>
 </div>

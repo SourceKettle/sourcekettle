@@ -64,7 +64,7 @@ class Source extends AppModel {
         )
     );
 
-    public function RepoForProject($name = null) {
+    public function RepoLocationOnFileSystem($name = null) {
         $devtrack_config = Configure::read('devtrack');
         $base = $devtrack_config['repo']['base'];
         if ($base[strlen($base)-1] != '/') {
@@ -75,7 +75,11 @@ class Source extends AppModel {
         $project = $this->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
-        $base .= $project['Project']['name'];
+        return $base . $project['Project']['name'];
+    }
+
+    public function RepoForProject($name = null) {
+        $base = $this->RepoLocationOnFileSystem($name);
 
         try {
             $repo = Git::open($base);

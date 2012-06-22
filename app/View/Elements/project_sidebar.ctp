@@ -52,7 +52,7 @@
             'action' => 'project',
         ),
     );
-    
+
     if(isset($isAdmin) && $isAdmin) {
         $options['Administration'] = array(
             'Collaborators' => array(
