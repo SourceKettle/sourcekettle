@@ -21,7 +21,7 @@ class SourceController extends AppController {
 
     public $helpers = array('Geshi.Geshi');
 
-    public function index($name = null, $folder = '') {
+    public function tree($name = null, $folder = '') {
          // Check for existant project
         $project = $this->Source->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
