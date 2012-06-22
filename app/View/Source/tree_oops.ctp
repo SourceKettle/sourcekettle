@@ -2,7 +2,7 @@
 /**
  *
  * View class for APP/Source/tree for the DevTrack system
- * Allows users to view source for a blob
+ * Shows an error when an invalid node is viewed
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -18,16 +18,9 @@ $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
 
 // Base url for the view
-$url = array('project' => $project['Project']['name'], 'action' => 'tree', $location[1]);
+$url = array('project' => $project['Project']['name'], 'action' => 'tree');
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
-
-// Create the base url to be used for all links and add breadcrumbs
-for ($i = 2; $i <= sizeof($location)-1; $i++) {
-    $url[] = $location[$i];
-    $this->Bootstrap->add_crumb($location[$i], $url);
-}
-// Cheat to get file pointer working later on
-$url[] = 'file.php';
+$this->Bootstrap->add_crumb("Aw fiddlesticks...", $url);
 
 // Header for the page
 echo $this->Bootstrap->page_header($pname . $smallText);
@@ -40,10 +33,11 @@ echo $this->Bootstrap->page_header($pname . $smallText);
     <div class="row">
         <div class="span10">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
-        </div>
-        <div class="span10">
-            <div class="">
-                <?= $this->Geshi->highlight('<pre lang="php">'.htmlentities($source_files).'</pre>') ?>
+            <div class="well">
+                <h2>Darn!</h2>
+                <h3>This is not the location you are looking for...</h3>
+                <h4>Whatever you've requested has gone and caused a pesky error in the system.</h4>
+                <p>Dont worry! We're making sure it wasnt us by realigning our flux capacitors and what-not.</p>
             </div>
         </div>
     </div>

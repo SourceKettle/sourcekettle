@@ -52,6 +52,8 @@ class SourceController extends AppController {
                 $this->set("source_files", $this->_lsFile($repo, $node['hash']));
                 $this->render('tree_blob');
                 break;
+            default:
+                $this->render('tree_oops');
         }
     }
 
@@ -62,7 +64,7 @@ class SourceController extends AppController {
      * @param $repo GitRepo the repo to examine
      */
     private function _getCurrentNode($repo) {
-        $branch = 'master';
+        $branch = $this->params['pass'][1];
         $path = $this->_buildPath();
 
         // If we are looking at the root of the project
@@ -88,7 +90,7 @@ class SourceController extends AppController {
     private function _buildPath() {
         $route = $this->params['pass'];
         $url = '';
-        for ($i = 1; $i <= sizeof($route)-1; $i++) {
+        for ($i = 2; $i <= sizeof($route)-1; $i++) {
             $url .= $route[$i] . '/';
         }
         if ($url == '') return $url;

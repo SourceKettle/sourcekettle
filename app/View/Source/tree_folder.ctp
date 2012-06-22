@@ -18,11 +18,11 @@ $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
 
 // Base url for the view
-$url = array('project' => $project['Project']['name'], 'action' => 'tree');
+$url = array('project' => $project['Project']['name'], 'action' => 'tree', $location[1]);
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
 
 // Create the base url to be used for all links and add breadcrumbs
-for ($i = 1; $i <= sizeof($location)-1; $i++) {
+for ($i = 2; $i <= sizeof($location)-1; $i++) {
     $url[] = $location[$i];
     $this->Bootstrap->add_crumb($location[$i], $url);
 }
