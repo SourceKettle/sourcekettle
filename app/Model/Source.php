@@ -75,7 +75,7 @@ class Source extends AppModel {
         $project = $this->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
-        return $base . $project['Project']['name'];
+        return $base . $project['Project']['name'] . '.git/';
     }
 
     public function RepoForProject($name = null) {
@@ -99,7 +99,7 @@ class Source extends AppModel {
             mkdir($base, 0777);
         }
 
-        return Git::create($base);
+        return Git::create($base, null, true);
     }
 
 }

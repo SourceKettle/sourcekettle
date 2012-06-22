@@ -6,7 +6,7 @@
 	url = git://github.com/loadsys/twitter-bootstrap-helper.git
 [submodule "app/Vendor/Git"]
 	path = app/Vendor/Git
-	url = git://github.com/kbjr/Git.php.git
+	url = git://github.com/pwhittlesea/Git.php.git
 [submodule "app/Vendor/GeSHi"]
 	path = app/Vendor/GeSHi
 	url = git://github.com/mattprice/GeSHi.git

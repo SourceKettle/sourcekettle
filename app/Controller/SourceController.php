@@ -34,7 +34,7 @@ class SourceController extends AppController {
 
         // Lock out those who are not guests
         $this->Source->Project->id = $project['Project']['id'];
-        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
+        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
         $repo = $this->Source->RepoForProject($name);
 
@@ -49,7 +49,7 @@ class SourceController extends AppController {
                 $this->render('tree_folder');
                 break;
             case 'blob':
-                $this->set("source_files", $this->_lsFile($repo, $node['name']));
+                $this->set("source_files", $this->_lsFile($repo, $node['hash']));
                 $this->render('tree_blob');
                 break;
         }
@@ -62,17 +62,18 @@ class SourceController extends AppController {
      * @param $repo GitRepo the repo to examine
      */
     private function _getCurrentNode($repo) {
+        $branch = 'master';
         $path = $this->_buildPath();
 
         // If we are looking at the root of the project
         if ($path == '') {
             return array(
                 'type' => 'tree',
-                'hash' => 'HEAD',
+                'hash' => $branch,
             );
         }
 
-        $files = $repo->run('ls-tree HEAD ' . $path);
+        $files = $repo->run("ls-tree $branch $path");
 
         $nodes = explode("\n", $files);
 
@@ -126,7 +127,7 @@ class SourceController extends AppController {
      * @param $repo GitRepo the repo to examine
      * @param $hash string the node to look up
      */
-    private function _lsFolder($repo, $hash = 'HEAD') {
+    private function _lsFolder($repo, $hash) {
         $files = $repo->run('ls-tree ' . $hash);
         $nodes = explode("\n", $files);
 
@@ -143,12 +144,10 @@ class SourceController extends AppController {
      * Return the contents of a blob
      *
      * @param $repo GitRepo the repo to examine
-     * @param $path string blob to look up
+     * @param $hash blob to look up
      */
-    private function _lsFile($repo, $path) {
-        $base = $this->Source->RepoLocationOnFileSystem($this->Source->Project->id);
-        $nodes = file_get_contents($base.'/'.$path);
-        return $nodes;
+    private function _lsFile($repo, $hash) {
+        return $repo->run('show ' . $hash);
     }
 
 }
