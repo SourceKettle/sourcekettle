@@ -21,7 +21,13 @@ class SourceController extends AppController {
 
     public $helpers = array('Geshi.Geshi');
 
-    public function tree($name = null, $folder = '') {
+    /*
+     * tree
+     * display an element in the tree
+     *
+     * @param $name string name of the project
+     */
+    public function tree($name = null) {
          // Check for existant project
         $project = $this->Source->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
@@ -49,6 +55,12 @@ class SourceController extends AppController {
         }
     }
 
+    /*
+     * _getCurrenctNode
+     * Return the details of the current node
+     *
+     * @param $repo GitRepo the repo to examine
+     */
     private function _getCurrentNode($repo) {
         $path = $this->_buildPath();
 
@@ -67,6 +79,11 @@ class SourceController extends AppController {
         return $this->_proccessNode($nodes[0]);
     }
 
+    /*
+     * _buildPath
+     * Return the path the user is currently viewing
+     *
+     */
     private function _buildPath() {
         $route = $this->params['pass'];
         $url = '';
@@ -78,6 +95,13 @@ class SourceController extends AppController {
         return $url;
     }
 
+    /*
+     * _proccessNode
+     * Return the details for the node in a linked list
+     * Essentially converts git row output to array
+     *
+     * @param $node array the node details
+     */
     private function _proccessNode($node) {
         $node = preg_split('/\s+/', $node);
 
@@ -95,6 +119,13 @@ class SourceController extends AppController {
         );
     }
 
+    /*
+     * _lsFolder
+     * Return the contents of a tree
+     *
+     * @param $repo GitRepo the repo to examine
+     * @param $hash string the node to look up
+     */
     private function _lsFolder($repo, $hash = 'HEAD') {
         $files = $repo->run('ls-tree ' . $hash);
         $nodes = explode("\n", $files);
@@ -107,6 +138,13 @@ class SourceController extends AppController {
         return $return;
     }
 
+    /*
+     * _lsFile
+     * Return the contents of a blob
+     *
+     * @param $repo GitRepo the repo to examine
+     * @param $path string blob to look up
+     */
     private function _lsFile($repo, $path) {
         $base = $this->Source->RepoLocationOnFileSystem($this->Source->Project->id);
         $nodes = file_get_contents($base.'/'.$path);
