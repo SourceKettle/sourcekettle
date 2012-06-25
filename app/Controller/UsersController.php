@@ -26,7 +26,9 @@ class UsersController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('register', 'activate', 'lost_password', 'reset_password');
+        $this->Auth->allow('register', 'activate', 'lost_password',
+            'reset_password',
+            'api_all', 'api_view', 'api_register');
     }
 
     /**
@@ -113,7 +115,7 @@ class UsersController extends AppController {
                     'recursive' => -1, // Don't recurse other models
                 ));
 
-                unset($user['User']['password']); // goodbye password hash :'(
+                unset($user['User']['password']); // goodbye hash :'(
                 $this->set('data',$user['User']);
             }
         }
