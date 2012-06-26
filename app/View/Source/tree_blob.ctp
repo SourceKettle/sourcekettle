@@ -29,6 +29,10 @@ for ($i = 2; $i <= sizeof($location)-1; $i++) {
 // Cheat to get file pointer working later on
 $url[] = 'file.php';
 
+foreach ($branches as $a => $branch) {
+    $branches[$a] = $this->Html->link($branch, array('project' => $project['Project']['name'], 'action' => 'tree', $branch));
+}
+
 // Header for the page
 echo $this->Bootstrap->page_header($pname . $smallText);
 
@@ -38,13 +42,14 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <?= $this->element('project_sidebar', array('project' => $pname, 'action' => 'collaborators')) ?>
     </div>
     <div class="row">
-        <div class="span10">
+        <div class="span8">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
         </div>
+        <div class="span2">
+            <?= $this->Bootstrap->button_dropdown("<strong>Branch: </strong>".$location[1], array("class" => "span2", "links" => $branches)) ?>
+        </div>
         <div class="span10">
-            <div class="">
-                <?= $this->Geshi->highlight('<pre lang="php">'.htmlentities($source_files).'</pre>') ?>
-            </div>
+            <?= $this->Geshi->highlight('<pre lang="php">'.htmlentities($source_files).'</pre>') ?>
         </div>
     </div>
 </div>
