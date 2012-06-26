@@ -36,7 +36,7 @@ class SourceController extends AppController {
         $this->Source->Project->id = $project['Project']['id'];
         if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
-        if ( !isset($this->params['pass'][1]) ) $this->redirect('master');
+        if ( !isset($this->params['pass'][1]) ) $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
 
         $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($name));
 
