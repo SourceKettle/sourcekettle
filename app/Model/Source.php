@@ -15,7 +15,7 @@
 */
 
 App::uses('AppModel', 'Model');
-App::import("Vendor", "Git", array("file"=>"Git/Git.php"));
+
 /**
  * Source Model
  *
@@ -76,30 +76,6 @@ class Source extends AppModel {
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
         return $base . $project['Project']['name'] . '.git/';
-    }
-
-    public function RepoForProject($name = null) {
-        $base = $this->RepoLocationOnFileSystem($name);
-
-        try {
-            $repo = Git::open($base);
-        } catch (Exception $e) {
-            $repo = $this->_createRepo($base);
-        }
-        if (! Git::is_repo($repo)) {
-            throw new Exception('Something has gone wrong with repo collection');
-        }
-        return $repo;
-    }
-
-    private function _createRepo($base = null) {
-        if ($base == null) return null;
-
-        if (!file_exists($base)) {
-            mkdir($base, 0777);
-        }
-
-        return Git::create($base, null, true);
     }
 
 }

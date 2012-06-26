@@ -15,11 +15,11 @@
  */
 
 App::uses('AppController', 'Controller');
-App::import("Vendor", "Git", array("file"=>"Git/Git.php"));
 
 class SourceController extends AppController {
 
     public $helpers = array('Geshi.Geshi');
+    public $uses = array('Source', 'GitCake.GitCake');
 
     /*
      * tree
@@ -36,50 +36,29 @@ class SourceController extends AppController {
         $this->Source->Project->id = $project['Project']['id'];
         if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
-        $repo = $this->Source->RepoForProject($name);
+        if ( !isset($this->params['pass'][1]) ) $this->redirect('master');
 
-        $node = $this->_getCurrentNode($repo);
+        $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($name));
+
+        $node = $this->GitCake->getNodeAtPath($this->params['pass'][1], $this->_buildPath());
+
+        //$node = $this->_getCurrentNode($repo);
 
         $this->set("project", $project);
         $this->set("location", $this->params['pass']);
         $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
         switch ($node['type']) {
             case 'tree':
-                $this->set("source_files", $this->_lsFolder($repo, $node['hash']));
+                $this->set("source_files", $this->GitCake->lsFolder($node['hash']));
                 $this->render('tree_folder');
                 break;
             case 'blob':
-                $this->set("source_files", $this->_lsFile($repo, $node['hash']));
+                $this->set("source_files", $this->GitCake->lsFile($node['hash']));
                 $this->render('tree_blob');
                 break;
             default:
                 $this->render('tree_oops');
         }
-    }
-
-    /*
-     * _getCurrenctNode
-     * Return the details of the current node
-     *
-     * @param $repo GitRepo the repo to examine
-     */
-    private function _getCurrentNode($repo) {
-        $branch = $this->params['pass'][1];
-        $path = $this->_buildPath();
-
-        // If we are looking at the root of the project
-        if ($path == '') {
-            return array(
-                'type' => 'tree',
-                'hash' => $branch,
-            );
-        }
-
-        $files = $repo->run("ls-tree $branch $path");
-
-        $nodes = explode("\n", $files);
-
-        return $this->_proccessNode($nodes[0]);
     }
 
     /*
@@ -96,60 +75,6 @@ class SourceController extends AppController {
         if ($url == '') return $url;
         $url[strlen($url)-1] = '';
         return $url;
-    }
-
-    /*
-     * _proccessNode
-     * Return the details for the node in a linked list
-     * Essentially converts git row output to array
-     *
-     * @param $node array the node details
-     */
-    private function _proccessNode($node) {
-        $node = preg_split('/\s+/', $node);
-
-        if ( !isset($node[0]) ||
-             !isset($node[1]) ||
-             !isset($node[2]) ||
-             !isset($node[3]) ) {
-            return null;
-        }
-        return array(
-            'permissions' => $node[0],
-            'type'        => $node[1],
-            'hash'        => $node[2],
-            'name'        => $node[3],
-        );
-    }
-
-    /*
-     * _lsFolder
-     * Return the contents of a tree
-     *
-     * @param $repo GitRepo the repo to examine
-     * @param $hash string the node to look up
-     */
-    private function _lsFolder($repo, $hash) {
-        $files = $repo->run('ls-tree ' . $hash);
-        $nodes = explode("\n", $files);
-
-        unset($nodes[sizeof($nodes)-1]);
-
-        foreach ( $nodes as $node ) {
-            $return[] = $this->_proccessNode($node);
-        }
-        return $return;
-    }
-
-    /*
-     * _lsFile
-     * Return the contents of a blob
-     *
-     * @param $repo GitRepo the repo to examine
-     * @param $hash blob to look up
-     */
-    private function _lsFile($repo, $hash) {
-        return $repo->run('show ' . $hash);
     }
 
 }

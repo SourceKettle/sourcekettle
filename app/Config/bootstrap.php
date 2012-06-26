@@ -135,3 +135,4 @@ Configure::load('geshi');
 CakePlugin::load('TwitterBootstrap');
 CakePlugin::load('GoogleChart');
 CakePlugin::load('Geshi');
+CakePlugin::load('GitCake');

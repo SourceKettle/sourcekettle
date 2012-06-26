@@ -4,12 +4,12 @@
 [submodule "app/Plugin/TwitterBootstrap"]
 	path = app/Plugin/TwitterBootstrap
 	url = git://github.com/loadsys/twitter-bootstrap-helper.git
-[submodule "app/Vendor/Git"]
-	path = app/Vendor/Git
-	url = git://github.com/pwhittlesea/Git.php.git
 [submodule "app/Vendor/GeSHi"]
 	path = app/Vendor/GeSHi
 	url = git://github.com/mattprice/GeSHi.git
 [submodule "app/Plugin/Geshi"]
 	path = app/Plugin/Geshi
 	url = git://github.com/pwhittlesea/cakephp_geshi.git
+[submodule "app/Plugin/GitCake"]
+	path = app/Plugin/GitCake
+	url = git@github.com:pwhittlesea/GitCake.git
