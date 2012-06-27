@@ -163,8 +163,6 @@ class UsersController extends AppController {
         $this->render('/Elements/json');
     }
 
-    }
-
     /**
      * Used to activate user accounts
      * @param type $key The key used to activate an account
