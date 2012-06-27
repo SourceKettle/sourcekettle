@@ -55,6 +55,7 @@ class SourceController extends AppController {
         $this->set("location", $this->params['pass']);
         $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
         $this->set('branches', $this->GitCake->listBranches());
+
         switch ($node['type']) {
             case 'tree':
                 $this->set("source_files", $this->GitCake->lsFolder($node['hash']));
@@ -66,6 +67,43 @@ class SourceController extends AppController {
                 break;
             default:
                 $this->render('tree_oops');
+        }
+    }
+
+    /*
+     * raw
+     * Same as tree but the raw file
+     *
+     * @see tree
+     * @param $name string name of the project
+     */
+    public function raw($name = null) {
+         // Check for existant project
+        $project = $this->Source->Project->getProject($name);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
+        // Lock out those who are not guests
+        $this->Source->Project->id = $project['Project']['id'];
+        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
+
+        // Check to see if a branch is set, if not redirect to master
+        if ( !isset($this->params['pass'][1]) ) $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
+        $branch = $this->params['pass'][1];
+
+        // Load the repo into the GitCake Model
+        $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
+
+        $node = $this->GitCake->getNodeAtPath($branch, $this->_buildPath());
+
+        $this->set("location", $this->params['pass']);
+
+        switch ($node['type']) {
+            case 'blob':
+                $this->set("source_files", $this->GitCake->lsFile($node['hash']));
+                $this->render('tree_raw');
+                break;
+            default:
+                $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
         }
     }
 
