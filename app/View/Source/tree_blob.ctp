@@ -26,8 +26,7 @@ for ($i = 2; $i <= sizeof($location)-1; $i++) {
     $url[] = $location[$i];
     $this->Bootstrap->add_crumb($location[$i], $url);
 }
-// Cheat to get file pointer working later on
-$url[] = 'file.php';
+$url['action'] = 'raw';
 
 foreach ($branches as $a => $branch) {
     $branches[$a] = $this->Html->link($branch, array('project' => $project['Project']['name'], 'action' => 'tree', $branch));
@@ -42,8 +41,11 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <?= $this->element('project_sidebar', array('project' => $pname, 'action' => 'collaborators')) ?>
     </div>
     <div class="row">
-        <div class="span8">
+        <div class="span7">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
+        </div>
+        <div class="span1">
+            <?= $this->Html->link("raw", $url, array("class" => "btn btn-default raw-button", "size" => "small")) ?>
         </div>
         <div class="span2">
             <?= $this->Bootstrap->button_dropdown("<strong>Branch: </strong>".$location[1], array("class" => "span2", "links" => $branches)) ?>
