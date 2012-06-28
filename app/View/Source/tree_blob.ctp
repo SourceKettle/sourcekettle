@@ -48,7 +48,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
             <?= $this->Html->link("raw", $url, array("class" => "btn btn-default raw-button", "size" => "small")) ?>
         </div>
         <div class="span2">
-            <?= $this->Bootstrap->button_dropdown("<strong>Branch: </strong>".$location[1], array("class" => "span2", "links" => $branches)) ?>
+            <?= $this->Bootstrap->button_dropdown($this->Bootstrap->icon('random')." <strong>Branch: </strong>".$location[1], array("class" => "span2", "links" => $branches)) ?>
         </div>
         <div class="span10">
             <?= $this->Geshi->highlight('<pre lang="php">'.htmlentities($source_files).'</pre>') ?>

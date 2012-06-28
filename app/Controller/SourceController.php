@@ -18,7 +18,7 @@ App::uses('AppController', 'Controller');
 
 class SourceController extends AppController {
 
-    public $helpers = array('Geshi.Geshi');
+    public $helpers = array('Geshi.Geshi', 'Time');
     public $uses = array('Source', 'GitCake.GitCake');
 
     /*
@@ -28,7 +28,7 @@ class SourceController extends AppController {
      * @param $name string name of the project
      */
     public function tree($name = null) {
-         // Check for existant project
+        // Check for existant project
         $project = $this->Source->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
@@ -78,7 +78,7 @@ class SourceController extends AppController {
      * @param $name string name of the project
      */
     public function raw($name = null) {
-         // Check for existant project
+        // Check for existant project
         $project = $this->Source->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
@@ -105,6 +105,29 @@ class SourceController extends AppController {
             default:
                 $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
         }
+    }
+
+    public function commits($name = null) {
+        // Check for existant project
+        $project = $this->Source->Project->getProject($name);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
+        // Lock out those who are not guests
+        $this->Source->Project->id = $project['Project']['id'];
+        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
+
+        // Check to see if a branch is set, if not redirect to master
+        if ( !isset($this->params['pass'][1]) ) $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
+        $branch = $this->params['pass'][1];
+
+        // Load the repo into the GitCake Model
+        $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
+
+        $this->set("project", $project);
+        $this->set("location", $this->params['pass']);
+        $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
+        $this->set('branches', $this->GitCake->listBranches());
+        $this->set("commits", $this->GitCake->listCommits($branch, 10));
     }
 
     /*

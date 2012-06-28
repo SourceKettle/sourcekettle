@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * View class for APP/Source/tree for the DevTrack system
- * Allows users to view tree for a commit
+ * View class for APP/Source/commits for the DevTrack system
+ * Allows users to view commits
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -18,7 +18,7 @@ $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
 
 // Base url for the view
-$url = array('project' => $project['Project']['name'], 'action' => 'tree', $location[1]);
+$url = array('project' => $project['Project']['name'], 'action' => 'commits', $location[1]);
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
 
 // Create the base url to be used for all links and add breadcrumbs
@@ -26,11 +26,9 @@ for ($i = 2; $i <= sizeof($location)-1; $i++) {
     $url[] = $location[$i];
     $this->Bootstrap->add_crumb($location[$i], $url);
 }
-// Cheat to get file pointer working later on
-$url[] = 'file.php';
 
 foreach ($branches as $a => $branch) {
-    $branches[$a] = $this->Html->link($branch, array('project' => $project['Project']['name'], 'action' => 'tree', $branch));
+    $branches[$a] = $this->Html->link($branch, array('project' => $project['Project']['name'], 'action' => 'commits', $branch));
 }
 
 // Header for the page
@@ -50,21 +48,12 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         </div>
         <div class="span10">
             <table class="well table table-striped">
-            <? foreach ($source_files as $source_file) : ?>
+            <? foreach ($commits as $commit) : ?>
                 <tr>
                     <td>
-                    <?php
-                    $icon = 'warning-sign';
-                    if ($source_file['type'] == 'blob') $icon = 'file';
-                    if ($source_file['type'] == 'tree') $icon = 'folder-open';
-                    echo $this->Bootstrap->icon($icon).' ';
-                    $url[sizeof($location)-1] = $source_file['name'];
-                    echo $this->Html->link(
-                        $source_file['name'], 
-                        $url, 
-                        array('escape' => false)
-                    ); 
-                    ?></td>
+                        <h4><?= ucfirst((strlen($commit['subject']) > 100) ? substr($commit['subject'], 0, 100).'...' : $commit['subject']) ?></h4>
+                        <h5><?= $commit['author']['name'].' &lt;'.$commit['author']['email'].'&gt;' ?> <small><?= $this->Time->timeAgoinWords($commit['date']) ?></small></h5>
+                    </td>
                 </tr>
             <? endforeach; ?>
             </table>
