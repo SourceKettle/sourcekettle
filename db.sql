@@ -187,13 +187,22 @@ CREATE TABLE IF NOT EXISTS `lost_password_keys` (
 -- Table structure for table `source`
 --
 
-CREATE TABLE `source` (
+CREATE TABLE IF NOT EXISTS `source` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- Table structure for `api_keys`
+--
+-- Dumping data for table `source`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `api_keys`
+--
+
 CREATE TABLE IF NOT EXISTS `api_keys` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
@@ -203,3 +212,8 @@ CREATE TABLE IF NOT EXISTS `api_keys` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
+
+
+--
+-- Dumping data for table `api_keys`
+--

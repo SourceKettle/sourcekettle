@@ -50,7 +50,7 @@ class Project extends AppModel {
                 'message' => 'Project names must be at least 4 characters long',
             ),
             'alphaNumericDashUnderscore' => array(
-                'rule' => '/[0-9a-zA-Z_-]+$/',
+                'rule' => '/^[0-9a-zA-Z_-]+$/',
                 'message' => 'May contain only letters, numbers, dashes and underscores',
             ),
             'startWithALetter' => array(
