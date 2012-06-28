@@ -123,6 +123,13 @@ class Project extends AppModel {
         )
     );
 
+    public function beforeSave($options) {
+        if (!empty($this->data['Project']['name'])) {
+            $this->data['Project']['name'] = strtolower($this->data['Project']['name']);
+        }
+        return true;
+    }
+
     /**
      * Fetches a project from either its name or its id
      *
