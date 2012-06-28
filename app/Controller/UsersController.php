@@ -317,7 +317,7 @@ class UsersController extends AppController {
 
         //Find the users public projects or public projects they are working on
         $this->User->Collaborator->Project->Collaborator->recursive = 0;
-        $this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $this->Auth->user('id'), 'public' => true))));
+        $this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
         $this->set('user', $this->User->read(null, $id));
     }
 
