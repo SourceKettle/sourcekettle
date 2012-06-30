@@ -107,6 +107,12 @@ class SourceController extends AppController {
         }
     }
 
+    /*
+     * commits
+     * Load the commits for a user to view the history of a project
+     *
+     * @param $name string name of the project
+     */
     public function commits($name = null) {
         // Check for existant project
         $project = $this->Source->Project->getProject($name);
@@ -117,7 +123,7 @@ class SourceController extends AppController {
         if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
         // Check to see if a branch is set, if not redirect to master
-        if ( !isset($this->params['pass'][1]) ) $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
+        if ( !isset($this->params['pass'][1]) ) $this->redirect(array('project' => $name, 'action' => 'commits', 'master'));
         $branch = $this->params['pass'][1];
 
         // Load the repo into the GitCake Model

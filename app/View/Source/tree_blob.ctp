@@ -13,6 +13,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->set('css_for_layout', array('pages/source'));
 
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
@@ -48,7 +49,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
             <?= $this->Html->link("raw", $url, array("class" => "btn btn-default raw-button", "size" => "small")) ?>
         </div>
         <div class="span2">
-            <?= $this->Bootstrap->button_dropdown($this->Bootstrap->icon('random')." <strong>Branch: </strong>".$location[1], array("class" => "span2", "links" => $branches)) ?>
+            <?= $this->Bootstrap->button_dropdown($this->Bootstrap->icon('random')." <strong>Branch: </strong>".$location[1], array("class" => "branch_button", "links" => $branches)) ?>
         </div>
         <div class="span10">
             <?= $this->Geshi->highlight('<pre lang="php">'.htmlentities($source_files).'</pre>') ?>

@@ -39,6 +39,22 @@
                     'project' => $project,
                 ),
             ),
+            '&nbsp;&nbsp;Code' => array(
+                'icon' => null,
+                'url' => array(
+                    'action' => 'tree',
+                    'controller' => 'source',
+                    'project' => $project,
+                ),
+            ),
+            '&nbsp;&nbsp;Commits' => array(
+                'icon' => null,
+                'url' => array(
+                    'action' => 'commits',
+                    'controller' => 'source',
+                    'project' => $project,
+                ),
+            ),
             'Tasks' => array(
                 'icon' => 'file',
                 'url' => array(
