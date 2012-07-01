@@ -22,12 +22,13 @@ class SourceController extends AppController {
     public $uses = array('Source', 'GitCake.GitCake');
 
     /*
-     * tree
-     * display an element in the tree
+     * _projectCheck
+     * Space saver to ensure user can view content
+     * Also sets commonly needed variables related to the project
      *
-     * @param $name string name of the project
+     * @param $name string Project name
      */
-    public function tree($name = null) {
+    private function _projectCheck($name) {
         // Check for existant project
         $project = $this->Source->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
@@ -39,13 +40,26 @@ class SourceController extends AppController {
         // Load the repo into the GitCake Model
         $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
 
+        $this->set('project', $project);
+        $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
+
+        return $project;
+    }
+
+    /*
+     * tree
+     * display an element in the tree
+     *
+     * @param $name string name of the project
+     */
+    public function tree($name = null) {
+        $this->_projectCheck($name);
+
         // Fetch branch
         $branch = $this->_getBranch();
         $node = $this->GitCake->getNodeAtPath($branch, $this->_getPath());
 
-        $this->set("project", $project);
         $this->set("location", $this->params['pass']);
-        $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
         $this->set('branches', $this->GitCake->listBranches());
 
         switch ($node['type']) {
@@ -70,16 +84,7 @@ class SourceController extends AppController {
      * @param $name string name of the project
      */
     public function raw($name = null) {
-        // Check for existant project
-        $project = $this->Source->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-
-        // Lock out those who are not guests
-        $this->Source->Project->id = $project['Project']['id'];
-        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
-
-        // Load the repo into the GitCake Model
-        $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
+        $this->_projectCheck($name);
 
         // Fetch branch
         $branch = $this->_getBranch();
@@ -87,7 +92,6 @@ class SourceController extends AppController {
         $node = $this->GitCake->getNodeAtPath($branch, $path);
 
         if (!isset($node['type'])) {
-            $this->set("project", $project);
             $this->render('tree_oops');
         } else {
             $this->set("source_files", $this->GitCake->lsFile($node['hash']));
@@ -101,23 +105,12 @@ class SourceController extends AppController {
      * @param $name string name of the project
      */
     public function commits($name = null) {
-        // Check for existant project
-        $project = $this->Source->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-
-        // Lock out those who are not guests
-        $this->Source->Project->id = $project['Project']['id'];
-        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
-
-        // Load the repo into the GitCake Model
-        $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
+        $this->_projectCheck($name);
 
         // Fetch branch
         $branch = $this->_getBranch();
 
-        $this->set("project", $project);
         $this->set("location", $this->params['pass']);
-        $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
         $this->set('branches', $this->GitCake->listBranches());
         $this->set("commits", $this->GitCake->listCommits($branch, 10));
     }
@@ -129,20 +122,9 @@ class SourceController extends AppController {
      * @param $name string name of the project
      */
     public function commit($name = null, $hash = null) {
-        // Check for existant project
-        $project = $this->Source->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+        $this->_projectCheck($name);
 
-        // Lock out those who are not guests
-        $this->Source->Project->id = $project['Project']['id'];
-        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
-
-        // Load the repo into the GitCake Model
-        $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
-
-        $this->set("project", $project);
         $this->set("location", $this->params['pass']);
-        $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
         $this->set("commit", $this->GitCake->showCommit($hash, true));
     }
 
