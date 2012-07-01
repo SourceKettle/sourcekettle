@@ -36,20 +36,12 @@ class SourceController extends AppController {
         $this->Source->Project->id = $project['Project']['id'];
         if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
-        // Check to see if a branch is set, if not redirect to master
-        if ( !isset($this->params['pass'][1]) ) $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
-        $branch = $this->params['pass'][1];
-
         // Load the repo into the GitCake Model
         $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
 
-        // Check valid branch is selected
-        if ( !$this->GitCake->hasBranch($branch) ) {
-            $this->Session->setFlash(__("The branch '".$branch."' does not exist."), 'default', array(), 'error');
-            $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
-        }
-
-        $node = $this->GitCake->getNodeAtPath($branch, $this->_buildPath());
+        // Fetch branch
+        $branch = $this->_getBranch();
+        $node = $this->GitCake->getNodeAtPath($branch, $this->_getPath());
 
         $this->set("project", $project);
         $this->set("location", $this->params['pass']);
@@ -86,24 +78,19 @@ class SourceController extends AppController {
         $this->Source->Project->id = $project['Project']['id'];
         if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
-        // Check to see if a branch is set, if not redirect to master
-        if ( !isset($this->params['pass'][1]) ) $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
-        $branch = $this->params['pass'][1];
-
         // Load the repo into the GitCake Model
         $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
 
-        $node = $this->GitCake->getNodeAtPath($branch, $this->_buildPath());
+        // Fetch branch
+        $branch = $this->_getBranch();
+        $path = $this->_getPath();
+        $node = $this->GitCake->getNodeAtPath($branch, $path);
 
-        $this->set("location", $this->params['pass']);
-
-        switch ($node['type']) {
-            case 'blob':
-                $this->set("source_files", $this->GitCake->lsFile($node['hash']));
-                $this->render('tree_raw');
-                break;
-            default:
-                $this->redirect(array('project' => $name, 'action' => 'tree', 'master'));
+        if (!isset($node['type'])) {
+            $this->set("project", $project);
+            $this->render('tree_oops');
+        } else {
+            $this->set("source_files", $this->GitCake->lsFile($node['hash']));
         }
     }
 
@@ -122,12 +109,11 @@ class SourceController extends AppController {
         $this->Source->Project->id = $project['Project']['id'];
         if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
 
-        // Check to see if a branch is set, if not redirect to master
-        if ( !isset($this->params['pass'][1]) ) $this->redirect(array('project' => $name, 'action' => 'commits', 'master'));
-        $branch = $this->params['pass'][1];
-
         // Load the repo into the GitCake Model
         $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
+
+        // Fetch branch
+        $branch = $this->_getBranch();
 
         $this->set("project", $project);
         $this->set("location", $this->params['pass']);
@@ -161,19 +147,35 @@ class SourceController extends AppController {
     }
 
     /*
-     * _buildPath
+     * _getPath
      * Return the path the user is currently viewing
      *
      */
-    private function _buildPath() {
+    private function _getPath() {
         $route = $this->params['pass'];
-        $url = '';
-        for ($i = 2; $i <= sizeof($route)-1; $i++) {
-            $url .= $route[$i] . '/';
+        unset($route[0]); // Project name
+        unset($route[1]); // Branch name
+        return implode('/',$route);
+    }
+
+    /*
+     * _getBranch
+     * Return the branch the user is currently viewing
+     *
+     */
+    private function _getBranch() {
+        // Check to see if a branch is set, if not redirect to master
+        if ( !isset($this->params['pass'][1]) ) {
+            $this->redirect(array('project' => $this->params['pass'][0], 'action' => $this->request['action'], 'master'));
         }
-        if ($url == '') return $url;
-        $url[strlen($url)-1] = '';
-        return $url;
+
+        // Check valid branch is selected
+        if ( !$this->GitCake->hasTree($this->params['pass'][1]) ) {
+            $this->Session->setFlash(__("The tree '".$this->params['pass'][1]."' does not exist."), 'default', array(), 'error');
+            $this->redirect(array('project' => $this->params['pass'][0], 'action' => $this->request['action'], 'master'));
+        }
+
+        return $this->params['pass'][1];
     }
 
 }
