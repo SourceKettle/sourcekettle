@@ -1,3 +1,7 @@
 .branch_button {
     height: 34px;
 }
+.raw_button {
+    height: 24px;
+    width: 75%;
+}
