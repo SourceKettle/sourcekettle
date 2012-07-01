@@ -57,22 +57,22 @@ class SourceController extends AppController {
 
         // Fetch branch
         $branch = $this->_getBranch();
-        $node = $this->GitCake->getNodeAtPath($branch, $this->_getPath());
+        $path = $this->_getPath();
+        $node = $this->GitCake->getNodeAtPath($branch, $path);
 
-        $this->set("location", $this->params['pass']);
+        $this->set("branch", $branch);
+        $this->set("path", $path);
         $this->set('branches', $this->GitCake->listBranches());
 
         switch ($node['type']) {
             case 'tree':
-                $this->set("source_files", $this->GitCake->lsFolder($node['hash']));
-                $this->render('tree_folder');
+                $this->set("files", $this->GitCake->lsFolder($node['hash']));
                 break;
             case 'blob':
-                $this->set("source_files", $this->GitCake->lsFile($node['hash']));
-                $this->render('tree_blob');
+                $this->set("source", $this->GitCake->lsFile($node['hash']));
                 break;
             default:
-                $this->render('tree_oops');
+                $this->render('not_found');
         }
     }
 
@@ -92,7 +92,7 @@ class SourceController extends AppController {
         $node = $this->GitCake->getNodeAtPath($branch, $path);
 
         if (!isset($node['type'])) {
-            $this->render('tree_oops');
+            $this->render('not_found');
         } else {
             $this->set("source_files", $this->GitCake->lsFile($node['hash']));
         }
