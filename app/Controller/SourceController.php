@@ -110,7 +110,7 @@ class SourceController extends AppController {
         // Fetch branch
         $branch = $this->_getBranch();
 
-        $this->set("location", $this->params['pass']);
+        $this->set("branch", $branch);
         $this->set('branches', $this->GitCake->listBranches());
         $this->set("commits", $this->GitCake->listCommits($branch, 10));
     }
@@ -124,7 +124,6 @@ class SourceController extends AppController {
     public function commit($name = null, $hash = null) {
         $this->_projectCheck($name);
 
-        $this->set("location", $this->params['pass']);
         $this->set("commit", $this->GitCake->showCommit($hash, true));
     }
 

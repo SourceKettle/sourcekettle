@@ -19,7 +19,7 @@ $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
 
 // Base url for the view
-$url = array('project' => $project['Project']['name'], 'action' => 'commits', $location[1]);
+$url = array('project' => $project['Project']['name'], 'action' => 'commits', $branch);
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
 $this->Bootstrap->add_crumb("Commit History", $url);
 
@@ -40,7 +40,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
         </div>
         <div class="span2">
-            <?= $this->Bootstrap->button_dropdown($this->Bootstrap->icon('random')." <strong>Branch: </strong>".$location[1], array("class" => "branch_button", "links" => $branches)) ?>
+            <?= $this->Bootstrap->button_dropdown($this->Bootstrap->icon('random')." <strong>Branch: </strong>".substr($branch, 0, 10), array("class" => "branch_button", "links" => $branches)) ?>
         </div>
         <div class="span10">
             <table class="well table table-striped">
