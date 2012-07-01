@@ -18,7 +18,7 @@ App::uses('AppController', 'Controller');
 
 class SourceController extends AppController {
 
-    public $helpers = array('Geshi.Geshi', 'Time');
+    public $helpers = array('Geshi.Geshi', 'Time', 'CommandLineColor');
     public $uses = array('Source', 'GitCake.GitCake');
 
     /*
@@ -134,6 +134,30 @@ class SourceController extends AppController {
         $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
         $this->set('branches', $this->GitCake->listBranches());
         $this->set("commits", $this->GitCake->listCommits($branch, 10));
+    }
+
+    /*
+     * commit
+     * Load a commit for a user to view
+     *
+     * @param $name string name of the project
+     */
+    public function commit($name = null, $hash = null) {
+        // Check for existant project
+        $project = $this->Source->Project->getProject($name);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
+        // Lock out those who are not guests
+        $this->Source->Project->id = $project['Project']['id'];
+        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
+
+        // Load the repo into the GitCake Model
+        $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
+
+        $this->set("project", $project);
+        $this->set("location", $this->params['pass']);
+        $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
+        $this->set("commit", $this->GitCake->showCommit($hash, true));
     }
 
     /*

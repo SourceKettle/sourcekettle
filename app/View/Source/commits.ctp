@@ -21,12 +21,7 @@ $pname = $project['Project']['name'];
 // Base url for the view
 $url = array('project' => $project['Project']['name'], 'action' => 'commits', $location[1]);
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
-
-// Create the base url to be used for all links and add breadcrumbs
-for ($i = 2; $i <= sizeof($location)-1; $i++) {
-    $url[] = $location[$i];
-    $this->Bootstrap->add_crumb($location[$i], $url);
-}
+$this->Bootstrap->add_crumb("Commit History", $url);
 
 foreach ($branches as $a => $branch) {
     $branches[$a] = $this->Html->link($branch, array('project' => $project['Project']['name'], 'action' => 'commits', $branch));
@@ -50,10 +45,11 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <div class="span10">
             <table class="well table table-striped">
             <? foreach ($commits as $commit) : ?>
+                <? $text = ucfirst((strlen($commit['subject']) > 100) ? substr($commit['subject'], 0, 100).'...' : $commit['subject']); ?>
                 <tr>
                     <td>
-                        <h4><?= ucfirst((strlen($commit['subject']) > 100) ? substr($commit['subject'], 0, 100).'...' : $commit['subject']) ?></h4>
-                        <h5><?= $commit['author']['name'].' &lt;'.$commit['author']['email'].'&gt;' ?> <small><?= $this->Time->timeAgoinWords($commit['date']) ?></small></h5>
+                        <h4><?= $this->Html->link($text, array('project'=>$project['Project']['name'],'action'=>'commit',$commit['hash'])) ?></h4>
+                        <h5><?= $commit['author']['name'].' &lt;'.$commit['author']['email'].'&gt;' ?> <small>authored <?= $this->Time->timeAgoinWords($commit['date']) ?></small></h5>
                     </td>
                 </tr>
             <? endforeach; ?>
