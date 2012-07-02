@@ -25,6 +25,17 @@ $hover_unix_name = $this->Popover->popover(
      </ul>'
 );
 
+$hover_waffle = $this->Popover->popover(
+    'waffle',
+    "Wait, what? Waffle?",
+    "This 'long' waffle should, in short, tell anyone that sees your project:
+     <ul>
+         <li>What the project does</li>
+         <li>Why/how it does it</li>
+     </ul>
+     For example:<br><i>'A project management system using the CakePHP MVC'</i> (Thats Devtrack)"
+);
+
 echo $this->Bootstrap->page_header("New Project <small>where baby projects are made</small>"); ?>
 
 <div class="row">
@@ -39,7 +50,7 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
 
         echo $this->Bootstrap->input("description", array(
             "input" => $this->Form->textarea("description"),
-            "help_block" => "The 'long' waffle explaining your projects intent"
+            "help_block" => "The 'long' $hover_waffle explaining your projects intent"
         ));
 
         echo $this->Bootstrap->input("public", array(
