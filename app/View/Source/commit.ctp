@@ -54,8 +54,8 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                     <div class="span7">
                         <h4><?= $file ?></h4>
                         <h6>
-                            <span style="color:green">Added: <?= $diff['more'] ?></span>
-                            <span style="color:red">Deleted: <?= $diff['less'] ?></span>
+                            <span class="label label-success">Added</span> <span style="color:green"><?= $diff['more'] ?></span>
+                            <span class="label label-important">Deleted</span> <span style="color:red"><?= $diff['less'] ?></span>
                         </h6>
                     </div>
                     <div class="span2">
