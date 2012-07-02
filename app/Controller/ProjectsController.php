@@ -25,6 +25,8 @@ class ProjectsController extends AppController {
      */
     public $helpers = array('Time', 'GoogleChart.GoogleChart', 'ProjectActivity');
 
+    public $uses = array('Project', 'GitCake.GitCake');
+
     /**
      * index method
      *
@@ -104,6 +106,11 @@ class ProjectsController extends AppController {
                 $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
                 $this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Auth->user('id')."]", 'devtrack');
                 $this->log("[ProjectController.add] user[".$this->Auth->user('id')."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
+
+                if ($this->Project->RepoType->field('name') == 'Git') {
+                    // Create a blank Git repo
+                    $this->GitCake->createRepo($this->Project->Source->RepoLocationOnFileSystem($this->request->data['Project']['name']));
+                }
 
                 $this->redirect(array('action' => 'index'));
             } else {
