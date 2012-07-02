@@ -15,6 +15,7 @@
  */
 ?>
 <!DOCTYPE html>
+<html>
 <head> 
     <title>
         <?= $devtrack_config['global']['alias'] ?> - <?= $title_for_layout ?>
