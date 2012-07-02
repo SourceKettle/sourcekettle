@@ -13,7 +13,18 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- 
+
+$hover_unix_name = $this->Popover->popover(
+    'UNIX',
+    "So what is a 'Unix' filename?",
+    'A UNIX file name has to:
+     <ul>
+         <li>Have more than 4 characters</li>
+         <li>Contain only letters, numbers, dashes and underscores</li>
+         <li>Start with a letter</li>
+     </ul>'
+);
+
 echo $this->Bootstrap->page_header("New Project <small>where baby projects are made</small>"); ?>
 
 <div class="row">
@@ -23,7 +34,7 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
 
         echo $this->Bootstrap->input("name", array(
             "input" => $this->Form->text("name"),
-            "help_block" => "The 'short' name your project will be known by<br>(must be a valid UNIX name)"
+            "help_block" => "The 'short' name your project will be known by<br>(must be a valid $hover_unix_name name)"
         ));
 
         echo $this->Bootstrap->input("description", array(

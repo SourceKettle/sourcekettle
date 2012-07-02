@@ -109,8 +109,7 @@
     <!-- JavaScript! Placed at the end of the file for faster page loading -->
     <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'); ?>
     <?= $this->Html->script('bootstrap.min') ?>
-
-
+    <?= $this->Popover->requirements() ?>
 
 </body>
 </html>
