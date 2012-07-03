@@ -94,6 +94,10 @@ CREATE TABLE IF NOT EXISTS `repo_types` (
 -- Dumping data for table `repo_types`
 --
 
+INSERT INTO `repo_types` (`id`, `name`, `created`, `modified`) VALUES
+(1, 'None', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
+(2, 'Git', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
+(3, 'SVN', '2012-06-02 22:03:59', '2012-06-02 22:04:01');
 
 -- --------------------------------------------------------
 
