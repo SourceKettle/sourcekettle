@@ -38,7 +38,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);?>
 
 <div class="row">
     <div class="span2">
-        <?= $this->element('project_sidebar', array('project' => $pname, 'action' => 'collaborators')) ?>
+        <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
         <div class="row">
