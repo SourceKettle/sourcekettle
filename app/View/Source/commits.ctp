@@ -33,9 +33,10 @@ echo $this->Bootstrap->page_header($pname . $smallText);
 ?>
 <div class="row">
     <div class="span2">
-        <?= $this->element('project_sidebar', array('project' => $pname, 'action' => 'collaborators')) ?>
+        <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
+        <?= $this->element('project_topbar') ?>
         <div class="span8">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
         </div>

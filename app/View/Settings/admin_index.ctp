@@ -37,7 +37,7 @@ echo $this->Bootstrap->page_header('Administration <small>system-wide configurat
 	
 <div class="row">
     <div class="span2">
-        <?= $this->element('admin_sidebar', array('action' => 'settings')) ?>
+        <?= $this->element('Sidebar/admin') ?>
     </div>
     <div class="well span9">
         <h3>System wide configuration options</h3>

@@ -20,7 +20,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
 	
 <div class="row">
     <div class="span2">
-        <?= $this->element('project_sidebar', array('project' => $project['Project']['name'], 'action' => 'view')) ?>
+        <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span9">
         <div class="row">

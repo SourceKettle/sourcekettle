@@ -15,18 +15,18 @@
  */
 
 echo $this->Bootstrap->page_header("Projects <small>all the projects you care about</small>" .
-	$this->Bootstrap->button_link("New Project", array('action' => 'add'), array("style" => "primary", "size" => "medium", "class" => "pull-right"))); ?>
+    $this->Bootstrap->button_link("New Project", array('action' => 'add'), array("style" => "primary", "size" => "medium", "class" => "pull-right"))); ?>
 
 <div class="row">
-	<?php // Loop through all the projects that a user has access to
-	foreach ($projects as $project): ?>
-		<div class="span4">
-			<div class="well project-well">
-				<h3 class="project-title"><?=$this->Html->link($project['Project']['name'], array('action' => '.', 'project' => $project['Project']['name']), array('class' => 'project-link'))?>
-				<span style="float: right;"><?= $this->Bootstrap->icon((($project['Project']['public']) ? 'globe' : 'lock'), 'black') ?></span></h3>
-				<p class="project-desc"><?=$project['Project']['description']?></p>
-				<p class="project-time">Last Modified: <?=$this->Time->timeAgoInWords($project['Project']['modified'])?></p>
-			</div>
-		</div>
-	<?php endforeach; ?>
+    <?php // Loop through all the projects that a user has access to
+    foreach ($projects as $project): ?>
+        <div class="span4">
+            <div class="well project-well">
+                <h3 class="project-title"><?=$this->Html->link($project['Project']['name'], array('action' => '.', 'project' => $project['Project']['name']), array('class' => 'project-link'))?>
+                <span style="float: right;"><?= $this->Bootstrap->icon((($project['Project']['public']) ? 'globe' : 'lock'), 'black') ?></span></h3>
+                <p class="project-desc"><?=$project['Project']['description']?></p>
+                <p class="project-time">Last Modified: <?=$this->Time->timeAgoInWords($project['Project']['modified'])?></p>
+            </div>
+        </div>
+    <?php endforeach; ?>
 </div>

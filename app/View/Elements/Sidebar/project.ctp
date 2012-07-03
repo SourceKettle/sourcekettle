@@ -20,7 +20,7 @@
                 'url' => array(
                     'action' => 'view',
                     'controller' => 'projects',
-                    'project' => $project,
+                    'project' => $this->params['project'],
                 ),
             ),
             'Time' => array(
@@ -28,31 +28,15 @@
                 'url' => array(
                     'action' => 'time',
                     'controller' => 'projects',
-                    'project' => $project,
+                    'project' => $this->params['project'],
                 ),
             ),
             'Source' => array(
                 'icon' => 'pencil',
                 'url' => array(
-                    'action' => '.',
+                    'action' => '*',
                     'controller' => 'source',
-                    'project' => $project,
-                ),
-            ),
-            '&nbsp;&nbsp;Code' => array(
-                'icon' => null,
-                'url' => array(
-                    'action' => 'tree',
-                    'controller' => 'source',
-                    'project' => $project,
-                ),
-            ),
-            '&nbsp;&nbsp;Commits' => array(
-                'icon' => null,
-                'url' => array(
-                    'action' => 'commits',
-                    'controller' => 'source',
-                    'project' => $project,
+                    'project' => $this->params['project'],
                 ),
             ),
             'Tasks' => array(
@@ -60,7 +44,7 @@
                 'url' => array(
                     'action' => 'tasks',
                     'controller' => 'projects',
-                    'project' => $project,
+                    'project' => $this->params['project'],
                 ),
             ),
         ),
@@ -76,7 +60,7 @@
                 'url' => array(
                     'action' => '.',
                     'controller' => 'collaborators',
-                    'project' => $project,
+                    'project' => $this->params['project'],
                 ),
             ),
             'Settings' => array(
@@ -84,10 +68,10 @@
                 'url' => array(
                     'action' => 'edit',
                     'controller' => 'projects',
-                    'project' => $project,
+                    'project' => $this->params['project'],
                 ),
             ),
         );
     }
 
-    echo $this->element('generic_sidebar', array('options' => $options));
+    echo $this->element('Sidebar/generic', array('options' => $options));

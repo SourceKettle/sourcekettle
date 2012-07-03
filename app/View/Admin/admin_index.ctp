@@ -18,7 +18,7 @@ echo $this->Bootstrap->page_header('Administration <small>system overview</small
 	
 <div class="row">
     <div class="span2">
-        <?= $this->element('admin_sidebar', array('action' => '.')) ?>
+        <?= $this->element('Sidebar/admin') ?>
     </div>
     <div class="span9">
         <div class="row">

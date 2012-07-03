@@ -33,11 +33,15 @@
             // Logic to figure out if we are in the right place
             $c2 = $options['url']['controller'];
             $a2 = $options['url']['action'];
-            $isFeat = ($c1==$c2 && ($a1==$a2 || ($a1=='index' && $a2=='.')));
+            $isFeat = ($c1==$c2 && ($a1==$a2 || ($a1=='index' && $a2=='.') || $a2=='*'));
 
             echo "<li ";
             if ($isFeat) echo 'class="active"';
             echo ">";
+
+            if ($options['url']['action'] == '*') {
+                $options['url']['action'] = '.';
+            }
 
             echo $this->Html->link(
                 $this->Bootstrap->icon($options['icon'], ($isFeat) ? 'white' : 'black').' '.ucwords($feature),

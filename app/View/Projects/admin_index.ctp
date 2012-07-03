@@ -18,7 +18,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
 
 <div class="row">
     <div class="span2">
-        <?= $this->element('admin_sidebar') ?>
+        <?= $this->element('Sidebar/admin') ?>
     </div>
     <div class="span10">
        <div class="row-fluid">

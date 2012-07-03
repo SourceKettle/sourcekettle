@@ -58,4 +58,4 @@
         ),
     );
 
-    echo $this->element('generic_sidebar', array('options' => $options));
+    echo $this->element('Sidebar/generic', array('options' => $options));

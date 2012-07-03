@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="span2">
-        <?= $this->element('users_sidebar', array('action' => 'viewkeys')) ?>
+        <?= $this->element('Sidebar/users') ?>
     </div>
 
     <div class="span6 offset1 well">
