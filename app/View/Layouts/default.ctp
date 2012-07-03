@@ -114,5 +114,9 @@
         <?= $this->Html->script(array($js)) ?>
     <? endforeach;
     endif; ?>
+    <? if (isset($js_blocks_for_layout)): foreach ($js_blocks_for_layout as $js): ?>
+        <?= $this->Html->scriptBlock($js) ?>
+    <? endforeach;
+    endif; ?>
 </body>
 </html>

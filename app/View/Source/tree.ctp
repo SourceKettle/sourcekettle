@@ -15,6 +15,7 @@
  */
 $this->set('css_for_layout', array('pages/source', 'prettify/prettify'));
 $this->set('js_for_layout', array('prettify/prettify'));
+$this->set('js_blocks_for_layout', array('prettyPrint()'));
 
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];

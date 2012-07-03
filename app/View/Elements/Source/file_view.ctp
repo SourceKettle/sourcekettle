@@ -22,7 +22,7 @@
     foreach ($array as $line) {
         $space = '';
 
-        for ($x = 0; $x < $array_size - strlen((string) $i); $x++) {
+        for ($x = 0; $x <= $array_size - strlen((string) $i); $x++) {
             $space .= ' ';
         }
         echo '<span class="nocode">'.$i++.'</span>'.$space.htmlentities($line)."\n";
