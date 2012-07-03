@@ -110,6 +110,9 @@
     <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'); ?>
     <?= $this->Html->script('bootstrap.min') ?>
     <?= $this->Popover->requirements() ?>
-
+    <? if (isset($js_for_layout)): foreach ($js_for_layout as $js): ?>
+        <?= $this->Html->script(array($js)) ?>
+    <? endforeach;
+    endif; ?>
 </body>
 </html>
