@@ -18,7 +18,7 @@ App::uses('AppController', 'Controller');
 
 class SourceController extends AppController {
 
-    public $helpers = array('Geshi.Geshi', 'Time', 'CommandLineColor');
+    public $helpers = array('Time', 'CommandLineColor');
     public $uses = array('Source', 'GitCake.GitCake');
 
     /*
