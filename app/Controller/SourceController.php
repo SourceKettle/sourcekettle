@@ -55,25 +55,35 @@ class SourceController extends AppController {
     public function tree($name = null) {
         $this->_projectCheck($name);
 
-        // Fetch branch
-        $branch = $this->_getBranch();
-        $path = $this->_getPath();
-        $node = $this->GitCake->getNodeAtPath($branch, $path);
+        $branches = $this->GitCake->listBranches();
+        if(empty($branches)) {
+            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
+        } else {
+            // Fetch branch
+            $branch = $this->_getBranch();
+            $path = $this->_getPath();
+            $node = $this->GitCake->getNodeAtPath($branch, $path);
 
-        $this->set("branch", $branch);
-        $this->set("path", $path);
-        $this->set('branches', $this->GitCake->listBranches());
+            $this->set("branch", $branch);
+            $this->set("path", $path);
+            $this->set('branches', $branches);
 
-        switch ($node['type']) {
-            case 'tree':
-                $this->set("files", $this->GitCake->lsFolder($node['hash']));
-                break;
-            case 'blob':
-                $this->set("source", $this->GitCake->lsFile($node['hash']));
-                break;
-            default:
-                $this->render('not_found');
+            switch ($node['type']) {
+                case 'tree':
+                    $this->set("files", $this->GitCake->lsFolder($node['hash']));
+                    break;
+                case 'blob':
+                    $this->set("source", $this->GitCake->lsFile($node['hash']));
+                    break;
+                default:
+                    $this->render('not_found');
+            }
         }
+    }
+
+    public function gettingStarted($name = null) {
+        $this->_projectCheck($name);
+        $this->set('user', $this->Auth->user());
     }
 
     /*
@@ -107,12 +117,17 @@ class SourceController extends AppController {
     public function commits($name = null) {
         $this->_projectCheck($name);
 
-        // Fetch branch
-        $branch = $this->_getBranch();
+        $branches = $this->GitCake->listBranches();
+        if(empty($branches)) {
+            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
+        } else {
+            // Fetch branch
+            $branch = $this->_getBranch();
 
-        $this->set("branch", $branch);
-        $this->set('branches', $this->GitCake->listBranches());
-        $this->set("commits", $this->GitCake->listCommits($branch, 10));
+            $this->set("branch", $branch);
+            $this->set('branches', $branches);
+            $this->set("commits", $this->GitCake->listCommits($branch, 10));
+        }
     }
 
     /*

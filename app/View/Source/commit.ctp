@@ -68,3 +68,4 @@ echo $this->Bootstrap->page_header($pname . $smallText);
             <? endforeach; ?>
         </div>
     </div>
+</div>
