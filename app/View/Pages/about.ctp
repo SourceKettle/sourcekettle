@@ -21,7 +21,6 @@
         <p><?=$this->Html->link('@alinacoslov', 'https://github.com/alinacoslov/')?></p>
         <p><?=$this->Html->link('@chrisbulmer', 'https://github.com/chrisbulmer/')?></p>
         <p><?=$this->Html->link('@coiax', 'https://github.com/coiax/')?></p>
-        <p><?=$this->Html->link('@mabbage', 'https://github.com/mabbage/')?></p>
         <p><?=$this->Html->link('@pwhittlesea', 'https://github.com/pwhittlesea/')?></p>
     </div>
     <div class="span4" style="text-align:center">
