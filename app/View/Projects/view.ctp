@@ -6,18 +6,18 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.View.Projects
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- 
+
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 
 echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
-	
+
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

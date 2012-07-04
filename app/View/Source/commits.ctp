@@ -46,11 +46,11 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <div class="span10">
             <table class="well table table-striped">
             <? foreach ($commits as $commit) : ?>
-                <? $text = ucfirst((strlen($commit['subject']) > 100) ? substr($commit['subject'], 0, 100).'...' : $commit['subject']); ?>
+                <? $text = ucfirst((strlen($commit['Commit']['subject']) > 100) ? substr($commit['Commit']['subject'], 0, 100).'...' : $commit['Commit']['subject']); ?>
                 <tr>
                     <td>
-                        <h4><?= $this->Html->link($text, array('project'=>$project['Project']['name'],'action'=>'commit',$commit['hash'])) ?></h4>
-                        <h5><?= $commit['author']['name'].' &lt;'.$commit['author']['email'].'&gt;' ?> <small>authored <?= $this->Time->timeAgoinWords($commit['date']) ?></small></h5>
+                        <h4><?= $this->Html->link($text, array('project'=>$project['Project']['name'],'action'=>'commit',$commit['Commit']['hash'])) ?></h4>
+                        <h5><?= $commit['Commit']['author']['name'].' &lt;'.$commit['Commit']['author']['email'].'&gt;' ?> <small>authored <?= $this->Time->timeAgoinWords($commit['Commit']['date']) ?></small></h5>
                     </td>
                 </tr>
             <? endforeach; ?>

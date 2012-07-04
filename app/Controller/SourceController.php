@@ -55,25 +55,30 @@ class SourceController extends AppController {
     public function tree($name = null) {
         $this->_projectCheck($name);
 
-        $branches = $this->GitCake->listBranches();
+        $branches = $this->GitCake->branch();
         if(empty($branches)) {
             $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
         } else {
             // Fetch branch
             $branch = $this->_getBranch();
             $path = $this->_getPath();
-            $node = $this->GitCake->getNodeAtPath($branch, $path);
+
+            if ($path == '') {
+                $node = array(array('type'=>'tree', 'hash' => 'master'));
+            } else {
+                $node = $this->GitCake->tree($branch, $path);
+            }
 
             $this->set("branch", $branch);
             $this->set("path", $path);
             $this->set('branches', $branches);
 
-            switch ($node['type']) {
+            switch ($node[0]['type']) {
                 case 'tree':
-                    $this->set("files", $this->GitCake->lsFolder($node['hash']));
+                    $this->set("files", $this->GitCake->tree($node[0]['hash']));
                     break;
                 case 'blob':
-                    $this->set("source", $this->GitCake->lsFile($node['hash']));
+                    $this->set("source", $this->GitCake->blob($node[0]['hash']));
                     break;
                 default:
                     $this->render('not_found');
@@ -99,12 +104,12 @@ class SourceController extends AppController {
         // Fetch branch
         $branch = $this->_getBranch();
         $path = $this->_getPath();
-        $node = $this->GitCake->getNodeAtPath($branch, $path);
+        $node = $this->GitCake->tree($branch, $path);
 
-        if (!isset($node['type'])) {
+        if (!isset($node[0]['type'])) {
             $this->render('not_found');
         } else {
-            $this->set("source_files", $this->GitCake->lsFile($node['hash']));
+            $this->set("source_files", $this->GitCake->blob($node[0]['hash']));
         }
     }
 
@@ -117,7 +122,7 @@ class SourceController extends AppController {
     public function commits($name = null) {
         $this->_projectCheck($name);
 
-        $branches = $this->GitCake->listBranches();
+        $branches = $this->GitCake->branch();
         if(empty($branches)) {
             $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
         } else {
@@ -126,7 +131,7 @@ class SourceController extends AppController {
 
             $this->set("branch", $branch);
             $this->set('branches', $branches);
-            $this->set("commits", $this->GitCake->listCommits($branch, 10));
+            $this->set("commits", $this->GitCake->log($branch, 10));
         }
     }
 
