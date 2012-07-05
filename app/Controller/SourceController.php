@@ -148,7 +148,14 @@ class SourceController extends AppController {
     public function commit($name = null, $hash = null) {
         $this->_projectCheck($name);
 
-        $this->set("commit", $this->GitCake->showCommit($hash, true));
+        $branches = $this->GitCake->branch();
+        if(empty($branches)) {
+            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
+        } else {
+            $this->set("branch", null);
+            $this->set('branches', $branches);
+            $this->set("commit", $this->GitCake->showCommit($hash, true));
+        }
     }
 
     /*
