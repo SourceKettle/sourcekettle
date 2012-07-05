@@ -23,10 +23,6 @@ $url = array('project' => $project['Project']['name'], 'action' => 'commits', $b
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
 $this->Bootstrap->add_crumb("Commit History", $url);
 
-foreach ($branches as $a => $branch) {
-    $branches[$a] = $this->Html->link($branch, array('project' => $project['Project']['name'], 'action' => 'commits', $branch));
-}
-
 // Header for the page
 echo $this->Bootstrap->page_header($pname . $smallText);
 
@@ -36,12 +32,9 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('project_topbar') ?>
-        <div class="span8">
+        <?= $this->element('project_topbar', array('branches' => $branches, 'branch' => $branch)) ?>
+        <div class="span10">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
-        </div>
-        <div class="span2">
-            <?= $this->Bootstrap->button_dropdown($this->Bootstrap->icon('random')." <strong>Branch: </strong>".substr($branch, 0, 10), array("class" => "branch_button", "links" => $branches)) ?>
         </div>
         <div class="span10">
             <table class="well table table-striped">

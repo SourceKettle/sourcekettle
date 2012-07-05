@@ -73,15 +73,19 @@ class SourceController extends AppController {
             $this->set("path", $path);
             $this->set('branches', $branches);
 
-            switch ($node[0]['type']) {
-                case 'tree':
-                    $this->set("files", $this->GitCake->tree($node[0]['hash']));
-                    break;
-                case 'blob':
-                    $this->set("source", $this->GitCake->blob($node[0]['hash']));
-                    break;
-                default:
-                    $this->render('not_found');
+            if (!isset($node[0])) {
+                $this->render('not_found');
+            } else {
+                switch ($node[0]['type']) {
+                    case 'tree':
+                        $this->set("files", $this->GitCake->tree($node[0]['hash']));
+                        break;
+                    case 'blob':
+                        $this->set("source", $this->GitCake->blob($node[0]['hash']));
+                        break;
+                    default:
+                        $this->render('not_found');
+                }
             }
         }
     }

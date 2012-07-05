@@ -31,8 +31,11 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
+        <?= $this->element('project_topbar', array('branches' => $branches, 'branch' => $branch)) ?>
         <div class="span10">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
+        </div>
+        <div class="span10">
             <div class="well">
                 <h2>Darn!</h2>
                 <h3>This is not the location you are looking for...</h3>

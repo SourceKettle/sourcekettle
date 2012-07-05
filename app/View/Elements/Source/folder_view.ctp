@@ -5,11 +5,8 @@
         'tree' => 'folder-open',
     );
 ?>
-<div class="span8">
+<div class="span10">
     <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
-</div>
-<div class="span2">
-    <?= $this->Bootstrap->button_dropdown($this->Bootstrap->icon('random')." <strong>Branch: </strong>".substr($branch, 0, 10), array("class" => "branch_button", "links" => $branches)) ?>
 </div>
 <div class="span10">
     <table class="well table table-striped">

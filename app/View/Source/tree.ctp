@@ -30,10 +30,6 @@ foreach (explode('/',$path) as $crumb) {
     $this->Bootstrap->add_crumb($crumb, $url);
 }
 
-foreach ($branches as $a => $b) {
-    $branches[$a] = $this->Html->link($b, array('project' => $project['Project']['name'], 'action' => 'tree', $b));
-}
-
 // Header for the page
 echo $this->Bootstrap->page_header($pname . $smallText);
 
@@ -43,7 +39,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('project_topbar') ?>
+        <?= $this->element('project_topbar', array('branches' => $branches, 'branch' => $branch)) ?>
         <? if (isset($files)) : ?> 
             <?= $this->element('source/folder_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'files' => $files)) ?>
         <? else : ?>
