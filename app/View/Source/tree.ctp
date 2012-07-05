@@ -39,7 +39,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('project_topbar', array('branches' => $branches, 'branch' => $branch)) ?>
+        <?= $this->element('Source/topbar', array('branches' => $branches, 'branch' => $branch)) ?>
         <? if (isset($files)) : ?> 
             <?= $this->element('source/folder_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'files' => $files)) ?>
         <? else : ?>

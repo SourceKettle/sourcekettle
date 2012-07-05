@@ -26,7 +26,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
     </div>
     <div class="span9">
         <div class="row">
-            <?= $this->element('project_topbar', array('branches' => $branches, 'branch' => $branch)) ?>
+            <?= $this->element('Source/topbar', array('branches' => $branches, 'branch' => $branch)) ?>
             <div class="well span9">
                 <div class="row">
                     <div class="span7">
