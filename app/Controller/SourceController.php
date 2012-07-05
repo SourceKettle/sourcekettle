@@ -78,7 +78,13 @@ class SourceController extends AppController {
             } else {
                 switch ($node[0]['type']) {
                     case 'tree':
-                        $this->set("files", $this->GitCake->tree($node[0]['hash']));
+                        $tree = $this->GitCake->tree($node[0]['hash']);
+                        foreach ($tree as $t => $element) {
+                            $commit = trim($this->GitCake->exec("rev-list --all -n 1 $branch -- ".(($path != '')?"$path/":$path).$element['name']));
+                            $tree[$t]['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' $commit"));
+                            $tree[$t]['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' $commit"));
+                        }
+                        $this->set("files", $tree);
                         break;
                     case 'blob':
                         $this->set("source", $this->GitCake->blob($node[0]['hash']));
