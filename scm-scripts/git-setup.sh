@@ -18,7 +18,7 @@
 # Firstly we create the git user.
 # Setup as a system user, with no password login and various other settings
 
-set -e
+set -e # Exit on error
 
 # Check if user is running as root
 if [ "$(whoami)" != "root" ]; then
@@ -30,8 +30,7 @@ fi
 printf "Adding git user to system..."
 
 # Check if user exists
-
-if grep -Fxq git /etc/passwd # grep users and returns whether git user was found
+if [ -z $(getent passwd git) ]
 then
     #Add user
     sudo adduser \
@@ -45,7 +44,7 @@ then
         git
 
     echo "$(tput setaf 2) Done!$(tput sgr0)"
-else 
+else   
     echo "$(tput setaf 1) Fail!$(tput sgr0)"
     echo "$(tput setaf 1)User git already exists. Exiting.$(tput sgr0)"
     exit
@@ -65,9 +64,21 @@ sudo -H -u git chmod 0600 /home/git/.ssh/authorized_keys
 echo "$(tput setaf 2) Done!$(tput sgr0)"
 
 # Now add webserver user to git group
-printf "What user does your webserver run as? (Usually www-data) \r\n"
-read -p " > "
+PASS='false'
+USER=''
+while [ $PASS = 'false' ]
+do
+    printf "What user does your webserver run as? (Usually www-data) \r\n"
+    read -p " > "
+    USER=$REPLY
+    if [ -z $(getent passwd $USER) ] 
+    then
+            echo "$(tput setaf 1) Error. The given group does not exist. Please try again.$(tput sgr0)"
+    else
+            break
+    fi
+done
+    
 printf "Adding webserver user to git group..."
-sudo usermod -aG git $REPLY 
-
+sudo usermod -aG git $USER 
 echo "$(tput setaf 2) Done!$(tput sgr0)"
