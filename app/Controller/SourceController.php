@@ -29,19 +29,21 @@ class SourceController extends AppController {
      * @param $name string Project name
      */
     private function _projectCheck($name) {
-        // Check for existant project
+        // Check for existent project
         $project = $this->Source->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+        $this->Source->Project->id = $project['Project']['id'];
+
+        $user = $this->Auth->user('id');
 
         // Lock out those who are not guests
-        $this->Source->Project->id = $project['Project']['id'];
-        if ( !$this->Source->Project->isMember($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
+        if ( !$this->Source->Project->hasRead($user) ) throw new ForbiddenException(__('You are not a member of this project'));
 
         // Load the repo into the GitCake Model
         $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
 
         $this->set('project', $project);
-        $this->set('isAdmin', $this->Source->Project->isAdmin($this->Auth->user('id')));
+        $this->set('isAdmin', $this->Source->Project->isAdmin($user));
 
         return $project;
     }

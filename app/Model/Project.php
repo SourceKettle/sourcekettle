@@ -155,6 +155,42 @@ class Project extends AppModel {
     }
 
     /**
+     * Checks to see if a user has read access of this project
+     *
+     * @param $user int id of the user to check
+     * @return boolean true if read permissions
+     */
+    public function hasRead($user = null) {
+        if ( $user == null ) return false;
+
+        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $this->id), 'fields' => array('access_level')));
+
+        if ( !empty($member) && $member['Collaborator']['access_level'] > -1 ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks to see if a user has write access of this project
+     *
+     * @param $user int id of the user to check
+     * @return boolean true if write permissions
+     */
+    public function hasWrite($user = null) {
+        if ( $user == null ) return false;
+
+        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $this->id), 'fields' => array('access_level')));
+
+        if ( !empty($member) && $member['Collaborator']['access_level'] > 0 ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks to see if a user is an admin of this project
      *
      * @param $user int id of the user to check
@@ -163,29 +199,13 @@ class Project extends AppModel {
     public function isAdmin($user = null) {
         if ( $user == null ) return false;
 
-        $admins = $this->Collaborator->find('first', array('conditions' => array('Collaborator.user_id' => $user, 'Collaborator.project_id' => $this->id), 'fields' => array('Collaborator.access_level')));
-        if ( $admins['Collaborator']['access_level'] == 2 ) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $this->id), 'fields' => array('access_level')));
 
-    /**
-     * Checks to see if a user is a member of this project
-     *
-     * @param $user int id of the user to check
-     * @return boolean true if member
-     */
-    public function isMember($user = null) {
-        if ( $user == null ) return false;
-
-        $members = $this->Collaborator->find('first', array('conditions' => array('Collaborator.user_id' => $user, 'Collaborator.project_id' => $this->id), 'fields' => array('Collaborator.access_level')));
-        if ( !empty($members) ) {
+        if ( !empty($member) && $member['Collaborator']['access_level'] > 1 ) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public function fetchEventsForProject() {
