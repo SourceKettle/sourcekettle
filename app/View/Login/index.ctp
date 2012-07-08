@@ -6,7 +6,7 @@
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
-* 
+*
 * @copyright     DevTrack Development Team 2012
 * @link          http://github.com/chrisbulmer/devtrack
 * @package       DevTrack.View.Login
@@ -24,15 +24,15 @@
 
             <?php
             echo $this->Bootstrap->input("email", array(
-                "input" => $this->Form->text("email", array('class'=>'span12')),
+                "input" => $this->Form->text("email", array('class'=>'span12', 'tabindex'=>'1')),
             ));
-            
+
             echo $this->Bootstrap->input("password", array(
-                "input" => $this->Form->password("password", array('class'=>'span12', 'escape'=>false)),
+                "input" => $this->Form->password("password", array('class'=>'span12', 'escape'=>false, 'tabindex'=>'2')),
                 "label" => "Password (".$this->Html->link('Forgot?','/users/lost_password').')',
             ));
 
-            echo $this->Bootstrap->button("Login", array("style" => "primary", "size" => "large", 'class' => 'controls'));
+            echo $this->Bootstrap->button("Login", array("style" => "primary", "size" => "large", 'class' => 'controls', 'tabindex'=>'3'));
             ?>
         </div>
         <?= $this->Form->end() ?>
