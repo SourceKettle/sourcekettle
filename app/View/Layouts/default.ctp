@@ -6,7 +6,7 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.View.Layouts
@@ -16,11 +16,12 @@
 ?>
 <!DOCTYPE html>
 <html>
-<head> 
+<head>
     <title>
         <?= $devtrack_config['global']['alias'] ?> - <?= $title_for_layout ?>
-    </title> 
+    </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
     <?= $this->Html->charset('UTF-8') . "\n" ?>
     <?= $this->Html->css('bootstrap.min') ?>
     <?= $this->Html->css('layout'); ?>
@@ -46,7 +47,7 @@
                         <span class="icon-bar"></span>
                     </a>
                     <?= $this->Html->link($devtrack_config['global']['alias'], '/', array('class' => 'brand')); ?>
-                    
+
                     <?php
                     if(isset($user_name)){
                         ?>
@@ -92,7 +93,7 @@
                 </div>
             </div>
         </div>
-    </header> 
+    </header>
     <div class="container">
         <div id="content">
             <? echo $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
