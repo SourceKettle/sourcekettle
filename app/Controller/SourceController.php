@@ -46,6 +46,10 @@ class SourceController extends AppController {
         return $project;
     }
 
+    public function index($name = null) {
+        $this->redirect(array('action' => 'tree', 'project' => $name));
+    }
+
     /*
      * tree
      * display an element in the tree

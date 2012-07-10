@@ -93,7 +93,7 @@ class Source extends AppModel {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->GitCake->branch();
-            case '3': return $this->SVNCake->branch();
+            case '3': return array('HEAD');
         }
     }
 
@@ -125,7 +125,7 @@ class Source extends AppModel {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->GitCake->hasTree($hash);
-            case '3': return $this->SVNCake->hasTree($hash);
+            case '3': return ($hash=='HEAD')? true : false;
         }
     }
 
@@ -135,8 +135,13 @@ class Source extends AppModel {
         if (empty($branches))
             return null;
 
-        if (in_array('master', $branches))
-            return 'master';
+        switch ($this->Project->field('repo_type')) {
+            case '2': $master = 'master';
+            case '3': $master = 'HEAD';
+        }
+
+        if (in_array($master, $branches))
+            return $master;
 
         return $branches[0];
     }
@@ -170,7 +175,7 @@ class Source extends AppModel {
 
         $tree['type'] = $this->_svnTypeTranslate($tree['type']);
 
-        if ($tree['type'] == 'tree') {
+        if ($tree['type'] == 'tree' && isset($tree['content']) && !empty($tree['content'])) {
             foreach ($tree['content'] as $t => $element) {
                 $tree['content'][$t]['type'] = $this->_svnTypeTranslate($element['type']);
             }
