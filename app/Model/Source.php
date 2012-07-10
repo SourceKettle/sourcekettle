@@ -45,6 +45,10 @@ class Source extends AppModel {
     public $hasMany = array(
         'GitCake' => array(
             'className' => 'GitCake.GitCake',
+            
+        ),
+        'SVNCake' => array(
+            'className' => 'SVNCake.SVNCake',
         )
     );
 
@@ -56,6 +60,7 @@ class Source extends AppModel {
                 $this->GitCake->loadRepo($this->_repoLocation());
                 break;
             case '3':
+                $this->SVNCake->loadRepo($this->_repoLocation());
                 break;
         }
     }
@@ -76,11 +81,19 @@ class Source extends AppModel {
         }
     }
 
+    public function create() {
+        switch ($this->Project->field('repo_type')) {
+            case '1': return null;
+            case '2': return $this->GitCake->createRepo($this->_repoLocation());
+            case '3': return $this->SVNCake->createRepo($this->_repoLocation());
+        }
+    }
+
     public function branches() {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->GitCake->branch();
-            case '3': return null;
+            case '3': return $this->SVNCake->branch();
         }
     }
 
@@ -88,7 +101,7 @@ class Source extends AppModel {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->_gitTree($branch, $folderPath);
-            case '3': return null;
+            case '3': return $this->SVNCake->tree($branch, $folderPath);
         }
     }
 
@@ -96,7 +109,7 @@ class Source extends AppModel {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->GitCake->log($branch, $limit, $offset, $filepath);
-            case '3': return null;
+            case '3': return $this->SVNCake->log($branch, $limit, $offset, $filepath);
         }
     }
 
@@ -104,7 +117,7 @@ class Source extends AppModel {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->GitCake->showCommit($hash);
-            case '3': return null;
+            case '3': return $this->SVNCake->showCommit($hash);
         }
     }
 

@@ -111,7 +111,7 @@ class Project extends AppModel {
         'Source' => array(
             'className' => 'Source',
             'foreignKey' => 'project_id',
-            'dependent' => true,
+            'dependent' => false,
             'conditions' => '',
             'fields' => '',
             'order' => '',

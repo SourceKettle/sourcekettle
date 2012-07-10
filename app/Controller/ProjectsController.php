@@ -107,10 +107,8 @@ class ProjectsController extends AppController {
                 $this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Auth->user('id')."]", 'devtrack');
                 $this->log("[ProjectController.add] user[".$this->Auth->user('id')."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
 
-                if ($this->Project->RepoType->field('name') == 'Git') {
-                    // Create a blank Git repo
-                    $this->GitCake->createRepo($this->Project->Source->RepoLocationOnFileSystem($this->request->data['Project']['name']));
-                }
+                // Create a repo
+                $this->Project->Source->create();
 
                 $this->redirect(array('action' => 'index'));
             } else {
