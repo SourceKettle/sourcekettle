@@ -19,7 +19,6 @@ App::uses('AppController', 'Controller');
 class SourceController extends AppController {
 
     public $helpers = array('Time', 'CommandLineColor');
-    public $uses = array('Source', 'GitCake.GitCake');
 
     /*
      * _projectCheck
@@ -39,9 +38,6 @@ class SourceController extends AppController {
         // Lock out those who are not guests
         if ( !$this->Source->Project->hasRead($user) ) throw new ForbiddenException(__('You are not a member of this project'));
 
-        // Load the repo into the GitCake Model
-        $this->GitCake->loadRepo($this->Source->RepoLocationOnFileSystem($project['Project']['name']));
-
         $this->set('project', $project);
         $this->set('isAdmin', $this->Source->Project->isAdmin($user));
 
@@ -57,43 +53,28 @@ class SourceController extends AppController {
     public function tree($name = null) {
         $this->_projectCheck($name);
 
-        $branches = $this->GitCake->branch();
+        $branches = $this->Source->branches();
         if(empty($branches)) {
             $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
         } else {
             // Fetch branch
             $branch = $this->_getBranch();
             $path = $this->_getPath();
-
-            if ($path == '') {
-                $node = array(array('type'=>'tree', 'hash' => 'master'));
-            } else {
-                $node = $this->GitCake->tree($branch, $path);
-            }
+            $node = $this->Source->tree($branch, $path);
 
             $this->set("branch", $branch);
             $this->set("path", $path);
             $this->set('branches', $branches);
 
-            if (!isset($node[0])) {
-                $this->render('not_found');
-            } else {
-                switch ($node[0]['type']) {
-                    case 'tree':
-                        $tree = $this->GitCake->tree($node[0]['hash']);
-                        foreach ($tree as $t => $element) {
-                            $commit = trim($this->GitCake->exec("rev-list --all -n 1 $branch -- ".(($path != '')?"$path/":$path).$element['name']));
-                            $tree[$t]['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' $commit"));
-                            $tree[$t]['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' $commit"));
-                        }
-                        $this->set("files", $tree);
-                        break;
-                    case 'blob':
-                        $this->set("source", $this->GitCake->blob($node[0]['hash']));
-                        break;
-                    default:
-                        $this->render('not_found');
-                }
+            switch ($node['type']) {
+                case 'tree':
+                    $this->set("tree", $node);
+                    break;
+                case 'blob':
+                    $this->set("tree", $node);
+                    break;
+                default:
+                    $this->render('not_found');
             }
         }
     }
@@ -116,12 +97,14 @@ class SourceController extends AppController {
         // Fetch branch
         $branch = $this->_getBranch();
         $path = $this->_getPath();
-        $node = $this->GitCake->tree($branch, $path);
+        $node = $this->Source->tree($branch, $path);
 
-        if (!isset($node[0]['type'])) {
+        if ($node['type'] != 'blob') {
+            $this->set("branch", $branch);
+            $this->set('branches', $this->Source->branches());
             $this->render('not_found');
         } else {
-            $this->set("source_files", $this->GitCake->blob($node[0]['hash']));
+            $this->set("source_files", $node['content']);
         }
     }
 
@@ -134,7 +117,7 @@ class SourceController extends AppController {
     public function commits($name = null) {
         $this->_projectCheck($name);
 
-        $branches = $this->GitCake->branch();
+        $branches = $this->Source->branches();
         if(empty($branches)) {
             $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
         } else {
@@ -143,7 +126,7 @@ class SourceController extends AppController {
 
             $this->set("branch", $branch);
             $this->set('branches', $branches);
-            $this->set("commits", $this->GitCake->log($branch, 10));
+            $this->set("commits", $this->Source->log($branch, 10));
         }
     }
 
@@ -156,13 +139,13 @@ class SourceController extends AppController {
     public function commit($name = null, $hash = null) {
         $this->_projectCheck($name);
 
-        $branches = $this->GitCake->branch();
+        $branches = $this->Source->branches();
         if(empty($branches)) {
             $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
         } else {
             $this->set("branch", null);
             $this->set('branches', $branches);
-            $this->set("commit", $this->GitCake->showCommit($hash, true));
+            $this->set("commit", $this->Source->showCommit($hash));
         }
     }
 
@@ -186,13 +169,13 @@ class SourceController extends AppController {
     private function _getBranch() {
         // Check to see if a branch is set, if not redirect to master
         if ( !isset($this->params['pass'][1]) ) {
-            $this->redirect(array('project' => $this->params['pass'][0], 'action' => $this->request['action'], 'master'));
+            $this->redirect(array('project' => $this->params['pass'][0], 'action' => $this->request['action'], $this->Source->defaultBranch()));
         }
 
         // Check valid branch is selected
-        if ( !$this->GitCake->hasTree($this->params['pass'][1]) ) {
+        if ( !$this->Source->hasBranch($this->params['pass'][1]) ) {
             $this->Session->setFlash(__("The tree '".$this->params['pass'][1]."' does not exist."), 'default', array(), 'error');
-            $this->redirect(array('project' => $this->params['pass'][0], 'action' => $this->request['action'], 'master'));
+            $this->redirect(array('project' => $this->params['pass'][0], 'action' => $this->request['action'], $this->Source->defaultBranch()));
         }
 
         return $this->params['pass'][1];

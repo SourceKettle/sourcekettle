@@ -26,30 +26,6 @@ class Source extends AppModel {
     public $useTable = 'source';
 
     /**
-     * Display field
-     *
-     * @var string
-     */
-    public $displayField = 'id';
-
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public $validate = array(
-        'project_id' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-                'message' => 'Please select a project',
-            ),
-        ),
-    );
-    
-    
-    //The Associations below have been created with all possible keys, those that are not needed can be removed
-
-    /**
      * belongsTo associations
      *
      * @var array
@@ -58,24 +34,115 @@ class Source extends AppModel {
         'Project' => array(
             'className' => 'Project',
             'foreignKey' => 'project_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
         )
     );
 
-    public function RepoLocationOnFileSystem($name = null) {
-        $devtrack_config = Configure::read('devtrack');
-        $base = $devtrack_config['repo']['base'];
-        if ($base[strlen($base)-1] != '/') {
-            $base .= '/';
+    /**
+     * hasMany associations
+     *
+     * @var array
+     */
+    public $hasMany = array(
+        'GitCake' => array(
+            'className' => 'GitCake.GitCake',
+        )
+    );
+
+    public function __construct() {
+        switch ($this->Project->field('repo_type')) {
+            case '1':
+                break;
+            case '2':
+                $this->GitCake->loadRepo($this->_repoLocation());
+                break;
+            case '3':
+                break;
         }
-
-        // Check for existant project
-        $project = $this->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-
-        return $base . $project['Project']['name'] . '.git/';
     }
 
+    private function _repoLocation() {
+
+        $devtrack_config = Configure::read('devtrack');
+        $base = $devtrack_config['repo']['base'];
+
+        if ($base[strlen($base)-1] != '/') $base .= '/';
+
+        $base .= $this->Project->field('name');
+
+        switch ($this->Project->field('repo_type')) {
+            case '1': return null;
+            case '2': return $base.'.git/';
+            case '3': return $base.'.svn/';
+        }
+    }
+
+    public function branches() {
+        switch ($this->Project->field('repo_type')) {
+            case '1': return null;
+            case '2': return $this->GitCake->branch();
+            case '3': return null;
+        }
+    }
+
+    public function tree($branch = 'master', $folderPath = '') {
+        switch ($this->Project->field('repo_type')) {
+            case '1': return null;
+            case '2': return $this->_gitTree($branch, $folderPath);
+            case '3': return null;
+        }
+    }
+
+    public function log($branch = 'master', $limit = 10, $offset = 0, $filepath = '') {
+        switch ($this->Project->field('repo_type')) {
+            case '1': return null;
+            case '2': return $this->GitCake->log($branch, $limit, $offset, $filepath);
+            case '3': return null;
+        }
+    }
+
+    public function showCommit($hash) {
+        switch ($this->Project->field('repo_type')) {
+            case '1': return null;
+            case '2': return $this->GitCake->showCommit($hash);
+            case '3': return null;
+        }
+    }
+
+    public function hasBranch($hash) {
+        switch ($this->Project->field('repo_type')) {
+            case '1': return null;
+            case '2': return $this->GitCake->hasTree($hash);
+            case '3': return null;
+        }
+    }
+
+    public function defaultBranch() {
+        $branches = $this->branches();
+
+        if (empty($branches))
+            return null;
+
+        if (in_array('master', $branches))
+            return 'master';
+
+        return $branches[0];
+    }
+
+    /**
+     *
+     ** Git Methods **
+     *
+     */
+
+    private function _gitTree($branch, $folderPath) {
+        $tree = $this->GitCake->tree($branch, $folderPath);
+        if ($tree['type'] == 'tree') {
+            foreach ($tree['content'] as $t => $element) {
+                $tree['content'][$t]['commit'] = trim($this->GitCake->exec("rev-list --all -n 1 $branch -- ".$tree['path']."/".$element['name']));
+                $tree['content'][$t]['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' ".$tree['content'][$t]['commit']));
+                $tree['content'][$t]['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' ".$tree['content'][$t]['commit']));
+            }
+        }
+        return $tree;
+    }
 }
