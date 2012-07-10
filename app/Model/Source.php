@@ -52,7 +52,7 @@ class Source extends AppModel {
         )
     );
 
-    public function __construct() {
+    public function init() {
         switch ($this->Project->field('repo_type')) {
             case '1':
                 break;
@@ -101,7 +101,7 @@ class Source extends AppModel {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->_gitTree($branch, $folderPath);
-            case '3': return $this->SVNCake->tree($branch, $folderPath);
+            case '3': return $this->_svnTree($branch, $folderPath);
         }
     }
 
@@ -125,7 +125,7 @@ class Source extends AppModel {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->GitCake->hasTree($hash);
-            case '3': return null;
+            case '3': return $this->SVNCake->hasTree($hash);
         }
     }
 
@@ -157,5 +157,34 @@ class Source extends AppModel {
             }
         }
         return $tree;
+    }
+
+    /**
+     *
+     ** SVN Methods **
+     *
+     */
+
+    private function _svnTree($branch, $folderPath) {
+        $tree = $this->SVNCake->tree($branch, $folderPath);
+
+        $tree['type'] = $this->_svnTypeTranslate($tree['type']);
+
+        if ($tree['type'] == 'tree') {
+            foreach ($tree['content'] as $t => $element) {
+                $tree['content'][$t]['type'] = $this->_svnTypeTranslate($element['type']);
+            }
+        }
+
+        return $tree;
+    }
+
+    private function _svnTypeTranslate($type) {
+        if ($type == 'dir') {
+            return 'tree';
+        } else if ($type == 'file') {
+            return 'blob';
+        }
+        return $type;
     }
 }

@@ -38,6 +38,8 @@ class SourceController extends AppController {
         // Lock out those who are not guests
         if ( !$this->Source->Project->hasRead($user) ) throw new ForbiddenException(__('You are not a member of this project'));
 
+        $this->Source->init();
+
         $this->set('project', $project);
         $this->set('isAdmin', $this->Source->Project->isAdmin($user));
 
