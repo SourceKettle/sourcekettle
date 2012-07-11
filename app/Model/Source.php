@@ -125,7 +125,7 @@ class Source extends AppModel {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
             case '2': return $this->GitCake->hasTree($hash);
-            case '3': return ($hash=='HEAD')? true : false;
+            case '3': return $this->SVNCake->hasTree($hash);
         }
     }
 
@@ -171,7 +171,7 @@ class Source extends AppModel {
      */
 
     private function _svnTree($branch, $folderPath) {
-        $tree = $this->SVNCake->tree($branch, $folderPath);
+        $tree = $this->SVNCake->tree($branch, $folderPath, $branch);
 
         $tree['type'] = $this->_svnTypeTranslate($tree['type']);
 

@@ -68,7 +68,6 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                 <br>
                 <table class="diff_table">
                 <?php
-                    //echo '<pre>';
                     foreach ($diff['hunks'] as $a => $hunk) {
                         $d_m = $diff['hunks_def'][$a]['-'];
                         $d_a = $diff['hunks_def'][$a]['+'];
@@ -98,7 +97,6 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                             <?
                         }
                     }
-                    //echo '</pre>';
                 ?>
                 </table>
             </div>
