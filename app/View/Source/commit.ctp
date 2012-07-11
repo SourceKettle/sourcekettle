@@ -13,6 +13,8 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->set('css_for_layout', array('pages/diff'));
+
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
 
@@ -55,8 +57,8 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                     <div class="span7">
                         <h4><?= $file ?></h4>
                         <h6>
-                            <span class="label label-success">Added</span> <span style="color:green"><?= $diff['more'] ?></span>
-                            <span class="label label-important">Deleted</span> <span style="color:red"><?= $diff['less'] ?></span>
+                            <span class="label label-success">Added</span> <span class="green_front"><?= $diff['more'] ?></span>
+                            <span class="label label-important">Deleted</span> <span class="red_front"><?= $diff['less'] ?></span>
                         </h6>
                     </div>
                     <div class="span2">
@@ -64,7 +66,41 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                     </div>
                 </div>
                 <br>
-                <pre><?= $this->CommandLineColor->translateColors(htmlspecialchars($diff['diff'])) ?></pre>
+                <table class="diff_table">
+                <?php
+                    //echo '<pre>';
+                    foreach ($diff['hunks'] as $a => $hunk) {
+                        $d_m = $diff['hunks_def'][$a]['-'];
+                        $d_a = $diff['hunks_def'][$a]['+'];
+                        ?>
+                        <tr class="diff_row">
+                            <td class="diff_col old_col">...</td>
+                            <td class="diff_col new_col">...</td>
+                            <td class="pre_col">
+                                <pre class="diff_pre hunk_header">   @@ -<?=$d_m[0]?>,<?=$d_m[1]?> +<?=$d_a[0]?>,<?=$d_a[1]?> @@ </pre>
+                            </td>
+                        </tr>
+                        <?
+                        foreach ($hunk as $line) {
+                            switch ($line[0]) {
+                                case '+': $color = "pre_green green_back"; break;
+                                case '-': $color = "pre_red red_back"; break;
+                                case ' ': $color = "pre_normal"; break;
+                            }
+                            ?>
+                            <tr class="diff_row">
+                                <td class="diff_col old_col"><?= $line[1] ?></td>
+                                <td class="diff_col new_col"><?= $line[2] ?></td>
+                                <td class="pre_col">
+                                    <pre class="diff_pre <?= $color ?>"> <?= $line[0] ?> <?= $line[3] ?></pre>
+                                </td>
+                            </tr>
+                            <?
+                        }
+                    }
+                    //echo '</pre>';
+                ?>
+                </table>
             </div>
             <? endforeach; ?>
         </div>
