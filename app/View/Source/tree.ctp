@@ -40,7 +40,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
     </div>
     <div class="row">
         <?= $this->element('Source/topbar', array('branches' => $branches, 'branch' => $branch)) ?>
-        <? if ($tree['type'] == 'tree') echo $this->element('source/folder_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'files' => $tree['content'])); ?>
-        <? if ($tree['type'] == 'blob') echo $this->element('source/file_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'source' => $tree['content'])) ?>
+        <? if ($tree['type'] == 'tree') echo $this->element('Source/folder_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'files' => $tree['content'])); ?>
+        <? if ($tree['type'] == 'blob') echo $this->element('Source/file_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'source' => $tree['content'])) ?>
     </div>
 </div>
