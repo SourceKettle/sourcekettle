@@ -24,6 +24,7 @@ class ProjectActivityHelper extends AppHelper {
     var $prefs = array(
         'Collaborator' => array('icon' => 'user', 'color' => 'warning'),
         'Time'         => array('icon' => 'time', 'color' => 'info'),
+        'Source'       => array('icon' => 'pencil', 'color' => 'success'),
     );
 
     /**
@@ -47,8 +48,10 @@ class ProjectActivityHelper extends AppHelper {
         foreach ( $events as $event ) {
 
             // If we change day, print out a date header
-            if (date('Y-m-d', $currentDate) != date('Y-m-d', strtotime($event['modified']))) {
+            $newDate = strtotime($event['modified']);
+            if (date('Y-m-d', $currentDate) != date('Y-m-d', $newDate)) {
                 $return .= '<p><strong>'.date('l jS \of F Y', strtotime($event['modified'])).'</strong></p>';
+                $currentDate = $newDate;
             }
 
             $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
@@ -60,6 +63,7 @@ class ProjectActivityHelper extends AppHelper {
                     $return .= '<p>' . $this->content_collaborator($event, $context) . ' - <small>'.$this->Time->timeAgoInWords($event['modified']).'</small></p>';
                     break;
                 case 'Commit':
+                    $return .= '<p>' . $this->content_commit($event, $context) . ' - <small>'.$this->Time->timeAgoInWords($event['modified']).'</small></p>';
                     break;
                 case 'Time':
                     $return .= '<p>' . $this->content_time($event, $context) . ' - <small>'.$this->Time->timeAgoInWords($event['modified']).'</small></p>';
@@ -89,13 +93,45 @@ class ProjectActivityHelper extends AppHelper {
     private function content_collaborator ( $event, $context ) {
         $return = '';
 
-        $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
-        $project = $this->Html->link($event['project_name'], array('controller' => 'users', 'action' => 'view', $event['project_id']));
+        if ($event['user_id'] == 0) {
+            $user = $event['user_name'];
+        } else {
+            $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
+        }
+        $project = $this->Html->link($event['project_name'], array('project' => $event['project_name'], 'controller' => 'users', 'action' => 'view'));
 
         $return .= $this->Bootstrap->label("Collaborator ".$this->Bootstrap->icon($this->prefs['Collaborator']['icon'], "white"), $this->prefs['Collaborator']['color']);
         $return .= ' '.$user.' was added';
         if ($context) $return .= ' to '.$project;
         $return .= ' as a collaborator';
+
+        return $return;
+    }
+
+    /**
+     * content_commit
+     * Will output the content row for a commit block
+     *
+     * @param $event array event to display
+     * @param $context boolean do we need context
+     *
+     * @return string the element to print
+     */
+    private function content_commit ( $event, $context ) {
+        $return = '';
+
+        if ($event['user_id'] == 0) {
+            $user = $event['user_name'];
+        } else {
+            $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
+        }
+        $project = $this->Html->link($event['project_name'], array('project' => $event['project_name'], 'controller' => 'users', 'action' => 'view'));
+        $commit = $this->Html->link('['.substr($event['message'], 0, 42).'...]', array('project' => $event['project_name'], 'controller' => 'source', 'action' => 'commit', $event['hash']));
+
+        $return .= $this->Bootstrap->label("Source ".$this->Bootstrap->icon($this->prefs['Source']['icon'], "white"), $this->prefs['Source']['color']);
+        $return .= ' '.$user.' commited';
+        if ($context) $return .= ' to '.$project;
+        $return .= ' '.$commit;
 
         return $return;
     }
