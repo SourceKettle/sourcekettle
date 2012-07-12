@@ -90,13 +90,13 @@ class SourceController extends AppController {
         $this->set('user', $this->Auth->user());
         switch ($this->Source->Project->field('repo_type')) {
             case '1':
-                $this->render('getting_started');
+                $this->render('GettingStarted/none');
                 break;
             case '2':
-                $this->render('getting_started_git');
+                $this->render('GettingStarted/git');
                 break;
             case '3':
-                $this->render('getting_started_svn');
+                $this->render('GettingStarted/svn');
                 break;
         }
     }
