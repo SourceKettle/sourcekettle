@@ -66,9 +66,7 @@ class Source extends AppModel {
     }
 
     private function _repoLocation() {
-
-        $devtrack_config = Configure::read('devtrack');
-        $base = $devtrack_config['repo']['base'];
+        $base = ClassRegistry::init('Settings')->field('value', array('name' => 'repo_location'));
 
         if ($base[strlen($base)-1] != '/') $base .= '/';
 

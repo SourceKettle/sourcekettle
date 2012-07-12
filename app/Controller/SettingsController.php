@@ -26,6 +26,8 @@ class SettingsController extends AppController {
     public function admin_index() {
         $this->Setting->recursive = 0;
         $this->set('register', $this->Setting->field('value', array('name' => 'register_enabled')));
+        $this->set('sysadmin_email', $this->Setting->field('value', array('name' => 'sysadmin_email')));
+        $this->set('repo_location', $this->Setting->field('value', array('name' => 'repo_location')));
     }
 
     /**
@@ -34,7 +36,14 @@ class SettingsController extends AppController {
      * @return void
      */
     public function admin_edit($change = null) {
-        foreach ( json_decode($change, true) as $key => $value ) {
+        $setting = array();
+        if ($change != null) {
+            $setting =array_merge(json_decode($change, true), $setting);
+        }
+        if ( isset($this->data['Settings']) && is_array($this->data['Settings']) ) {
+            $setting = array_merge($this->data['Settings'], $setting);
+        }
+        foreach ( $setting as $key => $value ) {
 
             if ( !($setting_id = $this->Setting->field('id', array('name' => $key))) ) {
                 $this->log("ERROR: [SettingsController.admin_edit] user[".$this->Auth->user('id')."] tried to set setting[".$key."] which does not exist", 'devtrack');

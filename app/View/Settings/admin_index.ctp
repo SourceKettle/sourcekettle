@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$options = array(
+$reg_op = array(
     '1' => array(
         'icon' => 'ok',
         'text' => 'On',
@@ -40,30 +40,73 @@ echo $this->Bootstrap->page_header('Administration <small>system-wide configurat
         <?= $this->element('Sidebar/admin') ?>
     </div>
     <div class="well span9">
+        <?= $this->Form->create('Settings', array('action'=>'edit')) ?>
         <h3>System wide configuration options</h3>
         <table class="table table-striped">
-            <?= $this->Form->create('Settings')//, array('class' => 'well form-search')) ?>
             <tbody>
                 <tr>
                     <td>
                         <h4>Allow Registration <small>- allow for new users to create accounts</small></h4>
                     </td>
                     <td>
-                    <?php
-                        echo $this->Bootstrap->button_dropdown($this->Bootstrap->icon($options[$register]['icon'], 'white')." ".$options[$register]['text'], array(
-                            "style" => $options[$register]['colour'],
-                            "size" => "mini",
-                            "links" => array(
-                                $this->Html->link($this->Bootstrap->icon($options[$register]['!icon'])." ".$options[$register]['!text'],
-                                        array('admin' => true, 'controller' => 'settings', 'action' => 'edit', json_encode($options[$register]['action'])),
-                                        array('escape' => false)),
-                                )
-                        ));
-                    ?>
+                        <div class="pull-right  form-search">
+                        <?php
+                            echo $this->Bootstrap->button_dropdown($this->Bootstrap->icon($reg_op[$register]['icon'], 'white')." ".$reg_op[$register]['text'], array(
+                                "style" => $reg_op[$register]['colour'],
+                                "size" => "mini",
+                                "links" => array(
+                                    $this->Html->link($this->Bootstrap->icon($reg_op[$register]['!icon'])." ".$reg_op[$register]['!text'],
+                                            array('admin' => true, 'controller' => 'settings', 'action' => 'edit', json_encode($reg_op[$register]['action'])),
+                                            array('escape' => false)),
+                                    )
+                            ));
+                        ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4>Admin email address <small>- where are emails come from</small></h4>
+                    </td>
+                    <td>
+                        <div class="pull-right">
+                        <?php
+                            echo $this->Bootstrap->input("sysadmin_email", array(
+                                "input" => $this->Form->text("sysadmin_email", array("class" => "input-xlarge search-query", "value" => $sysadmin_email)).' '.$this->Bootstrap->button("Update", array("style" => "primary", "size" => "mini")),
+                                "label" => false,
+                            ));
+                            
+                        ?>
+                        </div>
                     </td>
                 </tr>
             </tbody>
-            <?= $this->Form->end() ?>
         </table>
+        <?= $this->Form->end() ?>
+    </div>
+    <div class="well span9">
+        <?= $this->Form->create('Settings', array('action'=>'edit')) ?>
+        <h3>Source control options</h3>
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <td>
+                        <h4>Repository location <small>- where are the repositories on your file system</small></h4>
+                    </td>
+                    <td>
+                        <div class="pull-right">
+                        <?php
+                            echo $this->Bootstrap->input("repo_location", array(
+                                "input" => $this->Form->text("repo_location", array("class" => "input-xlarge search-query", "value" => $repo_location)).' '.$this->Bootstrap->button("Update", array("style" => "primary", "size" => "mini")),
+                                "label" => false,
+                            ));
+                            
+                        ?>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <?= $this->Form->end() ?>
     </div>
 </div>
