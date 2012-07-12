@@ -58,8 +58,8 @@ sudo -H -u git touch /home/git/.ssh/authorized_keys
 echo "$(tput setaf 2) Done!$(tput sgr0)"
 
 printf "Updating file permissions..."
-sudo -H -u git chmod 0700 /home/git/.ssh
-sudo -H -u git chmod 0600 /home/git/.ssh/authorized_keys
+sudo -H -u git chmod 0770 /home/git/.ssh
+sudo -H -u git chmod 0660 /home/git/.ssh/authorized_keys
 
 echo "$(tput setaf 2) Done!$(tput sgr0)"
 
