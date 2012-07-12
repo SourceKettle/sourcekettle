@@ -56,6 +56,12 @@ class UsersController extends AppController {
                                 $data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
                                 $data['SshKey']['comment'] = 'Default key';
                                 $this->User->SshKey->save($data);
+                                
+                                // Update the sync required flag
+                                $sync_required = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
+                                $sync_required['Setting']['value'] = 1;
+                                $this->Setting->save($sync_required);
+                                
                                 $this->log("[UsersController.register] sshkey[".$this->User->SshKey->getLastInsertID()."] added to user[${id}]", 'devtrack');
                             }
 

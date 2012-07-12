@@ -17,6 +17,7 @@
 App::uses('AppController', 'Controller');
 
 class SshKeysController extends AppController {
+    public $uses = array('SshKey', 'Setting');
 
     /**
      * Add an SSH key for the current user
@@ -26,6 +27,12 @@ class SshKeysController extends AppController {
             $this->request->data['SshKey']['user_id'] = $this->Auth->user('id'); //Set the key to belong to the current user
             if ($this->SshKey->save($this->request->data)){
                 $this->Session->setFlash(__('Your key was added successfully.'), 'default', array(), 'success');
+                
+                // Update the sync required flag
+                $sync_required = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
+                $sync_required['Setting']['value'] = 1;
+                $this->Setting->save($sync_required);
+                
                 $this->log("[UsersController.addkey] sshkey[".$this->SshKey->getLastInsertID()."] added to user[".$this->Auth->user('id')."]", 'devtrack');
                 $this->redirect(array('action'=>'view'));
             } else {
@@ -55,6 +62,11 @@ class SshKeysController extends AppController {
                 if ($this->SshKey->delete($key['SshKey'])){
                     $this->Session->setFlash(__('Your key was removed successfully.'), 'default', array(), 'success');
                     $this->log("[UsersController.deletekey] sshkey[".$id."] deleted by user[".$this->Auth->user('id')."]", 'devtrack');
+                    
+                    // Update the sync required flag
+                    $sync_required = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
+                    $sync_required['Setting']['value'] = 1;
+                    $this->Setting->save($sync_required);
                 } else {
                     $this->Session->setFlash(__('There was a problem removing your key. Please try again.'), 'default', array(), 'error');
                 }

@@ -142,7 +142,8 @@ CREATE TABLE IF NOT EXISTS `settings` (
 INSERT INTO `settings` (`id`, `name`, `value`, `created`, `modified`) VALUES
 (1, 'register_enabled', '0', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
 (2, 'sysadmin_email', 'sysadmin@example.com', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
-(3, 'repo_location', '/path/to/repos', '2012-06-02 22:03:59', '2012-06-02 22:04:01');
+(3, 'repo_location', '/Users/Chris/Documents/repos/', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
+(4, 'sync_required', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 
 -- --------------------------------------------------------
