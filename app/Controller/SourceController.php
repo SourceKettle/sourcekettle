@@ -88,6 +88,17 @@ class SourceController extends AppController {
     public function gettingStarted($name = null) {
         $this->_projectCheck($name);
         $this->set('user', $this->Auth->user());
+        switch ($this->Source->Project->field('repo_type')) {
+            case '1':
+                $this->render('getting_started');
+                break;
+            case '2':
+                $this->render('getting_started_git');
+                break;
+            case '3':
+                $this->render('getting_started_svn');
+                break;
+        }
     }
 
     /*

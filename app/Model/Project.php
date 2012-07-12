@@ -227,18 +227,21 @@ class Project extends AppModel {
 
         // Collect source events
         $this->Source->init();
-        foreach ( $this->Source->log() as $a ) {
-            $events[] = array(
-                'Type' => 'Commit',
-                'user_name' => $a['Commit']['author']['name'],
-                'user_id' => 0,
-                'project_name' => $project['Project']['name'],
-                'message' => $a['Commit']['subject'],
-                'hash' => $a['Commit']['hash'],
-                'modified' => $a['Commit']['date'],
-            );
-        }
+        $log = $this->Source->log();
 
+        if ($log != NULL) {
+            foreach ( $this->Source->log() as $a ) {
+                $events[] = array(
+                    'Type' => 'Commit',
+                    'user_name' => $a['Commit']['author']['name'],
+                    'user_id' => 0,
+                    'project_name' => $project['Project']['name'],
+                    'message' => $a['Commit']['subject'],
+                    'hash' => $a['Commit']['hash'],
+                    'modified' => $a['Commit']['date'],
+                );
+            }
+        }
         // Sort function for events
         // assumes $array{ $array{ 'modified' => 'date' }, ... }
         $cmp = function($a, $b) {
