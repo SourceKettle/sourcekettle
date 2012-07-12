@@ -79,6 +79,9 @@ do
     fi
 done
     
-printf "Adding webserver user to git group..."
-sudo usermod -aG git $USER 
+printf "Adding webserver user to devtrack group..."
+sudo groupadd --system devtrack
+sudo usermod -aG devtrack $USER
+printf "Adding git user to devtrack group..."
+sudo usermode -aG devtrack git 
 echo "$(tput setaf 2) Done!$(tput sgr0)"
