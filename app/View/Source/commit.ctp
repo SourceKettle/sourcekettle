@@ -40,15 +40,13 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                             <h5>
                                 <small><?= $commit['Commit']['body'] ?></small>
                             </h5>
-                        </div>
-                        <div class="span2">
-                            <?= $this->Bootstrap->button_link('See Code', array('project' => $project['Project']['name'], 'action' => 'tree', $commit['Commit']['hash']), array("style" => "info", "class" => "pull-right")) ?>
-                        </div>
-                        <div class="span9">
-                            <h5>
+                             <h5>
                                 <?= $commit['Commit']['author']['name'].' &lt;'.$commit['Commit']['author']['email'].'&gt;' ?> 
                                 <small>authored <?= $this->Time->timeAgoinWords($commit['Commit']['date']) ?></small>
                             </h5>
+                        </div>
+                        <div class="span2">
+                            <?= $this->Bootstrap->button_link('See Code', array('project' => $project['Project']['name'], 'action' => 'tree', $commit['Commit']['hash']), array("style" => "info", "class" => "pull-right")) ?>
                         </div>
                     </div>
                 </div>
