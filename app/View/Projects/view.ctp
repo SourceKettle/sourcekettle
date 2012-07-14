@@ -22,53 +22,53 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="span9">
+    <div class="span10">
         <div class="row">
-            <div class="well span9">
-                <div class="row">
-                    <div class="span3">
-                        <h3 style="margin: 0px;">Tasks</h3>
-                        <hr style="margin: 0px 0px 5px;">
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <ul class="unstyled">
-                                    <li><?= $this->Html->link('0 - Open Tasks', '#', array('style'=>"color: #3266cc;")) ?></li>
-                                    <li><?= $this->Html->link('0 - Closed Tasks', '#', array('style'=>"color: #c5d8ff;")) ?></li>
-                                    <li><?= $this->Html->link('0 - Total Tasks', '#', array('style'=>"color: #000000;")) ?></li>
-                                    <li>0% complete</li>
-                                </ul>
-                            </div>
-                            <div class="span6">
-                                <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array(20, 0, 50)); ?>
+            <div class="span10">
+                <div class="well">
+                    <div class="row-fluid">
+                        <div class="span4">
+                            <h3 style="margin: 0px;">Tasks</h3>
+                            <hr style="margin: 0px 0px 5px;">
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <ul class="unstyled">
+                                        <li><?= $this->Html->link('0 - Open Tasks', '#', array('style'=>"color: #3266cc;")) ?></li>
+                                        <li><?= $this->Html->link('0 - Closed Tasks', '#', array('style'=>"color: #c5d8ff;")) ?></li>
+                                        <li><?= $this->Html->link('0 - Total Tasks', '#', array('style'=>"color: #000000;")) ?></li>
+                                        <li>0% complete</li>
+                                    </ul>
+                                </div>
+                                <div class="span6">
+                                    <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array(20, 0, 50)); ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="span3">
-                        <h3 style="margin: 0px;">Next Milestone</h3>
-                        <hr style="margin: 0px 0px 5px;">
-                        <ul class="unstyled">
-                            <li><strong>Oh Damn</strong></li>
-                            <br>
-                            <li>Due: 22/10/2012</li>
-                            <li>0% complete</li>
-                        </ul>
-                        <?= $this->Bootstrap->progress(array("width" => 40, "striped" => true)) ?>
-                    </div>
-                    <div class="span3">
-                        <h3 style="margin: 0px;">Quick Stats</h3>
-                        <hr style="margin: 0px 0px 5px;">
-                        <ul class="unstyled">
-                            <li><strong>0 Bytes</strong> disk space used in files, notebook &amp; repositories.</li>
-                            <li><strong>1 user</strong> from 1 company are working on this project.</li>
-                            <li>Last activity was <strong>29 days ago</strong>.</li>
-                        </ul>
+                        <div class="span4">
+                            <h3 style="margin: 0px;">Next Milestone</h3>
+                            <hr style="margin: 0px 0px 5px;">
+                            <ul class="unstyled">
+                                <li><strong>Oh Damn</strong></li>
+                                <br>
+                                <li>Due: 22/10/2012</li>
+                                <li>0% complete</li>
+                            </ul>
+                            <?= $this->Bootstrap->progress(array("width" => 40, "striped" => true)) ?>
+                        </div>
+                        <div class="span4">
+                            <h3 style="margin: 0px;">Quick Stats</h3>
+                            <hr style="margin: 0px 0px 5px;">
+                            <ul class="unstyled">
+                                <li><strong>0 Bytes</strong> disk space used in files, notebook &amp; repositories.</li>
+                                <li><strong>1 user</strong> from 1 company are working on this project.</li>
+                                <li>Last activity was <strong>29 days ago</strong>.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="span9">
-                <div class="span9">
-                    <?= $this->ProjectActivity->displayActivity($events) ?>
-                </div>
+            <div class="span10">
+                <?= $this->ProjectActivity->displayActivity($events) ?>
             </div>
         </div>
     </div>
