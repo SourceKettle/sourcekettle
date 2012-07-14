@@ -39,8 +39,11 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Source/topbar', array('branches' => $branches, 'branch' => $branch)) ?>
+        <?= $this->element('Source/topbar', array('branches' => $branches, 'branch' => $branch)) ?>        
+        <div class="span10">
+            <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
+        </div>
         <? if ($tree['type'] == 'tree') echo $this->element('Source/folder_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'files' => $tree['content'])); ?>
-        <? if ($tree['type'] == 'blob') echo $this->element('Source/file_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'source' => $tree['content'])) ?>
+        <? if ($tree['type'] == 'blob') echo $this->element('Source/file_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'file' => $tree)) ?>
     </div>
 </div>

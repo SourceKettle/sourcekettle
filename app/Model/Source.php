@@ -160,6 +160,11 @@ class Source extends AppModel {
                 $tree['content'][$t]['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' ".$tree['content'][$t]['commit']));
             }
         }
+        if ($tree['type'] == 'blob') {
+            $tree['commit'] = trim($this->GitCake->exec("rev-list --all -n 1 $branch -- ".$tree['path']));
+            $tree['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' ".$tree['commit']));
+            $tree['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' ".$tree['commit']));
+        }
         return $tree;
     }
 

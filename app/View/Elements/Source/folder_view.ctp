@@ -7,9 +7,6 @@
     );
 ?>
 <div class="span10">
-    <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
-</div>
-<div class="span10">
     <table class="well table table-striped">
         <tr>
             <th><?= $this->Bootstrap->icon(null) ?> name</th>

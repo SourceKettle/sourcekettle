@@ -1,8 +1,6 @@
 .diff_table {
     width: 100%;
     border: 1px solid #a1a0a0;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
 }
 .diff_row {
     line-height: 16px;
