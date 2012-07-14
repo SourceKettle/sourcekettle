@@ -17,3 +17,7 @@
  // Tool name
  // value will be string that will be shown across the system in place of 'DevTrack'
  $config['devtrack']['global']['alias'] = 'DevTrack';
+
+ // Repository folder
+ // set to folder where you would like repositories placed
+ $config['devtrack']['repo']['base'] = '/home/git/repositories';

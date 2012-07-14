@@ -84,29 +84,4 @@ echo $this->Bootstrap->page_header('Administration <small>system-wide configurat
         </table>
         <?= $this->Form->end() ?>
     </div>
-    <div class="well span9">
-        <?= $this->Form->create('Settings', array('action'=>'edit')) ?>
-        <h3>Source control options</h3>
-        <table class="table table-striped">
-            <tbody>
-                <tr>
-                    <td>
-                        <h4>Repository location <small>- where are the repositories on your file system</small></h4>
-                    </td>
-                    <td>
-                        <div class="pull-right">
-                        <?php
-                            echo $this->Bootstrap->input("repo_location", array(
-                                "input" => $this->Form->text("repo_location", array("class" => "input-xlarge search-query", "value" => $repo_location)).' '.$this->Bootstrap->button("Update", array("style" => "primary", "size" => "mini")),
-                                "label" => false,
-                            ));
-                            
-                        ?>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <?= $this->Form->end() ?>
-    </div>
 </div>
