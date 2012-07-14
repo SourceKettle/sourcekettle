@@ -33,7 +33,20 @@
             // Logic to figure out if we are in the right place
             $c2 = $options['url']['controller'];
             $a2 = $options['url']['action'];
-            $isFeat = ($c1==$c2 && ($a1==$a2 || ($a1=='index' && $a2=='.') || $a2=='*'));
+            $isFeat = false;
+
+            // If the option is for more then one action
+            if (is_array($a2)) {
+                foreach ($a2 as $a2_i) {
+                    $isFeat = ($c1==$c2 && ($a1==$a2_i || ($a1=='index' && $a2_i=='.') || $a2_i=='*'));
+                    if ($isFeat) break;
+                }
+
+                // The first in the array is the default action
+                $options['url']['action'] = $a2[0];
+            } else {
+                $isFeat = ($c1==$c2 && ($a1==$a2 || ($a1=='index' && $a2=='.') || $a2=='*'));
+            }
 
             echo "<li ";
             if ($isFeat) echo 'class="active"';
