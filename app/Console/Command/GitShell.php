@@ -34,7 +34,7 @@ class GitShell extends AppShell {
             $app_path = $app_path[0];
             $app_path = str_replace('/Controller', '', $app_path);
 
-            $cmd = $console_path[0] . ' -app ' . $app_path . ' git serve';
+            $cmd = $console_path[0] . 'cake -app ' . $app_path . ' git serve';
 
             $out = '';
             foreach ($keys as $key) {
