@@ -48,6 +48,18 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                 </tr>
             <? endforeach; ?>
             </table>
+            <ul class="pager">
+                <? if ($page > 1) : ?>
+                <li class="previous">
+                    <?= $this->Html->link('&larr; Newer', array('project' => $project['Project']['name'], 'action' => 'commits', $branch, 'page' => ($page - 1)), array('escape' => false)) ?>
+                </li>
+                <? endif; ?>
+                <? if ($more_pages) : ?>
+                <li class="next">
+                    <?= $this->Html->link('Older  &rarr;', array('project' => $project['Project']['name'], 'action' => 'commits', $branch, 'page' => ($page + 1)), array('escape' => false)) ?>
+                </li>
+                <? endif; ?>
+            </ul>
         </div>
     </div>
 </div>

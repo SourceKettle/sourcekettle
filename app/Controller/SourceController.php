@@ -141,9 +141,29 @@ class SourceController extends AppController {
             // Fetch branch
             $branch = $this->_getBranch();
 
+            $page = 1;
+            $num_per_page = 10;
+
+            // Lets make sure its a valid int
+            if(isset($this->params['named']['page'])) {
+                $_page = (int) $this->params['named']['page'];
+                if ($_page > 1 and $_page < 100) {
+                    $page = $_page;
+                }
+            }
+
+            $commits = $this->Source->log($branch, $num_per_page+1, (($page-1)*$num_per_page));
+            if (sizeof($commits) == $num_per_page+1) {
+                unset($commits[$num_per_page]);
+                $this->set("more_pages", true);
+            } else {
+                $this->set("more_pages", false);
+            }
+
             $this->set("branch", $branch);
             $this->set('branches', $branches);
-            $this->set("commits", $this->Source->log($branch, 10));
+            $this->set("commits", $commits);
+            $this->set("page", $page);
         }
     }
 
