@@ -115,7 +115,7 @@ class GitShell extends AppShell {
 
         $repo_path = $matches['path'];
         //Now check if the user has the correct permissions
-        var_dump($repo_path);
+        $this->log(var_dump($repo_path));
 
     }
 
