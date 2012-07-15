@@ -53,7 +53,7 @@ class GitShell extends AppShell {
         //}
     }
 
-    public function serve($userid) {
+    public function serve() {
         //Firstly, get the SSH_ORIGINAL_COMMAND and argument array
         $vars = array_merge($_SERVER, $_ENV);
 
@@ -64,8 +64,7 @@ class GitShell extends AppShell {
 
         $ssh_original_command = $vars['SSH_ORIGINAL_COMMAND']; 
         $argv = $vars['argv'];
-
-        var_dump($userid);
+        var_dump($argv);
         //Secondly, validate the arguments
 
     }
