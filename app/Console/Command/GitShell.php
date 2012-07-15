@@ -53,10 +53,21 @@ class GitShell extends AppShell {
         //}
     }
 
-    public function serve() {
-        //Firstly, get the SSH_ORIGINAL_COMMAND
+    public function serve($userid) {
+        //Firstly, get the SSH_ORIGINAL_COMMAND and argument array
         $vars = array_merge($_SERVER, $_ENV);
-        var_dump($vars);
+
+        if (!isset($vars['SSH_ORIGINAL_COMMAND']) or !isset($vars['argv'])){
+            throw new Exception("Required environment variables are not defined");
+            return false;
+        }
+
+        $ssh_original_command = $vars['SSH_ORIGINAL_COMMAND']; 
+        $argv = $vars['argv'];
+
+        var_dump($userid);
+        //Secondly, validate the arguments
+
     }
 
 }
