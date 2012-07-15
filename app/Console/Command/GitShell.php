@@ -64,7 +64,7 @@ class GitShell extends AppShell {
 
         $ssh_original_command = $vars['SSH_ORIGINAL_COMMAND']; 
         $argv = $vars['argv'];
-        $userid = $argv[length($argv)-1];
+        $userid = $argv[sizeof($argv)-1];
 
         //Secondly, validate the arguments
 
