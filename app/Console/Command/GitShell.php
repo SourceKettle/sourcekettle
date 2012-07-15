@@ -58,7 +58,7 @@ class GitShell extends AppShell {
         $vars = array_merge($_SERVER, $_ENV);
 
         if (!isset($vars['SSH_ORIGINAL_COMMAND']) or !isset($vars['argv'])){
-            throw new Exception("Required environment variables are not defined");
+            $this->err("Required environment variables are not defined");
             exit(1);
         }
 
@@ -70,7 +70,7 @@ class GitShell extends AppShell {
 
         //check if SSH_ORIGINAL_COMMAND contains new lines
         if (strpos($ssh_original_command, "\n") !== false){ //!=== as it may also return non-boolean values that evaluate to false
-            throw new Exception("SSH_ORIGINAL_COMMAND contains new lines");
+            $this->err("SSH_ORIGINAL_COMMAND contains new lines");
             exit(2);
         }
 
@@ -79,7 +79,7 @@ class GitShell extends AppShell {
 
         //Check if the command has 2 parts
         if (sizeof($command_parts) != 2){
-            throw new Exception("Command is not a valid git command");
+            $this->err("Command is not a valid git command");
             exit(3);
         }
 
@@ -89,7 +89,7 @@ class GitShell extends AppShell {
         if ($command_parts[0] == 'git'){
             $command_args = explode(" ", $command_parts[1], 2); //split into the git command name and the arguments
             if (sizeof($command_args) != 2){
-                throw new Exception("Wrong number of arguments to a git command");
+                $this->err("Wrong number of arguments to a git command");
                 exit(4);
             } else {
                 $command['command'] = $command_parts[0] . $command_args[0];
@@ -106,10 +106,10 @@ class GitShell extends AppShell {
         $args_regex = '#^\'/*(?P<path>[a-zA-Z0-9][a-zA-Z0-9@._-]*(/[a-zA-Z0-9][a-zA-Z0-9@._-]*)*)\'$#';
 
         if (!in_array($command['command'], $read_commands) and !in_array($command['command'], $write_commands)){
-            throw new Exception("Unknown command");
+            $this->err("Unknown command");
             exit(5);
         } else if(!preg_match($args_regex, $command['args'], $matches)){
-            throw new Exception("Arguments to command do not look safe");
+            $this->err("Arguments to command do not look safe");
             exit(6);
         }
 
