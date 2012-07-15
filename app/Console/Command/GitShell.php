@@ -59,27 +59,63 @@ class GitShell extends AppShell {
 
         if (!isset($vars['SSH_ORIGINAL_COMMAND']) or !isset($vars['argv'])){
             throw new Exception("Required environment variables are not defined");
-            return false;
+            exit(1);
         }
 
         $ssh_original_command = $vars['SSH_ORIGINAL_COMMAND']; 
         $argv = $vars['argv'];
         $userid = $argv[sizeof($argv)-1];
 
-        //Secondly, validate the arguments
+        //Secondly, validate the arguments and get the command into a generic format
 
         //check if SSH_ORIGINAL_COMMAND contains new lines
         if (strpos($ssh_original_command, "\n") !== false){ //!=== as it may also return non-boolean values that evaluate to false
-            throw new Exception("SSH_ORIGINAL_COMMAND contains new lines.");
-            return false;
+            throw new Exception("SSH_ORIGINAL_COMMAND contains new lines");
+            exit(2);
         }
 
-        $command = explode(" ", $ssh_original_command, 2);
-        var_dump($command);
 
-        $commandregex = '#^\'/*(?P<path>[a-zA-Z0-9][a-zA-Z0-9@._-]*(/[a-zA-Z0-9][a-zA-Z0-9@._-]*)*)\'$#';
+        $command_parts = explode(" ", $ssh_original_command, 2);
 
+        //Check if the command has 2 parts
+        if (sizeof($command_parts) != 2){
+            throw new Exception("Command is not a valid git command");
+            exit(3);
+        }
 
+        $command = array(); //initialise an empty array
+
+        //Get the command into a generic format
+        if ($command_parts[0] == 'git'){
+            $command_args = explode(" ", $command_parts[1], 2); //split into the git command name and the arguments
+            if (sizeof($command_args) != 2){
+                throw new Exception("Wrong number of arguments to a git command")
+                exit(4);
+            } else {
+                $command['command'] = $command_parts[0] . $command_args[0];
+                $command['args'] = $command_args[1];
+            }
+        } else {
+            $command['command'] = $command_parts[0];
+            $command['args'] = $command_parts[1];
+        }
+
+        // Now check if the parts are a valid git command
+        $read_commands = array('git-upload-pack', 'git upload-pack');
+        $write_commands = array('git-receive-pack', 'git receive-pack');
+        $args_regex = '#^\'/*(?P<path>[a-zA-Z0-9][a-zA-Z0-9@._-]*(/[a-zA-Z0-9][a-zA-Z0-9@._-]*)*)\'$#';
+
+        if (!in_array($command['command'], $read_commands) and !in_array($command['command'], $write_commands)){
+            throw new Exception("Unknown command");
+            exit(5);
+        } else if(!preg_match($args_regex, $command['args'], $matches)){
+            throw new Exception("Arguments to command do not look safe");
+            exit(6);
+        }
+
+        $repo_path = $matches['path'];
+        //Now check if the user has the correct permissions
+        var_dump($repo_path);
 
     }
 
