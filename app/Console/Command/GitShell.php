@@ -26,10 +26,10 @@ class GitShell extends AppShell {
 
             $verbosity = 'quiet';
 
-            $template = 'command="%s %s --%s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
+            //$template = 'command="%s %s --%s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
+            $template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
 
             $console_path= App::path('Console');
-            //$path_to_serve = $path_to_this_file[0] . 'cake git serve ';
             $app_path = App::path('Controller');
             $app_path = $app_path[0];
             $app_path = str_replace('/Controller', '', $app_path);
@@ -43,7 +43,8 @@ class GitShell extends AppShell {
 
                 if (strlen($sshkey) > 40) { //sanity check on key
                     $content = trim(str_replace(array("\n", "\r"), '', $sshkey));
-                    $out .= sprintf($template, $cmd, $userid, $verbosity, $content) . "\n";
+                    //$out .= sprintf($template, $cmd, $userid, $verbosity, $content) . "\n";
+                    $out .= sprintf($template, $cmd, $userid, $content) . "\n";
                 }
             }
             file_put_contents('/home/git/.ssh/authorized_keys', $out, LOCK_EX);
@@ -53,7 +54,9 @@ class GitShell extends AppShell {
     }
 
     public function serve() {
-        
+        //Firstly, get the SSH_ORIGINAL_COMMAND
+        $vars = array_merge($_SERVER, $_ENV);
+        var_dump($vars);
     }
 
 }
