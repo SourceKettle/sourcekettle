@@ -89,7 +89,7 @@ class GitShell extends AppShell {
         if ($command_parts[0] == 'git'){
             $command_args = explode(" ", $command_parts[1], 2); //split into the git command name and the arguments
             if (sizeof($command_args) != 2){
-                throw new Exception("Wrong number of arguments to a git command")
+                throw new Exception("Wrong number of arguments to a git command");
                 exit(4);
             } else {
                 $command['command'] = $command_parts[0] . $command_args[0];
