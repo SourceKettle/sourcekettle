@@ -54,7 +54,7 @@ class GitShell extends AppShell {
     }
 
     public function serve() {
-        //Firstly, get the SSH_ORIGINAL_COMMAND and argument array
+        //Firstly, get the SSH_ORIGINAL_COMMAND and other useful variables from environment
         $vars = array_merge($_SERVER, $_ENV);
 
         if (!isset($vars['SSH_ORIGINAL_COMMAND']) or !isset($vars['argv'])){
@@ -64,8 +64,17 @@ class GitShell extends AppShell {
 
         $ssh_original_command = $vars['SSH_ORIGINAL_COMMAND']; 
         $argv = $vars['argv'];
-        var_dump($argv);
+        $userid = $argv[length($argv)-1];
+
         //Secondly, validate the arguments
+
+        //check if SSH_ORIGINAL_COMMAND contains new lines
+        if (strpos($ssh_original_command, "\n") !== false){ //!=== as it may also return non-boolean values that evaluate to false
+            throw new Exception("SSH_ORIGINAL_COMMAND contains new lines.");
+            return false;
+        }
+
+        var_dump($ssh_original_command);
 
     }
 
