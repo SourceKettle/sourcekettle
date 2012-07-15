@@ -58,7 +58,7 @@ class GitShell extends AppShell {
         $vars = array_merge($_SERVER, $_ENV);
 
         if (!isset($vars['SSH_ORIGINAL_COMMAND']) or !isset($vars['argv'])){
-            $this->err("Required environment variables are not defined");
+            $this->err("Error: Required environment variables are not defined");
             exit(1);
         }
 
@@ -70,7 +70,7 @@ class GitShell extends AppShell {
 
         //check if SSH_ORIGINAL_COMMAND contains new lines
         if (strpos($ssh_original_command, "\n") !== false){ //!=== as it may also return non-boolean values that evaluate to false
-            $this->err("SSH_ORIGINAL_COMMAND contains new lines");
+            $this->err("Error: SSH_ORIGINAL_COMMAND contains new lines");
             exit(2);
         }
 
@@ -79,7 +79,7 @@ class GitShell extends AppShell {
 
         //Check if the command has 2 parts
         if (sizeof($command_parts) != 2){
-            $this->err("Command is not a valid git command");
+            $this->err("Error: Command is not a valid git command");
             exit(3);
         }
 
@@ -89,10 +89,10 @@ class GitShell extends AppShell {
         if ($command_parts[0] == 'git'){
             $command_args = explode(" ", $command_parts[1], 2); //split into the git command name and the arguments
             if (sizeof($command_args) != 2){
-                $this->err("Wrong number of arguments to a git command");
+                $this->err("Error: Wrong number of arguments to a git command");
                 exit(4);
             } else {
-                $command['command'] = $command_parts[0] . $command_args[0];
+                $command['command'] = $command_parts[0] . " " . $command_args[0];
                 $command['args'] = $command_args[1];
             }
         } else {
@@ -103,20 +103,31 @@ class GitShell extends AppShell {
         // Now check if the parts are a valid git command
         $read_commands = array('git-upload-pack', 'git upload-pack');
         $write_commands = array('git-receive-pack', 'git receive-pack');
-        $args_regex = '#^\'/*(?P<path>[a-zA-Z0-9][a-zA-Z0-9@._-]*(/[a-zA-Z0-9][a-zA-Z0-9@._-]*)*)\'$#';
 
         if (!in_array($command['command'], $read_commands) and !in_array($command['command'], $write_commands)){
-            $this->err("Unknown command");
+            $this->err("Error: Unknown command");
             exit(5);
-        } else if(!preg_match($args_regex, $command['args'], $matches)){
-            $this->err("Arguments to command do not look safe");
+        } 
+
+        //Get the project. Since the project name must be a valid unix name, we can just use the argument
+        $project = $this->Project->getProject($command['args']);
+
+        $repo_path = $this->Setting->find('first', array('conditions' => array ('name' => 'repo_location')));
+        $repo_path = $repo_path['Setting']['value'];
+        //Now check if the user has the correct permissions for the operation they are trying to perform
+        if (in_array($command['command'], $read_commands) and ($project->hasRead($userid))){
+            // read requested and they have permission, serve the request
+            print $repo_path . $command['args'] . " " . $command['command'];
+            exit(0);
+        } else if (in_array($command['command'], $write_commands) and ($project->hasWrite($userid))) {
+             // write requested and they have permission, serve the request
+            print $repo_path . $command['args'] . " " . $command['command'];
+            exit(0);
+        } else {
+            // they do not have permission
+            $this->err("Error: You do not have the neccessary permissions");
             exit(6);
         }
-
-        $repo_path = $matches['path'];
-        //Now check if the user has the correct permissions
-        $this->log(var_dump($repo_path));
-
     }
 
 }
