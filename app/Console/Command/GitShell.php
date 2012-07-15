@@ -74,7 +74,7 @@ class GitShell extends AppShell {
             return false;
         }
 
-        $command = explode("\s", $ssh_original_command, 2);
+        $command = explode(" ", $ssh_original_command, 2);
         var_dump($command);
 
         $commandregex = '#^\'/*(?P<path>[a-zA-Z0-9][a-zA-Z0-9@._-]*(/[a-zA-Z0-9][a-zA-Z0-9@._-]*)*)\'$#';
