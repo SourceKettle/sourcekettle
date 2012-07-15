@@ -110,16 +110,19 @@ class GitShell extends AppShell {
         } 
 
         //Get the project. Since the project name must be a valid unix name, we can just use the argument
-        $project = $this->Project->getProject($command['args']);
+        $projectid = $this->Project->getProject($command['args']);
+        $this->Project->id = $projectid;
 
         $repo_path = $this->Setting->find('first', array('conditions' => array ('name' => 'repo_location')));
         $repo_path = $repo_path['Setting']['value'];
         //Now check if the user has the correct permissions for the operation they are trying to perform
-        if (in_array($command['command'], $read_commands) and ($project->hasRead($userid))){
+
+
+        if (in_array($command['command'], $read_commands) and ($this->Project->hasRead($userid))){
             // read requested and they have permission, serve the request
             print $repo_path . $command['args'] . " " . $command['command'];
             exit(0);
-        } else if (in_array($command['command'], $write_commands) and ($project->hasWrite($userid))) {
+        } else if (in_array($command['command'], $write_commands) and ($this->Project->hasWrite($userid))) {
              // write requested and they have permission, serve the request
             print $repo_path . $command['args'] . " " . $command['command'];
             exit(0);
@@ -128,6 +131,13 @@ class GitShell extends AppShell {
             $this->err("Error: You do not have the neccessary permissions");
             exit(6);
         }
+    }
+
+    /**
+    * Override the default welcome. We do not want to print the welcome message as this breaks git, so do nothing
+    */
+    protected function _welcome(){
+
     }
 
 }
