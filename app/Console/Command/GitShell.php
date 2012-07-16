@@ -110,8 +110,12 @@ class GitShell extends AppShell {
         } 
 
         //Get the project. Since the project name must be a valid unix name, we can just use the argument
-        $projectid = $this->Project->getProject($command['args']);
-        $this->Project->id = $projectid;
+        $project = $this->Project->getProject($command['args']);
+        if (empty ($project)){
+            $this->err("Error: You do not have the necessary permissions");
+            exit(6);
+        }
+        $this->Project->id = $project['Project']['id'];
 
         $repo_path = $this->Setting->find('first', array('conditions' => array ('name' => 'repo_location')));
         $repo_path = $repo_path['Setting']['value'];
@@ -128,8 +132,8 @@ class GitShell extends AppShell {
             exit(0);
         } else {
             // they do not have permission
-            $this->err("Error: You do not have the neccessary permissions");
-            exit(6);
+            $this->err("Error: You do not have the necessary permissions");
+            exit(7);
         }
     }
 
