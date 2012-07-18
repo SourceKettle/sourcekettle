@@ -128,11 +128,11 @@ class GitShell extends AppShell {
 
         if (in_array($command['command'], $read_commands) and ($this->Project->hasRead($userid))){
             // read requested and they have permission, serve the request
-            print $command['command'] . ' ' . $repo_path . '/' . $_proj_name;
+            print $command['command'] . ' \'' . $repo_path . '/' . $_proj_name . '\'';
             exit(0);
         } else if (in_array($command['command'], $write_commands) and ($this->Project->hasWrite($userid))) {
              // write requested and they have permission, serve the request
-            print $command['command'] . ' ' . $repo_path . '/' . $_proj_name;
+            print $command['command'] . ' \'' . $repo_path . '/' . $_proj_name . '\'';
             exit(0);
         } else {
             // they do not have permission
