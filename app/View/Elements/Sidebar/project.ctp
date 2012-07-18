@@ -34,7 +34,7 @@
             'Source' => array(
                 'icon' => 'pencil',
                 'url' => array(
-                    'action' => array('.', 'tree', 'gettingStarted', 'commits', 'commit'),
+                    'action' => array('.', 'tree', 'gettingStarted', 'commits', 'commit', 'history'),
                     'controller' => 'source',
                     'project' => $this->params['project'],
                 ),

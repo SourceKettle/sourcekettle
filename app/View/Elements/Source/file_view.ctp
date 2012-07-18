@@ -34,7 +34,7 @@
     ?>
         <div class="row-fluid">
             <div class="span12">
-                <?= $this->Bootstrap->button_link('View the History for this file', array_merge(array('project' => $project['Project']['name'], 'action' => 'history'), explode('/', $file['path'])), array("style" => "info", "class" => "span12")) ?>
+                <?= $this->Bootstrap->button_link('View the History for this file', array_merge(array('project' => $project['Project']['name'], 'action' => 'history', $branch), explode('/', $file['path'])), array("style" => "info", "class" => "span12")) ?>
             </div>
         </div>
 </div>

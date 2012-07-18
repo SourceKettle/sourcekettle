@@ -85,6 +85,37 @@ class SourceController extends AppController {
         }
     }
 
+    /*
+     * history
+     * display the history of a file
+     *
+     * @param $name string name of the project
+     */
+    public function history($name = null) {
+        $this->_projectCheck($name);
+
+        $branches = $this->Source->branches();
+        if(empty($branches)) {
+            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
+        } else {
+            // Fetch branch
+            $branch = $this->_getBranch();
+            $path = $this->_getPath();
+            $node = $this->Source->tree($branch, $path);
+
+            $this->set("branch", $branch);
+            $this->set("path", $path);
+            $this->set('branches', $branches);
+
+            $logs = $this->Source->log($branch, 10, 0, $path);
+            foreach ($logs as $a => $commit) {
+                $c = $this->Source->showCommit($commit['Commit']['hash']);
+                $logs[$a]['Commit']['diff'][$path] = $c['Commit']['diff'][$path];
+            }
+            $this->set("logs", $logs);
+        }
+    }
+
     public function gettingStarted($name = null) {
         $this->_projectCheck($name);
         $this->set('user', $this->Auth->user());
