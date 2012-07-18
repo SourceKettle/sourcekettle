@@ -24,17 +24,13 @@ class GitShell extends AppShell {
             $keys = $this->SshKey->find('all');
             $prepared_keys = array();
 
-            $verbosity = 'quiet';
-
-            //$template = 'command="%s %s --%s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
             $template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
 
-            $console_path= App::path('Console');
             $app_path = App::path('Controller');
             $app_path = $app_path[0];
-            $app_path = str_replace('/Controller', '', $app_path);
+            $app_path = str_replace('/app/Controller', '', $app_path);
 
-            $cmd = $console_path[0] . 'cake -app ' . $app_path . ' git serve';
+            $cmd = $app_path . 'scm-scripts/git-serve.py';
 
             $out = '';
             foreach ($keys as $key) {
@@ -43,7 +39,6 @@ class GitShell extends AppShell {
 
                 if (strlen($sshkey) > 40) { //sanity check on key
                     $content = trim(str_replace(array("\n", "\r"), '', $sshkey));
-                    //$out .= sprintf($template, $cmd, $userid, $verbosity, $content) . "\n";
                     $out .= sprintf($template, $cmd, $userid, $content) . "\n";
                 }
             }
