@@ -71,7 +71,7 @@ class GitShell extends AppShell {
         //check if SSH_ORIGINAL_COMMAND contains new lines
         if (strpos($ssh_original_command, "\n") !== false){ //!=== as it may also return non-boolean values that evaluate to false
             $this->err("Error: SSH_ORIGINAL_COMMAND contains new lines");
-            exit(2);
+            exit(1);
         }
 
 
@@ -80,7 +80,7 @@ class GitShell extends AppShell {
         //Check if the command has 2 parts
         if (sizeof($command_parts) != 2){
             $this->err("Error: Command is not a valid git command");
-            exit(3);
+            exit(1);
         }
 
         $command = array(); //initialise an empty array
@@ -90,7 +90,7 @@ class GitShell extends AppShell {
             $command_args = explode(" ", $command_parts[1], 2); //split into the git command name and the arguments
             if (sizeof($command_args) != 2){
                 $this->err("Error: Wrong number of arguments to a git command");
-                exit(4);
+                exit(1);
             } else {
                 $command['command'] = $command_parts[0] . " " . $command_args[0];
                 $command['args'] = $command_args[1];
@@ -106,14 +106,18 @@ class GitShell extends AppShell {
 
         if (!in_array($command['command'], $read_commands) and !in_array($command['command'], $write_commands)){
             $this->err("Error: Unknown command");
-            exit(5);
+            exit(1);
         } 
 
         //Get the project. Since the project name must be a valid unix name, we can just use the argument
-        $project = $this->Project->getProject($command['args']);
+        preg_match("#^\'/*[a-zA-Z0-9][a-zA-Z0-9@._-]*(/(?P<last>[a-zA-Z0-9][a-zA-Z0-9@._-]*))*\'$#", $command['args'], $matches);
+        preg_match("#^(?P<repo>[a-zA-Z0-9][a-zA-Z0-9@._-]*).git$#", $matches['last'], $matches);
+        $_proj_name = $matches['repo'];
+
+        $project = $this->Project->getProject($_proj_name);
         if (empty ($project)){
             $this->err("Error: You do not have the necessary permissions");
-            exit(6);
+            exit(1);
         }
         $this->Project->id = $project['Project']['id'];
 
@@ -124,16 +128,16 @@ class GitShell extends AppShell {
 
         if (in_array($command['command'], $read_commands) and ($this->Project->hasRead($userid))){
             // read requested and they have permission, serve the request
-            print $repo_path . $command['args'] . " " . $command['command'];
+            print $repo_path . $_proj_name . " " . $command['command'];
             exit(0);
         } else if (in_array($command['command'], $write_commands) and ($this->Project->hasWrite($userid))) {
              // write requested and they have permission, serve the request
-            print $repo_path . $command['args'] . " " . $command['command'];
+            print $repo_path . $_proj_name . " " . $command['command'];
             exit(0);
         } else {
             // they do not have permission
             $this->err("Error: You do not have the necessary permissions");
-            exit(7);
+            exit(1);
         }
     }
 
