@@ -105,7 +105,7 @@ class GitShell extends AppShell {
         } 
 
         //Get the project. Since the project name must be a valid unix name, we can just use the argument
-        preg_match("#^\'/*[a-zA-Z0-9][a-zA-Z0-9@._-]*(/(?P<last>[a-zA-Z0-9][a-zA-Z0-9@._-]*))*\'$#", $command['args'], $matches);
+        preg_match("#^\'(/?(?P<last>[a-zA-Z0-9][a-zA-Z0-9@._-]*))*\'$#", $command['args'], $matches);
         preg_match("#^(?P<repo>[a-zA-Z0-9][a-zA-Z0-9@._-]*).git$#", $matches['last'], $matches);
         $_proj_name = $matches['repo'];
 
