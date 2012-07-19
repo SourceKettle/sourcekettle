@@ -15,6 +15,7 @@
 */
 
 App::uses('AppModel', 'Model');
+App::uses('Folder', 'Utility');
 /**
  * Project Model
  *
@@ -128,6 +129,16 @@ class Project extends AppModel {
             $this->data['Project']['name'] = strtolower($this->data['Project']['name']);
         }
         return true;
+    }
+
+    public function beforeDelete($cascade) {
+        $folder = new Folder($this->Source->_repoLocation());
+        if ($folder->delete()) {
+            // Successfully deleted project and its nested folders
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

@@ -65,7 +65,7 @@ class Source extends AppModel {
         }
     }
 
-    private function _repoLocation() {
+    public function _repoLocation() {
         $devtrack_config = Configure::read('devtrack');
         $base = $devtrack_config['repo']['base'];
 
