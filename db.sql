@@ -222,3 +222,21 @@ CREATE TABLE IF NOT EXISTS `api_keys` (
 --
 -- Dumping data for table `api_keys`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `times`
+--
+
+CREATE TABLE IF NOT EXISTS `times` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) NOT NULL,
+  `user_id` int(10) NOT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `times`
+--
