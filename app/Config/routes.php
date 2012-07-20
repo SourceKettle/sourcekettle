@@ -60,8 +60,8 @@
         Router::connect('/project/:project/tasks/:action/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/tasks/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
 
-        Router::connect('/project/:project/time/:action/*', array('controller' => 'time'), array('pass' => array('project'), 'project' => '[\w]+'));
-        Router::connect('/project/:project/time/*', array('controller' => 'time'), array('pass' => array('project'), 'project' => '[\w]+'));
+        Router::connect('/project/:project/time/:action/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[\w]+'));
+        Router::connect('/project/:project/time/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[\w]+'));
 
         Router::connect('/project/:project/source/:action/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/source/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));

@@ -26,8 +26,8 @@
             'Time' => array(
                 'icon' => 'book',
                 'url' => array(
-                    'action' => 'time',
-                    'controller' => 'projects',
+                    'action' => '.',
+                    'controller' => 'times',
                     'project' => $this->params['project'],
                 ),
             ),
