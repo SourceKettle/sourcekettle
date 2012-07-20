@@ -155,6 +155,10 @@ class Source extends AppModel {
         $tree = $this->GitCake->tree($branch, $folderPath);
         if ($tree['type'] == 'tree') {
             foreach ($tree['content'] as $t => $element) {
+                if ($element['type'] == 'commit') {
+                    if (!isset($submodules)) $submodules = $this->GitCake->submodules($branch);
+                    $tree['content'][$t]['remote'] = $submodules[$tree['path']."/".$element['name']]['remote'];
+                }
                 $tree['content'][$t]['commit'] = trim($this->GitCake->exec("rev-list --all -n 1 $branch -- ".$tree['path']."/".$element['name']));
                 $tree['content'][$t]['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' ".$tree['content'][$t]['commit']));
                 $tree['content'][$t]['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' ".$tree['content'][$t]['commit']));

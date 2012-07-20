@@ -16,7 +16,18 @@
     <? foreach ($files as $file) : ?>
         <? $url[] = $file['name']; ?>
         <tr>
-            <td><?= $this->Bootstrap->icon((isset($icons[$file['type']])) ? $icons[$file['type']] : 'warning-sign').' '.$this->Html->link($file['name'], $url, array('escape' => false)) ?></td>
+            <?php
+                if ($file['type'] != 'commit') {
+                    $link = $this->Html->link($file['name'], $url, array('escape' => false));
+                } else {
+                    if (preg_match('#(git|http)://(?P<url>\S+)#', $file['remote'], $match)){
+                        $link = $this->Html->link($file['name'], 'http://'.$match['url'], array('escape' => false));
+                    } else {
+                        $link = $file['name']; 
+                    }
+                }
+            ?>
+            <td><?= $this->Bootstrap->icon((isset($icons[$file['type']])) ? $icons[$file['type']] : 'warning-sign') ?> <?= $link ?></td>
             <td><?= $this->Time->timeAgoInWords($file['updated']) ?></td>
             <td><?= substr(ucfirst($file['message']), 0, 100) ?></td>
         </tr>
