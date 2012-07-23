@@ -132,7 +132,11 @@ class Project extends AppModel {
     }
 
     public function beforeDelete($cascade) {
-        $folder = new Folder($this->Source->_repoLocation());
+        $location = $this->Source->_repoLocation();
+        if ($location == NULL || !is_dir($location)) {
+            return true;
+        }
+        $folder = new Folder($location);
         if ($folder->delete()) {
             // Successfully deleted project and its nested folders
             return true;
@@ -238,21 +242,26 @@ class Project extends AppModel {
 
         // Collect source events
         $this->Source->init();
-        $log = $this->Source->log();
+        $branches = $this->Source->branches();
+        foreach ($branches as $branch) {
+            $log = $this->Source->log($branch);
 
-        if ($log != NULL) {
-            foreach ( $this->Source->log() as $a ) {
-                $events[] = array(
-                    'Type' => 'Commit',
-                    'user_name' => $a['Commit']['author']['name'],
-                    'user_id' => 0,
-                    'project_name' => $project['Project']['name'],
-                    'message' => $a['Commit']['subject'],
-                    'hash' => $a['Commit']['hash'],
-                    'modified' => $a['Commit']['date'],
-                );
+            if ($log) {
+                foreach ( $log as $a ) {
+                    $events[] = array(
+                        'Type' => 'Commit',
+                        'user_name' => $a['Commit']['author']['name'],
+                        'user_id' => 0,
+                        'project_name' => $project['Project']['name'],
+                        'message' => $a['Commit']['subject'],
+                        'hash' => $a['Commit']['hash'],
+                        'modified' => $a['Commit']['date'],
+                        'branch' => $branch
+                    );
+                }
             }
         }
+
         // Sort function for events
         // assumes $array{ $array{ 'modified' => 'date' }, ... }
         $cmp = function($a, $b) {
