@@ -233,7 +233,10 @@ CREATE TABLE IF NOT EXISTS `times` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `project_id` int(10) NOT NULL,
   `user_id` int(10) NOT NULL,
+  `mins` int(10) NOT NULL DEFAULT '0',
   `description` text,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
