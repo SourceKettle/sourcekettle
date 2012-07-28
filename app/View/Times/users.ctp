@@ -29,23 +29,33 @@ echo $this->Bootstrap->page_header("Time Logged For The Project" . $smallText);?
         <div class="span10">
             <div class="row">
                 <div class="span10" style="text-align:center">
-                    <h3>Time Contribution</h3>
-<?php
+<? if (empty($users)) : ?>
+                    <h1>No Time Logged Yet</h1>
+                    <h3><small>Go on, click the 'Log Time' button</small></h3>
+                </div>
+<? else :
+
 $times = array();
 $names = array();
+$total = 0;
 
 foreach ($users as $user) {
     $times[] = $user['Time'];
     $names[] = $user['User']['name'];
+
+    $total += (int) $user['Time'];
 }
 
-echo $this->GoogleChart->create()
+$gc = $this->GoogleChart->create()
     ->setType('pie', array('3d'))
-    ->setSize(600, 250)
-    ->setMargins(0, 0, 50, 0)
+    ->setSize(600, 220)
+    ->setMargins(0, 0, 20, 0)
     ->addData($times)
     ->setPieChartLabels($names);
 ?>
+                    <h3>Time Contribution</h3>
+                    <?= $gc ?>
+                    <h5><small>(<?= $total ?> mins total)</small></h5>
                 </div>
 <?php
     // Pointers
@@ -73,6 +83,8 @@ echo $this->GoogleChart->create()
         $srt += 4;
         $end += 4;
     }
+
+    endif;
 ?>
             </div>
         </div>
