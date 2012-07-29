@@ -33,13 +33,13 @@ echo $this->Bootstrap->page_header("Log Time<small> to the nearest 30 mins, plea
                     "label" => "Time Taken",
                     "help_block" => "The amount of time youve taken (in the format #h #m)"
                 ));
-        
+
                 echo $this->Bootstrap->input("description", array(
                     "input" => $this->Form->textarea("description", array("class" => "input-xlarge")),
                     "label" => "Description",
                     "help_inline" => "(Optional)"
                 ));
-        
+
                 echo $this->Bootstrap->button("Submit", array("style" => "primary", "size" => "normal", 'class' => 'controls'));
                 ?>
             </div>
