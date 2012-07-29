@@ -94,23 +94,35 @@ class TimesController extends AppController {
     }
 
     /**
-     * add method
+     * add
+     * allows users to log ime
      *
-     * @return void
+     * @param name string the project name
      */
-    public function add() {
+    public function add($name) {
+        $project = $this->_projectCheck($name);
+
         if ($this->request->is('post')) {
             $this->Time->create();
+
+            preg_match("#(?P<hours>[0-9]+)\s?h(rs?|ours?)?#", $this->request->data['Time']['mins'], $hours);
+            preg_match("#(?P<mins>[0-9]+)\s?m(ins?)?#", $this->request->data['Time']['mins'], $mins);
+
+            $time = (int) 0;
+            $time += ((isset($hours['hours'])) ? 60*(int)$hours['hours'] : 0);
+            $time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
+
+            $this->request->data['Time']['mins'] = $time;
+            $this->request->data['Time']['user_id'] = $this->Auth->user('id');
+            $this->request->data['Time']['project_id'] = $project['Project']['id'];
+
             if ($this->Time->save($this->request->data)) {
-                $this->Session->setFlash(__('The time has been saved'));
-                $this->redirect(array('action' => 'index'));
+                $this->Session->setFlash(__('Time successfully logged.'), 'default', array(), 'success');
+                $this->redirect(array('project' => $name, 'action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The time could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('Could not log time to the project. Please, try again.'), 'default', array(), 'error');
             }
         }
-        $projects = $this->Time->Project->find('list');
-        $users = $this->Time->User->find('list');
-        $this->set(compact('projects', 'users'));
     }
 
     /**

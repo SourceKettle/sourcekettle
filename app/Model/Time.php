@@ -43,12 +43,6 @@ class Time extends AppModel {
                 'message' => 'A valid user id was not entered',
             ),
         ),
-        'description' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-                'message' => 'Please enter a description',
-            ),
-        ),
     );
 
     /**
