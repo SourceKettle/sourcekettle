@@ -37,13 +37,14 @@ echo $this->Bootstrap->page_header("Time Logged For The Project" . $smallText);?
 
 $times = array();
 $names = array();
-$total = 0;
+$total = array('hours' => 0, 'mins' => 0);
 
 foreach ($users as $user) {
-    $times[] = $user['Time'];
+    $times[] = $t = ((int) $user['Time']['hours'])*60 + ((int) $user['Time']['mins']);
     $names[] = $user['User']['name'];
 
-    $total += (int) $user['Time'];
+    $total['hours'] += (int) $user['Time']['hours'];
+    $total['mins'] += (int) $user['Time']['mins'];
 }
 
 $gc = $this->GoogleChart->create()
@@ -55,7 +56,7 @@ $gc = $this->GoogleChart->create()
 ?>
                     <h3>Time Contribution</h3>
                     <?= $gc ?>
-                    <h5><small>(<?= $total ?> mins total)</small></h5>
+                    <h5><small>(<?= $total['hours'] ?> hours <?= $total['mins'] ?> mins total)</small></h5>
                 </div>
 <?php
     // Pointers

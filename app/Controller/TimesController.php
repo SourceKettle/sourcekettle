@@ -71,9 +71,15 @@ class TimesController extends AppController {
             if (!isset($users[$user])) {
                 $users[$user]['User']['name'] = $time['User']['name'];
                 $users[$user]['User']['email'] = $time['User']['email'];
-                $users[$user]['Time'] = 0;
+                $users[$user]['Time']['mins'] = 0;
+                $users[$user]['Time']['hours'] = 0;
             }
-            $users[$user]['Time'] += (int) $time['Time']['mins'];
+            $users[$user]['Time']['mins'] += (int) $time['Time']['mins'];
+
+            while ($users[$user]['Time']['mins'] >= 60) {
+                $users[$user]['Time']['hours'] += 1;
+                $users[$user]['Time']['mins'] -= 60;
+            }
         }
 
         $this->set('users', $users);
