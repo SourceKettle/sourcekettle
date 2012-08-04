@@ -156,8 +156,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `password` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `is_admin` tinyint(1) NOT NULL,
-  `is_active` tinyint(1) NOT NULL,
+  `is_admin` tinyint(1) NOT NULL default '0',
+  `is_active` tinyint(1) NOT NULL default '0',
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)

@@ -137,14 +137,14 @@ class Project extends AppModel {
         )
     );
 
-    public function beforeSave($options) {
+    public function beforeSave($options = array()) {
         if (!empty($this->data['Project']['name'])) {
             $this->data['Project']['name'] = strtolower($this->data['Project']['name']);
         }
         return true;
     }
 
-    public function beforeDelete($cascade) {
+    public function beforeDelete($cascade = true) {
         $location = $this->Source->_repoLocation();
         if ($location == NULL || !is_dir($location)) {
             return true;

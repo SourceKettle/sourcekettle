@@ -150,14 +150,14 @@ class User extends AppModel {
         )
     );
 
-    public function beforeSave() {
+    public function beforeSave($options = array()) {
         if (isset($this->data[$this->alias]['password'])) {
             $this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
         }
         return true;
     }
 
-    public function beforeDelete() {
+    public function beforeDelete($cascade = true) {
         // Check to ensure that this user is not the only admin on multi-collaborator projects
         $projects = $this->Collaborator->find('list', array('fields' => array('Collaborator.project_id'), 'conditions' => array('Collaborator.user_id' => $this->id)));
         foreach ( $projects as $row => $project_id ) {
