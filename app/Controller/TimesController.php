@@ -94,8 +94,9 @@ class TimesController extends AppController {
 
         if ($this->request->is('post')) {
             $this->Time->create();
+            $origTime = $this->request->data['Time']['mins'];
 
-            $this->request->data['Time']['mins'] = $this->stringToTime($this->request->data['Time']['mins']);
+            $this->request->data['Time']['mins'] = $this->stringToTime($origTime);
             $this->request->data['Time']['user_id'] = $this->Auth->user('id');
             $this->request->data['Time']['project_id'] = $project['Project']['id'];
 
@@ -103,6 +104,8 @@ class TimesController extends AppController {
                 $this->Session->setFlash(__('Time successfully logged.'), 'default', array(), 'success');
                 $this->redirect(array('project' => $name, 'action' => 'index'));
             } else {
+                // Show the user what they put in, its just nice
+                $this->request->data['Time']['mins'] = $origTime;
                 $this->Session->setFlash(__('Could not log time to the project. Please, try again.'), 'default', array(), 'error');
             }
         }
@@ -128,7 +131,9 @@ class TimesController extends AppController {
             throw new NotFoundException(__('Invalid time'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
-            $this->request->data['Time']['mins'] = $this->stringToTime($this->request->data['Time']['mins']);
+            $origTime = $this->request->data['Time']['mins'];
+
+            $this->request->data['Time']['mins'] = $this->stringToTime($origTime);
             $this->request->data['Time']['user_id'] = $user;
             $this->request->data['Time']['project_id'] = $project['Project']['id'];
 
@@ -136,10 +141,14 @@ class TimesController extends AppController {
                 $this->Session->setFlash(__('Time successfully updated.'), 'default', array(), 'success');
                 $this->redirect(array('action' => 'index'));
             } else {
+                // Show the user what they put in, its just nice
+                $this->request->data['Time']['mins'] = $origTime;
                 $this->Session->setFlash(__('Could not update the logged time. Please, try again.'), 'default', array(), 'error');
             }
         } else {
             $this->request->data = $this->Time->read(null, $id);
+            $nTime = $this->normaliseTime($this->request->data['Time']['mins']);
+            $this->request->data['Time']['mins'] = $nTime['hours']."h ".$nTime['mins']."m";
         }
     }
 
