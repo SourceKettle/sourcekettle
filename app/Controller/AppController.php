@@ -26,7 +26,7 @@ class AppController extends Controller {
      * The global helpers
      * @var type
      */
-    public $helpers = array('Html', 'Session', 'Form', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'Popover');
+    public $helpers = array('Html', 'Text', 'Session', 'Form', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'Popover');
 
     /**
      * Global components used for authentication, authorisation and session management.
@@ -79,7 +79,8 @@ class AppController extends Controller {
         }
 
         // Load config file in
-        $this->devtrack_config = Configure::read('devtrack');
+        $this->devtrack_config = array_merge(Configure::read('devtrack'), ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value'))));
+
         $this->set('devtrack_config', $this->devtrack_config);
 
         // if admin pages are being requested

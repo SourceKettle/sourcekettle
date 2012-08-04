@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * View class for APP/times/add for the DevTrack system
- * Allows users to allocate time to a project
+ * View class for APP/times/edit for the DevTrack system
+ * Allows users to edit time allocated to a project
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -14,9 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$cache = array();
-
-echo $this->Bootstrap->page_header("Log Time<small> to the nearest 30 mins, please</small>");?>
+echo $this->Bootstrap->page_header("Correct Logged Time<small> to the nearest 30 mins, please</small>");?>
 
 <div class="row">
     <div class="span2">

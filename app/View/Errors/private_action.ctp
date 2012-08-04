@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * APP/View/Error/error400 for the DevTrack system
+ * APP/View/Error/not_found for the DevTrack system
  * Shows an error when something is not found
  *
  * Licensed under The MIT License
@@ -13,18 +13,17 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-echo $this->Bootstrap->page_header('Error, Will Robinson, ERROR!');
+
+echo $this->Bootstrap->page_header('Ello Ello Ello<small> whats going on ere\' then?</small>');
+
 ?>
 <div class="row">
     <div class="span12">
-        <div class="well error">
-            <h2><?=$name?></h2>
-            <h5>Is there an error with our error?<small> Email us at <?=$this->Text->autoLinkEmails($devtrack_config['sysadmin_email'])?></small></h5>
+        <div class="well">
+            <h2>Darn!</h2>
+            <h3>This is not the location you are looking for...</h3>
+            <h4>Whatever you've requested has gone and caused a pesky error in the system.</h4>
+            <p>Dont worry! We're making sure it wasnt us by realigning our flux capacitors and what-not.</p>
         </div>
     </div>
 </div>
-<?php
-if (Configure::read('debug') > 0 ):
-	echo $this->element('exception_stack_trace');
-endif;
-?>

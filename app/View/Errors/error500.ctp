@@ -1,26 +1,29 @@
 <?php
 /**
  *
- * PHP 5
- *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * APP/View/Error/error500 for the DevTrack system
+ * Shows an error when something has gone wrong
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Errors
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @copyright     DevTrack Development Team 2012
+ * @link          http://github.com/chrisbulmer/devtrack
+ * @package       DevTrack.View.Errors
+ * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+echo $this->Bootstrap->page_header('Oh Crickey, Batman! <small>An Internal Error Has Occurred!</small>');
 ?>
-<h2><?php echo $name; ?></h2>
-<p class="error">
-	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
-	<?php echo __d('cake', 'An Internal Error Has Occurred.'); ?>
-</p>
+<div class="row">
+    <div class="span12">
+        <div class="well">
+            <h2>Darn! This is horriblly embarrasing...</h2>
+            <h4>Whatever you've requested has gone and caused a pesky error in the system.</h4>
+            <h6><small>Let us know what went wrong and email us at <?=$this->Text->autoLinkEmails($devtrack_config['sysadmin_email'])?></small></h6>
+        </div>
+    </div>
+</div>
 <?php
 if (Configure::read('debug') > 0 ):
 	echo $this->element('exception_stack_trace');
