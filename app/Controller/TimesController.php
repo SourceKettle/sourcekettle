@@ -72,31 +72,15 @@ class TimesController extends AppController {
                 $users[$user]['User']['name'] = $time['User']['name'];
                 $users[$user]['User']['email'] = $time['User']['email'];
                 $users[$user]['Time']['mins'] = 0;
-                $users[$user]['Time']['hours'] = 0;
             }
             $users[$user]['Time']['mins'] += (int) $time['Time']['mins'];
+        }
 
-            while ($users[$user]['Time']['mins'] >= 60) {
-                $users[$user]['Time']['hours'] += 1;
-                $users[$user]['Time']['mins'] -= 60;
-            }
+        foreach ($users as $a => $user) {
+            $users[$a]['Time'] = $this->normaliseTime($user['Time']['mins']);
         }
 
         $this->set('users', $users);
-    }
-
-    /**
-     * view method
-     *
-     * @param string $id
-     * @return void
-     */
-    public function view($id = null) {
-        $this->Time->id = $id;
-        if (!$this->Time->exists()) {
-            throw new NotFoundException(__('Invalid time'));
-        }
-        $this->set('time', $this->Time->read(null, $id));
     }
 
     /**
@@ -111,14 +95,7 @@ class TimesController extends AppController {
         if ($this->request->is('post')) {
             $this->Time->create();
 
-            preg_match("#(?P<hours>[0-9]+)\s?h(rs?|ours?)?#", $this->request->data['Time']['mins'], $hours);
-            preg_match("#(?P<mins>[0-9]+)\s?m(ins?)?#", $this->request->data['Time']['mins'], $mins);
-
-            $time = (int) 0;
-            $time += ((isset($hours['hours'])) ? 60*(int)$hours['hours'] : 0);
-            $time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
-
-            $this->request->data['Time']['mins'] = $time;
+            $this->request->data['Time']['mins'] = $this->stringToTime($this->request->data['Time']['mins']);
             $this->request->data['Time']['user_id'] = $this->Auth->user('id');
             $this->request->data['Time']['project_id'] = $project['Project']['id'];
 
@@ -137,24 +114,33 @@ class TimesController extends AppController {
      * @param string $id
      * @return void
      */
-    public function edit($id = null) {
+    public function edit($name, $id = null) {
+        $project = $this->_projectCheck($name);
+        $user = $this->Auth->user('id');
         $this->Time->id = $id;
+
+        // Double check that the user is allowed to edit this time slice
+        if ($this->Time->field('user_id') != $user && !$this->Time->Project->isAdmin($user)) {
+            throw new ForbiddenException(__('You are not the owner of this logged time.'));
+        }
+
         if (!$this->Time->exists()) {
             throw new NotFoundException(__('Invalid time'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
+            $this->request->data['Time']['mins'] = $this->stringToTime($this->request->data['Time']['mins']);
+            $this->request->data['Time']['user_id'] = $user;
+            $this->request->data['Time']['project_id'] = $project['Project']['id'];
+
             if ($this->Time->save($this->request->data)) {
-                $this->Session->setFlash(__('The time has been saved'));
+                $this->Session->setFlash(__('Time successfully updated.'), 'default', array(), 'success');
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The time could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('Could not update the logged time. Please, try again.'), 'default', array(), 'error');
             }
         } else {
             $this->request->data = $this->Time->read(null, $id);
         }
-        $projects = $this->Time->Project->find('list');
-        $users = $this->Time->User->find('list');
-        $this->set(compact('projects', 'users'));
     }
 
     /**
@@ -177,5 +163,46 @@ class TimesController extends AppController {
         }
         $this->Session->setFlash(__('Time was not deleted'));
         $this->redirect(array('action' => 'index'));
+    }
+
+    /**
+     * normaliseTime
+     * Take a number of mins and turn it into an array of hours and mins
+     *
+     * @param int $mins
+     * @return array array('mins'=>X,'hours'=>X)
+     */
+    private function normaliseTime($mins = 0) {
+        $hours = 0;
+
+        while ($mins >= 60) {
+            $hours += 1;
+            $mins -= 60;
+        }
+
+        return array('hours'=>$hours, 'mins'=>$mins);
+    }
+
+    /**
+     * stringToTime
+     * Take a string with hours and mins in it (e.g. 1h 20m)
+     * and turn it into a number of mins
+     *
+     * @param string $string the string to parse
+     * @return int the amount of mins
+     */
+    private function stringToTime($string = "") {
+        if (is_int($string)) {
+            return (int) $string;
+        }
+
+        preg_match("#(?P<hours>[0-9]+)\s?h(rs?|ours?)?#", $string, $hours);
+        preg_match("#(?P<mins>[0-9]+)\s?m(ins?)?#", $string, $mins);
+
+        $time = (int) 0;
+        $time += ((isset($hours['hours'])) ? 60*(int)$hours['hours'] : 0);
+        $time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
+
+        return $time;
     }
 }

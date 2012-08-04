@@ -43,6 +43,12 @@ class Time extends AppModel {
                 'message' => 'A valid user id was not entered',
             ),
         ),
+        'mins' => array(
+            'comparison' => array(
+                'rule' => array('comparison', '>', 0),
+                'message' => 'Time logged must be greater than 0.',
+            ),
+        ),
     );
 
     /**
