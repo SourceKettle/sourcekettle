@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * View class for APP/collaborators/add for the DevTrack system
+ * View class for APP/times/add for the DevTrack system
  * Allows users to allocate time to a project
  *
  * Licensed under The MIT License

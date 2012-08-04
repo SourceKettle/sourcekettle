@@ -84,6 +84,24 @@ class TimesController extends AppController {
     }
 
     /**
+     * history
+     * list the amount of time logged
+     *
+     * @param name string the project name
+     */
+    public function history($name) {
+        $project = $this->_projectCheck($name);
+
+        $times = $this->Time->findAllByProjectId($project['Project']['id']);
+
+        foreach ($times as $a => $time) {
+            $times[$a]['Time']['mins'] = $this->normaliseTime($time['Time']['mins']);
+        }
+
+        $this->set('times', $times);
+    }
+
+    /**
      * add
      * allows users to log ime
      *

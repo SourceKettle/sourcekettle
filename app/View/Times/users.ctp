@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * View class for APP/collaborators/users for the DevTrack system
+ * View class for APP/times/users for the DevTrack system
  * Shows a graph of user contribution to a project
  *
  * Licensed under The MIT License
