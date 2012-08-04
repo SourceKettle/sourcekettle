@@ -21,29 +21,6 @@ foreach ($times as $time) {
     $total['mins'] += (int) $time['Time']['mins']['mins'];
 }
 
-// How full will the mini graph be?
-function size($time) {
-    if ($time <= 30) {
-        return array(10, 90);
-    } elseif ($time <= 60) {
-        return array(20, 80);
-    } elseif ($time <= 120) {
-        return array(30, 70);
-    } elseif ($time <= 240) {
-        return array(40, 60);
-    } elseif ($time <= 480) {
-        return array(50, 50);
-    } elseif ($time <= 960) {
-        return array(60, 40);
-    } elseif ($time <= 1920) {
-        return array(70, 30);
-    } elseif ($time <= 3684) {
-        return array(80, 20);
-    } else {
-        return array(90, 10);
-    }
-}
-
 echo $this->Bootstrap->page_header("Time Logged For The Project <small>" . $project['Project']['name'] . " </small>");?>
 
 <div class="row">
@@ -60,20 +37,27 @@ echo $this->Bootstrap->page_header("Time Logged For The Project <small>" . $proj
                     <h3><small>Go on, click the 'Log Time' button</small></h3>
                 </div>
 <? else : ?>
-                    <h3>Time Contribution</h3>
-                    <h5><small>(<?= $total['hours'] ?> hours <?= $total['mins'] ?> mins total)</small></h5>
+                    <h3>Time Logged on the project</h3>
+                    <h5><small>(<?= $total_time['hours'] ?> hours <?= $total_time['mins'] ?> mins total)</small></h5>
                     <br>
                 </div>
-                <table class="span6 offset2 table table-striped">
+                <table class="span10 table table-striped">
                     <thead>
                         <tr>
                             <th>User</th>
                             <th>Logged Time</th>
-                            <th>Created</th>
-                            <th></th>
+                            <th style="width: 50%">Description</th>
+                            <th>Options</th>
                         </tr>
                     </thead>
                     <tbody>
+                    <? if ($page > 1) : ?>
+                        <tr>
+                            <td colspan="5" style="text-align:center;">
+                                <?= $this->Html->link('... See Newer ...', array('project' => $project['Project']['name'], 'action' => 'history', 'page' => ($page - 1)), array('escape' => false)) ?>
+                            </td>
+                        </tr>
+                    <? endif; ?>
                     <? foreach ($times as $time) : ?>
                         <tr>
                             <td style="vertical-align:middle">
@@ -83,14 +67,55 @@ echo $this->Bootstrap->page_header("Time Logged For The Project <small>" . $proj
                             <td style="vertical-align:middle">
                                 <?= $this->Bootstrap->label($time['Time']['mins']['hours'].'h '.$time['Time']['mins']['mins'].'m', "warning") ?>
                             </td>
-                            <td style="vertical-align:middle">
-                                <?= $this->Time->timeAgoInWords($time['Time']['created']) ?>
+                            <td style="vertical-align:middle; overflow:hidden;">
+                                <?= ($time['Time']['description']=='') ? 'n/a' : substr($time['Time']['description'], 0, 70) ?>
                             </td>
                             <td style="vertical-align:middle">
-                                <?= $this->GoogleChart->create()->setType('pie')->setSize(30, 30)->addData(size($time['Time']['mins']['mins'] + (60 * $time['Time']['mins']['hours'])))->setMargins(0, 0, 0, 0)//->setContainerSize(40, 40) ?>
+                                <?php
+                                echo $this->Html->link(
+                                        $this->Bootstrap->icon('search'),
+                                        array(
+                                            'project' => $time['Project']['name'],
+                                            'controller' => 'times',
+                                            'action' => 'view',
+                                            $time['Time']['id']
+                                        ),
+                                        array('escape' => false)
+                                    ) .
+                                ' ';
+                                if ($user_id == $time['User']['id'])
+                                echo $this->Html->link(
+                                    $this->Bootstrap->icon('pencil'),
+                                        array(
+                                            'project' => $time['Project']['name'],
+                                            'controller' => 'times',
+                                            'action' => 'edit',
+                                            $time['Time']['id']
+                                        ),
+                                        array('escape' => false)
+                                    ) .
+                                ' ';
+                                if ($user_id == $time['User']['id'])
+                                echo $this->Html->link(
+                                    $this->Bootstrap->icon('remove'),
+                                    array(
+                                        'project' => $time['Project']['name'],
+                                        'controller' => 'times',
+                                        'action' => 'delete',
+                                        $time['Time']['id']
+                                    ),
+                                    array('escape' => false)
+                                ); ?>
                             </td>
                         </tr>
                     <? endforeach; ?>
+                    <? if ($more_pages) : ?>
+                        <tr>
+                            <td colspan="5" style="text-align:center;">
+                                <?= $this->Html->link('... See Older ...', array('project' => $project['Project']['name'], 'action' => 'history', 'page' => ($page + 1)), array('escape' => false)) ?>
+                            </td>
+                        </tr>
+                    <? endif; ?>
                     </tbody>
                 </table>
 <? endif; ?>

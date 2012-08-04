@@ -92,13 +92,46 @@ class TimesController extends AppController {
     public function history($name) {
         $project = $this->_projectCheck($name);
 
-        $times = $this->Time->findAllByProjectId($project['Project']['id']);
+        $page = 1;
+        $num_per_page = 10;
+
+        // Lets make sure its a valid int
+        if(isset($this->params['named']['page'])) {
+            $_page = (int) $this->params['named']['page'];
+            if ($_page > 1 and $_page < 100) {
+                $page = $_page;
+            }
+        }
+
+        $tTime = $this->Time->find('list', array(
+            'conditions' => array('Time.project_id' => $project['Project']['id']),
+            'fields'=>array('mins')
+        ));
+        $times = $this->Time->find('all', array(
+            'conditions' => array('Time.project_id' => $project['Project']['id']),
+            'order' => array('Time.created' => 'desc'),
+            'limit' => $num_per_page+1,
+            'offset' => (($page-1)*$num_per_page)
+        ));
+
+        if (sizeof($times) == 0 && $page > 1) {
+            $this->redirect(array('project'=>$name,'controller'=>'times','action'=>'history'));
+        }
 
         foreach ($times as $a => $time) {
             $times[$a]['Time']['mins'] = $this->normaliseTime($time['Time']['mins']);
         }
 
+        if (sizeof($times) == $num_per_page+1) {
+            unset($times[$num_per_page]);
+            $this->set("more_pages", true);
+        } else {
+            $this->set("more_pages", false);
+        }
+
         $this->set('times', $times);
+        $this->set('total_time', $this->normaliseTime(array_sum($tTime)));
+        $this->set('page', $page);
     }
 
     /**

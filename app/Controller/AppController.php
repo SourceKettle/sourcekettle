@@ -76,6 +76,7 @@ class AppController extends Controller {
 
         if($this->Auth->loggedIn()){
             $this->set('user_name', $this->Auth->user('name'));
+            $this->set('user_id', $this->Auth->user('id'));
         }
 
         // Load config file in

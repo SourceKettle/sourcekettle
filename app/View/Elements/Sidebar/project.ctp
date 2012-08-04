@@ -26,7 +26,7 @@
             'Time' => array(
                 'icon' => 'book',
                 'url' => array(
-                    'action' => array('.', 'users', 'log', 'add'),
+                    'action' => array('*'),
                     'controller' => 'times',
                     'project' => $this->params['project'],
                 ),
