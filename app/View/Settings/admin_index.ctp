@@ -69,14 +69,9 @@ echo $this->Bootstrap->page_header('Administration <small>system-wide configurat
                         <h4>Admin email address <small>- where are emails come from</small></h4>
                     </td>
                     <td>
-                        <div class="pull-right">
-                        <?php
-                            echo $this->Bootstrap->input("sysadmin_email", array(
-                                "input" => $this->Form->text("sysadmin_email", array("class" => "input-xlarge search-query", "value" => $sysadmin_email)).' '.$this->Bootstrap->button("Update", array("style" => "primary", "size" => "mini")),
-                                "label" => false,
-                            ));
-                            
-                        ?>
+                        <div class="pull-right input-append">
+                            <?= $this->Form->text("sysadmin_email", array('id' => 'appendedInputButton', 'class' => 'xlarge', "value" => $sysadmin_email)) ?>
+                            <?= $this->Bootstrap->button("Update", array('escape' => false, 'style' => 'primary')) ?>
                         </div>
                     </td>
                 </tr>

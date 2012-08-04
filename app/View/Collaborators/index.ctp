@@ -90,17 +90,12 @@ echo $this->Bootstrap->page_header($pname . $smallText);?>
             <div class="span4">
                 <div class="well">
                     <h3>Add a user</h3>
-                    <?php echo $this->Form->create('Collaborator', array('url' => array('action' => 'add', 'project' => $project['Project']['name']), 'class' => 'form-inline')); ?>
-                    <?php
-
-                    echo $this->Bootstrap->basic_input("name", array(
-                        "input" => $this->Form->text("name", array('class' => 'input-large', "placeholder" => "john.smith@example.com", "data-provide" => "typeahead")),
-                        "label" => false,
-                    ));
-
-                    echo " ".$this->Bootstrap->button($this->Bootstrap->icon('plus', 'white')." Add", array('escape' => false, 'style' => 'success', 'size' => 'mini'));
-
-                    echo $this->Form->end(); ?>
+                    <?= $this->Form->create('Collaborator', array('url' => array('action' => 'add', 'project' => $project['Project']['name']), 'class' => 'form-inline')) ?>
+                    <div class="input-append">
+                        <?= $this->Form->text("name", array('id' => 'appendedInputButton', 'class' => 'span3', "placeholder" => "john.smith@example.com", "data-provide" => "typeahead")) ?>
+                        <?= $this->Bootstrap->button("Add", array('escape' => false, 'style' => 'success')) ?>
+                    </div>
+                    <?= $this->Form->end() ?>
                 </div>
             </div>
         </div>

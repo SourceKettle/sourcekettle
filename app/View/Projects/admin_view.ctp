@@ -72,18 +72,13 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
             </div>
             <div class="span5 well">
                 <h3>Add a user</h3>
-                <?php echo $this->Form->create('Collaborator', array('url' => array('action' => 'admin_add'), 'class' => 'form-inline')); ?>
-                <?php
-
-                echo $this->Bootstrap->basic_input("name", array(
-                    "input" => $this->Form->text("name", array('class' => 'input-large', "placeholder" => "john.smith@example.com", "data-provide" => "typeahead")),
-                    "label" => false,
-                ));
-                echo $this->Form->hidden('Project.id');
-
-                echo " ".$this->Bootstrap->button($this->Bootstrap->icon('plus', 'white')." Add", array('escape' => false, 'style' => 'success', 'size' => 'mini'));
-
-                echo $this->Form->end(); ?>
+                <?= $this->Form->create('Collaborator', array('url' => array('action' => 'admin_add'), 'class' => 'form-inline')) ?>
+                <div class="input-append">
+                    <?= $this->Form->text("name", array('id' => 'appendedInputButton', "placeholder" => "john.smith@example.com", "data-provide" => "typeahead")) ?>
+                    <?= $this->Form->hidden('Project.id') ?>
+                    <?= $this->Bootstrap->button("Add", array('escape' => false, 'style' => 'success')) ?>
+                </div>
+                <?= $this->Form->end() ?>
 
                 <? foreach ( $details as $level => $detail ) : ?>
                 <h3>Project <?= $detail['text'] ?>s</h3>
