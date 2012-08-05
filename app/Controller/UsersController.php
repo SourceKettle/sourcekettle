@@ -448,9 +448,9 @@ class UsersController extends AppController {
         $this->User->id = $this->Auth->user('id'); //get the current user
 
         if ($this->request->is('post')){
+            $this->User->set('theme', (string) $this->request->data['User']['theme']);
             if ($this->User->save()){
                 // Don't update the used theme until we're sure we saved
-                $this->User->set('theme', (string) $this->request->data['User']['theme']);
                 
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
                 $this->log("[UsersController.theme] user[".$this->Auth->user('id')."] changed theme", 'devtrack');
