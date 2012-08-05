@@ -294,7 +294,7 @@ class UsersController extends AppController {
      * Allows users to view their profile
      */
     public function index() {
-        $this->redirect('editdetails');
+        $this->redirect(array ('action' => 'details'));
     }
 
     /**
@@ -384,13 +384,13 @@ class UsersController extends AppController {
     /**
      * Edit the name and the email address of the current user
      */
-    public function editdetails(){
+    public function details(){
         $this->User->id = $this->Auth->user('id'); //get the current user
 
         if ($this->request->is('post')){
             if ($this->User->save($this->request->data)){
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-                $this->log("[UsersController.editdetails] user[".$this->User->id."] edited details", 'devtrack');
+                $this->log("[UsersController.details] user[".$this->User->id."] edited details", 'devtrack');
 
                 $this->Session->write('Auth.User.name', $this->request->data['User']['name']);
                 $this->Session->write('Auth.User.email', $this->request->data['User']['email']);
@@ -411,7 +411,7 @@ class UsersController extends AppController {
     /**
      * Edit the current users password
      */
-    public function editpassword(){
+    public function security(){
         $this->User->id = $this->Auth->user('id'); //get the current user
         $user = $this->User->read(null, $this->User->id);
         $user = $user['User'];
@@ -421,7 +421,7 @@ class UsersController extends AppController {
 
                     if ($this->User->save($this->request->data)){
                         $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-                        $this->log("[UsersController.editpassword] user[".$this->Auth->user('id')."] changed password", 'devtrack');
+                        $this->log("[UsersController.security] user[".$this->Auth->user('id')."] changed password", 'devtrack');
                     } else {
                         $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
                     }
@@ -444,7 +444,7 @@ class UsersController extends AppController {
     /**
      * Edit the current users theme
      */
-    public function edittheme(){
+    public function theme(){
         $this->User->id = $this->Auth->user('id'); //get the current user
         $user = $this->User->read(null, $this->User->id);
 
@@ -452,9 +452,9 @@ class UsersController extends AppController {
             $this->User->set('theme', (string) $this->request->data['User']['theme']);
             if ($this->User->save()){
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-                $this->log("[UsersController.edittheme] user[".$this->Auth->user('id')."] changed theme", 'devtrack');
+                $this->log("[UsersController.theme] user[".$this->Auth->user('id')."] changed theme", 'devtrack');
                 $this->Session->write('Auth.User.theme', (string) $this->request->data['User']['theme']);
-                $this->redirect(array('action'=>'edittheme'));
+                $this->redirect(array('action'=>'theme'));
             } else {
                 $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
             }

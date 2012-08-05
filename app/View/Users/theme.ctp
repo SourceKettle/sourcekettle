@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * View class for APP/users/edittheme for the DevTrack system
+ * View class for APP/users/theme for the DevTrack system
  * Shows a list of themes for a user to pick from
  *
  * Licensed under The MIT License
@@ -21,7 +21,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
         <?= $this->element('Sidebar/users') ?>
     </div>
     <div class="span6">
-        <?= $this->Form->create('User', array('class' => 'well form-horizontal', 'action' => 'edittheme')) ?>
+        <?= $this->Form->create('User', array('class' => 'well form-horizontal', 'type' => 'post')) ?>
         <h3>Select your theme</h3>
         <?php
         $options = array('default' => $devtrack_config['global']['alias'].' default');

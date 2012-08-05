@@ -58,7 +58,7 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=$this->Html->url('/users', false)?>">Account settings</a></li>
+                            <li><a href="<?=$this->Html->url(array ('controller' => 'users', false))?>">Account settings</a></li>
                             <li class="divider"></li>
                             <li><a href="<?=$this->Html->url('/logout', false)?>">Log Out</a></li>
                         </ul>

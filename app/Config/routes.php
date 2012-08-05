@@ -76,9 +76,14 @@
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[\w]+'));
 
         /*
-         * Add custom route for editing the sshkeys associated to a user
+         * Add custom route for editing the sshkeys associated to a 
          */
-        Router::connect('/users/sshkeys/:action/*', array('controller' => 'sshKeys'));
+        Router::connect('/account/sshkeys/:action/*', array('controller' => 'sshKeys'));
+        
+        /*
+         * Route to make the 'account settings' addresses look nicer.
+         */
+        Router::connect('/account/:action/*', array('controller' => 'users'));
 
 
 /**
