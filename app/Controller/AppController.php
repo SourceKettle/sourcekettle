@@ -26,7 +26,7 @@ class AppController extends Controller {
      * The global helpers
      * @var type
      */
-    public $helpers = array('Html', 'Text', 'Session', 'Form', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'Popover');
+    public $helpers = array('Html', 'Text', 'Session', 'Form', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'Popover', 'TwitterBootswatch.TwitterBootswatch');
 
     /**
      * Global components used for authentication, authorisation and session management.
@@ -88,6 +88,12 @@ class AppController extends Controller {
         if(isset($this->params['admin'])) {
             // check the admin is logged in
             if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
+        }
+
+        if ($theme = $this->Auth->user('theme')) {
+            $this->set('user_theme', $theme);
+        } else {
+            $this->set('user_theme', null);
         }
     }
 }

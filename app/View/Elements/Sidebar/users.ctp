@@ -29,6 +29,13 @@
                     'controller' => 'users',
                 ),
             ),
+            'Change Theme' => array(
+                'icon' => 'glass',
+                'url' => array(
+                    'action' => 'edittheme',
+                    'controller' => 'users',
+                ),
+            ),
             'Delete Account' => array(
                 'icon' => 'remove',
                 'url' => array(

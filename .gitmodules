@@ -10,3 +10,6 @@
 [submodule "app/Plugin/SVNCake"]
 	path = app/Plugin/SVNCake
 	url = git@github.com:pwhittlesea/SVNCake.git
+[submodule "app/Plugin/TwitterBootswatch"]
+	path = app/Plugin/TwitterBootswatch
+	url = git@github.com:pwhittlesea/TwitterBootswatchHelper.git

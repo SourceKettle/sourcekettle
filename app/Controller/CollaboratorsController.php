@@ -79,9 +79,9 @@ class CollaboratorsController extends AppController {
             // Save the new collaborator
             $this->Collaborator->create();
             if ($this->Collaborator->save($this->request->data)) {
-                $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project', 'default', array(), 'success'));
+                $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project'), 'default', array(), 'success');
             } else {
-                $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.', 'default', array(), 'error'));
+                $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.'), 'default', array(), 'error');
             }
         }
         $this->redirect(array('project' => $name, 'action' => '.'));
@@ -115,9 +115,9 @@ class CollaboratorsController extends AppController {
             // Save the new collaborator
             $this->Collaborator->create();
             if ($this->Collaborator->save($this->request->data, true, array('project_id', 'user_id', 'access_level'))) {
-                $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project', 'default', array(), 'success'));
+                $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project'), 'default', array(), 'success');
             } else {
-                $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.', 'default', array(), 'error'));
+                $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.'), 'default', array(), 'error');
             }
         }
         $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $project['Project']['id']));
@@ -227,9 +227,9 @@ class CollaboratorsController extends AppController {
 
             // Save the changes to the user
             if ($this->Collaborator->save(null, true, array('access_level'))) {
-                $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'", 'default', array(), 'success'));
+                $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'"), 'default', array(), 'success');
             } else {
-                $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again.", 'default', array(), 'error'));
+                $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again."), 'default', array(), 'error');
             }
         }
         $this->redirect(array('project' => $name, 'action' => '.'));
@@ -258,9 +258,9 @@ class CollaboratorsController extends AppController {
 
             // Save the changes to the user
             if ($this->Collaborator->save(null, true, array('access_level'))) {
-                $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'", 'default', array(), 'success'));
+                $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'"), 'default', array(), 'success');
             } else {
-                $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again.", 'default', array(), 'error'));
+                $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again."), 'default', array(), 'error');
             }
         }
         $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $collaborator['Collaborator']['project_id']));
@@ -288,9 +288,9 @@ class CollaboratorsController extends AppController {
         if ( !$this->Collaborator->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
 
         if ($this->Collaborator->delete()) {
-            $this->Session->setFlash(__('Collaborator deleted', 'default', array(), 'success'));
+            $this->Session->setFlash(__('Collaborator deleted'), 'default', array(), 'success');
         } else {
-            $this->Session->setFlash(__('Collaborator was not deleted', 'default', array(), 'error'));
+            $this->Session->setFlash(__('Collaborator was not deleted'), 'default', array(), 'error');
         }
         $this->redirect(array('project' => $name, 'action' => '.'));
     }
@@ -312,9 +312,9 @@ class CollaboratorsController extends AppController {
             throw new NotFoundException(__('Invalid collaborator'));
         }
         if ($this->Collaborator->delete()) {
-            $this->Session->setFlash(__('Collaborator deleted', 'default', array(), 'success'));
+            $this->Session->setFlash(__('Collaborator deleted'), 'default', array(), 'success');
         } else {
-            $this->Session->setFlash(__('Collaborator was not deleted', 'default', array(), 'error'));
+            $this->Session->setFlash(__('Collaborator was not deleted'), 'default', array(), 'error');
         }
         $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $project_id));
     }

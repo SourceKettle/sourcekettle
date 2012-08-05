@@ -442,6 +442,27 @@ class UsersController extends AppController {
     }
 
     /**
+     * Edit the current users theme
+     */
+    public function edittheme(){
+        $this->User->id = $this->Auth->user('id'); //get the current user
+        $user = $this->User->read(null, $this->User->id);
+
+        if ($this->request->is('post')){
+            $this->User->set('theme', (string) $this->request->data['User']['theme']);
+            if ($this->User->save()){
+                $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+                $this->log("[UsersController.edittheme] user[".$this->Auth->user('id')."] changed theme", 'devtrack');
+                $this->Session->write('Auth.User.theme', (string) $this->request->data['User']['theme']);
+                $this->redirect(array('action'=>'edittheme'));
+            } else {
+                $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
+            }
+        }
+        $this->request->data = $this->User->read();
+    }
+
+    /**
      * Function to delete a user
      * Use at your own peril
      *

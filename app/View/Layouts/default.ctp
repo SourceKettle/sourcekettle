@@ -24,6 +24,7 @@
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
     <?= $this->Html->charset('UTF-8') . "\n" ?>
     <?= $this->Html->css('bootstrap.min') ?>
+    <?= ($user_theme != 'default') ? $this->TwitterBootswatch->cssForTheme($user_theme) : '' ?>
     <?= $this->Html->css('layout'); ?>
     <?= $this->Html->css('bootstrap-responsive.min') ?>
     <? if (isset($css_for_layout)): foreach ($css_for_layout as $css): ?>

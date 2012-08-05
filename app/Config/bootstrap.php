@@ -135,3 +135,4 @@ CakePlugin::load('TwitterBootstrap');
 CakePlugin::load('GoogleChart');
 CakePlugin::load('GitCake');
 CakePlugin::load('SVNCake');
+CakePlugin::load('TwitterBootswatch');
