@@ -18,10 +18,9 @@
     </div>
     <div class="span4" style="text-align:center"> 
         <h4>The DevTrack Dev Team</h4>
-        <p><?=$this->Html->link('@alinacoslov', 'https://github.com/alinacoslov/')?></p>
         <p><?=$this->Html->link('@chrisbulmer', 'https://github.com/chrisbulmer/')?></p>
-        <p><?=$this->Html->link('@coiax', 'https://github.com/coiax/')?></p>
         <p><?=$this->Html->link('@pwhittlesea', 'https://github.com/pwhittlesea/')?></p>
+        <p><?=$this->Html->link('et al.', 'https://github.com/chrisbulmer/devtrack/graphs/contributors')?></p>
     </div>
     <div class="span4" style="text-align:center">
         <h4>The Many Who Inspired Us</h4>

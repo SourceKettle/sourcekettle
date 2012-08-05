@@ -98,7 +98,7 @@ class ProjectActivityHelper extends AppHelper {
         } else {
             $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
         }
-        $project = $this->Html->link($event['project_name'], array('project' => $event['project_name'], 'controller' => 'users', 'action' => 'view'));
+        $project = $this->Html->link($event['project_name'], array('project' => $event['project_name'], 'controller' => 'projects', 'action' => 'view'));
 
         $return .= $this->Bootstrap->label("Collaborator ".$this->Bootstrap->icon($this->prefs['Collaborator']['icon'], "white"), $this->prefs['Collaborator']['color']);
         $return .= ' '.$user.' was added';
@@ -125,7 +125,7 @@ class ProjectActivityHelper extends AppHelper {
         } else {
             $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
         }
-        $project = $this->Html->link($event['project_name'], array('project' => $event['project_name'], 'controller' => 'users', 'action' => 'view'));
+        $project = $this->Html->link($event['project_name'], array('project' => $event['project_name'], 'controller' => 'projects', 'action' => 'view'));
         $commit = $this->Html->link('['.substr($event['message'], 0, 42).'...]', array('project' => $event['project_name'], 'controller' => 'source', 'action' => 'commit', $event['hash']));
 
         $return .= $this->Bootstrap->label("Source ".$this->Bootstrap->icon($this->prefs['Source']['icon'], "white"), $this->prefs['Source']['color']);
@@ -149,10 +149,10 @@ class ProjectActivityHelper extends AppHelper {
         $return = '';
 
         $user = $this->Html->link($event['user_name'], array('controller' => 'users', 'action' => 'view', $event['user_id']));
-        $project = $this->Html->link($event['project_name'], array('controller' => 'users', 'action' => 'view', $event['project_id']));
-
+        $project = $this->Html->link($event['project_name'], array('project' => $event['project_name'], 'controller' => 'projects', 'action' => 'view'));
+        $time = $this->Html->link('time', array('project' => $event['project_name'], 'controller' => 'times', 'action' => 'view', $event['time_id']));
         $return .= $this->Bootstrap->label("Time ".$this->Bootstrap->icon($this->prefs['Time']['icon'], "white"), $this->prefs['Time']['color']);
-        $return .= ' '.$user.' logged some time spent';
+        $return .= " $user logged some $time";
         if ($context) $return .= ' on '.$project;
 
         return $return;

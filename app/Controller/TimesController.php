@@ -94,12 +94,40 @@ class TimesController extends AppController {
 
         $page = 1;
         $num_per_page = 10;
+        $user_id = '*';
+        $sort = 'desc';
 
-        // Lets make sure its a valid int
+        $filterErrors = array();
+        $filterError = '';
+
+        $conditions = array(
+            'Time.project_id' => $project['Project']['id'],
+        );
+
         if(isset($this->params['named']['page'])) {
             $_page = (int) $this->params['named']['page'];
             if ($_page > 1 and $_page < 100) {
                 $page = $_page;
+            }
+        }
+
+        // Lets check the user filter
+        if(isset($this->params['named']['user_id'])) {
+            $this->Time->User->id = $this->params['named']['user_id'];
+            if ($this->Time->User->exists()) {
+                $conditions['Time.user_id'] = $this->Time->User->id;
+            } else {
+                $filterErrors[] = 'user_id [user does not exist]';
+            }
+        }
+
+        // Lets check the sort filter
+        if(isset($this->params['named']['sort'])) {
+            $_sort = strtolower($this->params['named']['sort']);
+            if ($_sort == 'asc' || $_sort == 'desc') {
+                $sort = $_sort;
+            } else {
+                $filterErrors[] = 'sort [can only have value \'asc\' or \'desc\']';
             }
         }
 
@@ -108,8 +136,8 @@ class TimesController extends AppController {
             'fields'=>array('mins')
         ));
         $times = $this->Time->find('all', array(
-            'conditions' => array('Time.project_id' => $project['Project']['id']),
-            'order' => array('Time.created' => 'desc'),
+            'conditions' => $conditions,
+            'order' => array('Time.created' => $sort),
             'limit' => $num_per_page+1,
             'offset' => (($page-1)*$num_per_page)
         ));
@@ -128,6 +156,12 @@ class TimesController extends AppController {
         } else {
             $this->set("more_pages", false);
         }
+
+        foreach ($filterErrors as $err) {
+            $filterError .= "<br>$err";
+        }
+        if ($filterError != '')
+            $this->Session->setFlash(__('<strong>The following filters were ignored:</strong>'.$filterError), 'default', array(), 'error');
 
         $this->set('times', $times);
         $this->set('total_time', $this->normaliseTime(array_sum($tTime)));

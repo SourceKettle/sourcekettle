@@ -80,5 +80,3 @@ class LoginController extends AppController{
     }
 
 }
-
-?>
