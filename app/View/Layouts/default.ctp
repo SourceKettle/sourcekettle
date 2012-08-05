@@ -58,30 +58,31 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=$this->Html->url('/users', false)?>">Account settings</a></li>
+                            <li><?= $this->Html->link (__('Account settings'), array ('controller' => 'users')) ?></li>
                             <li class="divider"></li>
-                            <li><a href="<?=$this->Html->url('/logout', false)?>">Log Out</a></li>
+                            <li><?= $this->Html->link (__('Log Out'), array ('controller' => 'login', 'action' => 'logout')) ?></li>
                         </ul>
                     </div>
                     <?
                     } else {
                     ?>
-                    <a class='btn pull-right' id='login-button' href="<?=$this->Html->url('/login', false)?>">
-                        <i class='icon-user'></i>Login
-                    </a>
+                    <?= $this->Html->link (
+                        '<i class="icon-user"></i>' . __('Login'),
+                        array ('controller' => 'login'),
+                        array ('class' => 'btn pull-right', 'id' => 'login-button', 'escape' => false)) ?>
                     <?php
                     }?>
                     <div class="nav-collapse">
                         <ul class="nav">
                             <?php
                             $navItems = array(
-                            	'dashboard' => 'Dashboard',
-                            	'projects' => 'Projects',
-                            	'tasks' => 'Tasks',
+                            	'dashboard' => __('Dashboard'),
+                            	'projects' => __('Projects'),
+                            	'tasks' => __('Tasks'),
                             );
                             foreach ($navItems as $controller => $text) {
                                 echo "<li" . ($controller == $this->params['controller'] ? " class='active'>" : ">");
-                                echo $this->Html->link($text, '/'.$controller);
+                                echo $this->Html->link($text, array ('controller' => $controller));
                                 echo "</li>";
                             }
                             ?>

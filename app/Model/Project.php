@@ -256,21 +256,23 @@ class Project extends AppModel {
         // Collect source events
         $this->Source->init();
         $branches = $this->Source->branches();
-        foreach ($branches as $branch) {
-            $log = $this->Source->log($branch);
+        if (!empty ($branches)) {
+            foreach ($branches as $branch) {
+                $log = $this->Source->log($branch);
 
-            if ($log) {
-                foreach ( $log as $a ) {
-                    $events[] = array(
-                        'Type' => 'Commit',
-                        'user_name' => $a['Commit']['author']['name'],
-                        'user_id' => 0,
-                        'project_name' => $project['Project']['name'],
-                        'message' => $a['Commit']['subject'],
-                        'hash' => $a['Commit']['hash'],
-                        'modified' => $a['Commit']['date'],
-                        'branch' => $branch
-                    );
+                if ($log) {
+                    foreach ( $log as $a ) {
+                        $events[] = array(
+                            'Type' => 'Commit',
+                            'user_name' => $a['Commit']['author']['name'],
+                            'user_id' => 0,
+                            'project_name' => $project['Project']['name'],
+                            'message' => $a['Commit']['subject'],
+                            'hash' => $a['Commit']['hash'],
+                            'modified' => $a['Commit']['date'],
+                            'branch' => $branch
+                        );
+                    }
                 }
             }
         }

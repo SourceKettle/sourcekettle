@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * View class for APP/users/edittheme for the DevTrack system
+ * View class for APP/users/theme for the DevTrack system
  * Shows a list of themes for a user to pick from
  *
  * Licensed under The MIT License
@@ -21,7 +21,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
         <?= $this->element('Sidebar/users') ?>
     </div>
     <div class="span6">
-        <?= $this->Form->create('User', array('class' => 'well form-horizontal', 'action' => 'edittheme')) ?>
+        <?= $this->Form->create('User', array('class' => 'well form-horizontal', 'type' => 'post')) ?>
         <h3>Select your theme</h3>
         <?php
         $options = array('default' => $devtrack_config['global']['alias'].' default');
@@ -48,9 +48,9 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
     <div class="span4">
         <h3>Where do these magical themes originate?</h3>
         <p>
-            Here at DevTrack, we like making our own descisions.
+            Here at DevTrack, we like making our own decisions.
             Like, should I put the milk in my tea before the water?
-            Thankfully, some lovely folks over at <?= $this->Html->link('Bootswatch', 'http://bootswatch.com/') ?> host some themes that we can use to make Devtrack <strong>Super Pretty</strong>.
+            Thankfully, some lovely folks over at <?= $this->Html->link('Bootswatch', 'http://bootswatch.com/') ?> host some themes that we can use to make DevTrack <strong>Super Pretty</strong>.
         </p>
         <h3>So what's the catch?</h3>
         <p>
@@ -65,7 +65,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
             <small>@chriswbulmer</small>
         </blockquote>
         <blockquote class="pull-right">
-            <p>Im actually in love with these!</p>
+            <p>I'm actually in love with these!</p>
             <small>@pwhittlesea</small>
         </blockquote>
     </div>

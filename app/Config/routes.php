@@ -78,7 +78,12 @@
         /*
          * Add custom route for editing the sshkeys associated to a user
          */
-        Router::connect('/users/sshkeys/:action/*', array('controller' => 'sshKeys'));
+        Router::connect('/account/sshkeys/:action/*', array('controller' => 'sshKeys'));
+        
+        /*
+         * Route to make the 'account settings' addresses look nicer.
+         */
+        Router::connect('/account/:action/*', array('controller' => 'users'), array ('action' => 'index|delete|details|security|theme'));
 
 
 /**

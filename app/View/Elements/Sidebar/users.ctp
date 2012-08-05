@@ -18,21 +18,21 @@
             'Basic details' => array(
                 'icon' => 'user',
                 'url' => array(
-                    'action' => 'editdetails',
+                    'action' => 'details',
                     'controller' => 'users',
                 ),
             ),
             'Change Password' => array(
                 'icon' => 'lock',
                 'url' => array(
-                    'action' => 'editpassword',
+                    'action' => 'security',
                     'controller' => 'users',
                 ),
             ),
             'Change Theme' => array(
                 'icon' => 'glass',
                 'url' => array(
-                    'action' => 'edittheme',
+                    'action' => 'theme',
                     'controller' => 'users',
                 ),
             ),
