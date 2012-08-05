@@ -49,7 +49,7 @@ class TimesController extends AppController {
      * @return void
      */
     public function index($name) {
-        $this->redirect(array('project'=>$name,'controller'=>'times','action'=>'users'));
+        $this->redirect(array('project'=>$name,'controller'=>'times','action'=>'history'));
     }
 
     /**
@@ -227,7 +227,9 @@ class TimesController extends AppController {
      * @param string $id
      * @return void
      */
-    public function delete($id = null) {
+    public function delete($name, $id = null) {
+        $project = $this->_projectCheck($name);
+
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
         }
@@ -235,12 +237,19 @@ class TimesController extends AppController {
         if (!$this->Time->exists()) {
             throw new NotFoundException(__('Invalid time'));
         }
-        if ($this->Time->delete()) {
-            $this->Session->setFlash(__('Time deleted'));
-            $this->redirect(array('action' => 'index'));
+        $user = $this->Auth->user('id');
+        $this->Time->id = $id;
+
+        // Double check that the user is allowed to edit this time slice
+        if ($this->Time->field('user_id') != $user && !$this->Time->Project->isAdmin($user)) {
+            throw new ForbiddenException(__('You are not the owner of this logged time.'));
         }
-        $this->Session->setFlash(__('Time was not deleted'));
-        $this->redirect(array('action' => 'index'));
+        if ($this->Time->delete()) {
+            $this->Session->setFlash(__('Time successfully deleted.'), 'default', array(), 'success');
+            $this->redirect(array('project' => $name, 'action' => 'index'));
+        }
+        $this->Session->setFlash(__('Could not delete the logged time. Please, try again.'), 'default', array(), 'error');
+        $this->redirect(array('project' => $name, 'action' => 'index'));
     }
 
     /**

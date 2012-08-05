@@ -72,7 +72,7 @@ echo $this->Bootstrap->page_header("Time Logged For The Project <small>" . $proj
                             </td>
                             <td style="vertical-align:middle">
                                 <?php
-                                echo $this->Html->link(
+                                echo $this->Bootstrap->button_link(
                                         $this->Bootstrap->icon('search'),
                                         array(
                                             'project' => $time['Project']['name'],
@@ -80,31 +80,27 @@ echo $this->Bootstrap->page_header("Time Logged For The Project <small>" . $proj
                                             'action' => 'view',
                                             $time['Time']['id']
                                         ),
-                                        array('escape' => false)
+                                        array('style' => 'success', 'escape' => false, 'size' => 'mini')
                                     ) .
                                 ' ';
                                 if ($user_id == $time['User']['id'])
-                                echo $this->Html->link(
-                                    $this->Bootstrap->icon('pencil'),
+                                echo $this->Bootstrap->button_link(
+                                    $this->Bootstrap->icon('pencil', 'white'),
                                         array(
                                             'project' => $time['Project']['name'],
                                             'controller' => 'times',
                                             'action' => 'edit',
                                             $time['Time']['id']
                                         ),
-                                        array('escape' => false)
+                                        array('style' => 'primary', 'escape' => false, 'size' => 'mini')
                                     ) .
                                 ' ';
                                 if ($user_id == $time['User']['id'])
-                                echo $this->Html->link(
-                                    $this->Bootstrap->icon('remove'),
-                                    array(
-                                        'project' => $time['Project']['name'],
-                                        'controller' => 'times',
-                                        'action' => 'delete',
-                                        $time['Time']['id']
-                                    ),
-                                    array('escape' => false)
+                                echo $this->Bootstrap->button_form(
+                                    $this->Bootstrap->icon('remove', 'white'),
+                                    array('controller' => 'times', 'project' => $time['Project']['name'], 'action' => 'delete', $time['Time']['id']),
+                                    array('style' => 'danger', 'escape' => false, 'size' => 'mini'),
+                                    "Are you sure you want to delete?"
                                 ); ?>
                             </td>
                         </tr>
