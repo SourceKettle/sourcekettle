@@ -48,9 +48,9 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
     <div class="span4">
         <h3>Where do these magical themes originate?</h3>
         <p>
-            Here at DevTrack, we like making our own descisions.
+            Here at DevTrack, we like making our own decisions.
             Like, should I put the milk in my tea before the water?
-            Thankfully, some lovely folks over at <?= $this->Html->link('Bootswatch', 'http://bootswatch.com/') ?> host some themes that we can use to make Devtrack <strong>Super Pretty</strong>.
+            Thankfully, some lovely folks over at <?= $this->Html->link('Bootswatch', 'http://bootswatch.com/') ?> host some themes that we can use to make DevTrack <strong>Super Pretty</strong>.
         </p>
         <h3>So what's the catch?</h3>
         <p>
@@ -65,7 +65,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
             <small>@chriswbulmer</small>
         </blockquote>
         <blockquote class="pull-right">
-            <p>Im actually in love with these!</p>
+            <p>I'm actually in love with these!</p>
             <small>@pwhittlesea</small>
         </blockquote>
     </div>

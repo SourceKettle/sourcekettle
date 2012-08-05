@@ -446,11 +446,12 @@ class UsersController extends AppController {
      */
     public function theme(){
         $this->User->id = $this->Auth->user('id'); //get the current user
-        $user = $this->User->read(null, $this->User->id);
 
         if ($this->request->is('post')){
-            $this->User->set('theme', (string) $this->request->data['User']['theme']);
             if ($this->User->save()){
+                // Don't update the used theme until we're sure we saved
+                $this->User->set('theme', (string) $this->request->data['User']['theme']);
+                
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
                 $this->log("[UsersController.theme] user[".$this->Auth->user('id')."] changed theme", 'devtrack');
                 $this->Session->write('Auth.User.theme', (string) $this->request->data['User']['theme']);
@@ -459,7 +460,12 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
             }
         }
+        
+        $user = $this->Auth->user();
+        $this->set('user', $user);
+        $this->User->id = $user['id'];
         $this->request->data = $this->User->read();
+        $this->request->data['User']['password'] = null; // We need to set the password to null, otherwise it get's changed!
     }
 
     /**
