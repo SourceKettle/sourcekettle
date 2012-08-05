@@ -135,6 +135,24 @@ class TimesController extends AppController {
     }
 
     /**
+     * view method
+     *
+     * @param string $id
+     * @return void
+     */
+     public function view($name, $id = null) {
+        $project = $this->_projectCheck($name);
+
+        $this->Time->id = $id;
+        if (!$this->Time->exists()) {
+            throw new NotFoundException(__('Invalid time'));
+        }
+        $time = $this->Time->read(null, $id);
+        $time['Time']['mins'] = $this->normaliseTime($time['Time']['mins']);
+        $this->set('time', $time);
+    }
+
+    /**
      * add
      * allows users to log ime
      *
@@ -190,7 +208,7 @@ class TimesController extends AppController {
 
             if ($this->Time->save($this->request->data)) {
                 $this->Session->setFlash(__('Time successfully updated.'), 'default', array(), 'success');
-                $this->redirect(array('action' => 'index'));
+                $this->redirect(array('project' => $name, 'action' => 'index'));
             } else {
                 // Show the user what they put in, its just nice
                 $this->request->data['Time']['mins'] = $origTime;

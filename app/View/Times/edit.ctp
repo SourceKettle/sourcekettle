@@ -23,7 +23,7 @@ echo $this->Bootstrap->page_header("Correct Logged Time<small> to the nearest 30
     <div class="row">
         <?= $this->element('Time/topbar') ?>
         <div class="span10">
-            <?= $this->Form->create('Time', array('project' => $project['Project']['id'], 'class' => 'form-horizontal')) ?>
+            <?= $this->Form->create('Time', array('class' => 'form-horizontal')) ?>
             <div class="well times form">
                 <?php
                 echo $this->Bootstrap->input("mins", array(
