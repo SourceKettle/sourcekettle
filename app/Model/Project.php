@@ -256,47 +256,49 @@ class Project extends AppModel {
         // Collect source events
         $this->Source->init();
         $branches = $this->Source->branches();
-        foreach ($branches as $branch) {
-            $log = $this->Source->log($branch);
+        if (!empty ($branches)) {
+            foreach ($branches as $branch) {
+                $log = $this->Source->log($branch);
 
-            if ($log) {
-                foreach ( $log as $a ) {
-                    $events[] = array(
-                        'Type' => 'Commit',
-                        'user_name' => $a['Commit']['author']['name'],
-                        'user_id' => 0,
-                        'project_name' => $project['Project']['name'],
-                        'message' => $a['Commit']['subject'],
-                        'hash' => $a['Commit']['hash'],
-                        'modified' => $a['Commit']['date'],
-                        'branch' => $branch
-                    );
+                if ($log) {
+                    foreach ( $log as $a ) {
+                        $events[] = array(
+                            'Type' => 'Commit',
+                            'user_name' => $a['Commit']['author']['name'],
+                            'user_id' => 0,
+                            'project_name' => $project['Project']['name'],
+                            'message' => $a['Commit']['subject'],
+                            'hash' => $a['Commit']['hash'],
+                            'modified' => $a['Commit']['date'],
+                            'branch' => $branch
+                        );
+                    }
                 }
             }
+
+            // Collect time events
+            foreach ( $project['Time'] as $a ) {
+                $events[] = array(
+                    'Type' => 'Time',
+                    'user_name' => $a['User']['name'],
+                    'user_id' => $a['User']['id'],
+                    'time_id' => $a['id'],
+                    'project_name' => $project['Project']['name'],
+                    'modified' => $a['modified'],
+                    'time' => $a['mins'],
+                );
+            }
+
+            // Sort function for events
+            // assumes $array{ $array{ 'modified' => 'date' }, ... }
+            $cmp = function($a, $b) {
+                if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
+                if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
+                return -1;
+            };
+
+            usort($events, $cmp);
         }
-
-        // Collect time events
-        foreach ( $project['Time'] as $a ) {
-            $events[] = array(
-                'Type' => 'Time',
-                'user_name' => $a['User']['name'],
-                'user_id' => $a['User']['id'],
-                'time_id' => $a['id'],
-                'project_name' => $project['Project']['name'],
-                'modified' => $a['modified'],
-                'time' => $a['mins'],
-            );
-        }
-
-        // Sort function for events
-        // assumes $array{ $array{ 'modified' => 'date' }, ... }
-        $cmp = function($a, $b) {
-            if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
-            if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
-            return -1;
-        };
-
-        usort($events, $cmp);
 
         return $events;
     }

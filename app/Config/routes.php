@@ -83,7 +83,7 @@
         /*
          * Route to make the 'account settings' addresses look nicer.
          */
-        Router::connect('/account/:action/*', array('controller' => 'users'));
+        Router::connect('/account/:action/*', array('controller' => 'users'), array ('action' => 'index|delete|details|security|theme'));
 
 
 /**
