@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  
-echo $this->Bootstrap->page_header($this->request->data['User']['name'])?>
+echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
 
 <div class="row">
     <div class="span2">
