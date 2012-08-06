@@ -23,7 +23,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
     
     <div class="span6">
         <?php
-        echo $this->Form->create('User', array('class' => 'well form-horizontal', 'type' => 'post'));
+        echo $this->Form->create('User', array('class' => 'well form-horizontal'));
         echo '<h3>Change your password</h3>';
 
         echo $this->Bootstrap->input("Current password", array(

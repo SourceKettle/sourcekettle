@@ -27,7 +27,7 @@ echo $this->Bootstrap->page_header("View Logged Time<small> we have been busy, h
                 <div class="control-group">
                     <p class="control-label">Time Logged</p>
                     <div class="controls">
-                        <span class="span6" style="padding-top:5px"><?= $time['Time']['mins']['hours']."h ".$time['Time']['mins']['mins']."m" ?></span>
+                        <span class="span6" style="padding-top:5px"><?= $time['Time']['mins']['s'] ?></span>
                     </div>
                 </div>
                 <div class="control-group">

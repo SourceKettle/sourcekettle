@@ -42,7 +42,7 @@ echo $this->Bootstrap->page_header("Correct Logged Time<small> to the nearest 30
                 echo ' ';
                 echo $this->Bootstrap->button_form(
                     "Remove",
-                    array('controller' => 'times', 'project' => $project['Project']['name'], 'action' => 'delete', $this->request->data['Time']['id']),
+                    array('controller' => 'times', 'project' => $project['Project']['name'], 'action' => 'delete', $id),
                     array('style' => 'danger', 'class' => 'controls', 'size' => 'normal'),
                     "Are you sure you want to delete?"
                 );
