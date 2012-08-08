@@ -7,7 +7,7 @@
             <p>
                 <?= $this->Html->link($name, array('controller' => 'users', 'action' => 'view', $id)) ?>
             </br>
-            <?= $this->Bootstrap->label($time['hours'].'h '.$time['mins'].'m', "warning") ?>
+            <?= $this->Bootstrap->label($time['time']['s'], "warning") ?>
             </p>
         </div>
     </div>

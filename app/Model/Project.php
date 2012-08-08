@@ -275,30 +275,30 @@ class Project extends AppModel {
                     }
                 }
             }
-
-            // Collect time events
-            foreach ( $project['Time'] as $a ) {
-                $events[] = array(
-                    'Type' => 'Time',
-                    'user_name' => $a['User']['name'],
-                    'user_id' => $a['User']['id'],
-                    'time_id' => $a['id'],
-                    'project_name' => $project['Project']['name'],
-                    'modified' => $a['modified'],
-                    'time' => $a['mins'],
-                );
-            }
-
-            // Sort function for events
-            // assumes $array{ $array{ 'modified' => 'date' }, ... }
-            $cmp = function($a, $b) {
-                if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
-                if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
-                return -1;
-            };
-
-            usort($events, $cmp);
         }
+
+        // Collect time events
+        foreach ( $project['Time'] as $a ) {
+            $events[] = array(
+                'Type' => 'Time',
+                'user_name' => $a['User']['name'],
+                'user_id' => $a['User']['id'],
+                'time_id' => $a['id'],
+                'project_name' => $project['Project']['name'],
+                'modified' => $a['modified'],
+                'time' => $a['mins'],
+            );
+        }
+
+        // Sort function for events
+        // assumes $array{ $array{ 'modified' => 'date' }, ... }
+        $cmp = function($a, $b) {
+            if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
+            if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
+            return -1;
+        };
+
+        usort($events, $cmp);
 
         return $events;
     }

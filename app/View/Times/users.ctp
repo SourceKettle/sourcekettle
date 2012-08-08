@@ -29,64 +29,61 @@ echo $this->Bootstrap->page_header("Time Logged For The Project" . $smallText);?
         <div class="span10">
             <div class="row">
                 <div class="span10" style="text-align:center">
-<? if (empty($users)) : ?>
+                <? if (empty($users)) : ?>
                     <h1>No Time Logged Yet</h1>
                     <h3><small>Go on, click the 'Log Time' button</small></h3>
                 </div>
-<? else :
+                <? else :
 
-$times = array();
-$names = array();
-$total = array('hours' => 0, 'mins' => 0);
+                $times = $names = array();
+                $total = array('hours' => 0, 'mins' => 0);
 
-foreach ($users as $user) {
-    $times[] = $t = ((int) $user['Time']['hours'])*60 + ((int) $user['Time']['mins']);
-    $names[] = $user['User']['name'];
+                foreach ($users as $user) {
+                    $times[] = $user['Time']['time']['t'];
+                    $names[] = $user['User']['name'];
 
-    $total['hours'] += (int) $user['Time']['hours'];
-    $total['mins'] += (int) $user['Time']['mins'];
-}
+                }
 
-$gc = $this->GoogleChart->create()
-    ->setType('pie', array('3d'))
-    ->setSize(600, 220)
-    ->setMargins(0, 0, 20, 0)
-    ->addData($times)
-    ->setPieChartLabels($names);
-?>
+                $gc = $this->GoogleChart->create()
+                    ->setType('pie', array('3d'))
+                    ->setSize(600, 220)
+                    ->setMargins(0, 0, 20, 0)
+                    ->addData($times)
+                    ->setPieChartLabels($names);
+                ?>
                     <h3>Time Contribution</h3>
                     <?= $gc ?>
-                    <h5><small>(<?= $total['hours'] ?> hours <?= $total['mins'] ?> mins total)</small></h5>
+                    <h5><small>(<?= $total_time['h'] ?> hours <?= $total_time['m'] ?> mins total)</small></h5>
                 </div>
-<?php
-    // Pointers
-    $srt = 0;
-    $end = 3;
+                <?php
+                    // Pointers
+                    $srt = 0;
+                    $end = 3;
 
-    // Keys array to allow for incremental iteration
-    $keys = array_keys($users);
+                    // Keys array to allow for incremental iteration
+                    $keys = array_keys($users);
 
-    while ($srt <= sizeof($keys)) {
-        echo '<div class="span10">';
-        echo '<div class="row-fluid">';
+                    while ($srt <= sizeof($keys)) {
+                        echo '<div class="span10">';
+                        echo '<div class="row-fluid">';
 
-        // Iterate between the pointers
-        for ($i = $srt; $i <= $end; $i++){
-            if (isset($keys[$i])) {
-                $user = $users[$keys[$i]];
-                echo $this->element('Time/user_block', array('id' => $keys[$i], 'time' => $user['Time'], 'email' => $user['User']['email'], 'name' => $user['User']['name']));
-            }
-        }
+                        // Iterate between the pointers
+                        for ($i = $srt; $i <= $end; $i++){
+                            if (isset($keys[$i])) {
+                                $user = $users[$keys[$i]];
+                                echo $this->element('Time/user_block', array('id' => $keys[$i], 'time' => $user['Time'], 'email' => $user['User']['email'], 'name' => $user['User']['name']));
+                            }
+                        }
 
-        echo '</div>';
-        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
 
-        $srt += 4;
-        $end += 4;
-    }
+                        $srt += 4;
+                        $end += 4;
+                    }
 
-    endif;
-?>
+                    endif;
+                ?>
             </div>
         </div>
     </div>

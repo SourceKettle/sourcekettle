@@ -76,4 +76,49 @@ class Time extends AppModel {
             'order' => ''
         )
     );
+
+    public function afterFind($results, $primary) {
+        foreach ($results as $a => $result) {
+            if (isset($result['Time']['mins'])) {
+                $results[$a]['Time']['mins'] = $this->splitMins($result['Time']['mins']);
+            }
+        }
+        return $results;
+    }
+
+    public function splitMins($in) {
+        $hours = 0;
+        $mins = (int) $in;
+
+        while ($mins >= 60) {
+            $hours += 1;
+            $mins -= 60;
+        }
+
+        return array('h' => $hours, 'm' => $mins, 's' => "${hours}h ${mins}m", 't' => (int) $in);
+    }
+
+    /**
+     * beforeValidate
+     * Take the mins string with hours and mins in it (e.g. 1h 20m)
+     * and turn it into a number of mins
+     */
+    public function beforeValidate() {
+        $string = $this->data['Time']['mins'];
+
+        if (is_int($string)) {
+            return true;
+        }
+
+        preg_match("#(?P<hours>[0-9]+)\s?h(rs?|ours?)?#", $string, $hours);
+        preg_match("#(?P<mins>[0-9]+)\s?m(ins?)?#", $string, $mins);
+
+        $time = (int) 0;
+        $time += ((isset($hours['hours'])) ? 60*(int)$hours['hours'] : 0);
+        $time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
+
+        $this->data['Time']['mins'] = $time;
+
+        return true;
+    }
 }

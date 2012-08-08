@@ -61,25 +61,20 @@ class TimesController extends AppController {
     public function users($name) {
         $project = $this->_projectCheck($name);
 
-        // Collect Users
-        $users = array();
-
-        $times = $this->Time->findAllByProjectId($project['Project']['id']);
-        foreach ($times as $time) {
-            $user = $time['User']['id'];
-
-            if (!isset($users[$user])) {
-                $users[$user]['User']['name'] = $time['User']['name'];
-                $users[$user]['User']['email'] = $time['User']['email'];
-                $users[$user]['Time']['mins'] = 0;
-            }
-            $users[$user]['Time']['mins'] += (int) $time['Time']['mins'];
-        }
+        $tTime = $this->Time->find('all', array(
+            'conditions' => array('Time.project_id' => $project['Project']['id']),
+            'fields' => array('SUM(Time.mins)')
+        ));
+        $users = $this->Time->find('all', array(
+            'conditions' => array('Time.project_id' => $project['Project']['id']),
+            'group' => array('Time.user_id'),
+            'fields' => array('User.id', 'User.name', 'User.email', 'SUM(Time.mins)')
+        ));
 
         foreach ($users as $a => $user) {
-            $users[$a]['Time'] = $this->normaliseTime($user['Time']['mins']);
+            $users[$a]['Time']['time'] = $this->Time->splitMins($user[0]["SUM(`Time`.`mins`)"]);
         }
-
+        $this->set('total_time', $this->Time->splitMins($tTime[0][0]['SUM(`Time`.`mins`)']));
         $this->set('users', $users);
     }
 
@@ -131,9 +126,9 @@ class TimesController extends AppController {
             }
         }
 
-        $tTime = $this->Time->find('list', array(
+        $tTime = $this->Time->find('all', array(
             'conditions' => array('Time.project_id' => $project['Project']['id']),
-            'fields'=>array('mins')
+            'fields' => array('SUM(Time.mins)')
         ));
         $times = $this->Time->find('all', array(
             'conditions' => $conditions,
@@ -144,10 +139,6 @@ class TimesController extends AppController {
 
         if (sizeof($times) == 0 && $page > 1) {
             $this->redirect(array('project'=>$name,'controller'=>'times','action'=>'history'));
-        }
-
-        foreach ($times as $a => $time) {
-            $times[$a]['Time']['mins'] = $this->normaliseTime($time['Time']['mins']);
         }
 
         if (sizeof($times) == $num_per_page+1) {
@@ -164,7 +155,7 @@ class TimesController extends AppController {
             $this->Session->setFlash(__('<strong>The following filters were ignored:</strong>'.$filterError), 'default', array(), 'error');
 
         $this->set('times', $times);
-        $this->set('total_time', $this->normaliseTime(array_sum($tTime)));
+        $this->set('total_time', $this->Time->splitMins($tTime[0][0]['SUM(`Time`.`mins`)']));
         $this->set('page', $page);
     }
 
@@ -181,9 +172,7 @@ class TimesController extends AppController {
         if (!$this->Time->exists()) {
             throw new NotFoundException(__('Invalid time'));
         }
-        $time = $this->Time->read(null, $id);
-        $time['Time']['mins'] = $this->normaliseTime($time['Time']['mins']);
-        $this->set('time', $time);
+        $this->set('time', $this->Time->read(null, $id));
     }
 
     /**
@@ -199,7 +188,6 @@ class TimesController extends AppController {
             $this->Time->create();
             $origTime = $this->request->data['Time']['mins'];
 
-            $this->request->data['Time']['mins'] = $this->stringToTime($origTime);
             $this->request->data['Time']['user_id'] = $this->Auth->user('id');
             $this->request->data['Time']['project_id'] = $project['Project']['id'];
 
@@ -224,6 +212,7 @@ class TimesController extends AppController {
         $project = $this->_projectCheck($name);
         $user = $this->Auth->user('id');
         $this->Time->id = $id;
+        $this->set('id', $id);
 
         // Double check that the user is allowed to edit this time slice
         if ($this->Time->field('user_id') != $user && !$this->Time->Project->isAdmin($user)) {
@@ -236,7 +225,6 @@ class TimesController extends AppController {
         if ($this->request->is('post') || $this->request->is('put')) {
             $origTime = $this->request->data['Time']['mins'];
 
-            $this->request->data['Time']['mins'] = $this->stringToTime($origTime);
             $this->request->data['Time']['user_id'] = $user;
             $this->request->data['Time']['project_id'] = $project['Project']['id'];
 
@@ -250,8 +238,7 @@ class TimesController extends AppController {
             }
         } else {
             $this->request->data = $this->Time->read(null, $id);
-            $nTime = $this->normaliseTime($this->request->data['Time']['mins']);
-            $this->request->data['Time']['mins'] = $nTime['hours']."h ".$nTime['mins']."m";
+            $this->request->data['Time']['mins'] = $this->request->data['Time']['mins']['s'];
         }
     }
 
@@ -284,46 +271,5 @@ class TimesController extends AppController {
         }
         $this->Session->setFlash(__('Could not delete the logged time. Please, try again.'), 'default', array(), 'error');
         $this->redirect(array('project' => $name, 'action' => 'index'));
-    }
-
-    /**
-     * normaliseTime
-     * Take a number of mins and turn it into an array of hours and mins
-     *
-     * @param int $mins
-     * @return array array('mins'=>X,'hours'=>X)
-     */
-    private function normaliseTime($mins = 0) {
-        $hours = 0;
-
-        while ($mins >= 60) {
-            $hours += 1;
-            $mins -= 60;
-        }
-
-        return array('hours'=>$hours, 'mins'=>$mins);
-    }
-
-    /**
-     * stringToTime
-     * Take a string with hours and mins in it (e.g. 1h 20m)
-     * and turn it into a number of mins
-     *
-     * @param string $string the string to parse
-     * @return int the amount of mins
-     */
-    private function stringToTime($string = "") {
-        if (is_int($string)) {
-            return (int) $string;
-        }
-
-        preg_match("#(?P<hours>[0-9]+)\s?h(rs?|ours?)?#", $string, $hours);
-        preg_match("#(?P<mins>[0-9]+)\s?m(ins?)?#", $string, $mins);
-
-        $time = (int) 0;
-        $time += ((isset($hours['hours'])) ? 60*(int)$hours['hours'] : 0);
-        $time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
-
-        return $time;
     }
 }
