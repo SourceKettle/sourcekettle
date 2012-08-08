@@ -72,7 +72,7 @@ class CollaboratorsController extends AppController {
             // Check for existing association with this project
             $collaborator = $this->Collaborator->findByUserIdAndProjectId ($user['User']['id'], $project['Project']['id'], array ('id'));
             if (!empty($collaborator)) {
-                $this->Session->setFlash(__('The user specified is already a collaborating in this project. Please, try again.'), 'default', array(), 'error');
+                $this->Session->setFlash(__('The user specified is already collaborating in this project. Please, try again.'), 'default', array(), 'error');
             } else {
                 // Create details to attach user to this project
                 unset($this->request->data['Collaborator']['name']);
