@@ -27,10 +27,7 @@
     <?= ($user_theme != 'default') ? $this->TwitterBootswatch->cssForTheme($user_theme) : '' ?>
     <?= $this->Html->css('layout'); ?>
     <?= $this->Html->css('bootstrap-responsive.min') ?>
-    <? if (isset($css_for_layout)): foreach ($css_for_layout as $css): ?>
-            <?= $this->Html->css(array($css)) ?>
-        <? endforeach;
-    endif; ?>
+    <?= $this->fetch ('css') ?>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -82,7 +79,7 @@
                             );
                             foreach ($navItems as $controller => $text) {
                                 echo "<li" . ($controller == $this->params['controller'] ? " class='active'>" : ">");
-                                echo $this->Html->link($text, array ('controller' => $controller));
+                                echo $this->Html->link($text, array ('controller' => $controller, 'action' => 'index'));
                                 echo "</li>";
                             }
                             ?>

@@ -66,7 +66,7 @@ class AppController extends Controller {
         $this->Auth->userModel = 'User';
 
         //Customise the login error
-        $this->Auth->loginError = 'The credentials you entered were incorrect. Please try again or have you<a href="lost_password">lost your password"</a>';
+        $this->Auth->loginError = 'The credentials you entered were incorrect. Please try again or have you <a href="lost_password">lost your password</a>';
 
         //Customise thge auth error (when they try to access a protected part of the site)
         $this->Auth->authError = 'You need to login to view that page';

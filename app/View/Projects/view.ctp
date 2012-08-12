@@ -14,7 +14,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$smallText = " <small>" . $project['Project']['description'] . " </small>";
+$this->Html->css ('project.overview', null, array ('inline' => false));
+$smallText = " <small>" . $project['Project']['description'] . "</small>";
 
 echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
 
@@ -26,16 +27,16 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
         <div class="row">
             <div class="span10">
                 <div class="well">
-                    <div class="row-fluid">
+                    <div class="row-fluid overview">
                         <div class="span4">
-                            <h3 style="margin: 0px;">Tasks</h3>
-                            <hr style="margin: 0px 0px 5px;">
+                            <h3>Tasks</h3>
+                            <hr />
                             <div class="row-fluid">
                                 <div class="span6">
                                     <ul class="unstyled">
-                                        <li><?= $this->Html->link('0 - Open Tasks', '#', array('style'=>"color: #3266cc;")) ?></li>
-                                        <li><?= $this->Html->link('0 - Closed Tasks', '#', array('style'=>"color: #c5d8ff;")) ?></li>
-                                        <li><?= $this->Html->link('0 - Total Tasks', '#', array('style'=>"color: #000000;")) ?></li>
+                                        <li><?= $this->Html->link('0 - Open Tasks', '#', array('class' => 'open-tasks')) ?></li>
+                                        <li><?= $this->Html->link('0 - Closed Tasks', '#', array('class' => 'closed-tasks')) ?></li>
+                                        <li><?= $this->Html->link('0 - Total Tasks', '#', array('class' => 'total-tasks')) ?></li>
                                         <li>0% complete</li>
                                     </ul>
                                 </div>
@@ -45,8 +46,8 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                             </div>
                         </div>
                         <div class="span4">
-                            <h3 style="margin: 0px;">Next Milestone</h3>
-                            <hr style="margin: 0px 0px 5px;">
+                            <h3>Next Milestone</h3>
+                            <hr />
                             <ul class="unstyled">
                                 <li><strong>Oh Damn</strong></li>
                                 <br>
@@ -56,8 +57,8 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                             <?= $this->Bootstrap->progress(array("width" => 40, "striped" => true)) ?>
                         </div>
                         <div class="span4">
-                            <h3 style="margin: 0px;">Quick Stats</h3>
-                            <hr style="margin: 0px 0px 5px;">
+                            <h3>Quick Stats</h3>
+                            <hr />
                             <ul class="unstyled">
                                 <li><strong>0 Bytes</strong> disk space used in files, notebook &amp; repositories.</li>
                                 <li><strong>1 user</strong> from 1 company are working on this project.</li>

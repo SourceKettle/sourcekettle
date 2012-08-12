@@ -423,7 +423,11 @@ class UsersController extends AppController {
                         $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
                         $this->log("[UsersController.security] user[".$this->Auth->user('id')."] changed password", 'devtrack');
                     } else {
-                        $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
+                        foreach ($this->User->validationErrors as $field => $errors) {
+                            foreach ($errors as $errorMessage) {
+                                $this->Session->setFlash($errorMessage, 'default', array(), 'error');
+                            }
+                        }
                     }
                 } else {
                     $this->Session->setFlash(__('Your passwords did not match. Please try again.'), 'default', array(), 'error');

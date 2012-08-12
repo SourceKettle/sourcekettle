@@ -77,7 +77,7 @@ class Time extends AppModel {
         )
     );
 
-    public function afterFind($results, $primary) {
+    public function afterFind($results, $primary = false) {
         foreach ($results as $a => $result) {
             if (isset($result['Time']['mins'])) {
                 $results[$a]['Time']['mins'] = $this->splitMins($result['Time']['mins']);
@@ -103,7 +103,7 @@ class Time extends AppModel {
      * Take the mins string with hours and mins in it (e.g. 1h 20m)
      * and turn it into a number of mins
      */
-    public function beforeValidate() {
+    public function beforeValidate($options = array()) {
         $string = $this->data['Time']['mins'];
 
         if (is_int($string)) {

@@ -1,0 +1,33 @@
+/**
+*
+* CSS for the projects overview page.
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+* 
+* @copyright     DevTrack Development Team 2012
+* @link          http://github.com/chrisbulmer/devtrack
+* @package       DevTrack.webroot.css
+* @since         DevTrack v 0.1
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
+
+.open-tasks {
+    color: #3266cc;
+}
+
+.closed-tasks {
+    color: #c5d8ff;
+}
+
+.total-tasks {
+    color: #000000;
+}
+
+.overview hr {
+    margin: 0 0 5px;
+}
+
+.overview h3 {
+    margin: 0;
+}
