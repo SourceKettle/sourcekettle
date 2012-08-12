@@ -257,11 +257,11 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `owner_id` int(10) NOT NULL,
   `task_type_id` int(10) NOT NULL,
   `task_status_id` int(10) NOT NULL,
+  `task_priority_id` int(10) NOT NULL,
   `assignee_id` int(10) NULL DEFAULT NULL,
   `milestone_id` int(10) NULL DEFAULT NULL,
   `subject` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `description` text CHARACTER SET utf8 COLLATE utf8_bin,
-  `priority` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
@@ -335,5 +335,28 @@ INSERT INTO `task_statuses` (`id`, `name`, `created`, `modified`) VALUES
 (2, 'in progress', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (3, 'resolved','0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (4, 'closed', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_priorities`
+--
+CREATE TABLE IF NOT EXISTS `task_priorities` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `task_priorities`
+--
+
+INSERT INTO `task_priorities` (`id`, `name`, `created`, `modified`) VALUES
+(1, 'minor','0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'major', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'urgent', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(4, 'blocker', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------

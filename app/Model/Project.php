@@ -109,6 +109,19 @@ class Project extends AppModel {
             'finderQuery' => '',
             'counterQuery' => ''
         ),
+        'Task' => array(
+            'className' => 'Task',
+            'foreignKey' => 'project_id',
+            'dependent' => true,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
         'Source' => array(
             'className' => 'Source',
             'foreignKey' => 'project_id',
