@@ -168,7 +168,19 @@ class TimesController extends AppController {
     public function add($name) {
         $project = $this->_projectCheck($name);
 
-        if ($this->request->is('post')) {
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->Time->create();
+
+            $this->request->data['Time']['user_id'] = $this->Auth->user('id');
+            $this->request->data['Time']['project_id'] = $project['Project']['id'];
+
+            if ($this->Time->save($this->request->data)) {
+                echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Time successfully logged.</div>';
+            } else {
+                echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please, try again.</div>';
+            }
+        } else if ($this->request->is('post')) {
             $this->Time->create();
             $origTime = $this->request->data['Time']['mins'];
 

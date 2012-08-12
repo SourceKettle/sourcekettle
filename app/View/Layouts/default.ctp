@@ -95,7 +95,9 @@
     </header>
     <div class="container">
         <div id="content">
-            <? echo $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
+            <span id="flashes">
+                <? echo $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
+            </span>
             <?= $content_for_layout ?>
         </div>
         <div id='footer'>
@@ -118,5 +120,6 @@
         <?= $this->Html->scriptBlock($js) ?>
     <? endforeach;
     endif; ?>
+    <?= $this->Js->writeBuffer() ?>
 </body>
 </html>

@@ -12,5 +12,6 @@
     </ul>
 </div>
 <div class="span2">
-    <?= $this->Bootstrap->button_link('Log Time', array('action' => 'add', 'project' => $this->params['project']), array("style" => "primary", "class" => "pull-right")) ?>
+    <?= $this->Bootstrap->button_link('Log Time', '#addTimeModal', array('data-toggle' => 'modal', 'style' => 'primary', 'class' => 'pull-right')) ?>
+    <?= $this->element('Time/modal_add') ?>
 </div>
