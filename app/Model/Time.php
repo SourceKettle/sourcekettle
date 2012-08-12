@@ -53,6 +53,10 @@ class Time extends AppModel {
                 'message' => 'Time logged must be greater than 0.',
             ),
         ),
+        'date' => array(
+            'rule' => array('date','ymd'),
+            'message' => 'Enter a valid date in YYYY-MM-DD format.',
+        ),
     );
 
     /**

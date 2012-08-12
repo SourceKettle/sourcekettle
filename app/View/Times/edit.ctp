@@ -13,6 +13,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->set('js_for_layout', array('bootstrap-datepicker'));
+$this->Html->css('datepicker', null, array ('inline' => false));
+$this->set('js_blocks_for_layout', array("$('.dp1').datepicker()"));
 
 echo $this->Bootstrap->page_header("Correct Logged Time<small> to the nearest 30 mins, please</small>");?>
 
@@ -36,6 +39,11 @@ echo $this->Bootstrap->page_header("Correct Logged Time<small> to the nearest 30
                     "input" => $this->Form->textarea("description", array("class" => "input-xlarge")),
                     "label" => "Description",
                     "help_inline" => "(Optional)"
+                ));
+
+                echo $this->Bootstrap->input("date", array(
+                    "input" => $this->Form->text("date", array("class" => "dp1", "value" => date('Y-m-d', strtotime($this->request->data['Time']['date'])), "data-date-format" => "yyyy-mm-dd")),
+                    "label" => "Date"
                 ));
 
                 echo $this->Bootstrap->button("Submit", array("style" => "primary", "size" => "normal", 'class' => 'controls'));

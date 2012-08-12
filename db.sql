@@ -236,6 +236,7 @@ CREATE TABLE IF NOT EXISTS `times` (
   `user_id` int(10) NOT NULL,
   `mins` int(10) NOT NULL DEFAULT '0',
   `description` text,
+  `date` date NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
