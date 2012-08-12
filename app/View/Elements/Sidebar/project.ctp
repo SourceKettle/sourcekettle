@@ -6,7 +6,7 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.View.Elements
@@ -42,8 +42,16 @@
             'Tasks' => array(
                 'icon' => 'file',
                 'url' => array(
-                    'action' => 'tasks',
-                    'controller' => 'projects',
+                    'action' => array('.', 'index', 'edit', 'view', 'add'),
+                    'controller' => 'tasks',
+                    'project' => $this->params['project'],
+                ),
+            ),
+            'Milestones' => array(
+                'icon' => 'road',
+                'url' => array(
+                    'action' => array('.', 'index', 'edit', 'view', 'add'),
+                    'controller' => 'milestones',
                     'project' => $this->params['project'],
                 ),
             ),

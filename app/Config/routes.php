@@ -60,6 +60,9 @@
         Router::connect('/project/:project/tasks/:action/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/tasks/*', array('controller' => 'tasks'), array('pass' => array('project'), 'project' => '[\w]+'));
 
+        Router::connect('/project/:project/milestones/:action/*', array('controller' => 'milestones'), array('pass' => array('project'), 'project' => '[\w]+'));
+        Router::connect('/project/:project/milestones/*', array('controller' => 'milestones'), array('pass' => array('project'), 'project' => '[\w]+'));
+
         Router::connect('/project/:project/time/:action/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/time/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[\w]+'));
 
@@ -79,7 +82,7 @@
          * Add custom route for editing the sshkeys associated to a user
          */
         Router::connect('/account/sshkeys/:action/*', array('controller' => 'sshKeys'));
-        
+
         /*
          * Route to make the 'account settings' addresses look nicer.
          */
