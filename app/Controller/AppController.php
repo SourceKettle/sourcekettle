@@ -26,7 +26,7 @@ class AppController extends Controller {
      * The global helpers
      * @var type
      */
-    public $helpers = array('Html', 'Text', 'Session', 'Form', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'Popover', 'TwitterBootswatch.TwitterBootswatch');
+    public $helpers = array('Html', 'Text', 'Session', 'Form', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'Popover', 'TwitterBootswatch.TwitterBootswatch', 'Gravatar');
 
     /**
      * Global components used for authentication, authorisation and session management.

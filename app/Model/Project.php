@@ -243,52 +243,14 @@ class Project extends AppModel {
         $events = array();
 
         // Collect collaborator events
-        foreach ( $project['Collaborator'] as $a ) {
-            $events[] = array(
-                'Type' => 'Collaborator',
-                'user_name' => $a['User']['name'],
-                'user_id' => $a['User']['id'],
-                'project_name' => $project['Project']['name'],
-                'modified' => $a['modified'],
-            );
-        }
+        $events = array_merge($events, $this->Collaborator->fetchHistory($project['Project']['name'], 40));
 
         // Collect source events
         $this->Source->init();
-        $branches = $this->Source->branches();
-        if (!empty ($branches)) {
-            foreach ($branches as $branch) {
-                $log = $this->Source->log($branch);
-
-                if ($log) {
-                    foreach ( $log as $a ) {
-                        $events[] = array(
-                            'Type' => 'Commit',
-                            'user_name' => $a['Commit']['author']['name'],
-                            'user_id' => 0,
-                            'project_name' => $project['Project']['name'],
-                            'message' => $a['Commit']['subject'],
-                            'hash' => $a['Commit']['hash'],
-                            'modified' => $a['Commit']['date'],
-                            'branch' => $branch
-                        );
-                    }
-                }
-            }
-        }
+        $events = array_merge($events, $this->Source->fetchHistory($project['Project']['name'], 40));
 
         // Collect time events
-        foreach ( $project['Time'] as $a ) {
-            $events[] = array(
-                'Type' => 'Time',
-                'user_name' => $a['User']['name'],
-                'user_id' => $a['User']['id'],
-                'time_id' => $a['id'],
-                'project_name' => $project['Project']['name'],
-                'modified' => $a['modified'],
-                'time' => $a['mins'],
-            );
-        }
+        $events = array_merge($events, $this->Time->fetchHistory($project['Project']['name'], 40));
 
         // Sort function for events
         // assumes $array{ $array{ 'modified' => 'date' }, ... }

@@ -61,6 +61,9 @@ class GravatarHelper extends AppHelper
             $attributes['height'] = $options['size'];
             $attributes['width'] = $options['size'];
         }
+        if (!isset($options['d'])) {
+            $options['d'] = 'wavatar';
+        }
         if (!empty($options)) {
             $query = '?' . http_build_query($options);
         }

@@ -17,7 +17,7 @@ App::uses('AppController', 'Controller');
 
 class TimesController extends AppController {
 
-    public $helpers = array('Gravatar', 'Time', 'GoogleChart.GoogleChart');
+    public $helpers = array('Time', 'GoogleChart.GoogleChart');
 
     /*
      * _projectCheck

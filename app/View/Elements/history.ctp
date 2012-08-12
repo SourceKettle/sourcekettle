@@ -10,15 +10,15 @@ $prefs = array(
 
 $contextStrings = array(
     'Collaborator' => array(
-        'updated' => array("%s was added to %s as a collaborator", "%s was added as a collaborator"),
-        'created'   => array("%s's role was updated in %s", "%s's role was updated"),
+        'updated'   => array("%s's role was updated in %s", "%s's role was updated"),
+        'created' => array("%s was added to %s as a collaborator", "%s was added as a collaborator"),
     ),
     'Time' => array(
-        'updated' => array("%s updated time spent (%s) on %s", "%s updated time spent (%s)"),
-        'created'   => array("%s added time spent (%s) on %s", "%s added time (%s)"),
+        'updated' => array("%s updated time spent [%s] on %s", "%s updated time spent [%s]"),
+        'created'   => array("%s added time spent [%s] on %s", "%s added time [%s]"),
     ),
     'Source' => array(
-        'created'   => array("%s committed to %s", "%s committed"),
+        'created'   => array("%s submitted code [%s] on %s", "%s submitted code [%s]"),
     ),
 );
 
@@ -52,12 +52,12 @@ foreach ( $events as $event ) {
         $context = 1;
     }
 
-    $detail = $this->Html->link($event['detail'], $event['url']);
+    $detail = $this->Html->link(substr($event['detail'], 0, 75), $event['url']);
     ?>
 
     <p>
-        <?= $this->Bootstrap->label($event['Type'].' '.$this->Bootstrap->icon($prefs[$event['Type']]['icon'], "white"), $prefs[$event['Type']]['color']) ?>
         <?= $this->Gravatar->image($event['Actioner']['email'], array('size' => 30), array('alt' => $event['Actioner']['name'])) ?>
+        <?= $this->Bootstrap->label($this->Bootstrap->icon($prefs[$event['Type']]['icon'], "white"), $prefs[$event['Type']]['color']) ?>
         <? printf($contextStrings[$event['Type']][$event['action']][$context], $user, $detail, $project) ?>
         -
         <small>

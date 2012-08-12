@@ -4,7 +4,7 @@
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
-* 
+*
 * @copyright     DevTrack Development Team 2012
 * @link          http://github.com/chrisbulmer/devtrack
 * @package       DevTrack.webroot.css
@@ -30,4 +30,8 @@
 
 .overview h3 {
     margin: 0;
+}
+
+.pager {
+    margin-bottom: 0;
 }

@@ -23,6 +23,14 @@ App::uses('AppModel', 'Model');
  */
 class Source extends AppModel {
 
+    /**
+     * useTable
+     *
+     * (default value: 'source')
+     *
+     * @var string
+     * @access public
+     */
     public $useTable = 'source';
 
     /**
@@ -45,13 +53,19 @@ class Source extends AppModel {
     public $hasMany = array(
         'GitCake' => array(
             'className' => 'GitCake.GitCake',
-            
+
         ),
         'SVNCake' => array(
             'className' => 'SVNCake.SVNCake',
         )
     );
 
+    /**
+     * init function.
+     *
+     * @access public
+     * @return void
+     */
     public function init() {
         switch ($this->Project->field('repo_type')) {
             case '1':
@@ -65,6 +79,12 @@ class Source extends AppModel {
         }
     }
 
+    /**
+     * _repoLocation function.
+     *
+     * @access public
+     * @return void
+     */
     public function _repoLocation() {
         $devtrack_config = Configure::read('devtrack');
         $base = $devtrack_config['repo']['base'];
@@ -80,6 +100,14 @@ class Source extends AppModel {
         }
     }
 
+    /**
+     * create function.
+     *
+     * @access public
+     * @param array $data (default: array())
+     * @param bool $filterKey (default: false)
+     * @return void
+     */
     public function create($data = array(), $filterKey = false) {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
@@ -88,6 +116,12 @@ class Source extends AppModel {
         }
     }
 
+    /**
+     * branches function.
+     *
+     * @access public
+     * @return void
+     */
     public function branches() {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
@@ -96,6 +130,14 @@ class Source extends AppModel {
         }
     }
 
+    /**
+     * tree function.
+     *
+     * @access public
+     * @param string $branch (default: 'master')
+     * @param string $folderPath (default: '')
+     * @return void
+     */
     public function tree($branch = 'master', $folderPath = '') {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
@@ -104,6 +146,16 @@ class Source extends AppModel {
         }
     }
 
+    /**
+     * log function.
+     *
+     * @access public
+     * @param string $branch (default: 'master')
+     * @param int $limit (default: 10)
+     * @param int $offset (default: 0)
+     * @param string $filepath (default: '')
+     * @return void
+     */
     public function log($branch = 'master', $limit = 10, $offset = 0, $filepath = '') {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
@@ -112,6 +164,13 @@ class Source extends AppModel {
         }
     }
 
+    /**
+     * showCommit function.
+     *
+     * @access public
+     * @param mixed $hash
+     * @return void
+     */
     public function showCommit($hash) {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
@@ -120,6 +179,13 @@ class Source extends AppModel {
         }
     }
 
+    /**
+     * hasBranch function.
+     *
+     * @access public
+     * @param mixed $hash
+     * @return void
+     */
     public function hasBranch($hash) {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
@@ -128,6 +194,12 @@ class Source extends AppModel {
         }
     }
 
+    /**
+     * defaultBranch function.
+     *
+     * @access public
+     * @return void
+     */
     public function defaultBranch() {
         $branches = $this->branches();
 
@@ -143,6 +215,72 @@ class Source extends AppModel {
             return $master;
 
         return $branches[0];
+    }
+
+    /**
+     * fetchHistory function.
+     *
+     * @access public
+     * @param string $project (default: '')
+     * @param int $number (default: 10)
+     * @param int $offset (default: 0)
+     * @param float $user (default: -1)
+     * @param array $query (default: array())
+     * @return void
+     */
+    public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
+        $events = array();
+        $branches = $this->branches();
+        $project = $this->Project->getProject($project);
+
+        if (!empty ($branches)) {
+            foreach ($branches as $branch) {
+                $log = $this->log($branch);
+
+                if ($log) {
+                    foreach ( $log as $a => $commit) {
+                        // Store wanted details
+                        $events[$a] = array(
+                            'Type' => 'Source',
+                            'Actioner' => array(
+                                'name' => $commit['Commit']['author']['name'],
+                                'id' => 0,
+                                'email' => $commit['Commit']['author']['email'],
+                            ),
+                            'Project' => array(
+                                'id' => $project['Project']['id'],
+                                'name' => $project['Project']['name']
+                            ),
+                            'url' => array(
+                                'project' => $project['Project']['name'],
+                                'controller' => 'source',
+                                'action' => 'commit',
+                                $branch,
+                                $commit['Commit']['hash']
+                            ),
+                            'modified' => $commit['Commit']['date'],
+                            'detail' => $commit['Commit']['subject'],
+                            'permissions' => array('view'),
+                            'action' => 'created',
+                        );
+                    }
+                }
+            }
+        }
+
+        // Collect time events
+
+        // Sort function for events
+        // assumes $array{ $array{ 'modified' => 'date' }, ... }
+        $cmp = function($a, $b) {
+            if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
+            if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
+            return -1;
+        };
+
+        usort($events, $cmp);
+
+        return array_slice($events, $offset, $number);
     }
 
     /**

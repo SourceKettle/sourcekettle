@@ -68,8 +68,24 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                     </div>
                 </div>
             </div>
+            <div class="span10" style="text-align:center">
+            <? if (empty($events)) : ?>
+                <h1>No Events Yet</h1>
+                <h3><small>Go on, do something!</small></h3>
+            </div>
+            <? else : ?>
+                <h3>Recent events for the project</h3>
+            </div>
+            <? endif; ?>
             <div class="span10">
-                <?= $this->ProjectActivity->displayActivity($events) ?>
+                <div class="well">
+                    <?= $this->element('history', array('events' => $events)) ?>
+                    <ul class="pager">
+                        <li>
+                            <?= $this->Html->link('See More', array('project' => $project['Project']['name'], 'action' => 'history'), array('escape' => false)) ?>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
