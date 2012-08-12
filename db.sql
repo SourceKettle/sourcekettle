@@ -360,3 +360,22 @@ INSERT INTO `task_priorities` (`id`, `name`, `created`, `modified`) VALUES
 (4, 'blocker', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `milestones`
+--
+CREATE TABLE IF NOT EXISTS `milestones` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) NOT NULL,
+  `subject` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `milestones`
+--
+
+-- --------------------------------------------------------

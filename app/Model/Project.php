@@ -122,6 +122,19 @@ class Project extends AppModel {
             'finderQuery' => '',
             'counterQuery' => ''
         ),
+        'Milestone' => array(
+            'className' => 'Milestone',
+            'foreignKey' => 'project_id',
+            'dependent' => true,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
         'Source' => array(
             'className' => 'Source',
             'foreignKey' => 'project_id',
