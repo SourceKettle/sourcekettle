@@ -25,12 +25,38 @@ class TasksController extends AppController {
      */
     public $helpers = array('Time');
 
+    /*
+     * _projectCheck
+     * Space saver to ensure user can view content
+     * Also sets commonly needed variables related to the project
+     *
+     * @param $name string Project name
+     */
+    private function _projectCheck($name) {
+        // Check for existent project
+        $project = $this->Task->Project->getProject($name);
+        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+        $this->Task->Project->id = $project['Project']['id'];
+
+        $user = $this->Auth->user('id');
+
+        // Lock out those who are not guests
+        if ( !$this->Task->Project->hasRead($user) ) throw new ForbiddenException(__('You are not a member of this project'));
+
+        $this->set('project', $project);
+        $this->set('isAdmin', $this->Task->Project->isAdmin($user));
+
+        return $project;
+    }
+
     /**
      * index method
      *
      * @return void
      */
-    public function index() {
+    public function index($project = null) {
+        $project = $this->_projectCheck($project);
+
         $this->Task->recursive = 0;
         $this->set('tasks', $this->paginate());
     }
@@ -41,7 +67,9 @@ class TasksController extends AppController {
      * @param string $id
      * @return void
      */
-    public function view($id = null) {
+    public function view($project = null, $id = null) {
+        $project = $this->_projectCheck($project);
+
         $this->Task->id = $id;
         if (!$this->Task->exists()) {
             throw new NotFoundException(__('Invalid task'));
@@ -54,7 +82,9 @@ class TasksController extends AppController {
      *
      * @return void
      */
-    public function add() {
+    public function add($project = null) {
+        $project = $this->_projectCheck($project);
+
         if ($this->request->is('post')) {
             $this->Task->create();
             if ($this->Task->save($this->request->data)) {
@@ -79,7 +109,9 @@ class TasksController extends AppController {
      * @param string $id
      * @return void
      */
-    public function edit($id = null) {
+    public function edit($project = null, $id = null) {
+        $project = $this->_projectCheck($project);
+
         $this->Task->id = $id;
         if (!$this->Task->exists()) {
             throw new NotFoundException(__('Invalid task'));
@@ -109,7 +141,9 @@ class TasksController extends AppController {
      * @param string $id
      * @return void
      */
-    public function delete($id = null) {
+    public function delete($project = null, $id = null) {
+        $project = $this->_projectCheck($project);
+
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
         }
