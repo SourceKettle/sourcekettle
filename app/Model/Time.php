@@ -121,4 +121,86 @@ class Time extends AppModel {
 
         return true;
     }
+
+    /**
+     * fetchHistory function.
+     * Lists the history of Time elements.
+     *
+     * @access public
+     * @param string $project (default: '')
+     * @param int $number (default: 10)
+     * @param int $offset (default: 0)
+     * @param float $user (default: -1)
+     * @return array
+     */
+    public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
+        $search = array(
+            'conditions' => array(),
+            'limit' => $number+$offset,
+            'offset' => $offset
+        );
+
+        // Decant query values in
+        foreach ($search as $s => $v) {
+            if (isset($query[$s])) {
+                $search[$s] = $query[$s];
+
+            }
+        }
+
+        if ($project != null && $project = $this->Project->getProject($project)) {
+            $search['conditions']['Project.id'] = $project['Project']['id'];
+        }
+
+        $times = $this->find('all', $search);
+        $events = array();
+
+        // Collect time events
+        foreach ( $times as $a => $time ) {
+            // Store wanted details
+            $events[$a] = array(
+                'Type' => 'Time',
+                'Actioner' => array(
+                    'name' => $time['User']['name'],
+                    'id' => $time['User']['id'],
+                    'email' => $time['User']['email'],
+                ),
+                'Project' => array(
+                    'id' => $time['Project']['id'],
+                    'name' => $time['Project']['name']
+                ),
+                'url' => array(
+                    'project' => $time['Project']['name'],
+                    'controller' => 'times',
+                    'action' => 'view',
+                    $time['Time']['id']
+                ),
+                'modified' => $time['Time']['modified'],
+                'detail' => $time['Time']['mins']['s'],
+                'permissions' => array('view'),
+            );
+            // Calculate last access action
+            if ($time['Time']['modified'] != $time['Time']['created']) {
+                $events[$a]['action'] = 'updated';
+            } else {
+                $events[$a]['action'] = 'created';
+            }
+            // Calcuate access options
+            if ($time['User']['id'] == $user) {
+                $events[$a]['permissions'] = array('view', 'edit', 'delete');
+            }
+        }
+
+        // Sort function for events
+        // assumes $array{ $array{ 'modified' => 'date' }, ... }
+        $cmp = function($a, $b) {
+            if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
+            if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
+            return -1;
+        };
+
+        usort($events, $cmp);
+
+        return $events;
+    }
 }

@@ -88,9 +88,8 @@ class TimesController extends AppController {
         $project = $this->_projectCheck($name);
 
         $page = 1;
-        $num_per_page = 10;
+        $num_per_page = 25;
         $user_id = '*';
-        $sort = 'desc';
 
         $filterErrors = array();
         $filterError = '';
@@ -116,26 +115,11 @@ class TimesController extends AppController {
             }
         }
 
-        // Lets check the sort filter
-        if(isset($this->params['named']['sort'])) {
-            $_sort = strtolower($this->params['named']['sort']);
-            if ($_sort == 'asc' || $_sort == 'desc') {
-                $sort = $_sort;
-            } else {
-                $filterErrors[] = 'sort [can only have value \'asc\' or \'desc\']';
-            }
-        }
-
         $tTime = $this->Time->find('all', array(
             'conditions' => array('Time.project_id' => $project['Project']['id']),
             'fields' => array('SUM(Time.mins)')
         ));
-        $times = $this->Time->find('all', array(
-            'conditions' => $conditions,
-            'order' => array('Time.created' => $sort),
-            'limit' => $num_per_page+1,
-            'offset' => (($page-1)*$num_per_page)
-        ));
+        $times = $this->Time->fetchHistory($project['Project']['id'], $num_per_page+1, (($page-1)*$num_per_page), $this->Auth->user('id'), array('conditions'=>$conditions));
 
         if (sizeof($times) == 0 && $page > 1) {
             $this->redirect(array('project'=>$name,'controller'=>'times','action'=>'history'));
