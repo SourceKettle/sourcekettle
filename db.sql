@@ -95,9 +95,9 @@ CREATE TABLE IF NOT EXISTS `repo_types` (
 --
 
 INSERT INTO `repo_types` (`id`, `name`, `created`, `modified`) VALUES
-(1, 'None', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
-(2, 'Git', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
-(3, 'SVN', '2012-06-02 22:03:59', '2012-06-02 22:04:01');
+(1, 'None', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'Git', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'SVN', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -140,9 +140,9 @@ CREATE TABLE IF NOT EXISTS `settings` (
 --
 
 INSERT INTO `settings` (`id`, `name`, `value`, `created`, `modified`) VALUES
-(1, 'register_enabled', '0', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
-(2, 'sysadmin_email', 'sysadmin@example.com', '2012-06-02 22:03:59', '2012-06-02 22:04:01'),
-(4, 'sync_required', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+(1, 'register_enabled', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'sysadmin_email', 'sysadmin@example.com', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'sync_required', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 
 -- --------------------------------------------------------
@@ -245,3 +245,95 @@ CREATE TABLE IF NOT EXISTS `times` (
 --
 -- Dumping data for table `times`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tasks`
+--
+CREATE TABLE IF NOT EXISTS `tasks` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) NOT NULL,
+  `owner_id` int(10) NOT NULL,
+  `task_type_id` int(10) NOT NULL,
+  `task_status_id` int(10) NOT NULL,
+  `assignee_id` int(10) NULL DEFAULT NULL,
+  `milestone_id` int(10) NULL DEFAULT NULL,
+  `subject` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `priority` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `tasks`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_types`
+--
+CREATE TABLE IF NOT EXISTS `task_types` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `task_types`
+--
+
+INSERT INTO `task_types` (`id`, `name`, `created`, `modified`) VALUES
+(1, 'bug','0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'duplicate', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'enhancement','0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(4, 'invalid','0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(5, 'question','0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(6, 'wontfix', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_comments`
+--
+CREATE TABLE IF NOT EXISTS `task_comments` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `task_id` int(10) NOT NULL,
+  `user_id` int(10) NOT NULL,
+  `comment` text CHARACTER SET utf8 COLLATE utf8_bin,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `task_comments`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_statuses`
+--
+CREATE TABLE IF NOT EXISTS `task_statuses` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `task_statuses`
+--
+
+INSERT INTO `task_statuses` (`id`, `name`, `created`, `modified`) VALUES
+(1, 'open','0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'in progress', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'resolved','0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(4, 'closed', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
