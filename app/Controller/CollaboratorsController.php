@@ -23,7 +23,7 @@ class CollaboratorsController extends AppController {
      * Project helpers
      * @var type
      */
-    public $helpers = array('Time', 'GoogleChart.GoogleChart', 'ProjectActivity');
+    public $helpers = array('Time', 'GoogleChart.GoogleChart');
 
     /**
      * index method
@@ -224,7 +224,7 @@ class CollaboratorsController extends AppController {
             $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
         } else {
             $collaborator = $this->Collaborator->read();
-            
+
             $current_access_level = $collaborator['Collaborator']['access_level'];
             $can_change = true;
             if ($newaccesslevel <= 1 && $current_access_level > 1) {
@@ -233,13 +233,13 @@ class CollaboratorsController extends AppController {
                     'fields' => 'Collaborator.id',
                     'conditions' => array ('project_id' => $project['Project']['id'], 'access_level >' => '1')
                 ));
-                
+
                 if ($numAdmins <= 1) {
                     $this->Session->setFlash(__('There must be at least one admin in the project.'), 'default', array(), 'error');
                     $can_change = false;
                 }
             }
-            
+
             if ($can_change) {
                 // Find additional details for the user being changed - only needed for flash message
                 $user_name = $this->Collaborator->User->field('name', array('User.id' => $id));
@@ -308,13 +308,13 @@ class CollaboratorsController extends AppController {
         // Lock out those who arnt admins
         $this->Collaborator->Project->id = $project['Project']['id'];
         if ( !$this->Collaborator->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
-        
+
         // Count the number of admins
         $numAdmins = $this->Collaborator->find ('count', array (
             'fields' => 'DISTINCT Collaborator.id',
             'conditions' => array ('project_id' => $project['Project']['id'], 'access_level >' => '1')
         ));
-        
+
         if ($numAdmins <= 1) {
             $this->Session->setFlash(__('There must be at least one admin in the project.'), 'default', array(), 'error');
         } else if ($this->Collaborator->delete()) {
