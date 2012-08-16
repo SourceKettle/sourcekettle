@@ -135,4 +135,8 @@ class Task extends AppModel {
         )
     );
 
+    public $virtualFields = array(
+        'fake_id' => 'SELECT COUNT(id) + 100 FROM tasks as Taskes WHERE Taskes.project_id = Task.project_id AND Taskes.id < Task.id'
+    );
+
 }

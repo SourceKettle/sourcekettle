@@ -57,8 +57,35 @@ class TasksController extends AppController {
     public function index($project = null) {
         $project = $this->_projectCheck($project);
 
-        $this->Task->recursive = 0;
-        $this->set('tasks', $this->paginate());
+        $backlog = $this->Task->find('all', array(
+            'conditions' => array(
+                'Project.id' => $project['Project']['id'],
+                'TaskStatus.id' => 1
+            ),
+            'order' => 'TaskPriority.id DESC'
+        ));
+        $inProgress = $this->Task->find('all', array(
+            'conditions' => array(
+                'Project.id' => $project['Project']['id'],
+                'TaskStatus.id' => 2
+            ),
+            'order' => 'TaskPriority.id DESC'
+        ));
+        $completed = $this->Task->find('all', array(
+            'conditions' => array(
+                'Project.id' => $project['Project']['id'],
+                'TaskStatus.id' => 3
+            ),
+            'order' => 'TaskPriority.id DESC'
+        ));
+
+        // Final value is min size of the board
+        $max = max(sizeof($backlog), sizeof($inProgress), sizeof($completed), 5);
+
+        $this->set('backlog_empty', $max - sizeof($backlog));
+        $this->set('inProgress_empty', $max - sizeof($inProgress));
+        $this->set('completed_empty', $max - sizeof($completed));
+        $this->set(compact('backlog', 'inProgress',  'completed'));
     }
 
     /**

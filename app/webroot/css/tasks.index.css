@@ -1,0 +1,50 @@
+/**
+*
+* CSS for the tasks index page.
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     DevTrack Development Team 2012
+* @link          http://github.com/chrisbulmer/devtrack
+* @package       DevTrack.webroot.css
+* @since         DevTrack v 0.1
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
+
+.col hr {
+    margin: 0px 0px 20px 5px;
+}
+
+.col h2 {
+    margin: 0;
+    text-align: center;
+}
+
+.task > .well {
+    background: lightgrey;
+    padding: 10px;
+    height: 35px;
+}
+
+.invisiblewell {
+    height: 77px; /* 35px tall + 2px border + 20px bottom-margin + 20px padding */
+}
+
+.empty h3, .empty h4 {
+    text-align: center;
+}
+
+.task img {
+    height: auto;
+}
+
+.task h5 {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-height: 40px;
+}
+
+.task h5 > a {
+    color: #333;
+}
