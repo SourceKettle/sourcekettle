@@ -57,6 +57,48 @@ class TasksController extends AppController {
     public function index($project = null) {
         $project = $this->_projectCheck($project);
 
+        $user = $this->Task->find('all', array(
+            'conditions' => array(
+                'Project.id' => $project['Project']['id'],
+                'Assignee.id' => $this->Auth->user('id'),
+                'TaskStatus.id' => array(1,2)
+            ),
+            'order' => 'TaskPriority.id DESC'
+        ));
+        $team = $this->Task->find('all', array(
+            'conditions' => array(
+                'Project.id' => $project['Project']['id'],
+                'Assignee.id !=' => $this->Auth->user('id'),
+                'TaskStatus.id' => array(1,2)
+            ),
+            'order' => 'TaskPriority.id DESC'
+        ));
+        $others = $this->Task->find('all', array(
+            'conditions' => array(
+                'Project.id' => $project['Project']['id'],
+                'Assignee.id' => null,
+                'TaskStatus.id' => array(1,2)
+            ),
+            'order' => 'TaskPriority.id DESC'
+        ));
+
+        // Final value is min size of the board
+        $max = max(sizeof($user), sizeof($team), sizeof($others), 5);
+
+        $this->set('user_empty', $max - sizeof($user));
+        $this->set('team_empty', $max - sizeof($team));
+        $this->set('others_empty', $max - sizeof($others));
+        $this->set(compact('user', 'team',  'others'));
+    }
+
+    /**
+     * sprint method
+     *
+     * @return void
+     */
+    public function sprint($project = null) {
+        $project = $this->_projectCheck($project);
+
         $backlog = $this->Task->find('all', array(
             'conditions' => array(
                 'Project.id' => $project['Project']['id'],

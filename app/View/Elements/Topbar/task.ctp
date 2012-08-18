@@ -13,25 +13,25 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  $options = array(
-    $this->DT->t('topbar.option1.text') => array(
+    $this->DT->t('topbar.option1.text', array('action' => 'topbar')) => array(
         'url' => array(
             'action' => '.',
             'controller' => 'tasks',
         ),
     ),
-    $this->DT->t('topbar.option2.text') => array(
+    $this->DT->t('topbar.option2.text', array('action' => 'topbar')) => array(
         'url' => array(
-            'action' => 'classic',
+            'action' => 'sprint',
             'controller' => 'tasks',
         ),
     ),
-    $this->DT->t('topbar.option3.text') => array(
+    $this->DT->t('topbar.option3.text', array('action' => 'topbar')) => array(
         'align' => 'right',
         'url' => '#addTaskModal',
         'data-toggle' => 'modal',
         'class' => 'btn-primary',
     ),
-    $this->DT->t('topbar.option4.text') => array(
+    $this->DT->t('topbar.option4.text', array('action' => 'topbar')) => array(
         'align' => 'right',
         'url' => array(
             'action' => 'admin_index',

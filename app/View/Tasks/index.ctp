@@ -15,6 +15,7 @@
  */
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
+
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -31,52 +32,40 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
 
                     <div class="span4">
                         <div class="well col">
-                            <h2><?= $this->DT->t('column.backlog.title') ?></h2>
+                            <h2><?= $this->DT->t('column.user.title') ?></h2>
                             <hr />
-                            <?= $this->element('Task/Board/'.((!empty($backlog))?'full_column':'empty_backlog'),
-                                array('tasks' => $backlog, 'e' => $backlog_empty)
+                            <?= $this->element('Task/Board/'.((!empty($user))?'full_column':'empty_user'),
+                                array('tasks' => $user, 'e' => $user_empty)
                             ) ?>
                         </div>
                     </div>
 
+                <? if (!empty($team)) : ?>
                     <div class="span4">
                         <div class="well col">
-                            <h2><?= $this->DT->t('column.inprogress.title') ?></h2>
+                            <h2><?= $this->DT->t('column.team.title') ?></h2>
                             <hr />
-                            <?= $this->element('Task/Board/'.((!empty($inProgress))?'full_column':'empty_in_progress'),
-                                array('tasks' => $inProgress, 'e' => $inProgress_empty)
+                            <?= $this->element('Task/Board/full_column',
+                                array('tasks' => $team, 'e' => $team_empty)
+                            ) ?>
+                        </div>
+                    </div>
+                <?  $i = 1;
+                else :
+                    $i = 2;
+                endif; ?>
+                    <div class="span<?= $i*4 ?>">
+                        <div class="well col">
+                            <h2><?= $this->DT->t('column.others.title') ?></h2>
+                            <hr />
+                            <?= $this->element('Task/Board/'.((!empty($others))?(($i>1) ? 'full_column_2' : 'full_column') : 'empty_others'),
+                                array('tasks' => $others, 'e' => $others_empty)
                             ) ?>
                         </div>
                     </div>
 
-                    <div class="span4">
-                        <div class="well col">
-                            <h2><?= $this->DT->t('column.completed.title') ?></h2>
-                            <hr />
-                            <?= $this->element('Task/Board/'.((!empty($completed))?'full_column':'empty_completed'),
-                                array('tasks' => $completed, 'e' => $completed_empty)
-                            ) ?>
-                        </div>
-                    </div>
+
                 </div>
-
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="well col">
-                            <h2><?= $this->DT->t('column.icebox.title') ?></h2>
-                            <hr />
-                            <? if (!empty($iceBox)) : ?>
-                                <? foreach ($iceBox as $task) : ?>
-                                    <?= $this->element('Task/element', array('task' => $task)) ?>
-                                <? endforeach; ?>
-                            <? else: ?>
-                                <?= $this->element('Task/Board/empty_icebox') ?>
-                            <? endif; ?>
-                        </div>
-                    </div>
-                </div>
-
-
             </div>
         </div>
     </div>

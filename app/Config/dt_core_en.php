@@ -24,26 +24,38 @@
  * Configuration for the tasks section
  * APP/Tasks
  */
+// APP/*/topbar
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option1.text'] = "Classic Board";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option2.text'] = "Sprint Board";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option3.text'] = "Create Task";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option4.text'] = "Milestones";
+
 // APP/Tasks/index
 $config['dtcore']['pages']['tasks']['index']['en']['header.text'] = "Tasks for the Project";
 
-$config['dtcore']['pages']['tasks']['index']['en']['topbar.option1.text'] = "Sprint Board";
-$config['dtcore']['pages']['tasks']['index']['en']['topbar.option2.text'] = "Classic Board";
-$config['dtcore']['pages']['tasks']['index']['en']['topbar.option3.text'] = "Create Task";
-$config['dtcore']['pages']['tasks']['index']['en']['topbar.option4.text'] = "Milestones";
+$config['dtcore']['pages']['tasks']['index']['en']['column.user.title'] = "Your Tasks";
+$config['dtcore']['pages']['tasks']['index']['en']['column.user.empty'] = "You currently have no tasks";
 
-$config['dtcore']['pages']['tasks']['index']['en']['column.backlog.title'] = "Backlog";
-$config['dtcore']['pages']['tasks']['index']['en']['column.backlog.empty'] = "Woo! Empty Backlog!";
+$config['dtcore']['pages']['tasks']['index']['en']['column.team.title'] = "Teams Tasks";
 
-$config['dtcore']['pages']['tasks']['index']['en']['column.inprogress.title'] = "In Progress";
-$config['dtcore']['pages']['tasks']['index']['en']['column.inprogress.empty'] = "Wait, there must be something to do?";
+$config['dtcore']['pages']['tasks']['index']['en']['column.others.title'] = "Unclaimed Tasks";
+$config['dtcore']['pages']['tasks']['index']['en']['column.others.empty'] = "There are no unclaimed tasks";
 
-$config['dtcore']['pages']['tasks']['index']['en']['column.completed.title'] = "Completed";
-$config['dtcore']['pages']['tasks']['index']['en']['column.completed.empty'] = "Nothing to see here!";
+// APP/Tasks/sprint
+$config['dtcore']['pages']['tasks']['sprint']['en']['header.text'] = "Sprint board for the Project";
 
-$config['dtcore']['pages']['tasks']['index']['en']['column.icebox.title'] = "Completed";
-$config['dtcore']['pages']['tasks']['index']['en']['column.icebox.empty.line1'] = "It's pretty warm in here!";
-$config['dtcore']['pages']['tasks']['index']['en']['column.icebox.empty.line2'] = "Add some tasks to the current milestone!";
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.backlog.title'] = "Backlog";
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.backlog.empty'] = "Woo! Empty Backlog!";
+
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.inprogress.title'] = "In Progress";
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.inprogress.empty'] = "Wait, there must be something to do?";
+
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.completed.title'] = "Completed";
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.completed.empty'] = "Nothing to see here!";
+
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.icebox.title'] = "Ice Box";
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.icebox.empty.line1'] = "It's pretty warm in here!";
+$config['dtcore']['pages']['tasks']['sprint']['en']['column.icebox.empty.line2'] = "Add some tasks to the current milestone!";
 
 // APP/Tasks/add
 $config['dtcore']['pages']['tasks']['add']['en']['header.text'] = "Add a new Task for the Project";
