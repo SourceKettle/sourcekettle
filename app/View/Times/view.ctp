@@ -21,7 +21,7 @@ echo $this->Bootstrap->page_header("View Logged Time<small> we have been busy, h
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Time/topbar') ?>
+        <?= $this->element('Topbar/time') ?>
         <div class="span10">
             <div class="well times form form-horizontal">
                 <div class="control-group">

@@ -25,7 +25,7 @@ echo $this->Bootstrap->page_header("Time Logged For The Project" . $smallText);?
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Time/topbar') ?>
+        <?= $this->element('Topbar/time') ?>
         <div class="span10">
             <div class="row">
                 <div class="span10" style="text-align:center">

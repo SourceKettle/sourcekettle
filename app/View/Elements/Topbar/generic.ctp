@@ -22,22 +22,28 @@
 
         foreach ($options as $a => $option) {
 
-            // Logic to figure out if we are in the right place
-            $c2 = $option['url']['controller'];
-            $a2 = $option['url']['action'];
-            $isFeat = false;
+            // If a complex URL is set, lets deal with it
+            if (is_array($option['url'])) {
 
-            // If the option is for more then one action
-            if (is_array($a2)) {
-                foreach ($a2 as $a2_i) {
-                    $isFeat = ($c1==$c2 && ($a1==$a2_i || ($a1=='index' && $a2_i=='.') || $a2_i=='*'));
-                    if ($isFeat) break;
+                // Logic to figure out if we are in the right place
+                $c2 = $option['url']['controller'];
+                $a2 = $option['url']['action'];
+                $isFeat = false;
+
+                // If the option is for more then one action
+                if (is_array($a2)) {
+                    foreach ($a2 as $a2_i) {
+                        $isFeat = ($c1==$c2 && ($a1==$a2_i || ($a1=='index' && $a2_i=='.') || $a2_i=='*'));
+                        if ($isFeat) break;
+                    }
+
+                    // The first in the array is the default action
+                    $option['url']['action'] = $a2[0];
+                } else {
+                    $isFeat = ($c1==$c2 && ($a1==$a2 || ($a1=='index' && $a2=='.') || $a2=='*'));
                 }
-
-                // The first in the array is the default action
-                $option['url']['action'] = $a2[0];
             } else {
-                $isFeat = ($c1==$c2 && ($a1==$a2 || ($a1=='index' && $a2=='.') || $a2=='*'));
+                $isFeat = true;
             }
 
             echo "<li class=\"";
@@ -46,19 +52,34 @@
             if (isset($option['dropdown'])) echo ' dropdown ';
             echo "\">";
 
-            if ($option['url']['action'] == '*') {
+            if (is_array($option['url']) && $option['url']['action'] == '*') {
                 $option['url']['action'] = '.';
             }
 
             if (!isset($option['dropdown'])) {
-                echo $this->Html->link(
-                    $a,
-                    array(
+
+                // Create correct URL
+                if (is_array($option['url'])) {
+                    $url = array(
                         'action' => $option['url']['action'],
                         'controller' => $option['url']['controller'],
                         'project' => $this->params['project']
-                    )
-                );
+                    );
+                } else {
+                    $url = $option['url'];
+                }
+
+                $prop = array();
+                // Create correct properties
+                if (isset($option['data-toggle'])) {
+                    $prop['data-toggle'] = $option['data-toggle'];
+                }
+                if (isset($option['class'])) {
+                    $prop['class'] = $option['class'];
+                }
+
+                // Print the link
+                echo $this->Html->link($a, $url, $prop);
             } else {
                 echo '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$a.'<b class="caret"></b></a>';
                 echo '<ul class="dropdown-menu">';

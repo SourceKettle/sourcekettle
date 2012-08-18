@@ -24,7 +24,7 @@ echo $this->Bootstrap->page_header("Log Time<small> to the nearest 30 mins, plea
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Time/topbar') ?>
+        <?= $this->element('Topbar/time') ?>
         <div class="span10">
             <?= $this->Form->create('Time', array('project' => $project['Project']['id'], 'class' => 'form-horizontal')) ?>
             <div class="well times form">
