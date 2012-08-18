@@ -40,9 +40,9 @@ $task['Task']['id'] = $task['Task']['fake_id'];
                 <div><?= $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm'), array('alt' => $task['Assignee']['name'], 'class' => 'span2')) ?>
                 <div class="span8">
                     <h5>
-                        <small><?= $this->Html->link($task['Task']['id'], array('project' => $task['Project']['id'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id'])) ?></small>
+                        <small><?= $this->Html->link($task['Task']['id'], array('project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id'])) ?></small>
                         -
-                        <?= $this->Html->link($task['Task']['subject'], array('project' => $task['Project']['id'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id'])) ?>
+                        <?= $this->Html->link($task['Task']['subject'], array('project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id'])) ?>
                     </h5>
                 </div>
                 </div>
