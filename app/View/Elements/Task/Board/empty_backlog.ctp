@@ -15,7 +15,7 @@
  */
 ?>
 <div class="task empty invisiblewell">
-    <h3><small>Woo! Empty Backlog!</small></h3>
+    <h3><small><?= $this->DT->t('column.backlog.empty') ?></small></h3>
 </div>
 <? while ($e-- > 1) : ?>
 <div class="invisiblewell"></div>

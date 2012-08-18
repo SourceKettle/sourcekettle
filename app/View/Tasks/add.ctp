@@ -13,9 +13,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+?>
 
-echo $this->Bootstrap->page_header("Add a new Task for the Project <small>You're gonna need a bigger boat...</small>");?>
-
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

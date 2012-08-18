@@ -15,6 +15,6 @@
  */
 ?>
 <div class="task empty">
-    <h3><small>It's pretty warm in here!</small></h3>
-    <h4><small>Add some tasks to the current milestone!</small></h4>
+    <h3><small><?= $this->DT->t('column.icebox.empty.line1') ?></small></h3>
+    <h4><small><?= $this->DT->t('column.icebox.empty.line2') ?></small></h4>
 </div>

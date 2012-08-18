@@ -13,9 +13,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+?>
 
-echo $this->Bootstrap->page_header("A task for the Project <small>Shaken, not stirred</small>");?>
-
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

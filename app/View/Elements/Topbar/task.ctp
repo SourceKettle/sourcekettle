@@ -13,19 +13,19 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  $options = array(
-    'Sprint Board' => array(
+    $this->DT->t('topbar.option1.text') => array(
         'url' => array(
             'action' => '.',
             'controller' => 'tasks',
         ),
     ),
-    'Classic Board' => array(
+    $this->DT->t('topbar.option2.text') => array(
         'url' => array(
             'action' => 'classic',
             'controller' => 'tasks',
         ),
     ),
-    'Milestones' => array(
+    $this->DT->t('topbar.option3.text') => array(
         'align' => 'right',
         'url' => array(
             'action' => 'admin_index',
