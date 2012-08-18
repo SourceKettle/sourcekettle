@@ -27,6 +27,12 @@
     ),
     $this->DT->t('topbar.option3.text') => array(
         'align' => 'right',
+        'url' => '#addTaskModal',
+        'data-toggle' => 'modal',
+        'class' => 'btn-primary',
+    ),
+    $this->DT->t('topbar.option4.text') => array(
+        'align' => 'right',
         'url' => array(
             'action' => 'admin_index',
             'controller' => 'admin',
@@ -44,3 +50,4 @@
 );
 
 echo $this->element('Topbar/generic', array('options' => $options));
+echo $this->element('Task/modal_add');
