@@ -25,22 +25,22 @@ class DTHelper extends AppHelper {
         $this->_config = Configure::read('dtcore');
     }
 
-    public function t($string, $lang = null) {
-        $lang = ($lang != null) ? $lang : $this->_lang;
+    public function t($string, $overrides = array()) {
+        $lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->_lang;
 
-        $c = $this->request['controller'];
-        $a = $this->request['action'];
+        $c = (isset($overrides['controller']) != null) ? $overrides['controller'] : $this->request['controller'];
+        $a = (isset($overrides['action']) != null) ? $overrides['action'] : $this->request['action'];
 
         return $this->_config['pages'][$c][$a][$lang][$string];
     }
 
-    public function pHeader($lang = null) {
-        $lang = ($lang != null) ? $lang : $this->_lang;
+    public function pHeader($overrides = array()) {
+        $lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->_lang;
 
         $p = $this->request['project'];
 
         $h = str_replace("{project}", $p, $this->_config['common']['header']['project']['format']);
-        $h = str_replace("{text}", $this->t('header.text', $lang), $h);
+        $h = str_replace("{text}", $this->t('header.text', $overrides), $h);
 
         return $this->TwitterBootstrap->page_header($h);
     }

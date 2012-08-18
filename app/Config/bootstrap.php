@@ -86,7 +86,7 @@
 Cache::config('default', array('engine' => 'File'));
 Configure::load('devtrack');
 Configure::load('dt_core');
-
+Configure::load('dt_core_en');
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
  *
