@@ -33,8 +33,8 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                         <div class="well col">
                             <h2><?= $this->DT->t('column.backlog.title') ?></h2>
                             <hr />
-                            <?= $this->element('Task/Board/'.((!empty($backlog))?'full_column':'empty_backlog'),
-                                array('tasks' => $backlog, 'e' => $backlog_empty)
+                            <?= $this->element('Task/Board/'.((!empty($backlog))?'full_column':'empty'),
+                                array('tasks' => $backlog, 'e' => $backlog_empty, 'width' => 1, 'c' => 'backlog')
                             ) ?>
                         </div>
                     </div>
@@ -43,8 +43,8 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                         <div class="well col">
                             <h2><?= $this->DT->t('column.inprogress.title') ?></h2>
                             <hr />
-                            <?= $this->element('Task/Board/'.((!empty($inProgress))?'full_column':'empty_in_progress'),
-                                array('tasks' => $inProgress, 'e' => $inProgress_empty)
+                            <?= $this->element('Task/Board/'.((!empty($inProgress))?'full_column':'empty'),
+                                array('tasks' => $inProgress, 'e' => $inProgress_empty, 'width' => 1, 'c' => 'inprogress')
                             ) ?>
                         </div>
                     </div>
@@ -53,8 +53,8 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                         <div class="well col">
                             <h2><?= $this->DT->t('column.completed.title') ?></h2>
                             <hr />
-                            <?= $this->element('Task/Board/'.((!empty($completed))?'full_column':'empty_completed'),
-                                array('tasks' => $completed, 'e' => $completed_empty)
+                            <?= $this->element('Task/Board/'.((!empty($completed))?'full_column':'empty'),
+                                array('tasks' => $completed, 'e' => $completed_empty, 'width' => 1, 'c' => 'completed')
                             ) ?>
                         </div>
                     </div>

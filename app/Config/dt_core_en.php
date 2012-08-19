@@ -33,13 +33,10 @@ $config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option4.text'] = "Mi
 // APP/Tasks/index
 $config['dtcore']['pages']['tasks']['index']['en']['header.text'] = "Tasks for the Project";
 
-$config['dtcore']['pages']['tasks']['index']['en']['column.user.title'] = "Your Tasks";
-$config['dtcore']['pages']['tasks']['index']['en']['column.user.empty'] = "You currently have no tasks";
+$config['dtcore']['pages']['tasks']['index']['en']['column.tasks.title'] = "Tasks";
+$config['dtcore']['pages']['tasks']['index']['en']['column.tasks.empty'] = "There are currently no tasks";
 
-$config['dtcore']['pages']['tasks']['index']['en']['column.team.title'] = "Teams Tasks";
-
-$config['dtcore']['pages']['tasks']['index']['en']['column.others.title'] = "Unclaimed Tasks";
-$config['dtcore']['pages']['tasks']['index']['en']['column.others.empty'] = "There are no unclaimed tasks";
+$config['dtcore']['pages']['tasks']['index']['en']['column.history.title'] = "Recent History";
 
 // APP/Tasks/sprint
 $config['dtcore']['pages']['tasks']['sprint']['en']['header.text'] = "Sprint board for the Project";

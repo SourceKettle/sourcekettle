@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * Element for APP/tasks/index for the DevTrack system
- * Shows a empty box for completed column
+ * Element for APP/tasks/index|sprint for the DevTrack system
+ * Shows a empty box for a column
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -15,7 +15,7 @@
  */
 ?>
 <div class="task empty invisiblewell">
-    <h3><small><?= $this->DT->t('column.others.empty') ?></small></h3>
+    <h3><small><?= $this->DT->t('column.'.$c.'.empty') ?></small></h3>
 </div>
 <? while ($e-- > 1) : ?>
 <div class="invisiblewell"></div>
