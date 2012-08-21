@@ -72,7 +72,7 @@ git push -u origin master</pre>
 
             <div class="well span9">
                 <h3><?= $this->Bootstrap->label('3', 'info', array('style'=>'font-size:18px')) ?> When you're done:</h3>
-                <?= $this->Bootstrap->button_link('Press this unnecessary large, green button', array('project' => $project['Project']['name'], 'action' => 'tree'), array("style" => "success", "size" => "large")) ?>
+                <?= $this->Bootstrap->button_link('Press this unnecessarily large, green button', array('project' => $project['Project']['name'], 'action' => 'tree'), array("style" => "success", "size" => "large")) ?>
             </div>
 
         </div>
