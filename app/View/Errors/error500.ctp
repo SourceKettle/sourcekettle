@@ -13,7 +13,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-echo $this->Bootstrap->page_header('Oh Crickey, Batman! <small>An Internal Error Has Occurred!</small>');
+echo $this->Bootstrap->page_header('Oh Crikey, Batman! <small>An Internal Error Has Occurred!</small>');
 ?>
 <div class="row">
     <div class="span12">
