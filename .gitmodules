@@ -13,3 +13,6 @@
 [submodule "app/Plugin/TwitterBootswatch"]
 	path = app/Plugin/TwitterBootswatch
 	url = git@github.com:pwhittlesea/TwitterBootswatchHelper.git
+[submodule "app/Plugin/LDAPAuthCake"]
+	path = app/Plugin/LDAPAuthCake
+	url = git@github.com:amn-ecs/LDAPAuthCake.git
