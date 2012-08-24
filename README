@@ -3,3 +3,27 @@ Devtrack is designed to be a multi-user project management and source code manag
 The aims are to make it as simple as possible to use, install and extend.
 
 It's currently in the early development stages.
+
+
+
+Quick and dirty setup guide, assumes reasonable knowledge:
+
+* Make sure you've got all submodules:
+  git submodule init
+  git submodule update
+  cd app/Plugin/GitCake/
+  git submodule init
+  git submodule update
+  cd app/Plugin/SVNCake/
+  git submodule init
+  git submodule update
+* Install apache with mod_rewrite, mysql and php5
+* Get apache/mysql/php running, create database(s)
+* Make sure your apache virtualhost config allows the use of .htaccess files
+* Point apache at the devtrack directory (the parent directory of 'app')
+* cp app/Config/database.php.default app/Config/database.php
+* Edit app/Config/database.php and set database details
+* cat db.sql | mysql <dbname> -u <user> --password=<password>
+* Run scm-scripts/git-setup.sh
+* Reload/restart apache
+* Load the webpage, then go to /setup to see any possible problems
