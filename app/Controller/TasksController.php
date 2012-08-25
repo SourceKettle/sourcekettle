@@ -154,22 +154,61 @@ class TasksController extends AppController {
     public function add($project = null) {
         $project = $this->_projectCheck($project);
 
-        if ($this->request->is('post')) {
+        if ($this->request->is('ajax')) {
+            // Enable once we've figured out how to do two Ajax submit buttons
+            // if ($this->request->data['submit'] == 1) {
+                 $this->redirect(array('project' => $project['Project']['name'], 'action' => 'add'));
+            // }
+
+            $this->autoRender = false;
             $this->Task->create();
+
+            $this->request->data['Task']['project_id'] = $project['Project']['id'];
+            $this->request->data['Task']['owner_id'] = $this->Auth->user('id');
+            $this->request->data['Task']['assignee_id'] = null;
+            $this->request->data['Task']['milestone_id'] = null;
+            $this->request->data['Task']['task_status_id'] = 1;
+            $this->request->data['Task']['task_type_id'] = 3;
+            $this->request->data['Task']['task_priority_id'] = 2;
+
             if ($this->Task->save($this->request->data)) {
-                $this->Session->setFlash(__('The task has been saved'));
-                $this->redirect(array('action' => 'index'));
+                echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Time successfully logged.</div>';
+            } else {
+                echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please, try again.</div>';
+            }
+        } else if ($this->request->is('post')) {
+            $this->Task->create();
+
+            $this->request->data['Task']['project_id'] = $project['Project']['id'];
+            $this->request->data['Task']['owner_id'] = $this->Auth->user('id');
+            $this->request->data['Task']['assignee_id'] = null;
+            $this->request->data['Task']['milestone_id'] = ($this->request->data['Task']['milestone_id'] == 0) ? null : $this->request->data['Task']['milestone_id'];
+            $this->request->data['Task']['task_status_id'] = 1;
+
+            if ($this->Task->save($this->request->data)) {
+                $this->Session->setFlash(__('The task has been added successfully'), 'default', array(), 'success');
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
             } else {
                 $this->Session->setFlash(__('The task could not be saved. Please, try again.'));
             }
+        } else {
+
+            // Fetch all the variables for the view
+            $taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
+            $milestonesOpen = $this->Task->Milestone->find('list');
+            $milestonesClosed = $this->Task->Milestone->find('list');
+            $milestones = array('No Assigned Milestone');
+            if (!empty($milestonesOpen)) {
+                $milestones['Open'] = $milestonesOpen;
+            }
+            if (!empty($milestonesClosed)) {
+                $milestones['Closed'] = $milestonesClosed;
+            }
+            foreach ( $taskPriorities as $id => $p ) {
+                $taskPriorities[$id] = ucfirst(strtolower($p));
+            }
+            $this->set(compact('taskPriorities', 'milestones'));
         }
-        $projects = $this->Task->Project->find('list');
-        $owners = $this->Task->Owner->find('list');
-        $taskTypes = $this->Task->TaskType->find('list');
-        $taskStatuses = $this->Task->TaskStatus->find('list');
-        $assignees = $this->Task->Assignee->find('list');
-        $milestones = $this->Task->Milestone->find('list');
-        $this->set(compact('projects', 'owners', 'taskTypes', 'taskStatuses', 'assignees', 'milestones'));
     }
 
     /**

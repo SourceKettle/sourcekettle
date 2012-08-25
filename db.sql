@@ -79,6 +79,30 @@ CREATE TABLE IF NOT EXISTS `projects` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `project_histories`
+--
+
+CREATE TABLE IF NOT EXISTS `project_histories` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) NOT NULL,
+  `model` varchar(25) NOT NULL,
+  `model_id` int(10) NOT NULL,
+  `field` varchar(25) DEFAULT NULL,
+  `old` text,
+  `new` text NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Dumping data for table `project_histories`
+--
+
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `repo_types`
 --
 

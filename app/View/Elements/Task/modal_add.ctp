@@ -13,9 +13,6 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->set('js_for_layout', array('bootstrap-datepicker'));
-$this->Html->css('datepicker', null, array ('inline' => false));
-$this->set('js_blocks_for_layout', array("$('.dp1').datepicker()"));
 $_dt = array('action' => 'add');
 
 // Submit the serialize data on submit click
@@ -43,8 +40,8 @@ $this->Js->get('#UserMyaddForm')->event('submit',
     <div class="modal-body">
         <?php
         echo $this->Bootstrap->input("subject", array(
-            "input" => $this->Form->text("subject", array("class" => "span5", "placeholder" => $this->DT->t('modal.form.subject.placeholder', $_dt))),
-            "label" => $this->DT->t('modal.form.subject.label', $_dt),
+            "input" => $this->Form->text("subject", array("class" => "span5", "placeholder" => $this->DT->t('form.subject.placeholder', $_dt))),
+            "label" => $this->DT->t('form.subject.label', $_dt),
         ));
 
         echo $this->Bootstrap->input("description", array(
@@ -52,7 +49,7 @@ $this->Js->get('#UserMyaddForm')->event('submit',
                 "type" => "textarea",
                 "class" => "span5",
                 "label" => false,
-                "placeholder" => $this->DT->t('modal.form.description.placeholder', $_dt)
+                "placeholder" => $this->DT->t('form.description.placeholder', $_dt)
             )),
             "label" => false,
         ));
@@ -60,7 +57,8 @@ $this->Js->get('#UserMyaddForm')->event('submit',
     </div>
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal"><?= $this->DT->t('modal.form.close', $_dt) ?></a>
-        <?= $this->Bootstrap->button($this->DT->t('modal.form.submit', $_dt), array("style" => "primary")) ?>
+        <?= $this->Bootstrap->button($this->DT->t('form.submit.continue', $_dt), array("style" => "primary")) ?>
+        <?= $this->Bootstrap->button($this->DT->t('form.submit', $_dt), array("style" => "primary")) ?>
     </div>
     <?= $this->Form->end() ?>
 </div>

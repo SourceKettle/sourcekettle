@@ -42,7 +42,7 @@
             'Tasks' => array(
                 'icon' => 'file',
                 'url' => array(
-                    'action' => array('.', 'index', 'edit', 'view', 'add'),
+                    'action' => array('*'),
                     'controller' => 'tasks',
                     'project' => $this->params['project'],
                 ),

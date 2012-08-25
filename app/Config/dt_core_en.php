@@ -57,15 +57,19 @@ $config['dtcore']['pages']['tasks']['sprint']['en']['column.icebox.empty.line2']
 // APP/Tasks/add
 $config['dtcore']['pages']['tasks']['add']['en']['header.text'] = "Add a new Task for the Project";
 
+$config['dtcore']['pages']['tasks']['add']['en']['form.subject.label'] = "Subject";
+$config['dtcore']['pages']['tasks']['add']['en']['form.subject.placeholder'] = "Quick, yet informative, description";
+$config['dtcore']['pages']['tasks']['add']['en']['form.description.label'] = "Description";
+$config['dtcore']['pages']['tasks']['add']['en']['form.description.placeholder'] = "Longer and more descriptive explanation...";
+$config['dtcore']['pages']['tasks']['add']['en']['form.type.label'] = "Issue Type";
+$config['dtcore']['pages']['tasks']['add']['en']['form.priority.label'] = "Priority";
+$config['dtcore']['pages']['tasks']['add']['en']['form.milestone.label'] = "Milestone";
+$config['dtcore']['pages']['tasks']['add']['en']['form.submit'] = "Submit";
+$config['dtcore']['pages']['tasks']['add']['en']['form.submit.continue'] = "Submit and Edit";
+
 $config['dtcore']['pages']['tasks']['add']['en']['modal.header.text'] = "Add a new task to this Project";
 $config['dtcore']['pages']['tasks']['add']['en']['modal.header.subtext'] = "Task will appear in the Ice Box if no milestone is set";
-
-$config['dtcore']['pages']['tasks']['add']['en']['modal.form.subject.label'] = "Title";
-$config['dtcore']['pages']['tasks']['add']['en']['modal.form.subject.placeholder'] = "Quick, yet informative, description";
-$config['dtcore']['pages']['tasks']['add']['en']['modal.form.description.placeholder'] = "Longer and more descriptive explanation...";
-
 $config['dtcore']['pages']['tasks']['add']['en']['modal.form.close'] = "Close";
-$config['dtcore']['pages']['tasks']['add']['en']['modal.form.submit'] = "Submit";
 
 // APP/Tasks/edit
 $config['dtcore']['pages']['tasks']['edit']['en']['header.text'] = "Edit a task for the Project";

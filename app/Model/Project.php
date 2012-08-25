@@ -160,6 +160,19 @@ class Project extends AppModel {
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'ProjectHistory' => array(
+            'className' => 'ProjectHistory',
+            'foreignKey' => 'project_id',
+            'dependent' => true,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
     );
 
@@ -289,6 +302,20 @@ class Project extends AppModel {
         usort($events, $cmp);
 
         return $events;
+    }
+
+    public function logC($model, $model_id, $field, $old, $new) {
+        $this->ProjectHistory->create();
+        return $this->ProjectHistory->save(array(
+            'ProjectHistory' => array(
+                'model' => $model,
+                'model_id' => $model_id,
+                'field' => $field,
+                'old' => $old,
+                'new' => $new,
+                'project_id' => $this->id
+            )
+        ));
     }
 
 }
