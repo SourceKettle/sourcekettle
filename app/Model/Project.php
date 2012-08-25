@@ -305,6 +305,12 @@ class Project extends AppModel {
     }
 
     public function logC($model, $model_id, $field, $old, $new) {
+        if (is_array($old)) {
+            $old = serialize($old);
+        }
+        if (is_array($new)) {
+            $new = serialize($new);
+        }
         $this->ProjectHistory->create();
         return $this->ProjectHistory->save(array(
             'ProjectHistory' => array(

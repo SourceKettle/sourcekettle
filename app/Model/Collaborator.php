@@ -14,14 +14,9 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-App::uses('AppModel', 'Model');
-/**
- * Collaborator Model
- *
- * @property Project $Project
- * @property User $User
- */
-class Collaborator extends AppModel {
+App::uses('AppProjectModel', 'Model');
+
+class Collaborator extends AppProjectModel {
 
     /**
      * Validation rules

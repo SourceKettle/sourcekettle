@@ -74,5 +74,15 @@ $config['dtcore']['pages']['tasks']['add']['en']['modal.form.close'] = "Close";
 // APP/Tasks/edit
 $config['dtcore']['pages']['tasks']['edit']['en']['header.text'] = "Edit a task for the Project";
 
+$config['dtcore']['pages']['tasks']['edit']['en']['form.subject.label'] = "Subject";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.subject.placeholder'] = "Quick, yet informative, description";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.description.label'] = "Description";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.description.placeholder'] = "Longer and more descriptive explanation...";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.type.label'] = "Issue Type";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.priority.label'] = "Priority";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.milestone.label'] = "Milestone";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.submit'] = "Submit";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.submit.continue'] = "Submit and Edit";
+
 // APP/Tasks/view
 $config['dtcore']['pages']['tasks']['view']['en']['header.text'] = "A task for the Project";

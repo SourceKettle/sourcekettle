@@ -154,6 +154,9 @@ class TasksController extends AppController {
     public function add($project = null) {
         $project = $this->_projectCheck($project);
 
+        // Lock out those who arnt allowed to write
+        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) throw new ForbiddenException(__('You have Read-Only Access'));
+
         if ($this->request->is('ajax')) {
             // Enable once we've figured out how to do two Ajax submit buttons
             // if ($this->request->data['submit'] == 1) {
@@ -189,7 +192,7 @@ class TasksController extends AppController {
                 $this->Session->setFlash(__('The task has been added successfully'), 'default', array(), 'success');
                 $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
             } else {
-                $this->Session->setFlash(__('The task could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The task could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
 
@@ -224,23 +227,40 @@ class TasksController extends AppController {
         if (!$this->Task->exists()) {
             throw new NotFoundException(__('Invalid task'));
         }
+
+        // Lock out those who arnt allowed to write
+        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) throw new ForbiddenException(__('You have Read-Only Access'));
+
         if ($this->request->is('post') || $this->request->is('put')) {
+
+            unset($this->request->data['Task']['project_id']);
+            unset($this->request->data['Task']['owner_id']);
+
             if ($this->Task->save($this->request->data)) {
-                $this->Session->setFlash(__('The task has been saved'));
-                $this->redirect(array('action' => 'index'));
+                $this->Session->setFlash(__('The task has been saved'), 'default', array(), 'success');
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
             } else {
-                $this->Session->setFlash(__('The task could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The task could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
             $this->request->data = $this->Task->read(null, $id);
+
+            // Fetch all the variables for the view
+            $taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
+            $milestonesOpen = $this->Task->Milestone->find('list');
+            $milestonesClosed = $this->Task->Milestone->find('list');
+            $milestones = array('No Assigned Milestone');
+            if (!empty($milestonesOpen)) {
+                $milestones['Open'] = $milestonesOpen;
+            }
+            if (!empty($milestonesClosed)) {
+                $milestones['Closed'] = $milestonesClosed;
+            }
+            foreach ( $taskPriorities as $id => $p ) {
+                $taskPriorities[$id] = ucfirst(strtolower($p));
+            }
+            $this->set(compact('taskPriorities', 'milestones'));
         }
-        $projects = $this->Task->Project->find('list');
-        $owners = $this->Task->Owner->find('list');
-        $taskTypes = $this->Task->TaskType->find('list');
-        $taskStatuses = $this->Task->TaskStatus->find('list');
-        $assignees = $this->Task->Assignee->find('list');
-        $milestones = $this->Task->Milestone->find('list');
-        $this->set(compact('projects', 'owners', 'taskTypes', 'taskStatuses', 'assignees', 'milestones'));
     }
 
     /**

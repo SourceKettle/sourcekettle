@@ -14,9 +14,9 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-App::uses('AppModel', 'Model');
+App::uses('AppProjectModel', 'Model');
 
-class Time extends AppModel {
+class Time extends AppProjectModel {
 
     /**
     * Display field

@@ -22,9 +22,9 @@
  * @property Milestone $Milestone
  * @property TaskComment $TaskComment
  */
-App::uses('AppModel', 'Model');
+App::uses('AppProjectModel', 'Model');
 
-class Task extends AppModel {
+class Task extends AppProjectModel {
 
     /**
      * Display field
@@ -133,10 +133,6 @@ class Task extends AppModel {
             'foreignKey' => 'task_id',
             'dependent' => true,
         )
-    );
-
-    public $virtualFields = array(
-        'fake_id' => 'SELECT COUNT(id) + 100 FROM tasks as Taskes WHERE Taskes.project_id = Task.project_id AND Taskes.id < Task.id'
     );
 
 }

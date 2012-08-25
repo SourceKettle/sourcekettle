@@ -28,7 +28,6 @@ $type = array(
     'question' => '',
     'wontfix' => ''
 );
-$task['Task']['id'] = $task['Task']['fake_id'];
 ?>
 <div draggable="true">
     <div class="task">
