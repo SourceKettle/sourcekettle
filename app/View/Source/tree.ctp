@@ -13,7 +13,10 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->set('css_for_layout', array('pages/source', 'prettify/prettify'));
+
+$this->Html->css('pages/source', null, array ('inline' => false));
+$this->Html->css('prettify/prettify', null, array ('inline' => false));
+
 $this->set('js_for_layout', array('prettify/prettify'));
 $this->set('js_blocks_for_layout', array('prettyPrint()'));
 

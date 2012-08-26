@@ -13,7 +13,8 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->set('css_for_layout', array('pages/diff'));
+
+$this->Html->css('pages/diff', null, array ('inline' => false));
 
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
@@ -41,7 +42,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                                 <small><?= $commit['Commit']['body'] ?></small>
                             </h5>
                              <h5>
-                                <?= $commit['Commit']['author']['name'].' &lt;'.$commit['Commit']['author']['email'].'&gt;' ?> 
+                                <?= $commit['Commit']['author']['name'].' &lt;'.$commit['Commit']['author']['email'].'&gt;' ?>
                                 <small>authored <?= $this->Time->timeAgoinWords($commit['Commit']['date']) ?></small>
                             </h5>
                         </div>

@@ -13,7 +13,8 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->set('css_for_layout', array('pages/source'));
+
+$this->Html->css('pages/source', null, array ('inline' => false));
 
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];
