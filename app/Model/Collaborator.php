@@ -79,65 +79,35 @@ class Collaborator extends AppProjectModel {
      * @param array $query (default: array())
      * @return void
      */
-    public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
-        $search = array(
-            'conditions' => array(),
-            'limit' => $number+$offset,
-            'offset' => $offset
-        );
+    public function fetchHistory($project = '', $number = 50, $offset = 0, $user = -1, $query = array()) {
+        $events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user,'collaborator');
 
-        // Decant query values in
-        foreach ($search as $s => $v) {
-            if (isset($query[$s])) {
-                $search[$s] = $query[$s];
-
+        // Currently there are no view pages for collaborators
+        foreach ($events as $x => $event) {
+            $this->id = $event['Subject']['id'];
+            if ($this->exists()) {
+                $events[$x]['url'] = array('controller' => 'users', 'action' => 'view', $this->field('user_id'));
             }
         }
-
-        if ($project != null && $project = $this->Project->getProject($project)) {
-            $search['conditions']['Project.id'] = $project['Project']['id'];
-        }
-
-        $collaborators = $this->find('all', $search);
-        $events = array();
-
-        // Collect time events
-        foreach ( $collaborators as $a => $collaborator ) {
-            // Store wanted details
-            $events[$a] = array(
-                'Type' => 'Collaborator',
-                'Actioner' => array(
-                    'name' => $collaborator['User']['name'],
-                    'id' => $collaborator['User']['id'],
-                    'email' => $collaborator['User']['email'],
-                ),
-                'Project' => array(
-                    'id' => $collaborator['Project']['id'],
-                    'name' => $collaborator['Project']['name']
-                ),
-                'url' => null,
-                'modified' => $collaborator['Collaborator']['modified'],
-                'detail' => $collaborator['Collaborator']['access_level'],
-                'permissions' => array('view'),
-            );
-            // Calculate last access action
-            if ($collaborator['Collaborator']['modified'] != $collaborator['Collaborator']['created']) {
-                $events[$a]['action'] = 'updated';
-            } else {
-                $events[$a]['action'] = 'created';
-            }
-        }
-
-        // Sort function for events
-        // assumes $array{ $array{ 'modified' => 'date' }, ... }
-        $cmp = function($a, $b) {
-            if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
-            if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
-            return -1;
-        };
-
-        usort($events, $cmp);
-
         return $events;
+    }
+
+    /**
+     * @OVERRIDE
+     *
+     * getTitleForHistory function.
+     *
+     * @access public
+     * @param mixed $id
+     * @return void
+     */
+    public function getTitleForHistory($id) {
+        $this->id = $id;
+        if (!$this->exists()) {
+            return null;
+        } else {
+            $this->User->id = $this->field('user_id');
+            return $this->User->field('name');
+        }
     }
 }

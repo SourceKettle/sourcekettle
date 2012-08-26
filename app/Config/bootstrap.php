@@ -85,8 +85,13 @@
  */
 Cache::config('default', array('engine' => 'File'));
 Configure::load('devtrack');
-Configure::load('dt_core');
-Configure::load('dt_core_en');
+
+/**
+ * Load all the language files for devtrack
+ */
+Configure::load('Language/dt_core');
+Configure::load('Language/dt_core_en');
+Configure::load('Language/dt_core_tasks_en');
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
  *

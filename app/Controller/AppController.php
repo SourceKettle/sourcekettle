@@ -86,8 +86,10 @@ class AppController extends Controller {
         Security::setHash('sha256');
 
         if($this->Auth->loggedIn()){
-            $this->set('user_name', $this->Auth->user('name'));
-            $this->set('user_id', $this->Auth->user('id'));
+            $user_id = $this->{$this->modelClass}->_auth_user_id = $this->Auth->user('id');
+            $user_name = $this->{$this->modelClass}->_auth_user_name = $this->Auth->user('name');
+            $this->set('user_id', $user_id);
+            $this->set('user_name', $user_name);
         }
 
         // Load config file in

@@ -35,7 +35,7 @@ class AppProjectModel extends Model {
         $before = $this->findById($this->id);
         foreach ($this->data[$this->name] as $field => $value) {
             if ($field != 'modified' && $before[$this->name][$field] != $value) {
-                $this->_cache[$field] = array($before[$this->name][$field], $value);
+                $this->_cache[$field] = $before[$this->name][$field];
             }
         }
         return true;
@@ -50,31 +50,39 @@ class AppProjectModel extends Model {
      */
     public function afterSave($created = false) {
         if (!$created) {
-            foreach ($this->_cache as $field => $values) {
-                $this->Project->logC(strtolower($this->name), $this->id, $field, $values[0], $values[1]);
+            // Some fields have been updated
+            foreach ($this->_cache as $field => $value) {
+                $this->Project->ProjectHistory->logC(
+                    strtolower($this->name),
+                    $this->id,
+                    $this->getTitleForHistory($this->id),
+                    $field,
+                    $value,
+                    $this->field($field),
+                    $this->_auth_user_id,
+                    $this->_auth_user_name
+                );
             }
         } else {
-            $this->recursive = -1;
-            $new = $this->read();
-            unset($new[$this->name]['created']);
-            unset($new[$this->name]['modified']);
-            $this->Project->logC(strtolower($this->name), $this->id, null, null, $this->getRawSerialisedObject());
+            // We have a new Project => Use '+' to signify creation
+            $this->Project->ProjectHistory->logC(
+                strtolower($this->name),
+                $this->id,
+                $this->getTitleForHistory($this->id),
+                '+',
+                null,
+                null,
+                $this->_auth_user_id,
+                $this->_auth_user_name
+            );
         }
         return true;
     }
 
-    /**
-     * beforeDelete function.
-     *
-     * @access public
-     * @param bool $cascade (default: true)
-     * @return void
-     */
     public function beforeDelete($cascade = true) {
-        $this->_cache = $this->getRawSerialisedObject();
+        $this->_cache = $this->getTitleForHistory($this->id);
         return true;
     }
-
     /**
      * afterDelete function.
      *
@@ -82,24 +90,30 @@ class AppProjectModel extends Model {
      * @return void
      */
     public function afterDelete() {
-        $this->Project->logC(strtolower($this->name), $this->id, null, $this->_cache, null);
+        $this->Project->ProjectHistory->logC(
+            strtolower($this->name),
+            $this->id,
+            $this->_cache,
+            '-',
+            null,
+            null,
+            $this->_auth_user_id,
+            $this->_auth_user_name
+        );
         return true;
     }
 
     /**
-     * getRawSerialisedObject function.
+     * getTitleForHistory function.
+     * Designed to be overridden.
      *
-     * @access private
+     * @access public
      * @return void
      */
-    private function getRawSerialisedObject() {
-        $this->recursive = -1;
-        $new = $this->read();
-
-        unset($new[$this->name]['id']);
-        unset($new[$this->name]['created']);
-        unset($new[$this->name]['modified']);
-
-        return serialize($new[$this->name]);
+    # @override
+    public function getTitleForHistory($id) {
+        $this->id = $id;
+        return $this->field($this->displayField);
     }
+
 }

@@ -239,30 +239,41 @@ class Source extends AppModel {
 
                 if ($log) {
                     foreach ( $log as $a => $commit) {
-                        // Store wanted details
-                        $events[$a] = array(
-                            'Type' => 'Source',
-                            'Actioner' => array(
-                                'name' => $commit['Commit']['author']['name'],
-                                'id' => 0,
-                                'email' => $commit['Commit']['author']['email'],
-                            ),
-                            'Project' => array(
-                                'id' => $project['Project']['id'],
-                                'name' => $project['Project']['name']
-                            ),
-                            'url' => array(
-                                'project' => $project['Project']['name'],
-                                'controller' => 'source',
-                                'action' => 'commit',
-                                $branch,
-                                $commit['Commit']['hash']
-                            ),
-                            'modified' => $commit['Commit']['date'],
-                            'detail' => $commit['Commit']['subject'],
-                            'permissions' => array('view'),
-                            'action' => 'created',
-                        );
+
+                        $events[$a] = array();
+                        $events[$a]['modified'] = $commit['Commit']['date'];
+                        $events[$a]['Type'] = 'Source';
+
+                        // Gather project details
+                        $events[$a]['Project']['id'] = $project['Project']['id'];
+                        $events[$a]['Project']['name'] = $project['Project']['name'];
+
+                        // Gather user details
+                        $events[$a]['Actioner']['id'] = -1;
+                        $events[$a]['Actioner']['name'] = $commit['Commit']['author']['name'];
+                        $events[$a]['Actioner']['email'] = $commit['Commit']['author']['email'];
+                        $events[$a]['Actioner']['exists'] = false;
+
+                        // Gather subject details
+                        $events[$a]['Subject']['id'] = $commit['Commit']['hash'];
+                        $events[$a]['Subject']['title'] = $commit['Commit']['subject'];
+                        $events[$a]['Subject']['exists'] = true;
+
+                        // Gather change details
+                        $events[$a]['Change']['field'] = '+';
+                        $events[$a]['Change']['field_old'] = null;
+                        $events[$a]['Change']['field_new'] = null;
+
+                        // Check if the actioner exists
+                        $actioner = $this->Project->Collaborator->User->findByEmail('pw@thega.me.uk');
+                        if($actioner) {
+                            $events[$a]['Actioner']['id'] = $actioner['User']['id'];
+                            $events[$a]['Actioner']['name'] = $actioner['User']['name'];
+                            $events[$a]['Actioner']['exists'] = true;
+                        }
+
+                        // Store URL override
+                        $events[$a]['url'] = array('project' => $project['Project']['name'], 'controller' => 'source', 'action' => 'commit', $branch, $commit['Commit']['hash']);
                     }
                 }
             }

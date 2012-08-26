@@ -281,15 +281,10 @@ class Project extends AppModel {
 
         $events = array();
 
-        // Collect collaborator events
-        $events = array_merge($events, $this->Collaborator->fetchHistory($project['Project']['name'], 40));
-
-        // Collect source events
         $this->Source->init();
-        $events = array_merge($events, $this->Source->fetchHistory($project['Project']['name'], 40));
-
-        // Collect time events
-        $events = array_merge($events, $this->Time->fetchHistory($project['Project']['name'], 40));
+        foreach ( array('Collaborator', 'Time', 'Source', 'Task') as $x ) {
+            $events = array_merge($events, $this->{$x}->fetchHistory($project['Project']['name'], 40));
+        }
 
         // Sort function for events
         // assumes $array{ $array{ 'modified' => 'date' }, ... }
@@ -301,27 +296,7 @@ class Project extends AppModel {
 
         usort($events, $cmp);
 
-        return $events;
-    }
-
-    public function logC($model, $model_id, $field, $old, $new) {
-        if (is_array($old)) {
-            $old = serialize($old);
-        }
-        if (is_array($new)) {
-            $new = serialize($new);
-        }
-        $this->ProjectHistory->create();
-        return $this->ProjectHistory->save(array(
-            'ProjectHistory' => array(
-                'model' => $model,
-                'model_id' => $model_id,
-                'field' => $field,
-                'old' => $old,
-                'new' => $new,
-                'project_id' => $this->id
-            )
-        ));
+        return array_slice($events, 0, 8);
     }
 
 }

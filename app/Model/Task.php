@@ -31,7 +31,7 @@ class Task extends AppProjectModel {
      *
      * @var string
      */
-    public $displayField = 'subject';
+    public $displayField = 'id';
 
     /**
      * Validation rules
@@ -135,4 +135,39 @@ class Task extends AppProjectModel {
         )
     );
 
+    /**
+     * @OVERRIDE
+     *
+     * fetchHistory function.
+     *
+     * @access public
+     * @param string $project (default: '')
+     * @param int $number (default: 10)
+     * @param int $offset (default: 0)
+     * @param float $user (default: -1)
+     * @param array $query (default: array())
+     * @return void
+     */
+    public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
+        $events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'task');
+        return $events;
+    }
+
+    /**
+     * @OVERRIDE
+     *
+     * getTitleForHistory function.
+     *
+     * @access public
+     * @param mixed $id
+     * @return void
+     */
+    public function getTitleForHistory($id) {
+        $this->id = $id;
+        if (!$this->exists()) {
+            return null;
+        } else {
+            return '#'.$id;
+        }
+    }
 }
