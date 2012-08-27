@@ -33,7 +33,7 @@ class AppProjectModel extends AppModel {
      */
     public function beforeSave($options = array()) {
         // Lock out those who arnt allowed to write
-        if ( !$this->Project->hasWrite($this->Auth->user('id')) ) {
+        if ( !$this->Project->hasWrite($this->_auth_user_id) ) {
             throw new ForbiddenException(__('You do not have permissions to write to this project'));
         }
 
