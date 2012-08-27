@@ -91,9 +91,7 @@ $config['dtcore']['pages']['tasks']['view']['en']['bar.task'] = "Task #";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.edit'] = "Edit";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.assign'] = "Assign";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.selfassign'] = "Assign to me";
-$config['dtcore']['pages']['tasks']['view']['en']['bar.resolve'] = "Resolve task";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.close'] = "Close task";
-$config['dtcore']['pages']['tasks']['view']['en']['bar.delete'] = "Delete task";
 
 $config['dtcore']['pages']['tasks']['view']['en']['history.create.action'] = "created this task";
 $config['dtcore']['pages']['tasks']['view']['en']['history.change.action'] = "updated the tasks";
@@ -101,3 +99,5 @@ $config['dtcore']['pages']['tasks']['view']['en']['history.commented.action'] = 
 $config['dtcore']['pages']['tasks']['view']['en']['history.newcomment.placeholder'] = "Add a new comment to this task...";
 $config['dtcore']['pages']['tasks']['view']['en']['history.newcomment.submit'] = "Comment";
 $config['dtcore']['pages']['tasks']['view']['en']['history.editcomment.submit'] = "Update comment";
+$config['dtcore']['pages']['tasks']['view']['en']['history.assignee.assigned'] = "Assigned to:";
+$config['dtcore']['pages']['tasks']['view']['en']['history.assignee.none'] = "No-one currently assigned";

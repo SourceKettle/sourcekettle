@@ -53,21 +53,23 @@ $this->set('js_blocks_for_layout', array(
             <div class="span10">
 
                 <div class="row-fluid">
-                    <div class="span12">
+
+                    <div class="span1"></div>
+                    <div class="span10">
                         <div class="btn-toolbar">
                             <div class="btn-group">
                                 <?= $this->Bootstrap->button($this->DT->t('bar.task').$task['Task']['id'], array("class" => "disabled")) ?>
                                 <?= $this->Bootstrap->button_link($this->DT->t('bar.edit'), array('project' => $project['Project']['name'], 'action' => 'edit', $task['Task']['id']), array("style" => "primary")) ?>
                             </div>
-                            <div class="btn-group">
+                            <div class="btn-group pull-right">
                                 <?= $this->Bootstrap->button($this->DT->t('bar.assign')) ?>
                                 <?= $this->Bootstrap->button($this->DT->t('bar.selfassign')) ?>
-                                <?= $this->Bootstrap->button($this->DT->t('bar.resolve')) ?>
-                                <?= $this->Bootstrap->button($this->DT->t('bar.close')) ?>
-                                <?= $this->Bootstrap->button($this->DT->t('bar.delete'), array("style" => "danger")) ?>
+                                <?= $this->Bootstrap->button($this->DT->t('bar.close'), array("style" => "success")) ?>
                             </div>
                         </div>
                     </div>
+                    <div class="span1"></div>
+
                 </div>
 
                 <div class="row-fluid">
@@ -81,7 +83,6 @@ $this->set('js_blocks_for_layout', array(
                     </div>
                     <div class="span10">
                         <div class="well col">
-                            <span class="pull-right"><?= $this->Task->priority($task['Task']['task_priority_id']) ?></span>
                             <h5>
                                 <?= $this->Bootstrap->icon('pencil') ?>
                                 <small>
@@ -89,8 +90,23 @@ $this->set('js_blocks_for_layout', array(
                                     <?= $this->DT->t('history.create.action') ?>
                                     <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
                                 </small>
+                                <span class="pull-right">
+                                    <? if (!is_null($task['Assignee']['id'])) : ?>
+                                        <?= $this->DT->t('history.assignee.assigned') ?>
+                                        <?= $this->Html->link(
+                                            $task['Assignee']['name'],
+                                            array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
+                                        ) ?>
+                                        <?= $this->Html->link(
+                                            $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm', 's' => 24)),
+                                            array('controller' => 'users', 'action' => 'view', $task['Assignee']['id']),
+                                            array('escape' => false, 'class' => '')
+                                        ) ?>
+                                    <? else : ?>
+                                        <?= $this->DT->t('history.assignee.none') ?>
+                                    <? endif; ?>
+                                </span>
                             </h5>
-                            <span class="pull-right"><?= $this->Task->type($task['Task']['task_type_id']) ?></span>
                             <h3><?= $task['Task']['subject'] ?></h3>
                             <hr />
                             <p><?= $task['Task']['description'] ?></p>

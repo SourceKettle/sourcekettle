@@ -56,6 +56,10 @@ class Task extends AppProjectModel {
             ),
         ),
         'task_type_id' => array(
+            'comparison' => array(
+                'rule' => array('comparison', '>', 0),
+                'message' => 'Select a type',
+            ),
             'numeric' => array(
                 'rule' => array('numeric'),
             ),
@@ -82,6 +86,7 @@ class Task extends AppProjectModel {
         'subject' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
+                'message' => 'Subject cannot be empty',
             ),
         ),
     );

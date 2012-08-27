@@ -176,7 +176,7 @@ class TasksController extends AppController {
         $this->set('task', $this->Task->read(null, $id));
 
         // Fetch the changes that will have happened
-        $changes  = $this->Task->Project->ProjectHistory->find('all', array('conditions' => array('ProjectHistory.row_id' => $this->Task->id)));
+        $changes  = $this->Task->Project->ProjectHistory->find('all', array('conditions' => array('ProjectHistory.row_id' => $this->Task->id, 'ProjectHistory.row_field !=' => '+')));
         $comments = $this->Task->TaskComment->find('all', array('conditions' => array('Task.id' => $this->Task->id)));
 
         // They are in the wrong format for the sort function - so move the modified field
@@ -242,6 +242,7 @@ class TasksController extends AppController {
             $this->request->data['Task']['owner_id'] = $this->Auth->user('id');
             $this->request->data['Task']['assignee_id'] = null;
             $this->request->data['Task']['milestone_id'] = ($this->request->data['Task']['milestone_id'] == 0) ? null : $this->request->data['Task']['milestone_id'];
+            $this->request->data['Task']['task_type_id'] = (!isset($this->request->data['Task']['task_type_id'])) ? null : $this->request->data['Task']['task_type_id'];
             $this->request->data['Task']['task_status_id'] = 1;
 
             if ($this->Task->save($this->request->data)) {
@@ -250,24 +251,24 @@ class TasksController extends AppController {
             } else {
                 $this->Session->setFlash(__('The task could not be saved. Please, try again.'), 'default', array(), 'error');
             }
-        } else {
-
-            // Fetch all the variables for the view
-            $taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
-            $milestonesOpen = $this->Task->Milestone->find('list');
-            $milestonesClosed = $this->Task->Milestone->find('list');
-            $milestones = array('No Assigned Milestone');
-            if (!empty($milestonesOpen)) {
-                $milestones['Open'] = $milestonesOpen;
-            }
-            if (!empty($milestonesClosed)) {
-                $milestones['Closed'] = $milestonesClosed;
-            }
-            foreach ( $taskPriorities as $id => $p ) {
-                $taskPriorities[$id] = ucfirst(strtolower($p));
-            }
-            $this->set(compact('taskPriorities', 'milestones'));
         }
+
+        // Fetch all the variables for the view
+        $taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
+        $milestonesOpen = $this->Task->Milestone->find('list');
+        $milestonesClosed = $this->Task->Milestone->find('list');
+        $milestones = array('No Assigned Milestone');
+        if (!empty($milestonesOpen)) {
+            $milestones['Open'] = $milestonesOpen;
+        }
+        if (!empty($milestonesClosed)) {
+            $milestones['Closed'] = $milestonesClosed;
+        }
+        foreach ( $taskPriorities as $id => $p ) {
+            $taskPriorities[$id] = ucfirst(strtolower($p));
+        }
+        $this->set(compact('taskPriorities', 'milestones'));
+
     }
 
     /**
