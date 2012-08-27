@@ -36,15 +36,11 @@ class TasksController extends AppController {
         // Check for existent project
         $project = $this->Task->Project->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+
         $this->Task->Project->id = $project['Project']['id'];
 
-        $user = $this->Auth->user('id');
-
-        // Lock out those who are not guests
-        if ( !$this->Task->Project->hasRead($user) ) throw new ForbiddenException(__('You are not a member of this project'));
-
         $this->set('project', $project);
-        $this->set('isAdmin', $this->Task->Project->isAdmin($user));
+        $this->set('isAdmin', $this->Task->Project->isAdmin());
 
         return $project;
     }
@@ -148,9 +144,6 @@ class TasksController extends AppController {
         if ($this->request->is('post') && isset($this->request->data['TaskComment'])) {
             $user = $this->Auth->user('id');
 
-            // Lock out those who are not allowed to write
-            if ( !$this->Task->Project->hasWrite($user) ) throw new ForbiddenException(__('You are not a member of this project'));
-
             $this->Task->TaskComment->create();
 
             $this->request->data['TaskComment']['task_id'] = $id;
@@ -164,6 +157,22 @@ class TasksController extends AppController {
             }
         }
 
+        // If a User has updated a comment
+        if ($this->request->is('post') && isset($this->request->data['TaskCommentEdit'])) {
+
+            $this->request->data['TaskComment'] = $this->request->data['TaskCommentEdit'];
+            unset($this->request->data['TaskCommentEdit']);
+
+            $this->Task->TaskComment->id = $this->request->data['TaskComment']['id'];
+
+            if ($this->Task->TaskComment->exists() && $this->Task->TaskComment->save($this->request->data)) {
+                $this->Session->setFlash(__('The comment has been updated successfully'), 'default', array(), 'success');
+                unset($this->request->data['TaskComment']);
+            } else {
+                $this->Session->setFlash(__('The comment could not be updated. Please, try again.'), 'default', array(), 'error');
+            }
+        }
+
         $this->set('task', $this->Task->read(null, $id));
 
         // Fetch the changes that will have happened
@@ -172,18 +181,18 @@ class TasksController extends AppController {
 
         // They are in the wrong format for the sort function - so move the modified field
         foreach ( $changes as $x => $change ) {
-            $changes[$x]['modified'] = $change['ProjectHistory']['modified'];
+            $changes[$x]['created'] = $change['ProjectHistory']['created'];
         }
         foreach ( $comments as $x => $comment ) {
-            $comments[$x]['modified'] = $comment['TaskComment']['modified'];
+            $comments[$x]['created'] = $comment['TaskComment']['created'];
         }
         $changes = array_merge($changes, $comments);
 
         // Sort function for events
         // assumes $array{ $array{ 'modified' => 'date' }, ... }
         $cmp = function($a, $b) {
-            if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
-            if (strtotime($a['modified']) > strtotime($b['modified'])) return 1;
+            if (strtotime($a['created']) == strtotime($b['created'])) return 0;
+            if (strtotime($a['created']) > strtotime($b['created'])) return 1;
             return -1;
         };
         usort($changes, $cmp);
@@ -200,7 +209,9 @@ class TasksController extends AppController {
         $project = $this->_projectCheck($project);
 
         // Lock out those who arnt allowed to write
-        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) throw new ForbiddenException(__('You have Read-Only Access'));
+        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) {
+            throw new ForbiddenException(__('You do not have permissions to write to this project'));
+        }
 
         if ($this->request->is('ajax')) {
             // Enable once we've figured out how to do two Ajax submit buttons
@@ -274,7 +285,9 @@ class TasksController extends AppController {
         }
 
         // Lock out those who arnt allowed to write
-        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) throw new ForbiddenException(__('You have Read-Only Access'));
+        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) {
+            throw new ForbiddenException(__('You do not have permissions to write to this project'));
+        }
 
         if ($this->request->is('post') || $this->request->is('put')) {
 

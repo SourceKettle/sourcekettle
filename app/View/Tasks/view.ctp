@@ -16,6 +16,29 @@
 
 $this->Html->css('tasks.view', null, array ('inline' => false));
 
+$edit_comment  = $this->Form->create('TaskCommentEdit', array('class' => 'form'));
+$edit_comment .= $this->Form->hidden('id');
+$edit_comment .= $this->Bootstrap->input("comment", array(
+    "input" => $this->Form->textarea("comment", array("class" => "span12", "rows" => 5)),"label" => false)
+);
+$edit_comment .= $this->Bootstrap->button($this->DT->t('history.editcomment.submit'), array("style" => "primary", 'class' => 'controls'));
+$edit_comment .= $this->Form->end();
+
+// The following JS will change a comment box into an input box
+$this->set('js_blocks_for_layout', array(
+    "$('.comment').find(':button.edit').bind('click', function() {
+        var open = $('[name=\"data[TaskCommentEdit][id]\"]').parent('form').parent('.comment');
+        if (open) {
+            open.find('form').remove();
+            open.find('p').show();
+        }
+        var p = $(this).parent('.comment');
+        p.find('p').hide();
+        p.append('$edit_comment');
+        p.find('textarea').html(p.find('p').text());
+        $('[name=\"data[TaskCommentEdit][id]\"]').attr('value', p.attr('id'));
+    });"
+));
 ?>
 
 <?= $this->DT->pHeader() ?>

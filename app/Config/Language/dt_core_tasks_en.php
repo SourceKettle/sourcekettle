@@ -100,3 +100,4 @@ $config['dtcore']['pages']['tasks']['view']['en']['history.change.action'] = "up
 $config['dtcore']['pages']['tasks']['view']['en']['history.commented.action'] = "commented";
 $config['dtcore']['pages']['tasks']['view']['en']['history.newcomment.placeholder'] = "Add a new comment to this task...";
 $config['dtcore']['pages']['tasks']['view']['en']['history.newcomment.submit'] = "Comment";
+$config['dtcore']['pages']['tasks']['view']['en']['history.editcomment.submit'] = "Update comment";

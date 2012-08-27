@@ -73,4 +73,12 @@ class TaskComment extends AppModel {
             'foreignKey' => 'user_id',
         )
     );
+
+    function beforeSave($options = array()) {
+        // Lock out those who are not allowed to write
+        if ( !$this->Task->Project->hasWrite($this->_auth_user_id) ) {
+            throw new ForbiddenException(__('You do not have permissions to modifiy this project'));
+        }
+        return true;
+    }
 }
