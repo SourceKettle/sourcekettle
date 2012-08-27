@@ -35,4 +35,5 @@ class AppModel extends Model {
     // The logged in user
     public $_auth_user_id;
     public $_auth_user_name;
+    public $_auth_user_email;
 }

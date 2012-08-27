@@ -143,6 +143,27 @@ class TasksController extends AppController {
         if (!$this->Task->exists()) {
             throw new NotFoundException(__('Invalid task'));
         }
+
+        // If a User has commented
+        if ($this->request->is('post') && isset($this->request->data['TaskComment'])) {
+            $user = $this->Auth->user('id');
+
+            // Lock out those who are not allowed to write
+            if ( !$this->Task->Project->hasWrite($user) ) throw new ForbiddenException(__('You are not a member of this project'));
+
+            $this->Task->TaskComment->create();
+
+            $this->request->data['TaskComment']['task_id'] = $id;
+            $this->request->data['TaskComment']['user_id'] = $user;
+
+            if ($this->Task->TaskComment->save($this->request->data)) {
+                $this->Session->setFlash(__('The comment has been added successfully'), 'default', array(), 'success');
+                unset($this->request->data['TaskComment']);
+            } else {
+                $this->Session->setFlash(__('The comment could not be saved. Please, try again.'), 'default', array(), 'error');
+            }
+        }
+
         $this->set('task', $this->Task->read(null, $id));
 
         // Fetch the changes that will have happened

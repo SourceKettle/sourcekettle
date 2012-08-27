@@ -13,7 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
- <div class="row-fluid">
+<div class="row-fluid">
 
     <div class="span1">
         <?= $this->Html->link(

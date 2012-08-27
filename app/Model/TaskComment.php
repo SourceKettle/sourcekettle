@@ -53,6 +53,7 @@ class TaskComment extends AppModel {
         'comment' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
+                'message' => 'Comments cannot be empty',
             ),
         ),
     );

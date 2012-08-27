@@ -98,3 +98,5 @@ $config['dtcore']['pages']['tasks']['view']['en']['bar.delete'] = "Delete task";
 $config['dtcore']['pages']['tasks']['view']['en']['history.create.action'] = "created this task";
 $config['dtcore']['pages']['tasks']['view']['en']['history.change.action'] = "updated the tasks";
 $config['dtcore']['pages']['tasks']['view']['en']['history.commented.action'] = "commented";
+$config['dtcore']['pages']['tasks']['view']['en']['history.newcomment.placeholder'] = "Add a new comment to this task...";
+$config['dtcore']['pages']['tasks']['view']['en']['history.newcomment.submit'] = "Comment";

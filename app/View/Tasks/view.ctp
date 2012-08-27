@@ -87,6 +87,38 @@ $this->Html->css('tasks.view', null, array ('inline' => false));
                     }
                 ?>
 
+                 <div class="row-fluid">
+
+                    <div class="span1">
+                        <?= $this->Html->link(
+                            $this->Gravatar->image($user_email, array('d' => 'mm')),
+                            array('controller' => 'users', 'action' => 'view', $user_id),
+                            array('escape' => false, 'class' => 'thumbnail')
+                        ) ?>
+                    </div>
+                    <div class="span10">
+                        <div class="well col">
+                            <?php
+                            echo $this->Form->create('TaskComment', array('class' => 'form'));
+
+                            echo $this->Bootstrap->input("comment", array(
+                                "input" => $this->Form->textarea("comment", array(
+                                    "class" => "span12",
+                                    "rows" => 5,
+                                    "placeholder" => $this->DT->t('history.newcomment.placeholder')
+                                )),
+                                "label" => false,
+                            ));
+
+                            echo $this->Bootstrap->button($this->DT->t('history.newcomment.submit'), array("style" => "primary", 'class' => 'controls'));
+                            echo $this->Form->end();
+                            ?>
+                        </div>
+                    </div>
+                    <div class="span1"></div>
+
+                </div>
+
             </div>
         </div>
     </div>
