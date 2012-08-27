@@ -218,6 +218,12 @@ class Project extends AppModel {
         if (empty($project)){
             $project = null;
         }
+
+        // Lock out those who are not allowed to read
+        if ( !$this->hasRead($this->_auth_user_id, $project['Project']['id']) ) {
+            throw new ForbiddenException(__('You do not have permissions to access this project'));
+        }
+
         return $project;
     }
 
@@ -227,10 +233,13 @@ class Project extends AppModel {
      * @param $user int id of the user to check
      * @return boolean true if read permissions
      */
-    public function hasRead($user = null) {
+    public function hasRead($user = null, $project = null) {
+        if ( $user == null ) $user = $this->_auth_user_id;
         if ( $user == null ) return false;
 
-        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $this->id), 'fields' => array('access_level')));
+        if ($this->id) $project = $this->id;
+
+        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $project), 'fields' => array('access_level')));
 
         if ( !empty($member) && $member['Collaborator']['access_level'] > -1 ) {
             return true;
@@ -245,10 +254,13 @@ class Project extends AppModel {
      * @param $user int id of the user to check
      * @return boolean true if write permissions
      */
-    public function hasWrite($user = null) {
+    public function hasWrite($user = null, $project = null) {
+        if ( $user == null ) $user = $this->_auth_user_id;
         if ( $user == null ) return false;
 
-        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $this->id), 'fields' => array('access_level')));
+        if ($this->id) $project = $this->id;
+
+        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $project), 'fields' => array('access_level')));
 
         if ( !empty($member) && $member['Collaborator']['access_level'] > 0 ) {
             return true;
@@ -263,10 +275,13 @@ class Project extends AppModel {
      * @param $user int id of the user to check
      * @return boolean true if admin
      */
-    public function isAdmin($user = null) {
+    public function isAdmin($user = null, $project = null) {
+        if ( $user == null ) $user = $this->_auth_user_id;
         if ( $user == null ) return false;
 
-        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $this->id), 'fields' => array('access_level')));
+        if ($this->id) $project = $this->id;
+
+        $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $project), 'fields' => array('access_level')));
 
         if ( !empty($member) && $member['Collaborator']['access_level'] > 1 ) {
             return true;

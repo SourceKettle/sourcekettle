@@ -14,7 +14,7 @@
  */
 App::uses('AppModel', 'Model');
 
-class AppProjectModel extends Model {
+class AppProjectModel extends AppModel {
 
     /**
      * _cache
@@ -32,6 +32,11 @@ class AppProjectModel extends Model {
      * @return void
      */
     public function beforeSave($options = array()) {
+        // Lock out those who arnt allowed to write
+        if ( !$this->Project->hasWrite($this->Auth->user('id')) ) {
+            throw new ForbiddenException(__('You do not have permissions to write to this project'));
+        }
+
         $before = $this->findById($this->id);
         foreach ($this->data[$this->name] as $field => $value) {
             if ($field != 'modified' && $before[$this->name][$field] != $value) {

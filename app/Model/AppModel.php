@@ -36,4 +36,33 @@ class AppModel extends Model {
     public $_auth_user_id;
     public $_auth_user_name;
     public $_auth_user_email;
+
+    /**
+     * setCurrentUserData function.
+     * Recursively traverse the MODELS and set the current logged in users data
+     * This should hopefully mean we can have fatter models
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @param mixed $name (default: null)
+     * @param mixed $email (default: null)
+     * @return void
+     */
+    public function setCurrentUserData($id = null, $name = null, $email = null) {
+        if ($this->_auth_user_id) return true;
+
+        $this->_auth_user_id = $id;
+        $this->_auth_user_name = $name;
+        $this->_auth_user_email = $email;
+
+        foreach (array_keys($this->hasMany) as $key) {
+            $this->{$key}->setCurrentUserData($id, $name, $email);
+        }
+        foreach (array_keys($this->belongsTo) as $key) {
+            $this->{$key}->setCurrentUserData($id, $name, $email);
+        }
+        foreach (array_keys($this->hasAndBelongsToMany) as $key) {
+            $this->{$key}->setCurrentUserData($id, $name, $email);
+        }
+    }
 }
