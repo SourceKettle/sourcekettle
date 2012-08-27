@@ -23,7 +23,7 @@ class TasksController extends AppController {
      *
      * @var array
      */
-    public $helpers = array('Time');
+    public $helpers = array('Time', 'Task');
 
     /*
      * _projectCheck
@@ -144,6 +144,30 @@ class TasksController extends AppController {
             throw new NotFoundException(__('Invalid task'));
         }
         $this->set('task', $this->Task->read(null, $id));
+
+        // Fetch the changes that will have happened
+        $changes  = $this->Task->Project->ProjectHistory->find('all', array('conditions' => array('ProjectHistory.row_id' => $this->Task->id)));
+        $comments = $this->Task->TaskComment->find('all', array('conditions' => array('Task.id' => $this->Task->id)));
+
+        // They are in the wrong format for the sort function - so move the modified field
+        foreach ( $changes as $x => $change ) {
+            $changes[$x]['modified'] = $change['ProjectHistory']['modified'];
+        }
+        foreach ( $comments as $x => $comment ) {
+            $comments[$x]['modified'] = $comment['TaskComment']['modified'];
+        }
+        $changes = array_merge($changes, $comments);
+
+        // Sort function for events
+        // assumes $array{ $array{ 'modified' => 'date' }, ... }
+        $cmp = function($a, $b) {
+            if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
+            if (strtotime($a['modified']) > strtotime($b['modified'])) return 1;
+            return -1;
+        };
+        usort($changes, $cmp);
+
+        $this->set('changes', $changes);
     }
 
     /**

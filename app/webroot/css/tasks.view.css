@@ -1,0 +1,41 @@
+/**
+*
+* CSS for the view index page.
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     DevTrack Development Team 2012
+* @link          http://github.com/chrisbulmer/devtrack
+* @package       DevTrack.webroot.css
+* @since         DevTrack v 0.1
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
+
+.col hr {
+    margin: 0px 0px 20px 0px;
+}
+
+.colchange hr {
+    margin: 0px 0px 0px 0px;
+}
+
+.col h3 {
+    margin: 0;
+}
+
+.well {
+    padding: 15px;
+}
+
+.thumbnail img {
+    height: auto;
+}
+
+.hr-popover {
+    margin: 0px 0px 3px 0px;
+}
+
+.hr-h4 {
+    margin-top: 3px;
+}

@@ -333,6 +333,8 @@ CREATE TABLE IF NOT EXISTS `task_comments` (
   `task_id` int(10) NOT NULL,
   `user_id` int(10) NOT NULL,
   `comment` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
