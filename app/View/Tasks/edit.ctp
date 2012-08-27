@@ -35,30 +35,23 @@ $this->Html->css('tasks.add', null, array ('inline' => false));
                             "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => $this->DT->t('form.subject.placeholder'))),
                             "label" => $this->DT->t('form.subject.label'),
                         ));
-                        ?>
-                        <div class="">
-                            <span class="span6">
-                                <?php
-                                echo $this->Bootstrap->input("task_priority_id", array(
-                                    "input" => $this->Form->input("task_priority_id", array(
-                                        "label" => false,
-                                    )),
-                                    "label" => $this->DT->t('form.priority.label'),
-                                ));
-                                ?>
-                            </span>
-                            <span class="span6">
-                                <?php
-                                echo $this->Bootstrap->input("milestone_id", array(
-                                    "input" => $this->Form->input("milestone_id", array(
-                                        "label" => false,
-                                    )),
-                                    "label" => $this->DT->t('form.milestone.label').' '.$this->Bootstrap->icon('road'),
-                                ));
-                                ?>
-                            </span>
-                        </div>
-                        <?php
+
+                        echo $this->Bootstrap->input("task_priority_id", array(
+                            "input" => $this->Form->input("task_priority_id", array(
+                                "label" => false,
+                                "class" => "span3"
+                            )),
+                            "label" => $this->DT->t('form.priority.label'),
+                        ));
+
+                        echo $this->Bootstrap->input("milestone_id", array(
+                            "input" => $this->Form->input("milestone_id", array(
+                                "label" => false,
+                                "class" => "span6",
+                            )),
+                            "label" => $this->DT->t('form.milestone.label').' '.$this->Bootstrap->icon('road'),
+                        ));
+
                         echo $this->Bootstrap->input("description", array(
                             "input" => $this->Form->input("description", array(
                                 "type" => "textarea",
