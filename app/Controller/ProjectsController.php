@@ -89,7 +89,11 @@ class ProjectsController extends AppProjectController {
      */
     public function add() {
         if ($this->request->is('post')) {
+
+            // Create the project object with its data
             $this->Project->create();
+
+
             if ($this->Project->save($this->request->data)) {
 
                 // Project has been saved
@@ -99,13 +103,18 @@ class ProjectsController extends AppProjectController {
                 $data['Collaborator']['project_id'] = $this->Project->id;
                 $data['Collaborator']['access_level'] = 2; //Project admin
                 $this->Project->Collaborator->save($data);
-
-                $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
                 $this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Auth->user('id')."]", 'devtrack');
                 $this->log("[ProjectController.add] user[".$this->Auth->user('id')."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
 
-                // Create a repo
-                $this->Project->Source->create();
+
+                // Create the actual repository - if it fails, delete the database content
+                if(!$this->Project->Source->create()){
+                    $this->log("[ProjectController.add] project[".$this->Project->id."] repository creation failed - automatically removing project data", 'devtrack');
+                    $this->Project->delete();
+                    $this->Session->setFlash(__('The project repository could not be created. Please try again.'), 'default', array(), 'error');
+                } else {
+                    $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
+                }
 
                 $this->redirect(array('action' => 'index'));
             } else {
