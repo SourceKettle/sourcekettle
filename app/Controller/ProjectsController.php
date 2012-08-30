@@ -15,9 +15,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('AppController', 'Controller');
+App::uses('AppProjectController', 'Controller');
 
-class ProjectsController extends AppController {
+class ProjectsController extends AppProjectController {
 
     /**
      * Project helpers
@@ -54,18 +54,15 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function view($name = null) {
-        // Check for valid project name
-        $project = $this->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+        $project = $this->_projectCheck($name);
 
-        $this->Project->id = $project['Project']['id'];
+        $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 1, 'Project.id' => $project['Project']['id'])));
+        $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 2, 'Project.id' => $project['Project']['id'])));
+        $number_of_tasks = $number_of_closed_tasks + $number_of_open_tasks;
+        $percent_of_tasks = $number_of_closed_tasks / $number_of_tasks * 100;
 
-        // Lock out those who arnt members
-        if ( !$this->Project->hasRead($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a member of this project'));
-
+        $this->set(compact('number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks'));
         $this->set('events', $this->Project->fetchEventsForProject());
-        $this->set('isAdmin', $this->Project->isAdmin($this->Auth->user('id')));
-        $this->set('project', $project);
     }
 
     /**

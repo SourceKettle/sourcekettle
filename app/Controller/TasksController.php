@@ -14,9 +14,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('AppController', 'Controller');
+App::uses('AppProjectController', 'Controller');
 
-class TasksController extends AppController {
+class TasksController extends AppProjectController {
 
     /**
      * Helpers
@@ -24,26 +24,6 @@ class TasksController extends AppController {
      * @var array
      */
     public $helpers = array('Time', 'Task');
-
-    /*
-     * _projectCheck
-     * Space saver to ensure user can view content
-     * Also sets commonly needed variables related to the project
-     *
-     * @param $name string Project name
-     */
-    private function _projectCheck($name) {
-        // Check for existent project
-        $project = $this->Task->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-
-        $this->Task->Project->id = $project['Project']['id'];
-
-        $this->set('project', $project);
-        $this->set('isAdmin', $this->Task->Project->isAdmin());
-
-        return $project;
-    }
 
     /**
      * index method
