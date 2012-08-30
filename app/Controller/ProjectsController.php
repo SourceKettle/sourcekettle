@@ -25,7 +25,7 @@ class ProjectsController extends AppProjectController {
      */
     public $helpers = array('Time', 'GoogleChart.GoogleChart');
 
-    public $uses = array('Project', 'GitCake.GitCake');
+    public $uses = array('Project');
 
     /**
      * index method
