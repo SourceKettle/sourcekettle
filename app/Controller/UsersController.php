@@ -56,12 +56,12 @@ class UsersController extends AppController {
                                 $data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
                                 $data['SshKey']['comment'] = 'Default key';
                                 $this->User->SshKey->save($data);
-                                
+
                                 // Update the sync required flag
                                 $sync_required = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
                                 $sync_required['Setting']['value'] = 1;
                                 $this->Setting->save($sync_required);
-                                
+
                                 $this->log("[UsersController.register] sshkey[".$this->User->SshKey->getLastInsertID()."] added to user[${id}]", 'devtrack');
                             }
 
@@ -139,10 +139,10 @@ class UsersController extends AppController {
             $api_key = null;
         }
 
-        // Get User with this API key
-        //
-        $user_id = $this->User->ApiKey->field('user_id',
-            array('key' => $api_key));
+        if (!($user_id = $this->Auth->user('id'))) {
+            // Get User with this API key
+            $user_id = $this->User->ApiKey->field('user_id', array('key' => $api_key));
+        }
 
         $user = $this->User->findById($user_id);
 
@@ -455,7 +455,7 @@ class UsersController extends AppController {
             $this->User->set('theme', (string) $this->request->data['User']['theme']);
 
             if ($this->User->save()){
-                
+
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
                 $this->log("[UsersController.theme] user[".$this->Auth->user('id')."] changed theme", 'devtrack');
                 $this->Session->write('Auth.User.theme', (string) $this->request->data['User']['theme']);
@@ -464,7 +464,7 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
             }
         }
-        
+
         $user = $this->Auth->user();
         $this->set('user', $user);
         $this->User->id = $user['id'];

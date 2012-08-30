@@ -101,3 +101,9 @@ $config['dtcore']['pages']['tasks']['view']['en']['history.newcomment.submit'] =
 $config['dtcore']['pages']['tasks']['view']['en']['history.editcomment.submit'] = "Update comment";
 $config['dtcore']['pages']['tasks']['view']['en']['history.assignee.assigned'] = "Assigned to:";
 $config['dtcore']['pages']['tasks']['view']['en']['history.assignee.none'] = "No-one currently assigned";
+
+
+$config['dtcore']['pages']['tasks']['view']['en']['modal.assign.header'] = "No-one currently assigned";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.assign.assignee.label'] = "New Assignee";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.assign.close'] = "Close";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.assign.submit'] = "Assign";

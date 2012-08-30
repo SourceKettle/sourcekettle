@@ -91,6 +91,8 @@ Configure::load('devtrack');
  */
 Configure::load('Language/dt_core');
 Configure::load('Language/dt_core_en');
+
+Configure::load('Language/dt_core_projects_en');
 Configure::load('Language/dt_core_tasks_en');
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
