@@ -16,9 +16,8 @@
 
 $this->Html->css('pages/source', null, array ('inline' => false));
 $this->Html->css('prettify/prettify', null, array ('inline' => false));
-
-$this->set('js_for_layout', array('prettify/prettify'));
-$this->set('js_blocks_for_layout', array('prettyPrint()'));
+$this->Html->script('prettify/prettify', array('block' => 'scriptBottom'));
+$this->Html->scriptBlock("prettyPrint()", array('inline' => false));
 
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
 $pname = $project['Project']['name'];

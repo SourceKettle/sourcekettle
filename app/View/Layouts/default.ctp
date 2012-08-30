@@ -112,14 +112,8 @@
     <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'); ?>
     <?= $this->Html->script('bootstrap.min') ?>
     <?= $this->Popover->requirements() ?>
-    <? if (isset($js_for_layout)): foreach ($js_for_layout as $js): ?>
-        <?= $this->Html->script(array($js)) ?>
-    <? endforeach;
-    endif; ?>
-    <? if (isset($js_blocks_for_layout)): foreach ($js_blocks_for_layout as $js): ?>
-        <?= $this->Html->scriptBlock($js) ?>
-    <? endforeach;
-    endif; ?>
+    <?= $this->fetch('scriptBottom') ?>
+    <?= $scripts_for_layout ?>
     <?= $this->Js->writeBuffer() ?>
 </body>
 </html>

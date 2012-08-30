@@ -14,11 +14,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css ('project.overview', null, array ('inline' => false));
-$smallText = " <small>" . $project['Project']['description'] . "</small>";
+$this->Html->css('project.overview', null, array ('inline' => false));
 
-echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
+?>
 
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -29,19 +29,19 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                 <div class="well">
                     <div class="row-fluid overview">
                         <div class="span4">
-                            <h3>Tasks</h3>
+                            <h3><?= $this->DT->t('summary.issues.title') ?></h3>
                             <hr />
                             <div class="row-fluid">
                                 <div class="span6">
                                     <ul class="unstyled">
-                                        <li><?= $this->Html->link('0 - Open Tasks', '#', array('class' => 'open-tasks')) ?></li>
-                                        <li><?= $this->Html->link('0 - Closed Tasks', '#', array('class' => 'closed-tasks')) ?></li>
-                                        <li><?= $this->Html->link('0 - Total Tasks', '#', array('class' => 'total-tasks')) ?></li>
-                                        <li>0% complete</li>
+                                        <li class="open-tasks"><?= $number_of_open_tasks ?> - <?= $this->DT->t('summary.issues.open') ?></li>
+                                        <li class="closed-tasks"><?= $number_of_closed_tasks ?> - <?= $this->DT->t('summary.issues.closed') ?></li>
+                                        <li class="total-tasks"><?= $number_of_tasks ?> - <?= $this->DT->t('summary.issues.total') ?></li>
+                                        <li><?= $percent_of_tasks ?>% <?= $this->DT->t('summary.issues.percent') ?></li>
                                     </ul>
                                 </div>
                                 <div class="span6">
-                                    <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array(20, 0, 50)); ?>
+                                    <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array($number_of_open_tasks, $number_of_closed_tasks)); ?>
                                 </div>
                             </div>
                         </div>

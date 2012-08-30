@@ -13,9 +13,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->set('js_for_layout', array('bootstrap-datepicker'));
+$this->Html->script('bootstrap-datepicker', array('block' => 'scriptBottom'));
+$this->Html->scriptBlock("$('.dp1').datepicker()", array('inline' => false));
 $this->Html->css('datepicker', null, array ('inline' => false));
-$this->set('js_blocks_for_layout', array("$('.dp1').datepicker()"));
 
 // Submit the serialize data on submit click
 $this->Js->get('#UserMyaddForm')->event('submit',

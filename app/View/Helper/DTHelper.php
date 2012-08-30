@@ -37,10 +37,10 @@ class DTHelper extends AppHelper {
     public function pHeader($overrides = array()) {
         $lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->_lang;
 
-        $p = $this->request['project'];
+        $r_before = array("{project}", "{text}");
+        $r_after  = array($this->request['project'], $this->t('header.text', $overrides));
 
-        $h = str_replace("{project}", $p, $this->_config['common']['header']['project']['format']);
-        $h = str_replace("{text}", $this->t('header.text', $overrides), $h);
+        $h = str_replace($r_before, $r_after, $this->_config['common']['header']['project']['format']);
 
         return $this->TwitterBootstrap->page_header($h);
     }
