@@ -27,6 +27,14 @@ class ProjectsController extends AppProjectController {
 
     public $uses = array('Project');
 
+    public function beforeFilter() {
+        parent::beforeFilter();
+        $this->Auth->allow(
+            'api_all',
+            'api_view'
+        );
+    }
+
     /**
      * index method
      *
@@ -257,4 +265,106 @@ class ProjectsController extends AppProjectController {
         $this->redirect(array('action' => 'admin_index'));
     }
 
+    /***************************************************
+    *                                                  *
+    *            API SECTION OF CONTROLLER             *
+    *             CAUTION: PUBLIC FACING               *
+    *                                                  *
+    ***************************************************/
+
+    /**
+     * api_view function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function api_view($id = null) {
+        $this->layout = 'ajax';
+
+        $this->Project->recursive = -1;
+        $data = array();
+
+        if ($id == null) {
+            $this->response->statusCode(400);
+            $data['error'] = 400;
+            $data['message'] = 'Bad request, no project id specified.';
+        }
+
+        if ($id == 'all') {
+            $this->api_all();
+            return;
+        }
+
+        if (is_numeric($id)) {
+            $this->Project->id = $id;
+
+            if (!$this->Project->exists()) {
+                $this->response->statusCode(404);
+                $data['error'] = 404;
+                $data['message'] = 'No project found of that ID.';
+                $data['id'] = $id;
+            } else {
+                $project = $this->Project->read();
+
+                // Collaborators
+                $c = $this->Project->Collaborator->find('list', array('fields' => array('user_id'), 'conditions' => array('project_id' => $id)));
+                $project['Project']['collaborators'] = array_values($c);
+
+                // Repo Type
+                $project['Project']['repo_type'] = $this->Project->RepoType->field('name');
+
+                $_part_of_project = in_array($this->Auth->user('id'), $project['Project']['collaborators']);
+                $_public_project = $project['Project']['public'];
+                $_is_admin = ($this->_api_auth_level() == 1);
+
+                if ($_public_project || $_part_of_project || $_is_admin) {
+                    $data = $project['Project'];
+                } else {
+                    $data['error'] = 401;
+                    $data['message'] = 'Project found, but is not public.';
+                    $data['id'] = $id;
+                }
+            }
+        }
+
+        $this->set('data',$data);
+        $this->render('/Elements/json');
+    }
+
+    /**
+     * api_all function.
+     * ADMINS only
+     *
+     * @access public
+     * @return void
+     */
+    public function api_all() {
+        $this->layout = 'ajax';
+
+        $this->Project->recursive = -1;
+        $data = array();
+
+        switch ($this->_api_auth_level()) {
+            case 1:
+                foreach ($this->Project->find("all") as $project) {
+                    // Collaborators
+                    $c = $this->Project->Collaborator->find('list', array('fields' => array('user_id'), 'conditions' => array('project_id' => $project['Project']['id'])));
+                    $project['Project']['collaborators'] = array_values($c);
+
+                    // Repo Type
+                    $project['Project']['repo_type'] = $this->Project->RepoType->field('name', array('id' => $project['Project']['repo_type']));
+
+                    $data[] = $project['Project'];
+                }
+                break;
+            default:
+                $this->response->statusCode(403);
+                $data['error'] = 403;
+                $data['message'] = 'You are not authorised to access this.';
+        }
+
+        $this->set('data',$data);
+        $this->render('/Elements/json');
+    }
 }
