@@ -102,8 +102,9 @@ $config['dtcore']['pages']['tasks']['view']['en']['history.editcomment.submit'] 
 $config['dtcore']['pages']['tasks']['view']['en']['history.assignee.assigned'] = "Assigned to:";
 $config['dtcore']['pages']['tasks']['view']['en']['history.assignee.none'] = "No-one currently assigned";
 
-
 $config['dtcore']['pages']['tasks']['view']['en']['modal.assign.header'] = "No-one currently assigned";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.assign.assignee.label'] = "New Assignee";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.assign.assignee.placeholder'] = "Start typing a name...";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.assign.close'] = "Close";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.assign.submit'] = "Assign";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.assign.body'] = "To assign this task to a user on this project, enter their name in the box below and select";

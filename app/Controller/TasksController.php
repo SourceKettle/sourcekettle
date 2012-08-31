@@ -153,6 +153,26 @@ class TasksController extends AppProjectController {
             }
         }
 
+        // If a User has assigned someone
+        if ($this->request->is('post') && isset($this->request->data['TaskAssignee'])) {
+
+            preg_match('#[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}#', $this->request->data['TaskAssignee']['assignee'], $matches);
+            unset($this->request->data['TaskAssignee']);
+
+            if (!isset($matches[0]) || is_null($matches[0]) || !($user = $this->Task->Assignee->findByEmail($matches[0]))) {
+                $this->Session->setFlash(__('The assignee could not be updated. Please, try again.'), 'default', array(), 'error');
+            } else {
+                $this->request->data['Task']['assignee_id'] = $user['Assignee']['id'];
+                $this->Task->id = $id;
+
+                if ($this->Task->save($this->request->data)) {
+                    $this->Session->setFlash(__('The assignee has been updated successfully'), 'default', array(), 'success');
+                } else {
+                    $this->Session->setFlash(__('The assignee could not be updated. Please, try again.'), 'default', array(), 'error');
+                }
+            }
+        }
+
         $this->set('task', $this->Task->read(null, $id));
 
         // Fetch the changes that will have happened
@@ -166,6 +186,29 @@ class TasksController extends AppProjectController {
         foreach ( $comments as $x => $comment ) {
             $comments[$x]['created'] = $comment['TaskComment']['created'];
         }
+
+        // Fetch any additional users that may be needed
+        $change_users = array();
+        $this->Task->Assignee->recursive = -1;
+        foreach ( $changes as $change ) {
+            if ($change['ProjectHistory']['row_field'] == 'assignee_id') {
+                $_old = $change['ProjectHistory']['row_field_old'];
+                $_new = $change['ProjectHistory']['row_field_new'];
+
+                if ($_old && !isset($change_users[$_old])) {
+                    $this->Task->Assignee->id = $_old;
+                    $_temp = $this->Task->Assignee->read();
+                    $change_users[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+                }
+                if ($_new && !isset($change_users[$_new])) {
+                    $this->Task->Assignee->id = $_new;
+                    $_temp = $this->Task->Assignee->read();
+                    $change_users[$_new] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+                }
+            }
+        }
+
+        // Merge the changes
         $changes = array_merge($changes, $comments);
 
         // Sort function for events
@@ -175,8 +218,10 @@ class TasksController extends AppProjectController {
             if (strtotime($a['created']) > strtotime($b['created'])) return 1;
             return -1;
         };
-        usort($changes, $cmp);
 
+        usort($changes, $cmp);
+        $this->Task->Project->Collaborator->recursive = 1;
+        $this->set('change_users', $change_users);
         $this->set('changes', $changes);
     }
 

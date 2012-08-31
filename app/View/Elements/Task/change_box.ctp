@@ -24,8 +24,24 @@
         case 'task_priority_id':
             $pop_over = 'priority: '.$this->Task->priority($old).' &rarr; '.$this->Task->priority($new);
             break;
+        case 'assignee_id':
+            $old = ($old) ? $this->Gravatar->image($change_users[$old][1], array('d' => 'mm', 's' => 24)).' '.$change_users[$old][0] : '<small>No-one assigned</small>';
+            $new = ($new) ? $this->Gravatar->image($change_users[$new][1], array('d' => 'mm', 's' => 24)).' '.$change_users[$new][0] : '<small>No-one assigned</small>';
+            $pop_over = $this->Popover->popover(
+                'assignee',
+                'Tasks \'Assignee\' changed',
+                "<h4 class='hr-h4'>Before</h4>
+                 <hr class='hr-popover'>
+                 <p>${old}</p>
+
+                 <h4 class='hr-h4'>After</h4>
+                 <hr class='hr-popover'>
+                 <p>${new}</p>"
+            );
+            break;
         default:
             $old = ($old) ? $old : '<small>empty</small>';
+            $new = ($new) ? $new : '<small>empty</small>';
             $pop_over = $this->Popover->popover(
                 $field,
                 'Tasks \''.$field.'\' changed',
