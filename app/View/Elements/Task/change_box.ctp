@@ -39,6 +39,9 @@
                  <p>${new}</p>"
             );
             break;
+        case 'task_status_id':
+            $pop_over = 'status: '.$this->Task->status($old).' &rarr; '.$this->Task->status($new);
+            break;
         default:
             $old = ($old) ? $old : '<small>empty</small>';
             $new = ($new) ? $new : '<small>empty</small>';

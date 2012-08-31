@@ -369,4 +369,71 @@ class TasksController extends AppProjectController {
         $this->Session->setFlash(__('Task was not deleted'));
         $this->redirect(array('action' => 'index'));
     }
+
+    /**
+     * opentask function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function opentask($project = null, $id = null) {
+        $success = $this->_update_task_status($project, $id, 1);
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
+    /**
+     * closetask function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function closetask($project = null, $id = null) {
+        $success = $this->_update_task_status($project, $id, 4);
+
+        // If a User has commented
+        if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+            $this->Task->TaskComment->create();
+
+            $this->request->data['TaskComment']['task_id'] = $id;
+            $this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+            if ($this->Task->TaskComment->save($this->request->data)) {
+                $this->Session->setFlash(__('The comment has been added successfully'), 'default', array(), 'success');
+                unset($this->request->data['TaskComment']);
+            } else {
+                $this->Session->setFlash(__('The comment could not be saved. Please, try again.'), 'default', array(), 'error');
+            }
+        }
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
+    /**
+     * _update_task_status function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    private function _update_task_status($project = null, $id = null, $status = null) {
+        $project = $this->_projectCheck($project, true);
+
+        $this->Task->id = $id;
+
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+        if (!$this->Task->exists()) throw new NotFoundException(__('Invalid task'));
+
+        $this->Task->set('task_status_id', $status);
+
+        if ($this->Task->save()) {
+            $this->Session->setFlash(__('The tasks status has been updated successfully'), 'default', array(), 'success');
+            return true;
+        }
+        $this->Session->setFlash(__('The task status could not be updated. Please, try again.'), 'default', array(), 'error');
+        return false;
+    }
 }

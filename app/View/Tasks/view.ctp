@@ -16,7 +16,7 @@
 
 $this->Html->css('tasks.view', null, array ('inline' => false));
 
-$edit_comment  = $this->Form->create('TaskCommentEdit', array('class' => 'form'));
+$edit_comment  = $this->Form->create('TaskCommentEdit');
 $edit_comment .= $this->Form->hidden('id');
 $edit_comment .= $this->Bootstrap->input("comment", array(
     "input" => $this->Form->textarea("comment", array("class" => "span12", "rows" => 5)),"label" => false)
@@ -40,6 +40,7 @@ $this->Html->scriptBlock("
     });
 ", array('inline' => false));
 
+echo $this->element('Task/modal_close');
 echo $this->element('Task/modal_assign');
 
 ?>
@@ -64,7 +65,12 @@ echo $this->element('Task/modal_assign');
                                 <?= $this->Bootstrap->button($this->DT->t('bar.task').$task['Task']['id'], array("class" => "disabled")) ?>
                                 <?= $this->Bootstrap->button_link($this->DT->t('bar.edit'), array('project' => $project['Project']['name'], 'action' => 'edit', $task['Task']['id'])) ?>
                                 <?= $this->Bootstrap->button_link($this->DT->t('bar.assign'), '#assignModal', array('data-toggle' => 'modal')) ?>
-                                <?= $this->Bootstrap->button($this->DT->t('bar.close'), array("style" => "success")) ?>
+                                <?= $this->Bootstrap->button_link($this->DT->t('bar.resolve'), '#resolveModal', array('data-toggle' => 'modal')) ?>
+                                <? if ($task['Task']['task_status_id'] != 4) : ?>
+                                    <?= $this->Bootstrap->button_link($this->DT->t('bar.close'), '#closeModal', array('data-toggle' => 'modal', "style" => "success")) ?>
+                                <? else : ?>
+                                    <?= $this->Bootstrap->button_form($this->DT->t('bar.open'), array('project' => $project['Project']['name'], 'action' => 'opentask', $task['Task']['id']), array("style" => "info")) ?>
+                                <? endif; ?>
                             </div>
                         </div>
                     </div>
@@ -109,7 +115,53 @@ echo $this->element('Task/modal_assign');
                             </h5>
                             <h3><?= $task['Task']['subject'] ?></h3>
                             <hr />
-                            <p><?= $task['Task']['description'] ?></p>
+
+                            <h3 id="section_details_toggle" class="section_title" data-toggle="collapse" data-target="#section_details"><?= $this->DT->t('details.title') ?></h3>
+                            <div id="section_details" class="collapse in">
+                                <div class="span12">
+                                    <dl class="dl-horizontal span6">
+                                        <dt><?= $this->DT->t('details.creator') ?>:</dt>
+                                        <dd>
+                                            <?= $this->Html->link(
+                                                $task['Owner']['name'],
+                                                array('controller' => 'users', 'action' => 'view', $task['Owner']['id'])
+                                            ) ?>
+                                        </dd>
+                                        <dt><?= $this->DT->t('details.type') ?>:</dt>
+                                        <dd><?= $this->Task->type($task['Task']['task_type_id']) ?></dd>
+                                        <dt><?= $this->DT->t('details.priority') ?>:</dt>
+                                        <dd><?= $this->Task->priority($task['Task']['task_priority_id']) ?></dd>
+                                        <dt><?= $this->DT->t('details.milestone') ?>:</dt>
+                                        <dd>
+                                        <?= (isset($task['Milestone']['subject'])) ? $this->Html->link(
+                                                $task['Milestone']['subject'],
+                                                array('controller' => 'milestones', 'action' => 'view', $task['Milestone']['id'])
+                                            )  : 'n/a' ?>
+                                        </dd>
+                                    </dl>
+                                    <dl class="dl-horizontal span6">
+                                        <dt><?= $this->DT->t('details.assignee') ?>:</dt>
+                                        <dd>
+                                            <?= (isset($task['Assignee']['name'])) ? $this->Html->link(
+                                                $task['Assignee']['name'],
+                                                array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
+                                            )  : 'n/a' ?>
+                                        </dd>
+                                        <dt><?= $this->DT->t('details.status') ?>:</dt>
+                                        <dd><?= $this->Task->status($task['Task']['task_status_id']) ?></dd>
+
+                                        <dt><?= $this->DT->t('details.created') ?>:</dt>
+                                        <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>
+                                        <dt><?= $this->DT->t('details.updated') ?>:</dt>
+                                        <dd><?= $this->Time->timeAgoInWords($task['Task']['modified']) ?></dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <h3 id="section_description_toggle" class="section_title" data-toggle="collapse" data-target="#section_description"><?= $this->DT->t('description.title') ?></h3>
+                            <div id="section_description" class="collapse in">
+                                <p><?= $task['Task']['description'] ?></p>
+                            </div>
                         </div>
                     </div>
                     <div class="span1"></div>

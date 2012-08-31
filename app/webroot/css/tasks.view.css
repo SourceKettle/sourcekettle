@@ -40,6 +40,10 @@
     margin-top: 3px;
 }
 
-.form {
+form {
     margin-bottom: 0px;
+}
+
+.section_title {
+    cursor: pointer;
 }

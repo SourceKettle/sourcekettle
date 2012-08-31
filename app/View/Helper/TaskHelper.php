@@ -47,6 +47,29 @@ class TaskHelper extends AppHelper {
     }
 
     /**
+     * status function.
+     *
+     * @access public
+     * @param mixed $id
+     * @return void
+     */
+    public function status($id) {
+        $text = array(
+            1 => 'Open',
+            2 => 'In Progress',
+            3 => 'Resolved',
+            4 => 'Closed',
+        );
+        $colour = array(
+            1 => 'success',
+            2 => 'primary',
+            3 => 'info',
+            4 => 'danger',
+        );
+        return $this->Bootstrap->button($text[$id], array('class' => 'btn-mini disabled btn-'.$colour[$id]));
+    }
+
+    /**
      * type function.
      *
      * @access public

@@ -90,8 +90,21 @@ $config['dtcore']['pages']['tasks']['view']['en']['header.text'] = "A task for t
 $config['dtcore']['pages']['tasks']['view']['en']['bar.task'] = "Task #";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.edit'] = "Edit";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.assign'] = "Assign";
-$config['dtcore']['pages']['tasks']['view']['en']['bar.selfassign'] = "Assign to me";
+$config['dtcore']['pages']['tasks']['view']['en']['bar.resolve'] = "Resolve";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.close'] = "Close task";
+$config['dtcore']['pages']['tasks']['view']['en']['bar.open'] = "Re-open task";
+
+$config['dtcore']['pages']['tasks']['view']['en']['details.title'] = "Task details";
+$config['dtcore']['pages']['tasks']['view']['en']['details.creator'] = "Created by";
+$config['dtcore']['pages']['tasks']['view']['en']['details.type'] = "Task type";
+$config['dtcore']['pages']['tasks']['view']['en']['details.priority'] = "Task priority";
+$config['dtcore']['pages']['tasks']['view']['en']['details.status'] = "Task status";
+$config['dtcore']['pages']['tasks']['view']['en']['details.assignee'] = "Assigned to";
+$config['dtcore']['pages']['tasks']['view']['en']['details.milestone'] = "Fix Milestone";
+$config['dtcore']['pages']['tasks']['view']['en']['details.created'] = "Created";
+$config['dtcore']['pages']['tasks']['view']['en']['details.updated'] = "Last updated";
+
+$config['dtcore']['pages']['tasks']['view']['en']['description.title'] = "Description";
 
 $config['dtcore']['pages']['tasks']['view']['en']['history.create.action'] = "created this task";
 $config['dtcore']['pages']['tasks']['view']['en']['history.change.action'] = "updated the tasks";
@@ -108,3 +121,9 @@ $config['dtcore']['pages']['tasks']['view']['en']['modal.assign.assignee.placeho
 $config['dtcore']['pages']['tasks']['view']['en']['modal.assign.close'] = "Close";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.assign.submit'] = "Assign";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.assign.body'] = "To assign this task to a user on this project, enter their name in the box below and select";
+
+$config['dtcore']['pages']['tasks']['view']['en']['modal.close.header'] = "Close the task";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.close.comment.placeholder'] = "Enter a closing comment for this task...";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.close.close'] = "Cancel";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.close.submit'] = "Close Task";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.close.body'] = "Before the task can be closed, please leave an explanation.";
