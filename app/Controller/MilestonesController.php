@@ -14,33 +14,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('AppController', 'Controller');
+App::uses('AppProjectController', 'Controller');
 
-class MilestonesController extends AppController {
-
-    /*
-     * _projectCheck
-     * Space saver to ensure user can view content
-     * Also sets commonly needed variables related to the project
-     *
-     * @param $name string Project name
-     */
-    private function _projectCheck($name) {
-        // Check for existent project
-        $project = $this->Milestone->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-        $this->Milestone->Project->id = $project['Project']['id'];
-
-        $user = $this->Auth->user('id');
-
-        // Lock out those who are not guests
-        if ( !$this->Milestone->Project->hasRead($user) ) throw new ForbiddenException(__('You are not a member of this project'));
-
-        $this->set('project', $project);
-        $this->set('isAdmin', $this->Milestone->Project->isAdmin($user));
-
-        return $project;
-    }
+class MilestonesController extends AppProjectController {
 
     /**
      * index method
@@ -48,10 +24,86 @@ class MilestonesController extends AppController {
      * @return void
      */
     public function index($project = null) {
+        $this->redirect(array('project'=>$project,'action'=>'open'));
+    }
+
+    /**
+     * index method
+     *
+     * @return void
+     */
+    public function open($project = null) {
         $project = $this->_projectCheck($project);
 
-        $this->Milestone->recursive = 0;
-        $this->set('milestones', $this->paginate());
+        $milestones = array();
+        // Iterate over all milestones
+        foreach ($this->Milestone->find('all') as $x => $milestone) {
+            $o_tasks = $this->Milestone->Task->find(
+                'list',
+                array(
+                    'field' => array('milestone_id'),
+                    'conditions' => array('task_status_id <' => 4, 'milestone_id =' => $milestone['Milestone']['id'])
+                )
+            );
+            $c_tasks = $this->Milestone->Task->find(
+                'list',
+                array(
+                    'field' => array('milestone_id'),
+                    'conditions' => array('task_status_id' => 4, 'milestone_id =' => $milestone['Milestone']['id'])
+                )
+            );
+
+            $milestone['Milestone']['closed_tasks'] = sizeof($c_tasks);
+            $milestone['Milestone']['open_tasks'] = sizeof($o_tasks);
+
+            if (empty($o_tasks) && empty($c_tasks)) {
+                // Add if new
+                $milestones[$x] = $milestone;
+            } else if (empty($o_tasks) && !empty($c_tasks)) {
+                // Closed
+            } else {
+                // Add in progress
+                $milestones[$x] = $milestone;
+            }
+        }
+        $this->set('milestones', $milestones);
+    }
+
+    /**
+     * index method
+     *
+     * @return void
+     */
+    public function closed($project = null) {
+        $project = $this->_projectCheck($project);
+
+        $milestones = array();
+        // Iterate over all milestones
+        foreach ($this->Milestone->find('all') as $x => $milestone) {
+            $o_tasks = $this->Milestone->Task->find(
+                'list',
+                array(
+                    'field' => array('milestone_id'),
+                    'conditions' => array('task_status_id <' => 4, 'milestone_id =' => $milestone['Milestone']['id'])
+                )
+            );
+            $c_tasks = $this->Milestone->Task->find(
+                'list',
+                array(
+                    'field' => array('milestone_id'),
+                    'conditions' => array('task_status_id' => 4, 'milestone_id =' => $milestone['Milestone']['id'])
+                )
+            );
+
+            $milestone['Milestone']['closed_tasks'] = sizeof($c_tasks);
+            $milestone['Milestone']['open_tasks'] = sizeof($o_tasks);
+
+            if (empty($o_tasks) && !empty($c_tasks)) {
+                // Closed
+                $milestones[$x] = $milestone;
+            }
+        }
+        $this->set('milestones', $milestones);
     }
 
     /**

@@ -160,7 +160,7 @@ echo $this->element('Task/modal_assign');
 
                             <h3 id="section_description_toggle" class="section_title" data-toggle="collapse" data-target="#section_description"><?= $this->DT->t('description.title') ?></h3>
                             <div id="section_description" class="collapse in">
-                                <p><?= $task['Task']['description'] ?></p>
+                                <p><?= $this->DT->parse($task['Task']['description']) ?></p>
                             </div>
                         </div>
                     </div>

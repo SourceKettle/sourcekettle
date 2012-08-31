@@ -50,7 +50,7 @@
             'Milestones' => array(
                 'icon' => 'road',
                 'url' => array(
-                    'action' => array('.', 'index', 'edit', 'view', 'add'),
+                    'action' => array('*'),
                     'controller' => 'milestones',
                     'project' => $this->params['project'],
                 ),
