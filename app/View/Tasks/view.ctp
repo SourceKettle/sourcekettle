@@ -64,7 +64,6 @@ echo $this->element('Task/modal_assign');
                                 <?= $this->Bootstrap->button($this->DT->t('bar.task').$task['Task']['id'], array("class" => "disabled")) ?>
                                 <?= $this->Bootstrap->button_link($this->DT->t('bar.edit'), array('project' => $project['Project']['name'], 'action' => 'edit', $task['Task']['id'])) ?>
                                 <?= $this->Bootstrap->button_link($this->DT->t('bar.assign'), '#assignModal', array('data-toggle' => 'modal')) ?>
-                                <?= $this->Bootstrap->button($this->DT->t('bar.selfassign')) ?>
                                 <?= $this->Bootstrap->button($this->DT->t('bar.close'), array("style" => "success")) ?>
                             </div>
                         </div>

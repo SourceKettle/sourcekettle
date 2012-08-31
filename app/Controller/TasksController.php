@@ -220,7 +220,6 @@ class TasksController extends AppProjectController {
         };
 
         usort($changes, $cmp);
-        $this->Task->Project->Collaborator->recursive = 1;
         $this->set('change_users', $change_users);
         $this->set('changes', $changes);
     }
