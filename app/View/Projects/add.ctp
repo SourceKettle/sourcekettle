@@ -80,7 +80,7 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
 		<div>
             <h4>Time Tracking</h4>
             <p>Sometimes, spreadsheets just aren't the best way of logging how much time you've spent on a task.
-            Heres where we introduce our simple to use time logging system.
+            Here's where we introduce our simple to use time logging system.
             <br>
         </div>
     </div>
