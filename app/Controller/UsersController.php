@@ -26,9 +26,15 @@ class UsersController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('register', 'activate', 'lost_password',
+        $this->Auth->allow(
+            'register',
+            'activate',
+            'lost_password',
             'reset_password',
-            'api_all', 'api_view', 'api_register');
+            'api_all',
+            'api_view',
+            'api_register'
+        );
     }
 
     /**
@@ -88,85 +94,6 @@ class UsersController extends AppController {
             //Display an error saying that registration is not allowed
             $this->render('registration_disabled');
         }
-    }
-
-    /**
-     * Register a user via an API call
-     */
-    public function api_register() {
-        $this->set('data', array(1,2,3));
-        $this->layout = 'ajax';
-        $this->render('/Elements/json');
-    }
-
-    public function api_view($id = null) {
-        $this->layout = 'ajax';
-        if ($id == null) {
-            $this->set('data',array(
-                'error' => 400,
-                'message' => 'Bad request, no user id specified',
-                ));
-        } else {
-            $this->User->id = $id;
-            if (!$this->User->exists()) {
-                $this->set('data',array(
-                    'error' => 404,
-                    'message' => 'No user found of that ID.',
-                    'id' => $id,
-                ));
-            } else {
-                //$this->set('data',$this->User->read(null, $id));
-                $user = $this->User->find("first", array(
-                    'conditions' => array('id' => $id),
-                    'recursive' => -1, // Don't recurse other models
-                ));
-
-                unset($user['User']['password']); // goodbye hash :'(
-                $this->set('data',$user['User']);
-            }
-        }
-
-        $this->render('/Elements/json');
-    }
-
-    public function api_all() {
-        // Only admins should be able to call this
-        $this->layout = 'ajax';
-
-        if (array_key_exists('key', $this->request->query)) {
-            $api_key = $this->request->query['key'];
-        } else {
-            $api_key = null;
-        }
-
-        if (!($user_id = $this->Auth->user('id'))) {
-            // Get User with this API key
-            $user_id = $this->User->ApiKey->field('user_id', array('key' => $api_key));
-        }
-
-        $user = $this->User->findById($user_id);
-
-        if ($user != FALSE && $user['User']['is_admin']) {
-            $all = $this->User->find("all", array(
-                'recursive' => -1,
-            ));
-
-            $new = array();
-
-            foreach ($all as $item) {
-                unset($item['User']['password']);
-                array_push($new,$item['User']);
-            }
-
-            $this->set('data',$new);
-        } else {
-            $this->set('data',array(
-                'error' => 403,
-                'message' => 'You are not authorised to access this.',
-            ));
-        }
-
-        $this->render('/Elements/json');
     }
 
     /**
@@ -623,5 +550,101 @@ class UsersController extends AppController {
             return true;
         }
         return false;
+    }
+
+    /***************************************************
+    *                                                  *
+    *            API SECTION OF CONTROLLER             *
+    *             CAUTION: PUBLIC FACING               *
+    *                                                  *
+    ***************************************************/
+
+    /**
+     * Register a user via an API call
+     * TODO Doesnt work
+     */
+    public function api_register() {
+        $this->layout = 'ajax';
+
+        $this->User->recursive = -1;
+        $data = array();
+
+        $this->response->statusCode(405);
+        $data['error'] = 405;
+        $data['message'] = 'Function not yet supported.';
+
+        $this->set('data', $data);
+        $this->render('/Elements/json');
+    }
+
+    /**
+     * api_view function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function api_view($id = null) {
+        $this->layout = 'ajax';
+
+        $this->User->recursive = -1;
+        $data = array();
+
+        if ($id == null) {
+            $this->response->statusCode(400);
+            $data['error'] = 400;
+            $data['message'] = 'Bad request, no user id specified.';
+        }
+
+        if ($id == 'all') {
+            $this->api_all();
+            return;
+        }
+
+        if (is_numeric($id)) {
+            $this->User->id = $id;
+
+            if (!$this->User->exists()) {
+                $this->response->statusCode(404);
+                $data['error'] = 404;
+                $data['message'] = 'No user found of that ID.';
+                $data['id'] = $id;
+            } else {
+                $user = $this->User->read();
+                $data = $user['User'];
+            }
+        }
+
+        $this->set('data',$data);
+        $this->render('/Elements/json');
+    }
+
+    /**
+     * api_all function.
+     * ADMINS only
+     *
+     * @access public
+     * @return void
+     */
+    public function api_all() {
+        $this->layout = 'ajax';
+
+        $this->User->recursive = -1;
+        $data = array();
+
+        switch ($this->_api_auth_level()) {
+            case 1:
+                foreach ($this->User->find("all") as $user) {
+                    $data[] = $user['User'];
+                }
+                break;
+            default:
+                $this->response->statusCode(403);
+                $data['error'] = 403;
+                $data['message'] = 'You are not authorised to access this.';
+        }
+
+        $this->set('data',$data);
+        $this->render('/Elements/json');
     }
 }

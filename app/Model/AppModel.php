@@ -37,6 +37,9 @@ class AppModel extends Model {
     public $_auth_user_name;
     public $_auth_user_email;
 
+    // Is this an API request?
+    public $_is_api = false;
+
     /**
      * setCurrentUserData function.
      * Recursively traverse the MODELS and set the current logged in users data

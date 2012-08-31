@@ -105,11 +105,38 @@ class AppController extends Controller {
             // check the admin is logged in
             if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
         }
+        if(isset($this->params['api'])) {
+            // The following line kinda breaks the M->V->C thing
+            $this->{$this->modelClass}->_is_api = true;
+        }
 
         if ($theme = $this->Auth->user('theme')) {
             $this->set('user_theme', $theme);
         } else {
             $this->set('user_theme', null);
         }
+    }
+
+    protected function _api_auth_level() {
+        $_USER_MODEL = ClassRegistry::init('User');
+
+        if (array_key_exists('key', $this->request->query)) {
+            $api_key = $this->request->query['key'];
+        } else {
+            $api_key = null;
+        }
+
+        // Check if an admin cookie exists
+        if (!($user_id = $this->Auth->user('id'))) {
+            // Get User with this API key
+            $user_id = $_USER_MODEL->ApiKey->field('user_id', array('key' => $api_key));
+        }
+
+        $user = $_USER_MODEL->findById($user_id);
+
+        if ($user != FALSE && $user['User']['is_admin']) {
+            return 1;
+        }
+        return 0;
     }
 }
