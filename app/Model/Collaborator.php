@@ -14,9 +14,11 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-App::uses('AppProjectModel', 'Model');
+App::uses('AppModel', 'Model');
 
-class Collaborator extends AppProjectModel {
+class Collaborator extends AppModel {
+
+    public $actsAs = array('ProjectHistory');
 
     /**
      * Validation rules
