@@ -36,7 +36,7 @@
 </head>
 <body>
     <header>
-        <div class="navbar navbar-fixed-top">
+        <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
                     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -51,7 +51,7 @@
                         ?>
                     <div class="btn-group pull-right" id='login-button'>
                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="icon-user"></i><?=$user_name?>
+                            <i class="icon-user"></i> <?= $user_name?>
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
