@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * View class for APP/milestones/index for the DevTrack system
+ * View class for APP/milestones/open|closed for the DevTrack system
  * Shows a list of milestones for a project
  *
  * Licensed under The MIT License

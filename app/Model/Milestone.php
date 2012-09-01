@@ -74,4 +74,73 @@ class Milestone extends AppModel {
         )
     );
 
+    /**
+     * openTasksForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function openTasksForMilestone($id = null) {
+        return $this->tasksOfStatusForMilestone($id, 1);
+    }
+
+    /**
+     * inProgressTasksForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function inProgressTasksForMilestone($id = null) {
+        return $this->tasksOfStatusForMilestone($id, 2);
+    }
+
+    /**
+     * resolvedTasksForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function resolvedTasksForMilestone($id = null) {
+        return $this->tasksOfStatusForMilestone($id, 3);
+    }
+
+    /**
+     * closedTasksForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function closedTasksForMilestone($id = null) {
+        return $this->tasksOfStatusForMilestone($id, 4);
+    }
+
+    /**
+     * tasksOfStatusForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @param mixed $status
+     * @return void
+     */
+    public function tasksOfStatusForMilestone($id = null, $status) {
+        $this->id = $id;
+
+        if (!$this->exists()) return null;
+
+        $tasks = $this->Task->find(
+            'all',
+            array(
+                'field' => array('milestone_id'),
+                'conditions' => array(
+                    'task_status_id ' => $status,
+                    'milestone_id =' => $id
+                )
+            )
+        );
+        return $tasks;
+    }
 }

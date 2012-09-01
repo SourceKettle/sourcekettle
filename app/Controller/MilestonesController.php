@@ -38,28 +38,20 @@ class MilestonesController extends AppProjectController {
         $milestones = array();
         // Iterate over all milestones
         foreach ($this->Milestone->find('all') as $x => $milestone) {
-            $o_tasks = $this->Milestone->Task->find(
-                'list',
-                array(
-                    'field' => array('milestone_id'),
-                    'conditions' => array('task_status_id <' => 4, 'milestone_id =' => $milestone['Milestone']['id'])
-                )
-            );
-            $c_tasks = $this->Milestone->Task->find(
-                'list',
-                array(
-                    'field' => array('milestone_id'),
-                    'conditions' => array('task_status_id' => 4, 'milestone_id =' => $milestone['Milestone']['id'])
-                )
-            );
+            $o_tasks = $this->Milestone->openTasksForMilestone($milestone['Milestone']['id']);
+            $i_tasks = $this->Milestone->inProgressTasksForMilestone($milestone['Milestone']['id']);
+            $r_tasks = $this->Milestone->resolvedTasksForMilestone($milestone['Milestone']['id']);
+            $c_tasks = $this->Milestone->closedTasksForMilestone($milestone['Milestone']['id']);
 
-            $milestone['Milestone']['closed_tasks'] = sizeof($c_tasks);
-            $milestone['Milestone']['open_tasks'] = sizeof($o_tasks);
+            $milestone['Milestone']['c_tasks'] = sizeof($c_tasks);
+            $milestone['Milestone']['i_tasks'] = sizeof($i_tasks);
+            $milestone['Milestone']['r_tasks'] = sizeof($r_tasks);
+            $milestone['Milestone']['o_tasks'] = sizeof($o_tasks);
 
             if (empty($o_tasks) && empty($c_tasks)) {
                 // Add if new
                 $milestones[$x] = $milestone;
-            } else if (empty($o_tasks) && !empty($c_tasks)) {
+            } else if (empty($o_tasks) && empty($r_tasks) && empty($i_tasks) && !empty($c_tasks)) {
                 // Closed
             } else {
                 // Add in progress
@@ -67,6 +59,7 @@ class MilestonesController extends AppProjectController {
             }
         }
         $this->set('milestones', $milestones);
+        $this->render('open_closed');
     }
 
     /**
@@ -80,30 +73,26 @@ class MilestonesController extends AppProjectController {
         $milestones = array();
         // Iterate over all milestones
         foreach ($this->Milestone->find('all') as $x => $milestone) {
-            $o_tasks = $this->Milestone->Task->find(
-                'list',
-                array(
-                    'field' => array('milestone_id'),
-                    'conditions' => array('task_status_id <' => 4, 'milestone_id =' => $milestone['Milestone']['id'])
-                )
-            );
-            $c_tasks = $this->Milestone->Task->find(
-                'list',
-                array(
-                    'field' => array('milestone_id'),
-                    'conditions' => array('task_status_id' => 4, 'milestone_id =' => $milestone['Milestone']['id'])
-                )
-            );
+            $o_tasks = $this->Milestone->openTasksForMilestone($milestone['Milestone']['id']);
+            $i_tasks = $this->Milestone->inProgressTasksForMilestone($milestone['Milestone']['id']);
+            $r_tasks = $this->Milestone->resolvedTasksForMilestone($milestone['Milestone']['id']);
+            $c_tasks = $this->Milestone->closedTasksForMilestone($milestone['Milestone']['id']);
+
+            $milestone['Milestone']['c_tasks'] = sizeof($c_tasks);
+            $milestone['Milestone']['i_tasks'] = sizeof($i_tasks);
+            $milestone['Milestone']['r_tasks'] = sizeof($r_tasks);
+            $milestone['Milestone']['o_tasks'] = sizeof($o_tasks);
 
             $milestone['Milestone']['closed_tasks'] = sizeof($c_tasks);
             $milestone['Milestone']['open_tasks'] = sizeof($o_tasks);
 
-            if (empty($o_tasks) && !empty($c_tasks)) {
+            if (empty($o_tasks) && empty($r_tasks) && empty($i_tasks) && !empty($c_tasks)) {
                 // Closed
                 $milestones[$x] = $milestone;
             }
         }
         $this->set('milestones', $milestones);
+        $this->render('open_closed');
     }
 
     /**

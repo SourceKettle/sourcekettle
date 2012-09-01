@@ -30,6 +30,11 @@ $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.option2.text'] 
 
 // APP/Milestones/open
 $config['dtcore']['pages']['milestones']['open']['en']['header.text'] = "Open Milestones";
+$config['dtcore']['pages']['milestones']['open']['en']['block.progress.notasks.text'] = "no tasks in this milestone";
+$config['dtcore']['pages']['milestones']['open']['en']['block.progress.open.text'] = " open";
+$config['dtcore']['pages']['milestones']['open']['en']['block.progress.inprogress.text'] = " in progress";
+$config['dtcore']['pages']['milestones']['open']['en']['block.progress.resolved.text'] = " resolved";
+$config['dtcore']['pages']['milestones']['open']['en']['block.progress.closed.text'] = " closed";
 
 // APP/Milestones/closed
 $config['dtcore']['pages']['milestones']['closed']['en']['header.text'] = "Closed Milestones";
