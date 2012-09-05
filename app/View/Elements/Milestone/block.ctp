@@ -28,8 +28,8 @@ $link_title = $this->Html->link(
     $milestone['Milestone']['subject'],
     array(
         'project' => $project['Project']['name'],
-        'controller' => 'tasks',
-        'action' => 'sprint',
+        'controller' => 'milestones',
+        'action' => 'view',
         $milestone['Milestone']['id']
     )
 );
@@ -58,9 +58,9 @@ $link_edit = $this->Html->link(
     )
 );
 ?>
-<div class="row-fluid well">
+<div class="row-fluid">
     <div class="span12">
-
+        <div class="well">
         <div class="row-fluid overview">
             <div class="span5">
                 <h3><?= $link_title ?></h3>
@@ -71,23 +71,23 @@ $link_edit = $this->Html->link(
                 <p>
                     <small>
                         <?= ($t == 0) ? $this->DT->t('block.progress.notasks.text', array('action'=>'open')) : '' ?>
-                        <?= ($o > 0) ? $this->Bootstrap->badge($o, 'warning').$this->DT->t('block.progress.open.text', array('action'=>'open')) : '' ?>
-                        <?= ($i > 0) ? $this->Bootstrap->badge($i, 'info').$this->DT->t('block.progress.inprogress.text', array('action'=>'open')) : '' ?>
-                        <?= ($r > 0) ? $this->Bootstrap->badge($r).$this->DT->t('block.progress.resolved.text', array('action'=>'open')) : '' ?>
                         <?= ($c > 0) ? $this->Bootstrap->badge($c, 'success').$this->DT->t('block.progress.closed.text', array('action'=>'open')) : '' ?>
+                        <?= ($r > 0) ? $this->Bootstrap->badge($r).$this->DT->t('block.progress.resolved.text', array('action'=>'open')) : '' ?>
+                        <?= ($i > 0) ? $this->Bootstrap->badge($i, 'info').$this->DT->t('block.progress.inprogress.text', array('action'=>'open')) : '' ?>
+                        <?= ($o > 0) ? $this->Bootstrap->badge($o, 'warning').$this->DT->t('block.progress.open.text', array('action'=>'open')) : '' ?>
                     </small>
                 </p>
                 <div class="progress progress-striped">
-                    <div class="bar bar-warning" style="width: <?= $percent_o ?>%;"></div>
-                    <div class="bar bar-info" style="width: <?= $percent_i ?>%;"></div>
-                    <div class="bar" style="width: <?= $percent_r ?>%;"></div>
                     <div class="bar bar-success" style="width: <?= $percent_c ?>%;"></div>
+                    <div class="bar" style="width: <?= $percent_r ?>%;"></div>
+                    <div class="bar bar-info" style="width: <?= $percent_i ?>%;"></div>
+                    <div class="bar bar-warning" style="width: <?= $percent_o ?>%;"></div>
                 </div>
             </div>
         </div>
 
         <hr>
         <p><?= $this->DT->parse($milestone['Milestone']['description']) ?></p>
-
+        </div>
     </div>
 </div>

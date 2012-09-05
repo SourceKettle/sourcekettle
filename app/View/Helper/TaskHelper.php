@@ -66,7 +66,8 @@ class TaskHelper extends AppHelper {
             3 => 'info',
             4 => 'danger',
         );
-        return $this->Bootstrap->button($text[$id], array('class' => 'btn-mini disabled btn-'.$colour[$id]));
+        //return $this->Bootstrap->button($text[$id], array('class' => 'btn-mini disabled btn-'.$colour[$id]));
+        return $text[$id];
     }
 
     /**

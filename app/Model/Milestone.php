@@ -138,9 +138,30 @@ class Milestone extends AppModel {
                 'conditions' => array(
                     'task_status_id ' => $status,
                     'milestone_id =' => $id
-                )
+                ),
+                'order' => 'task_priority_id DESC'
             )
         );
         return $tasks;
+    }
+
+    public function getOpenMilestones() {
+        $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
+        return array_diff($list_of_milestones, $this->getClosedMilestones());
+    }
+
+    public function getClosedMilestones() {
+        $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
+        $open_task_milestones = array_values($this->Task->find(
+            'list',
+            array(
+                'group' => array('milestone_id'),
+                'fields' => array('milestone_id'),
+                 'conditions' => array(
+                    'milestone_id NOT' => NULL,
+                    'task_status_id <' => 4)
+            )
+        ));
+        return array_diff($list_of_milestones, $open_task_milestones);
     }
 }

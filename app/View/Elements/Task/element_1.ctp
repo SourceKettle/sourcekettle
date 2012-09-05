@@ -13,37 +13,22 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-$priority = array(
-    'blocker' => 'important',
-    'urgent' => 'warning',
-    'major' => 'info',
-    'minor' => 'inverse'
-);
-$type = array(
-    'bug' => '',
-    'duplicate' => '',
-    'enhancement' => '',
-    'invalid' => '',
-    'question' => '',
-    'wontfix' => ''
-);
+$url = array('project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
 ?>
-<div draggable="true">
+<div onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="true">
+    <div class="priority_bar_small priority_bar_<?= $task['TaskPriority']['name'] ?>"></div>
     <div class="task">
-        <span class="pull-right">
-            <?= $this->Bootstrap->label(ucfirst($task['TaskPriority']['name']), $priority[$task['TaskPriority']['name']]) ?>
-        </span>
         <div class="well">
             <div class="row-fluid">
-                <div><?= $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm'), array('alt' => $task['Assignee']['name'], 'class' => 'span2')) ?>
-                <div class="span8">
-                    <h5>
-                        <small><?= $this->Html->link($task['Task']['id'], array('project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id'])) ?></small>
-                        -
-                        <?= $this->Html->link($task['Task']['subject'], array('project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id'])) ?>
-                    </h5>
-                </div>
+                <div>
+                    <div class="span10">
+                        <p>
+                            <?= $this->Html->link('<strong>#'.$task['Task']['id'].'</strong> - '.$task['Task']['subject'], $url, array('escape' => false)) ?>
+                        </p>
+                    </div>
+                    <div class="span2">
+                        <?= $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm'), array('alt' => $task['Assignee']['name'])) ?>
+                    </div>
                 </div>
             </div>
         </div>

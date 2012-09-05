@@ -11,40 +11,79 @@
 * @since         DevTrack v 0.1
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
-
 .col hr {
-    margin: 0px 0px 20px 5px;
+	margin:0 0 20px 5px;
 }
 
 .col h2 {
-    margin: 0;
-    text-align: center;
-}
-
-.task > .well {
-    background: lightgrey;
-    padding: 10px;
-    height: 35px;
+	margin:0;
+	text-align:center;
 }
 
 .invisiblewell {
-    height: 77px; /* 35px tall + 2px border + 20px bottom-margin + 20px padding */
+	height:77px;
+/* 35px tall + 2px border + 20px bottom-margin + 20px padding */
 }
 
-.empty h3, .empty h4 {
-    text-align: center;
+.empty h3,.empty h4 {
+	text-align:center;
+}
+
+.task {
+    cursor: pointer;
+}
+
+.task > .well {
+	padding:10px;
+	height:35px;
+	background:#d3d3d3;
 }
 
 .task img {
-    height: auto;
+	width:auto;
+	height:100%;
 }
 
-.task h5 {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-height: 40px;
+.task p {
+	overflow:hidden;
+	margin-top:-2px;
+	margin-bottom:0;
+	padding-left: 5px;
+	max-height:40px;
+	text-overflow:ellipsis;
 }
 
-.task h5 > a {
-    color: #333;
+.task p > a {
+	color:#333;
+}
+
+.task p > a:hover {
+	text-decoration:none;
+}
+
+.priority_bar_small {
+	float:left;
+	width:7px;
+	height:55px;
+	border:1px solid #E3E3E3;
+	border-right:0;
+	-webkit-border-radius:4px 0 0 4px;
+	-moz-border-radius:4px 0 0 4px;
+	border-radius:4px 0 0 4px;
+}
+
+.priority_bar_blocker {
+	background-color:#B94A48;
+}
+
+.priority_bar_urgent {
+	background-color:#F89406;
+}
+
+.priority_bar_major {
+	background-color:#3A87AD;
+}
+
+.priority_bar_minor {
+	background-color:#333;
 }

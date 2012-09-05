@@ -25,21 +25,13 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Topbar/milestone') ?>
+            <?= $this->element('Milestone/topbar_index') ?>
             <div class="span10">
-                <div class="row-fluid">
-
-
-                    <div class="span8">
-                        <?php
-                        foreach ($milestones as $milestone) {
-                            echo $this->element('Milestone/block', array('milestone' => $milestone));
-                        }
-                        ?>
-                    </div>
-
-
-                </div>
+                <?php
+                foreach ($milestones as $milestone) {
+                    echo $this->element('Milestone/block', array('milestone' => $milestone));
+                }
+                ?>
             </div>
         </div>
     </div>

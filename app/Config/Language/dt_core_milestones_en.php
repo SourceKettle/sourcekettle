@@ -27,6 +27,7 @@
 // APP/*/topbar
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.option1.text'] = "Open Milestones";
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.option2.text'] = "Closed Milestones";
+$config['dtcore']['pages']['milestones']['topbar']['en']['topbar.create.text'] = "Create Milestone";
 
 // APP/Milestones/open
 $config['dtcore']['pages']['milestones']['open']['en']['header.text'] = "Open Milestones";
@@ -38,3 +39,20 @@ $config['dtcore']['pages']['milestones']['open']['en']['block.progress.closed.te
 
 // APP/Milestones/closed
 $config['dtcore']['pages']['milestones']['closed']['en']['header.text'] = "Closed Milestones";
+
+
+//APP/Milestones/view
+$config['dtcore']['pages']['milestones']['view']['en']['header.text'] = "Milestone board";
+
+$config['dtcore']['pages']['milestones']['view']['en']['column.backlog.title'] = "Backlog";
+$config['dtcore']['pages']['milestones']['view']['en']['column.backlog.empty'] = "Woo! Empty Backlog!";
+
+$config['dtcore']['pages']['milestones']['view']['en']['column.inprogress.title'] = "In Progress";
+$config['dtcore']['pages']['milestones']['view']['en']['column.inprogress.empty'] = "Wait, there must be something to do?";
+
+$config['dtcore']['pages']['milestones']['view']['en']['column.completed.title'] = "Completed";
+$config['dtcore']['pages']['milestones']['view']['en']['column.completed.empty'] = "Nothing to see here!";
+
+$config['dtcore']['pages']['milestones']['view']['en']['column.icebox.title'] = "Ice Box";
+$config['dtcore']['pages']['milestones']['view']['en']['column.icebox.empty.line1'] = "It's pretty warm in here!";
+$config['dtcore']['pages']['milestones']['view']['en']['column.icebox.empty.line2'] = "Add some tasks to the current milestone!";

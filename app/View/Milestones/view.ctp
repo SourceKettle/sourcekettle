@@ -1,32 +1,92 @@
 <?php
 /**
  *
- * View class for APP/milestones/view for the DevTrack system
- * Allows a user to view a milestone for a project
+ * View class for APP/tasks/sprint for the DevTrack system
+ * Shows a list of tasks for a project
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
- * @package       DevTrack.View.Milestones
+ * @package       DevTrack.View.Tasks
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header("A milestone for the Project <small>Shaken, not stirred</small>");?>
+$this->Html->css('tasks.index', null, array ('inline' => false));
+?>
 
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
-        <div class="span10">
-            <div class='hero-unit'>
-                <h1>There be nothing here yet</h1>
-                <p>
-                   Oops :/
-                </p>
+    <div class="span10">
+        <div class="row">
+            <?= $this->element('Milestone/topbar_view', array('id' => $milestone['Milestone']['id'])) ?>
+            <div class="span10">
+                <div class="row-fluid">
+
+                    <div class="span4">
+                        <div class="well col">
+                            <h2><?= $this->DT->t('column.backlog.title') ?></h2>
+                            <hr />
+                            <?= $this->element('Task/Board/'.((!empty($backlog))?'full_column':'empty'),
+                                array('tasks' => $backlog, 'e' => $backlog_empty, 'width' => 1, 'c' => 'backlog')
+                            ) ?>
+                        </div>
+                    </div>
+
+                    <div class="span4">
+                        <div class="well col">
+                            <h2><?= $this->DT->t('column.inprogress.title') ?></h2>
+                            <hr />
+                            <?= $this->element('Task/Board/'.((!empty($inProgress))?'full_column':'empty'),
+                                array('tasks' => $inProgress, 'e' => $inProgress_empty, 'width' => 1, 'c' => 'inprogress')
+                            ) ?>
+                        </div>
+                    </div>
+
+                    <div class="span4">
+                        <div class="well col">
+                            <h2><?= $this->DT->t('column.completed.title') ?></h2>
+                            <hr />
+                            <?= $this->element('Task/Board/'.((!empty($completed))?'full_column':'empty'),
+                                array('tasks' => $completed, 'e' => $completed_empty, 'width' => 1, 'c' => 'completed')
+                            ) ?>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="well col">
+                            <h2><?= $this->DT->t('column.icebox.title') ?></h2>
+                            <hr />
+                            <? if (!empty($iceBox)) : ?>
+                                <? for ($x = 0; $x < sizeof($iceBox); $x = $x + 3) : ?>
+                                    <div class="row-fluid">
+                                        <div class="span4">
+                                            <?= $this->element('Task/element_1', array('task' => $iceBox[$x])) ?>
+                                        </div>
+                                        <div class="span4">
+                                            <?= (isset($iceBox[$x + 1])) ? $this->element('Task/element_1', array('task' => $iceBox[$x + 1])) : '' ?>
+                                        </div>
+                                        <div class="span4">
+                                            <?= (isset($iceBox[$x + 2])) ? $this->element('Task/element_1', array('task' => $iceBox[$x + 2])) : '' ?>
+                                        </div>
+                                    </div>
+                                <? endfor; ?>
+                            <? else: ?>
+                                <?= $this->element('Task/Board/empty_icebox') ?>
+                            <? endif; ?>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

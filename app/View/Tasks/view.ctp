@@ -53,30 +53,8 @@ echo $this->element('Task/modal_assign');
     <div class="row">
     <div class="span10">
         <div class="row">
-            <?= $this->element('Topbar/task') ?>
+            <?= $this->element('Task/topbar_view', array('id' => $task['Task']['id'])) ?>
             <div class="span10">
-
-                <div class="row-fluid">
-
-                    <div class="span1"></div>
-                    <div class="span10">
-                        <div class="btn-toolbar">
-                            <div class="btn-group">
-                                <?= $this->Bootstrap->button($this->DT->t('bar.task').$task['Task']['id'], array("class" => "disabled")) ?>
-                                <?= $this->Bootstrap->button_link($this->DT->t('bar.edit'), array('project' => $project['Project']['name'], 'action' => 'edit', $task['Task']['id'])) ?>
-                                <?= $this->Bootstrap->button_link($this->DT->t('bar.assign'), '#assignModal', array('data-toggle' => 'modal')) ?>
-                                <?= $this->Bootstrap->button_link($this->DT->t('bar.resolve'), '#resolveModal', array('data-toggle' => 'modal')) ?>
-                                <? if ($task['Task']['task_status_id'] != 4) : ?>
-                                    <?= $this->Bootstrap->button_link($this->DT->t('bar.close'), '#closeModal', array('data-toggle' => 'modal', "style" => "success")) ?>
-                                <? else : ?>
-                                    <?= $this->Bootstrap->button_form($this->DT->t('bar.open'), array('project' => $project['Project']['name'], 'action' => 'opentask', $task['Task']['id']), array("style" => "info")) ?>
-                                <? endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="span1"></div>
-
-                </div>
 
                 <div class="row-fluid">
 
@@ -135,7 +113,7 @@ echo $this->element('Task/modal_assign');
                                         <dd>
                                         <?= (isset($task['Milestone']['subject'])) ? $this->Html->link(
                                                 $task['Milestone']['subject'],
-                                                array('controller' => 'milestones', 'action' => 'view', $task['Milestone']['id'])
+                                                array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
                                             )  : 'n/a' ?>
                                         </dd>
                                     </dl>

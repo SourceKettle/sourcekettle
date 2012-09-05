@@ -37,11 +37,14 @@ class MilestonesController extends AppProjectController {
 
         $milestones = array();
         // Iterate over all milestones
-        foreach ($this->Milestone->find('all') as $x => $milestone) {
-            $o_tasks = $this->Milestone->openTasksForMilestone($milestone['Milestone']['id']);
-            $i_tasks = $this->Milestone->inProgressTasksForMilestone($milestone['Milestone']['id']);
-            $r_tasks = $this->Milestone->resolvedTasksForMilestone($milestone['Milestone']['id']);
-            $c_tasks = $this->Milestone->closedTasksForMilestone($milestone['Milestone']['id']);
+        foreach ($this->Milestone->getOpenMilestones() as $x) {
+            $o_tasks = $this->Milestone->openTasksForMilestone($x);
+            $i_tasks = $this->Milestone->inProgressTasksForMilestone($x);
+            $r_tasks = $this->Milestone->resolvedTasksForMilestone($x);
+            $c_tasks = $this->Milestone->closedTasksForMilestone($x);
+
+            $this->Milestone->id = $x;
+            $milestone = $this->Milestone->read();
 
             $milestone['Milestone']['c_tasks'] = sizeof($c_tasks);
             $milestone['Milestone']['i_tasks'] = sizeof($i_tasks);
@@ -72,11 +75,14 @@ class MilestonesController extends AppProjectController {
 
         $milestones = array();
         // Iterate over all milestones
-        foreach ($this->Milestone->find('all') as $x => $milestone) {
-            $o_tasks = $this->Milestone->openTasksForMilestone($milestone['Milestone']['id']);
-            $i_tasks = $this->Milestone->inProgressTasksForMilestone($milestone['Milestone']['id']);
-            $r_tasks = $this->Milestone->resolvedTasksForMilestone($milestone['Milestone']['id']);
-            $c_tasks = $this->Milestone->closedTasksForMilestone($milestone['Milestone']['id']);
+        foreach ($this->Milestone->getClosedMilestones() as $x) {
+            $o_tasks = $this->Milestone->openTasksForMilestone($x);
+            $i_tasks = $this->Milestone->inProgressTasksForMilestone($x);
+            $r_tasks = $this->Milestone->resolvedTasksForMilestone($x);
+            $c_tasks = $this->Milestone->closedTasksForMilestone($x);
+
+            $this->Milestone->id = $x;
+            $milestone = $this->Milestone->read();
 
             $milestone['Milestone']['c_tasks'] = sizeof($c_tasks);
             $milestone['Milestone']['i_tasks'] = sizeof($i_tasks);
@@ -98,7 +104,6 @@ class MilestonesController extends AppProjectController {
     /**
      * view method
      *
-     * @param string $id
      * @return void
      */
     public function view($project = null, $id = null) {
@@ -108,7 +113,34 @@ class MilestonesController extends AppProjectController {
         if (!$this->Milestone->exists()) {
             throw new NotFoundException(__('Invalid milestone'));
         }
-        $this->set('milestone', $this->Milestone->read(null, $id));
+        $backlog = $this->Milestone->openTasksForMilestone($id);
+        $inProgress = $this->Milestone->inProgressTasksForMilestone($id);
+        $resolved = $this->Milestone->resolvedTasksForMilestone($id);
+        $completed = $this->Milestone->closedTasksForMilestone($id);
+
+        $iceBox = $this->Milestone->Task->find('all', array('conditions' => array('milestone_id' => NULL)));
+
+        // Theres only 3 cols
+        $completed = array_merge($completed, $resolved);
+
+        // Sort function for tasks
+        $cmp = function($a, $b) {
+            if (strtotime($a['Task']['task_priority_id']) == strtotime($b['Task']['task_priority_id'])) return 0;
+            if (strtotime($a['Task']['task_priority_id']) > strtotime($b['Task']['task_priority_id'])) return 1;
+            return -1;
+        };
+
+        usort($completed, $cmp);
+
+        // Final value is min size of the board
+        $max = max(sizeof($backlog), sizeof($inProgress), sizeof($completed), 3);
+
+        $this->set('milestone', $this->Milestone->read());
+
+        $this->set('backlog_empty', $max - sizeof($backlog));
+        $this->set('inProgress_empty', $max - sizeof($inProgress));
+        $this->set('completed_empty', $max - sizeof($completed));
+        $this->set(compact('backlog', 'inProgress', 'completed', 'iceBox'));
     }
 
     /**

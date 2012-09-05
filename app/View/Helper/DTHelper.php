@@ -57,10 +57,11 @@ class DTHelper extends AppHelper {
      * @return void
      */
     public function pHeader($overrides = array()) {
-        $lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->_lang;
+        $lang = (isset($overrides['lang'])) ? $overrides['lang'] : $this->_lang;
+        $text = (isset($overrides['text'])) ? $overrides['text'] : $this->t('header.text', $overrides);
 
         $r_before = array("{project}", "{text}");
-        $r_after  = array($this->request['project'], $this->t('header.text', $overrides));
+        $r_after  = array($this->request['project'], $text);
 
         $h = str_replace($r_before, $r_after, $this->_config['common']['header']['project']['format']);
 

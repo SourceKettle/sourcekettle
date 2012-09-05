@@ -26,9 +26,7 @@
  */
 // APP/*/topbar
 $config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option1.text'] = "Classic Board";
-$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option2.text'] = "Sprint Board";
-$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option3.text'] = "Create Task";
-$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option4.text'] = "Milestones";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.create.text'] = "Create Task";
 
 // APP/Tasks/index
 $config['dtcore']['pages']['tasks']['index']['en']['header.text'] = "Tasks for the Project";
@@ -37,22 +35,6 @@ $config['dtcore']['pages']['tasks']['index']['en']['column.tasks.title'] = "Task
 $config['dtcore']['pages']['tasks']['index']['en']['column.tasks.empty'] = "There are currently no tasks";
 
 $config['dtcore']['pages']['tasks']['index']['en']['column.history.title'] = "Recent History";
-
-// APP/Tasks/sprint
-$config['dtcore']['pages']['tasks']['sprint']['en']['header.text'] = "Sprint board for the Project";
-
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.backlog.title'] = "Backlog";
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.backlog.empty'] = "Woo! Empty Backlog!";
-
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.inprogress.title'] = "In Progress";
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.inprogress.empty'] = "Wait, there must be something to do?";
-
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.completed.title'] = "Completed";
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.completed.empty'] = "Nothing to see here!";
-
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.icebox.title'] = "Ice Box";
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.icebox.empty.line1'] = "It's pretty warm in here!";
-$config['dtcore']['pages']['tasks']['sprint']['en']['column.icebox.empty.line2'] = "Add some tasks to the current milestone!";
 
 // APP/Tasks/add
 $config['dtcore']['pages']['tasks']['add']['en']['header.text'] = "Add a new Task for the Project";
@@ -73,6 +55,13 @@ $config['dtcore']['pages']['tasks']['add']['en']['modal.form.close'] = "Close";
 
 // APP/Tasks/edit
 $config['dtcore']['pages']['tasks']['edit']['en']['header.text'] = "Edit a task for the Project";
+
+$config['dtcore']['pages']['tasks']['edit']['en']['bar.task'] = "Task #";
+$config['dtcore']['pages']['tasks']['edit']['en']['bar.view'] = "View";
+$config['dtcore']['pages']['tasks']['edit']['en']['bar.assign'] = "Assign";
+$config['dtcore']['pages']['tasks']['edit']['en']['bar.resolve'] = "Resolve";
+$config['dtcore']['pages']['tasks']['edit']['en']['bar.close'] = "Close task";
+$config['dtcore']['pages']['tasks']['edit']['en']['bar.open'] = "Re-open task";
 
 $config['dtcore']['pages']['tasks']['edit']['en']['form.subject.label'] = "Subject";
 $config['dtcore']['pages']['tasks']['edit']['en']['form.subject.placeholder'] = "Quick, yet informative, description";
