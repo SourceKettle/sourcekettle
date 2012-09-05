@@ -28,8 +28,12 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
             <?= $this->element('Milestone/topbar_index') ?>
             <div class="span10">
                 <?php
-                foreach ($milestones as $milestone) {
-                    echo $this->element('Milestone/block', array('milestone' => $milestone));
+                if (empty($milestones)) {
+                    echo '<div class="span10" style="text-align:center"><h1>No '.$this->DT->t('header.text').'</h1></div>';
+                } else {
+                    foreach ($milestones as $milestone) {
+                        echo $this->element('Milestone/block', array('milestone' => $milestone));
+                    }
                 }
                 ?>
             </div>
