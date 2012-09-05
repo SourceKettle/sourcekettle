@@ -33,6 +33,7 @@ if ($task['Task']['task_status_id'] != 4) {
  }
 
  $options = array(
+    'back' => $previousPage,
     'left' => array(
         array(
             array(
@@ -57,15 +58,6 @@ if ($task['Task']['task_status_id'] != 4) {
         ),
     ),
     'right' => array(
-        array(
-            array(
-                'text' => $this->DT->t('topbar.option1.text', array('action' => 'topbar')),
-                'url' => array(
-                    'action' => '.',
-                    'controller' => 'tasks',
-                ),
-            ),
-        ),
         array(
             array(
                 'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),

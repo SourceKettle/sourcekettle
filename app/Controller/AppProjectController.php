@@ -42,6 +42,8 @@ class AppProjectController extends AppController {
         $this->set('project', $project);
         $this->set('isAdmin', $__model->isAdmin());
 
+        $this->set('previousPage', $this->referer(array('action' => 'index', 'project' => $project['Project']['name']), true));
+
         // Lock out those who arnt allowed to write
         if ($needWrite && !$__model->hasWrite($this->Auth->user('id')) ) {
             throw new ForbiddenException(__('You do not have permissions to write to this project'));

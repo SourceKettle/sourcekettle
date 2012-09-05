@@ -15,6 +15,7 @@
  $pl = 'Milestone #'.$id;
 
  $options = array(
+    'back' => $previousPage,
     'left' => array(
         array(
             array(
@@ -37,22 +38,6 @@
         ),
     ),
     'right' => array(
-        array(
-            array(
-                'text' => $this->DT->t('topbar.option1.text', array('action' => 'topbar')),
-                'url' => array(
-                    'action' => 'open',
-                    'controller' => 'milestones',
-                ),
-            ),
-            array(
-                'text' => $this->DT->t('topbar.option2.text', array('action' => 'topbar')),
-                'url' => array(
-                    'action' => 'closed',
-                    'controller' => 'milestones',
-                ),
-            ),
-        ),
         array(
             array(
                 'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),
