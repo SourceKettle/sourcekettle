@@ -51,15 +51,8 @@ class MilestonesController extends AppProjectController {
             $milestone['Milestone']['r_tasks'] = sizeof($r_tasks);
             $milestone['Milestone']['o_tasks'] = sizeof($o_tasks);
 
-            if (empty($o_tasks) && empty($c_tasks)) {
-                // Add if new
-                $milestones[$x] = $milestone;
-            } else if (empty($o_tasks) && empty($r_tasks) && empty($i_tasks) && !empty($c_tasks)) {
-                // Closed
-            } else {
-                // Add in progress
-                $milestones[$x] = $milestone;
-            }
+
+            $milestones[$x] = $milestone;
         }
         $this->set('milestones', $milestones);
         $this->render('open_closed');
@@ -92,10 +85,7 @@ class MilestonesController extends AppProjectController {
             $milestone['Milestone']['closed_tasks'] = sizeof($c_tasks);
             $milestone['Milestone']['open_tasks'] = sizeof($o_tasks);
 
-            if (empty($o_tasks) && empty($r_tasks) && empty($i_tasks) && !empty($c_tasks)) {
-                // Closed
-                $milestones[$x] = $milestone;
-            }
+            $milestones[$x] = $milestone;
         }
         $this->set('milestones', $milestones);
         $this->render('open_closed');
@@ -149,15 +139,18 @@ class MilestonesController extends AppProjectController {
      * @return void
      */
     public function add($project = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($project, true);
 
         if ($this->request->is('post')) {
             $this->Milestone->create();
+
+            $this->request->data['Milestone']['project_id'] = $project['Project']['id'];
+
             if ($this->Milestone->save($this->request->data)) {
-                $this->Session->setFlash(__('The milestone has been saved'));
-                $this->redirect(array('action' => 'index'));
+                $this->Session->setFlash(__('The milestone has been saved.'), 'default', array(), 'success');
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The milestone could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The milestone could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         }
         $projects = $this->Milestone->Project->find('list');
@@ -171,7 +164,7 @@ class MilestonesController extends AppProjectController {
      * @return void
      */
     public function edit($project = null, $id = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($project, true);
 
         $this->Milestone->id = $id;
         if (!$this->Milestone->exists()) {

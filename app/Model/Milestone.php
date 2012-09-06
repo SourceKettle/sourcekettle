@@ -46,6 +46,10 @@ class Milestone extends AppModel {
             'notempty' => array(
                 'rule' => array('notempty'),
             ),
+            'maxLength' => array(
+                'rule' => array('maxLength', 50),
+                'message' => 'Short names must be less than 50 characters long',
+            ),
         ),
     );
 
