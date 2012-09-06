@@ -19,9 +19,9 @@
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.edit.text', array('action' => 'topbar')),
+                'text' => $this->DT->t('topbar.view.text', array('action' => 'topbar')),
                 'url' => array(
-                    'action' => 'edit',
+                    'action' => 'view',
                     'controller' => 'milestones',
                     $id
                 ),

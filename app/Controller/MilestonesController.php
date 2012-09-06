@@ -153,8 +153,6 @@ class MilestonesController extends AppProjectController {
                 $this->Session->setFlash(__('The milestone could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         }
-        $projects = $this->Milestone->Project->find('list');
-        $this->set(compact('projects'));
     }
 
     /**
@@ -171,17 +169,18 @@ class MilestonesController extends AppProjectController {
             throw new NotFoundException(__('Invalid milestone'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
+
+            $this->request->data['Milestone']['project_id'] = $project['Project']['id'];
+
             if ($this->Milestone->save($this->request->data)) {
-                $this->Session->setFlash(__('The milestone has been saved'));
-                $this->redirect(array('action' => 'index'));
+                $this->Session->setFlash(__('The milestone has been saved.'), 'default', array(), 'success');
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The milestone could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The milestone could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
             $this->request->data = $this->Milestone->read(null, $id);
         }
-        $projects = $this->Milestone->Project->find('list');
-        $this->set(compact('projects'));
     }
 
     /**
@@ -193,7 +192,7 @@ class MilestonesController extends AppProjectController {
     public function delete($project = null, $id = null) {
         $project = $this->_projectCheck($project);
 
-        if (!$this->request->is('post')) {
+        if (!$this->request->is('post') && !$this->request->is('get')) {
             throw new MethodNotAllowedException();
         }
         $this->Milestone->id = $id;
@@ -201,10 +200,10 @@ class MilestonesController extends AppProjectController {
             throw new NotFoundException(__('Invalid milestone'));
         }
         if ($this->Milestone->delete()) {
-            $this->Session->setFlash(__('Milestone deleted'));
-            $this->redirect(array('action' => 'index'));
+            $this->Session->setFlash(__('The milestone has been deleted.'), 'default', array(), 'success');
+            $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
         }
-        $this->Session->setFlash(__('Milestone was not deleted'));
-        $this->redirect(array('action' => 'index'));
+        $this->Session->setFlash(__('The milestone could not be deleted. Please, try again.'), 'default', array(), 'error');
+        $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
     }
 }

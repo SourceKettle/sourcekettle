@@ -13,21 +13,27 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->Html->script('bootstrap-datepicker', array('block' => 'scriptBottom'));
+$this->Html->scriptBlock("$('.dp1').datepicker()", array('inline' => false));
+$this->Html->css('datepicker', null, array ('inline' => false));
+$this->Html->css('milestones.index', null, array ('inline' => false));
 
-echo $this->Bootstrap->page_header("Edit a Milestone for the Project <small>You talking to me?!</small>");?>
+?>
 
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
-        <div class="span10">
-            <div class='hero-unit'>
-                <h1>There be nothing here yet</h1>
-                <p>
-                   Oops :/
-                </p>
+    <div class="span10">
+        <div class="row">
+            <?= $this->element('Milestone/topbar_edit', array('id' => $this->request->data['Milestone']['id'])) ?>
+            <div class="span10">
+
+                <?= $this->element('Milestone/add_edit') ?>
+
             </div>
         </div>
     </div>
 </div>
+

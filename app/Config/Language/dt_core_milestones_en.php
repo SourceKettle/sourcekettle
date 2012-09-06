@@ -28,6 +28,9 @@
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.option1.text'] = "Open Milestones";
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.option2.text'] = "Closed Milestones";
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.create.text'] = "Create Milestone";
+$config['dtcore']['pages']['milestones']['topbar']['en']['topbar.edit.text'] = "Edit";
+$config['dtcore']['pages']['milestones']['topbar']['en']['topbar.view.text'] = "View";
+$config['dtcore']['pages']['milestones']['topbar']['en']['topbar.delete.text'] = "Delete";
 
 // APP/Milestones/open
 $config['dtcore']['pages']['milestones']['open']['en']['header.text'] = "Open Milestones";
@@ -67,3 +70,14 @@ $config['dtcore']['pages']['milestones']['add']['en']['form.description.placehol
 $config['dtcore']['pages']['milestones']['add']['en']['form.due.label'] = "Completion target";
 $config['dtcore']['pages']['milestones']['add']['en']['form.due.help'] = "When the milstone should be complete.";
 $config['dtcore']['pages']['milestones']['add']['en']['form.submit'] = "Submit";
+
+//APP/Milestones/edit
+$config['dtcore']['pages']['milestones']['edit']['en']['header.text'] = "Edit a Milestone";
+
+$config['dtcore']['pages']['milestones']['edit']['en']['form.subject.label'] = "Short name";
+$config['dtcore']['pages']['milestones']['edit']['en']['form.subject.placeholder'] = "e.g. Sprint 1";
+$config['dtcore']['pages']['milestones']['edit']['en']['form.description.label'] = "Description";
+$config['dtcore']['pages']['milestones']['edit']['en']['form.description.placeholder'] = "e.g. Overall goals of the milestone";
+$config['dtcore']['pages']['milestones']['edit']['en']['form.due.label'] = "Completion target";
+$config['dtcore']['pages']['milestones']['edit']['en']['form.due.help'] = "When the milstone should be complete.";
+$config['dtcore']['pages']['milestones']['edit']['en']['form.submit'] = "Submit";
