@@ -46,10 +46,13 @@ $config['dtcore']['pages']['all']['history']['en']['log.source.created.context']
 $config['dtcore']['pages']['all']['history']['en']['log.source.created'] = "{actioner} commited code to the project &rarr; {subject}";
 
 $config['dtcore']['pages']['all']['history']['en']['log.task.updated.context'] = "{actioner} updated task {subject} in {project}";
+$config['dtcore']['pages']['all']['history']['en']['log.task.updated.short'] = "{actioner} updated task {subject}";
 $config['dtcore']['pages']['all']['history']['en']['log.task.updated'] = "{actioner} updated task {subject} &rarr; '{field}' was modified";
 
 $config['dtcore']['pages']['all']['history']['en']['log.task.created.context'] = "{actioner} added a task ({subject}) to {project}";
+$config['dtcore']['pages']['all']['history']['en']['log.task.created.short'] = "{actioner} added task #{subject}";
 $config['dtcore']['pages']['all']['history']['en']['log.task.created'] = "{actioner} added a task ({subject}) to the project";
 
 $config['dtcore']['pages']['all']['history']['en']['log.task.deleted.context'] = "{actioner} deleted task {subject} from {project}";
+$config['dtcore']['pages']['all']['history']['en']['log.task.deleted.short'] = "{actioner} deleted task #{subject}";
 $config['dtcore']['pages']['all']['history']['en']['log.task.deleted'] = "{actioner} deleted task {subject} from the project";

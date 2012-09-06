@@ -49,6 +49,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                         <div class="well col">
                             <h2><?= $this->DT->t('column.history.title') ?></h2>
                             <hr />
+                            <?= $this->element('history', array('events' => $events, 'short' => 1)) ?>
                         </div>
                     </div>
 

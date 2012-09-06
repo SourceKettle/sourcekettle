@@ -61,10 +61,12 @@ class TasksController extends AppProjectController {
         // Final value is min size of the board
         $max = max(sizeof($user), sizeof($team), sizeof($others), 5);
 
+        $events = $this->Task->fetchHistory($project['Project']['id'], round($max * 1.4));
+
         $this->set('user_empty', $max - sizeof($user));
         $this->set('team_empty', $max - sizeof($team));
         $this->set('others_empty', $max - sizeof($others));
-        $this->set(compact('user', 'team',  'others'));
+        $this->set(compact('user', 'team', 'others', 'events'));
     }
 
     /**
