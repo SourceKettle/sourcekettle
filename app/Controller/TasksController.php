@@ -191,12 +191,7 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function add($project = null) {
-        $project = $this->_projectCheck($project);
-
-        // Lock out those who arnt allowed to write
-        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) {
-            throw new ForbiddenException(__('You do not have permissions to write to this project'));
-        }
+        $project = $this->_projectCheck($project, true);
 
         if ($this->request->is('ajax')) {
             // Enable once we've figured out how to do two Ajax submit buttons
@@ -263,16 +258,11 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function edit($project = null, $id = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($project, true);
 
         $this->Task->id = $id;
         if (!$this->Task->exists()) {
             throw new NotFoundException(__('Invalid task'));
-        }
-
-        // Lock out those who arnt allowed to write
-        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) {
-            throw new ForbiddenException(__('You do not have permissions to write to this project'));
         }
 
         if ($this->request->is('post') || $this->request->is('put')) {
@@ -314,7 +304,7 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function delete($project = null, $id = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($project, true);
 
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
