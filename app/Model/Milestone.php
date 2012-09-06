@@ -79,6 +79,22 @@ class Milestone extends AppModel {
     );
 
     /**
+     * afterDelete function.
+     * Dis-associate all of the incomplete tasks and delete the done ones
+     *
+     * @access public
+     * @return void
+     */
+    public function afterDelete() {
+        foreach ($this->Task->find('all', array('conditions' => array('milestone_id' => $this->id, 'task_status_id <' => 3))) as $task) {
+            $this->Task->id = $task['Task']['id'];
+            $this->Task->set('milestone_id', null);
+            $this->Task->save();
+        }
+        $this->Task->deleteAll(array('milestone_id' => $this->id), false);
+    }
+
+    /**
      * openTasksForMilestone function.
      *
      * @access public
