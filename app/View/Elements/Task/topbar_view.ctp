@@ -50,6 +50,22 @@ if ($task['Task']['task_status_id'] != 4) {
                 'props' => array('data-toggle' => 'modal'),
             ),
             array(
+                'text' => 'Start progress',
+                'url' => array(
+                    'action' => 'starttask',
+                    'controller' => 'tasks',
+                    $id
+                ),
+            ),
+            array(
+                'text' => 'Stop progress',
+                'url' => array(
+                    'action' => 'stoptask',
+                    'controller' => 'tasks',
+                    $id
+                ),
+            ),
+            array(
                 'text' => $this->DT->t('bar.resolve'),
                 'url' => '#resolveModal',
                 'props' => array('data-toggle' => 'modal'),

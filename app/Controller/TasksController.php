@@ -322,6 +322,66 @@ class TasksController extends AppProjectController {
     }
 
     /**
+     * starttask function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function starttask($project = null, $id = null) {
+        $this->Task->id = $id;
+        if (!$this->Task->exists()) {
+            throw new NotFoundException(__('Invalid task'));
+        }
+
+        // check assigned
+        if (!$this->Task->isAssignee()) {
+            $this->Session->setFlash(__('You can not start work on a task not assigned to you.'), 'default', array(), 'error');
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
+
+        //check open
+        if (!$this->Task->isOpen()) {
+            $this->Session->setFlash(__('You can not start work on a task that is not open.'), 'default', array(), 'error');
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
+
+        $this->_update_task_status($project, $id, 2);
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
+    /**
+     * stoptask function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function stoptask($project = null, $id = null) {
+        $this->Task->id = $id;
+        if (!$this->Task->exists()) {
+            throw new NotFoundException(__('Invalid task'));
+        }
+
+        // check assigned
+        if (!$this->Task->isAssignee()) {
+            $this->Session->setFlash(__('You can not stop work on a task not assigned to you.'), 'default', array(), 'error');
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
+
+        //check inProgress
+        if (!$this->Task->isInProgress()) {
+            $this->Session->setFlash(__('You can not stop work on a task that is not in progress.'), 'default', array(), 'error');
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
+
+        $this->_update_task_status($project, $id, 1);
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
+    /**
      * opentask function.
      *
      * @access public
@@ -375,7 +435,7 @@ class TasksController extends AppProjectController {
 
         $this->Task->id = $id;
 
-        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+        //if (!$this->request->is('post')) throw new MethodNotAllowedException();
         if (!$this->Task->exists()) throw new NotFoundException(__('Invalid task'));
 
         $this->Task->set('task_status_id', $status);
