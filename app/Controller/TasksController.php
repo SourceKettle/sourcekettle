@@ -26,6 +26,20 @@ class TasksController extends AppProjectController {
     public $helpers = array('Time', 'Task');
 
     /**
+     * beforeFilter function.
+     *
+     * @access public
+     * @return void
+     */
+    public function beforeFilter() {
+        parent::beforeFilter();
+        $this->Auth->allow(
+            'api_all',
+            'api_view'
+        );
+    }
+
+    /**
      * index method
      *
      * @return void
@@ -448,5 +462,117 @@ class TasksController extends AppProjectController {
         }
         $this->Session->setFlash(__('The task status could not be updated. Please, try again.'), 'default', array(), 'error');
         return false;
+    }
+
+    /***************************************************
+    *                                                  *
+    *            API SECTION OF CONTROLLER             *
+    *             CAUTION: PUBLIC FACING               *
+    *                                                  *
+    ***************************************************/
+
+    /**
+     * api_view function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function api_view($id = null) {
+        $this->layout = 'ajax';
+
+        $this->Task->recursive = 0;
+
+        $data = array();
+
+        if ($id == null) {
+            $this->response->statusCode(400);
+            $data['error'] = 400;
+            $data['message'] = 'Bad request, no project id specified.';
+        }
+
+        if ($id == 'all') {
+            $this->api_all();
+            return;
+        }
+
+        if (is_numeric($id)) {
+            $this->Task->id = $id;
+
+            if (!$this->Task->exists()) {
+                $this->response->statusCode(404);
+                $data['error'] = 404;
+                $data['message'] = 'No task found of that ID.';
+                $data['id'] = $id;
+            } else {
+                $task = $this->Task->read();
+
+                $this->Task->Project->id = $task['Task']['project_id'];
+
+                $_part_of_project = $this->Task->Project->hasRead($this->Auth->user('id'));
+                $_public_project  = $this->Task->Project->field('public');
+                $_is_admin = ($this->_api_auth_level() == 1);
+
+                if ($_public_project || $_is_admin || $_part_of_project) {
+                    //task_type_id
+                    unset($task['Task']['task_type_id']);
+                    $task['Task']['type'] = $task['TaskType']['name'];
+                    //task_status_id
+                    unset($task['Task']['task_status_id']);
+                    $task['Task']['status'] = $task['TaskStatus']['name'];
+                    //task_priority_id
+                    unset($task['Task']['task_priority_id']);
+                    $task['Task']['priority'] = $task['TaskPriority']['name'];
+
+                    $data = $task['Task'];
+                } else {
+                    $data['error'] = 401;
+                    $data['message'] = 'Task found, but is not public.';
+                    $data['id'] = $id;
+                }
+            }
+        }
+
+        $this->set('data',$data);
+        $this->render('/Elements/json');
+    }
+
+    /**
+     * api_all function.
+     * ADMINS only
+     *
+     * @access public
+     * @return void
+     */
+    public function api_all() {
+        $this->layout = 'ajax';
+
+        $this->Task->recursive = 0;
+        $data = array();
+
+        switch ($this->_api_auth_level()) {
+            case 1:
+                foreach ($this->Task->find("all") as $task) {
+                    //task_type_id
+                    unset($task['Task']['task_type_id']);
+                    $task['Task']['type'] = $task['TaskType']['name'];
+                    //task_status_id
+                    unset($task['Task']['task_status_id']);
+                    $task['Task']['status'] = $task['TaskStatus']['name'];
+                    //task_priority_id
+                    unset($task['Task']['task_priority_id']);
+                    $task['Task']['priority'] = $task['TaskPriority']['name'];
+
+                    $data[] = $task['Task'];
+                }
+                break;
+            default:
+                $this->response->statusCode(403);
+                $data['error'] = 403;
+                $data['message'] = 'You are not authorised to access this.';
+        }
+
+        $this->set('data',$data);
+        $this->render('/Elements/json');
     }
 }
