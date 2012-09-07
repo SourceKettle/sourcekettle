@@ -27,6 +27,12 @@ class ProjectsController extends AppProjectController {
 
     public $uses = array('Project');
 
+    /**
+     * beforeFilter function.
+     *
+     * @access public
+     * @return void
+     */
     public function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow(
@@ -314,8 +320,8 @@ class ProjectsController extends AppProjectController {
                 // Repo Type
                 $project['Project']['repo_type'] = $this->Project->RepoType->field('name');
 
-                $_part_of_project = in_array($this->Auth->user('id'), $project['Project']['collaborators']);
-                $_public_project = $project['Project']['public'];
+                $_part_of_project = $this->Milestone->Project->hasRead($this->Auth->user('id'));
+                $_public_project  = $this->Milestone->Project->field('public');
                 $_is_admin = ($this->_api_auth_level() == 1);
 
                 if ($_public_project || $_part_of_project || $_is_admin) {
