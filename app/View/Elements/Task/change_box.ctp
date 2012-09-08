@@ -31,11 +31,9 @@
                 'assignee',
                 'Tasks \'Assignee\' changed',
                 "<h4 class='hr-h4'>Before</h4>
-                 <hr class='hr-popover'>
                  <p>${old}</p>
-
-                 <h4 class='hr-h4'>After</h4>
                  <hr class='hr-popover'>
+                 <h4 class='hr-h4'>After</h4>
                  <p>${new}</p>"
             );
             break;
