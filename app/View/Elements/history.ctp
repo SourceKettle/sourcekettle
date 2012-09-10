@@ -66,6 +66,7 @@ foreach ( $events as $event ) {
             $_dt_string .= 'updated';
     }
     $_dt_string .= ((isset($context_global)) ? '.context' : '');
+    $_dt_string .= ((isset($short)) ? '.short' : '');
 
     echo '<p>';
 

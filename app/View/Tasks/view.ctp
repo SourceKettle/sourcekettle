@@ -16,7 +16,7 @@
 
 $this->Html->css('tasks.view', null, array ('inline' => false));
 
-$edit_comment  = $this->Form->create('TaskCommentEdit', array('class' => 'form'));
+$edit_comment  = $this->Form->create('TaskCommentEdit');
 $edit_comment .= $this->Form->hidden('id');
 $edit_comment .= $this->Bootstrap->input("comment", array(
     "input" => $this->Form->textarea("comment", array("class" => "span12", "rows" => 5)),"label" => false)
@@ -40,6 +40,9 @@ $this->Html->scriptBlock("
     });
 ", array('inline' => false));
 
+echo $this->element('Task/modal_close');
+echo $this->element('Task/modal_assign');
+
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -50,28 +53,8 @@ $this->Html->scriptBlock("
     <div class="row">
     <div class="span10">
         <div class="row">
-            <?= $this->element('Topbar/task') ?>
+            <?= $this->element('Task/topbar_view', array('id' => $task['Task']['id'])) ?>
             <div class="span10">
-
-                <div class="row-fluid">
-
-                    <div class="span1"></div>
-                    <div class="span10">
-                        <div class="btn-toolbar">
-                            <div class="btn-group">
-                                <?= $this->Bootstrap->button($this->DT->t('bar.task').$task['Task']['id'], array("class" => "disabled")) ?>
-                                <?= $this->Bootstrap->button_link($this->DT->t('bar.edit'), array('project' => $project['Project']['name'], 'action' => 'edit', $task['Task']['id']), array("style" => "primary")) ?>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <?= $this->Bootstrap->button($this->DT->t('bar.assign')) ?>
-                                <?= $this->Bootstrap->button($this->DT->t('bar.selfassign')) ?>
-                                <?= $this->Bootstrap->button($this->DT->t('bar.close'), array("style" => "success")) ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="span1"></div>
-
-                </div>
 
                 <div class="row-fluid">
 
@@ -110,7 +93,53 @@ $this->Html->scriptBlock("
                             </h5>
                             <h3><?= $task['Task']['subject'] ?></h3>
                             <hr />
-                            <p><?= $task['Task']['description'] ?></p>
+
+                            <h3 id="section_details_toggle" class="section_title" data-toggle="collapse" data-target="#section_details"><?= $this->DT->t('details.title') ?></h3>
+                            <div id="section_details" class="collapse in">
+                                <div class="span12">
+                                    <dl class="dl-horizontal span6">
+                                        <dt><?= $this->DT->t('details.creator') ?>:</dt>
+                                        <dd>
+                                            <?= $this->Html->link(
+                                                $task['Owner']['name'],
+                                                array('controller' => 'users', 'action' => 'view', $task['Owner']['id'])
+                                            ) ?>
+                                        </dd>
+                                        <dt><?= $this->DT->t('details.type') ?>:</dt>
+                                        <dd><?= $this->Task->type($task['Task']['task_type_id']) ?></dd>
+                                        <dt><?= $this->DT->t('details.priority') ?>:</dt>
+                                        <dd><?= $this->Task->priority($task['Task']['task_priority_id']) ?></dd>
+                                        <dt><?= $this->DT->t('details.milestone') ?>:</dt>
+                                        <dd>
+                                        <?= (isset($task['Milestone']['subject'])) ? $this->Html->link(
+                                                $task['Milestone']['subject'],
+                                                array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
+                                            )  : 'n/a' ?>
+                                        </dd>
+                                    </dl>
+                                    <dl class="dl-horizontal span6">
+                                        <dt><?= $this->DT->t('details.assignee') ?>:</dt>
+                                        <dd>
+                                            <?= (isset($task['Assignee']['name'])) ? $this->Html->link(
+                                                $task['Assignee']['name'],
+                                                array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
+                                            )  : 'n/a' ?>
+                                        </dd>
+                                        <dt><?= $this->DT->t('details.status') ?>:</dt>
+                                        <dd><?= $this->Task->status($task['Task']['task_status_id']) ?></dd>
+
+                                        <dt><?= $this->DT->t('details.created') ?>:</dt>
+                                        <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>
+                                        <dt><?= $this->DT->t('details.updated') ?>:</dt>
+                                        <dd><?= $this->Time->timeAgoInWords($task['Task']['modified']) ?></dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <h3 id="section_description_toggle" class="section_title" data-toggle="collapse" data-target="#section_description"><?= $this->DT->t('description.title') ?></h3>
+                            <div id="section_description" class="collapse in">
+                                <p><?= $this->DT->parse($task['Task']['description']) ?></p>
+                            </div>
                         </div>
                     </div>
                     <div class="span1"></div>

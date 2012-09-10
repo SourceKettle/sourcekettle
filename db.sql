@@ -398,6 +398,7 @@ CREATE TABLE IF NOT EXISTS `milestones` (
   `project_id` int(10) NOT NULL,
   `subject` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `description` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `date` date NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)

@@ -22,9 +22,9 @@
  * @property Milestone $Milestone
  * @property TaskComment $TaskComment
  */
-App::uses('AppProjectModel', 'Model');
+App::uses('AppModel', 'Model');
 
-class Task extends AppProjectModel {
+class Task extends AppModel {
 
     /**
      * Display field
@@ -32,6 +32,8 @@ class Task extends AppProjectModel {
      * @var string
      */
     public $displayField = 'id';
+
+    public $actsAs = array('ProjectHistory');
 
     /**
      * Validation rules
@@ -139,6 +141,36 @@ class Task extends AppProjectModel {
             'dependent' => true,
         )
     );
+
+    /**
+     * isAssignee function.
+     *
+     * @access public
+     * @return void
+     */
+    public function isAssignee() {
+        return $this->_auth_user_id == $this->field('assignee_id');
+    }
+
+    /**
+     * isOpen function.
+     *
+     * @access public
+     * @return void
+     */
+    public function isOpen() {
+        return $this->field('task_status_id') == 1;
+    }
+
+    /**
+     * isInProgress function.
+     *
+     * @access public
+     * @return void
+     */
+    public function isInProgress() {
+        return $this->field('task_status_id') == 2;
+    }
 
     /**
      * @OVERRIDE

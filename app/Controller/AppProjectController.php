@@ -22,9 +22,12 @@ class AppProjectController extends AppController {
      * Space saver to ensure user can view content
      * Also sets commonly needed variables related to the project
      *
-     * @param $name string Project name
+     * @access protected
+     * @param mixed $name
+     * @param bool $needWrite (default: false)
+     * @return void
      */
-    protected function _projectCheck($name) {
+    protected function _projectCheck($name, $needWrite = false) {
         if ( $this->modelClass == "Project" ) {
             $__model = $this->Project;
         } else {
@@ -38,6 +41,13 @@ class AppProjectController extends AppController {
 
         $this->set('project', $project);
         $this->set('isAdmin', $__model->isAdmin());
+
+        $this->set('previousPage', $this->referer(array('action' => 'index', 'project' => $project['Project']['name']), true));
+
+        // Lock out those who arnt allowed to write
+        if ($needWrite && !$__model->hasWrite($this->Auth->user('id')) ) {
+            throw new ForbiddenException(__('You do not have permissions to write to this project'));
+        }
 
         return $project;
     }

@@ -113,7 +113,8 @@ class ProjectHistory extends AppModel {
         $search = array(
             'conditions' => array(),
             'limit' => $number+$offset,
-            'offset' => $offset
+            'offset' => $offset,
+            'order' => 'ProjectHistory.created DESC'
         );
 
         // Decant query values in

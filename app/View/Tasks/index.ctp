@@ -25,7 +25,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Topbar/task') ?>
+            <?= $this->element('Task/topbar_index') ?>
             <div class="span10">
                 <div class="row-fluid">
 
@@ -35,7 +35,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                             <h2><?= $this->DT->t('column.tasks.title') ?></h2>
                             <hr />
                             <?= $this->element('Task/Board/'.((!empty($user))?'full_column':'empty'),
-                                array('tasks' => $user, 'e' => $user_empty, 'width' => 2, 'c' => 'tasks')
+                                array('tasks' => $user, 'e' => $user_empty, 'width' => 1, 'c' => 'tasks')
                             ) ?>
                         </div>
                     </div>
@@ -49,6 +49,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                         <div class="well col">
                             <h2><?= $this->DT->t('column.history.title') ?></h2>
                             <hr />
+                            <?= $this->element('history', array('events' => $events, 'short' => 1)) ?>
                         </div>
                     </div>
 

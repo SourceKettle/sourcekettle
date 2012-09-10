@@ -1,6 +1,6 @@
 /**
 *
-* CSS for the view index page.
+* CSS for the milestone index page.
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
@@ -12,38 +12,19 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-.col hr {
-    margin: 0px 0px 20px 0px;
+hr {
+    margin-top: 0px;
+    margin-bottom: 5px;
 }
 
-.colchange hr {
-    margin: 0px 0px 0px 0px;
+.progress {
+    margin-bottom: 5px;
 }
 
-.col h3 {
-    margin: 0;
+.zero {
+    padding-left: 5px;
 }
 
-.well {
-    padding: 15px;
-}
-
-.thumbnail img {
-    height: auto;
-}
-
-.hr-popover {
-    margin: 0px 0px 3px 0px;
-}
-
-.hr-h4 {
-    margin-top: 3px;
-}
-
-form {
-    margin-bottom: 0px;
-}
-
-.section_title {
-    cursor: pointer;
+.close {
+    padding-left: 10px !important;
 }

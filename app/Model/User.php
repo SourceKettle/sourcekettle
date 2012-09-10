@@ -6,7 +6,7 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.Model
@@ -121,7 +121,7 @@ class User extends AppModel {
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
-        ), 
+        ),
         'ApiKey' => array(
             'className' => 'ApiKey',
             'foreignKey' => 'user_id',
@@ -134,7 +134,7 @@ class User extends AppModel {
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
-        ), 
+        ),
         'LostPasswordKey' => array(
             'className' => 'LostPasswordKey',
             'foreignKey' => 'user_id',
@@ -149,6 +149,16 @@ class User extends AppModel {
             'counterQuery' => ''
         )
     );
+
+    public function afterFind($results, $primary = false) {
+        if ($this->_is_api) {
+            foreach ($results as $x => $item) {
+                // A list of things that should not be available in the API
+                unset($results[$x]['User']['password']);
+            }
+        }
+        return $results;
+    }
 
     public function beforeSave($options = array()) {
         if (isset($this->data[$this->alias]['password'])) {

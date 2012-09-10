@@ -25,7 +25,7 @@ $this->Html->css('tasks.add', null, array ('inline' => false));
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Topbar/task') ?>
+            <?= $this->element('Task/topbar_edit', array('id' => $this->request->data['Task']['id'])) ?>
             <div class="span10">
                 <?= $this->Form->create('Task', array('class' => 'well form-horizontal')) ?>
                 <div class="row-fluid">

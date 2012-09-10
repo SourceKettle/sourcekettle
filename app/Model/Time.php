@@ -14,9 +14,9 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-App::uses('AppProjectModel', 'Model');
+App::uses('AppModel', 'Model');
 
-class Time extends AppProjectModel {
+class Time extends AppModel {
 
     /**
     * Display field
@@ -24,6 +24,8 @@ class Time extends AppProjectModel {
     * @var string
     */
     public $displayField = 'id';
+
+    public $actsAs = array('ProjectHistory');
 
     /**
      * Validation rules

@@ -46,6 +46,10 @@ class Milestone extends AppModel {
             'notempty' => array(
                 'rule' => array('notempty'),
             ),
+            'maxLength' => array(
+                'rule' => array('maxLength', 50),
+                'message' => 'Short names must be less than 50 characters long',
+            ),
         ),
     );
 
@@ -74,4 +78,110 @@ class Milestone extends AppModel {
         )
     );
 
+    /**
+     * afterDelete function.
+     * Dis-associate all of the incomplete tasks and delete the done ones
+     *
+     * @access public
+     * @return void
+     */
+    public function afterDelete() {
+        foreach ($this->Task->find('all', array('conditions' => array('milestone_id' => $this->id, 'task_status_id <' => 3))) as $task) {
+            $this->Task->id = $task['Task']['id'];
+            $this->Task->set('milestone_id', null);
+            $this->Task->save();
+        }
+        $this->Task->deleteAll(array('milestone_id' => $this->id), false);
+    }
+
+    /**
+     * openTasksForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function openTasksForMilestone($id = null) {
+        return $this->tasksOfStatusForMilestone($id, 1);
+    }
+
+    /**
+     * inProgressTasksForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function inProgressTasksForMilestone($id = null) {
+        return $this->tasksOfStatusForMilestone($id, 2);
+    }
+
+    /**
+     * resolvedTasksForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function resolvedTasksForMilestone($id = null) {
+        return $this->tasksOfStatusForMilestone($id, 3);
+    }
+
+    /**
+     * closedTasksForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function closedTasksForMilestone($id = null) {
+        return $this->tasksOfStatusForMilestone($id, 4);
+    }
+
+    /**
+     * tasksOfStatusForMilestone function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @param mixed $status
+     * @return void
+     */
+    public function tasksOfStatusForMilestone($id = null, $status) {
+        $this->id = $id;
+
+        if (!$this->exists()) return null;
+
+        $tasks = $this->Task->find(
+            'all',
+            array(
+                'field' => array('milestone_id'),
+                'conditions' => array(
+                    'task_status_id ' => $status,
+                    'milestone_id =' => $id
+                ),
+                'order' => 'task_priority_id DESC'
+            )
+        );
+        return $tasks;
+    }
+
+    public function getOpenMilestones() {
+        $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
+        return array_diff($list_of_milestones, $this->getClosedMilestones());
+    }
+
+    public function getClosedMilestones() {
+        $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
+        $open_task_milestones = array_values($this->Task->find(
+            'list',
+            array(
+                'group' => array('milestone_id'),
+                'fields' => array('milestone_id'),
+                 'conditions' => array(
+                    'milestone_id NOT' => NULL,
+                    'task_status_id <' => 4)
+            )
+        ));
+        return array_diff($list_of_milestones, $open_task_milestones);
+    }
 }

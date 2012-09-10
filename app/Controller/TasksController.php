@@ -61,49 +61,12 @@ class TasksController extends AppProjectController {
         // Final value is min size of the board
         $max = max(sizeof($user), sizeof($team), sizeof($others), 5);
 
+        $events = $this->Task->fetchHistory($project['Project']['id'], round($max * 1.4));
+
         $this->set('user_empty', $max - sizeof($user));
         $this->set('team_empty', $max - sizeof($team));
         $this->set('others_empty', $max - sizeof($others));
-        $this->set(compact('user', 'team',  'others'));
-    }
-
-    /**
-     * sprint method
-     *
-     * @return void
-     */
-    public function sprint($project = null) {
-        $project = $this->_projectCheck($project);
-
-        $backlog = $this->Task->find('all', array(
-            'conditions' => array(
-                'Project.id' => $project['Project']['id'],
-                'TaskStatus.id' => 1
-            ),
-            'order' => 'TaskPriority.id DESC'
-        ));
-        $inProgress = $this->Task->find('all', array(
-            'conditions' => array(
-                'Project.id' => $project['Project']['id'],
-                'TaskStatus.id' => 2
-            ),
-            'order' => 'TaskPriority.id DESC'
-        ));
-        $completed = $this->Task->find('all', array(
-            'conditions' => array(
-                'Project.id' => $project['Project']['id'],
-                'TaskStatus.id' => 3
-            ),
-            'order' => 'TaskPriority.id DESC'
-        ));
-
-        // Final value is min size of the board
-        $max = max(sizeof($backlog), sizeof($inProgress), sizeof($completed), 5);
-
-        $this->set('backlog_empty', $max - sizeof($backlog));
-        $this->set('inProgress_empty', $max - sizeof($inProgress));
-        $this->set('completed_empty', $max - sizeof($completed));
-        $this->set(compact('backlog', 'inProgress',  'completed'));
+        $this->set(compact('user', 'team', 'others', 'events'));
     }
 
     /**
@@ -153,6 +116,26 @@ class TasksController extends AppProjectController {
             }
         }
 
+        // If a User has assigned someone
+        if ($this->request->is('post') && isset($this->request->data['TaskAssignee'])) {
+
+            preg_match('#[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}#', $this->request->data['TaskAssignee']['assignee'], $matches);
+            unset($this->request->data['TaskAssignee']);
+
+            if (!isset($matches[0]) || is_null($matches[0]) || !($user = $this->Task->Assignee->findByEmail($matches[0]))) {
+                $this->Session->setFlash(__('The assignee could not be updated. Please, try again.'), 'default', array(), 'error');
+            } else {
+                $this->request->data['Task']['assignee_id'] = $user['Assignee']['id'];
+                $this->Task->id = $id;
+
+                if ($this->Task->save($this->request->data)) {
+                    $this->Session->setFlash(__('The assignee has been updated successfully'), 'default', array(), 'success');
+                } else {
+                    $this->Session->setFlash(__('The assignee could not be updated. Please, try again.'), 'default', array(), 'error');
+                }
+            }
+        }
+
         $this->set('task', $this->Task->read(null, $id));
 
         // Fetch the changes that will have happened
@@ -166,6 +149,29 @@ class TasksController extends AppProjectController {
         foreach ( $comments as $x => $comment ) {
             $comments[$x]['created'] = $comment['TaskComment']['created'];
         }
+
+        // Fetch any additional users that may be needed
+        $change_users = array();
+        $this->Task->Assignee->recursive = -1;
+        foreach ( $changes as $change ) {
+            if ($change['ProjectHistory']['row_field'] == 'assignee_id') {
+                $_old = $change['ProjectHistory']['row_field_old'];
+                $_new = $change['ProjectHistory']['row_field_new'];
+
+                if ($_old && !isset($change_users[$_old])) {
+                    $this->Task->Assignee->id = $_old;
+                    $_temp = $this->Task->Assignee->read();
+                    $change_users[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+                }
+                if ($_new && !isset($change_users[$_new])) {
+                    $this->Task->Assignee->id = $_new;
+                    $_temp = $this->Task->Assignee->read();
+                    $change_users[$_new] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+                }
+            }
+        }
+
+        // Merge the changes
         $changes = array_merge($changes, $comments);
 
         // Sort function for events
@@ -175,8 +181,9 @@ class TasksController extends AppProjectController {
             if (strtotime($a['created']) > strtotime($b['created'])) return 1;
             return -1;
         };
-        usort($changes, $cmp);
 
+        usort($changes, $cmp);
+        $this->set('change_users', $change_users);
         $this->set('changes', $changes);
     }
 
@@ -186,12 +193,7 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function add($project = null) {
-        $project = $this->_projectCheck($project);
-
-        // Lock out those who arnt allowed to write
-        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) {
-            throw new ForbiddenException(__('You do not have permissions to write to this project'));
-        }
+        $project = $this->_projectCheck($project, true);
 
         if ($this->request->is('ajax')) {
             // Enable once we've figured out how to do two Ajax submit buttons
@@ -258,16 +260,11 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function edit($project = null, $id = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($project, true);
 
         $this->Task->id = $id;
         if (!$this->Task->exists()) {
             throw new NotFoundException(__('Invalid task'));
-        }
-
-        // Lock out those who arnt allowed to write
-        if ( !$this->Task->Project->hasWrite($this->Auth->user('id')) ) {
-            throw new ForbiddenException(__('You do not have permissions to write to this project'));
         }
 
         if ($this->request->is('post') || $this->request->is('put')) {
@@ -309,7 +306,7 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function delete($project = null, $id = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($project, true);
 
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
@@ -324,5 +321,132 @@ class TasksController extends AppProjectController {
         }
         $this->Session->setFlash(__('Task was not deleted'));
         $this->redirect(array('action' => 'index'));
+    }
+
+    /**
+     * starttask function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function starttask($project = null, $id = null) {
+        $this->Task->id = $id;
+        if (!$this->Task->exists()) {
+            throw new NotFoundException(__('Invalid task'));
+        }
+
+        // check assigned
+        if (!$this->Task->isAssignee()) {
+            $this->Session->setFlash(__('You can not start work on a task not assigned to you.'), 'default', array(), 'error');
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
+
+        //check open
+        if (!$this->Task->isOpen()) {
+            $this->Session->setFlash(__('You can not start work on a task that is not open.'), 'default', array(), 'error');
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
+
+        $this->_update_task_status($project, $id, 2);
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
+    /**
+     * stoptask function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function stoptask($project = null, $id = null) {
+        $this->Task->id = $id;
+        if (!$this->Task->exists()) {
+            throw new NotFoundException(__('Invalid task'));
+        }
+
+        // check assigned
+        if (!$this->Task->isAssignee()) {
+            $this->Session->setFlash(__('You can not stop work on a task not assigned to you.'), 'default', array(), 'error');
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
+
+        //check inProgress
+        if (!$this->Task->isInProgress()) {
+            $this->Session->setFlash(__('You can not stop work on a task that is not in progress.'), 'default', array(), 'error');
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
+
+        $this->_update_task_status($project, $id, 1);
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
+    /**
+     * opentask function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function opentask($project = null, $id = null) {
+        $success = $this->_update_task_status($project, $id, 1);
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
+    /**
+     * closetask function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function closetask($project = null, $id = null) {
+        $success = $this->_update_task_status($project, $id, 4);
+
+        // If a User has commented
+        if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+            $this->Task->TaskComment->create();
+
+            $this->request->data['TaskComment']['task_id'] = $id;
+            $this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+            if ($this->Task->TaskComment->save($this->request->data)) {
+                $this->Session->setFlash(__('The comment has been added successfully'), 'default', array(), 'success');
+                unset($this->request->data['TaskComment']);
+            } else {
+                $this->Session->setFlash(__('The comment could not be saved. Please, try again.'), 'default', array(), 'error');
+            }
+        }
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
+    /**
+     * _update_task_status function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    private function _update_task_status($project = null, $id = null, $status = null) {
+        $project = $this->_projectCheck($project, true);
+
+        $this->Task->id = $id;
+
+        //if (!$this->request->is('post')) throw new MethodNotAllowedException();
+        if (!$this->Task->exists()) throw new NotFoundException(__('Invalid task'));
+
+        $this->Task->set('task_status_id', $status);
+
+        if ($this->Task->save()) {
+            $this->Session->setFlash(__('The tasks status has been updated successfully'), 'default', array(), 'success');
+            return true;
+        }
+        $this->Session->setFlash(__('The task status could not be updated. Please, try again.'), 'default', array(), 'error');
+        return false;
     }
 }
