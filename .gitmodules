@@ -6,13 +6,13 @@
 	url = git://github.com/loadsys/twitter-bootstrap-helper.git
 [submodule "app/Plugin/GitCake"]
 	path = app/Plugin/GitCake
-	url = git@github.com:pwhittlesea/GitCake.git
+	url = git://github.com/pwhittlesea/GitCake.git
 [submodule "app/Plugin/SVNCake"]
 	path = app/Plugin/SVNCake
-	url = git@github.com:pwhittlesea/SVNCake.git
+	url = git://github.com/pwhittlesea/SVNCake.git
 [submodule "app/Plugin/TwitterBootswatch"]
 	path = app/Plugin/TwitterBootswatch
-	url = git@github.com:pwhittlesea/TwitterBootswatchHelper.git
+	url = git://github.com/pwhittlesea/TwitterBootswatchHelper.git
 [submodule "app/Plugin/LDAPAuthCake"]
 	path = app/Plugin/LDAPAuthCake
-	url = git@github.com:amn-ecs/LDAPAuthCake.git
+	url = git://github.com/amn-ecs/LDAPAuthCake.git
