@@ -76,11 +76,12 @@ class TasksController extends AppProjectController {
         $max = max(sizeof($user), sizeof($team), sizeof($others), 5);
 
         $events = $this->Task->fetchHistory($project['Project']['id'], round($max * 1.4));
+        $open_milestones = $this->Task->Milestone->getOpenMilestones(true);
 
         $this->set('user_empty', $max - sizeof($user));
         $this->set('team_empty', $max - sizeof($team));
         $this->set('others_empty', $max - sizeof($others));
-        $this->set(compact('user', 'team', 'others', 'events'));
+        $this->set(compact('open_milestones', 'user', 'team', 'others', 'events'));
     }
 
     /**
@@ -574,5 +575,86 @@ class TasksController extends AppProjectController {
 
         $this->set('data',$data);
         $this->render('/Elements/json');
+    }
+
+    /**
+     * api_marshalled function.
+     * THIS RETURNS HTML
+     *
+     * @access public
+     * @return void
+     */
+    public function api_marshalled() {
+        $this->layout = 'ajax';
+
+        $data = array();
+        $request = array();
+
+        // Fetch the request from the user
+        if (!is_null($this->params->data)) {
+            $request = $this->params->data;
+        }
+
+        $user = $this->Auth->user('id');
+
+        if (empty($request)) {
+            $this->response->statusCode(400);
+            $data['error'] = 400;
+            $data['message'] = 'Bad request, empty query specified.';
+        } else if (!array_key_exists('project', $request)) {
+            $this->response->statusCode(400);
+            $data['error'] = 400;
+            $data['message'] = 'Bad request, no project specified.';
+        } else if (is_null($user) || $user < 1 || !($project = $this->_projectCheck($request['project']))) {
+            $this->response->statusCode(403);
+            $data['error'] = 403;
+            $data['message'] = 'You are not authorised to access this.';
+        } else {
+            $conditions = array('Task.project_id' => $project['Project']['id']);
+
+            if (array_key_exists('milestone', $request) && is_numeric($request['milestone']) && $request['milestone'] > 0) {
+                $this->Task->Milestone->id = $request['milestone'];
+                if ($this->Task->Milestone->exists()) {
+                    $conditions['milestone_id'] = $request['milestone'];
+                }
+            }
+
+            // Ive assumed the user is logged in
+            if (array_key_exists('requester', $request)) {
+                switch ($request['requester']) {
+                    case 'index':
+                        $conditions['assignee_id'] = $user;
+                        break;
+                    case 'everyone':
+                        break;
+                    default:
+                        $conditions['assignee_id !='] = $user;
+                }
+            } else {
+                $conditions['assignee_id'] = $user;
+            }
+
+            // Ive assumed the user is logged in
+            if (array_key_exists('status', $request)) {
+                $status = $this->Task->TaskStatus->findByName(strtolower($request['status']));
+                if ($status != null) {
+                    $conditions['task_status_id'] = $status['TaskStatus']['id'];
+                }
+            }
+
+            if (array_key_exists('types', $request) && $request['types'] != '' && $types = explode(',', $request['types'])) {
+                $conditions['task_type_id'] = array();
+                foreach ($types as $i) {
+                    if (is_numeric($i) && $i > 0 && $i < 7) {
+                        $conditions['task_type_id'][] = $i;
+                    }
+                }
+            }
+
+            foreach ($this->Task->find("all", array('conditions' => $conditions)) as $task) {
+                $data[] = $task;
+            }
+        }
+        $this->set('data',$data);
     }
 }

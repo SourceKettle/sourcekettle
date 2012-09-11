@@ -25,15 +25,21 @@
  * APP/Tasks
  */
 // APP/*/topbar
-$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option1.text'] = "Classic Board";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option1.text'] = "Assigned to you";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option2.text'] = "Assigned to anyone";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option3.text'] = "Watching";
 $config['dtcore']['pages']['tasks']['topbar']['en']['topbar.create.text'] = "Create Task";
 
 // APP/Tasks/index
 $config['dtcore']['pages']['tasks']['index']['en']['header.text'] = "Tasks for the Project";
 
-$config['dtcore']['pages']['tasks']['index']['en']['column.tasks.title'] = "Tasks";
 $config['dtcore']['pages']['tasks']['index']['en']['column.tasks.empty'] = "There are currently no tasks";
 
+$config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.open'] = "Open";
+$config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.progress'] = "In Progress";
+$config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.resolved'] = "Resolved";
+$config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.closed'] = "Closed";
+$config['dtcore']['pages']['tasks']['index']['en']['column.options.milestone.title'] = "Milestone";
 $config['dtcore']['pages']['tasks']['index']['en']['column.history.title'] = "Recent History";
 
 // APP/Tasks/add
@@ -116,3 +122,7 @@ $config['dtcore']['pages']['tasks']['view']['en']['modal.close.comment.placehold
 $config['dtcore']['pages']['tasks']['view']['en']['modal.close.close'] = "Cancel";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.close.submit'] = "Close Task";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.close.body'] = "Before the task can be closed, please leave an explanation.";
+
+// APP/Tasks/api_marshalled
+
+$config['dtcore']['pages']['tasks']['api_marshalled']['en']['column.tasks.empty'] = "No Tasks found...";

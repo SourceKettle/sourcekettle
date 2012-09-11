@@ -87,3 +87,7 @@
 .priority_bar_minor {
 	background-color:#333;
 }
+
+.label, .lead {
+    margin-bottom: 2px;
+}
