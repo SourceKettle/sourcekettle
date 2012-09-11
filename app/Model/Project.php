@@ -204,7 +204,7 @@ class Project extends AppModel {
      *
      * @return Project The project found by the given key, null if no project is found
      */
-    public function getProject($key) {
+    public function getProject($key, $skip_perms = false) {
         if ($key == null){ //Sanity check
             return null;
         }
@@ -218,11 +218,14 @@ class Project extends AppModel {
         if (empty($project)){
             $project = null;
         }
-
-        // Lock out those who are not allowed to read
-        if ( !$this->hasRead($this->_auth_user_id, $project['Project']['id']) ) {
-            throw new ForbiddenException(__('You do not have permissions to access this project'));
-        }
+	
+	// In some cases, auth_user_id isn't set (like GitCommand)
+	if (!$skip_perms) {
+        	// Lock out those who are not allowed to read
+        	if ( !$this->hasRead($this->_auth_user_id, $project['Project']['id']) ) {
+	            throw new ForbiddenException(__('You do not have permissions to access this project. ID <<' . $this->_auth_user_id . ">>"));
+	        }
+	}
 
         return $project;
     }
