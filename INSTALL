@@ -1,14 +1,7 @@
 Quick and dirty setup guide, assumes reasonable prior knowledge of Things:
 
 * Make sure you've got all submodules:
-  git submodule init
-  git submodule update
-  cd app/Plugin/GitCake/
-  git submodule init
-  git submodule update
-  cd app/Plugin/SVNCake/
-  git submodule init
-  git submodule update
+  git submodule update --init --recursive
 * Install apache with mod_rewrite, mysql and php5
 * Get apache/mysql/php running, create database(s)
 * Make sure your apache virtualhost config allows the use of .htaccess files
