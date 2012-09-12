@@ -13,7 +13,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$url = array('project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
+$url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
 ?>
 <div onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="true">
     <div class="priority_bar_small priority_bar_<?= $task['TaskPriority']['name'] ?>"></div>

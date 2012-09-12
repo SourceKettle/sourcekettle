@@ -109,7 +109,7 @@ class GitShell extends AppShell {
         preg_match("#^(?P<repo>[a-zA-Z0-9][a-zA-Z0-9@._-]*).git$#", $matches['last'], $matches);
         $_proj_name = $matches['repo'];
 
-        $project = $this->Project->getProject($_proj_name);
+        $project = $this->Project->getProject($_proj_name, true);
         if (empty ($project)){
             $this->err("Error: You do not have the necessary permissions");
             exit(1);

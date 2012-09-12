@@ -23,6 +23,20 @@
                     'controller' => 'tasks',
                 ),
             ),
+            array(
+                'text' => $this->DT->t('topbar.option2.text', array('action' => 'topbar')),
+                'url' => array(
+                    'action' => 'others',
+                    'controller' => 'tasks',
+                ),
+            ),
+            array(
+                'text' => $this->DT->t('topbar.option3.text', array('action' => 'topbar')),
+                'url' => array(
+                    'action' => 'watching',
+                    'controller' => 'tasks',
+                ),
+            ),
         ),
     ),
     'right' => array(

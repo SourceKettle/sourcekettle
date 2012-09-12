@@ -19,6 +19,20 @@ App::uses('AppProjectController', 'Controller');
 class MilestonesController extends AppProjectController {
 
     /**
+     * beforeFilter function.
+     *
+     * @access public
+     * @return void
+     */
+    public function beforeFilter() {
+        parent::beforeFilter();
+        $this->Auth->allow(
+            'api_all',
+            'api_view'
+        );
+    }
+
+    /**
      * index method
      *
      * @return void
@@ -205,5 +219,112 @@ class MilestonesController extends AppProjectController {
         }
         $this->Session->setFlash(__('The milestone could not be deleted. Please, try again.'), 'default', array(), 'error');
         $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+    }
+
+    /***************************************************
+    *                                                  *
+    *            API SECTION OF CONTROLLER             *
+    *             CAUTION: PUBLIC FACING               *
+    *                                                  *
+    ***************************************************/
+
+    /**
+     * api_view function.
+     *
+     * @access public
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function api_view($id = null) {
+        $this->layout = 'ajax';
+
+        $this->Milestone->recursive = -1;
+        $this->Milestone->Task->recursive = -1;
+
+        $data = array();
+
+        if ($id == null) {
+            $this->response->statusCode(400);
+            $data['error'] = 400;
+            $data['message'] = 'Bad request, no project id specified.';
+        }
+
+        if ($id == 'all') {
+            $this->api_all();
+            return;
+        }
+
+        if (is_numeric($id)) {
+            $this->Milestone->id = $id;
+
+            if (!$this->Milestone->exists()) {
+                $this->response->statusCode(404);
+                $data['error'] = 404;
+                $data['message'] = 'No milestone found of that ID.';
+                $data['id'] = $id;
+            } else {
+                $milestone = $this->Milestone->read();
+
+                $this->Milestone->Project->id = $milestone['Milestone']['project_id'];
+
+                $_part_of_project = $this->Milestone->Project->hasRead($this->Auth->user('id'));
+                $_public_project  = $this->Milestone->Project->field('public');
+                $_is_admin = ($this->_api_auth_level() == 1);
+
+                if ($_public_project || $_is_admin || $_part_of_project) {
+                    $milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $id))));
+
+                    $o_tasks = sizeof($this->Milestone->openTasksForMilestone($id));
+                    $i_tasks = sizeof($this->Milestone->inProgressTasksForMilestone($id));
+                    $r_tasks = sizeof($this->Milestone->resolvedTasksForMilestone($id));
+                    $c_tasks = sizeof($this->Milestone->closedTasksForMilestone($id));
+                    if (($o_tasks + $i_tasks + $r_tasks + $c_tasks) > 0) {
+                        $milestone['Milestone']['percent'] = $o_tasks / ($o_tasks + $i_tasks + $r_tasks + $c_tasks) * 100;
+                    } else {
+                        $milestone['Milestone']['percent'] = 0;
+                    }
+
+                    $data = $milestone['Milestone'];
+                } else {
+                    $data['error'] = 401;
+                    $data['message'] = 'Milestone found, but is not public.';
+                    $data['id'] = $id;
+                }
+            }
+        }
+
+        $this->set('data',$data);
+        $this->render('/Elements/json');
+    }
+
+    /**
+     * api_all function.
+     * ADMINS only
+     *
+     * @access public
+     * @return void
+     */
+    public function api_all() {
+        $this->layout = 'ajax';
+
+        $this->Milestone->recursive = -1;
+        $data = array();
+
+        switch ($this->_api_auth_level()) {
+            case 1:
+                foreach ($this->Milestone->find("all") as $milestone) {
+                    $milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $milestone['Milestone']['id']))));
+
+                    $data[] = $milestone['Milestone'];
+                }
+                break;
+            default:
+                $this->response->statusCode(403);
+                $data['error'] = 403;
+                $data['message'] = 'You are not authorised to access this.';
+        }
+
+        $this->set('data',$data);
+        $this->render('/Elements/json');
     }
 }

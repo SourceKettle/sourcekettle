@@ -165,12 +165,15 @@ class Milestone extends AppModel {
         return $tasks;
     }
 
-    public function getOpenMilestones() {
+    public function getOpenMilestones($assoc = false) {
         $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
-        return array_diff($list_of_milestones, $this->getClosedMilestones());
+        if ($assoc) {
+            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('id' => array_diff($list_of_milestones, $this->getClosedMilestones($assoc)))));
+        }
+        return array_diff($list_of_milestones, $this->getClosedMilestones($assoc));
     }
 
-    public function getClosedMilestones() {
+    public function getClosedMilestones($assoc = false) {
         $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
         $open_task_milestones = array_values($this->Task->find(
             'list',
@@ -182,6 +185,9 @@ class Milestone extends AppModel {
                     'task_status_id <' => 4)
             )
         ));
+        if ($assoc) {
+            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('id' => array_diff($list_of_milestones, $open_task_milestones))));
+        }
         return array_diff($list_of_milestones, $open_task_milestones);
     }
 }
