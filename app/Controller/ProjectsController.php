@@ -110,8 +110,13 @@ class ProjectsController extends AppProjectController {
             // Create the project object with its data
             $this->Project->create();
 
+       		$repoTypes = $this->Project->RepoType->find('list');
+       		$this->set(compact('repoTypes'));
 
             if ($this->Project->save($this->request->data)) {
+
+				// Need to know the repo type so we can skip repo creation if necessary...
+				$repo_type = $repoTypes[$this->request->data['Project']['repo_type']];
 
                 // Project has been saved
                 // Now to add the creator as the first admin user on the project
@@ -124,8 +129,10 @@ class ProjectsController extends AppProjectController {
                 $this->log("[ProjectController.add] user[".$this->Auth->user('id')."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
 
 
-                // Create the actual repository - if it fails, delete the database content
-                if(!$this->Project->Source->create()){
+                // Create the actual repository, if required - if it fails, delete the database content
+                if (strtolower($repo_type) == 'none') {
+                    $this->log("[ProjectController.add] project[".$this->Project->id."] does not require a repository", 'devtrack');
+				} elseif (!$this->Project->Source->create()) {
                     $this->log("[ProjectController.add] project[".$this->Project->id."] repository creation failed - automatically removing project data", 'devtrack');
                     $this->Project->delete();
                     $this->Session->setFlash(__('The project repository could not be created. Please try again.'), 'default', array(), 'error');
@@ -138,8 +145,6 @@ class ProjectsController extends AppProjectController {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         }
-        $repoTypes = $this->Project->RepoType->find('list');
-        $this->set(compact('repoTypes'));
     }
 
     /**
