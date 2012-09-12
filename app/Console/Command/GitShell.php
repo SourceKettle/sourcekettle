@@ -7,141 +7,233 @@
  */
 class GitShell extends AppShell {
 
-    public $uses = array('SshKey', 'Project', 'Collaborator', 'Setting');
+	public  $uses = array('SshKey', 'Project', 'Collaborator', 'Setting');
 
-    public function main() {
-        $this->out("You need to specify a command. Try 'sync_keys' or 'serve'.");
-    }
+	// Git read and write commands, for checking access permissions
+	private $read_commands  = array('git-upload-pack',  'git upload-pack');
+	private $write_commands = array('git-receive-pack', 'git receive-pack');
 
-    /**
-     * Syncs all of the SSH keys to the git user's authorized_keys file to allow for ssh access
-     */
-    public function sync_keys() {
+	public function main() {
+		$this->out("You need to specify a command. Try 'sync_keys' or 'serve'.");
+	}
 
-        $sync_required = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
+	/**
+	 * Syncs all of the SSH keys to the git user's authorized_keys file to allow for ssh access
+	 */
+	public function sync_keys() {
 
-        //if ($sync_required['Setting']['value'] == 1) {
-            $keys = $this->SshKey->find('all');
-            $prepared_keys = array();
+		// Don't bother unless a key's actually been changed...
+		$sync_required = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
 
-            $template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
+		//if ($sync_required['Setting']['value'] == 1) {
 
-            $app_path = App::path('Controller');
-            $app_path = $app_path[0];
-            $app_path = str_replace('/app/Controller', '', $app_path);
+			// Work out where to put the SSH keys (git user's homedir)
+			$devtrack_config = Configure::read('devtrack');
 
-            $cmd = $app_path . 'scm-scripts/git-serve.py';
+			// Get username from config, and get info from the passwd file (or other entry)
+			$git_user	= $devtrack_config['repo']['user'];
+			$git_details = posix_getpwnam($git_user);
+			
+			// Sanity check #1, fail if the user doesn't exist...
+			if(!$git_details){
+				throw new Exception("Cannot sync keys - git user '$git_user' does not exist - have you set up DevTrack properly?");
+			}
 
-            $out = '';
-            foreach ($keys as $key) {
-                $sshkey = $key['SshKey']['key'];
-                $userid = $key['User']['id'];
+			// Get their homedir
+			$git_homedir = $git_details['dir'];
 
-                if (strlen($sshkey) > 40) { //sanity check on key
-                    $content = trim(str_replace(array("\n", "\r"), '', $sshkey));
-                    $out .= sprintf($template, $cmd, $userid, $content) . "\n";
-                }
-            }
-            file_put_contents('/home/git/.ssh/authorized_keys', $out, LOCK_EX);
-            $sync_required['Setting']['value'] = 0;
-            $this->Setting->save($sync_required);
-        //}
-    }
+			// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
+			if(!is_dir($git_homedir.'/.ssh')){
+				throw new Exception("Cannot sync keys - $git_homedir/.ssh not found - have you set up DevTrack properly?");
+			}
 
-    public function serve() {
-        //Firstly, get the SSH_ORIGINAL_COMMAND and other useful variables from environment
-        $vars = array_merge($_SERVER, $_ENV);
+			// Now we know where to write to...
+			$ssh_keyfile = $git_homedir.'/.ssh/authorized_keys';
 
-        if (!isset($vars['SSH_ORIGINAL_COMMAND']) or !isset($vars['argv'])){
-            $this->err("Error: Required environment variables are not defined");
-            exit(1);
-        }
+			// Get all of the SSH keys from the database
+			$keys = $this->SshKey->find('all');
+			$prepared_keys = array();
 
-        $ssh_original_command = $vars['SSH_ORIGINAL_COMMAND']; 
-        $argv = $vars['argv'];
-        $userid = $argv[sizeof($argv)-1];
+			// We will auto-run out git serve command when the git user logs in, and we should disable any
+			// features that may be used for nefarious purposes
+			$template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
 
-        //Secondly, validate the arguments and get the command into a generic format
+			// This seems dubious... TODO
+			$app_path = App::path('Controller');
+			$app_path = $app_path[0];
+			$app_path = str_replace('/app/Controller', '', $app_path);
 
-        //check if SSH_ORIGINAL_COMMAND contains new lines
-        if (strpos($ssh_original_command, "\n") !== false){ //!=== as it may also return non-boolean values that evaluate to false
-            $this->err("Error: SSH_ORIGINAL_COMMAND contains new lines");
-            exit(1);
-        }
+			// This is the git-serve command that will be run when git logs in
+			$cmd = $app_path . 'scm-scripts/git-serve.py';
 
+			// Build up a list of SSH keys to write to file
+			// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...
+			$out = '';
+			foreach ($keys as $key) {
+				$sshkey = $key['SshKey']['key'];
+				$userid = $key['User']['id'];
 
-        $command_parts = explode(" ", $ssh_original_command, 2);
+				// Sanity check the key
+				if (strlen($sshkey) > 40) {
+					$content = trim(str_replace(array("\n", "\r"), '', $sshkey));
+					$out .= sprintf($template, $cmd, $userid, $content) . "\n";
+				}
+			}
 
-        //Check if the command has 2 parts
-        if (sizeof($command_parts) != 2){
-            $this->err("Error: Command is not a valid git command");
-            exit(1);
-        }
+			// Write to the file, making sure we get an exclusive lock to prevent corruption
+			file_put_contents($ssh_keyfile, $out, LOCK_EX);
 
-        $command = array(); //initialise an empty array
+			// Don't sync again unless keys have changed
+			$sync_required['Setting']['value'] = 0;
+			$this->Setting->save($sync_required);
+		//}
+	}
 
-        //Get the command into a generic format
-        if ($command_parts[0] == 'git'){
-            $command_args = explode(" ", $command_parts[1], 2); //split into the git command name and the arguments
-            if (sizeof($command_args) != 2){
-                $this->err("Error: Wrong number of arguments to a git command");
-                exit(1);
-            } else {
-                $command['command'] = $command_parts[0] . " " . $command_args[0];
-                $command['args'] = $command_args[1];
-            }
-        } else {
-            $command['command'] = $command_parts[0];
-            $command['args'] = $command_parts[1];
-        }
+	// Helper functions to validate git commands
+	private function isReadCommand($command){
+		return in_array($command, $this->read_commands);
+	}
+	private function isWriteCommand($command){
+		return in_array($command, $this->write_commands);
+	}
+	private function isValidGitCommand($command){
+		return ($this->isReadCommand($command) or $this->isWriteCommand($command));
+	}
 
-        // Now check if the parts are a valid git command
-        $read_commands = array('git-upload-pack', 'git upload-pack');
-        $write_commands = array('git-receive-pack', 'git receive-pack');
-
-        if (!in_array($command['command'], $read_commands) and !in_array($command['command'], $write_commands)){
-            $this->err("Error: Unknown command");
-            exit(1);
-        } 
-
-        //Get the project. Since the project name must be a valid unix name, we can just use the argument
-        preg_match("#^\'(/?(?P<last>[a-zA-Z0-9][a-zA-Z0-9@._-]*))*\'$#", $command['args'], $matches);
-        preg_match("#^(?P<repo>[a-zA-Z0-9][a-zA-Z0-9@._-]*).git$#", $matches['last'], $matches);
-        $_proj_name = $matches['repo'];
-
-        $project = $this->Project->getProject($_proj_name, true);
-        if (empty ($project)){
-            $this->err("Error: You do not have the necessary permissions");
-            exit(1);
-        }
-        $this->Project->id = $project['Project']['id'];
-
-        $devtrack_config = Configure::read('devtrack');
-        $repo_path = $devtrack_config['repo']['base'];
-        //Now check if the user has the correct permissions for the operation they are trying to perform
+	public function serve() {
+	
+		// Some background info on how this function is called...
+		// * User logs in using an SSH key
+		// * The authorized_keys file generated by the function above ensures that a very
+		//   specific command is run when that key is used - git-serve.py {userid associated with key}
+		// * The git-serve.py script does some sanity checking and runs this command via CakePHP,
+		//   passing it the user ID as an argument - the SSH_ORIGINAL_COMMAND environment var is
+		//   available as we're being run via SSH
+		// * This command does a LOT of sanity and permission checks, then returns the validated command
+		//   for the git user to run
+		// * git-serve.py then runs that command and the remote git program starts pulling/pushing data
+		//
+		// ... got it?
 
 
-        if (in_array($command['command'], $read_commands) and ($this->Project->hasRead($userid))){
-            // read requested and they have permission, serve the request
-            print $command['command'] . ' \'' . $repo_path . '/' . $_proj_name . '\'';
-            exit(0);
-        } else if (in_array($command['command'], $write_commands) and ($this->Project->hasWrite($userid))) {
-             // write requested and they have permission, serve the request
-            print $command['command'] . ' \'' . $repo_path . '/' . $_proj_name . '\'';
-            exit(0);
-        } else {
-            // they do not have permission
-            $this->err("Error: You do not have the necessary permissions");
-            exit(1);
-        }
-    }
+		// Firstly, get the SSH_ORIGINAL_COMMAND and other useful variables from environment
+		$vars = array_merge($_SERVER, $_ENV);
 
-    /**
-    * Override the default welcome. We do not want to print the welcome message as this breaks git, so do nothing
-    */
-    protected function _welcome(){
+		if (!isset($vars['SSH_ORIGINAL_COMMAND']) or !isset($vars['argv'])) {
+			$this->err("Error: Required environment variables are not defined");
+			exit(1);
+		}
 
-    }
+		$ssh_original_command = $vars['SSH_ORIGINAL_COMMAND']; 
+		$argv   = $vars['argv'];
+		$userid = array_pop($argv);
+
+		// User ID must be numeric and greater than zero
+		if (!preg_match('/^\s*(\d+)\s*$/', $userid, $matches)) {
+			$this->err("Error: You do not have the necessary permissions");
+			exit(1);
+		}
+		$userid = $matches[1];
+
+		if ($userid <= 0) {
+			$this->err("Error: You do not have the necessary permissions");
+			exit(1);
+		}
+
+		// Secondly, validate the arguments and get the command into a generic format
+
+		// Check if SSH_ORIGINAL_COMMAND contains newlines and bomb out early (nice easy sanity check)
+		if (strpos($ssh_original_command, "\n") !== false) { //!=== as it may also return non-boolean values that evaluate to false
+			$this->err("Error: SSH_ORIGINAL_COMMAND contains newlines");
+			exit(1);
+		}
+		
+		// If it's a valid git command it will look something like:
+		// git-receive-pack 'projects/fnord.git'
+		// or:
+		// git receive-pack 'projects/fnord.git'
+
+		// Match both forms; command will be in $1, command args will be in $3
+		// Bomb out if the command doesn't match
+		if (!preg_match('/^\s*(git(\s+|\-)\S+)\s+(.+)$/', $ssh_original_command, $matches)) {
+			$this->err("Error: Command is not a valid git command");
+			exit(1);
+		}
+
+		// Make sure it's in the git-receive-pack format, not git receive-pack
+		$command = preg_replace('/\s+/', '-', $matches[1]);
+
+		// Remove any quotes around the command arguments (go go gadget irregular expressions!)
+		$args	= preg_replace('/^(\'|\")(.+)\\1/', '\\2', $matches[3]);
+
+
+		// Check if it's a valid git command to start with...
+		if (!$this->isValidGitCommand($command)) {
+			$this->err("Error: Unknown command");
+			exit(1);
+		}
+
+		// Now check that they've given us a valid repo name
+		// Should look something like:
+		// projects/fnord.git
+		// ...but actually, we'll just throw away the entire path except for the last part,
+		// then make sure it's a valid unix username with '.git' on the end.
+		// NB project names are always valid unix usernames
+		if (!preg_match('#^(.*/)?([a-zA-Z0-9][a-zA-Z0-9@._-]*).git$#', $args, $matches)) {
+			$this->err("Error: Malformed repository name");
+			exit(1);
+		}
+
+		$_proj_name = $matches[2];
+		
+
+
+		// Try and get project info, if it doesn't exist then don't give that fact away...
+		$project = $this->Project->getProject($_proj_name, true);
+		if (empty ($project)){
+			$this->err("Error: You do not have the necessary permissions");
+			exit(1);
+		}
+
+		// We don't need to set all the details, just the ID so we can call hasRead/hasWrite
+		$this->Project->id = $project['Project']['id'];
+
+		// Get the repository location
+		$devtrack_config = Configure::read('devtrack');
+		$repo_path = $devtrack_config['repo']['base'] . "/$_proj_name.git";
+
+		// Make sure there's actually a git repository for this project...
+		if (strtolower($project['RepoType']['name']) != 'git' or !is_dir($repo_path)) {
+			$this->err("Error: You do not have the necessary permissions");
+			exit(1);
+		}
+
+		//Now check if the user has the correct permissions for the operation they are trying to perform
+
+		// Read requested and they have permission, serve the request
+		if ($this->isReadCommand($command) and ($this->Project->hasRead($userid))) {
+			print "$command '$repo_path'";
+			exit(0);
+
+		// Write requested and they have permission, serve the request
+		} else if ($this->isWriteCommand($command) and ($this->Project->hasWrite($userid))) {
+			print "$command '$repo_path'";
+			exit(0);
+
+		// They do not have permission
+		} else {
+			$this->err("Error: You do not have the necessary permissions");
+			exit(1);
+		}
+
+	}
+
+	/**
+	* Override the default welcome. We do not want to print the welcome message as this breaks git, so do nothing
+	*/
+	protected function _welcome(){
+
+	}
 
 }
 
