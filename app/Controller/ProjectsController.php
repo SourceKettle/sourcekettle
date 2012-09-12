@@ -73,7 +73,10 @@ class ProjectsController extends AppProjectController {
         $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 1, 'Project.id' => $project['Project']['id'])));
         $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 2, 'Project.id' => $project['Project']['id'])));
         $number_of_tasks = $number_of_closed_tasks + $number_of_open_tasks;
-        $percent_of_tasks = $number_of_closed_tasks / $number_of_tasks * 100;
+        $percent_of_tasks = 0;
+        if($number_of_tasks > 0){
+            $percent_of_tasks = $number_of_closed_tasks / $number_of_tasks * 100;
+        }
 
         $this->set(compact('number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks'));
         $this->set('events', $this->Project->fetchEventsForProject());
