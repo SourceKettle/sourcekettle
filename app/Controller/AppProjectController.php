@@ -25,6 +25,7 @@ class AppProjectController extends AppController {
      * @access protected
      * @param mixed $name
      * @param bool $needWrite (default: false)
+     * @param bool $needAdmin (default: false)
      * @return void
      */
     protected function _projectCheck($name, $needWrite = false, $needAdmin = false) {

@@ -15,9 +15,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('AppController', 'Controller');
+App::uses('AppProjectController', 'Controller');
 
-class CollaboratorsController extends AppController {
+class CollaboratorsController extends AppProjectController {
 
     /**
      * Project helpers
@@ -32,17 +32,14 @@ class CollaboratorsController extends AppController {
      * @return void
      */
     public function index($name = null) {
-        // Check for existant project
-        $project = $this->Collaborator->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+        $project = $this->_projectCheck($name, true, true);
 
-        // Lock out those who arnt admins
-        $this->Collaborator->Project->id = $project['Project']['id'];
-        if ( !$this->Collaborator->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not a admin of this project'));
+        $collaborators = array();
+        foreach (array(0, 1, 2) as $x) {
+            $collaborators[$x] = $this->Collaborator->find('all', array('conditions' => array('access_level' => $x, 'project_id' => $project['Project']['id'])));
+        }
 
-        $this->Collaborator->Project->recursive = 2;
-        $this->set('project', $this->Collaborator->Project->read());
-        $this->set('isAdmin', $this->Collaborator->Project->isAdmin($this->Auth->user('id')));
+        $this->set('collaborators', $collaborators);
     }
 
     /**

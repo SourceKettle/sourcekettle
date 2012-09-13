@@ -15,8 +15,9 @@
  */
 
 $smallText = " <small>" . $project['Project']['description'] . " </small>";
-$pname = $project['Project']['name'];
-$details = array(
+$_project_name = $project['Project']['name'];
+
+$_levels = array(
     '0' => array(
         'icon' => 'search',
         'text' => 'Guest',
@@ -34,7 +35,7 @@ $details = array(
     ),
 );
 
-echo $this->Bootstrap->page_header($pname . $smallText);?>
+echo $this->Bootstrap->page_header($_project_name . $smallText);?>
 
 <div class="row">
     <div class="span2">
@@ -46,43 +47,58 @@ echo $this->Bootstrap->page_header($pname . $smallText);?>
                 <div class="well">
                     <h3>Users on this project</h3>
                     <table class="table table-striped">
-                        <tbody>
-                            <?php foreach ($project['Collaborator'] as $c) : ?>
-                            <?php $al = $c['access_level']; ?>
+                        <thead>
                             <tr>
-                                <td><?= $this->Html->link($c['User']['name']." &lt;".$c['User']['email']."&gt;", array('controller' => 'users', 'action' => 'view', $c['User']['id']), array('escape' => false)) ?></td>
+                                <th width="60%">Users</th>
+                                <th>Role</th>
+                                <th width="25%">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        foreach (array_reverse($_levels, true) as $_access_level => $_details) :
+
+                            $_access_text   = $_details['text'];
+                            $_access_icon = $this->Bootstrap->icon($_details['icon']);
+
+                            $_section_title = ucfirst("${_access_text}s on this project");
+
+                            $_up_icon   = $this->Bootstrap->icon('arrow-up');
+                            $_down_icon = $this->Bootstrap->icon('arrow-down');
+
+                            foreach ($collaborators[$_access_level] as $collaborator) :
+
+                                $_user_name = $collaborator['User']['name'];
+                                $_user_mail = $collaborator['User']['email'];
+                                $_user_id   = $collaborator['User']['id'];
+                                $_user_url  = array('controller' => 'users', 'action' => 'view', $_user_id);
+
+                                $_promote_url = ($_access_level < 2) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level + 1]['action'], $_user_id), true) : null;
+                                $_demote_url  = ($_access_level > 0) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level - 1]['action'], $_user_id), true) : null;
+                                $_delete_url  = $this->Html->url(array('controller' => 'collaborators', 'project' => $_project_name, 'action' => 'delete', $collaborator['Collaborator']['id']), true);
+
+                                $_blank_button = $this->Bootstrap->button_form($this->Bootstrap->icon('none'), '#', array('escape'=>false, 'size' => 'mini', 'class' => 'disabled'))
+                            ?>
+                            <tr>
+                                <td><?= $this->Html->link("$_user_name &lt;$_user_mail&gt;", $_user_url, array('escape' => false)) ?></td>
+                                <td><?= "$_access_icon $_access_text" ?></td>
                                 <td>
-                                <?php
-                                    echo $this->Bootstrap->button_dropdown($this->Bootstrap->icon($details[$al]['icon'], 'white')." ".$details[$al]['text'], array(
-                                        "style" => "primary",
-                                        "size" => "mini",
-                                        "links" => array(
-                                            $this->Html->link($this->Bootstrap->icon($details[2]['icon'])." Make an ".$details[2]['text'],
-                                                    array('project' => $pname, 'action' => $details[2]['action'], $c['User']['id']),
-                                                    array('escape' => false)),
-                                            $this->Html->link($this->Bootstrap->icon($details[1]['icon'])." Make a " .$details[1]['text'],
-                                                    array('project' => $pname, 'action' => $details[1]['action'], $c['User']['id']),
-                                                    array('escape' => false)),
-                                            null,
-                                            $this->Html->link($this->Bootstrap->icon($details[0]['icon'])." Make a " .$details[0]['text'],
-                                                    array('project' => $pname, 'action' => $details[0]['action'], $c['User']['id']),
-                                                    array('escape' => false)),
-                                        )
-                                    ));
-                                ?>
-                                </td>
-                                <td>
+                                    <? if ($_promote_url) echo $this->Bootstrap->button_form($_up_icon, $_promote_url, array('escape'=>false, 'size' => 'mini')); else echo $_blank_button; ?>
+                                    <? if ($_demote_url) echo $this->Bootstrap->button_form($_down_icon, $_demote_url, array('escape'=>false, 'size' => 'mini')); else echo $_blank_button; ?>
                                 <?php
                                     echo $this->Bootstrap->button_form(
-                                        $this->Bootstrap->icon('eject', 'white')." Remove",
-                                        $this->Html->url(array('controller' => 'collaborators', 'project' => $pname, 'action' => 'delete', $c['id']), true),
+                                        $this->Bootstrap->icon('eject', 'white'),
+                                        $_delete_url,
                                         array('escape'=>false, 'style' => 'danger', 'size' => 'mini'),
-                                        "Are you sure you want to delete " . $c['User']['name'] . "?"
+                                        "Are you sure you want to remove $_user_name from the project?"
                                     );
                                 ?>
                                 </td>
                             </tr>
-                            <? endforeach; ?>
+                            <?php
+                            endforeach;
+                        endforeach;
+                        ?>
                         </tbody>
                     </table>
                 </div>
