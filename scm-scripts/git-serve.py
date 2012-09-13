@@ -24,7 +24,8 @@ import shlex
 CAKE_ROOT = os.path.abspath(os.path.dirname(__file__) + '/../')
 GITSERVEPHP = '{0}/app/Console/cake -app {0}/app/ git serve {1}'.format(CAKE_ROOT, sys.argv[1])
 try:
-    output = subprocess.check_output(shlex.split(GITSERVEPHP))
-    subprocess.check_output(['git-shell', '-c', output.strip()])
+    output = subprocess.Popen(shlex.split(GITSERVEPHP), stdout=subprocess.PIPE).communicate()[0]
+    git_process = subprocess.Popen(['git-shell', '-c', output.strip()])
+    git_process.wait()
 except subprocess.CalledProcessError:
     sys.exit(1)
