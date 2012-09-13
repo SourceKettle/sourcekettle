@@ -60,7 +60,7 @@ class Task extends AppModel {
         'task_type_id' => array(
             'comparison' => array(
                 'rule' => array('comparison', '>', 0),
-                'message' => 'Select a type',
+                'message' => 'Select a task type',
             ),
             'numeric' => array(
                 'rule' => array('numeric'),

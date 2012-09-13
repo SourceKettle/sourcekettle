@@ -49,12 +49,23 @@ $this->Html->css('project.overview', null, array ('inline' => false));
                             <h3>Next Milestone</h3>
                             <hr />
                             <ul class="unstyled">
-                                <li><strong>Oh Damn</strong></li>
+                                <? if ($milestone) : ?>
+                                <li><strong><?= $this->Html->link(
+                                    $milestone['Milestone']['subject'],
+                                    array(
+                                        'project'=>$project['Project']['name'],
+                                        'controller'=>'milestones',
+                                        'action'=>'view',
+                                        $milestone['Milestone']['id']
+                                    )) ?></strong></li>
                                 <br>
-                                <li>Due: 22/10/2012</li>
-                                <li>0% complete</li>
+                                <li>Due: <?= $milestone['Milestone']['due'] ?></li>
+                                <li><?= $milestone['Milestone']['percent'] ?>% complete</li>
+                                <?= $this->Bootstrap->progress(array("width" => (int) $milestone['Milestone']['percent'], "striped" => true)) ?>
+                                <? else: ?>
+                                <li><?= $this->Html->link('Create a milestone', array('project'=>$project['Project']['name'],'controller'=>'milestones','action'=>'add')) ?></li>
+                                <? endif; ?>
                             </ul>
-                            <?= $this->Bootstrap->progress(array("width" => 40, "striped" => true)) ?>
                         </div>
                         <div class="span4">
                             <h3>Quick Stats</h3>

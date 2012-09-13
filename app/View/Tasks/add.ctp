@@ -69,6 +69,9 @@ $this->Html->css('tasks.add', null, array ('inline' => false));
                     <div class="span2 sidebarRight">
                         <h5><?= $this->DT->t('form.type.label') ?></h5>
                         <?php
+
+                        if (!isset($this->request->data['Task']['task_type_id'])) $this->request->data['Task']['task_type_id'] = 1;
+
                         echo $this->Bootstrap->radio("task_type_id", array(
                             "options" => array(
                                 1 => '<div class="tasktype label label-important">bug</div>',

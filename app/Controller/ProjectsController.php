@@ -70,12 +70,20 @@ class ProjectsController extends AppProjectController {
     public function view($name = null) {
         $project = $this->_projectCheck($name);
 
-        $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 1, 'Project.id' => $project['Project']['id'])));
-        $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 2, 'Project.id' => $project['Project']['id'])));
+        $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 1, 'Task.project_id' => $project['Project']['id'])));
+        $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 2, 'Task.project_id' => $project['Project']['id'])));
         $number_of_tasks = $number_of_closed_tasks + $number_of_open_tasks;
-        $percent_of_tasks = $number_of_closed_tasks / $number_of_tasks * 100;
+        $percent_of_tasks = round($number_of_closed_tasks / $number_of_tasks * 100, 1);
 
-        $this->set(compact('number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks'));
+        $_o_milestones = $this->Project->Milestone->getOpenMilestones();
+        $_o_milestones = $this->Project->Milestone->find('all', array('conditions' => array('Milestone.id' => array_values($_o_milestones)), 'order' => 'Milestone.created ASC'));
+        if (empty($_o_milestones)) {
+            $milestone = null;
+        } else {
+            $milestone = $_o_milestones[0];
+        }
+
+        $this->set(compact('milestone', 'number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks'));
         $this->set('events', $this->Project->fetchEventsForProject());
     }
 
