@@ -14,9 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$smallText = " <small>" . $project['Project']['description'] . " </small>";
 $_project_name = $project['Project']['name'];
-
 $_levels = array(
     '0' => array(
         'icon' => 'search',
@@ -34,9 +32,9 @@ $_levels = array(
         'action' => 'makeadmin',
     ),
 );
+?>
 
-echo $this->Bootstrap->page_header($_project_name . $smallText);?>
-
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -45,13 +43,13 @@ echo $this->Bootstrap->page_header($_project_name . $smallText);?>
         <div class="row">
             <div class="span6">
                 <div class="well">
-                    <h3>Users on this project</h3>
+                    <h3><?= $this->DT->t('users.header') ?></h3>
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th width="60%">Users</th>
-                                <th>Role</th>
-                                <th width="25%">Actions</th>
+                                <th width="60%"><?= $this->DT->t('users.users') ?></th>
+                                <th><?= $this->DT->t('users.role') ?></th>
+                                <th width="25%"><?= $this->DT->t('users.actions') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,8 +58,6 @@ echo $this->Bootstrap->page_header($_project_name . $smallText);?>
 
                             $_access_text   = $_details['text'];
                             $_access_icon = $this->Bootstrap->icon($_details['icon']);
-
-                            $_section_title = ucfirst("${_access_text}s on this project");
 
                             $_up_icon   = $this->Bootstrap->icon('arrow-up');
                             $_down_icon = $this->Bootstrap->icon('arrow-down');
@@ -77,7 +73,7 @@ echo $this->Bootstrap->page_header($_project_name . $smallText);?>
                                 $_demote_url  = ($_access_level > 0) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level - 1]['action'], $_user_id), true) : null;
                                 $_delete_url  = $this->Html->url(array('controller' => 'collaborators', 'project' => $_project_name, 'action' => 'delete', $collaborator['Collaborator']['id']), true);
 
-                                $_blank_button = $this->Bootstrap->button_form($this->Bootstrap->icon('none'), '#', array('escape'=>false, 'size' => 'mini', 'class' => 'disabled'))
+                                $_blank_button = $this->Bootstrap->button($this->Bootstrap->icon('none'), array('escape'=>false, 'size' => 'mini', 'class' => 'disabled'))
                             ?>
                             <tr>
                                 <td><?= $this->Html->link("$_user_name &lt;$_user_mail&gt;", $_user_url, array('escape' => false)) ?></td>
@@ -90,7 +86,7 @@ echo $this->Bootstrap->page_header($_project_name . $smallText);?>
                                         $this->Bootstrap->icon('eject', 'white'),
                                         $_delete_url,
                                         array('escape'=>false, 'style' => 'danger', 'size' => 'mini'),
-                                        "Are you sure you want to remove $_user_name from the project?"
+                                        str_replace('{user}', $_user_name, $this->DT->t('users.actions.delete'))
                                     );
                                 ?>
                                 </td>
@@ -105,7 +101,7 @@ echo $this->Bootstrap->page_header($_project_name . $smallText);?>
             </div>
             <div class="span4">
                 <div class="well">
-                    <h3>Add a user</h3>
+                    <h3><?= $this->DT->t('add.header') ?></h3>
                     <?= $this->Form->create('Collaborator', array('url' => array('action' => 'add', 'project' => $project['Project']['name']), 'class' => 'form-inline')) ?>
                     <div class="input-append">
                         <?= $this->Form->text("name", array('id' => 'appendedInputButton', 'class' => 'span3', "placeholder" => "john.smith@example.com", "data-provide" => "typeahead")) ?>
