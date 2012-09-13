@@ -45,7 +45,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
     <div class="span4">
         <h3>What makes a super s3cr3t_pa55W0rd?</h3>
         <p>
-            Here at DevTrack, we arn't your parents.<br>
+            Here at DevTrack, we aren't your parents.<br>
             However we do know a thing or two (maybe more) about what makes a secure password.
         </p>
         <p>

@@ -73,7 +73,11 @@ class ProjectsController extends AppProjectController {
         $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 1, 'Task.project_id' => $project['Project']['id'])));
         $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 2, 'Task.project_id' => $project['Project']['id'])));
         $number_of_tasks = $number_of_closed_tasks + $number_of_open_tasks;
-        $percent_of_tasks = round($number_of_closed_tasks / $number_of_tasks * 100, 1);
+
+        $percent_of_tasks = 0;
+        if($number_of_tasks > 0){
+            $percent_of_tasks = round($number_of_closed_tasks / $number_of_tasks * 100, 1);
+        }
 
         $_o_milestones = $this->Project->Milestone->getOpenMilestones();
         $_o_milestones = $this->Project->Milestone->find('all', array('conditions' => array('Milestone.id' => array_values($_o_milestones)), 'order' => 'Milestone.created ASC'));
@@ -115,8 +119,13 @@ class ProjectsController extends AppProjectController {
             // Create the project object with its data
             $this->Project->create();
 
+            $repoTypes = $this->Project->RepoType->find('list');
+            $this->set(compact('repoTypes'));
 
             if ($this->Project->save($this->request->data)) {
+
+                // Need to know the repo type so we can skip repo creation if necessary...
+                $repo_type = $repoTypes[$this->request->data['Project']['repo_type']];
 
                 // Project has been saved
                 // Now to add the creator as the first admin user on the project
@@ -129,8 +138,10 @@ class ProjectsController extends AppProjectController {
                 $this->log("[ProjectController.add] user[".$this->Auth->user('id')."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
 
 
-                // Create the actual repository - if it fails, delete the database content
-                if(!$this->Project->Source->create()){
+                // Create the actual repository, if required - if it fails, delete the database content
+                if (strtolower($repo_type) == 'none') {
+                    $this->log("[ProjectController.add] project[".$this->Project->id."] does not require a repository", 'devtrack');
+                } elseif (!$this->Project->Source->create()) {
                     $this->log("[ProjectController.add] project[".$this->Project->id."] repository creation failed - automatically removing project data", 'devtrack');
                     $this->Project->delete();
                     $this->Session->setFlash(__('The project repository could not be created. Please try again.'), 'default', array(), 'error');
@@ -143,8 +154,6 @@ class ProjectsController extends AppProjectController {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         }
-        $repoTypes = $this->Project->RepoType->find('list');
-        $this->set(compact('repoTypes'));
     }
 
     /**

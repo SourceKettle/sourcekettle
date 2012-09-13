@@ -12,7 +12,7 @@
         User registered
         </dt>
         <dd>
-            <?= $this->Time->timeAgoInWords($user['User']['created']) ?>
+            <?= $this->Time->timeAgoInWords($user['User']['created'], 'Y-m-d') ?>
         </dd>
     </dl>
 </div>
