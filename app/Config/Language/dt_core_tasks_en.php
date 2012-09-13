@@ -25,13 +25,13 @@
  * APP/Tasks
  */
 // APP/*/topbar
-$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option1.text'] = "Assigned to you";
-$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option2.text'] = "Assigned to anyone";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.index.text'] = "Assigned to you";
+$config['dtcore']['pages']['tasks']['topbar']['en']['topbar.others.text'] = "Assigned to others";
 $config['dtcore']['pages']['tasks']['topbar']['en']['topbar.option3.text'] = "Watching";
 $config['dtcore']['pages']['tasks']['topbar']['en']['topbar.create.text'] = "Create Task";
 
 // APP/Tasks/index
-$config['dtcore']['pages']['tasks']['index']['en']['header.text'] = "Tasks for the Project";
+$config['dtcore']['pages']['tasks']['index']['en']['header.text'] = "My Tasks for the Project";
 
 $config['dtcore']['pages']['tasks']['index']['en']['column.tasks.empty'] = "There are currently no tasks";
 
@@ -41,6 +41,18 @@ $config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.reso
 $config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.closed'] = "Closed";
 $config['dtcore']['pages']['tasks']['index']['en']['column.options.milestone.title'] = "Milestone";
 $config['dtcore']['pages']['tasks']['index']['en']['column.history.title'] = "Recent History";
+
+// APP/Tasks/others
+$config['dtcore']['pages']['tasks']['others']['en']['header.text'] = "Others Tasks for the Project";
+
+$config['dtcore']['pages']['tasks']['others']['en']['column.tasks.empty'] = "There are currently no tasks";
+
+$config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.open'] = "Open";
+$config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.progress'] = "In Progress";
+$config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.resolved'] = "Resolved";
+$config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.closed'] = "Closed";
+$config['dtcore']['pages']['tasks']['others']['en']['column.options.milestone.title'] = "Milestone";
+$config['dtcore']['pages']['tasks']['others']['en']['column.history.title'] = "Recent History";
 
 // APP/Tasks/add
 $config['dtcore']['pages']['tasks']['add']['en']['header.text'] = "Add a new Task for the Project";
