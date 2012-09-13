@@ -114,13 +114,13 @@ class ProjectsController extends AppProjectController {
      * @return void
      */
     public function add() {
+        $repoTypes = $this->Project->RepoType->find('list');
+        $this->set(compact('repoTypes'));
+
         if ($this->request->is('post')) {
 
             // Create the project object with its data
             $this->Project->create();
-
-            $repoTypes = $this->Project->RepoType->find('list');
-            $this->set(compact('repoTypes'));
 
             if ($this->Project->save($this->request->data)) {
 
