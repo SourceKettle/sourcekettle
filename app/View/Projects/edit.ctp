@@ -6,44 +6,47 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
  * @package       DevTrack.View.Projects
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- 
-$smallText = " <small>" . $project['Project']['description'] . " </small>";
+
+$smallText = " <small>Edit Project</small>";
 
 echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
-	
+
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-        <div class="row">
-            <div class="span6">
-                <div class="well row-split">
-                    <h3>Edit Project</h3>
-                    <?php echo $this->Form->create('Project', array('class' => 'form-vertical')); ?>
-                    <?php 
+        <div class="row-fluid">
+            <div class="span7">
+                <div class="well">
+                    <h3>Project description</h3>
+                    <?php echo $this->Form->create('Project', array('class' => 'form-inline')); ?>
+                    <?php
 
                     echo $this->Bootstrap->input("description", array(
-                        "input" => $this->Form->textarea("description", array('class' => 'span5')),
+                        "input" => $this->Form->textarea("description", array('class' => 'span12', 'rows' => 8)),
+                        "label" => false
                     ));
 
-                    echo $this->Bootstrap->input("public", array(
-                        "input" => $this->Form->checkbox("public"),
-                    ));
+                    echo "<h3>Is the project public?</h3>";
+                    ?>
 
-                    echo $this->Bootstrap->button("Update Project", array("style" => "primary", "size" => "large", 'class' => 'controls')); 
+                    <p><?= $this->Form->checkbox("public") ?> Yes, I would like to allow other DevTrack users to browse my project</p>
+
+                    <?php
+                    echo $this->Bootstrap->button("Submit", array("style" => "primary", 'class' => 'controls'));
 
                     echo $this->Form->end(); ?>
                 </div>
             </div>
-            <div class="span4">
+            <div class="span5">
                 <div class="well">
                     <h3>Delete this project</h3>
                     <p>Please note, this action is <strong>not</strong> reversible. This will also delete any material associate with this project (e.g. Wikis).</p>
