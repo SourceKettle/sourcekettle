@@ -75,7 +75,6 @@
                             $navItems = array(
                             	'dashboard' => __('Dashboard'),
                             	'projects' => __('Projects'),
-                            	'tasks' => __('Tasks'),
                             );
                             foreach ($navItems as $controller => $text) {
                                 echo "<li" . ($controller == $this->params['controller'] ? " class='active'>" : ">");
@@ -103,8 +102,8 @@
         <div id='footer'>
             <hr>
             <?=$this->Html->link('About DevTrack', '/about');?>
-            <?=$this->Html->link('Git help', '/git_help');?>
-            <?=$this->Html->link('SVN help', '/svn_help');?>
+            <?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
+            <?//=$this->Html->link('SVN help', '/svn_help');?>
         </div>
     </div>
 
