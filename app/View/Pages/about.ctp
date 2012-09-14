@@ -18,8 +18,10 @@
     </div>
     <div class="span4" style="text-align:center"> 
         <h4>The DevTrack Dev Team</h4>
-        <p><?=$this->Html->link('@chrisbulmer', 'https://github.com/chrisbulmer/')?></p>
         <p><?=$this->Html->link('@pwhittlesea', 'https://github.com/pwhittlesea/')?></p>
+        <p><?=$this->Html->link('@chrisbulmer', 'https://github.com/chrisbulmer/')?></p>
+        <p><?=$this->Html->link('@xycaleth', 'https://github.com/xycaleth')?></p>
+        <p><?=$this->Html->link('@amn-ecs', 'https://github.com/amn-ecs/')?></p>
         <p><?=$this->Html->link('et al.', 'https://github.com/chrisbulmer/devtrack/graphs/contributors')?></p>
     </div>
     <div class="span4" style="text-align:center">
