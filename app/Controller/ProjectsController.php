@@ -122,21 +122,23 @@ class ProjectsController extends AppProjectController {
             // Create the project object with its data
             $this->Project->create();
 
-            if ($this->Project->save($this->request->data)) {
+            // Lets vet the data coming in
+            $_request_data = array();
 
+            $_request_data['Project'] = $this->request->data['Project'];
+            $_request_data['Collaborator'] = array(
+                array(
+                    'user_id' => $this->Project->_auth_user_id,
+                    'access_level' => 2 // Project admin
+                )
+            );
+
+            if ($this->Project->saveAll($_request_data)) {
                 // Need to know the repo type so we can skip repo creation if necessary...
-                $repo_type = $repoTypes[$this->request->data['Project']['repo_type']];
+                $repo_type = $repoTypes[$_request_data['Project']['repo_type']];
 
-                // Project has been saved
-                // Now to add the creator as the first admin user on the project
-                $data = array('Collaborator');
-                $data['Collaborator']['user_id'] = $this->Auth->user('id');
-                $data['Collaborator']['project_id'] = $this->Project->id;
-                $data['Collaborator']['access_level'] = 2; //Project admin
-                $this->Project->Collaborator->save($data);
-                $this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Auth->user('id')."]", 'devtrack');
-                $this->log("[ProjectController.add] user[".$this->Auth->user('id')."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
-
+                $this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Project->_auth_user_id."]", 'devtrack');
+                $this->log("[ProjectController.add] user[".$this->Project->_auth_user_id."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
 
                 // Create the actual repository, if required - if it fails, delete the database content
                 if (strtolower($repo_type) == 'none') {
@@ -149,7 +151,7 @@ class ProjectsController extends AppProjectController {
                     $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
                 }
 
-                $this->redirect(array('action' => 'index'));
+                $this->redirect(array('project' => $_request_data['Project']['name'], 'action' => 'view', $this->Project->_auth_user_id));
             } else {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
