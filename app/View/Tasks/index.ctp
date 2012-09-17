@@ -89,7 +89,7 @@ $this->Html->scriptBlock("
 
                     <div class="span7">
                         <div class="well col">
-                            <h2><?= $this->DT->t('topbar.option1.text', array('action' => 'topbar')) ?></h2>
+                            <h2><?= $this->DT->t('topbar.'.$this->request['action'].'.text', array('action' => 'topbar')) ?></h2>
                             <hr />
                             <span id="tasksCol">
                             </span>

@@ -79,6 +79,33 @@ class Milestone extends AppModel {
     );
 
     /**
+     * afterFind function.
+     *
+     * @access public
+     * @param mixed $results
+     * @param bool $primary (default: false)
+     * @return void
+     */
+    public function afterFind($results, $primary = false) {
+        foreach ($results as $a => $result) {
+            if (isset($result['Milestone']['id'])) {
+                $this->Task->recursive = -1;
+                $o = $results[$a]['Tasks']['open'] = $this->openTasksForMilestone($result['Milestone']['id']);
+                $i = $results[$a]['Tasks']['in_progress'] = $this->inProgressTasksForMilestone($result['Milestone']['id']);
+                $r = $results[$a]['Tasks']['resolved'] = $this->resolvedTasksForMilestone($result['Milestone']['id']);
+                $c = $results[$a]['Tasks']['completed'] = $this->closedTasksForMilestone($result['Milestone']['id']);
+                if ((sizeof($o) + sizeof($i) + sizeof($r) + sizeof($c)) > 0) {
+                    $results[$a]['Milestone']['percent'] = sizeof($o) / (sizeof($o) + sizeof($i) + sizeof($r) + sizeof($c)) * 100;
+                } else {
+                    $results[$a]['Milestone']['percent'] = 0;
+                }
+                $this->Task->recursive = 1;
+            }
+        }
+        return $results;
+    }
+
+    /**
      * afterDelete function.
      * Dis-associate all of the incomplete tasks and delete the done ones
      *
@@ -166,9 +193,9 @@ class Milestone extends AppModel {
     }
 
     public function getOpenMilestones($assoc = false) {
-        $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
+        $list_of_milestones = array_values($this->find('list', array('conditions' => array('project_id' => $this->Project->id), 'fields' => array('id'))));
         if ($assoc) {
-            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('id' => array_diff($list_of_milestones, $this->getClosedMilestones($assoc)))));
+            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('project_id' => $this->Project->id, 'id' => array_diff($list_of_milestones, $this->getClosedMilestones($assoc)))));
         }
         return array_diff($list_of_milestones, $this->getClosedMilestones($assoc));
     }
@@ -178,6 +205,7 @@ class Milestone extends AppModel {
         $open_task_milestones = array_values($this->Task->find(
             'list',
             array(
+                'project_id' => $this->Project->id,
                 'group' => array('milestone_id'),
                 'fields' => array('milestone_id'),
                  'conditions' => array(
@@ -186,7 +214,7 @@ class Milestone extends AppModel {
             )
         ));
         if ($assoc) {
-            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('id' => array_diff($list_of_milestones, $open_task_milestones))));
+            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('project_id' => $this->Project->id, 'id' => array_diff($list_of_milestones, $open_task_milestones))));
         }
         return array_diff($list_of_milestones, $open_task_milestones);
     }

@@ -47,41 +47,15 @@ class TasksController extends AppProjectController {
     public function index($project = null) {
         $project = $this->_projectCheck($project);
 
-        $user = $this->Task->find('all', array(
-            'conditions' => array(
-                'Project.id' => $project['Project']['id'],
-                'Assignee.id' => $this->Auth->user('id'),
-                'TaskStatus.id' => array(1,2)
-            ),
-            'order' => 'TaskPriority.id DESC'
-        ));
-        $team = $this->Task->find('all', array(
-            'conditions' => array(
-                'Project.id' => $project['Project']['id'],
-                'Assignee.id !=' => $this->Auth->user('id'),
-                'TaskStatus.id' => array(1,2)
-            ),
-            'order' => 'TaskPriority.id DESC'
-        ));
-        $others = $this->Task->find('all', array(
-            'conditions' => array(
-                'Project.id' => $project['Project']['id'],
-                'Assignee.id' => null,
-                'TaskStatus.id' => array(1,2)
-            ),
-            'order' => 'TaskPriority.id DESC'
-        ));
-
-        // Final value is min size of the board
-        $max = max(sizeof($user), sizeof($team), sizeof($others), 5);
-
-        $events = $this->Task->fetchHistory($project['Project']['id'], round($max * 1.4));
+        $events = $this->Task->fetchHistory($project['Project']['id'], 5);
         $open_milestones = $this->Task->Milestone->getOpenMilestones(true);
 
-        $this->set('user_empty', $max - sizeof($user));
-        $this->set('team_empty', $max - sizeof($team));
-        $this->set('others_empty', $max - sizeof($others));
-        $this->set(compact('open_milestones', 'user', 'team', 'others', 'events'));
+        $this->set(compact('open_milestones', 'events'));
+    }
+
+    public function others($project = null) {
+        $this->index($project);
+        $this->render('index');
     }
 
     /**
@@ -252,8 +226,8 @@ class TasksController extends AppProjectController {
 
         // Fetch all the variables for the view
         $taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
-        $milestonesOpen = $this->Task->Milestone->find('list');
-        $milestonesClosed = $this->Task->Milestone->find('list');
+        $milestonesOpen = $this->Task->Milestone->getOpenMilestones();
+        $milestonesClosed = $this->Task->Milestone->getClosedMilestones();
         $milestones = array('No Assigned Milestone');
         if (!empty($milestonesOpen)) {
             $milestones['Open'] = $milestonesOpen;

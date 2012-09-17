@@ -274,16 +274,6 @@ class MilestonesController extends AppProjectController {
                 if ($_public_project || $_is_admin || $_part_of_project) {
                     $milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $id))));
 
-                    $o_tasks = sizeof($this->Milestone->openTasksForMilestone($id));
-                    $i_tasks = sizeof($this->Milestone->inProgressTasksForMilestone($id));
-                    $r_tasks = sizeof($this->Milestone->resolvedTasksForMilestone($id));
-                    $c_tasks = sizeof($this->Milestone->closedTasksForMilestone($id));
-                    if (($o_tasks + $i_tasks + $r_tasks + $c_tasks) > 0) {
-                        $milestone['Milestone']['percent'] = $o_tasks / ($o_tasks + $i_tasks + $r_tasks + $c_tasks) * 100;
-                    } else {
-                        $milestone['Milestone']['percent'] = 0;
-                    }
-
                     $data = $milestone['Milestone'];
                 } else {
                     $data['error'] = 401;

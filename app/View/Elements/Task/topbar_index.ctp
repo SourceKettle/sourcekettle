@@ -17,23 +17,16 @@
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.option1.text', array('action' => 'topbar')),
+                'text' => $this->DT->t('topbar.index.text', array('action' => 'topbar')),
                 'url' => array(
                     'action' => '.',
                     'controller' => 'tasks',
                 ),
             ),
             array(
-                'text' => $this->DT->t('topbar.option2.text', array('action' => 'topbar')),
+                'text' => $this->DT->t('topbar.others.text', array('action' => 'topbar')),
                 'url' => array(
                     'action' => 'others',
-                    'controller' => 'tasks',
-                ),
-            ),
-            array(
-                'text' => $this->DT->t('topbar.option3.text', array('action' => 'topbar')),
-                'url' => array(
-                    'action' => 'watching',
                     'controller' => 'tasks',
                 ),
             ),

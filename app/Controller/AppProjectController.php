@@ -25,9 +25,10 @@ class AppProjectController extends AppController {
      * @access protected
      * @param mixed $name
      * @param bool $needWrite (default: false)
+     * @param bool $needAdmin (default: false)
      * @return void
      */
-    protected function _projectCheck($name, $needWrite = false) {
+    protected function _projectCheck($name, $needWrite = false, $needAdmin = false) {
         if ( $this->modelClass == "Project" ) {
             $__model = $this->Project;
         } else {
@@ -45,8 +46,13 @@ class AppProjectController extends AppController {
         $this->set('previousPage', $this->referer(array('action' => 'index', 'project' => $project['Project']['name']), true));
 
         // Lock out those who arnt allowed to write
-        if ($needWrite && !$__model->hasWrite($this->Auth->user('id')) ) {
+        if ($needWrite && !$__model->hasWrite($__model->_auth_user_id) ) {
             throw new ForbiddenException(__('You do not have permissions to write to this project'));
+        }
+
+        // Lock out those who arnt admins
+        if ($needAdmin && !$__model->isAdmin($__model->_auth_user_id) ) {
+            throw new ForbiddenException(__('You need to be an admin to access this page'));
         }
 
         return $project;

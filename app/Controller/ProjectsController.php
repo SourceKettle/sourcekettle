@@ -70,15 +70,24 @@ class ProjectsController extends AppProjectController {
     public function view($name = null) {
         $project = $this->_projectCheck($name);
 
-        $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 1, 'Project.id' => $project['Project']['id'])));
-        $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 2, 'Project.id' => $project['Project']['id'])));
+        $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 1, 'Task.project_id' => $project['Project']['id'])));
+        $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 2, 'Task.project_id' => $project['Project']['id'])));
         $number_of_tasks = $number_of_closed_tasks + $number_of_open_tasks;
+
         $percent_of_tasks = 0;
         if($number_of_tasks > 0){
-            $percent_of_tasks = $number_of_closed_tasks / $number_of_tasks * 100;
+            $percent_of_tasks = round($number_of_closed_tasks / $number_of_tasks * 100, 1);
         }
 
-        $this->set(compact('number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks'));
+        $_o_milestones = $this->Project->Milestone->getOpenMilestones();
+        $_o_milestones = $this->Project->Milestone->find('all', array('conditions' => array('Milestone.id' => array_values($_o_milestones)), 'order' => 'Milestone.created ASC'));
+        if (empty($_o_milestones)) {
+            $milestone = null;
+        } else {
+            $milestone = $_o_milestones[0];
+        }
+
+        $this->set(compact('milestone', 'number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks'));
         $this->set('events', $this->Project->fetchEventsForProject());
     }
 
@@ -113,27 +122,28 @@ class ProjectsController extends AppProjectController {
 
             $repoTypes = $this->Project->RepoType->find('list');
 
+            // Lets vet the data coming in
+            $_request_data = array();
 
-            if ($this->Project->save($this->request->data)) {
+            $_request_data['Project'] = $this->request->data['Project'];
+            $_request_data['Collaborator'] = array(
+                array(
+                    'user_id' => $this->Project->_auth_user_id,
+                    'access_level' => 2 // Project admin
+                )
+            );
 
-				// Need to know the repo type so we can skip repo creation if necessary...
-				$repo_type = $repoTypes[$this->request->data['Project']['repo_type']];
+            if ($this->Project->saveAll($_request_data)) {
+                // Need to know the repo type so we can skip repo creation if necessary...
+                $repo_type = $repoTypes[$_request_data['Project']['repo_type']];
 
-                // Project has been saved
-                // Now to add the creator as the first admin user on the project
-                $data = array('Collaborator');
-                $data['Collaborator']['user_id'] = $this->Auth->user('id');
-                $data['Collaborator']['project_id'] = $this->Project->id;
-                $data['Collaborator']['access_level'] = 2; //Project admin
-                $this->Project->Collaborator->save($data);
-                $this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Auth->user('id')."]", 'devtrack');
-                $this->log("[ProjectController.add] user[".$this->Auth->user('id')."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
-
+                $this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Project->_auth_user_id."]", 'devtrack');
+                $this->log("[ProjectController.add] user[".$this->Project->_auth_user_id."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
 
                 // Create the actual repository, if required - if it fails, delete the database content
                 if (strtolower($repo_type) == 'none') {
                     $this->log("[ProjectController.add] project[".$this->Project->id."] does not require a repository", 'devtrack');
-				} elseif (!$this->Project->Source->create()) {
+                } elseif (!$this->Project->Source->create()) {
                     $this->log("[ProjectController.add] project[".$this->Project->id."] repository creation failed - automatically removing project data", 'devtrack');
                     $this->Project->delete();
                     $this->Session->setFlash(__('The project repository could not be created. Please try again.'), 'default', array(), 'error');
@@ -141,7 +151,7 @@ class ProjectsController extends AppProjectController {
                     $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
                 }
 
-                $this->redirect(array('action' => 'index'));
+                $this->redirect(array('project' => $_request_data['Project']['name'], 'action' => 'view', $this->Project->_auth_user_id));
             } else {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
