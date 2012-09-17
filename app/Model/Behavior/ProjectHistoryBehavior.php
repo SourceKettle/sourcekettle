@@ -65,7 +65,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
     public function beforeSave(Model $Model) {
         $exception = false;
 
-        // Lock out those who arnt allowed to write
+        // Lock out those who aren't allowed to write
         if ( $Model->name == 'Collaborator' && !$Model->findByProjectId($Model->Project->id) ) {
             $exception = true;
         }
@@ -73,6 +73,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
         if ( !$exception && !$Model->Project->hasWrite($Model->_auth_user_id) ) {
             throw new ForbiddenException(__('You do not have permissions to write to this project'));
         }
+
         $before = $Model->findById($Model->id);
         foreach ($Model->data[$Model->name] as $field => $value) {
             if ($field != 'modified' && $before[$Model->name][$field] != $value) {

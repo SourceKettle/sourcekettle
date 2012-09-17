@@ -44,7 +44,6 @@ class LoginController extends AppController{
      * Allows users to login using their username and password.
      */
     public function index(){
-        
         //if (!$this->Auth->loggedIn()){
             if ($this->request->is('post')) {
                 
@@ -61,7 +60,7 @@ class LoginController extends AppController{
                         $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The credentials supplied were not valid. Please try again."), 'default', array(), 'error');
                     }
                 } else { //else error (same error as above so not to disclose that it is a valid account)
-                    $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The credentials supplied were not valid. Please try again."), 'default', array(), 'error');
+                    $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The (a)credentials supplied were not valid. Please try again."), 'default', array(), 'error');
                 }
             }
         /*} else {
