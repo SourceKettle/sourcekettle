@@ -33,7 +33,7 @@
          */
         Router::connect('/logout', array('controller' => 'login', 'action' => 'logout'));
         Router::connect('/forgot_password', array('controller' => 'users', 'action' => 'forgot_password'));
-        Router::connect('/reset_password/*', array('controller' => 'users', 'action' => 'reset_password'));
+        //Router::connect('/reset_password/*', array('controller' => 'users', 'action' => 'reset_password'));
         Router::connect('/register', array('controller' => 'users', 'action' => 'register'));
         Router::connect('/activate/*', array('controller' => 'users', 'action' => 'activate'));
         Router::connect('/admin', array('controller' => 'admin', 'action' => 'index', 'admin' => true));

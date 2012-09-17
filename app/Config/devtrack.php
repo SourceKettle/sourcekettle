@@ -25,23 +25,3 @@
  // set to folder where you would like repositories placed
  $config['devtrack']['repo']['base'] = '/home/git/repositories';
 
- $config['devtrack']['authenticate'] = array(
-                // Try soton auth first
-                'LDAPAuthCake.LDAP' => array(
-                    'ldap_url'      => 'ldaps://nlbldap.soton.ac.uk',
-                    'ldap_bind_dn'  => '',
-                    'ldap_bind_pw'  => '',
-                    'ldap_base_dn'  => 'ou=User,dc=soton,dc=ac,dc=uk',
-                    'ldap_filter'   => '(| (proxyAddresses=SMTP:%USERNAME%) (proxyAddresses=smtp:%USERNAME%) )',
-                    'form_fields'   => array ('username' => 'email', 'password' => 'password'),
-                    'ldap_to_user'  => array(
-                      'displayName' => 'name',
-                      'mail'        => 'email',
-                    ),
-                ),
-
-                // Then try form/db auth
-                'Form' => array(
-                    'fields' => array ('username' => 'email', 'password' => 'password')
-                ),
-            );
