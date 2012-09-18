@@ -72,6 +72,9 @@
         Router::connect('/project/:project/collaborators/:action/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/collaborators/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[\w]+'));
 
+        Router::connect('/project/:project/attachment/:action/*', array('controller' => 'attachments'), array('pass' => array('project'), 'project' => '[\w]+'));
+        Router::connect('/project/:project/attachment/*', array('controller' => 'attachments'), array('pass' => array('project'), 'project' => '[\w]+'));
+
         /*
          * If no other controller is to be used, use the projects controller
          */

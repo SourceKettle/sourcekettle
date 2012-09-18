@@ -173,6 +173,19 @@ class Project extends AppModel {
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'Attachment' => array(
+            'className' => 'Attachment',
+            'foreignKey' => 'project_id',
+            'dependent' => true,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
     );
 
@@ -218,7 +231,7 @@ class Project extends AppModel {
         if (empty($project)){
             $project = null;
         }
-	
+
 	// In some cases, auth_user_id isn't set (like GitCommand)
 	if (!$skip_perms) {
         	// Lock out those who are not allowed to read

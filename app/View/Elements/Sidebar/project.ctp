@@ -55,6 +55,14 @@
                     'project' => $this->params['project'],
                 ),
             ),
+            'Attachments' => array(
+                'icon' => 'download',
+                'url' => array(
+                    'action' => array('*'),
+                    'controller' => 'attachments',
+                    'project' => $this->params['project'],
+                ),
+            ),
         ),
         'help' => array(
             'action' => 'project',

@@ -41,7 +41,7 @@ class ProjectHistory extends AppModel {
         ),
         'model' => array(
             'inlist' => array(
-                'rule' => array('inlist', array('collaborator','task','milestone','source','time')),
+                'rule' => array('inlist', array('collaborator','task','milestone','source','time','projectattachment')),
             ),
         ),
         'model_id' => array(

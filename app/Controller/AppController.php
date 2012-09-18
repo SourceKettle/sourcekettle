@@ -44,6 +44,7 @@ class AppController extends Controller {
      * @var type
      */
     public $components = array(
+        'RequestHandler',
         'Session',
         'Auth' => array(
             //'authorize' => 'actions',

@@ -409,3 +409,26 @@ CREATE TABLE IF NOT EXISTS `milestones` (
 --
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `attachments`
+--
+CREATE TABLE IF NOT EXISTS `attachments` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) NOT NULL,
+  `model` varchar(255) DEFAULT NULL,
+  `model_id` int(10) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `mime` varchar(255) NOT NULL,
+  `size` varchar(255) NOT NULL,
+  `md5` varchar(255) NOT NULL,
+  `content` longblob,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `attachments`
+--
+
+-- --------------------------------------------------------
