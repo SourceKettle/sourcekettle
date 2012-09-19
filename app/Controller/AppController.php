@@ -20,7 +20,9 @@
  */
 App::uses('Controller', 'Controller');
 
+
 class AppController extends Controller {
+
 
     /**
      * The global helpers
@@ -47,7 +49,6 @@ class AppController extends Controller {
         'RequestHandler',
         'Session',
         'Auth' => array(
-            //'authorize' => 'actions',
             'actionPath' => 'controllers/',
             'loginAction' => array(
                 'controller' => 'login',
@@ -62,10 +63,10 @@ class AppController extends Controller {
             'authenticate' => array(
                 'Form' => array(
                     'fields' => array ('username' => 'email', 'password' => 'password')
-                )
+                ),
             )
-        ));
-
+        )
+    );
 
     /**
      * Before filter method acts first in the controller
@@ -75,20 +76,33 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
 
+        // Load config file in
+        $this->devtrack_config = array_merge(
+          Configure::read('devtrack'),
+          ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
+        );
+        
+        $this->set('devtrack_config', $this->devtrack_config);
+            
+            
+
+        // Set up the devtrack-specific auth model
         $this->Auth->userModel = 'User';
 
         //Customise the login error
-        $this->Auth->loginError = 'The credentials you entered were incorrect. Please try again or have you <a href="lost_password">lost your password</a>';
+        $this->Auth->loginError = 'The credentials you entered were incorrect. Please try again, or have you <a href="lost_password">lost your password</a>?';
 
         //Customise thge auth error (when they try to access a protected part of the site)
         $this->Auth->authError = 'You need to login to view that page';
+
+        // Now set up the Auth object's authentication settings based on the config settings
 
         //Use sha256 as the hashing algorithm for the site as it is the most secure out of the allowed options.
         Security::setHash('sha256');
 
         if($this->Auth->loggedIn()){
-            $user_id = $this->Auth->user('id');
-            $user_name = $this->Auth->user('name');
+            $user_id    = $this->Auth->user('id');
+            $user_name  = $this->Auth->user('name');
             $user_email = $this->Auth->user('email');
             $this->{$this->modelClass}->setCurrentUserData($user_id, $user_name, $user_email);
             $this->set('user_id', $user_id);
@@ -96,10 +110,6 @@ class AppController extends Controller {
             $this->set('user_email', $user_email);
         }
 
-        // Load config file in
-        $this->devtrack_config = array_merge(Configure::read('devtrack'), ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value'))));
-
-        $this->set('devtrack_config', $this->devtrack_config);
 
         // if admin pages are being requested
         if(isset($this->params['admin'])) {

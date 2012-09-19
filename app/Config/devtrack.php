@@ -24,3 +24,4 @@
  // Repository folder
  // set to folder where you would like repositories placed
  $config['devtrack']['repo']['base'] = '/home/git/repositories';
+

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Description of GitShell
  *
@@ -36,7 +37,8 @@ class GitShell extends AppShell {
 			
 			// Sanity check #1, fail if the user doesn't exist...
 			if(!$git_details){
-				throw new Exception("Cannot sync keys - git user '$git_user' does not exist - have you set up DevTrack properly?");
+				$this->err("Cannot sync keys - git user '$git_user' does not exist - have you set up DevTrack properly?");
+                exit(1);
 			}
 
 			// Get their homedir
@@ -44,7 +46,8 @@ class GitShell extends AppShell {
 
 			// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
 			if(!is_dir($git_homedir.'/.ssh')){
-				throw new Exception("Cannot sync keys - $git_homedir/.ssh not found - have you set up DevTrack properly?");
+				$this->err("Cannot sync keys - $git_homedir/.ssh not found - have you set up DevTrack properly?");
+                exit(1);
 			}
 
 			// Now we know where to write to...
@@ -65,6 +68,8 @@ class GitShell extends AppShell {
 
 			// This is the git-serve command that will be run when git logs in
 			$cmd = $app_path . 'scm-scripts/git-serve.py';
+
+            //$cmd = dirname(__FILE__).'../../../scm-scripts/git-serve.py'
 
 			// Build up a list of SSH keys to write to file
 			// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...

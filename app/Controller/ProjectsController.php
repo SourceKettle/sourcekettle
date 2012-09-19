@@ -25,7 +25,7 @@ class ProjectsController extends AppProjectController {
      */
     public $helpers = array('Time', 'GoogleChart.GoogleChart');
 
-    public $uses = array('Project');
+    public $uses = array('Project', 'RepoType');
 
     /**
      * beforeFilter function.
@@ -114,13 +114,13 @@ class ProjectsController extends AppProjectController {
      * @return void
      */
     public function add() {
-        $repoTypes = $this->Project->RepoType->find('list');
-        $this->set(compact('repoTypes'));
 
         if ($this->request->is('post')) {
 
             // Create the project object with its data
             $this->Project->create();
+
+            $repoTypes = $this->Project->RepoType->find('list');
 
             // Lets vet the data coming in
             $_request_data = array();
@@ -155,7 +155,12 @@ class ProjectsController extends AppProjectController {
             } else {
                 $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
+
+        } else {
+            $repoTypes = $this->RepoType->find('list');
         }
+
+       	$this->set(compact('repoTypes'));
     }
 
     /**
