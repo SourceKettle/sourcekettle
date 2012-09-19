@@ -28,38 +28,102 @@ class SettingsController extends AppController {
         $this->set('register', $this->Setting->field('value', array('name' => 'register_enabled')));
         $this->set('sysadmin_email', $this->Setting->field('value', array('name' => 'sysadmin_email')));
         $this->set('repo_location', $this->Setting->field('value', array('name' => 'repo_location')));
+
+        // Project options
+        $this->set('features', array(
+            'time'       => $this->Setting->field('value', array('name' => 'feature_time_enabled')),
+            'source'     => $this->Setting->field('value', array('name' => 'feature_source_enabled')),
+            'task'       => $this->Setting->field('value', array('name' => 'feature_task_enabled')),
+            'attachment' => $this->Setting->field('value', array('name' => 'feature_attachment_enabled'))
+        ));
     }
 
-    /**
-     * admin_edit method
-     *
-     * @return void
-     */
-    public function admin_edit($change = null) {
-        $setting = array();
-        if ($change != null) {
-            $setting =array_merge(json_decode($change, true), $setting);
+    public function admin_setEmail() {
+        // Check form value provided and request is a post request
+        if (!$this->request->is('post')) {
+            throw new MethodNotAllowedException();
         }
-        if ( isset($this->data['Settings']) && is_array($this->data['Settings']) ) {
-            $setting = array_merge($this->data['Settings'], $setting);
-        }
-        foreach ( $setting as $key => $value ) {
-
-            if ( !($setting_id = $this->Setting->field('id', array('name' => $key))) ) {
-                $this->log("ERROR: [SettingsController.admin_edit] user[".$this->Auth->user('id')."] tried to set setting[".$key."] which does not exist", 'devtrack');
-            }
-            $data = array();
-            $data['Setting']['id'] = $setting_id;
-            $data['Setting']['value'] = $value;
-
-            if ($this->Setting->save($data)) {
-                $this->Session->setFlash(__('Setting "'.$key.'" updated'), 'default', array(), 'success');
-                $this->log("[SettingsController.admin_edit] user[".$this->Auth->user('id')."] changed setting[".$key."] to value \"".$value."\"", 'devtrack');
-            } else {
-                $this->Session->setFlash(__('Setting "'.$key.'" could not be saved. Please, try again.'), 'default', array(), 'error');
-            }
+        $this->Setting->id = $this->Setting->field('id', array('name' => 'sysadmin_email'));
+        if ($this->Setting->exists() && Validation::email($this->request->data['Settings']['sysadmin_email'])) {
+            $this->Setting->set('value', $this->request->data['Settings']['sysadmin_email']);
+            $this->Setting->save();
         }
         $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
     }
 
+    /**
+     * admin_setRegistration function.
+     *
+     * @access public
+     * @param mixed $value (default: null)
+     * @return void
+     */
+    public function admin_setRegistration($value = null) {
+        $this->admin_setField('register_enabled', $value);
+    }
+
+    /**
+     * admin_setFeatureTime function.
+     *
+     * @access public
+     * @param mixed $value (default: null)
+     * @return void
+     */
+    public function admin_setFeatureTime($value = null) {
+        $this->admin_setField('feature_time_enabled', $value);
+    }
+
+    /**
+     * admin_setFeatureTask function.
+     *
+     * @access public
+     * @param mixed $value (default: null)
+     * @return void
+     */
+    public function admin_setFeatureTask($value = null) {
+        $this->admin_setField('feature_task_enabled', $value);
+    }
+
+    /**
+     * admin_setFeatureSource function.
+     *
+     * @access public
+     * @param mixed $value (default: null)
+     * @return void
+     */
+    public function admin_setFeatureSource($value = null) {
+        $this->admin_setField('feature_source_enabled', $value);
+    }
+
+    /**
+     * admin_setFeatureAttachment function.
+     *
+     * @access public
+     * @param mixed $value (default: null)
+     * @return void
+     */
+    public function admin_setFeatureAttachment($value = null) {
+        $this->admin_setField('feature_attachment_enabled', $value);
+    }
+
+    /**
+     * admin_setField function.
+     *
+     * @access private
+     * @param mixed $field (default: null)
+     * @param mixed $value (default: null)
+     * @return void
+     */
+    private function admin_setField($field = null, $value = null) {
+        $this->Setting->id = $this->Setting->field('id', array('name' => $field));
+        if (!$this->Setting->exists()) {
+            $this->Session->setFlash(__('The specified setting does not exist in the database. Please create "'.$field.'" and try again.'), 'default', array(), 'error');
+        } else if (in_array((int) $value, array(0,1))) {
+            $this->Setting->set('value', $value);
+            $this->Setting->save();
+        } else {
+            $this->Session->setFlash(__('Cannot set "'.$field.'" to a value other than 1 or 0. Please try again.'), 'default', array(), 'error');
+        }
+        $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+    }
 }
