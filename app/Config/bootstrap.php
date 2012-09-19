@@ -94,6 +94,7 @@ Configure::load('Language/dt_core_en');
 
 Configure::load('Language/dt_core_projects_en');
 Configure::load('Language/dt_core_tasks_en');
+Configure::load('Language/dt_core_times_en');
 Configure::load('Language/dt_core_milestones_en');
 Configure::load('Language/dt_core_collaborators_en');
 Configure::load('Language/dt_core_attachments_en');
