@@ -44,28 +44,40 @@ class LoginController extends AppController{
      * Allows users to login using their username and password.
      */
     public function index(){
-        //if (!$this->Auth->loggedIn()){
-            if ($this->request->is('post')) {
-                
-                //Get the user they are trying to log in as
-                $user = $this->User->find('first', array('conditions' => array('email' => $this->request->data['User']['email']), 'recursive' => -1));
-                
-                //Check if the user has activated their account
-                if ($user['User']['is_active']){
-                    if ($this->Auth->login()) { //if login works
-                        $this->log("[LoginController.logout] user[".$this->Auth->user('id')."] logged in", 'devtrack');
 
-                        $this->redirect($this->Auth->redirect()); //send them to the dashboard
-                    } else { //else error!
-                        $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The credentials supplied were not valid. Please try again."), 'default', array(), 'error');
-                    }
-                } else { //else error (same error as above so not to disclose that it is a valid account)
-                    $this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The (a)credentials supplied were not valid. Please try again."), 'default', array(), 'error');
-                }
+        // If they're already logged in, bounce them to the homepage
+        if($this->Auth->loggedIn()){
+            $this->redirect($this->Auth->redirect());
+            return; // Not sure if needed?
+        }
+
+        if ($this->request->is('post')) {
+                
+            // First, try to authenticate them
+            if(!$this->Auth->login()){
+                $this->log("[LoginController.index] Authentication failed using ".$this->request->data['User']['email'], 'devtrack');
+                $this->Session->setFlash(__($this->Auth->loginError), 'default', array(), 'error');
+                return;
             }
-        /*} else {
-            //$this->redirect())
-        }*/
+
+            $this->log("[LoginController.index] Authentication succeeded for ".$this->request->data['User']['email'], 'devtrack');
+
+            // Authentication succeeded - load the user object they logged in with
+            $user = $this->User->find('first', array('conditions' => array('email' => $this->request->data['User']['email']), 'recursive' => -1));
+            $this->log("[LoginController.index] Looked up user - ID is ".$user['User']['id'], 'devtrack');
+
+
+            // Check if the user has activated their account
+            if (!$user['User']['is_active']){
+                $this->log("[LoginController.index] user[".$this->Auth->user('id')."] denied access - account is not activated", 'devtrack');
+                $this->Session->setFlash(__($this->Auth->loginError), 'default', array(), 'error');
+                return;
+            }
+
+            // Authentication successful, everybody is happy! Let's log it to celebrate.
+            $this->log("[LoginController.index] user[".$this->Auth->user('id')."] logged in", 'devtrack');
+
+        }
     }
 
     /**
