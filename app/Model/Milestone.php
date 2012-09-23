@@ -192,30 +192,67 @@ class Milestone extends AppModel {
         return $tasks;
     }
 
+    // Sorry.  Really.
+    // The queries below return something like:
+    // [
+    //   0 => {'tasks' => {'milestone_id' => 4}}
+    //   1 => {'tasks' => {'milestone_id' => 5}}
+    // ]
+    // 
+    // This shonk first does a pop to reduce it to 0 => {'milestone_id' => 4} ...
+    // then get the array values to reduce it to [ 0 => [4], 1 => [5] ]
+    // then do a pop again to give just [ 4, 5 ].  Ugh.
+    private function _fudgeMilestoneList($milestones){
+        return array_map(
+          'array_pop', array_map(
+            'array_values', array_map(
+              'array_pop', $milestones)));
+    }
+
     public function getOpenMilestones($assoc = false) {
-        $list_of_milestones = array_values($this->find('list', array('conditions' => array('project_id' => $this->Project->id), 'fields' => array('id'))));
-        if ($assoc) {
-            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('project_id' => $this->Project->id, 'id' => array_diff($list_of_milestones, $this->getClosedMilestones($assoc)))));
-        }
-        return array_diff($list_of_milestones, $this->getClosedMilestones($assoc));
+        
+        // There doesn't seem to be a nice way to do "give me a list of all the entries in table X
+        // where there exists nothing in table Y" in CakePHP.  This is a bit of a fudge however it
+        // fixed a problem where the wrong milestones were returned for a project.
+        $milestones = $this->Task->query('
+          SELECT
+            milestone_id
+          FROM
+            milestones
+            INNER JOIN tasks ON (
+              milestones.id = tasks.milestone_id
+              AND tasks.task_status_id < 3
+            )
+          WHERE
+            milestones.project_id = '.(int)$this->Project->id.'
+          GROUP BY
+            milestone_id
+          HAVING
+            COUNT(tasks.id) > 0'
+        );
+        $milestones = $this->_fudgeMilestoneList($milestones);
+        return $milestones;
     }
 
     public function getClosedMilestones($assoc = false) {
-        $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
-        $open_task_milestones = array_values($this->Task->find(
-            'list',
-            array(
-                'project_id' => $this->Project->id,
-                'group' => array('milestone_id'),
-                'fields' => array('milestone_id'),
-                 'conditions' => array(
-                    'milestone_id NOT' => NULL,
-                    'task_status_id <' => 4)
+
+        // There doesn't seem to be a nice way to do "give me a list of all the entries in table X
+        // where there exists nothing in table Y" in CakePHP.  This is a bit of a fudge however it
+        // fixed a problem where the wrong milestones were returned for a project.
+        $milestones = $this->Task->query('
+          SELECT
+            DISTINCT milestones.id
+          FROM
+            milestones
+            LEFT JOIN tasks ON (
+              milestones.id = tasks.milestone_id
+              AND tasks.task_status_id < 3
             )
-        ));
-        if ($assoc) {
-            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('project_id' => $this->Project->id, 'id' => array_diff($list_of_milestones, $open_task_milestones))));
-        }
-        return array_diff($list_of_milestones, $open_task_milestones);
+          WHERE
+            milestones.project_id = '.(int)$this->Project->id.'
+            AND tasks.id IS NULL'
+        );
+        $milestones = $this->_fudgeMilestoneList($milestones);
+        return $milestones;
     }
 }
