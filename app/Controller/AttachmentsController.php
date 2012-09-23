@@ -110,8 +110,15 @@ class AttachmentsController extends AppProjectController{
         $this->set('attachment', $attachment);
     }
 
+    /**
+     * add function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @return void
+     */
     public function add($project = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($project, true);
 
         if (!empty($this->data)) {
             if ($data = $this->Attachment->upload($this->data)) {
