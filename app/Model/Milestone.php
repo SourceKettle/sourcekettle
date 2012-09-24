@@ -28,6 +28,11 @@ class Milestone extends AppModel {
      */
     public $displayField = 'subject';
 
+    public $actsAs = array(
+        'ProjectComponent',
+        'ProjectHistory'
+    );
+
     /**
      * Validation rules
      *
@@ -88,7 +93,7 @@ class Milestone extends AppModel {
      */
     public function afterFind($results, $primary = false) {
         foreach ($results as $a => $result) {
-            if (isset($result['Milestone']['id'])) {
+            if (isset($result['Milestone']) && isset($result['Milestone']['id'])) {
                 $this->Task->recursive = -1;
                 $o = $results[$a]['Tasks']['open'] = $this->openTasksForMilestone($result['Milestone']['id']);
                 $i = $results[$a]['Tasks']['in_progress'] = $this->inProgressTasksForMilestone($result['Milestone']['id']);
@@ -192,67 +197,70 @@ class Milestone extends AppModel {
         return $tasks;
     }
 
-    // Sorry.  Really.
-    // The queries below return something like:
-    // [
-    //   0 => {'tasks' => {'milestone_id' => 4}}
-    //   1 => {'tasks' => {'milestone_id' => 5}}
-    // ]
-    // 
-    // This shonk first does a pop to reduce it to 0 => {'milestone_id' => 4} ...
-    // then get the array values to reduce it to [ 0 => [4], 1 => [5] ]
-    // then do a pop again to give just [ 4, 5 ].  Ugh.
-    private function _fudgeMilestoneList($milestones){
-        return array_map(
-          'array_pop', array_map(
-            'array_values', array_map(
-              'array_pop', $milestones)));
-    }
-
     public function getOpenMilestones($assoc = false) {
-        
-        // There doesn't seem to be a nice way to do "give me a list of all the entries in table X
-        // where there exists nothing in table Y" in CakePHP.  This is a bit of a fudge however it
-        // fixed a problem where the wrong milestones were returned for a project.
-        $milestones = $this->Task->query('
-          SELECT
-            milestone_id
-          FROM
-            milestones
-            INNER JOIN tasks ON (
-              milestones.id = tasks.milestone_id
-              AND tasks.task_status_id < 3
+        // Fetch a list of milestones for the project
+        $_milestones = $this->find(
+            'list',
+            array(
+                'fields' => array('id'),
+                'conditions'=> array('project_id' => $this->Project->id)
             )
-          WHERE
-            milestones.project_id = '.(int)$this->Project->id.'
-          GROUP BY
-            milestone_id
-          HAVING
-            COUNT(tasks.id) > 0'
         );
-        $milestones = $this->_fudgeMilestoneList($milestones);
-        return $milestones;
+        // If we require an associated result (with names)
+        if ($assoc) {
+            $open = $this->find(
+                'list',
+                array(
+                    'fields' => array('id', 'subject'),
+                    'conditions' => array(
+                        'project_id' => $this->Project->id,
+                        'id' => array_diff(array_values($_milestones), array_keys($this->getClosedMilestones($assoc)))
+                    )
+                )
+            );
+        } else {
+            $open = array_diff(array_values($_milestones), array_values($this->getClosedMilestones($assoc)));
+        }
+        return $open;
     }
 
     public function getClosedMilestones($assoc = false) {
-
-        // There doesn't seem to be a nice way to do "give me a list of all the entries in table X
-        // where there exists nothing in table Y" in CakePHP.  This is a bit of a fudge however it
-        // fixed a problem where the wrong milestones were returned for a project.
-        $milestones = $this->Task->query('
-          SELECT
-            DISTINCT milestones.id
-          FROM
-            milestones
-            LEFT JOIN tasks ON (
-              milestones.id = tasks.milestone_id
-              AND tasks.task_status_id < 3
+        // Fetch a list of milestones for the project
+        $_milestones = $this->find(
+            'list',
+            array(
+                'fields' => array('id'),
+                'conditions'=> array('project_id' => $this->Project->id)
             )
-          WHERE
-            milestones.project_id = '.(int)$this->Project->id.'
-            AND tasks.id IS NULL'
         );
-        $milestones = $this->_fudgeMilestoneList($milestones);
-        return $milestones;
+        // Fetch the milestone ids for open tasks for this project
+        $_open_tasks = $this->Task->find(
+            'list',
+            array(
+                'project_id' => $this->Project->id,
+                'group' => array('milestone_id'),
+                'fields' => array('milestone_id'),
+                'conditions' => array(
+                    'milestone_id NOT' => NULL,
+                    'task_status_id <' => 4)
+            )
+        );
+        $_diff = array_diff(array_values($_milestones), array_values($_open_tasks));
+        // If we require an associated result (with names)
+        if ($assoc) {
+            $closed = $this->find(
+                'list',
+                array(
+                    'fields' => array('id', 'subject'),
+                    'conditions' => array(
+                        'project_id' => $this->Project->id, 
+                        'id' => $_diff
+                    )
+                )
+            );
+        } else {
+            $closed = $_diff;
+        }
+        return $closed;
     }
 }
