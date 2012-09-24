@@ -45,8 +45,11 @@ class LoginController extends AppController{
      */
     public function index(){
 
+        $this->log("[LoginController.index] Login action started", 'devtrack');
+
         // If they're already logged in, bounce them to the homepage
         if($this->Auth->loggedIn()){
+            $this->log("[LoginController.index] User already logged in, skipping login page", 'devtrack');
             $this->redirect($this->Auth->redirect());
             return; // Not sure if needed?
         }
@@ -63,7 +66,7 @@ class LoginController extends AppController{
             $this->log("[LoginController.index] Authentication succeeded for ".$this->request->data['User']['email'], 'devtrack');
 
             // Authentication succeeded - load the user object they logged in with
-            $user = $this->User->find('first', array('conditions' => array('email' => $this->request->data['User']['email']), 'recursive' => -1));
+            $user = $this->User->findById($this->Auth->user('id'));
             $this->log("[LoginController.index] Looked up user - ID is ".$user['User']['id'], 'devtrack');
 
 
@@ -76,6 +79,7 @@ class LoginController extends AppController{
 
             // Authentication successful, everybody is happy! Let's log it to celebrate.
             $this->log("[LoginController.index] user[".$this->Auth->user('id')."] logged in", 'devtrack');
+            $this->redirect($this->Auth->redirect());
 
         }
     }
