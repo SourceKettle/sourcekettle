@@ -306,17 +306,7 @@ class Project extends AppModel {
         return false;
     }
 
-    public function fetchEventsForProject() {
-        $this->recursive = 2;
-        $project = $this->getProject($this->id);
-
-        $events = array();
-
-        $this->Source->init();
-        foreach ( array('Collaborator', 'Time', 'Source', 'Task') as $x ) {
-            $events = array_merge($events, $this->{$x}->fetchHistory($project['Project']['name'], 40));
-        }
-
+    public function fetchEventsForProject($number = 8) {
         // Sort function for events
         // assumes $array{ $array{ 'modified' => 'date' }, ... }
         $cmp = function($a, $b) {
@@ -325,9 +315,52 @@ class Project extends AppModel {
             return -1;
         };
 
-        usort($events, $cmp);
+        $this->recursive = 2;
+        $project = $this->getProject($this->id);
 
-        return array_slice($events, 0, 8);
+        $events = array();
+        $this->Source->init();
+
+        // Types of event to collect
+        $_types = array('Collaborator', 'Time', 'Source', 'Task');
+
+        // Iterate over all of the types of event
+        foreach ( $_types as $x ) {
+            $_modelEvents = array();
+            $_x = 0;
+
+            // While the number of events we have for this type is too few
+            while (sizeOf($_modelEvents) < $number) {
+
+                // Escape if we have no more events
+                $_newEvents = $this->{$x}->fetchHistory($project['Project']['name'], $number, $number * $_x++);
+                if (empty($_newEvents)) break;
+
+                // Mudge the old and the new together and sort
+                $_modelEvents = array_merge($_modelEvents, $_newEvents);
+                usort($_modelEvents, $cmp);
+
+                // Check that no adjacent events are duplicates
+                $_lEvent = null;
+                foreach ( $_modelEvents as $a => $_mEvent ) {
+                    if ($_lEvent && $_lEvent['Type'] == $_mEvent['Type'] &&
+                        $_lEvent['Project']['id'] == $_mEvent['Project']['id'] &&
+                        $_lEvent['Actioner']['id'] == $_mEvent['Actioner']['id'] &&
+                        $_lEvent['Subject']['id'] == $_mEvent['Subject']['id'] &&
+                        $_lEvent['Change']['field'] == $_mEvent['Change']['field']) {
+                        unset($_modelEvents[$a]);
+                    }
+                    $_lEvent = $_mEvent;
+                }
+            }
+
+            // Bring all the events back together
+            $events = array_merge($events, $_modelEvents);
+        }
+
+        // Finally sort all the events
+        usort($events, $cmp);
+        return array_slice($events, 0, $number);
     }
 
 }
