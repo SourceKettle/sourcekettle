@@ -57,9 +57,18 @@ $config['dtcore']['pages']['times']['edit']['en']['bar.time'] = "Time #";
 $config['dtcore']['pages']['times']['edit']['en']['bar.view'] = "View";
 $config['dtcore']['pages']['times']['edit']['en']['bar.delete'] = "Delete";
 
+
 // APP Time/view
 $config['dtcore']['pages']['times']['view']['en']['header.text'] = "Edit some time for the Project";
 
 $config['dtcore']['pages']['times']['view']['en']['bar.time'] = "Time #";
 $config['dtcore']['pages']['times']['view']['en']['bar.edit'] = "Edit";
 $config['dtcore']['pages']['times']['view']['en']['bar.delete'] = "Delete";
+
+$config['dtcore']['pages']['times']['view']['en']['info.time.logged'] = "Time Logged";
+$config['dtcore']['pages']['times']['view']['en']['info.time.description'] = "Description";
+$config['dtcore']['pages']['times']['view']['en']['info.time.date'] = "Date";
+$config['dtcore']['pages']['times']['view']['en']['info.time.created'] = "Created By";
+
+// APP Time/add
+$config['dtcore']['pages']['times']['add']['en']['header.text'] = "to the nearest 30 mins, please";

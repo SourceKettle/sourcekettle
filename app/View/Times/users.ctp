@@ -28,7 +28,7 @@
                 if (empty($users)) {
                     echo $this->element('Time/breakdown_empty');
                 } else {
-                    echo $this->element('TIme/breakdown_full');
+                    echo $this->element('Time/breakdown_full');
                 }
             ?>
             </div>

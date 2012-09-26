@@ -13,9 +13,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+?>
 
-echo $this->Bootstrap->page_header("View Logged Time<small> we have been busy, haven't we?</small>");?>
-
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -25,15 +25,17 @@ echo $this->Bootstrap->page_header("View Logged Time<small> we have been busy, h
         <div class="span10">
             <div class="well times form form-horizontal">
                 <dl class="dl-horizontal">
-                    <dt>Time Logged</dt>
+                    <dt><?= $this->DT->t('info.time.logged') ?></dt>
                     <dd><?= $time['Time']['mins']['s'] ?></dd>
-                    <dt>Description</dt>
-                    <dd><?= $time['Time']['description'] ?></dd>
-                    <dt>Date</dt>
+
+                    <dt><?= $this->DT->t('info.time.description') ?></dt>
+                    <dd><?= ($time['Time']['description']) ? $time['Time']['description'] : 'n/a' ?></dd>
+
+                    <dt><?= $this->DT->t('info.time.date') ?></dt>
                     <dd><?= $time['Time']['date'] ?></dd>
                 </dl>
                 <dl class="dl-horizontal">
-                    <dt>Created By</dt>
+                    <dt><?= $this->DT->t('info.time.created') ?></dt>
                     <dd>
                         <?= $this->Gravatar->image($time['User']['email'], array('size' => 24), array('alt' => $time['User']['name'])) ?>
                         <?= $this->Html->link($time['User']['name'], array('controller'=>'users','action'=>'view',$time['User']['id'])) ?>

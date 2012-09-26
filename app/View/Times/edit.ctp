@@ -16,9 +16,9 @@
 $this->Html->script('bootstrap-datepicker', array('block' => 'scriptBottom'));
 $this->Html->scriptBlock("$('.dp1').datepicker()", array('inline' => false));
 $this->Html->css('datepicker', null, array ('inline' => false));
+?>
 
-echo $this->Bootstrap->page_header("Correct Logged Time<small> to the nearest 30 mins, please</small>");?>
-
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

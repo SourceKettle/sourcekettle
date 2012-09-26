@@ -13,9 +13,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+?>
 
-echo $this->Bootstrap->page_header("Log Time<small> to the nearest 30 mins, please</small>");?>
-
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
