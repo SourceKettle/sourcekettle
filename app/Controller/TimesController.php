@@ -13,160 +13,22 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('AppController', 'Controller');
+App::uses('AppProjectController', 'Controller');
 
-class TimesController extends AppController {
+class TimesController extends AppProjectController {
 
     public $helpers = array('Time', 'GoogleChart.GoogleChart');
 
-    /*
-     * _projectCheck
-     * Space saver to ensure user can view content
-     * Also sets commonly needed variables related to the project
-     *
-     * @param $name string Project name
-     */
-    private function _projectCheck($name) {
-        // Check for existent project
-        $project = $this->Time->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-        $this->Time->Project->id = $project['Project']['id'];
-
-        $user = $this->Auth->user('id');
-
-        // Lock out those who are not guests
-        if ( !$this->Time->Project->hasRead($user) ) throw new ForbiddenException(__('You are not a member of this project'));
-
-        $this->set('project', $project);
-        $this->set('isAdmin', $this->Time->Project->isAdmin($user));
-
-        return $project;
-    }
-
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function index($name) {
-        $this->redirect(array('project'=>$name,'controller'=>'times','action'=>'history'));
-    }
-
-    /**
-     * users
-     * list the amount of time each user has logged
-     *
-     * @param name string the project name
-     */
-    public function users($name) {
-        $project = $this->_projectCheck($name);
-
-        $tTime = $this->Time->find('all', array(
-            'conditions' => array('Time.project_id' => $project['Project']['id']),
-            'fields' => array('SUM(Time.mins)')
-        ));
-        $users = $this->Time->find('all', array(
-            'conditions' => array('Time.project_id' => $project['Project']['id']),
-            'group' => array('Time.user_id'),
-            'fields' => array('User.id', 'User.name', 'User.email', 'SUM(Time.mins)')
-        ));
-
-        foreach ($users as $a => $user) {
-            $users[$a]['Time']['time'] = $this->Time->splitMins($user[0]["SUM(`Time`.`mins`)"]);
-        }
-        $this->set('total_time', $this->Time->splitMins($tTime[0][0]['SUM(`Time`.`mins`)']));
-        $this->set('users', $users);
-    }
-
-    /**
-     * history
-     * list the amount of time logged
-     *
-     * @param name string the project name
-     */
-    public function history($name) {
-        $project = $this->_projectCheck($name);
-
-        $page = 1;
-        $num_per_page = 25;
-        $user_id = '*';
-
-        $filterErrors = array();
-        $filterError = '';
-
-        $conditions = array(
-            'Time.project_id' => $project['Project']['id'],
-        );
-
-        if(isset($this->params['named']['page'])) {
-            $_page = (int) $this->params['named']['page'];
-            if ($_page > 1 and $_page < 100) {
-                $page = $_page;
-            }
-        }
-
-        // Lets check the user filter
-        if(isset($this->params['named']['user_id'])) {
-            $this->Time->User->id = $this->params['named']['user_id'];
-            if ($this->Time->User->exists()) {
-                $conditions['Time.user_id'] = $this->Time->User->id;
-            } else {
-                $filterErrors[] = 'user_id [user does not exist]';
-            }
-        }
-
-        $tTime = $this->Time->find('all', array(
-            'conditions' => array('Time.project_id' => $project['Project']['id']),
-            'fields' => array('SUM(Time.mins)')
-        ));
-        $times = $this->Time->fetchHistory($project['Project']['id'], $num_per_page+1, (($page-1)*$num_per_page), $this->Auth->user('id'), array('conditions'=>$conditions));
-
-        if (sizeof($times) == 0 && $page > 1) {
-            $this->redirect(array('project'=>$name,'controller'=>'times','action'=>'history'));
-        }
-
-        if (sizeof($times) == $num_per_page+1) {
-            unset($times[$num_per_page]);
-            $this->set("more_pages", true);
-        } else {
-            $this->set("more_pages", false);
-        }
-
-        foreach ($filterErrors as $err) {
-            $filterError .= "<br>$err";
-        }
-        if ($filterError != '')
-            $this->Session->setFlash(__('<strong>The following filters were ignored:</strong>'.$filterError), 'default', array(), 'error');
-
-        $this->set('times', $times);
-        $this->set('total_time', $this->Time->splitMins($tTime[0][0]['SUM(`Time`.`mins`)']));
-        $this->set('page', $page);
-    }
-
-    /**
-     * view method
-     *
-     * @param string $id
-     * @return void
-     */
-     public function view($name, $id = null) {
-        $project = $this->_projectCheck($name);
-
-        $this->Time->id = $id;
-        if (!$this->Time->exists()) {
-            throw new NotFoundException(__('Invalid time'));
-        }
-        $this->set('time', $this->Time->read(null, $id));
-    }
-
     /**
      * add
-     * allows users to log ime
+     * allows users to log time
      *
-     * @param name string the project name
+     * @access public
+     * @param mixed $project
+     * @return void
      */
-    public function add($name) {
-        $project = $this->_projectCheck($name);
+    public function add($project) {
+        $project = $this->_projectCheck($project, true);
 
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -189,7 +51,7 @@ class TimesController extends AppController {
 
             if ($this->Time->save($this->request->data)) {
                 $this->Session->setFlash(__('Time successfully logged.'), 'default', array(), 'success');
-                $this->redirect(array('project' => $name, 'action' => 'index'));
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
             } else {
                 // Show the user what they put in, its just nice
                 $this->request->data['Time']['mins'] = $origTime;
@@ -199,73 +61,206 @@ class TimesController extends AppController {
     }
 
     /**
-     * edit method
+     * delete function.
      *
-     * @param string $id
+     * @access public
+     * @param mixed $project
+     * @param mixed $id (default: null)
      * @return void
      */
-    public function edit($name, $id = null) {
-        $project = $this->_projectCheck($name);
-        $user = $this->Auth->user('id');
-        $this->Time->id = $id;
-        $this->set('id', $id);
+    public function delete($project, $id = null) {
+        $project = $this->_projectCheck($project, true);
+        $time = $this->Time->open($id, true);
 
-        // Double check that the user is allowed to edit this time slice
-        if ($this->Time->field('user_id') != $user && !$this->Time->Project->isAdmin($user)) {
-            throw new ForbiddenException(__('You are not the owner of this logged time.'));
-        }
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
 
-        if (!$this->Time->exists()) {
-            throw new NotFoundException(__('Invalid time'));
+        if ($this->Time->delete()) {
+            $this->Session->setFlash(__('Time successfully deleted.'), 'default', array(), 'success');
+        } else {
+            $this->Session->setFlash(__('Could not delete the logged time. Please, try again.'), 'default', array(), 'error');
         }
+        $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+    }
+
+    /**
+     * edit function.
+     *
+     * @access public
+     * @param mixed $project
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function edit($project, $id = null) {
+        $project = $this->_projectCheck($project, true);
+        $time = $this->Time->open($id, true);
+
         if ($this->request->is('post') || $this->request->is('put')) {
-            $origTime = $this->request->data['Time']['mins'];
-
-            $this->request->data['Time']['user_id'] = $user;
+            $this->request->data['Time']['user_id'] = $this->Time->_auth_user_id;
             $this->request->data['Time']['project_id'] = $project['Project']['id'];
 
             if ($this->Time->save($this->request->data)) {
                 $this->Session->setFlash(__('Time successfully updated.'), 'default', array(), 'success');
-                $this->redirect(array('project' => $name, 'action' => 'index'));
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
             } else {
-                // Show the user what they put in, its just nice
-                $this->request->data['Time']['mins'] = $origTime;
                 $this->Session->setFlash(__('Could not update the logged time. Please, try again.'), 'default', array(), 'error');
             }
         } else {
-            $this->request->data = $this->Time->read(null, $id);
+            $this->request->data = $time;
             $this->request->data['Time']['mins'] = $this->request->data['Time']['mins']['s'];
         }
     }
 
     /**
-     * delete method
+     * history
+     * list the amount of time logged
      *
-     * @param string $id
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $week (default: null)
      * @return void
      */
-    public function delete($name, $id = null) {
-        $project = $this->_projectCheck($name);
+    public function history($project = null, $week = null) {
+        $project = $this->_projectCheck($project);
 
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
+        if ($week) {
+            if (!is_numeric($week) || $week < 1 || $week > 53) {
+                $this->redirect(array('project'=>$project['Project']['name'], 'action'=>'history'));
+            }
+        } else {
+            $week = date('W');
         }
-        $this->Time->id = $id;
-        if (!$this->Time->exists()) {
-            throw new NotFoundException(__('Invalid time'));
+        if ($week < 10) {
+            $week = '0'.$week;
         }
-        $user = $this->Auth->user('id');
-        $this->Time->id = $id;
+        $week_start = date('Y-m-d', strtotime(date('Y').'W'.$week));
+        $week_end   = date('Y-m-d', strtotime("$week_start +1 week"));
 
-        // Double check that the user is allowed to edit this time slice
-        if ($this->Time->field('user_id') != $user && !$this->Time->Project->isAdmin($user)) {
-            throw new ForbiddenException(__('You are not the owner of this logged time.'));
+        $day = date('N');
+        $week_items = array();
+
+        $week_tasks = $this->Time->find('list', array(
+            'fields'        => array('Time.task_id'),
+            'group'         => array('Time.task_id'),
+            'conditions'    => array(
+                'Time.date BETWEEN ? AND ?' => array($week_start,$week_end),
+                'Time.project_id'           => $project['Project']['id'],
+                'Time.user_id'              => $this->Time->_auth_user_id
+            )
+        ));
+
+        // Iterate over our week
+        for($x = 1; $x <= 7; $x++) {
+            // Real date for the day
+            $date = date('Y-m-d', strtotime("$week_start +".($x-1)." days"));
+
+            // Todal time for a day
+            $_total = 0;
+
+            // Iterate over the tasks that we found for this week
+            foreach ($week_tasks as $m => $task) {
+                // Total for the task for the day
+                $_subTotal = 0;
+                $_task_id = ($task) ? $task : 0;
+
+                $week_items[$date][$_task_id] = $this->Time->find(
+                    'all', array(
+                    'conditions' => array(
+                        'date'      => $date,
+                        'user_id'   => $this->Time->_auth_user_id,
+                        'project_id'=> $project['Project']['id'],
+                        'task_id'   => $task
+                    )
+                ));
+
+                $task = ($task) ? $task : 0;
+
+                // If there are items, calculate the total time
+                foreach ($week_items[$date][$_task_id] as $_time) {
+                    $_subTotal += $_time['Time']['mins']['t'];
+                }
+                $_total += $_subTotal;
+
+                // Change the total to a useful format
+                $_subTotal = $this->Time->splitMins($_subTotal);
+                $week_items[$date][$_task_id]['total'] = $_subTotal['h'] + round($_subTotal['m']/60, 1);
+            }
+
+            if (!isset($week_items[$date][0])) {
+                $week_items[$date][0]['total'] = 0;
+            }
+
+            // Change the total to a useful format
+            if ($_total) {
+                $_total = $this->Time->splitMins($_total);
+                $week_items[$date]['total'] = $_total['h'] + round($_total['m']/60, 1);
+            } else {
+                $week_items[$date]['total'] = '';
+            }
         }
-        if ($this->Time->delete()) {
-            $this->Session->setFlash(__('Time successfully deleted.'), 'default', array(), 'success');
-            $this->redirect(array('project' => $name, 'action' => 'index'));
+
+        $week_tasks = $this->Time->Project->Task->find('all', array(
+            'conditions'    => array(
+                'Task.id' => array_values($week_tasks),
+            )
+        ));
+        $week_tasks[] = array('Task' => array('id' => 0, 'subject' => 'No associated task'));
+
+        $this->set('week', $week_items);
+        $this->set('tasks', $week_tasks);
+        $this->set('dayOfWeek', $day);
+        $this->set('weekStart', $week_start);
+        $this->set('weekNo', $week);
+    }
+
+    /**
+     * index function.
+     *
+     * @access public
+     * @param mixed $project
+     * @return void
+     */
+    public function index($project) {
+        $this->redirect(array('project'=>$project,'controller'=>'times','action'=>'users'));
+    }
+
+    /**
+     * users
+     * list the amount of time each user has logged
+     *
+     * @access public
+     * @param mixed $project
+     * @return void
+     */
+    public function users($project) {
+        $project = $this->_projectCheck($project);
+
+        $tTime = $this->Time->find('all', array(
+            'conditions' => array('Time.project_id' => $project['Project']['id']),
+            'fields' => array('SUM(Time.mins)')
+        ));
+        $users = $this->Time->find('all', array(
+            'conditions' => array('Time.project_id' => $project['Project']['id']),
+            'group' => array('Time.user_id'),
+            'fields' => array('User.id', 'User.name', 'User.email', 'SUM(Time.mins)')
+        ));
+
+        foreach ($users as $a => $user) {
+            $users[$a]['Time']['time'] = $this->Time->splitMins($user[0]["SUM(`Time`.`mins`)"]);
         }
-        $this->Session->setFlash(__('Could not delete the logged time. Please, try again.'), 'default', array(), 'error');
-        $this->redirect(array('project' => $name, 'action' => 'index'));
+        $this->set('total_time', $this->Time->splitMins($tTime[0][0]['SUM(`Time`.`mins`)']));
+        $this->set('users', $users);
+    }
+
+    /**
+     * view function.
+     *
+     * @access public
+     * @param mixed $project
+     * @param mixed $id (default: null)
+     * @return void
+     */
+    public function view($project, $id = null) {
+        $project = $this->_projectCheck($project);
+        $this->set('time', $this->Time->open($id));
     }
 }

@@ -24,7 +24,7 @@ echo $this->Bootstrap->page_header("Correct Logged Time<small> to the nearest 30
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Topbar/time') ?>
+        <?= $this->element('Time/topbar_edit', array('id' => $this->request->data['Time']['id'])) ?>
         <div class="span10">
             <?= $this->Form->create('Time', array('class' => 'form-horizontal')) ?>
             <div class="well times form">
@@ -47,13 +47,6 @@ echo $this->Bootstrap->page_header("Correct Logged Time<small> to the nearest 30
                 ));
 
                 echo $this->Bootstrap->button("Submit", array("style" => "primary", "size" => "normal", 'class' => 'controls'));
-                echo ' ';
-                echo $this->Bootstrap->button_form(
-                    "Remove",
-                    array('controller' => 'times', 'project' => $project['Project']['name'], 'action' => 'delete', $id),
-                    array('style' => 'danger', 'class' => 'controls', 'size' => 'normal'),
-                    "Are you sure you want to delete?"
-                );
                 ?>
             </div>
             <?= $this->Form->end() ?>

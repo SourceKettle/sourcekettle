@@ -1,0 +1,42 @@
+.today {
+    background-color: #bdb9b1 !important;
+}
+
+.tempoHeader {
+    text-align: center !important;
+    border: 1px solid #DDD;
+    cursor: pointer;
+}
+
+.tempoBody {
+    text-align: center !important;
+    border: 1px solid #DDD;
+    cursor: pointer;
+}
+
+.tempoBody:hover {
+    background-color: #DDD !important;
+}
+
+.tempoBody a:hover {
+    text-decoration: none !important;
+}
+
+.tempoFooter {
+    text-align: center !important;
+    border: 1px solid #DDD;
+    cursor: pointer;
+}
+
+.tempo-footer {
+    margin: 0;
+    padding: 5px;
+}
+
+.table-modal {
+    margin-bottom: 0px;
+}
+
+.tempo-toolbar {
+    text-align: center;
+}

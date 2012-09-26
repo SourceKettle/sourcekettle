@@ -25,7 +25,10 @@ class Time extends AppModel {
     */
     public $displayField = 'id';
 
-    public $actsAs = array('ProjectHistory');
+    public $actsAs = array(
+        'ProjectComponent',
+        'ProjectHistory'
+    );
 
     /**
      * Validation rules

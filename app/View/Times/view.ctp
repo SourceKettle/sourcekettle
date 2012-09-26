@@ -21,52 +21,25 @@ echo $this->Bootstrap->page_header("View Logged Time<small> we have been busy, h
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Topbar/time') ?>
+        <?= $this->element('Time/topbar_view', array('id' => $time['Time']['id'])) ?>
         <div class="span10">
             <div class="well times form form-horizontal">
-                <div class="control-group">
-                    <p class="control-label">Time Logged</p>
-                    <div class="controls">
-                        <span class="span6" style="padding-top:5px"><?= $time['Time']['mins']['s'] ?></span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <p class="control-label">Description</p>
-                    <div class="controls">
-                        <span class="span6" style="padding-top:5px"><?= $time['Time']['description'] ?></span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <p class="control-label">Date</p>
-                    <div class="controls">
-                        <span class="span6" style="padding-top:5px"><?= $time['Time']['date'] ?></span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <p class="control-label">Created By</p>
-                    <div class="controls">
-                        <span class="span6" style="padding-top:5px">
-                            <?= $this->Gravatar->image($time['User']['email'], array('size' => 30), array('alt' => $time['User']['name'])) ?>
-                            <?= $this->Html->link($time['User']['name'], array('controller'=>'users','action'=>'view',$time['User']['id'])) ?>
-                        </span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <p class="control-label">Created<br>Last Modified</p>
-                    <div class="controls">
-                        <span class="span6" style="padding-top:5px"><?= $time['Time']['created'] ?><br><?= $time['Time']['modified'] ?></span>
-                    </div>
-                </div>
-                <?php
-                echo $this->Bootstrap->button_link("Edit", array('project'=>$project['Project']['name'],'action'=>'edit',$time['Time']['id']), array("style" => "success"));
-                echo ' ';
-                echo $this->Bootstrap->button_form(
-                    "Remove",
-                    array('controller' => 'times', 'project' => $project['Project']['name'], 'action' => 'delete', $time['Time']['id']),
-                    array('style' => 'danger', 'class' => 'controls', 'size' => 'normal'),
-                    "Are you sure you want to delete?"
-                );
-                ?>
+                <dl class="dl-horizontal">
+                    <dt>Time Logged</dt>
+                    <dd><?= $time['Time']['mins']['s'] ?></dd>
+                    <dt>Description</dt>
+                    <dd><?= $time['Time']['description'] ?></dd>
+                    <dt>Date</dt>
+                    <dd><?= $time['Time']['date'] ?></dd>
+                </dl>
+                <dl class="dl-horizontal">
+                    <dt>Created By</dt>
+                    <dd>
+                        <?= $this->Gravatar->image($time['User']['email'], array('size' => 24), array('alt' => $time['User']['name'])) ?>
+                        <?= $this->Html->link($time['User']['name'], array('controller'=>'users','action'=>'view',$time['User']['id'])) ?>
+                        - <small><?= $this->Time->timeAgoInWords($time['Time']['created']) ?></small>
+                    </dd>
+                </dl>
             </div>
         </div>
     </div>

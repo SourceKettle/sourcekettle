@@ -31,3 +31,35 @@ $config['dtcore']['pages']['times']['topbar']['en']['topbar.users.text'] = "User
 
 // APP/Time/history
 $config['dtcore']['pages']['times']['history']['en']['header.text'] = "Recent time logged to the project";
+
+$config['dtcore']['pages']['times']['history']['en']['tempo.table.task.text'] = "Task";
+$config['dtcore']['pages']['times']['history']['en']['tempo.table.total.text'] = "Total";
+$config['dtcore']['pages']['times']['history']['en']['tempo.table.week.text'] = "Week ";
+
+$config['dtcore']['pages']['times']['history']['en']['tempo.modal.description.header'] = "Description";
+$config['dtcore']['pages']['times']['history']['en']['tempo.modal.time.header'] = "Time";
+$config['dtcore']['pages']['times']['history']['en']['tempo.modal.add'] = "Add Time";
+$config['dtcore']['pages']['times']['history']['en']['tempo.modal.close'] = "Close";
+
+// APP/Time/users
+$config['dtcore']['pages']['times']['users']['en']['header.text'] = "Time breakdown for users on the project";
+
+$config['dtcore']['pages']['times']['users']['en']['pie.header'] = "Time Contribution";
+$config['dtcore']['pages']['times']['users']['en']['pie.total'] = "({hours} hours {mins} mins total)";
+
+$config['dtcore']['pages']['times']['users']['en']['table.header.user'] = "User";
+$config['dtcore']['pages']['times']['users']['en']['table.header.time'] = "Total Time";
+
+// APP Time/edit
+$config['dtcore']['pages']['times']['edit']['en']['header.text'] = "Edit some time for the Project";
+
+$config['dtcore']['pages']['times']['edit']['en']['bar.time'] = "Time #";
+$config['dtcore']['pages']['times']['edit']['en']['bar.view'] = "View";
+$config['dtcore']['pages']['times']['edit']['en']['bar.delete'] = "Delete";
+
+// APP Time/view
+$config['dtcore']['pages']['times']['view']['en']['header.text'] = "Edit some time for the Project";
+
+$config['dtcore']['pages']['times']['view']['en']['bar.time'] = "Time #";
+$config['dtcore']['pages']['times']['view']['en']['bar.edit'] = "Edit";
+$config['dtcore']['pages']['times']['view']['en']['bar.delete'] = "Delete";
