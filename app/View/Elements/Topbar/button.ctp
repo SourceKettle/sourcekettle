@@ -31,14 +31,14 @@
 
     if (isset($options['back'])) {
         echo '<div class="btn-group">';
-            echo $this->Bootstrap->button_link($this->TwitterBootstrap->icon('backward'), $options['back'], array('escape'=>false));
+            echo $this->Bootstrap->button_link($this->Bootstrap->icon('backward'), $options['back'], array('escape'=>false));
         echo '</div>';
     }
 
     foreach ($options['left'] as $block) {
         echo '<div class="btn-group">';
         if (isset($pl)) {
-            echo $this->Bootstrap->button($this->TwitterBootstrap->icon($prefs[$c1]['icon'], 'white') .' '. $pl, array('class' => 'disabled btn-inverse'));
+            echo $this->Bootstrap->button($this->Bootstrap->icon($prefs[$c1]['icon'], 'white') .' '. $pl, array('class' => 'disabled btn-inverse'));
             unset($pl);
         }
         foreach ($block as $option) {
