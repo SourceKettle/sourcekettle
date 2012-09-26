@@ -18,7 +18,7 @@
             'Overview' => array(
                 'icon' => 'home',
                 'url' => array(
-                    'action' => 'view',
+                    'action' => array('view','history'),
                     'controller' => 'projects',
                     'project' => $this->params['project'],
                 ),

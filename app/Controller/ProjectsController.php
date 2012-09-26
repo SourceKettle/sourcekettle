@@ -41,6 +41,12 @@ class ProjectsController extends AppProjectController {
         );
     }
 
+    public function history($project) {
+        $project = $this->_projectCheck($project);
+        
+        $this->set('events', $this->Project->fetchEventsForProject(50));
+    }
+
     /**
      * index method
      *

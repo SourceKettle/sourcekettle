@@ -33,3 +33,6 @@ $config['dtcore']['pages']['projects']['view']['en']['summary.issues.open'] = "O
 $config['dtcore']['pages']['projects']['view']['en']['summary.issues.closed'] = "Closed Tasks";
 $config['dtcore']['pages']['projects']['view']['en']['summary.issues.total'] = "Total Tasks";
 $config['dtcore']['pages']['projects']['view']['en']['summary.issues.percent'] = "complete";
+
+// APP/Projects/history
+$config['dtcore']['pages']['projects']['history']['en']['header.text'] = "What's been happening lately?";
