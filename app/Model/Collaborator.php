@@ -18,7 +18,10 @@ App::uses('AppModel', 'Model');
 
 class Collaborator extends AppModel {
 
-    public $actsAs = array('ProjectHistory');
+    public $actsAs = array(
+        'ProjectComponent',
+        'ProjectHistory'
+    );
 
     /**
      * Validation rules

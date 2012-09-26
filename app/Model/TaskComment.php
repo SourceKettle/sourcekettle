@@ -81,4 +81,16 @@ class TaskComment extends AppModel {
         }
         return true;
     }
+
+    function open($id, $task_id = null) {
+        $this->id = $id;
+
+        if (!$this->exists()) {
+            throw new NotFoundException(__('Invalid '.$this->name));
+        }
+        if ($task_id && $this->field('task_id') != $task_id) {
+            throw new NotFoundException(__('Invalid '.$this->name));
+        }
+        return $this->read();
+    }
 }

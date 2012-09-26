@@ -33,7 +33,10 @@ class Task extends AppModel {
      */
     public $displayField = 'id';
 
-    public $actsAs = array('ProjectHistory');
+    public $actsAs = array(
+        'ProjectComponent',
+        'ProjectHistory'
+    );
 
     /**
      * Validation rules
@@ -58,15 +61,15 @@ class Task extends AppModel {
             ),
         ),
         'task_type_id' => array(
-            'comparison' => array(
-                'rule' => array('comparison', '>', 0),
-                'message' => 'Select a task type',
-            ),
             'numeric' => array(
                 'rule' => array('numeric'),
             ),
             'notempty' => array(
                 'rule' => array('notempty'),
+            ),
+            'inlist' => array(
+                'rule' => array('inlist', array(1,2,3,4,5,6,'1','2','3','4','5','6')),
+                'message' => 'Select a task type',
             ),
         ),
         'task_status_id' => array(
@@ -76,6 +79,10 @@ class Task extends AppModel {
             'notempty' => array(
                 'rule' => array('notempty'),
             ),
+            'inlist' => array(
+                'rule' => array('inlist', array(1,2,3,4,'1','2','3','4')),
+                'message' => 'Select a task status',
+            ),
         ),
         'task_priority_id' => array(
             'numeric' => array(
@@ -83,6 +90,10 @@ class Task extends AppModel {
             ),
             'notempty' => array(
                 'rule' => array('notempty'),
+            ),
+            'inlist' => array(
+                'rule' => array('inlist', array(1,2,3,4,'1','2','3','4')),
+                'message' => 'Select a task priority',
             ),
         ),
         'subject' => array(

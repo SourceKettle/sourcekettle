@@ -36,6 +36,8 @@ if ($task['Task']['assignee_id'] != null) {
     } else {
         $progress = false;
     }
+} else {
+    $progress = false;
 }
 if ($task['Task']['task_status_id'] != 4) {
      $state = array(

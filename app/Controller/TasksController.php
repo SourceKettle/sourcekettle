@@ -53,6 +53,13 @@ class TasksController extends AppProjectController {
         $this->set(compact('open_milestones', 'events'));
     }
 
+    /**
+     * others function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @return void
+     */
     public function others($project = null) {
         $this->index($project);
         $this->render('index');
@@ -66,20 +73,15 @@ class TasksController extends AppProjectController {
      */
     public function view($project = null, $id = null) {
         $project = $this->_projectCheck($project);
-
-        $this->Task->id = $id;
-        if (!$this->Task->exists()) {
-            throw new NotFoundException(__('Invalid task'));
-        }
+        $task = $this->Task->open($id);
 
         // If a User has commented
         if ($this->request->is('post') && isset($this->request->data['TaskComment'])) {
-            $user = $this->Auth->user('id');
 
             $this->Task->TaskComment->create();
 
             $this->request->data['TaskComment']['task_id'] = $id;
-            $this->request->data['TaskComment']['user_id'] = $user;
+            $this->request->data['TaskComment']['user_id'] = $this->Task->_auth_user_id;
 
             if ($this->Task->TaskComment->save($this->request->data)) {
                 $this->Session->setFlash(__('The comment has been added successfully'), 'default', array(), 'success');
@@ -95,9 +97,9 @@ class TasksController extends AppProjectController {
             $this->request->data['TaskComment'] = $this->request->data['TaskCommentEdit'];
             unset($this->request->data['TaskCommentEdit']);
 
-            $this->Task->TaskComment->id = $this->request->data['TaskComment']['id'];
+            $this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id']);
 
-            if ($this->Task->TaskComment->exists() && $this->Task->TaskComment->save($this->request->data)) {
+            if ($this->Task->TaskComment->save($this->request->data)) {
                 $this->Session->setFlash(__('The comment has been updated successfully'), 'default', array(), 'success');
                 unset($this->request->data['TaskComment']);
             } else {
@@ -110,14 +112,12 @@ class TasksController extends AppProjectController {
 
             preg_match('#[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}#', $this->request->data['TaskAssignee']['assignee'], $matches);
             unset($this->request->data['TaskAssignee']);
-
             if (!isset($matches[0]) || is_null($matches[0]) || !($user = $this->Task->Assignee->findByEmail($matches[0]))) {
                 $this->Session->setFlash(__('The assignee could not be updated. Please, try again.'), 'default', array(), 'error');
             } else {
-                $this->request->data['Task']['assignee_id'] = $user['Assignee']['id'];
-                $this->Task->id = $id;
+                $this->Task->set('assignee_id', $user['Assignee']['id']);
 
-                if ($this->Task->save($this->request->data)) {
+                if ($this->Task->save()) {
                     $this->Session->setFlash(__('The assignee has been updated successfully'), 'default', array(), 'success');
                 } else {
                     $this->Session->setFlash(__('The assignee could not be updated. Please, try again.'), 'default', array(), 'error');
@@ -125,10 +125,20 @@ class TasksController extends AppProjectController {
             }
         }
 
-        $this->set('task', $this->Task->read(null, $id));
+        // Re-read to pick up changes
+        $this->set('task', $this->Task->read());
 
         // Fetch the changes that will have happened
-        $changes  = $this->Task->Project->ProjectHistory->find('all', array('conditions' => array('ProjectHistory.row_id' => $this->Task->id, 'ProjectHistory.row_field !=' => '+')));
+        $changes  = $this->Task->Project->ProjectHistory->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'ProjectHistory.row_id' => $this->Task->id,
+                    'ProjectHistory.row_field !=' => '+',
+                    'ProjectHistory.model' => 'task'
+                )
+            )
+        );
         $comments = $this->Task->TaskComment->find('all', array('conditions' => array('Task.id' => $this->Task->id)));
 
         // They are in the wrong format for the sort function - so move the modified field
@@ -184,43 +194,41 @@ class TasksController extends AppProjectController {
     public function add($project = null) {
         $project = $this->_projectCheck($project, true);
 
-        if ($this->request->is('ajax')) {
-            // Enable once we've figured out how to do two Ajax submit buttons
-            // if ($this->request->data['submit'] == 1) {
-                 $this->redirect(array('project' => $project['Project']['name'], 'action' => 'add'));
-            // }
-
-            $this->autoRender = false;
+        if ($this->request->is('ajax') || $this->request->is('post')) {
             $this->Task->create();
 
-            $this->request->data['Task']['project_id'] = $project['Project']['id'];
-            $this->request->data['Task']['owner_id'] = $this->Auth->user('id');
-            $this->request->data['Task']['assignee_id'] = null;
-            $this->request->data['Task']['milestone_id'] = null;
-            $this->request->data['Task']['task_status_id'] = 1;
-            $this->request->data['Task']['task_type_id'] = 3;
-            $this->request->data['Task']['task_priority_id'] = 2;
+            $this->request->data['Task']['project_id']      = $project['Project']['id'];
+            $this->request->data['Task']['owner_id']        = $this->Task->_auth_user_id;
+            $this->request->data['Task']['assignee_id']     = null;
+            $this->request->data['Task']['task_status_id']  = 1;
 
-            if ($this->Task->save($this->request->data)) {
-                echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Time successfully logged.</div>';
-            } else {
-                echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please, try again.</div>';
+            if (isset($this->request->data['Task']['milestone_id']) && $this->request->data['Task']['milestone_id'] == 0) {
+                $this->request->data['Task']['milestone_id'] = null;
             }
-        } else if ($this->request->is('post')) {
-            $this->Task->create();
 
-            $this->request->data['Task']['project_id'] = $project['Project']['id'];
-            $this->request->data['Task']['owner_id'] = $this->Auth->user('id');
-            $this->request->data['Task']['assignee_id'] = null;
-            $this->request->data['Task']['milestone_id'] = ($this->request->data['Task']['milestone_id'] == 0) ? null : $this->request->data['Task']['milestone_id'];
-            $this->request->data['Task']['task_type_id'] = (!isset($this->request->data['Task']['task_type_id'])) ? null : $this->request->data['Task']['task_type_id'];
-            $this->request->data['Task']['task_status_id'] = 1;
+            if (isset($this->request->data['Task']['task_type_id']) && $this->request->data['Task']['task_type_id'] == 0) {
+                $this->request->data['Task']['task_type_id'] = 3;
+            }
 
-            if ($this->Task->save($this->request->data)) {
-                $this->Session->setFlash(__('The task has been added successfully'), 'default', array(), 'success');
-                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
-            } else {
-                $this->Session->setFlash(__('The task could not be saved. Please, try again.'), 'default', array(), 'error');
+            if (isset($this->request->data['Task']['task_priority_id']) && $this->request->data['Task']['task_priority_id'] == 0) {
+                $this->request->data['Task']['task_priority_id'] = 2;
+            }
+
+            if ($this->request->is('ajax')) {
+                $this->autoRender = false;
+
+                if ($this->Task->save($this->request->data)) {
+                    echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Time successfully logged.</div>';
+                } else {
+                    echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please, try again.</div>';
+                }
+            } else if ($this->request->is('post')) {
+                if ($this->Task->save($this->request->data)) {
+                    $this->Session->setFlash(__('The task has been added successfully'), 'default', array(), 'success');
+                    $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
+                } else {
+                    $this->Session->setFlash(__('The task could not be saved. Please, try again.'), 'default', array(), 'error');
+                }
             }
         }
 
@@ -250,11 +258,7 @@ class TasksController extends AppProjectController {
      */
     public function edit($project = null, $id = null) {
         $project = $this->_projectCheck($project, true);
-
-        $this->Task->id = $id;
-        if (!$this->Task->exists()) {
-            throw new NotFoundException(__('Invalid task'));
-        }
+        $task = $this->Task->open($id);
 
         if ($this->request->is('post') || $this->request->is('put')) {
 
@@ -268,7 +272,7 @@ class TasksController extends AppProjectController {
                 $this->Session->setFlash(__('The task could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
-            $this->request->data = $this->Task->read(null, $id);
+            $this->request->data = $task;
 
             // Fetch all the variables for the view
             $taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
@@ -296,20 +300,17 @@ class TasksController extends AppProjectController {
      */
     public function delete($project = null, $id = null) {
         $project = $this->_projectCheck($project, true);
+        $task = $this->Task->open($id);
 
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
-        }
-        $this->Task->id = $id;
-        if (!$this->Task->exists()) {
-            throw new NotFoundException(__('Invalid task'));
-        }
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+
         if ($this->Task->delete()) {
             $this->Session->setFlash(__('Task deleted'));
             $this->redirect(array('action' => 'index'));
+        } else {
+            $this->Session->setFlash(__('Task was not deleted'));
+            $this->redirect(array('action' => 'index'));
         }
-        $this->Session->setFlash(__('Task was not deleted'));
-        $this->redirect(array('action' => 'index'));
     }
 
     /**
@@ -321,10 +322,7 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function starttask($project = null, $id = null) {
-        $this->Task->id = $id;
-        if (!$this->Task->exists()) {
-            throw new NotFoundException(__('Invalid task'));
-        }
+        $task = $this->Task->open($id);
 
         // check assigned
         if (!$this->Task->isAssignee()) {
@@ -351,10 +349,7 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function stoptask($project = null, $id = null) {
-        $this->Task->id = $id;
-        if (!$this->Task->exists()) {
-            throw new NotFoundException(__('Invalid task'));
-        }
+        $task = $this->Task->open($id);
 
         // check assigned
         if (!$this->Task->isAssignee()) {
@@ -423,11 +418,7 @@ class TasksController extends AppProjectController {
      */
     private function _update_task_status($project = null, $id = null, $status = null) {
         $project = $this->_projectCheck($project, true);
-
-        $this->Task->id = $id;
-
-        //if (!$this->request->is('post')) throw new MethodNotAllowedException();
-        if (!$this->Task->exists()) throw new NotFoundException(__('Invalid task'));
+        $task = $this->Task->open($id);
 
         $this->Task->set('task_status_id', $status);
 
