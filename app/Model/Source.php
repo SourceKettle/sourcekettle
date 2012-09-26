@@ -273,7 +273,7 @@ class Source extends AppModel {
                         }
 
                         // Store URL override
-                        $events[$a]['url'] = array('project' => $project['Project']['name'], 'controller' => 'source', 'action' => 'commit', $branch, $commit['Commit']['hash']);
+                        $events[$a]['url'] = array('project' => $project['Project']['name'], 'controller' => 'source', 'action' => 'commit', $commit['Commit']['hash']);
                     }
                 }
             }
