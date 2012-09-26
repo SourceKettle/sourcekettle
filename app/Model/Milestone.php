@@ -28,6 +28,11 @@ class Milestone extends AppModel {
      */
     public $displayField = 'subject';
 
+    public $actsAs = array(
+        'ProjectComponent',
+        'ProjectHistory'
+    );
+
     /**
      * Validation rules
      *
@@ -88,7 +93,7 @@ class Milestone extends AppModel {
      */
     public function afterFind($results, $primary = false) {
         foreach ($results as $a => $result) {
-            if (isset($result['Milestone']['id'])) {
+            if (isset($result['Milestone']) && isset($result['Milestone']['id'])) {
                 $this->Task->recursive = -1;
                 $o = $results[$a]['Tasks']['open'] = $this->openTasksForMilestone($result['Milestone']['id']);
                 $i = $results[$a]['Tasks']['in_progress'] = $this->inProgressTasksForMilestone($result['Milestone']['id']);
@@ -193,29 +198,69 @@ class Milestone extends AppModel {
     }
 
     public function getOpenMilestones($assoc = false) {
-        $list_of_milestones = array_values($this->find('list', array('conditions' => array('project_id' => $this->Project->id), 'fields' => array('id'))));
+        // Fetch a list of milestones for the project
+        $_milestones = $this->find(
+            'list',
+            array(
+                'fields' => array('id'),
+                'conditions'=> array('project_id' => $this->Project->id)
+            )
+        );
+        // If we require an associated result (with names)
         if ($assoc) {
-            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('project_id' => $this->Project->id, 'id' => array_diff($list_of_milestones, $this->getClosedMilestones($assoc)))));
+            $open = $this->find(
+                'list',
+                array(
+                    'fields' => array('id', 'subject'),
+                    'conditions' => array(
+                        'project_id' => $this->Project->id,
+                        'id' => array_diff(array_values($_milestones), array_keys($this->getClosedMilestones($assoc)))
+                    )
+                )
+            );
+        } else {
+            $open = array_diff(array_values($_milestones), array_values($this->getClosedMilestones($assoc)));
         }
-        return array_diff($list_of_milestones, $this->getClosedMilestones($assoc));
+        return $open;
     }
 
     public function getClosedMilestones($assoc = false) {
-        $list_of_milestones = array_values($this->find('list', array('fields' => array('id'))));
-        $open_task_milestones = array_values($this->Task->find(
+        // Fetch a list of milestones for the project
+        $_milestones = $this->find(
+            'list',
+            array(
+                'fields' => array('id'),
+                'conditions'=> array('project_id' => $this->Project->id)
+            )
+        );
+        // Fetch the milestone ids for open tasks for this project
+        $_open_tasks = $this->Task->find(
             'list',
             array(
                 'project_id' => $this->Project->id,
                 'group' => array('milestone_id'),
                 'fields' => array('milestone_id'),
-                 'conditions' => array(
+                'conditions' => array(
                     'milestone_id NOT' => NULL,
                     'task_status_id <' => 4)
             )
-        ));
+        );
+        $_diff = array_diff(array_values($_milestones), array_values($_open_tasks));
+        // If we require an associated result (with names)
         if ($assoc) {
-            return $this->find('list', array('fields' => array('id', 'subject'), 'conditions' => array('project_id' => $this->Project->id, 'id' => array_diff($list_of_milestones, $open_task_milestones))));
+            $closed = $this->find(
+                'list',
+                array(
+                    'fields' => array('id', 'subject'),
+                    'conditions' => array(
+                        'project_id' => $this->Project->id, 
+                        'id' => $_diff
+                    )
+                )
+            );
+        } else {
+            $closed = $_diff;
         }
-        return array_diff($list_of_milestones, $open_task_milestones);
+        return $closed;
     }
 }

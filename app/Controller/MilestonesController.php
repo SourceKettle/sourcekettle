@@ -112,11 +112,8 @@ class MilestonesController extends AppProjectController {
      */
     public function view($project = null, $id = null) {
         $project = $this->_projectCheck($project);
+        $milestone = $this->Milestone->open($id);
 
-        $this->Milestone->id = $id;
-        if (!$this->Milestone->exists()) {
-            throw new NotFoundException(__('Invalid milestone'));
-        }
         $backlog = $this->Milestone->openTasksForMilestone($id);
         $inProgress = $this->Milestone->inProgressTasksForMilestone($id);
         $resolved = $this->Milestone->resolvedTasksForMilestone($id);
@@ -139,7 +136,7 @@ class MilestonesController extends AppProjectController {
         // Final value is min size of the board
         $max = max(sizeof($backlog), sizeof($inProgress), sizeof($completed), 3);
 
-        $this->set('milestone', $this->Milestone->read());
+        $this->set('milestone', $milestone);
 
         $this->set('backlog_empty', $max - sizeof($backlog));
         $this->set('inProgress_empty', $max - sizeof($inProgress));
@@ -177,13 +174,9 @@ class MilestonesController extends AppProjectController {
      */
     public function edit($project = null, $id = null) {
         $project = $this->_projectCheck($project, true);
+        $milestone = $this->Milestone->open($id);
 
-        $this->Milestone->id = $id;
-        if (!$this->Milestone->exists()) {
-            throw new NotFoundException(__('Invalid milestone'));
-        }
         if ($this->request->is('post') || $this->request->is('put')) {
-
             $this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
             if ($this->Milestone->save($this->request->data)) {
@@ -193,7 +186,7 @@ class MilestonesController extends AppProjectController {
                 $this->Session->setFlash(__('The milestone could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
-            $this->request->data = $this->Milestone->read(null, $id);
+            $this->request->data = $milestone;
         }
     }
 

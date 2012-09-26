@@ -42,6 +42,7 @@
             unset($pl);
         }
         foreach ($block as $option) {
+            if ($option == null) continue;
             // Create correct URL
             if (is_array($option['url'])) {
                 $option['url']['project'] = $this->params['project'];

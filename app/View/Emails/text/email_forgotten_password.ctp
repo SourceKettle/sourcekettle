@@ -19,7 +19,7 @@ A request to reset your password was made, if this was by you then please click 
 
 <?= $this->Html->url('/users/reset_password/'.$Key['LostPasswordKey']['key'], true) ?>
 
-This definately wasn't you?
+This definitely wasn't you?
 Then please ignore this email and the key will expire shortly.
 
 Not again?!
