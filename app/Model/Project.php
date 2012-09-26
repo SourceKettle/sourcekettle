@@ -31,6 +31,10 @@ class Project extends AppModel {
      */
     public $displayField = 'name';
 
+    public $actsAs = array(
+        'ProjectDelete'
+    );
+
     /**
      * Validation rules
      *

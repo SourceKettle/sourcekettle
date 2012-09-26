@@ -43,7 +43,7 @@ class ProjectsController extends AppProjectController {
 
     public function history($project) {
         $project = $this->_projectCheck($project);
-        
+
         $this->set('events', $this->Project->fetchEventsForProject(50));
     }
 
@@ -76,8 +76,8 @@ class ProjectsController extends AppProjectController {
     public function view($name = null) {
         $project = $this->_projectCheck($name);
 
-        $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 1, 'Task.project_id' => $project['Project']['id'])));
-        $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 2, 'Task.project_id' => $project['Project']['id'])));
+        $number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id <' => 4, 'Task.project_id' => $project['Project']['id'])));
+        $number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 4, 'Task.project_id' => $project['Project']['id'])));
         $number_of_tasks = $number_of_closed_tasks + $number_of_open_tasks;
 
         $percent_of_tasks = 0;
