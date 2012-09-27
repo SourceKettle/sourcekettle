@@ -34,9 +34,8 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                         "input" => $this->Form->textarea("description", array('class' => 'span12', 'rows' => 8)),
                         "label" => false
                     ));
-
-                    echo "<h3>Is the project public?</h3>";
                     ?>
+                    <h3>Is the project public?</h3>
 
                     <p><?= $this->Form->checkbox("public") ?> Yes, I would like to allow other DevTrack users to browse my project</p>
 
@@ -49,8 +48,8 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
             <div class="span5">
                 <div class="well">
                     <h3>Delete this project</h3>
-                    <p>Please note, this action is <strong>not</strong> reversible. This will also delete any material associate with this project (e.g. Wikis).</p>
-                    <?= $this->Bootstrap->button_form("Delete this project", array("controller" => "projects", "action" => "delete", $this->Form->value('Project.id')), array("style" => "danger", "size" => "large"), "Yep, one final time. Are you sure you want to delete this project?") ?>
+                    <p>Please note, this action is <strong>not</strong> reversible. This will also delete any material associated with this project (e.g. Wikis).</p>
+                    <?= $this->Bootstrap->button_link("Delete this project", array("controller" => "projects", "action" => "delete", "project" => $project['Project']['name']), array("style" => "danger")) ?>
                 </div>
             </div>
         </div>
