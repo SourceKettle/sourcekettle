@@ -20,23 +20,85 @@
 
 set -e # Exit on error
 
-DEFAULT_REPODIR='/home/git/repositories'
-GIT_USER='git'
-
 # Check if user is running as root
 if [ "$(whoami)" != "root" ]; then
-    echo "$(tput setaf 1)You need to be root to run this script. Exiting.$(tput sgr0)"
-    exit
+	echo "$(tput setaf 1)You need to be root to run this script. Exiting.$(tput sgr0)"
+	exit
 fi
 
+# Some defaults for where to store repositories, and the user for git
+DEFAULT_REPO_DIR='/home/git/repositories'
+DEFAULT_GIT_USER='git'
 
-printf "Adding git user '$GIT_USER' to system..."
 
-# Check if user exists
-if [ -z "$(getent passwd $GIT_USER)" ]
-then
-    #Add user
-    sudo adduser \
+# What flavour of Teh Lunix is this? A bit crude, just checks for RHEL or Debian-ish things
+# Tested on Ubuntu and RHEL6.
+DISTRO='Debian';
+if [ -f /etc/redhat-release ]; then
+	DISTRO='RedHat';
+elif [ -f /etc/debian_version ]; then
+	DISTRO='Debian';
+fi;
+
+
+
+# Set defaults based on distro
+if [ "$DISTRO" == "Debian" ]; then
+	DEFAULT_WWW_USER="www-data"
+elif [ "$DISTRO" == "RedHat" ]; then
+	DEFAULT_WWW_USER="apache"
+else
+	DEFAULT_WWW_USER="apache"
+fi
+
+# Prompt for a git username
+echo "I need to create a user account for git/svn access."
+echo "Please enter a username:"
+echo -n "[default: $DEFAULT_GIT_USER] >"
+read -e GIT_USER
+if [ -z $GIT_USER ]; then
+	GIT_USER=$DEFAULT_GIT_USER
+fi
+
+# Prompt for a repo directory
+echo "I need somewhere to store git/svn repositories."
+echo "Please enter a repo dir:"
+echo -n "[default: $DEFAULT_REPO_DIR] >"
+read -e REPO_DIR
+if [ -z $REPO_DIR ]; then
+	REPO_DIR=$DEFAULT_REPO_DIR
+fi
+
+# Find out the apache/www-data/whatever username
+WWW_USER=''
+while [ 1 ]
+do
+    echo "What user does your webserver run as?"
+    read -p "[$DEFAULT_WWW_USER] > "
+    WWW_USER=$REPLY
+	if [ -z $WWW_USER ]; then
+		WWW_USER=$DEFAULT_WWW_USER
+	fi
+    if [ -z "$(getent passwd $WWW_USER)" ] 
+    then
+            echo "$(tput setaf 1) Error. The given user does not exist. Please try again.$(tput sgr0)"
+    else
+            break
+    fi
+done
+
+
+### Create git user for SSH access ###
+
+# User already exists, so don't bother creating it
+if [ ! -z "$(getent passwd $GIT_USER)" ]; then
+	echo "$(tput setaf 1)[WARN]$(tput sgr0) $GIT_USER already exists, so I'll skip creating it..."
+
+# Create user - Debian-style
+elif [ "$DISTRO" == "Debian" ]; then
+
+	echo "Add $GIT_USER to the system (Debian)"
+    adduser \
         --system \
         --shell /bin/sh \
         --gecos 'git user' \
@@ -46,84 +108,88 @@ then
         --quiet \
         $GIT_USER
 
-    echo "$(tput setaf 2) Done!$(tput sgr0)"
-else   
-    #echo "$(tput setaf 1) Fail!$(tput sgr0)"
-    #echo "$(tput setaf 1)User git already exists. Exiting.$(tput sgr0)"
-	echo
-	echo "User $GIT_USER already exists, skipping user creation"
+	echo "$(tput setaf 2) Done!$(tput sgr0)"
+
+# Create user - RedHat-style
+elif [ "$DISTRO" == "RedHat" ]; then
+
+	echo "Add $GIT_USER to the system (RedHat)"
+    adduser \
+        --system \
+        --shell /bin/sh \
+        --home /home/$GIT_USER \
+        $GIT_USER
+
+	echo "$(tput setaf 2) Done!$(tput sgr0)"
+
+# Shouldn't hit this one, but meh
+else
+	echo "$(tput setaf 1)[ERROR]$(tput sgr0) For some reason, I have no idea how to create users on your distro ($DISTRO) :-("
 fi
 
-# Create files for storing SSH keys and set permissions
 
-printf "Creating SSH key files..."
+# Create files for storing SSH keys and set permissions
+mkdir -p /home/$GIT_USER
+chown $GIT_USER /home/$GIT_USER
+
+echo "Creating SSH key files..."
 sudo -H -u $GIT_USER mkdir -p /home/$GIT_USER/.ssh
 sudo -H -u $GIT_USER touch /home/$GIT_USER/.ssh/authorized_keys
 echo "$(tput setaf 2) Done!$(tput sgr0)"
 
-printf "Updating file permissions..."
-sudo -H -u git chmod 0700 /home/$GIT_USER/.ssh
-sudo -H -u git chmod 0600 /home/$GIT_USER/.ssh/authorized_keys
+echo "Updating file permissions..."
+sudo -H -u $GIT_USER chmod 0700 /home/$GIT_USER/.ssh
+sudo -H -u $GIT_USER chmod 0600 /home/$GIT_USER/.ssh/authorized_keys
 
 echo "$(tput setaf 2) Done!$(tput sgr0)"
 
-# Now add webserver user to git group
-PASS='false'
-USER=''
-while [ $PASS = 'false' ]
-do
-    printf "What user does your webserver run as? (Usually www-data) \r\n"
-    read -p " > "
-    USER=$REPLY
-    if [ -z "$(getent passwd $USER)" ] 
-    then
-            echo "$(tput setaf 1) Error. The given user does not exist. Please try again.$(tput sgr0)"
-    else
-            break
-    fi
-done
+
+### Create devtrack group and add git user + webserver user ###
 
 
-printf "Adding webserver user to devtrack group..."
+echo "Creating devtrack group..."
 if [ -z "$(getent group devtrack)" ]
 then
-	sudo groupadd --system devtrack
+	groupadd --system devtrack
 else
 	echo
 	echo "The devtrack group already exists, skipping..."
 fi
-sudo usermod -aG devtrack $USER
-printf "Adding git user to devtrack group..."
-sudo usermod -aG devtrack $GIT_USER 
+
+
+echo "Adding webserver user $WWW_USER to devtrack group..."
+usermod -aG devtrack $WWW_USER
+
+echo "Adding git user to devtrack group..."
+usermod -aG devtrack $GIT_USER 
 echo "$(tput setaf 2) Done!$(tput sgr0)"
 
 
-REPODIR=''
-printf "Where should project source repositories be stored? \r\n"
-read -p "[$DEFAULT_REPODIR] > "
-REPODIR=$REPLY
 
-if [ -z $REPODIR ]
-then
-    REPODIR=$DEFAULT_REPODIR
-fi
+### Create repository storage if needed ###
 
-if [ -x $REPODIR ]
+echo "Creating repository storage directory..."
+if [ -x $REPO_DIR ]
 then
-    echo "$REPODIR already exists - are you sure about this?"
+    echo "$REPO_DIR already exists - are you sure about this?"
 	echo "I'll mess with the permissions so don't come crying to me if it all goes horribly wrong..."
     read -p "Really use this directory? [y/n] > "
     YARLY=$REPLY
     if [ $YARLY != 'y' ]; then
-        printf "OK then..."
+        echo "OK then..."
         exit
     fi
+
+	# Dereference any symlinks so we can set permissions properly...
+	REPO_DIR=$(readlink -f $REPO_DIR);
+	echo "Symlinks dereferenced - repo dir is at $REPO_DIR"
 fi
 
 
-printf "Creating repository directory [$REPODIR] and setting permissions..."
-sudo mkdir -p $REPODIR
-sudo chown $GIT_USER:devtrack $REPODIR
-sudo chmod -R g+rwxs $REPODIR
+echo "Creating repository directory [$REPO_DIR] and setting permissions..."
+mkdir -p $REPO_DIR
+chown -R $GIT_USER:devtrack $REPO_DIR
+chmod -R g+rwxs $REPO_DIR
 
 echo "$(tput setaf 2) Done!$(tput sgr0)"
+
