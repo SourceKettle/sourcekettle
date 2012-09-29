@@ -24,10 +24,14 @@ $this->Html->css('deletable', null, array ('inline' => false));
         <div class="span10">
             <div class="row-fluid">
                 <div class="well span8 offset2 deletable">
-                    <h4>
-                        If you delete "<?=$object['name']?>" you will also be deleting:
-                    </h4>
                     <?php
+                        echo "<h4>";
+                        if (sizeof($objects) == 1) {
+                            echo "Deleting '".$object['name']."' is irreversable!";
+                        } else {
+                            echo "If you delete '".$object['name']."' you will also be deleting:";
+                        }
+                        echo "</h4>";
                         echo "<ul class='span6 offset3'>";
                         if (isset($objects['Collaborator'])) {
                             $size = sizeof($objects['Collaborator']);
@@ -136,20 +140,24 @@ $this->Html->css('deletable', null, array ('inline' => false));
                                 echo "<li>$size $adj</li>";
                             }
                         }
+
+                        $url = array(
+                            "controller" => $this->request['controller'],
+                            "action" => $this->request['action'],
+                            "project" => $this->request['project'],
+                        );
+                        if (isset($object['id'])) {
+                            $url[] = $object['id'];
+                        }
                         echo "</ul>";
                         echo $this->Bootstrap->button_form(
                             "I'm super sure. Delete!",
-                            array(
-                                "controller" => $this->request['controller'],
-                                "action" => $this->request['action'],
-                                "project" => $this->request['project']
-                            ),
+                            $url,
                             array(
                                 "style" => "danger",
                                 "size" => "large",
                                 "class" => "deleteButton span12"
-                            ),
-                            "Yep, one final time. Are you sure?"
+                            )
                         );
                     ?>
                 </div>
