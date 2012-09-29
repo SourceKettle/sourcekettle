@@ -111,7 +111,7 @@ class Source extends AppModel {
     public function create($data = array(), $filterKey = false) {
         switch ($this->Project->field('repo_type')) {
             case '1': return null;
-            case '2': return $this->GitCake->createRepo($this->_repoLocation());
+            case '2': return $this->GitCake->createRepo($this->_repoLocation(), 'g+rwX');
             case '3': return $this->SVNCake->createRepo($this->_repoLocation());
         }
     }
