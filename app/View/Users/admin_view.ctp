@@ -56,7 +56,7 @@ echo $this->Bootstrap->page_header('Administration <small>single out the straggl
 
                     <dt>Ssh Keys</dt><dd><?= count($this->request->data['SshKey']) ?></dd>
 
-                    <dt>Local Account</dt><dd><?= ($this->request->data['User']['password'] != null) ? 'Yes' : 'No' ?></dd>
+                    <dt>Local Account</dt><dd><?= $this->request->data['User']['is_local'] ? 'Yes' : 'No' ?></dd>
 
                 </dl>
             </div>

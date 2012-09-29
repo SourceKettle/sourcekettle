@@ -4,7 +4,19 @@
     <div class="span2">
         <?= $this->element('Sidebar/users') ?>
     </div>
-
+    <? if($external_account):?>
+    <div class="span6">
+        <div class="well">
+            <h3>Your account cannot be deleted</h3>
+            <p>We're sorry you want to leave, but it's not quite that simple!</p>
+            <p>This DevTrack system is set up to use external authentication - most likely, you have logged in with a user account provided by your organisation.  There's not a lot we can do about that :-(</p>
+        <h3>Problem?</h3>
+        <p>
+          If you think something's gone horribly wrong and you really <strong>should</strong> be able to delete your account, it's probably worth having a chat with <?= $this->Html->link('the system administrator', 'mailto:'.$devtrack_config['sysadmin_email']) ?>!
+        </p>
+        </div>
+    </div>
+    <? else: ?>
     <div class="span6">
         <div class="well">
             <h3>Delete your account</h3>
@@ -14,6 +26,8 @@
             ?>
         </div>
     </div>
+    <? endif ?>
+
     <div class="span4">
         <h3>Leaving so soon?</h3>
         <p>
