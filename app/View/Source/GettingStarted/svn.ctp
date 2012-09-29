@@ -20,7 +20,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
 
 $public_key = $this->Popover->popover(
     'Public Key',
-    "How does one acquisition a 'Public Key' good Sir?",
+    "How does one acquire a 'Public Key' good Sir?",
     "Here at DevTrack, we love making source code control easy as pie, unfortunately computers are more like an apple turnover.<br>
      <br>
      What this pop-up box is trying to say is:<br>
@@ -41,7 +41,7 @@ $public_key = $this->Popover->popover(
                 <h3><?= $this->Bootstrap->label('1', 'info', array('style'=>'font-size:18px')) ?> Getting started:</h3>
                 <p><?= $this->Bootstrap->label('Whoa there!', 'important') ?> Have you <?=$this->Html->link('uploaded',array('controller'=>'sshKeys','action'=>'add'))?> your <?=$public_key?>? Step 1 wont work if you haven't!</p>
 
-                <pre>svn checkout svn+ssh://svn@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= $project['Project']['name'] ?>.svn</pre>
+                <pre>svn checkout svn+ssh://<?= $devtrack_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= $project['Project']['name'] ?>.svn</pre>
 
             </div>
 

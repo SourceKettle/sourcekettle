@@ -20,7 +20,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
 
 $public_key = $this->Popover->popover(
     'Public Key',
-    "How does one acquisition a 'Public Key' good Sir?",
+    "How does one acquire a 'Public Key' good Sir?",
     "Here at DevTrack, we love making source code control easy as pie, unfortunately computers are more like an apple turnover.<br>
      <br>
      What this pop-up box is trying to say is:<br>
@@ -58,15 +58,14 @@ git init
 touch README
 git add README
 git commit -m 'First Commit'
-git remote add origin git@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= $project['Project']['name'] ?>.git
+git remote add origin <?= $devtrack_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= $project['Project']['name'] ?>.git
 git push -u origin master</pre>
 
                 <h4><?= $this->Bootstrap->label('2b', 'info', array('style'=>'font-size:15px')) ?> Existing Git Repo?</h4>
 
 <pre>cd existing_git_repo
-git remote add origin git@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= $project['Project']['name'] ?>.git
+git remote add origin <?= $devtrack_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= $project['Project']['name'] ?>.git
 git push -u origin master</pre>
-
                 <p><?= $this->Bootstrap->label('Not sure?', 'warning') ?> If you don't quite get some of the commands above, head over to the Git documentation at <?= $this->Html->link('http://git-scm.com/docs', 'http://git-scm.com/docs') ?></p>
             </div>
 
