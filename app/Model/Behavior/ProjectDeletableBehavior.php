@@ -13,11 +13,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-class ProjectDeleteBehavior extends ModelBehavior {
+class ProjectDeletableBehavior extends ModelBehavior {
 
     var $settings = array();
 
     var $model = null;
+
+    var $ignore = array('ProjectHistory');
 
     public function setup(Model $model, $settings = array()) {
         $this->settings[$model->name] = $settings;
@@ -32,7 +34,13 @@ class ProjectDeleteBehavior extends ModelBehavior {
      * @return void
      */
     public function preDelete(Model $Model) {
-        debug($this->preDeleteR($Model, array('id' => $Model->id)));
+        $objects = $this->preDeleteR($Model, array('id' => $Model->id));
+        foreach ($this->ignore as $i) {
+            if (isset($objects[$i])) {
+                unset($objects[$i]);
+            }
+        }
+        return $objects;
     }
 
     /**

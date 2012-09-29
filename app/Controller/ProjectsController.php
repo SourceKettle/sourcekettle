@@ -251,30 +251,25 @@ class ProjectsController extends AppProjectController {
      * delete
      * remove a project and its sub components from the database
      *
-     * @param string $name
+     * @param string $project
      *
      * @return void
      */
-    public function delete($name = null) {
-        // Check for valid project name
-        $project = $this->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+    public function delete($project = null) {
+        $project = $this->_projectCheck($project, true, true);
 
-        $this->Project->id = $project['Project']['id'];
-
-        // Lock out those who arnt admins
-        if ( !$this->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not an admin of this project'));
-
-        // Only allow form submissions
-        if ( !$this->request->is('post') ) throw new MethodNotAllowedException();
-
-        if ($this->Project->delete()) {
-            $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
-            $this->log("[ProjectController.delete] project[".$this->Project->id."] was deleted by user[".$this->Auth->user('id')."]", 'devtrack');
-        } else {
-            $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
+        if ($this->request->is('post')) {
+            if ($this->Project->delete()) {
+                $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
+                $this->log("[ProjectController.delete] project[".$this->Project->id."] was deleted by user[".$this->Auth->user('id')."]", 'devtrack');
+                $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
+            }
         }
-        $this->redirect(array('action' => 'index'));
+        $this->set('object', array('name'=>$project['Project']['name']));
+        $this->set('objects', $this->Project->preDelete());
+        $this->render('/Elements/Project/delete');
     }
 
     /**

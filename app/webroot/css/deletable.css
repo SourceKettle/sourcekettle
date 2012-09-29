@@ -1,0 +1,8 @@
+.deletable h4 {
+    text-align: center;
+}
+
+.deletable .deleteButton {
+margin:49px 0px 0px 49px;
+width: 80%;
+}
