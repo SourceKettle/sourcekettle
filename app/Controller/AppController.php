@@ -108,6 +108,9 @@ class AppController extends Controller {
             $this->set('user_id', $user_id);
             $this->set('user_name', $user_name);
             $this->set('user_email', $user_email);
+            $this->set('user_is_admin', ($this->Auth->user('is_admin') == 1));
+        } else{
+            $this->set('user_is_admin', false);
         }
 
 
