@@ -14,15 +14,18 @@
 # @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 # 
 import os
+import os.path
 import sys
-import commands
-import traceback
+import subprocess
+import shlex
 
-CAKE = traceback.extract_stack(limit=1)[0][0][0:-len("/scm-scripts/git-serve.py")]
-GITSERVEPHP = '%s/app/Console/cake -app %s/app/ git serve' % (CAKE, CAKE)
-status, output = commands.getstatusoutput('%s %s' % (GITSERVEPHP, sys.argv[1]))
-if status == 0:
-    os.execvp('git', ['git', 'shell', '-c', output.strip()])
-else:
-    sys.stderr.write("%s\n" % output)
-sys.exit(1)
+# XXX: There are probably better ways of pulling the parent directory
+# but I really didn't want to deal with os.path.split
+CAKE_ROOT = os.path.abspath(os.path.dirname(__file__) + '/../')
+GITSERVEPHP = '{0}/app/Console/cake -app {0}/app/ git serve {1}'.format(CAKE_ROOT, sys.argv[1])
+try:
+    output = subprocess.Popen(shlex.split(GITSERVEPHP), stdout=subprocess.PIPE).communicate()[0]
+    git_process = subprocess.Popen(['git-shell', '-c', output.strip()])
+    git_process.wait()
+except subprocess.CalledProcessError:
+    sys.exit(1)
