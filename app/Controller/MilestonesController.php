@@ -18,6 +18,8 @@ App::uses('AppProjectController', 'Controller');
 
 class MilestonesController extends AppProjectController {
 
+    var $components = array('Flash');
+
     /**
      * beforeFilter function.
      *
@@ -157,11 +159,8 @@ class MilestonesController extends AppProjectController {
 
             $this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
-            if ($this->Milestone->save($this->request->data)) {
-                $this->Session->setFlash(__('The milestone has been saved.'), 'default', array(), 'success');
-                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('The milestone could not be saved. Please, try again.'), 'default', array(), 'error');
+            if ($this->Flash->C($this->Milestone->save($this->request->data))) {
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
             }
         }
     }
@@ -179,11 +178,8 @@ class MilestonesController extends AppProjectController {
         if ($this->request->is('post') || $this->request->is('put')) {
             $this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
-            if ($this->Milestone->save($this->request->data)) {
-                $this->Session->setFlash(__('The milestone has been saved.'), 'default', array(), 'success');
+            if ($this->Flash->U($this->Milestone->save($this->request->data))) {
                 $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('The milestone could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
             $this->request->data = $milestone;
@@ -197,21 +193,20 @@ class MilestonesController extends AppProjectController {
      * @return void
      */
     public function delete($project = null, $id = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($project, true, true);
+        $milestone = $this->Milestone->open($id);
 
-        if (!$this->request->is('post') && !$this->request->is('get')) {
-            throw new MethodNotAllowedException();
+        if ($this->request->is('post')) {
+            if ($this->Flash->D($this->Milestone->delete())) {
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+            }
         }
-        $this->Milestone->id = $id;
-        if (!$this->Milestone->exists()) {
-            throw new NotFoundException(__('Invalid milestone'));
-        }
-        if ($this->Milestone->delete()) {
-            $this->Session->setFlash(__('The milestone has been deleted.'), 'default', array(), 'success');
-            $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
-        }
-        $this->Session->setFlash(__('The milestone could not be deleted. Please, try again.'), 'default', array(), 'error');
-        $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+        $this->set('object', array(
+            'name' => $milestone['Milestone']['subject'],
+            'id'   => $milestone['Milestone']['id']
+        ));
+        $this->set('objects', $this->Milestone->preDelete());
+        $this->render('/Elements/Project/delete');
     }
 
     /***************************************************

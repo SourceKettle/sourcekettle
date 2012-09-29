@@ -30,7 +30,8 @@ class Milestone extends AppModel {
 
     public $actsAs = array(
         'ProjectComponent',
-        'ProjectHistory'
+        'ProjectHistory',
+        'ProjectDeletable'
     );
 
     /**
@@ -253,7 +254,7 @@ class Milestone extends AppModel {
                 array(
                     'fields' => array('id', 'subject'),
                     'conditions' => array(
-                        'project_id' => $this->Project->id, 
+                        'project_id' => $this->Project->id,
                         'id' => $_diff
                     )
                 )

@@ -33,7 +33,7 @@
                     'controller' => 'milestones',
                     $id
                 ),
-                'type' => 'button_form',
+                'props' => array('class' => 'btn-danger'),
             ),
         ),
     ),
