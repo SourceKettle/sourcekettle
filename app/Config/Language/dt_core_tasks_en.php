@@ -43,7 +43,7 @@ $config['dtcore']['pages']['tasks']['index']['en']['column.options.milestone.tit
 $config['dtcore']['pages']['tasks']['index']['en']['column.history.title'] = "Recent History";
 
 // APP/Tasks/others
-$config['dtcore']['pages']['tasks']['others']['en']['header.text'] = "Others Tasks for the Project";
+$config['dtcore']['pages']['tasks']['others']['en']['header.text'] = "Others' Tasks for the Project";
 
 $config['dtcore']['pages']['tasks']['others']['en']['column.tasks.empty'] = "There are currently no tasks";
 
