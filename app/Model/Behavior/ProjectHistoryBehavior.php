@@ -64,6 +64,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
      */
     public function beforeSave(Model $Model) {
         $exception = false;
+        $this->prepare($Model);
 
         // Lock out those who aren't allowed to write
         if ( $Model->name == 'Collaborator' && !$Model->findByProjectId($Model->Project->id) ) {
@@ -75,9 +76,11 @@ class ProjectHistoryBehavior extends ModelBehavior {
         }
 
         $before = $Model->findById($Model->id);
+        $this->_cache[$Model->name][$Model->id] = array();
+
         foreach ($Model->data[$Model->name] as $field => $value) {
             if ($field != 'modified' && $before[$Model->name][$field] != $value) {
-                $this->_cache[$field] = $before[$Model->name][$field];
+                $this->_cache[$Model->name][$Model->id][$field] = $before[$Model->name][$field];
             }
         }
         return true;
@@ -93,7 +96,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
     public function afterSave(Model $Model, $created = false) {
         if (!$created) {
             // Some fields have been updated
-            foreach ($this->_cache as $field => $value) {
+            foreach ($this->_cache[$Model->name][$Model->id] as $field => $value) {
                 $Model->Project->ProjectHistory->logC(
                     strtolower($Model->name),
                     $Model->id,
@@ -130,7 +133,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
      * @return void
      */
     public function beforeDelete(Model $Model, $cascade = true) {
-        $this->_cache = $this->getTitleForHistory($Model);
+        $this->prepare($Model);
+        $this->_cache[$Model->name][$Model->id] = $this->getTitleForHistory($Model);
         return true;
     }
 
@@ -144,7 +148,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
         $Model->Project->ProjectHistory->logC(
             strtolower($Model->name),
             $Model->id,
-            $this->_cache,
+            $this->_cache[$Model->name][$Model->id],
             '-',
             null,
             null,
@@ -169,4 +173,9 @@ class ProjectHistoryBehavior extends ModelBehavior {
         return $Model->field($Model->displayField);
     }
 
+    private function prepare(Model $Model) {
+        if (!isset($this->_cache[$Model->name])) {
+            $this->_cache[$Model->name] = array();
+        }
+    }
 }

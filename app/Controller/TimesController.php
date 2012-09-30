@@ -69,8 +69,6 @@ class TimesController extends AppProjectController {
         $project = $this->_projectCheck($project, true);
         $time = $this->Time->open($id, true);
 
-        if (!$this->request->is('post')) throw new MethodNotAllowedException();
-
         $this->Flash->setUp();
         $this->Flash->D($this->Time->delete());
         $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));

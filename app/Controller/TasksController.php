@@ -255,7 +255,7 @@ class TasksController extends AppProjectController {
             unset($this->request->data['Task']['project_id']);
             unset($this->request->data['Task']['owner_id']);
 
-            if ($this->Task->U($this->Task->save($this->request->data))) {
+            if ($this->Flash->U($this->Task->save($this->request->data))) {
                 $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
             }
         } else {
