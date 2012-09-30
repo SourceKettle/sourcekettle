@@ -82,10 +82,10 @@ class AppController extends Controller {
           Configure::read('devtrack'),
           ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
         );
-        
+
         $this->set('devtrack_config', $this->devtrack_config);
-            
-            
+        $this->set('devtrackVersion', 'v0.9');
+
 
         // Set up the devtrack-specific auth model
         $this->Auth->userModel = 'User';
