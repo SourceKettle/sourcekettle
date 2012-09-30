@@ -58,7 +58,7 @@ class ProjectDeletableBehavior extends ModelBehavior {
         $_list = array_values($Model->find('list', array('conditions' => $conditions, 'fields' => array('id'))));
         foreach ($Model->hasMany as $key => $value) {
             if ($value['dependent']) {
-                $_objects = $this->preDeleteR($Model->{$key}, array($value['foreignKey'] = $_list));
+                $_objects = $this->preDeleteR($Model->{$key}, array($value['foreignKey'] => $_list));
                 foreach ($_objects as $_k => $_v) {
                     if (isset($objects[$_k])) {
                         $objects[$_k] = array_merge($objects[$_k], $_objects[$_k]);
