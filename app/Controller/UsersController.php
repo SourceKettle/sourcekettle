@@ -236,6 +236,7 @@ class UsersController extends AppController {
         //Find the users projects they are working on
         $this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
         $this->request->data = $this->User->read();
+        $this->request->data['User']['is_local'] = $this->User->isDevtrackManaged();
         $this->request->data['User']['password'] = null;
     }
 
@@ -407,6 +408,16 @@ class UsersController extends AppController {
      * collaborators
      */
     public function delete(){
+        // Check whether the user account is DevTrack-managed (if not it's an LDAP
+        // account or similar, so we can't really delete it properly)
+        $this->User->id = $this->Auth->user('id');
+        $this->request->data = $this->User->read();
+        $this->set('external_account', false);
+        if(!$this->User->isDevtrackManaged()){
+            $this->set('external_account', true);
+            return;
+        }
+
         if($this->request->is('post')){
             $this->User->id = $this->Auth->user('id');
 

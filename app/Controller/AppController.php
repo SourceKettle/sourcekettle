@@ -109,12 +109,16 @@ class AppController extends Controller {
             $this->set('user_id', $user_id);
             $this->set('user_name', $user_name);
             $this->set('user_email', $user_email);
+            $this->set('user_is_admin', ($this->Auth->user('is_admin') == 1));
+        } else{
+            $this->set('user_is_admin', false);
         }
 
 
         // if admin pages are being requested
         if(isset($this->params['admin'])) {
             // check the admin is logged in
+            if ( !isset($user_id) || empty($user_id) ) $this->redirect('/login');
             if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
         }
         if(isset($this->params['api'])) {

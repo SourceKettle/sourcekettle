@@ -54,7 +54,12 @@ class ProjectsController extends AppProjectController {
      */
     public function index() {
         $this->Project->Collaborator->recursive = 0;
-        $this->set('projects', $this->Project->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $this->Auth->user('id')))));
+        $this->set('projects', $this->Project->Collaborator->find(
+          'all', array(
+            'conditions' => array('Collaborator.user_id' => $this->Auth->user('id')),
+            'order' => array('Project.name')
+          )
+        ));
     }
 
     /**

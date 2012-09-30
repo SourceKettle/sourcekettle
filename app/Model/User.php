@@ -191,4 +191,13 @@ class User extends AppModel {
         return true;
     }
 
+    // Is the user a DevTrack-managed account, i.e. password is stored in the database?
+    // If it's been auto-created from e.g. LDAP, the password will be blank.
+    public function isDevtrackManaged() {
+        return (
+          isset($this->data[$this->alias]['password'])
+          && !empty($this->data[$this->alias]['password'])
+        );
+    }
+
 }

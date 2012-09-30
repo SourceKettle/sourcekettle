@@ -76,6 +76,9 @@
                             	'dashboard' => __('Dashboard'),
                             	'projects' => __('Projects'),
                             );
+                            if($user_is_admin){
+                                $navItems['admin'] = __('Administration');
+                            }
                             foreach ($navItems as $controller => $text) {
                                 echo "<li" . ($controller == $this->params['controller'] ? " class='active'>" : ">");
                                 echo $this->Html->link($text, array ('controller' => $controller, 'action' => 'index'));
