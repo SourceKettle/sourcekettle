@@ -14,36 +14,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('AppController', 'Controller');
+App::uses('AppProjectController', 'Controller');
 
-class SourceController extends AppController {
+class SourceController extends AppProjectController {
 
     public $helpers = array('Time', 'CommandLineColor');
 
-    /*
-     * _projectCheck
-     * Space saver to ensure user can view content
-     * Also sets commonly needed variables related to the project
-     *
-     * @param $name string Project name
-     */
-    private function _projectCheck($name) {
-        // Check for existent project
-        $project = $this->Source->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-        $this->Source->Project->id = $project['Project']['id'];
-
-        $user = $this->Auth->user('id');
-
-        // Lock out those who are not guests
-        if ( !$this->Source->Project->hasRead($user) ) throw new ForbiddenException(__('You are not a member of this project'));
-
+    public function beforeFilter() {
+        parent::beforeFilter();
         $this->Source->init();
-
-        $this->set('project', $project);
-        $this->set('isAdmin', $this->Source->Project->isAdmin($user));
-
-        return $project;
     }
 
     public function index($name = null) {
