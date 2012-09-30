@@ -26,7 +26,7 @@ $this->Html->css('deletable', null, array ('inline' => false));
                 <div class="well span8 offset2 deletable">
                     <?php
                         echo "<h4>";
-                        if (sizeof($objects) == 1) {
+                        if (sizeof($objects) < 1) {
                             echo "Deleting '".$object['name']."' is irreversable!";
                         } else {
                             echo "If you delete '".$object['name']."' you will also be deleting:";

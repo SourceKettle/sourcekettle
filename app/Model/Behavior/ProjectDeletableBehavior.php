@@ -35,7 +35,9 @@ class ProjectDeletableBehavior extends ModelBehavior {
      */
     public function preDelete(Model $Model) {
         $objects = $this->preDeleteR($Model, array('id' => $Model->id));
-        foreach ($this->ignore as $i) {
+        $ignore = $this->ignore;
+        $ignore[] = $Model->name;
+        foreach ($ignore as $i) {
             if (isset($objects[$i])) {
                 unset($objects[$i]);
             }
