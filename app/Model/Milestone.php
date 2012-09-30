@@ -118,7 +118,7 @@ class Milestone extends AppModel {
      * @access public
      * @return void
      */
-    public function beforeDelete() {
+    public function beforeDelete(Model $Model, $cascade = false) {
         foreach ($this->Task->find('all', array('conditions' => array('milestone_id' => $this->id, 'task_status_id <' => 3))) as $task) {
             $this->Task->id = $task['Task']['id'];
             $this->Task->set('milestone_id', null);

@@ -62,6 +62,7 @@ class FlashComponent extends Component {
         return $this->objectFlash("has been updated", "could not be updated", $winning);
     }
     public function D($winning = false) {
+        if (in_array('SoftDeletable', $this->Model->actsAs)) $winning = true;
         return $this->objectFlash("has been deleted", "could not be deleted", $winning);
     }
 
@@ -108,8 +109,10 @@ class FlashComponent extends Component {
      */
     public function setUp() {
         if ($this->Model->id) {
+            if (in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(false);
             $this->_name = $this->Model->field($this->Model->displayField);
             $this->_id   = $this->Model->id;
+            if (in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(true);
         }
     }
 }

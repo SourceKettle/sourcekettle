@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS `collaborators` (
   `access_level` int(11) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT '0',
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -68,6 +70,8 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `repo_type` int(2) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT '0',
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -192,6 +196,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `theme` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL default 'default',
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT '0',
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -271,6 +277,8 @@ CREATE TABLE IF NOT EXISTS `times` (
   `date` date NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT '0',
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
@@ -296,6 +304,8 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `description` text CHARACTER SET utf8 COLLATE utf8_bin,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT '0',
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
@@ -358,6 +368,8 @@ CREATE TABLE IF NOT EXISTS `task_comments` (
   `comment` text CHARACTER SET utf8 COLLATE utf8_bin,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT '0',
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
@@ -424,6 +436,8 @@ CREATE TABLE IF NOT EXISTS `milestones` (
   `due` date NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT '0',
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 

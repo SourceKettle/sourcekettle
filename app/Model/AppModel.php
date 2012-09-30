@@ -68,4 +68,11 @@ class AppModel extends Model {
             $this->{$key}->setCurrentUserData($id, $name, $email);
         }
     }
+
+    public function __deleteDependent($id, $cascade) {
+        $this->_deleteDependent($id, $cascade);
+    }
+    public function __deleteLinks($id) {
+        $this->_deleteLinks($id);
+    }
 }
