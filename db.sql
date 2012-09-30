@@ -169,7 +169,11 @@ CREATE TABLE IF NOT EXISTS `settings` (
 INSERT INTO `settings` (`id`, `name`, `value`, `created`, `modified`) VALUES
 (1, 'register_enabled', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (2, 'sysadmin_email', 'sysadmin@example.com', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(3, 'sync_required', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+(3, 'sync_required', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(4, 'feature_time_enabled', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(5, 'feature_source_enabled', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(6, 'feature_task_enabled', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(7, 'feature_attachment_enabled', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 
 -- --------------------------------------------------------
@@ -290,6 +294,24 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `milestone_id` int(10) NULL DEFAULT NULL,
   `subject` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `description` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `tasks`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_dependencies`
+--
+CREATE TABLE IF NOT EXISTS `task_dependencies` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `child_task_id` int(10) NOT NULL,
+  `parent_task_id` int(10) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
