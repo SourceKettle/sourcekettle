@@ -121,11 +121,8 @@ class AttachmentsController extends AppProjectController{
         $project = $this->_projectCheck($project, true);
 
         if (!empty($this->data)) {
-            if ($data = $this->Attachment->upload($this->data)) {
-                $this->Session->setFlash(__('The attachment has been added successfully'), 'default', array(), 'success');
+            if ($this->Flash->C($this->Attachment->upload($this->data))) {
                  $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
-            } else {
-                $this->Session->setFlash(__('The attachment could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         }
     }
@@ -138,16 +135,13 @@ class AttachmentsController extends AppProjectController{
      * @return void
      */
     public function delete($project = null, $id = null) {
-        if (!$this->request->is('post')) throw new MethodNotAllowedException();
-
         $project = $this->_projectCheck($project, true);
         $attachment = $this->Attachment->open($id);
 
-        if ($this->Attachment->delete()) {
-            $this->Session->setFlash(__('Attachment deleted'), 'default', array(), 'success');
-        } else {
-            $this->Session->setFlash(__('Attachment was not deleted'), 'default', array(), 'error');
-        }
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+
+        $this->Flash->setUp();
+        $this->Flash->D($this->Attachment->delete());
         $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
     }
 

@@ -30,7 +30,7 @@ class Attachment extends AppModel {
      *
      * @var string
      */
-    public $displayField = 'id';
+    public $displayField = 'name';
 
     /**
      * Validation rules
