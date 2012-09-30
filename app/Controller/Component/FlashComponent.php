@@ -38,6 +38,20 @@ class FlashComponent extends Component {
         $this->Model      = $this->Controller->{$this->name};
     }
 
+    public function info($message) {
+        $this->flash($message, true);
+    }
+
+    public function error($message) {
+        $this->flash($message, false);
+    }
+    public function errorReason($reason) {
+        $subject = "<h4 class='alert-heading'>The Request could not be completed</h4>{reason}.";
+        $search  = array('{reason}');
+        $replace = array($reason);
+        $this->flash(str_replace($search, $replace, $subject), false);
+    }
+
     public function C($winning = false) {
         return $this->objectFlash("has been created", "could not be created", $winning);
     }
@@ -92,9 +106,11 @@ class FlashComponent extends Component {
      * @access private
      * @return void
      */
-    private function setUp() {
-        $this->_name = $this->Model->field($this->Model->displayField);
-        $this->_id   = $this->Model->id;
+    public function setUp() {
+        if ($this->Model->id) {
+            $this->_name = $this->Model->field($this->Model->displayField);
+            $this->_id   = $this->Model->id;
+        }
     }
 }
 

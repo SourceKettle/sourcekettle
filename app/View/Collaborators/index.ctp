@@ -68,10 +68,11 @@ $_levels = array(
                                 $_user_mail = $collaborator['User']['email'];
                                 $_user_id   = $collaborator['User']['id'];
                                 $_user_url  = array('controller' => 'users', 'action' => 'view', $_user_id);
+                                $_c_id      = $collaborator['Collaborator']['id'];
 
-                                $_promote_url = ($_access_level < 2) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level + 1]['action'], $_user_id), true) : null;
-                                $_demote_url  = ($_access_level > 0) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level - 1]['action'], $_user_id), true) : null;
-                                $_delete_url  = $this->Html->url(array('controller' => 'collaborators', 'project' => $_project_name, 'action' => 'delete', $collaborator['Collaborator']['id']), true);
+                                $_promote_url = ($_access_level < 2) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level + 1]['action'], $_c_id), true) : null;
+                                $_demote_url  = ($_access_level > 0) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level - 1]['action'], $_c_id), true) : null;
+                                $_delete_url  = $this->Html->url(array('controller' => 'collaborators', 'project' => $_project_name, 'action' => 'delete', $_c_id), true);
 
                                 $_blank_button = $this->Bootstrap->button($this->Bootstrap->icon('none'), array('escape'=>false, 'size' => 'mini', 'class' => 'disabled'))
                             ?>
@@ -82,11 +83,10 @@ $_levels = array(
                                     <? if ($_promote_url) echo $this->Bootstrap->button_form($_up_icon, $_promote_url, array('escape'=>false, 'size' => 'mini')); else echo $_blank_button; ?>
                                     <? if ($_demote_url) echo $this->Bootstrap->button_form($_down_icon, $_demote_url, array('escape'=>false, 'size' => 'mini')); else echo $_blank_button; ?>
                                 <?php
-                                    echo $this->Bootstrap->button_form(
+                                    echo $this->Bootstrap->button_link(
                                         $this->Bootstrap->icon('eject', 'white'),
                                         $_delete_url,
-                                        array('escape'=>false, 'style' => 'danger', 'size' => 'mini'),
-                                        str_replace('{user}', $_user_name, $this->DT->t('users.actions.delete'))
+                                        array('escape'=>false, 'style' => 'danger', 'size' => 'mini')
                                     );
                                 ?>
                                 </td>

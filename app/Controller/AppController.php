@@ -48,6 +48,7 @@ class AppController extends Controller {
     public $components = array(
         'RequestHandler',
         'Session',
+        'Flash',
         'Auth' => array(
             'actionPath' => 'controllers/',
             'loginAction' => array(
