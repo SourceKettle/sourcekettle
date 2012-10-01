@@ -18,8 +18,6 @@ App::uses('AppProjectController', 'Controller');
 
 class MilestonesController extends AppProjectController {
 
-    var $components = array('Flash');
-
     /**
      * beforeFilter function.
      *
@@ -195,6 +193,8 @@ class MilestonesController extends AppProjectController {
     public function delete($project = null, $id = null) {
         $project = $this->_projectCheck($project, true, true);
         $milestone = $this->Milestone->open($id);
+
+        $this->Flash->setUp();
 
         if ($this->request->is('post')) {
             if ($this->Flash->D($this->Milestone->delete())) {

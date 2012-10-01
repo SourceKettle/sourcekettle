@@ -117,12 +117,12 @@ class SettingsController extends AppController {
     private function admin_setField($field = null, $value = null) {
         $this->Setting->id = $this->Setting->field('id', array('name' => $field));
         if (!$this->Setting->exists()) {
-            $this->Session->setFlash(__('The specified setting does not exist in the database. Please create "'.$field.'" and try again.'), 'default', array(), 'error');
+            $this->Flash->error('The specified setting does not exist in the database. Please create "'.$field.'" and try again.');
         } else if (in_array((int) $value, array(0,1))) {
             $this->Setting->set('value', $value);
             $this->Setting->save();
         } else {
-            $this->Session->setFlash(__('Cannot set "'.$field.'" to a value other than 1 or 0. Please try again.'), 'default', array(), 'error');
+            $this->Flash->error('Cannot set "'.$field.'" to a value other than 1 or 0. Please try again.');
         }
         $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
     }

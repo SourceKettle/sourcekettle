@@ -20,7 +20,8 @@ class Collaborator extends AppModel {
 
     public $actsAs = array(
         'ProjectComponent',
-        'ProjectHistory'
+        'ProjectHistory',
+        'ProjectDeletable'
     );
 
     /**

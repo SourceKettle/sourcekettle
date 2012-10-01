@@ -104,7 +104,7 @@
         </div>
         <div id='footer'>
             <hr>
-            <?=$this->Html->link('About DevTrack', '/about');?>
+            <?=$this->Html->link("About DevTrack $devtrackVersion", '/about');?>
             <?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
             <?//=$this->Html->link('SVN help', '/svn_help');?>
         </div>

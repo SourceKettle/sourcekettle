@@ -26,7 +26,7 @@ $this->Html->css('deletable', null, array ('inline' => false));
                 <div class="well span8 offset2 deletable">
                     <?php
                         echo "<h4>";
-                        if (sizeof($objects) == 1) {
+                        if (sizeof($objects) < 1) {
                             echo "Deleting '".$object['name']."' is irreversable!";
                         } else {
                             echo "If you delete '".$object['name']."' you will also be deleting:";
@@ -47,7 +47,7 @@ $this->Html->css('deletable', null, array ('inline' => false));
                                 $size = '+20';
                             }
 
-                            if ($size > 2) {
+                            if ($size > 0) {
                                 echo "<li>A project with $size $adj</li>";
                             }
                         }
@@ -66,7 +66,7 @@ $this->Html->css('deletable', null, array ('inline' => false));
                                 $size = '+20';
                             }
 
-                            if ($size > 2) {
+                            if ($size > 0) {
                                 echo "<li>$size $adj</li>";
                             }
                         }
@@ -85,7 +85,7 @@ $this->Html->css('deletable', null, array ('inline' => false));
                                 $size = '+20';
                             }
 
-                            if ($size > 2) {
+                            if ($size > 0) {
                                 echo "<li>$size $adj of allocated time</li>";
                             }
                         }
@@ -115,9 +115,9 @@ $this->Html->css('deletable', null, array ('inline' => false));
                             } else if ($size2 > 20) {
                                 $size2 = '+20';
                             }
-                            if ($size > 2 & $size2 >2) {
+                            if ($size > 0 & $size2 >0) {
                                 echo "<li>$size $adj with $size2 $adj2</li>";
-                            } else if ($size > 2) {
+                            } else if ($size > 0) {
                                 echo "<li>$size $adj</li>";
                             }
                         }
@@ -136,7 +136,7 @@ $this->Html->css('deletable', null, array ('inline' => false));
                                 $size = '+20';
                             }
 
-                            if ($size > 2) {
+                            if ($size > 0) {
                                 echo "<li>$size $adj</li>";
                             }
                         }

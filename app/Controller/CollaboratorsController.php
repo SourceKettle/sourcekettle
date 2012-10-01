@@ -36,7 +36,15 @@ class CollaboratorsController extends AppProjectController {
 
         $collaborators = array();
         foreach (array(0, 1, 2) as $x) {
-            $collaborators[$x] = $this->Collaborator->find('all', array('conditions' => array('access_level' => $x, 'project_id' => $project['Project']['id'])));
+            $collaborators[$x] = $this->Collaborator->find(
+                'all',
+                array(
+                    'conditions' => array(
+                        'access_level' => $x,
+                        'project_id' => $project['Project']['id']
+                    )
+                )
+            );
         }
 
         $this->set('collaborators', $collaborators);
@@ -50,37 +58,7 @@ class CollaboratorsController extends AppProjectController {
      */
     public function add($project = null) {
         $project = $this->_projectCheck($project, true, true);
-
-        if (!$this->request->is('post')) throw new MethodNotAllowedException();
-
-        // Check for existant user
-        $this->Collaborator->User->recursive = -1;
-        $user = $this->Collaborator->User->findByEmail($this->request->data['Collaborator']['name'], array('User.id', 'User.name'));
-
-        if ( empty($user) ) {
-            $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
-        } else {
-            // Check for existing association with this project
-            $collaborator = $this->Collaborator->findByUserIdAndProjectId($user['User']['id'], $project['Project']['id'], array('id'));
-            if (!empty($collaborator)) {
-                $this->Session->setFlash(__('The user specified is already collaborating in this project. Please, try again.'), 'default', array(), 'error');
-            } else {
-                // Create details to attach user to this project
-                unset($this->request->data['Collaborator']['name']);
-                $this->request->data['Collaborator']['project_id'] = $project['Project']['id'];
-                $this->request->data['Collaborator']['user_id'] = $user['User']['id'];
-                $this->request->data['Collaborator']['access_level'] = 1;
-
-                // Save the new collaborator
-                $this->Collaborator->create();
-                if ($this->Collaborator->save($this->request->data)) {
-                    $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project'), 'default', array(), 'success');
-                } else {
-                    $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.'), 'default', array(), 'error');
-                }
-            }
-        }
-        $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
+        $this->_add($project, $this->request->data, array('project' => $project['Project']['name'], 'action' => '.'));
     }
 
     /**
@@ -89,34 +67,54 @@ class CollaboratorsController extends AppProjectController {
      * @return void
      */
     public function admin_add() {
-        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+        $project = $this->_projectCheck($this->request->data['Project']['id']);
+        $this->_add($project, $this->request->data, array('controller' => 'projects', 'action' => 'admin_view', $project['Project']['id']));
+    }
 
-        // Check for existant project
-        $project = $this->Collaborator->Project->getProject($this->request->data['Project']['id']);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+    /**
+     * _add function.
+     * Alias for admin_add and add
+     *
+     * @access private
+     * @param mixed $project
+     * @param mixed $data
+     * @param mixed $redirect
+     * @return void
+     */
+    private function _add($project, $data, $redirect) {
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
 
         // Check for existant user
         $this->Collaborator->User->recursive = -1;
-        $user = $this->Collaborator->User->findByEmail($this->request->data['Collaborator']['name'], array('User.id', 'User.name'));
+        $user = $this->Collaborator->User->findByEmail($data['Collaborator']['name'], array('User.id', 'User.name'));
 
-        if ( empty($user) ) {
-            $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
-        } else {
-            // Create details to attach user to this project
-            unset($this->request->data['Collaborator']['name']);
-            $this->request->data['Collaborator']['project_id'] = $project['Project']['id'];
-            $this->request->data['Collaborator']['user_id'] = $user['User']['id'];
-            $this->request->data['Collaborator']['access_level'] = 1;
-
-            // Save the new collaborator
-            $this->Collaborator->create();
-            if ($this->Collaborator->save($this->request->data, true, array('project_id', 'user_id', 'access_level'))) {
-                $this->Session->setFlash(__($user['User']['name'] . ' has been added to the project'), 'default', array(), 'success');
-            } else {
-                $this->Session->setFlash(__($user['User']['name'] . ' could not be added to the project. Please, try again.'), 'default', array(), 'error');
-            }
+        if (empty($user)) {
+            $this->Flash->error('The user specified does not exist. Please, try again.');
+            $this->redirect($redirect);
         }
-        $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $project['Project']['id']));
+
+        // Check for existing association with this project
+        if ($this->Collaborator->findByUserIdAndProjectId($user['User']['id'], $project['Project']['id'], array('id'))) {
+            $this->Flash->error('The user specified is already collaborating in this project.');
+            $this->redirect($redirect);
+        }
+
+        // Create details to attach user to this project
+        $this->Collaborator->create();
+        $collaborator = array(
+            'project_id'   => $project['Project']['id'],
+            'user_id'      => $user['User']['id'],
+            'access_level' => 1
+        );
+
+        // Save the new collaborator
+        if ($this->Collaborator->save($collaborator)) {
+            $this->Flash->info($user['User']['name'].' has been added to the project');
+        } else {
+            $this->Flash->error($user['User']['name'].' could not be added to the project. Please, try again.');
+        }
+
+        $this->redirect($redirect);
     }
 
     /**
@@ -199,44 +197,31 @@ class CollaboratorsController extends AppProjectController {
      */
     private function changepermissionlevel($project = null, $id = null, $newaccesslevel = 0){
         $project = $this->_projectCheck($project, true, true);
+        $collaborator = $this->Collaborator->open($id);
 
-        // Check for existant collaborator for the user and this project
-        $this->Collaborator->id = $this->Collaborator->field('id', array('user_id' => $id, 'project_id' => $project['Project']['id']));
+        if ($newaccesslevel <= 1 && $collaborator['Collaborator']['access_level'] > 1) {
+            // Count the number of admins
+            $numAdmins = $this->Collaborator->find ('count', array (
+                'fields' => 'Collaborator.id',
+                'conditions' => array (
+                    'project_id' => $project['Project']['id'],
+                    'access_level >' => '1'
+                )
+            ));
 
-        if (!$this->Collaborator->exists()) {
-            $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
-        } else {
-            $collaborator = $this->Collaborator->read();
-
-            $current_access_level = $collaborator['Collaborator']['access_level'];
-            $can_change = true;
-            if ($newaccesslevel <= 1 && $current_access_level > 1) {
-                // Count the number of admins
-                $numAdmins = $this->Collaborator->find ('count', array (
-                    'fields' => 'Collaborator.id',
-                    'conditions' => array ('project_id' => $project['Project']['id'], 'access_level >' => '1')
-                ));
-
-                if ($numAdmins <= 1) {
-                    $this->Session->setFlash(__('There must be at least one admin in the project.'), 'default', array(), 'error');
-                    $can_change = false;
-                }
-            }
-
-            if ($can_change) {
-                // Find additional details for the user being changed - only needed for flash message
-                $user_name = $this->Collaborator->User->field('name', array('User.id' => $id));
-
-                $this->Collaborator->set('access_level', $newaccesslevel);
-
-                // Save the changes to the user
-                if ($this->Collaborator->save(null, true, array('access_level'))) {
-                    $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'"), 'default', array(), 'success');
-                } else {
-                    $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again."), 'default', array(), 'error');
-                }
+            if ($numAdmins <= 1) {
+                $this->Flash->errorReason('There must be at least one admin in the project');
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
             }
         }
+
+        // Save the changes to the user
+        if ($this->Collaborator->set('access_level', $newaccesslevel) && $this->Collaborator->save()) {
+            $this->Flash->info("Permissions level successfully changed for '".$collaborator['User']['name']."'");
+        } else {
+            $this->Flash->error("Permissions level for '".$collaborator['User']['name']."' not be updated. Please, try again.");
+        }
+
         $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
     }
 
@@ -248,26 +233,15 @@ class CollaboratorsController extends AppProjectController {
      * @return void
      */
     private function _admin_changepermissionlevel($id = null, $newaccesslevel = 0){
-        // Check for existant collaborator for the user and this project
-        $this->Collaborator->id = $id;
+        $collaborator = $this->Collaborator->open($id);
 
-        if (!$this->Collaborator->exists()) {
-            $this->Session->setFlash(__('The user specified does not exist. Please, try again.'), 'default', array(), 'error');
+        // Save the changes to the user
+        if ($this->Collaborator->set('access_level', $newaccesslevel) && $this->Collaborator->save()) {
+            $this->Flash->info("Permissions level successfully changed for '".$collaborator['User']['name']."'");
         } else {
-            $collaborator = $this->Collaborator->read();
-
-            // Find additional details for the user being changed - only needed for flash message
-            $user_name = $this->Collaborator->User->field('name', array('User.id' => $collaborator['Collaborator']['user_id']));
-
-            $this->Collaborator->set('access_level', $newaccesslevel);
-
-            // Save the changes to the user
-            if ($this->Collaborator->save(null, true, array('access_level'))) {
-                $this->Session->setFlash(__("Permissions level successfully changed for '${user_name}'"), 'default', array(), 'success');
-            } else {
-                $this->Session->setFlash(__("Permissions level for '${user_name}' not be updated. Please, try again."), 'default', array(), 'error');
-            }
+            $this->Flash->error("Permissions level for '".$collaborator['User']['name']."' not be updated. Please, try again.");
         }
+
         $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $collaborator['Collaborator']['project_id']));
     }
 
@@ -280,26 +254,37 @@ class CollaboratorsController extends AppProjectController {
      */
     public function delete($project = null, $id = null) {
         $project = $this->_projectCheck($project, true, true);
+        $collaborator = $this->Collaborator->open($id);
 
-        if (!$this->request->is('post')) throw new MethodNotAllowedException();
-
-        $this->Collaborator->id = $id;
-        if (!$this->Collaborator->exists()) throw new NotFoundException(__('Invalid collaborator'));
+        $this->Flash->setUp();
 
         // Count the number of admins
         $numAdmins = $this->Collaborator->find('count', array (
             'fields' => 'DISTINCT Collaborator.id',
-            'conditions' => array ('project_id' => $project['Project']['id'], 'access_level >' => '1', 'Collaborator.id !=' => $id)
+            'conditions' => array (
+                'Collaborator.project_id' => $project['Project']['id'],
+                'Collaborator.access_level >' => '1',
+                'Collaborator.id !=' => $id
+            )
         ));
 
+        // If the user cannot delete due to no other admins
         if (!$numAdmins) {
-            $this->Session->setFlash(__('There must be at least one admin in the project.'), 'default', array(), 'error');
-        } else if ($this->Collaborator->delete()) {
-            $this->Session->setFlash(__('Collaborator deleted'), 'default', array(), 'success');
-        } else {
-            $this->Session->setFlash(__('Collaborator was not deleted'), 'default', array(), 'error');
+            $this->Flash->errorReason('There must be at least one admin in the project');
+            $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
         }
-        $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
+
+        // If the user has confimed deletion
+        if ($this->request->is('post') && $this->Flash->D($this->Collaborator->delete())) {
+            $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
+        }
+
+        $this->set('object', array(
+            'name' => $collaborator['User']['name'],
+            'id'   => $collaborator['Collaborator']['id']
+        ));
+        $this->set('objects', $this->Collaborator->preDelete());
+        $this->render('/Elements/Project/delete');
     }
 
     /**
@@ -310,19 +295,12 @@ class CollaboratorsController extends AppProjectController {
      * @return void
      */
     public function admin_delete($id = null) {
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
-        }
-        $this->Collaborator->id = $id;
-        $project_id = $this->Collaborator->field('project_id', array('id' => $this->Collaborator->id));
-        if (!$this->Collaborator->exists()) {
-            throw new NotFoundException(__('Invalid collaborator'));
-        }
-        if ($this->Collaborator->delete()) {
-            $this->Session->setFlash(__('Collaborator deleted'), 'default', array(), 'success');
-        } else {
-            $this->Session->setFlash(__('Collaborator was not deleted'), 'default', array(), 'error');
-        }
-        $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $project_id));
+        $collaborator = $this->Collaborator->open($id);
+
+        if (!$this->request->is('post')) throw new MethodNotAllowedException();
+
+        $this->Flash->setUp();
+        $this->Flash->D($this->Collaborator->delete());
+        $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $collaborator['Project']['id']));
     }
 }

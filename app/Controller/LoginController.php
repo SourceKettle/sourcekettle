@@ -1,5 +1,4 @@
 <?php
-
 /**
 *
 * LoginController for the DevTrack system
@@ -7,7 +6,7 @@
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
-* 
+*
 * @copyright     DevTrack Development Team 2012
 * @link          http://github.com/chrisbulmer/devtrack
 * @package       DevTrack.Controller
@@ -16,78 +15,60 @@
 */
 
 class LoginController extends AppController{
-    /**
-     * The name of the controller
-     * @var type String
-     */
+
     public $name = 'Login';
-    
-    /**
-     * Uses the Users model
-     * @var type 
-     */
+
     public $uses = array('User');
-    
-    /**
-     * Allows the view to use the Form helper
-     * @var type 
-     */
-    public $helpers = array('Form');
-    
+
     public function beforeFilter() {
         parent::beforeFilter();
     }
 
     /**
      * The login function.
-     * 
      * Allows users to login using their username and password.
+     *
+     * @access public
+     * @return void
      */
     public function index(){
 
-        $this->log("[LoginController.index] Login action started", 'devtrack');
-
         // If they're already logged in, bounce them to the homepage
-        if($this->Auth->loggedIn()){
-            $this->log("[LoginController.index] User already logged in, skipping login page", 'devtrack');
-            $this->redirect($this->Auth->redirect());
-            return; // Not sure if needed?
+        if($this->Auth->loggedIn()) $this->redirect($this->Auth->redirect());
+
+        // Only POST requests are authenticated
+        if (!$this->request->is('post')) return;
+
+        // First, try to authenticate them
+        if(!$this->Auth->login()){
+            $this->log("[LoginController.index] Authentication failed using ".$this->request->data['User']['email'], 'devtrack');
+            $this->Flash->error($this->Auth->loginError);
+            return;
         }
 
-        if ($this->request->is('post')) {
-                
-            // First, try to authenticate them
-            if(!$this->Auth->login()){
-                $this->log("[LoginController.index] Authentication failed using ".$this->request->data['User']['email'], 'devtrack');
-                $this->Session->setFlash(__($this->Auth->loginError), 'default', array(), 'error');
-                return;
-            }
+        $this->log("[LoginController.index] Authentication succeeded for ".$this->request->data['User']['email'], 'devtrack');
 
-            $this->log("[LoginController.index] Authentication succeeded for ".$this->request->data['User']['email'], 'devtrack');
+        // Authentication succeeded - load the user object they logged in with
+        $user = $this->User->findById($this->Auth->user('id'));
 
-            // Authentication succeeded - load the user object they logged in with
-            $user = $this->User->findById($this->Auth->user('id'));
-            $this->log("[LoginController.index] Looked up user - ID is ".$user['User']['id'], 'devtrack');
-
-
-            // Check if the user has activated their account
-            if (!$user['User']['is_active']){
-                $this->log("[LoginController.index] user[".$this->Auth->user('id')."] denied access - account is not activated", 'devtrack');
-                $this->Session->setFlash(__($this->Auth->loginError), 'default', array(), 'error');
-                return;
-            }
-
-            // Authentication successful, everybody is happy! Let's log it to celebrate.
-            $this->log("[LoginController.index] user[".$this->Auth->user('id')."] logged in", 'devtrack');
-            $this->redirect($this->Auth->redirect());
-
+        // Check if the user has activated their account
+        if (!$user['User']['is_active']){
+            $this->log("[LoginController.index] user[".$user['User']['id']."] denied access - account is not activated", 'devtrack');
+            $this->Flash->error($this->Auth->loginError);
+            return;
         }
+
+        // Authentication successful, everybody is happy! Let's log it to celebrate.
+        $this->log("[LoginController.index] user[".$user['User']['id']."] logged in", 'devtrack');
+        $this->redirect($this->Auth->redirect());
     }
 
     /**
      * The logout function.
-     * 
      * Allows users to logout of DevTrack.
+     *
+     * @access public
+     * @return void
      */
     public function logout(){
         $this->Auth->logout();

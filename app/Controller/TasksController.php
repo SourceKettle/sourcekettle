@@ -47,10 +47,8 @@ class TasksController extends AppProjectController {
     public function index($project = null) {
         $project = $this->_projectCheck($project);
 
-        $events = $this->Task->fetchHistory($project['Project']['id'], 5);
-        $open_milestones = $this->Task->Milestone->getOpenMilestones(true);
-
-        $this->set(compact('open_milestones', 'events'));
+        $this->set('events', $this->Task->fetchHistory($project['Project']['id'], 5));
+        $this->set('open_milestones', $this->Task->Milestone->getOpenMilestones(true));
     }
 
     /**
@@ -84,10 +82,10 @@ class TasksController extends AppProjectController {
             $this->request->data['TaskComment']['user_id'] = $this->Task->_auth_user_id;
 
             if ($this->Task->TaskComment->save($this->request->data)) {
-                $this->Session->setFlash(__('The comment has been added successfully'), 'default', array(), 'success');
+                $this->Flash->info('The comment has been added successfully');
                 unset($this->request->data['TaskComment']);
             } else {
-                $this->Session->setFlash(__('The comment could not be saved. Please, try again.'), 'default', array(), 'error');
+                $this->Flash->error('The comment could not be saved. Please, try again.');
             }
         }
 
@@ -100,10 +98,10 @@ class TasksController extends AppProjectController {
             $this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id']);
 
             if ($this->Task->TaskComment->save($this->request->data)) {
-                $this->Session->setFlash(__('The comment has been updated successfully'), 'default', array(), 'success');
+                $this->Flash->info('The comment has been updated successfully');
                 unset($this->request->data['TaskComment']);
             } else {
-                $this->Session->setFlash(__('The comment could not be updated. Please, try again.'), 'default', array(), 'error');
+                $this->Flash->error('The comment could not be updated. Please, try again.');
             }
         }
 
@@ -113,15 +111,10 @@ class TasksController extends AppProjectController {
             preg_match('#[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}#', $this->request->data['TaskAssignee']['assignee'], $matches);
             unset($this->request->data['TaskAssignee']);
             if (!isset($matches[0]) || is_null($matches[0]) || !($user = $this->Task->Assignee->findByEmail($matches[0]))) {
-                $this->Session->setFlash(__('The assignee could not be updated. Please, try again.'), 'default', array(), 'error');
+                $this->Flash->error('The assignee could not be updated. Please, try again.');
             } else {
                 $this->Task->set('assignee_id', $user['Assignee']['id']);
-
-                if ($this->Task->save()) {
-                    $this->Session->setFlash(__('The assignee has been updated successfully'), 'default', array(), 'success');
-                } else {
-                    $this->Session->setFlash(__('The assignee could not be updated. Please, try again.'), 'default', array(), 'error');
-                }
+                $this->Flash->U($this->Task->save());
             }
         }
 
@@ -223,11 +216,8 @@ class TasksController extends AppProjectController {
                     echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please, try again.</div>';
                 }
             } else if ($this->request->is('post')) {
-                if ($this->Task->save($this->request->data)) {
-                    $this->Session->setFlash(__('The task has been added successfully'), 'default', array(), 'success');
+                if ($this->Flash->C($this->Task->save($this->request->data))) {
                     $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
-                } else {
-                    $this->Session->setFlash(__('The task could not be saved. Please, try again.'), 'default', array(), 'error');
                 }
             }
         }
@@ -265,11 +255,8 @@ class TasksController extends AppProjectController {
             unset($this->request->data['Task']['project_id']);
             unset($this->request->data['Task']['owner_id']);
 
-            if ($this->Task->save($this->request->data)) {
-                $this->Session->setFlash(__('The task has been saved'), 'default', array(), 'success');
+            if ($this->Flash->U($this->Task->save($this->request->data))) {
                 $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
-            } else {
-                $this->Session->setFlash(__('The task could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         } else {
             $this->request->data = $task;
@@ -304,13 +291,9 @@ class TasksController extends AppProjectController {
 
         if (!$this->request->is('post')) throw new MethodNotAllowedException();
 
-        if ($this->Task->delete()) {
-            $this->Session->setFlash(__('Task deleted'));
-            $this->redirect(array('action' => 'index'));
-        } else {
-            $this->Session->setFlash(__('Task was not deleted'));
-            $this->redirect(array('action' => 'index'));
-        }
+        $this->Flash->setUp();
+        $this->Flash->D($this->Task->delete());
+        $this->redirect(array('action' => 'index'));
     }
 
     /**
@@ -326,13 +309,13 @@ class TasksController extends AppProjectController {
 
         // check assigned
         if (!$this->Task->isAssignee()) {
-            $this->Session->setFlash(__('You can not start work on a task not assigned to you.'), 'default', array(), 'error');
+            $this->Flash->error('You can not start work on a task not assigned to you.');
             $this->redirect(array('project' => $project, 'action' => 'view', $id));
         }
 
         //check open
         if (!$this->Task->isOpen()) {
-            $this->Session->setFlash(__('You can not start work on a task that is not open.'), 'default', array(), 'error');
+            $this->Flash->error('You can not start work on a task that is not open.');
             $this->redirect(array('project' => $project, 'action' => 'view', $id));
         }
 
@@ -353,13 +336,13 @@ class TasksController extends AppProjectController {
 
         // check assigned
         if (!$this->Task->isAssignee()) {
-            $this->Session->setFlash(__('You can not stop work on a task not assigned to you.'), 'default', array(), 'error');
+            $this->Flash->error('You can not stop work on a task not assigned to you.');
             $this->redirect(array('project' => $project, 'action' => 'view', $id));
         }
 
         //check inProgress
         if (!$this->Task->isInProgress()) {
-            $this->Session->setFlash(__('You can not stop work on a task that is not in progress.'), 'default', array(), 'error');
+            $this->Flash->error('You can not stop work on a task that is not in progress.');
             $this->redirect(array('project' => $project, 'action' => 'view', $id));
         }
 
@@ -399,10 +382,10 @@ class TasksController extends AppProjectController {
             $this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
 
             if ($this->Task->TaskComment->save($this->request->data)) {
-                $this->Session->setFlash(__('The comment has been added successfully'), 'default', array(), 'success');
+                $this->Flash->info('The comment has been added successfully');
                 unset($this->request->data['TaskComment']);
             } else {
-                $this->Session->setFlash(__('The comment could not be saved. Please, try again.'), 'default', array(), 'error');
+                $this->Flash->error('The comment could not be saved. Please, try again.');
             }
         }
         $this->redirect(array('project' => $project, 'action' => 'view', $id));
@@ -421,13 +404,7 @@ class TasksController extends AppProjectController {
         $task = $this->Task->open($id);
 
         $this->Task->set('task_status_id', $status);
-
-        if ($this->Task->save()) {
-            $this->Session->setFlash(__('The tasks status has been updated successfully'), 'default', array(), 'success');
-            return true;
-        }
-        $this->Session->setFlash(__('The task status could not be updated. Please, try again.'), 'default', array(), 'error');
-        return false;
+        return $this->Flash->U($this->Task->save());
     }
 
     /***************************************************

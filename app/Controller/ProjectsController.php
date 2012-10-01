@@ -54,12 +54,13 @@ class ProjectsController extends AppProjectController {
      */
     public function index() {
         $this->Project->Collaborator->recursive = 0;
-        $this->set('projects', $this->Project->Collaborator->find(
+        $projects = $this->Project->Collaborator->find(
           'all', array(
-            'conditions' => array('Collaborator.user_id' => $this->Auth->user('id')),
+            'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
             'order' => array('Project.name')
           )
-        ));
+        );
+        $this->set('projects', $projects);
     }
 
     /**
@@ -125,22 +126,21 @@ class ProjectsController extends AppProjectController {
      * @return void
      */
     public function add() {
+        $repoTypes = $this->Project->RepoType->find('list');
 
         if ($this->request->is('post')) {
 
             // Create the project object with its data
             $this->Project->create();
 
-            $repoTypes = $this->Project->RepoType->find('list');
-
             // Lets vet the data coming in
-            $_request_data = array();
-
-            $_request_data['Project'] = $this->request->data['Project'];
-            $_request_data['Collaborator'] = array(
-                array(
-                    'user_id' => $this->Project->_auth_user_id,
-                    'access_level' => 2 // Project admin
+            $_request_data = array(
+                'Project' => $this->request->data['Project'],
+                'Collaborator' => array(
+                    array(
+                        'user_id' => $this->Project->_auth_user_id,
+                        'access_level' => 2 // Project admin
+                    )
                 )
             );
 
@@ -157,21 +157,18 @@ class ProjectsController extends AppProjectController {
                 } elseif (!$this->Project->Source->create()) {
                     $this->log("[ProjectController.add] project[".$this->Project->id."] repository creation failed - automatically removing project data", 'devtrack');
                     $this->Project->delete();
-                    $this->Session->setFlash(__('The project repository could not be created. Please try again.'), 'default', array(), 'error');
+                    $this->Flash->C(false);
                 } else {
-                    $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
+                    $this->Flash->C(true);
                 }
 
                 $this->redirect(array('project' => $_request_data['Project']['name'], 'action' => 'view', $this->Project->_auth_user_id));
             } else {
-                $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
+                $this->Flash->C(false);
             }
-
-        } else {
-            $repoTypes = $this->RepoType->find('list');
         }
 
-       	$this->set(compact('repoTypes'));
+        $this->set(compact('repoTypes'));
     }
 
     /**
@@ -182,15 +179,11 @@ class ProjectsController extends AppProjectController {
     public function admin_add() {
         if ($this->request->is('post')) {
             $this->Project->create();
-            if ($this->Project->save($this->request->data)) {
-                $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
+            if ($this->Flash->C($this->Project->save($this->request->data))) {
                 $this->redirect(array('action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
         }
-        $repoTypes = $this->Project->RepoType->find('list');
-        $this->set(compact('repoTypes'));
+        $this->set('repoTypes', $this->Project->RepoType->find('list'));
     }
 
     /**
@@ -199,30 +192,16 @@ class ProjectsController extends AppProjectController {
      * @param string $id
      * @return void
      */
-    public function edit($name = null) {
-        // Check for valid project name
-        $project = $this->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-
-        $this->Project->id = $project['Project']['id'];
-
-        // Lock out those who arnt admins
-        if ( !$this->Project->isAdmin($this->Auth->user('id')) ) throw new ForbiddenException(__('You are not an admin of this project'));
+    public function edit($project = null) {
+        $project = $this->_projectCheck($project, true, true);
 
         if ($this->request->is('post') || $this->request->is('put')) {
-            if ($this->Project->save($this->request->data)) {
-                $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
-                $this->log("[ProjectController.edit] user[".$this->Auth->user('id')."] edited project[".$this->Project->id."]", 'devtrack');
-
-                $this->redirect(array('action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
+            if ($this->Flash->U($this->Project->save($this->request->data))) {
+                $this->log("[ProjectController.edit] user[".$this->Project->_auth_user_id."] edited project[".$this->Project->id."]", 'devtrack');
+                $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view'));
             }
-        } else {
-            $this->set('project', $project);
-            $this->set('isAdmin', $this->Project->isAdmin($this->Auth->user('id')));
-            $this->request->data = $this->Project->read(null, $this->Project->id);
         }
+        $this->request->data = $project;
     }
 
     /**
@@ -231,25 +210,16 @@ class ProjectsController extends AppProjectController {
      * @param string $id
      * @return void
      */
-    public function admin_edit($name = null) {
-        $project = $this->Project->getProject($name);
-        $id = $project['Project']['id'];
-        $this->Project->id = $id;
-        if (!$this->Project->exists()) {
-            throw new NotFoundException(__('Invalid project'));
-        }
+    public function admin_edit($project = null) {
+        $project = $this->_projectCheck($project);
+
         if ($this->request->is('post') || $this->request->is('put')) {
-            if ($this->Project->save($this->request->data)) {
-                $this->Session->setFlash(__('The project has been saved'), 'default', array(), 'success');
+            if ($this->Flash->U($this->Project->save($this->request->data))) {
                 $this->redirect(array('action' => 'admin_view', $this->Project->id));
-            } else {
-                $this->Session->setFlash(__('The project could not be saved. Please, try again.'), 'default', array(), 'error');
             }
-        } else {
-            $this->request->data = $this->Project->read(null, $id);
         }
-        $repoTypes = $this->Project->RepoType->find('list');
-        $this->set(compact('repoTypes'));
+        $this->request->data = $project;
+        $this->set('repoTypes', $this->Project->RepoType->find('list'));
     }
 
     /**
@@ -263,13 +233,11 @@ class ProjectsController extends AppProjectController {
     public function delete($project = null) {
         $project = $this->_projectCheck($project, true, true);
 
+        $this->Flash->setUp();
+
         if ($this->request->is('post')) {
-            if ($this->Project->delete()) {
-                $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
-                $this->log("[ProjectController.delete] project[".$this->Project->id."] was deleted by user[".$this->Auth->user('id')."]", 'devtrack');
+            if ($this->Flash->D($this->Project->delete())) {
                 $this->redirect(array('action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
             }
         }
         $this->set('object', array('name'=>$project['Project']['name']));
@@ -284,20 +252,11 @@ class ProjectsController extends AppProjectController {
      * @return void
      */
     public function admin_delete($name = null) {
-        $project = $this->Project->getProject($name);
-        if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
-
-        $this->Project->id = $project['Project']['id'];
+        $project = $this->_projectCheck($project);
 
         if (!$this->request->is('post')) throw new MethodNotAllowedException();
 
-        if (!$this->Project->exists()) throw new NotFoundException(__('Invalid project'));
-
-        if ($this->Project->delete()) {
-            $this->Session->setFlash(__('Project deleted'), 'default', array(), 'success');
-            $this->redirect(array('action' => 'admin_index'));
-        }
-        $this->Session->setFlash(__('Project was not deleted'), 'default', array(), 'error');
+        $this->Flash->D($this->Project->delete());
         $this->redirect(array('action' => 'admin_index'));
     }
 

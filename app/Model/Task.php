@@ -31,7 +31,7 @@ class Task extends AppModel {
      *
      * @var string
      */
-    public $displayField = 'id';
+    public $displayField = 'subject';
 
     public $actsAs = array(
         'ProjectComponent',
