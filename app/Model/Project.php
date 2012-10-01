@@ -259,6 +259,10 @@ class Project extends AppModel {
 
         if ($this->id) $project = $this->id;
 
+        if ($this->field('public', array('Project.id' => $project))) {
+            return true;
+        }
+
         $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $project), 'fields' => array('access_level')));
 
         if ( !empty($member) && $member['Collaborator']['access_level'] > -1 ) {

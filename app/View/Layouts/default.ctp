@@ -86,10 +86,6 @@
                             }
                             ?>
                         </ul>
-                        <form class="navbar-search pull-right">
-                            <i class="icon-search"></i>
-                            <input type="text" class="search-query" placeholder="Search">
-                        </form>
                     </div>
                 </div>
             </div>
