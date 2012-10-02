@@ -28,15 +28,7 @@
                 <div class="row-fluid">
 
                     <div class="span12">
-                        <div class="well">
-                            <?= $this->element('history', array('events' => $events)) ?>
-                    <ul class="pager">
-                        <li>
-                            <?= $this->Html->link('See More', array('project' => $project['Project']['name'], 'action' => 'history'), array('escape' => false)) ?>
-                        </li>
-                    </ul>
-
-                        </div>
+                        <?= $this->element('history_ajax', array('no_more'=>true)) ?>
                     </div>
 
                 </div>

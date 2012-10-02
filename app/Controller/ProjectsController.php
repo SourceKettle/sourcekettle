@@ -44,7 +44,7 @@ class ProjectsController extends AppProjectController {
     public function history($project) {
         $project = $this->_projectCheck($project);
 
-        $this->set('events', $this->Project->fetchEventsForProject(50));
+        $this->set('historyCount', 50);
     }
 
     /**
@@ -99,8 +99,10 @@ class ProjectsController extends AppProjectController {
             $milestone = $_o_milestones[0];
         }
 
-        $this->set(compact('milestone', 'number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks'));
-        $this->set('events', $this->Project->fetchEventsForProject());
+        $numCollab = sizeof($this->Project->Collaborator->findAllByProjectId($project['Project']['id']));
+
+        $this->set(compact('milestone', 'number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks', 'numCollab'));
+        $this->set('historyCount', 8);
     }
 
     /**
@@ -361,5 +363,25 @@ class ProjectsController extends AppProjectController {
 
         $this->set('data',$data);
         $this->render('/Elements/json');
+    }
+
+    /**
+     * api_history function.
+     * not strictly an API call, consider moving to ajax routing
+     *
+     * @access public
+     * @param int $number (default: 0)
+     * @return void
+     */
+    public function api_history($number = 0) {
+        $project = $this->_projectCheck($this->request->data['project']);
+        $this->layout = 'ajax';
+
+        if (!is_numeric($number) || $number < 1 || $number > 50) {
+            $number = 8;
+        }
+
+        $this->set('events', $this->Project->fetchEventsForProject($number));
+        $this->render('/Elements/history');
     }
 }

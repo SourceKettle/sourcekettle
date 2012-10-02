@@ -119,7 +119,7 @@ class MilestonesController extends AppProjectController {
         $resolved = $this->Milestone->resolvedTasksForMilestone($id);
         $completed = $this->Milestone->closedTasksForMilestone($id);
 
-        $iceBox = $this->Milestone->Task->find('all', array('conditions' => array('milestone_id' => NULL)));
+        $iceBox = $this->Milestone->Task->find('all', array('conditions' => array('milestone_id' => NULL, 'Task.project_id' => $project['Project']['id'])));
 
         // Theres only 3 cols
         $completed = array_merge($completed, $resolved);

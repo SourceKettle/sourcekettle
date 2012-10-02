@@ -54,4 +54,29 @@ class ProjectComponentBehavior extends ModelBehavior {
         return $Model->read();
     }
 
+    /**
+     * afterSave function.
+     *
+     * @access public
+     * @param bool $created (default: false)
+     * @return void
+     */
+    public function afterSave(Model $Model, $created = false) {
+        $Model->Project->set('modified', date('Y-m-d H:i:s'));
+        $Model->Project->save();
+        return true;
+    }
+
+    /**
+     * afterDelete function.
+     *
+     * @access public
+     * @return void
+     */
+    public function afterDelete(Model $Model) {
+        $Model->Project->set('modified', date('Y-m-d H:i:s'));
+        $Model->Project->save();
+        return true;
+    }
+
 }

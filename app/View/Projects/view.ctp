@@ -71,32 +71,18 @@ $this->Html->css('project.overview', null, array ('inline' => false));
                             <h3>Quick Stats</h3>
                             <hr />
                             <ul class="unstyled">
-                                <li><strong>0 Bytes</strong> disk space used in files, notebook &amp; repositories.</li>
-                                <li><strong>1 user</strong> from 1 company are working on this project.</li>
-                                <li>Last activity was <strong>29 days ago</strong>.</li>
+                                <li><strong><?= $numCollab ?> <?= Inflector::pluralize('user', $numCollab) ?></strong> are working on this project.</li>
+                                <li>Last activity was <strong><?= $this->Time->timeAgoInWords($project['Project']['modified']) ?></strong>.</li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="span10" style="text-align:center">
-            <? if (empty($events)) : ?>
-                <h1>No Events Yet</h1>
-                <h3><small>Go on, do something!</small></h3>
-            </div>
-            <? else : ?>
                 <h3>Recent events for the project</h3>
             </div>
-            <? endif; ?>
             <div class="span10">
-                <div class="well">
-                    <?= $this->element('history', array('events' => $events)) ?>
-                    <ul class="pager">
-                        <li>
-                            <?= $this->Html->link('See More', array('project' => $project['Project']['name'], 'action' => 'history'), array('escape' => false)) ?>
-                        </li>
-                    </ul>
-                </div>
+                <?= $this->element('history_ajax') ?>
             </div>
         </div>
     </div>
