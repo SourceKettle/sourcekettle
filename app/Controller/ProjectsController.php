@@ -311,8 +311,8 @@ class ProjectsController extends AppProjectController {
                 // Repo Type
                 $project['Project']['repo_type'] = $this->Project->RepoType->field('name');
 
-                $_part_of_project = $this->Milestone->Project->hasRead($this->Auth->user('id'));
-                $_public_project  = $this->Milestone->Project->field('public');
+                $_part_of_project = $this->Project->hasRead();
+                $_public_project  = $this->Project->field('public');
                 $_is_admin = ($this->_api_auth_level() == 1);
 
                 if ($_public_project || $_part_of_project || $_is_admin) {
