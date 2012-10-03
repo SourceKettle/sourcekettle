@@ -65,4 +65,12 @@
         ),
     );
 
+    // If we are logged in with a non-devtrack-managed account,
+    // do not offer the 'delete account' link or 'change password' link.
+    if(!$user_is_devtrack_managed){
+        unset($options['Your Account']['Delete Account']);
+        unset($options['Your Account']['Change Password']);
+    }
+
+    
     echo $this->element('Sidebar/generic', array('options' => $options));

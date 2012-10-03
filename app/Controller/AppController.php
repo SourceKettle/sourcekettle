@@ -131,6 +131,13 @@ class AppController extends Controller {
         } else {
             $this->set('user_theme', null);
         }
+
+        // Is the user account devtrack-managed or external e.g. LDAP?
+        if(isset($user_id)){
+            $_USER_MODEL = ClassRegistry::init('User');
+            $user = $_USER_MODEL->findById($user_id);
+            $this->set('user_is_devtrack_managed', User::isDevTrackManaged($user));
+        }
     }
 
     protected function _api_auth_level() {

@@ -161,13 +161,33 @@ class User extends AppModel {
     }
 
     public function beforeSave($options = array()) {
-        if (isset($this->data[$this->alias]['password'])) {
+
+        // Can't update the email or password field if it's an externally-managed account
+        // 
+        if ( User::isDevtrackManaged($this->data) ) {
+
+            $wl = $this->whitelist;
+            if(empty($wl)){
+                $wl = array_keys($this->schema());
+            }
+            $wl = array_diff($wl, array('email', 'password'));
+            $this->whitelist = $wl;
+        }
+
+        if ( isset($this->data[$this->alias]['password'])) {
             $this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
         }
         return true;
     }
 
+
     public function beforeDelete($cascade = true) {
+
+        // Check that the user account is DevTrack-managed, can't delete otherwise...
+        if ( !User::isDevtrackManaged($this->data) ) {
+            return false;
+        }
+
         // Check to ensure that this user is not the only admin on multi-collaborator projects
         $projects = $this->Collaborator->find('list', array('fields' => array('Collaborator.project_id'), 'conditions' => array('Collaborator.user_id' => $this->id)));
         foreach ( $projects as $row => $project_id ) {
@@ -193,10 +213,10 @@ class User extends AppModel {
 
     // Is the user a DevTrack-managed account, i.e. password is stored in the database?
     // If it's been auto-created from e.g. LDAP, the password will be blank.
-    public function isDevtrackManaged() {
+    public static function isDevtrackManaged($data) {
         return (
-          isset($this->data[$this->alias]['password'])
-          && !empty($this->data[$this->alias]['password'])
+          isset($data['User']['password'])
+          && !empty($data['User']['password'])
         );
     }
 
