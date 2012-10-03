@@ -18,6 +18,9 @@ App::uses('AppProjectController', 'Controller');
 
 class MilestonesController extends AppProjectController {
 
+
+    public $helpers = array('Task');
+
     /**
      * beforeFilter function.
      *
