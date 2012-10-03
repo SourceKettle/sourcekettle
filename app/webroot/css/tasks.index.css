@@ -61,7 +61,7 @@
 	text-decoration:none;
 }
 
-.priority_bar_small {
+.type_bar_small {
 	float:left;
 	width:7px;
 	height:55px;
@@ -72,20 +72,28 @@
 	border-radius:4px 0 0 4px;
 }
 
-.priority_bar_blocker {
-	background-color:#B94A48;
+.type_bar_bug {
+	background-color: #B94A48;
 }
 
-.priority_bar_urgent {
-	background-color:#F89406;
+.type_bar_duplicate {
+	background-color: #F89406;
 }
 
-.priority_bar_major {
-	background-color:#3A87AD;
+.type_bar_enhancement {
+	background-color:#468847;
 }
 
-.priority_bar_minor {
-	background-color:#333;
+.type_bar_invalid {
+	background-color: #999;
+}
+
+.type_bar_question {
+	background-color: #3A87AD;
+}
+
+.type_bar_wontfix {
+	background-color: #333;
 }
 
 .label, .lead {
