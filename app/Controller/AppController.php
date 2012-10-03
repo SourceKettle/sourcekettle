@@ -121,6 +121,7 @@ class AppController extends Controller {
             // check the admin is logged in
             if ( !isset($user_id) || empty($user_id) ) $this->redirect('/login');
             if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
+            $this->Flash->message('You are currently in the ADMIN section of the site..');
         }
         if(isset($this->params['api'])) {
             // The following line kinda breaks the M->V->C thing
