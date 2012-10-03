@@ -236,7 +236,7 @@ class UsersController extends AppController {
         //Find the users projects they are working on
         $this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
         $this->request->data = $this->User->read();
-        $this->request->data['User']['is_local'] = $this->User->isDevtrackManaged();
+        $this->request->data['User']['is_local'] = User::isDevtrackManaged($this->data);
         $this->request->data['User']['password'] = null;
     }
 
@@ -320,9 +320,12 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
                 $this->log("[UsersController.details] user[".$this->User->id."] edited details", 'devtrack');
 
-                $this->Session->write('Auth.User.name', $this->request->data['User']['name']);
-                $this->Session->write('Auth.User.email', $this->request->data['User']['email']);
-                $this->set('user_name', $this->request->data['User']['name']);
+                // NB we have to re-read this as we may not have updated the email address
+                // (external accounts will throw it away)
+                $user_data = $this->User->read();
+                $this->Session->write('Auth.User.name', $user_data['User']['name']);
+                $this->Session->write('Auth.User.email', $user_data['User']['email']);
+                $this->set('user_name', $user_data['User']['name']);
             } else {
                 $this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
             }
@@ -413,7 +416,7 @@ class UsersController extends AppController {
         $this->User->id = $this->Auth->user('id');
         $this->request->data = $this->User->read();
         $this->set('external_account', false);
-        if(!$this->User->isDevtrackManaged()){
+        if(!User::isDevtrackManaged($this->User->data)){
             $this->set('external_account', true);
             return;
         }
