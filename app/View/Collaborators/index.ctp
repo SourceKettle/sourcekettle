@@ -100,15 +100,34 @@ $_levels = array(
                 </div>
             </div>
             <div class="span4">
-                <div class="well">
-                    <h3><?= $this->DT->t('add.header') ?></h3>
-                    <?= $this->Form->create('Collaborator', array('url' => array('action' => 'add', 'project' => $project['Project']['name']), 'class' => 'form-inline')) ?>
-                    <div class="input-append">
-                        <?= $this->Form->text("name", array('id' => 'appendedInputButton', 'class' => 'span3', "placeholder" => "john.smith@example.com", "data-provide" => "typeahead")) ?>
-                        <?= $this->Bootstrap->button("Add", array('escape' => false, 'style' => 'success')) ?>
-                    </div>
-                    <?= $this->Form->end() ?>
-                </div>
+            <?php
+                echo $this->Form->create('Collaborator',
+                    array(
+                        'url' => array(
+                            'action' => 'add',
+                            'project' => $project['Project']['name']
+                        ),
+                        'class' => 'form-inline well input-append'
+                    )
+                );
+
+                echo '<h3>'. $this->DT->t('add.header') .'</h3>';
+
+                echo $this->element('components/user_typeahead_input',
+                    array(
+                        'name' => 'name',
+                        'properties' => array(
+                            'id' => 'appendedInputButton',
+                            'class' => 'span3',
+                            "placeholder" => "john.smith@example.com",
+                            'label' => false
+                        )
+                    )
+                );
+                echo $this->Bootstrap->button($this->Bootstrap->icon('plus', 'white'), array('escape' => false, 'style' => 'success'));
+
+                echo $this->Form->end();
+            ?>
             </div>
         </div>
     </div>

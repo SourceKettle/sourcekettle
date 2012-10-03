@@ -106,15 +106,20 @@ class TasksController extends AppProjectController {
         }
 
         // If a User has assigned someone
-        if ($this->request->is('post') && isset($this->request->data['TaskAssignee'])) {
+        if ($this->request->is('post') && isset($this->request->data['TaskAssignee']) && isset($this->request->data['TaskAssignee']['assignee'])) {
 
-            preg_match('#[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}#', $this->request->data['TaskAssignee']['assignee'], $matches);
+            $_email = $this->Useful->extractEmail($this->request->data['TaskAssignee']['assignee']);
             unset($this->request->data['TaskAssignee']);
-            if (!isset($matches[0]) || is_null($matches[0]) || !($user = $this->Task->Assignee->findByEmail($matches[0]))) {
-                $this->Flash->error('The assignee could not be updated. Please, try again.');
+
+            if ($user = $this->Task->Assignee->findByEmail($_email)) {
+                if ($this->Task->Project->hasWrite($user['Assignee']['id'])) {
+                    $this->Task->set('assignee_id', $user['Assignee']['id']);
+                    $this->Flash->U($this->Task->save());
+                } else {
+                    $this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
+                }
             } else {
-                $this->Task->set('assignee_id', $user['Assignee']['id']);
-                $this->Flash->U($this->Task->save());
+                $this->Flash->error('The assignee could not be updated. Please, try again.');
             }
         }
 

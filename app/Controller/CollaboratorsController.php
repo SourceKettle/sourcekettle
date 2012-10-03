@@ -86,7 +86,8 @@ class CollaboratorsController extends AppProjectController {
 
         // Check for existant user
         $this->Collaborator->User->recursive = -1;
-        $user = $this->Collaborator->User->findByEmail($data['Collaborator']['name'], array('User.id', 'User.name'));
+        $_email = $this->Useful->extractEmail($data['Collaborator']['name']);
+        $user = $this->Collaborator->User->findByEmail($_email, array('User.id', 'User.name'));
 
         if (empty($user)) {
             $this->Flash->error('The user specified does not exist. Please, try again.');
@@ -302,5 +303,54 @@ class CollaboratorsController extends AppProjectController {
         $this->Flash->setUp();
         $this->Flash->D($this->Collaborator->delete());
         $this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $collaborator['Project']['id']));
+    }
+
+    /***************************************************
+    *                                                  *
+    *            API SECTION OF CONTROLLER             *
+    *             CAUTION: PUBLIC FACING               *
+    *                                                  *
+    ***************************************************/
+
+    /**
+     * api_autocomplete function.
+     *
+     * @access public
+     * @return void
+     */
+    public function api_autocomplete() {
+        $this->layout = 'ajax';
+
+        $data = array('users' => array());
+
+        if (isset($this->request->query['query'])
+            && $this->request->query['query'] != null
+            && strlen($this->request->query['query']) > 2
+            && isset($this->request['named']['project'])) {
+
+            $query = mysql_real_escape_string($this->request->query['query']);
+            $users = $this->Collaborator->find(
+                "all",
+                array(
+                    'conditions' => array(
+                        'OR' => array(
+                            'User.name  LIKE' => $query.'%',
+                            'User.email LIKE' => $query.'%'
+                        ),
+                        'Project.id' => $this->request['named']['project']
+                    ),
+                    'fields' => array(
+                        'User.name',
+                        'User.email'
+                    )
+                )
+            );
+            foreach ($users as $user) {
+                $data['users'][] = $user['User']['name']." [".$user['User']['email']."]";
+            }
+
+        }
+        $this->set('data',$data);
+        $this->render('/Elements/json');
     }
 }
