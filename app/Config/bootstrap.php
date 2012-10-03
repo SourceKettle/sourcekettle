@@ -83,7 +83,7 @@
  *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
  */
-Cache::config('default', array('engine' => 'File'));
+Cache::config('default', array('engine' => 'Apc'));
 Configure::load('devtrack');
 
 /**
