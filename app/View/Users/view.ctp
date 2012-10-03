@@ -1,7 +1,14 @@
 <?= $this->Bootstrap->page_header($user['User']['name']); ?>
 
 <div class="row">
-    <dl class="dl-horizontal span6">
+    <div class="span3">
+        <?= $this->Gravatar->image(
+            $user['User']['email'],
+            array('size' => 200),
+            array('alt' => $user['User']['name'])
+        ) ?>
+    </div>
+    <dl class="dl-horizontal span9 pull-right">
         <dt>
         Email address
         </dt>
@@ -16,7 +23,7 @@
         </dd>
     </dl>
 </div>
-
+<hr>
 <div class="row">
     <?php
     // Loop through all the projects that a user has access to

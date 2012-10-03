@@ -60,7 +60,6 @@ $this->Html->css('project.overview', null, array ('inline' => false));
                                     )) ?></strong></li>
                                 <br>
                                 <li>Due: <?= $milestone['Milestone']['due'] ?></li>
-                                <li><?= $milestone['Milestone']['percent'] ?>% complete</li>
                                 <?= $this->Bootstrap->progress(array("width" => (int) $milestone['Milestone']['percent'], "striped" => true)) ?>
                                 <? else: ?>
                                 <li><?= $this->Html->link('Create a milestone', array('project'=>$project['Project']['name'],'controller'=>'milestones','action'=>'add')) ?></li>

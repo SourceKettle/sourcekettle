@@ -71,6 +71,29 @@ class TaskHelper extends AppHelper {
     }
 
     /**
+     * Get a label to show the status of a task
+     * 
+     * @access public
+     * @param mixed $id
+     * @return void
+     */
+    public function statusLabel($id) {
+        $text = array(
+            1 => 'Open',
+            2 => 'In Progress',
+            3 => 'Resolved',
+            4 => 'Closed',
+        );
+        $colour = array(
+            1 => 'important',
+            2 => 'warning',
+            3 => 'success',
+            4 => '',
+        );
+        return $this->Bootstrap->label($text[$id], $colour[$id]);
+    }
+
+    /**
      * type function.
      *
      * @access public

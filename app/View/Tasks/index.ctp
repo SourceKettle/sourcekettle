@@ -103,6 +103,9 @@ $this->Html->scriptBlock("
                                 <div class="span6">
                                     <ul id="taskStatus" class="nav nav-pills nav-stacked">
                                         <li class="active">
+                                            <a href="#"><?= $this->DT->t('column.options.statuses.all') ?></a>
+                                        </li>
+                                        <li class="">
                                             <a href="#"><?= $this->DT->t('column.options.statuses.open') ?></a>
                                         </li>
                                         <li class="">

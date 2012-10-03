@@ -64,6 +64,30 @@ class TasksController extends AppProjectController {
     }
 
     /**
+     * View tasks assigned to nobody
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @return void
+     */
+    public function nobody($project = null) {
+        $this->index($project);
+        $this->render('index');
+    }
+
+    /**
+     * View all tasks
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @return void
+     */
+    public function all($project = null) {
+        $this->index($project);
+        $this->render('index');
+    }
+
+    /**
      * view method
      *
      * @param string $id
@@ -567,7 +591,10 @@ class TasksController extends AppProjectController {
                     case 'index':
                         $conditions['assignee_id'] = $user;
                         break;
-                    case 'everyone':
+                    case 'nobody':
+                        $conditions['assignee_id'] = null;
+                        break; 
+                    case 'all':
                         break;
                     default:
                         $conditions['assignee_id !='] = $user;
