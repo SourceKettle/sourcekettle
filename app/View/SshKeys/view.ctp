@@ -21,9 +21,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
         <?= $this->element('Sidebar/users') ?>
     </div>
     <div class="span6">
-        <div class="well">
-            <h3>Current SSH keys</h3>
-            <table class="table table-striped">
+            <table class="well table table-striped">
                 <thead>
                     <tr>
                         <th>Comment</th>
@@ -40,13 +38,12 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
                 <? foreach ($this->request->data['SshKey'] as $key) : ?>
                     <tr>
                         <td><?= $key['comment'] ?></td>
-                        <td style='overflow: hidden; max-width: 388px; word-wrap: break-word;'><?= $key['key'] ?></td>
+                        <td style='overflow: hidden; max-width: 388px; word-wrap: break-word;'><tt><?= $this->Text->truncate($key['key'], 40) ?></tt></td>
                         <td class='span1'><?= $this->Bootstrap->button_form("Delete", $this->Html->url(array('controller' => 'sshKeys', 'action' => 'delete' , $key['id']), true), array('style' => 'danger'), "Are you sure you want to delete the SSH key '" . $key['comment'] . "'?") ?></td>
                     </tr>
                 <? endforeach; ?>
                 </tbody>
             </table>
-        </div>
     </div>
     <div class="span4">
         <h3>What be all the hype about SSH keys?</h3>

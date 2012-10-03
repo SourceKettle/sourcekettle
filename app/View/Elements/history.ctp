@@ -43,6 +43,7 @@ foreach ( $events as $event ) {
                 'project' => $event['Project']['name'],
                 'controller' => Inflector::pluralize(strtolower($event['Type'])),
                 'action' => 'view',
+                'api' => false,
                 $event['Subject']['id']
             )
         );
