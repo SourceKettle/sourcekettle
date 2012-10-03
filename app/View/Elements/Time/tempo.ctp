@@ -66,7 +66,7 @@ echo $this->element('Time/modal_add');
                     array(
                         'action' => 'view',
                         'controller' => 'tasks',
-                        'project' => $project['Project']['id'],
+                        'project' => $project['Project']['name'],
                         $task['Task']['id']
                     )
                 ) : $task['Task']['subject'];

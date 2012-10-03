@@ -28,9 +28,11 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']) ?>
             "input" => $this->Form->text("name"),
         ));
 
-        echo $this->Bootstrap->input("email", array(
-            "input" => $this->Form->text("email"),
-        ));
+        if($user_is_devtrack_managed){
+            echo $this->Bootstrap->input("email", array(
+                "input" => $this->Form->text("email"),
+            ));
+        }
         echo $this->Bootstrap->button("Update", array("style" => "primary", "size" => "large", 'class' => 'controls'));
 
         echo $this->Form->end();

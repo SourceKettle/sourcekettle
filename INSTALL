@@ -3,13 +3,10 @@ Quick and dirty setup guide, assumes reasonable prior knowledge of Things:
 * Make sure you've got all submodules:
   git submodule update --init --recursive
 * Install apache with mod_rewrite, mysql and php5
-* Get apache/mysql/php running, create database(s)
+* Get apache/mysql/php running
 * Make sure your apache virtualhost config allows the use of .htaccess files
 * Point apache at the devtrack directory (the parent directory of 'app')
-* cp app/Config/database.php.default app/Config/database.php
-* Edit app/Config/database.php and set database details
-* cat db.sql | mysql <dbname> -u <user> --password=<password>
-* Run scm-scripts/git-setup.sh
+* Run scm-scripts/devtrack-setup.py
 * Reload/restart apache
 * Load the webpage, then go to /setup to see any possible problems
 
