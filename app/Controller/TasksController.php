@@ -116,10 +116,13 @@ class TasksController extends AppProjectController {
         // If a User has updated a comment
         if ($this->request->is('post') && isset($this->request->data['TaskCommentEdit'])) {
 
-            $this->request->data['TaskComment'] = $this->request->data['TaskCommentEdit'];
+            $this->request->data['TaskComment'] = array(
+                'comment' => $this->request->data['TaskCommentEdit']['comment'],
+                'id' => $this->request->data['TaskCommentEdit']['id']
+            );
             unset($this->request->data['TaskCommentEdit']);
 
-            $this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id']);
+            $this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id'], true);
 
             if ($this->Task->TaskComment->save($this->request->data)) {
                 $this->Flash->info('The comment has been updated successfully');

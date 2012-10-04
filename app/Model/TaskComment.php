@@ -82,7 +82,7 @@ class TaskComment extends AppModel {
         return true;
     }
 
-    function open($id, $task_id = null) {
+    function open($id, $task_id = null, $ownershipRequired = false) {
         $this->id = $id;
 
         if (!$this->exists()) {
@@ -90,6 +90,9 @@ class TaskComment extends AppModel {
         }
         if ($task_id && $this->field('task_id') != $task_id) {
             throw new NotFoundException(__('Invalid '.$this->name));
+        }
+        if ($ownershipRequired && $this->field('user_id') != $this->_auth_user_id) {
+            throw new ForbiddenException(__('Ownership required'));
         }
         return $this->read();
     }
