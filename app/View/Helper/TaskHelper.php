@@ -88,7 +88,7 @@ class TaskHelper extends AppHelper {
             1 => 'important',
             2 => 'warning',
             3 => 'success',
-            4 => '',
+            4 => 'info',
         );
         return $this->Bootstrap->label($text[$id], $colour[$id]);
     }
