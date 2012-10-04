@@ -34,6 +34,17 @@ class ProjectComponentBehavior extends ModelBehavior {
      * @return void
      */
     public function open(Model $Model, $id = null, $ownerRequired = false) {
+        if ($id == null) {
+            if ($Model->id == null) {
+                throw new NotFoundException(__('Invalid '.$Model->name));
+            }
+        }
+
+        // Enable when public_id's are used
+        // if ($Model->hasField('public_id', true) && $_virtual = $Model->findByPublicId($id)) {
+        //     $id = $_virtual[$Model->name]['id'];
+        // }
+
         $Model->id = $id;
 
         if (!$Model->exists()) {
@@ -51,7 +62,7 @@ class ProjectComponentBehavior extends ModelBehavior {
                 throw new ForbiddenException(__('Ownership required'));
             }
         }
-        return $Model->read();
+        return $Model->findById($Model->id);
     }
 
     /**

@@ -148,7 +148,7 @@ class TasksController extends AppProjectController {
         }
 
         // Re-read to pick up changes
-        $this->set('task', $this->Task->read());
+        $this->set('task', $this->Task->open($id));
 
         // Fetch the changes that will have happened
         $changes  = $this->Task->Project->ProjectHistory->find(
@@ -314,16 +314,17 @@ class TasksController extends AppProjectController {
      * @param string $id
      * @return void
      */
-    public function delete($project = null, $id = null) {
-        $project = $this->_projectCheck($project, true);
-        $task = $this->Task->open($id);
-
-        if (!$this->request->is('post')) throw new MethodNotAllowedException();
-
-        $this->Flash->setUp();
-        $this->Flash->D($this->Task->delete());
-        $this->redirect(array('action' => 'index'));
-    }
+    // Temporarily commented out - tasks should not be deleted
+    // public function delete($project = null, $id = null) {
+    //     $project = $this->_projectCheck($project, true);
+    //     $task = $this->Task->open($id);
+    //
+    //     if (!$this->request->is('post')) throw new MethodNotAllowedException();
+    //
+    //     $this->Flash->setUp();
+    //     $this->Flash->D($this->Task->delete());
+    //     $this->redirect(array('action' => 'index'));
+    // }
 
     /**
      * starttask function.
@@ -598,7 +599,7 @@ class TasksController extends AppProjectController {
                         break;
                     case 'nobody':
                         $conditions['assignee_id'] = null;
-                        break; 
+                        break;
                     case 'all':
                         break;
                     default:

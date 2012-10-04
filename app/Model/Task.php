@@ -154,6 +154,23 @@ class Task extends AppModel {
     );
 
     /**
+     * __construct function.
+     *
+     * @access public
+     * @param bool $id (default: false)
+     * @param mixed $table (default: null)
+     * @param mixed $ds (default: null)
+     * @return void
+     */
+    public function __construct($id = false, $table = null, $ds = null){
+        parent::__construct($id, $table, $ds);
+
+        $this->virtualFields = array(
+            'public_id' => "(SELECT COUNT(`{$this->table}`.`id`) FROM `{$this->table}` WHERE `{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)"
+        );
+    }
+
+    /**
      * isAssignee function.
      *
      * @access public
