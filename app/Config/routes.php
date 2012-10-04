@@ -42,8 +42,6 @@
          * Define some more to make the footer pages work
          */
         Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'about'));
-        Router::connect('/svn_help', array('controller' => 'pages', 'action' => 'display', 'svn_help'));
-        Router::connect('/git_help', array('controller' => 'pages', 'action' => 'display', 'git_help'));
 
         /*
          * The below routes allow all projects to be accessed at APP/project/project_name/[controller_to_use/]?[action/]?[params]?

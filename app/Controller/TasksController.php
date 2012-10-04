@@ -239,21 +239,21 @@ class TasksController extends AppProjectController {
             if ($this->request->is('ajax')) {
                 $this->autoRender = false;
 
-                if ($this->Task->save($this->request->data)) {
-                    echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Time successfully logged.</div>';
+                if ($this->Task->saveAll($this->request->data)) {
+                    echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Task successfully created.</div>';
                 } else {
-                    echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please, try again.</div>';
+                    echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not add task to the project. Please, try again.</div>';
                 }
             } else if ($this->request->is('post')) {
-                if ($this->Flash->C($this->Task->save($this->request->data))) {
+                if ($this->Flash->C($this->Task->saveAll($this->request->data))) {
                     $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
                 }
             }
         }
 
         // Fetch all the variables for the view
-        $taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
-        $milestonesOpen = $this->Task->Milestone->getOpenMilestones(true);
+        $taskPriorities   = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
+        $milestonesOpen   = $this->Task->Milestone->getOpenMilestones(true);
         $milestonesClosed = $this->Task->Milestone->getClosedMilestones(true);
         $milestones = array('No Assigned Milestone');
         if (!empty($milestonesOpen)) {
@@ -265,7 +265,13 @@ class TasksController extends AppProjectController {
         foreach ( $taskPriorities as $id => $p ) {
             $taskPriorities[$id] = ucfirst(strtolower($p));
         }
-        $this->set(compact('taskPriorities', 'milestones'));
+
+
+        $availableTasks = $this->Task->find('list', array(
+            'conditions' => array('project_id =' => $project['Project']['id']),
+            'fields' => array('Task.id', 'Task.subject'),
+        ));
+        $this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
 
     }
 
@@ -304,7 +310,14 @@ class TasksController extends AppProjectController {
             foreach ( $taskPriorities as $id => $p ) {
                 $taskPriorities[$id] = ucfirst(strtolower($p));
             }
-            $this->set(compact('taskPriorities', 'milestones'));
+            $availableTasks = $this->Task->find('list', array(
+                'conditions' => array('project_id =' => $project['Project']['id']),
+                'fields' => array('Task.id', 'Task.subject'),
+            ));
+
+            $this->Task->bindModel(array('hasOne' => array('TaskDependency')));
+            
+            $this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
         }
     }
 

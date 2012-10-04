@@ -32,8 +32,9 @@ $this->Html->css('tasks.add', null, array ('inline' => false));
                     <div class="span10">
                         <?php
                         echo $this->Bootstrap->input("subject", array(
-                            "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => $this->DT->t('form.subject.placeholder'))),
+                            "input" => $this->Form->text("subject", array("class" => "span9", "placeholder" => $this->DT->t('form.subject.placeholder'), "maxlength" => 50)),
                             "label" => $this->DT->t('form.subject.label'),
+                            "help_inline" => "50 characters max"
                         ));
 
                         echo $this->Bootstrap->input("task_priority_id", array(
@@ -42,6 +43,16 @@ $this->Html->css('tasks.add', null, array ('inline' => false));
                                 "class" => "span3"
                             )),
                             "label" => $this->DT->t('form.priority.label'),
+                        ));
+
+                        echo $this->Bootstrap->input("DependsOn.DependsOn", array(
+                            "input" => $this->Form->input("DependsOn.DependsOn", array(
+                                "label"    => false,
+                                "class"    => "span6",
+                                "multiple" => "multiple",
+                                "options"  => $availableTasks,
+                            )),
+                            "label" => $this->DT->t('form.dependent_tasks.label').' '.$this->Bootstrap->icon('tasks'),
                         ));
 
                         echo $this->Bootstrap->input("milestone_id", array(
