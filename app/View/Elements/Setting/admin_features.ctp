@@ -17,7 +17,6 @@
 <div class="well">
     <h3><?= $this->DT->t('projects.header.text') ?></h3>
     <div class="alert alert-info">
-        <button type="button" class="close" data-dismiss="alert">×</button>
         <?= $this->DT->t('projects.warning') ?>
     </div>
     <table class="table table-striped">
