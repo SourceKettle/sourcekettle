@@ -147,11 +147,27 @@ class Task extends AppModel {
      */
     public $hasMany = array(
         'TaskComment' => array(
-            'className' => 'TaskComment',
+            'className'  => 'TaskComment',
             'foreignKey' => 'task_id',
-            'dependent' => true,
-        )
+            'dependent'  => true,
+        ),
     );
+
+    public $hasAndBelongsToMany = array(
+        'DependsOn' => array(
+            'className'  => 'Task',
+            'joinTable'  => 'task_dependencies',
+            'foreignKey' => 'child_task_id',
+            'associationForeignKey' => 'parent_task_id',
+        ),
+        'DependedOnBy' => array(
+            'className'  => 'Task',
+            'joinTable'  => 'task_dependencies',
+            'foreignKey' => 'parent_task_id',
+            'associationForeignKey' => 'child_task_id',
+        ),
+    );
+
 
     /**
      * isAssignee function.

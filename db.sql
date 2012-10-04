@@ -316,6 +316,24 @@ CREATE TABLE IF NOT EXISTS `tasks` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `task_dependencies`
+--
+CREATE TABLE IF NOT EXISTS `task_dependencies` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `child_task_id` int(10) NOT NULL,
+  `parent_task_id` int(10) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `tasks`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `task_types`
 --
 CREATE TABLE IF NOT EXISTS `task_types` (
