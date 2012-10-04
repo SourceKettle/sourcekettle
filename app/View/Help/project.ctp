@@ -18,11 +18,12 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
 	
 <div class="row">
     <div class="span2">
-        <?= $this->element('Sidebar/project') ?>
+        <?= $this->element('Sidebar/help') ?>
     </div>
     <div class="span10">
         <div class="well">
             <div class="row">
+                
             </div>
         </div>
     </div>

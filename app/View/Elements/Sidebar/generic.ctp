@@ -20,8 +20,10 @@
     $c1 = $this->request['controller'];
     $a1 = $this->request['action'];
 
-    $help = $options['help'];
-    unset($options['help']);
+    if (isset($options['help'])){
+        $help = $options['help'];
+        unset($options['help']);
+    }
 
     foreach ($options as $title => $section) {
 
@@ -66,14 +68,16 @@
         }
     }
 
-    echo '<li class="divider"></li>';
-    echo '<li>';
-    echo $this->Html->link(
-        $this->Bootstrap->icon('flag').' Help',
-        array('controller' => 'help', 'action' => $help['action']),
-        array('escape' => false)
-    );
+    if (isset($help)){
+        echo '<li class="divider"></li>';
+        echo '<li>';
+        echo $this->Html->link(
+            $this->Bootstrap->icon('flag').' Help',
+            array('controller' => 'help', 'action' => $help['action']),
+            array('escape' => false)
+        );
 
-    echo '</li>';
+        echo '</li>';
+    }
 ?>
 </ul>
