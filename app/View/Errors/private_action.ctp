@@ -23,7 +23,7 @@ echo $this->Bootstrap->page_header('Ello Ello Ello<small> whats going on ere\' t
             <h2>Darn!</h2>
             <h3>This is not the location you are looking for...</h3>
             <h4>Whatever you've requested has gone and caused a pesky error in the system.</h4>
-            <p>Dont worry! We're making sure it wasnt us by realigning our flux capacitors and what-not.</p>
+            <p>Dont worry! We're making sure it wasn't us by realigning our flux capacitors and what-not.</p>
         </div>
     </div>
 </div>
