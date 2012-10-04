@@ -43,7 +43,7 @@ if ($task['Task']['task_status_id'] != 4) {
      $state = array(
          'text' => $this->DT->t('bar.close'),
          'url' => '#closeModal',
-         'props' => array("data-toggle" => "modal", "class" => "btn-danger")
+         'props' => array("data-toggle" => "modal", "class" => "btn-success")
      );
  } else {
      $state =  array(
