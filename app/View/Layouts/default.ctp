@@ -75,6 +75,7 @@
                             $navItems = array(
                             	'dashboard' => __('Dashboard'),
                             	'projects' => __('Projects'),
+                                'help' => __('Help'),
                             );
                             if($user_is_admin){
                                 $navItems['admin'] = __('Administration');
