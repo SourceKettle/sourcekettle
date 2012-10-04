@@ -45,6 +45,16 @@ $this->Html->css('tasks.add', null, array ('inline' => false));
                             "label" => $this->DT->t('form.priority.label'),
                         ));
 
+                        echo $this->Bootstrap->input("DependsOn.DependsOn", array(
+                            "input" => $this->Form->input("DependsOn.DependsOn", array(
+                                "label"    => false,
+                                "class"    => "span6",
+                                "multiple" => "multiple",
+                                "options"  => $availableTasks,
+                            )),
+                            "label" => $this->DT->t('form.dependent_tasks.label').' '.$this->Bootstrap->icon('tasks'),
+                        ));
+
                         echo $this->Bootstrap->input("milestone_id", array(
                             "input" => $this->Form->input("milestone_id", array(
                                 "label" => false,

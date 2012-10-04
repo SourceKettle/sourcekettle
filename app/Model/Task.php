@@ -147,11 +147,44 @@ class Task extends AppModel {
      */
     public $hasMany = array(
         'TaskComment' => array(
-            'className' => 'TaskComment',
+            'className'  => 'TaskComment',
             'foreignKey' => 'task_id',
-            'dependent' => true,
-        )
+            'dependent'  => true,
+        ),
     );
+
+    public $hasAndBelongsToMany = array(
+        'DependsOn' => array(
+            'className'  => 'Task',
+            'joinTable'  => 'task_dependencies',
+            'foreignKey' => 'child_task_id',
+            'associationForeignKey' => 'parent_task_id',
+        ),
+        'DependedOnBy' => array(
+            'className'  => 'Task',
+            'joinTable'  => 'task_dependencies',
+            'foreignKey' => 'parent_task_id',
+            'associationForeignKey' => 'child_task_id',
+        ),
+    );
+
+
+    /**
+     * __construct function.
+     *
+     * @access public
+     * @param bool $id (default: false)
+     * @param mixed $table (default: null)
+     * @param mixed $ds (default: null)
+     * @return void
+     */
+    public function __construct($id = false, $table = null, $ds = null){
+        parent::__construct($id, $table, $ds);
+
+        $this->virtualFields = array(
+            'public_id' => "(SELECT COUNT(`{$this->table}`.`id`) FROM `{$this->table}` WHERE `{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)"
+        );
+    }
 
     /**
      * isAssignee function.

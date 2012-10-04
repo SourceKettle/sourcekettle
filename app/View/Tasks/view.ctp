@@ -43,6 +43,7 @@ $this->Html->scriptBlock("
 echo $this->element('Task/modal_close');
 echo $this->element('Task/modal_assign');
 
+
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -116,6 +117,14 @@ echo $this->element('Task/modal_assign');
                                                 array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
                                             )  : 'n/a' ?>
                                         </dd>
+
+                                        <dt>Depends on:</dt>
+
+                                        <dd>
+                                        <? foreach($task['DependsOn'] as $dep){
+                                          echo $this->element('Task/dependency', array('task' => $dep));
+                                        }?>
+                                        </dd>
                                     </dl>
                                     <dl class="dl-horizontal span6">
                                         <dt><?= $this->DT->t('details.assignee') ?>:</dt>
@@ -132,10 +141,15 @@ echo $this->element('Task/modal_assign');
                                         <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>
                                         <dt><?= $this->DT->t('details.updated') ?>:</dt>
                                         <dd><?= $this->Time->timeAgoInWords($task['Task']['modified']) ?></dd>
+                                        <dt>Depended on by:</dt>
+                                        <dd>
+                                        <? foreach($task['DependedOnBy'] as $dep){
+                                          echo $this->element('Task/dependency', array('task' => $dep));
+                                        }?>
+                                        </dd>
                                     </dl>
                                 </div>
                             </div>
-
                             <h3 id="section_description_toggle" class="section_title" data-toggle="collapse" data-target="#section_description"><?= $this->DT->t('description.title') ?></h3>
                             <div id="section_description" class="collapse in">
                                 <p><?= $this->DT->parse($task['Task']['description']) ?></p>

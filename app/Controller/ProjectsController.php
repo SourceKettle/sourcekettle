@@ -261,7 +261,7 @@ class ProjectsController extends AppProjectController {
      * @return void
      */
     public function admin_delete($name = null) {
-        $project = $this->_projectCheck($project);
+        $project = $this->_projectCheck($name);
 
         if (!$this->request->is('post')) throw new MethodNotAllowedException();
 

@@ -22,6 +22,8 @@ $this->Html->scriptBlock("
     $('.tempoBody').bind('click', function() {
         var a = $('#' + $(this).attr('data-toggle'));
 
+        $('.dp1').val($(this).attr('id'));
+
         if (a.size() === 0) {
             $('#addTimeModal').modal('show');
         } else {

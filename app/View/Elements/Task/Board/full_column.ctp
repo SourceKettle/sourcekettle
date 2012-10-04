@@ -15,7 +15,7 @@
  */
 
 foreach ($tasks as $task) {
-    echo $this->element('Task/element_'.$width, array('task' => $task));
+    echo $this->element('Task/element_1', array('task' => $task));
 }
 while ($e-- > 0) {
     echo '<div class="invisiblewell"></div>';
