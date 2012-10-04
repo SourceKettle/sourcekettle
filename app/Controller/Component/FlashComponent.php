@@ -39,17 +39,22 @@ class FlashComponent extends Component {
     }
 
     public function info($message) {
-        $this->flash($message, true);
+        $this->flashBoolean($message, true);
     }
-
+    public function message($message) {
+        $subject = "<h4 class='alert-heading'>Please Note:</h4>{reason}.";
+        $search  = array('{reason}');
+        $replace = array($message);
+        $this->flash(str_replace($search, $replace, $subject), 'info');
+    }
     public function error($message) {
-        $this->flash($message, false);
+        $this->flashBoolean($message, false);
     }
     public function errorReason($reason) {
         $subject = "<h4 class='alert-heading'>The Request could not be completed</h4>{reason}.";
         $search  = array('{reason}');
         $replace = array($reason);
-        $this->flash(str_replace($search, $replace, $subject), false);
+        $this->flashBoolean(str_replace($search, $replace, $subject), false);
     }
 
     public function C($winning = false) {
@@ -85,7 +90,20 @@ class FlashComponent extends Component {
 
         $replaced = str_replace($search, $replace, $subject);
 
-        return $this->flash($replaced, $winning);
+        return $this->flashBoolean($replaced, $winning);
+    }
+
+    /**
+     * flashBoolean function.
+     *
+     * @access private
+     * @param mixed $message
+     * @param bool $winning (default: false)
+     * @return void
+     */
+    private function flashBoolean($message, $winning = false) {
+        $this->flash($message, ($winning) ? 'success' : 'error');
+        return $winning;
     }
 
     /**
@@ -93,12 +111,11 @@ class FlashComponent extends Component {
      *
      * @access private
      * @param mixed $message
-     * @param bool $winning (default: false)
+     * @param mixed $color
      * @return void
      */
-    private function flash($message, $winning = false) {
-        $this->Session->setFlash(__($message), 'default', array(), ($winning) ? 'success' : 'error');
-        return $winning;
+    private function flash($message, $color) {
+        $this->Session->setFlash(__($message), 'default', array(), $color);
     }
 
     /**

@@ -213,6 +213,13 @@ class UsersController extends AppController {
      * Allows admins to see all users
      */
     public function admin_index() {
+        if ($this->request->is('post') && isset($this->request->data['User']['name']) && $user = $this->request->data['User']['name']) {
+            if ($user = $this->User->findByEmail($this->Useful->extractEmail($user))) {
+                $this->redirect(array('action' => 'view', $user['User']['id']));
+            } else {
+                $this->Flash->error('The specified User does not exist. Please try again.');
+            }
+        }
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
     }
@@ -658,6 +665,47 @@ class UsersController extends AppController {
                 $data['message'] = 'You are not authorised to access this.';
         }
 
+        $this->set('data',$data);
+        $this->render('/Elements/json');
+    }
+
+    /**
+     * api_autocomplete function.
+     *
+     * @access public
+     * @return void
+     */
+    public function api_autocomplete() {
+        $this->layout = 'ajax';
+
+        $this->User->recursive = -1;
+        $data = array('users' => array());
+
+        if (isset($this->request->query['query'])
+            && $this->request->query['query'] != null
+            && strlen($this->request->query['query']) > 2) {
+
+            $query = mysql_real_escape_string($this->request->query['query']);
+            $users = $this->User->find(
+                "all",
+                array(
+                    'conditions' => array(
+                        'OR' => array(
+                            'User.name  LIKE' => $query.'%',
+                            'User.email LIKE' => $query.'%'
+                        )
+                    ),
+                    'fields' => array(
+                        'User.name',
+                        'User.email'
+                    )
+                )
+            );
+            foreach ($users as $user) {
+                $data['users'][] = $user['User']['name']." [".$user['User']['email']."]";
+            }
+
+        }
         $this->set('data',$data);
         $this->render('/Elements/json');
     }

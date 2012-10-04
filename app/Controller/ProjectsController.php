@@ -69,6 +69,13 @@ class ProjectsController extends AppProjectController {
      * @return void
      */
     public function admin_index() {
+        if ($this->request->is('post') && isset($this->request->data['Project']['name']) && $project = $this->request->data['Project']['name']) {
+            if ($project = $this->Project->findByName($project)) {
+                $this->redirect(array('action' => 'view', $project['Project']['id']));
+            } else {
+                $this->Flash->error('The specified Project does not exist. Please try again.');
+            }
+        }
         $this->Project->recursive = 0;
         $this->set('projects', $this->paginate());
     }
@@ -311,8 +318,8 @@ class ProjectsController extends AppProjectController {
                 // Repo Type
                 $project['Project']['repo_type'] = $this->Project->RepoType->field('name');
 
-                $_part_of_project = $this->Milestone->Project->hasRead($this->Auth->user('id'));
-                $_public_project  = $this->Milestone->Project->field('public');
+                $_part_of_project = $this->Project->hasRead();
+                $_public_project  = $this->Project->field('public');
                 $_is_admin = ($this->_api_auth_level() == 1);
 
                 if ($_public_project || $_part_of_project || $_is_admin) {
@@ -383,5 +390,44 @@ class ProjectsController extends AppProjectController {
 
         $this->set('events', $this->Project->fetchEventsForProject($number));
         $this->render('/Elements/history');
+    }
+
+    /**
+     * api_autocomplete function.
+     *
+     * @access public
+     * @return void
+     */
+    public function api_autocomplete() {
+        $this->layout = 'ajax';
+
+        $data = array('users' => array());
+
+        if (isset($this->request->query['query'])
+            && $this->request->query['query'] != null
+            && strlen($this->request->query['query']) > 1) {
+
+            $query = mysql_real_escape_string($this->request->query['query']);
+            $projects = $this->Project->find(
+                "all",
+                array(
+                    'conditions' => array(
+                        'OR' => array(
+                            'Project.name LIKE' => $query.'%',
+                            'Project.description LIKE' => $query.'%'
+                        ),
+                    ),
+                    'fields' => array(
+                        'Project.name'
+                    )
+                )
+            );
+            foreach ($projects as $project) {
+                $data['users'][] = $project['Project']['name'];
+            }
+
+        }
+        $this->set('data',$data);
+        $this->render('/Elements/json');
     }
 }

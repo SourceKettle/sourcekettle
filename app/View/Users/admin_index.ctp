@@ -21,13 +21,36 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
         <?= $this->element('Sidebar/admin') ?>
     </div>
     <div class="span10">
-       <div class="row-fluid">
-            <div class="well">
-            <h3>Search for a User</h3>
-            <form class="well form-search">
-                <input type="text" class="span12 search-query" placeholder="Search for a user">
-            </form>
-            <table class="table table-striped">
+        <div class="row-fluid">
+            <?php
+                echo $this->Form->create('User',
+                    array(
+                        'class' => 'form-inline input-append'
+                    )
+                );
+
+                echo $this->element('components/user_typeahead_input',
+                    array(
+                        'name' => 'name',
+                        'properties' => array(
+                            'id' => 'appendedInputButton',
+                            'class' => 'span11',
+                            "placeholder" => "john.smith@example.com",
+                            'label' => false
+                        )
+                    )
+                );
+                echo $this->Bootstrap->button('Search', array('escape' => false, 'style' => 'primary'));
+
+                echo $this->Form->end();
+            ?>
+            <table class="well table table-striped">
+                <thead>
+                    <tr>
+                        <th width="85%">User name / email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
                 <tbody>
                 <? foreach ( $users as $user ) : ?>
                     <tr>
@@ -38,9 +61,9 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
                         <td>
                         <?php
                             echo $this->Bootstrap->button_form(
-                                $this->Bootstrap->icon('eject', 'white')." Remove",
+                                $this->Bootstrap->icon('eject', 'white'),
                                 $this->Html->url(array('controller' => 'users', 'action' => 'admin_delete', $user['User']['id']), true),
-                                array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => 'pull-right'),
+                                array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
                                 "Are you sure you want to delete " . $user['User']['email'] . "?"
                             );
                         ?>
@@ -50,7 +73,6 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
                 </tbody>
             </table>
             <?= $this->element('pagination') ?>
-            </div>
         </div>
     </div>
 </div>
