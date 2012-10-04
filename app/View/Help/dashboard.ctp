@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * View class for APP/help/user for the DevTrack system
- * View display help for the user section of the site
+ * View class for APP/help/dashboard for the DevTrack system
+ * Display the help page for the dashboard part of the application
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -15,15 +15,14 @@
  */
 
 echo $this->Bootstrap->page_header('HELP!'); ?>
-	
+  
 <div class="row">
     <div class="span2">
-        <?= $this->element('Sidebar/user') ?>
+        <?= $this->element('Sidebar/help') ?>
     </div>
     <div class="span10">
         <div class="well">
-            <div class="row">
-            </div>
+          <h3>Dashboard</h3>
         </div>
     </div>
 </div>
