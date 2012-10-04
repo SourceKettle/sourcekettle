@@ -24,10 +24,17 @@
             ),
         ),
         'Project' => array(
-            'Create' => array(
+            'Create Project' => array(
                 'icon' => 'plus',
                 'url' => array(
                     'action' => array('create'),
+                    'controller' => 'help',
+                ),
+            ),
+            'List projects' => array(
+                'icon' => 'th',
+                'url' => array(
+                    'action' => array('project_list'),
                     'controller' => 'help',
                 ),
             ),

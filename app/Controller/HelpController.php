@@ -26,6 +26,7 @@ class HelpController extends AppController{
     public function dashboard() {}
 
     public function create() {}
+    public function project_list() {}
     public function overview() {}
     public function time() {}
     public function source() {}
