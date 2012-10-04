@@ -14,11 +14,27 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
     $options = array(
+        'General' => array(
+            'Dashboard' => array(
+                'icon' => 'globe',
+                'url' => array(
+                    'action' => array('dashboard'),
+                    'controller' => 'help',
+                ),
+            ),
+        ),
         'Project' => array(
+            'Create' => array(
+                'icon' => 'plus',
+                'url' => array(
+                    'action' => array('create'),
+                    'controller' => 'help',
+                ),
+            ),
             'Overview' => array(
                 'icon' => 'home',
                 'url' => array(
-                    'action' => array('project'),
+                    'action' => array('overview'),
                     'controller' => 'help',
                 ),
             ),

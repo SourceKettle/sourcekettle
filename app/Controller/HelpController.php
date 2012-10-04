@@ -21,10 +21,31 @@ class HelpController extends AppController{
      */
     public $name = 'Help';
 
-    public function project() {}
+    public function index() {}
 
-    public function user() {}
+    public function dashboard() {}
+
+    public function create() {}
+    public function overview() {}
+    public function time() {}
+    public function source() {}
+    public function tasks() {}
+    public function milestones() {}
+    public function attachments() {}
+
+    public function collaborators() {}
+    public function settings() {}
+
+    public function details() {}
+    public function security() {}
+    public function theme() {}
+    public function delete() {}
+
+    public function addkey() {}
+    public function viewkeys() {}
 
     public function admin_index() {}
+
+    private function test() {}
 
 }
