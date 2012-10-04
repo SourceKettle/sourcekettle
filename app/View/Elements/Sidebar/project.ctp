@@ -65,7 +65,7 @@
             ),
         ),
         'help' => array(
-            'action' => 'project',
+            'action' => 'overview',
         ),
     );
 

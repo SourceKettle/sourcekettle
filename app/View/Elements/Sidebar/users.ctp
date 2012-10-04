@@ -61,7 +61,7 @@
             ),
         ),
         'help' => array(
-            'action' => 'user',
+            'action' => 'details',
         ),
     );
 
