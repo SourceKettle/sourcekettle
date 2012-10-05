@@ -58,7 +58,7 @@ class ProjectsController extends AppProjectController {
         $projects = $this->Project->Collaborator->find(
           'all', array(
             'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
-            'order' => array('Project.name')
+            'order' => array('Project.modified DESC')
           )
         );
         $this->set('projects', $projects);
@@ -69,7 +69,7 @@ class ProjectsController extends AppProjectController {
         $this->paginate = array(
             'conditions' => array('Project.public' => true),
             'limit' => 15,
-            'order' => 'Project.modified'
+            'order' => 'Project.modified DESC'
         );
         $projects = $this->paginate('Project');
 
