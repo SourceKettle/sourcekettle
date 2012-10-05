@@ -164,8 +164,7 @@ class User extends AppModel {
 
         // Can't update the email or password field if it's an externally-managed account
         // 
-        if ( User::isDevtrackManaged($this->data) ) {
-
+        if ( !User::isDevtrackManaged($this->data) ) {
             $wl = $this->whitelist;
             if(empty($wl)){
                 $wl = array_keys($this->schema());
