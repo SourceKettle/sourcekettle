@@ -14,9 +14,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header("Public Projects <small>projects people have shared</small>" .
-    $this->Bootstrap->button_link("New Project", array('action' => 'add'), array("style" => "primary", "size" => "medium", "class" => "pull-right"))); ?>
+echo $this->Bootstrap->page_header("Public Projects <small>projects people have shared</small>"); ?>
 
 <div class="row">
-    <?= $this->Element("Project/list", array('projects' => $projects)) ?>
+  <?= $this->Element("Project/topbar") ?>
+  <?= $this->Element("Project/list", array('projects' => $projects)) ?>
 </div>
