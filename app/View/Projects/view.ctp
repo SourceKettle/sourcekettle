@@ -26,6 +26,11 @@ $this->Html->css('project.overview', null, array ('inline' => false));
     <div class="span10">
         <div class="row">
             <div class="span10">
+                <? if (!empty($project['Project']['description'])){?>
+                    <div class='well'>
+                        <?= $project['Project']['description'] ?>
+                    </div>
+                <?}?>
                 <div class="well">
                     <div class="row-fluid overview">
                         <div class="span4">
