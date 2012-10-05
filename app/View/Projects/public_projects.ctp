@@ -18,5 +18,10 @@ echo $this->Bootstrap->page_header("Public Projects <small>projects people have 
 
 <div class="row">
   <?= $this->Element("Project/topbar") ?>
+</div>
+<div class='row'>  
   <?= $this->Element("Project/list", array('projects' => $projects)) ?>
+</div>
+<div class='row'>
+  <?=$this->element('pagination') ?>
 </div>
