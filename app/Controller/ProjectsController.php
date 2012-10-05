@@ -63,6 +63,16 @@ class ProjectsController extends AppProjectController {
         $this->set('projects', $projects);
     }
 
+    public function public_projects() {
+        $projects = $this->Project->find(
+          'all', array(
+            'conditions' => array('public' => true),
+            'order' => array('Project.name')
+          )
+        );
+        $this->set('projects', $projects);
+    }
+
     /**
      * admin_index method
      *
