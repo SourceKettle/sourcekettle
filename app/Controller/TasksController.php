@@ -314,7 +314,7 @@ class TasksController extends AppProjectController {
                 $taskPriorities[$id] = ucfirst(strtolower($p));
             }
             $availableTasks = $this->Task->find('list', array(
-                'conditions' => array('project_id =' => $project['Project']['id']),
+                'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
                 'fields' => array('Task.id', 'Task.subject'),
             ));
 
