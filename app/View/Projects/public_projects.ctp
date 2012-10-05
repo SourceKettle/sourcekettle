@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * View class for APP/projects/index for the DevTrack system
- * View will render a list of all the projects a user has access to
+ * View class for APP/projects/public_projects for the DevTrack system
+ * View will render a list of all the public projects
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header("Projects <small>all the projects you care about</small>" .
+echo $this->Bootstrap->page_header("Public Projects <small>projects people have shared</small>" .
     $this->Bootstrap->button_link("New Project", array('action' => 'add'), array("style" => "primary", "size" => "medium", "class" => "pull-right"))); ?>
 
 <div class="row">
