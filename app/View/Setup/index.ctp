@@ -14,7 +14,7 @@
  * @copyright     Original: Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @copyright     Modifications: DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
- * @package       DevTrack.View.Pages
+ * @package       DevTrack.View.Setup
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -77,6 +77,80 @@ function saltCipherCheck() {
         return 1;
     }
     return 0;
+}
+
+function gitRepoSet(){
+    $config = Configure::read('devtrack');
+    if (isset($config['repo']['base'])  && !empty($config['repo']['base'])){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function gitUserSet() {
+    $config = Configure::read('devtrack');
+    if (isset($config['repo']['user']) && !empty($config['repo']['user'])){
+        echo '<div class="alert alert-success">';
+        echo __d('cake_dev', 'Your git user has been set to <strong>' . $config['repo']['user'] . '</strong>');
+        echo '</div>';
+        return true;
+    } else {
+        echo '<div class="alert alert-error">';
+        echo __d('cake_dev', 'Your git user is NOT set. The git user can be set in APP/Config/devtrack.php');
+        echo '</div>';
+        return false;
+    }
+}
+
+function gitRepoLocationSet(){
+    if (gitRepoSet()){
+        $config = Configure::read('devtrack');
+        echo '<div class="alert alert-success">';
+        echo __d('cake_dev', 'Your git repositories directory has been set to <strong>' . $config['repo']['base'] . '</strong>');
+        echo '</div>';
+        return true;
+    } else {
+        echo '<div class="alert alert-error">';
+        echo __d('cake_dev', 'Your git repositories directory is NOT set. The git repositories directory can be set in APP/Config/devtrack.php');
+        echo '</div>';
+        return false;
+    }
+}
+
+function gitRepoWritable() {
+    if (gitRepoSet()){
+
+        $config = Configure::read('devtrack');
+        if (is_writable($config['repo']['base'])){
+            echo '<div class="alert alert-success">';
+            echo __d('cake_dev', 'Your git repositories directory is writable.');
+            echo '</div>';
+            return 1;
+        } else {
+            echo '<div class="alert alert-error">';
+            echo __d('cake_dev', 'Your git repositories directory is NOT writable. The git repositories directory can be found in ' . $config['repo']['base']);
+            echo '</div>';
+            return 0;
+        }
+    }
+}
+
+function gitRepoReadable() {
+    if (gitRepoSet()){
+        $config = Configure::read('devtrack');
+        if (is_readable($config['repo']['base'])){
+            echo '<div class="alert alert-success">';
+            echo __d('cake_dev', 'Your git repositories directory is readable.');
+            echo '</div>';
+            return 1;
+        } else {
+            echo '<div class="alert alert-error">';
+            echo __d('cake_dev', 'Your git repositories directory is NOT readable. The git repositories directory can be found in ' . $config['repo']['base']);
+            echo '</div>';
+            return 0;
+        }
+    }
 }
 
 /**
@@ -229,6 +303,20 @@ if ( !databaseCheck() ) $complete = false;
 
 // Check Unicode
 if ( !unicodeCheck() ) $complete = false;
+
+// Check git user is set
+if ( !gitUserSet() ) $complete = false;
+
+// Check the git repositories are properly configured
+if ( gitRepoLocationSet()){
+    // Check repo directory readable
+    if ( !gitRepoReadable() ) $complete = false;
+
+    // Check repo directory writable
+    if ( !gitRepoWritable() ) $complete = false;
+} else {
+    $complete = false;
+}
 
 if ( $complete ) {
     echo '<div class="alert alert-info">';

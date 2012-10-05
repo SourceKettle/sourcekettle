@@ -26,7 +26,6 @@
  * to use (in this case, /app/View/Pages/home.ctp)...
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
-	Router::connect('/setup', array('controller' => 'pages', 'action' => 'display', 'setup'));
 
         /*
          * Defined to make the logging in/out etc look less retarded than /login/logout
