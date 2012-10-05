@@ -80,8 +80,15 @@
                             if($user_is_admin){
                                 $navItems['admin'] = __('Administration');
                             }
+
+                            // Make the projects nav element highlighted if the current page is anything to do with a project
+                            $current_controller = $this->params['controller'];
+                            if (isset($project)){
+                                $current_controller = 'projects';
+                            }
+
                             foreach ($navItems as $controller => $text) {
-                                echo "<li" . ($controller == $this->params['controller'] ? " class='active'>" : ">");
+                                echo "<li" . ($controller == $current_controller ? " class='active'>" : ">");
                                 echo $this->Html->link($text, array ('controller' => $controller, 'action' => 'index'));
                                 echo "</li>";
                             }
