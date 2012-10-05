@@ -15,7 +15,7 @@
  */
 
 // TODO this doesn't link to the right place - needs project name
-$url = array('api' => false,'controller' => 'tasks', 'action' => 'view', $task['id']);
+$url = array('api' => false, 'controller' => 'tasks', 'project' => $project, 'action' => 'view', $task['id']);
 ?>
 <div onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="false">
     <?/*<div class="type_bar_small type_bar_<?= $task['TaskType']['name'] ?>"></div>*/?>
