@@ -30,7 +30,14 @@ foreach ( $events as $event ) {
 
     // Create Actioner String/Link if exists
     if ( $event['Actioner']['exists'] ) {
-        $user = $this->Html->link($event['Actioner']['name'], array('controller' => 'users', 'action' => 'view', $event['Actioner']['id']));
+        $user = $this->Html->link(
+          $event['Actioner']['name'], array(
+            'controller' => 'users',
+            'action'     => 'view',
+            'api' => false,
+            $event['Actioner']['id']
+          )
+        );
     } else {
         $user = $event['Actioner']['name'];
     }
