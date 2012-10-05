@@ -12,7 +12,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$smallText = " <small>" . $project['Project']['description'] . " </small>";
+$smallText = " <small>source code</small>";
 $pname = $project['Project']['name'];
 
 // Header for the page

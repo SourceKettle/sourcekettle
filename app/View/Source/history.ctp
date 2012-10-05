@@ -16,7 +16,7 @@
 
 $this->Html->css('pages/diff', null, array ('inline' => false));
 
-$smallText = " <small>" . $project['Project']['description'] . " </small>";
+$smallText = " <small>source code</small>";
 $pname = $project['Project']['name'];
 
 // Header for the page
