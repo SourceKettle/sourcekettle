@@ -25,7 +25,7 @@ $url = array('api' => false, 'controller' => 'tasks', 'project' => $project, 'ac
                 <div>
                     <div class="span10">
                         <p>
-                            <?= $this->Html->link('<strong>#'.$task['id'].'</strong> - '.$task['subject'], $url, array('escape' => false)) ?>
+                            <?= $this->Html->link('<strong>#'.$task['id'].'</strong> - '.$this->Text->truncate ($task['subject'], 30), $url, array('escape' => false)) ?>
                         </p>
                         <?= $this->Task->priority($task['task_priority_id']) ?>
                         <?= $this->Task->statusLabel($task['task_status_id']) ?>
