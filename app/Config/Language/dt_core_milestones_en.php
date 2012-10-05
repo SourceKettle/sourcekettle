@@ -68,7 +68,7 @@ $config['dtcore']['pages']['milestones']['add']['en']['form.subject.placeholder'
 $config['dtcore']['pages']['milestones']['add']['en']['form.description.label'] = "Description";
 $config['dtcore']['pages']['milestones']['add']['en']['form.description.placeholder'] = "e.g. Overall goals of the milestone";
 $config['dtcore']['pages']['milestones']['add']['en']['form.due.label'] = "Completion target";
-$config['dtcore']['pages']['milestones']['add']['en']['form.due.help'] = "When the milstone should be complete.";
+$config['dtcore']['pages']['milestones']['add']['en']['form.due.help'] = "When the milestone should be complete.";
 $config['dtcore']['pages']['milestones']['add']['en']['form.submit'] = "Submit";
 
 //APP/Milestones/edit
@@ -79,5 +79,5 @@ $config['dtcore']['pages']['milestones']['edit']['en']['form.subject.placeholder
 $config['dtcore']['pages']['milestones']['edit']['en']['form.description.label'] = "Description";
 $config['dtcore']['pages']['milestones']['edit']['en']['form.description.placeholder'] = "e.g. Overall goals of the milestone";
 $config['dtcore']['pages']['milestones']['edit']['en']['form.due.label'] = "Completion target";
-$config['dtcore']['pages']['milestones']['edit']['en']['form.due.help'] = "When the milstone should be complete.";
+$config['dtcore']['pages']['milestones']['edit']['en']['form.due.help'] = "When the milestone should be complete.";
 $config['dtcore']['pages']['milestones']['edit']['en']['form.submit'] = "Submit";
