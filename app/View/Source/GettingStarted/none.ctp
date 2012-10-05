@@ -28,7 +28,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
 
                 <div class="hero-unit span9">
                   <h1>Nothing to see here</h1>
-                  <p>Unfortunately this project was created repository-less and as such, there is no soure to view.</p>
+                  <p>Unfortunately this project was created repository-less and as such, there is no source to view.</p>
                   <p>If you would like this to change, please contact an Administrator for this project.</p>
                 </div>
         </div>

@@ -122,7 +122,7 @@ echo $this->element('Task/modal_assign');
 
                                         <dd>
                                         <? foreach($task['DependsOn'] as $dep){
-                                          echo $this->element('Task/dependency', array('task' => $dep));
+                                          echo $this->element('Task/dependency', array('project' => $task['Project']['name'], 'task' => $dep));
                                         }?>
                                         </dd>
                                     </dl>
@@ -144,7 +144,7 @@ echo $this->element('Task/modal_assign');
                                         <dt>Depended on by:</dt>
                                         <dd>
                                         <? foreach($task['DependedOnBy'] as $dep){
-                                          echo $this->element('Task/dependency', array('task' => $dep));
+                                          echo $this->element('Task/dependency', array('project' => $task['Project']['name'], 'task' => $dep));
                                         }?>
                                         </dd>
                                     </dl>

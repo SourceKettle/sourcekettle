@@ -15,7 +15,7 @@
  */
 
 // TODO this doesn't link to the right place - needs project name
-$url = array('api' => false,'controller' => 'tasks', 'action' => 'view', $task['id']);
+$url = array('api' => false, 'controller' => 'tasks', 'project' => $project, 'action' => 'view', $task['id']);
 ?>
 <div onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="false">
     <?/*<div class="type_bar_small type_bar_<?= $task['TaskType']['name'] ?>"></div>*/?>
@@ -25,7 +25,7 @@ $url = array('api' => false,'controller' => 'tasks', 'action' => 'view', $task['
                 <div>
                     <div class="span10">
                         <p>
-                            <?= $this->Html->link('<strong>#'.$task['id'].'</strong> - '.$task['subject'], $url, array('escape' => false)) ?>
+                            <?= $this->Html->link('<strong>#'.$task['id'].'</strong> - '.$this->Text->truncate ($task['subject'], 30), $url, array('escape' => false)) ?>
                         </p>
                         <?= $this->Task->priority($task['task_priority_id']) ?>
                         <?= $this->Task->statusLabel($task['task_status_id']) ?>
