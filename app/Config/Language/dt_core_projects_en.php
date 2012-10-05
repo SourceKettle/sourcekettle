@@ -36,3 +36,8 @@ $config['dtcore']['pages']['projects']['view']['en']['summary.issues.percent'] =
 
 // APP/Projects/history
 $config['dtcore']['pages']['projects']['history']['en']['header.text'] = "What's been happening lately?";
+
+// APP/Projects/index and APP/Projects/public_projects
+$config['dtcore']['pages']['projects']['topbar']['en']['topbar.index.text'] = "My projects";
+$config['dtcore']['pages']['projects']['topbar']['en']['topbar.public.text'] = "Public projects";
+$config['dtcore']['pages']['projects']['topbar']['en']['topbar.create.text'] = "New Project";
