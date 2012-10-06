@@ -20,7 +20,12 @@ echo $this->Bootstrap->page_header("Public Projects <small>projects people have 
   <?= $this->Element("Project/topbar") ?>
 </div>
 <div class='row'>  
-  <?= $this->Element("Project/list", array('projects' => $projects)) ?>
+  <? if (!empty($projects)){
+        echo $this->Element("Project/list", array('projects' => $projects));
+      } else {
+        $config = Configure::read('dtcore'); 
+        echo "<div class='well span4'>" . $config['pages']['projects']['all']['en']['noprojects.text'] . "</div>";
+      }?>
 </div>
 <div class='row'>
   <?=$this->element('pagination') ?>
