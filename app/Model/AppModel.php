@@ -36,6 +36,7 @@ class AppModel extends Model {
     public $_auth_user_id;
     public $_auth_user_name;
     public $_auth_user_email;
+    public $_auth_user_is_admin;
 
     // Is this an API request?
     public $_is_api = false;
@@ -51,21 +52,22 @@ class AppModel extends Model {
      * @param mixed $email (default: null)
      * @return void
      */
-    public function setCurrentUserData($id = null, $name = null, $email = null) {
+    public function setCurrentUserData($id = null, $name = null, $email = null, $is_admin = false) {
         if ($this->_auth_user_id) return true;
 
         $this->_auth_user_id = $id;
         $this->_auth_user_name = $name;
         $this->_auth_user_email = $email;
+        $this->_auth_user_is_admin = $is_admin;
 
         foreach (array_keys($this->hasMany) as $key) {
-            $this->{$key}->setCurrentUserData($id, $name, $email);
+            $this->{$key}->setCurrentUserData($id, $name, $email, $is_admin);
         }
         foreach (array_keys($this->belongsTo) as $key) {
-            $this->{$key}->setCurrentUserData($id, $name, $email);
+            $this->{$key}->setCurrentUserData($id, $name, $email, $is_admin);
         }
         foreach (array_keys($this->hasAndBelongsToMany) as $key) {
-            $this->{$key}->setCurrentUserData($id, $name, $email);
+            $this->{$key}->setCurrentUserData($id, $name, $email, $is_admin);
         }
     }
 

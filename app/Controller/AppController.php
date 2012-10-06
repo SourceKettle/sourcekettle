@@ -107,11 +107,12 @@ class AppController extends Controller {
             $user_id    = $this->Auth->user('id');
             $user_name  = $this->Auth->user('name');
             $user_email = $this->Auth->user('email');
-            $this->{$this->modelClass}->setCurrentUserData($user_id, $user_name, $user_email);
-            $this->set('user_id', $user_id);
-            $this->set('user_name', $user_name);
-            $this->set('user_email', $user_email);
-            $this->set('user_is_admin', ($this->Auth->user('is_admin') == 1));
+            $is_admin   = ($this->Auth->user('is_admin') == 1);
+            $this->{$this->modelClass}->setCurrentUserData($user_id, $user_name, $user_email, $is_admin);
+            $this->set('user_id',       $user_id);
+            $this->set('user_name',     $user_name);
+            $this->set('user_email',    $user_email);
+            $this->set('user_is_admin', $is_admin);
         } else{
             $this->set('user_is_admin', false);
         }
