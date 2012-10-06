@@ -33,7 +33,13 @@
             <h5><?= $this->Bootstrap->icon('comment') ?><small> <?= $comment['User']['name'] ?> <?= $this->DT->t('history.commented.action') ?> <?= $this->Time->timeAgoInWords($comment['TaskComment']['created']) ?></small></h5>
             <hr />
             <p><?= $comment['TaskComment']['comment'] ?></p>
-        </div>
+			<?= $this->Form->create('TaskCommentEdit', array ('class' => 'hide')); ?>
+			<?= $this->Form->hidden('id', array ('value' => $comment['TaskComment']['id'])); ?>
+			<?= $this->Bootstrap->input("comment", array(
+    			"input" => $this->Form->textarea("comment", array("value" => $comment['TaskComment']['comment'], "class" => "span12", "rows" => 5)),"label" => false)); ?>
+			<?= $this->Bootstrap->button($this->DT->t('history.editcomment.submit'), array("style" => "primary", 'class' => 'controls')); ?>
+			<?= $this->Form->end(); ?>
+       </div>
     </div>
     <div class="span1"></div>
 

@@ -111,11 +111,13 @@ class TasksController extends AppProjectController {
             } else {
                 $this->Flash->error('The comment could not be saved. Please, try again.');
             }
+
+			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+			return;
         }
 
         // If a User has updated a comment
         if ($this->request->is('post') && isset($this->request->data['TaskCommentEdit'])) {
-
             $this->request->data['TaskComment'] = array(
                 'comment' => $this->request->data['TaskCommentEdit']['comment'],
                 'id' => $this->request->data['TaskCommentEdit']['id']
@@ -130,6 +132,9 @@ class TasksController extends AppProjectController {
             } else {
                 $this->Flash->error('The comment could not be updated. Please, try again.');
             }
+
+			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+			return;
         }
 
         // If a User has assigned someone
@@ -148,6 +153,9 @@ class TasksController extends AppProjectController {
             } else {
                 $this->Flash->error('The assignee could not be updated. Please, try again.');
             }
+
+			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+			return;
         }
 
         // Re-read to pick up changes
