@@ -27,8 +27,15 @@ $this->Html->css('project.overview', null, array ('inline' => false));
         <div class="row">
             <div class="span10">
                 <? if (!empty($project['Project']['description'])){?>
-                    <div class='well'>
-                        <?= $project['Project']['description'] ?>
+                    <div class='well' id='project_description'>
+                        <? $this->Html->script('projects.overview.js', array('inline' => false)) ?>
+
+                        <? $more_link = '... <span id="view_more_button">' .$this->Html->link('Read More', '#') . '</span>'; ?>
+
+                        <?= $this->Text->truncate($project['Project']['description'], 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
+                        <div id='full_description'>
+                            <?= $project['Project']['description'] ?>
+                        </div>
                     </div>
                 <?}?>
                 <div class="well">
