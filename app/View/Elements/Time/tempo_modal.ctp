@@ -15,7 +15,6 @@
  */
 
 unset($times['total']);
-if (!empty($times)) {
 ?>
 <div class="modal hide" id="<?= $id ?>">
     <table class="modal-body table table-striped table-modal">
@@ -53,4 +52,3 @@ if (!empty($times)) {
         <a href="#" class="btn btn-mini" data-dismiss="modal"><?= $this->DT->t('tempo.modal.close') ?></a>
     </div>
 </div>
-<? } ?>

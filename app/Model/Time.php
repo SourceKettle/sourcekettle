@@ -18,6 +18,19 @@ App::uses('AppModel', 'Model');
 
 class Time extends AppModel {
 
+    private $Date;
+    private $_minYear;
+    private $_maxYear;
+
+    public function __construct(){
+        parent::__construct();
+
+        $this->Date = new DateTime;
+
+        $this->_minYear = 2010;
+        $this->_maxYear = $this->currentYear(1);
+    }
+
     /**
     * Display field
     *
@@ -169,5 +182,175 @@ class Time extends AppModel {
             $mins = $this->field('mins');
             return $mins['s'];
         }
+    }
+
+    /**
+     * currentYear function.
+     *
+     * @access public
+     * @param int $offset (default: 0)
+     * @return void
+     */
+    public function currentYear($offset = 0) {
+        return date('Y', strtotime("+$offset year"));
+    }
+
+    /**
+     * validateYear function.
+     *
+     * @access public
+     * @param mixed $year (default: null)
+     * @return void
+     */
+    public function validateYear($year = null) {
+        if ($year == null) {
+            return $this->currentYear();
+        }
+        if (!is_numeric($year) || $year < $this->_minYear || $year > $this->_maxYear) {
+            throw new NotFoundException(__("Invalid Year (allowed 2010 - {$this->_maxYear})"));
+        }
+        return $year;
+    }
+
+    /**
+     * currentWeek function.
+     *
+     * @access public
+     * @param int $offset (default: 0)
+     * @return void
+     */
+    public function currentWeek($offset = 0) {
+        return date('W', strtotime("+$offset week"));
+    }
+
+    /**
+     * validateWeek function.
+     *
+     * @access public
+     * @param mixed $week (default: null)
+     * @return void
+     */
+    public function validateWeek($week = null, $year = null) {
+        if ($week == null) {
+            return $this->currentWeek();
+        }
+        if (!is_numeric($week) || $week < 1 || $week > $this->lastWeekOfYear($year)) {
+            throw new NotFoundException(__('Invalid Week of the Year'));
+        }
+        return $week;
+    }
+
+    /**
+     * lastWeekOfYear function.
+     *
+     * @access public
+     * @param mixed $year (default: null)
+     * @return string last week of year
+     */
+    public function lastWeekOfYear($year = null) {
+        $this->Date->setISODate($year, 53);
+        return ($this->Date->format("W") === "53" ? '53' : '52');
+    }
+
+    /**
+     * startOfWeek function.
+     *
+     * @access public
+     * @param mixed $year
+     * @param mixed $week
+     * @return void
+     */
+    public function startOfWeek($year, $week) {
+        return $this->dayOfWeek($year, $week, 0);
+    }
+
+    /**
+     * dayOfWeek function.
+     *
+     * @access public
+     * @param mixed $year
+     * @param mixed $week
+     * @param mixed $day
+     * @return void
+     */
+    public function dayOfWeek($year, $week, $day) {
+        $this->Date->setISODate($year, $week, $day);
+        return $this->Date->format('Y-m-d');
+    }
+
+// REMOVE
+    public function tasksForWeek($year, $week) {
+        return array_values($this->find(
+            'list',
+            array(
+                'fields'     => array('Time.task_id'),
+                'group'      => array('Time.task_id'),
+                'conditions' => array(
+                    'Time.date BETWEEN ? AND ?' => array(
+                        $this->startOfWeek($year, $week),
+                        $this->startOfWeek($year, $week +1)
+                    ),
+                    'Time.project_id' => $this->Project->id,
+                    'Time.user_id'    => $this->_auth_user_id
+                )
+            )
+        ));
+    }
+
+    public function timesForWeek($year, $week) {
+        $this->recursive = -1;
+        $weekEvents = array();
+        $dateToday = date('Y-m-d');
+
+        // Iterate over our week
+        for($day = 1; $day <= 7; $day++) {
+
+            // Real date for the day
+            $today = $this->dayOfWeek($year, $week, $day);
+
+            $weekEvents[$day] = array(
+                'date' => $today,
+                'times' => array(),
+                'today' => ($today == $dateToday) ? true : false,
+                'totalTimes' => array(),
+                'totalTime' => 0
+            );
+
+            $todaysTimes = $this->find(
+                'all', array(
+                'conditions' => array(
+                    'Time.date'      => $today,
+                    'Time.user_id'   => $this->_auth_user_id,
+                    'Time.project_id'=> $this->Project->id,
+                )
+            ));
+
+            foreach ($todaysTimes as $time) {
+                if (!$time['Time']['task_id']) {
+                    $time['Time']['task_id'] = 0;
+                }
+                if (!isset($weekEvents[$day]['times'][$time['Time']['task_id']])) {
+                    $weekEvents[$day]['times'][$time['Time']['task_id']] = array();
+                    $weekEvents[$day]['totalTimes'][$time['Time']['task_id']] = 0;
+                }
+                $weekEvents[$day]['times'][$time['Time']['task_id']][] = $time;
+                $weekEvents[$day]['totalTimes'][$time['Time']['task_id']] += $time['Time']['mins']['t'];
+                $weekEvents[$day]['totalTime'] += $time['Time']['mins']['t'];
+            }
+
+            // Change the total to a useful format
+            foreach ($weekEvents[$day]['totalTimes'] as $a => $b) {
+                $b = $this->splitMins($b);
+                $weekEvents[$day]['totalTimes'][$a] = $b['h'] + round($b['m']/60, 1);
+            }
+            $totalTime = $this->splitMins($weekEvents[$day]['totalTime']);
+            $weekEvents[$day]['totalTime'] = $totalTime['h'] + round($totalTime['m']/60, 1);
+
+            $weekEvents[$this->Date->format('D')] = $weekEvents[$day];
+
+            unset($weekEvents[$day]);
+        }
+
+        return $weekEvents;
     }
 }

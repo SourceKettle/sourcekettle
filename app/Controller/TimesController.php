@@ -108,97 +108,46 @@ class TimesController extends AppProjectController {
      * @param mixed $week (default: null)
      * @return void
      */
-    public function history($project = null, $week = null) {
+    public function history($project = null, $year = null, $week = null) {
         $project = $this->_projectCheck($project);
 
-        if ($week) {
-            if (!is_numeric($week) || $week < 1 || $week > 53) {
-                $this->redirect(array('project'=>$project['Project']['name'], 'action'=>'history'));
-            }
-        } else {
-            $week = date('W');
+        // Validate the Year
+        if (($_year = $this->Time->validateYear($year)) != $year) {
+            $this->redirect(array('project'=>$project['Project']['name'],'year'=>$_year,'week'=>$week));
         }
-        if ($week < 10) {
-            $week = '0'.$week;
-        }
-        $week_start = date('Y-m-d', strtotime(date('Y').'W'.$week));
-        $week_end   = date('Y-m-d', strtotime("$week_start +1 week"));
-
-        $day = date('N');
-        $week_items = array();
-
-        $week_tasks = $this->Time->find('list', array(
-            'fields'        => array('Time.task_id'),
-            'group'         => array('Time.task_id'),
-            'conditions'    => array(
-                'Time.date BETWEEN ? AND ?' => array($week_start,$week_end),
-                'Time.project_id'           => $project['Project']['id'],
-                'Time.user_id'              => $this->Time->_auth_user_id
-            )
-        ));
-
-        // Iterate over our week
-        for($x = 1; $x <= 7; $x++) {
-            // Real date for the day
-            $date = date('Y-m-d', strtotime("$week_start +".($x-1)." days"));
-
-            // Todal time for a day
-            $_total = 0;
-
-            // Iterate over the tasks that we found for this week
-            foreach ($week_tasks as $m => $task) {
-                // Total for the task for the day
-                $_subTotal = 0;
-                $_task_id = ($task) ? $task : 0;
-
-                $week_items[$date][$_task_id] = $this->Time->find(
-                    'all', array(
-                    'conditions' => array(
-                        'date'      => $date,
-                        'user_id'   => $this->Time->_auth_user_id,
-                        'project_id'=> $project['Project']['id'],
-                        'task_id'   => $task
-                    )
-                ));
-
-                $task = ($task) ? $task : 0;
-
-                // If there are items, calculate the total time
-                foreach ($week_items[$date][$_task_id] as $_time) {
-                    $_subTotal += $_time['Time']['mins']['t'];
-                }
-                $_total += $_subTotal;
-
-                // Change the total to a useful format
-                $_subTotal = $this->Time->splitMins($_subTotal);
-                $week_items[$date][$_task_id]['total'] = $_subTotal['h'] + round($_subTotal['m']/60, 1);
-            }
-
-            if (!isset($week_items[$date][0])) {
-                $week_items[$date][0]['total'] = 0;
-            }
-
-            // Change the total to a useful format
-            if ($_total) {
-                $_total = $this->Time->splitMins($_total);
-                $week_items[$date]['total'] = $_total['h'] + round($_total['m']/60, 1);
-            } else {
-                $week_items[$date]['total'] = '';
-            }
+        // Validate the week
+        if (($_week = $this->Time->validateWeek($week, $year)) != $week) {
+            $this->redirect(array('project'=>$project['Project']['name'],'year'=>$year,'week'=>$_week));
         }
 
         $week_tasks = $this->Time->Project->Task->find('all', array(
             'conditions'    => array(
-                'Task.id' => array_values($week_tasks),
+                'Task.id' => $this->Time->tasksForWeek($year, $week),
             )
         ));
         $week_tasks[] = array('Task' => array('id' => 0, 'subject' => 'No associated task'));
 
-        $this->set('week', $week_items);
+        $this->set('week', $this->Time->timesForWeek($year, $week));
         $this->set('tasks', $week_tasks);
-        $this->set('dayOfWeek', $day);
-        $this->set('weekStart', $week_start);
-        $this->set('weekNo', $week);
+
+        $this->set('thisWeek', $week);
+        $this->set('thisYear', $year);
+
+        if ($week == $this->Time->lastWeekOfYear($year)) {
+            $this->set('nextWeek', 1);
+            $this->set('nextYear', $year + 1);
+        } else {
+            $this->set('nextWeek', $week + 1);
+            $this->set('nextYear', $year);
+        }
+
+        if ($week == 1) {
+            $this->set('prevWeek', $this->Time->lastWeekOfYear($year - 1));
+            $this->set('prevYear', $year - 1);
+        } else {
+            $this->set('prevWeek', $week - 1);
+            $this->set('prevYear', $year);
+        }
     }
 
     /**

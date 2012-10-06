@@ -62,6 +62,7 @@
         Router::connect('/project/:project/milestones/:action/*', array('controller' => 'milestones'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/milestones/*', array('controller' => 'milestones'), array('pass' => array('project'), 'project' => '[\w]+'));
 
+        Router::connect('/project/:project/time/:action/:year/:week/*', array('controller' => 'times'), array('pass' => array('project', 'year', 'week'), 'project' => '[\w]+'));
         Router::connect('/project/:project/time/:action/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/time/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[\w]+'));
 
