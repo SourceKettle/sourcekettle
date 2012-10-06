@@ -47,8 +47,8 @@ class AppProjectController extends AppController {
         } else {
             $__model = $this->{$this->modelClass}->Project;
         }
-        // Check for existent project
-        $project = $__model->getProject($name);
+        // Check for existent project (skip permissions check for now, as that's what we're about to do)
+        $project = $__model->getProject($name, true);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
         $__model->id = $project['Project']['id'];
@@ -58,12 +58,15 @@ class AppProjectController extends AppController {
 
         $this->set('previousPage', $this->referer(array('action' => 'index', 'project' => $project['Project']['name']), true));
 
-        // Lock out those who arnt allowed to write
+        // Allow site admins to access any project
+        Debugger::dump($this); exit;
+
+        // Lock out those who aren't allowed to write
         if ($needWrite && !$__model->hasWrite($__model->_auth_user_id) ) {
             throw new ForbiddenException(__('You do not have permissions to write to this project'));
         }
 
-        // Lock out those who arnt admins
+        // Lock out those who aren't admins
         if ($needAdmin && !$__model->isAdmin($__model->_auth_user_id) ) {
             throw new ForbiddenException(__('You need to be an admin to access this page'));
         }

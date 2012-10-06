@@ -46,11 +46,25 @@ $this->Html->css('project.overview', null, array ('inline' => false));
                             <div class="row-fluid">
                                 <div class="span6">
                                     <ul class="unstyled">
-                                        <li class="open-tasks"><?= $number_of_open_tasks ?> - <?= $this->DT->t('summary.issues.open') ?></li>
+                                        <li class="open-tasks">
+                                          <?= $this->Html->link(
+                                           "$number_of_open_tasks - ".$this->DT->t('summary.issues.open'),
+                                           array(
+                                             'project'=>$project['Project']['name'],
+                                             'controller'=>'tasks'
+                                           ))?>
+                                        </li>
                                         <li class="closed-tasks"><?= $number_of_closed_tasks ?> - <?= $this->DT->t('summary.issues.closed') ?></li>
                                         <li class="total-tasks"><?= $number_of_tasks ?> - <?= $this->DT->t('summary.issues.total') ?></li>
                                         <li><?= $percent_of_tasks ?>% <?= $this->DT->t('summary.issues.percent') ?></li>
                                     </ul>
+                                    <?= $this->Html->link(
+                                      'Create a task',
+                                      array(
+                                        'project'    => $project['Project']['name'],
+                                        'controller' => 'tasks',
+                                        'action'     => 'add'
+                                    ))?>
                                 </div>
                                 <div class="span6">
                                     <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array($number_of_open_tasks, $number_of_closed_tasks)); ?>
@@ -73,9 +87,8 @@ $this->Html->css('project.overview', null, array ('inline' => false));
                                 <br>
                                 <li>Due: <?= $milestone['Milestone']['due'] ?></li>
                                 <?= $this->Bootstrap->progress(array("width" => (int) $milestone['Milestone']['percent'], "striped" => true)) ?>
-                                <? else: ?>
-                                <li><?= $this->Html->link('Create a milestone', array('project'=>$project['Project']['name'],'controller'=>'milestones','action'=>'add')) ?></li>
                                 <? endif; ?>
+                                <li><?= $this->Html->link('Create a milestone', array('project'=>$project['Project']['name'],'controller'=>'milestones','action'=>'add')) ?></li>
                             </ul>
                         </div>
                         <div class="span4">

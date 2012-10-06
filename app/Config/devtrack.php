@@ -16,12 +16,12 @@
 
  // Tool name
  // value will be string that will be shown across the system in place of 'DevTrack'
- $config['devtrack']['global']['alias'] = 'DevTrack';
+ $config['devtrack']['global']['alias'] = 'DevTrack dev';
 
  // Username for SSH access to git repositories
- $config['devtrack']['repo']['user'] = 'git';
+ $config['devtrack']['repo']['user'] = 'git-dev';
 
  // Repository folder
  // set to folder where you would like repositories placed
- $config['devtrack']['repo']['base'] = '/home/git/repositories';
+ $config['devtrack']['repo']['base'] = '/export/1/var.devtrack-dev.repositories';
 

@@ -163,13 +163,17 @@ class User extends AppModel {
     public function beforeSave($options = array()) {
 
         // Can't update the email or password field if it's an externally-managed account
-        // 
         if ( !User::isDevtrackManaged($this->data) ) {
             $wl = $this->whitelist;
             if(empty($wl)){
                 $wl = array_keys($this->schema());
             }
-            $wl = array_diff($wl, array('email', 'password'));
+            $wl = array_diff($wl, array('password'));
+
+            // Only blacklist the email if we're updating an existing account
+            if( $this->id ) {
+                $wl = array_diff($wl, array('email'));
+            }
             $this->whitelist = $wl;
         }
 

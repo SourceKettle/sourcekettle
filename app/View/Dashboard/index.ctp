@@ -23,7 +23,6 @@
 
 <div class="row">
     <div class="span8">
-      Stuff
     </div>
 
     <div class="span4">
