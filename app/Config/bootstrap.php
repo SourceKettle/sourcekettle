@@ -99,6 +99,7 @@ Configure::load('Language/dt_core_milestones_en');
 Configure::load('Language/dt_core_collaborators_en');
 Configure::load('Language/dt_core_attachments_en');
 Configure::load('Language/dt_core_settings_en');
+Configure::load('Language/dt_core_dashboard_en');
 
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
