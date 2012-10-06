@@ -28,5 +28,7 @@ echo $this->Bootstrap->page_header("Public Projects <small>projects people have 
       }?>
 </div>
 <div class='row'>
-  <?=$this->element('pagination') ?>
+  <? if (!empty($projects)){
+    echo $this->element('pagination');
+  } ?>
 </div>
