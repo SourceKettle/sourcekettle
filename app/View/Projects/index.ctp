@@ -22,7 +22,6 @@ echo $this->Bootstrap->page_header("My Projects <small>all the projects you care
     <? if (!empty($projects)){
         echo $this->Element("Project/list", array('projects' => $projects));
       } else {
-        $config = Configure::read('dtcore'); 
-        echo "<div class='well span4'>" . $config['pages']['projects']['all']['en']['noprojects.text'] . "</div>";
+        echo $this->element('Project/noprojectsalert', array('span' => true));
       }?>
 </div>
