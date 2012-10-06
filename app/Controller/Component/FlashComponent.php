@@ -126,10 +126,10 @@ class FlashComponent extends Component {
      */
     public function setUp() {
         if ($this->Model->id) {
-            if (in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(false);
+            if ($this->Model->actsAs && in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(false);
             $this->_name = $this->Model->field($this->Model->displayField);
             $this->_id   = $this->Model->id;
-            if (in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(true);
+            if ($this->Model->actsAs && in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(true);
         }
     }
 }
