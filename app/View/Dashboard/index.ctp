@@ -47,7 +47,7 @@
                         array(
                             'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar', 'controller' => 'projects')),
                             'url' => array(
-                                'action' => 'new',
+                                'action' => 'add',
                                 'controller' => 'projects',
                             ),
                             'props' => array('class' => 'btn-primary'),
