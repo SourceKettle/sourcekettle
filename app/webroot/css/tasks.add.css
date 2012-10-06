@@ -17,13 +17,6 @@
     cursor: pointer;
 }
 
-input[type="radio"] {
-    -webkit-appearance: checkbox;
-    -moz-appearance: checkbox;
-    -ms-appearance: checkbox;     /* not currently supported */
-    -o-appearance: checkbox;      /* not currently supported */
-}
-
 .sidebarRight .control-group .controls {
     margin-left: 0px;
 }
