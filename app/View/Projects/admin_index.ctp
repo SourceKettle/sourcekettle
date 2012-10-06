@@ -58,13 +58,22 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                     </tr>
                 </thead>
                 <tbody>
+                <? $this->Html->script('projects.overview.js', array('inline' => false)) ?>
                 <? foreach ( $projects as $project ) : ?>
                     <tr>
                         <td>
                             <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['id']))?>
                         </td>
                         <td>
-                            <?= $project['Project']['description'] ?>
+                            <div id='project_description'>
+
+                                <? $more_link = '... <span id="view_more_button">' .$this->Html->link('Read More', '#') . '</span>'; ?>
+
+                                <?= $this->Text->truncate($project['Project']['description'], 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
+                                <div id='full_description' style='display: none'>
+                                    <?= $project['Project']['description'] ?>
+                                </div>
+                            </div>
                         </td>
                         <td>
                         <?php
