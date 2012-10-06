@@ -18,5 +18,10 @@ echo $this->Bootstrap->page_header("My Projects <small>all the projects you care
 
 <div class="row">
     <?= $this->Element("Project/topbar") ?>
-    <?= $this->Element("Project/list", array('projects' => $projects)) ?>
+
+    <? if (!empty($projects)){
+        echo $this->Element("Project/list", array('projects' => $projects));
+      } else {
+        echo "<div class='well span4'>You have no projects. Why not create one?</div>";
+      }?>
 </div>

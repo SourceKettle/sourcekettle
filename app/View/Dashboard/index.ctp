@@ -59,6 +59,11 @@
 
           ?>
         </div>
-        <?= $this->Element("Project/list", array('projects' => $projects, 'nospan' => true)) ?>  
+
+        <? if (!empty($projects)){
+          echo $this->Element("Project/list", array('projects' => $projects, 'nospan' => true));
+        } else {
+          echo "<div class='well'>You have no projects. Why not create one?</div>";
+        }?>
     </div>
 </div>
