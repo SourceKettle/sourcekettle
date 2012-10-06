@@ -26,5 +26,5 @@
  */
 
 $config['dtcore']['pages']['dashboard']['index']['en']['header.text'] = "Dashboard";
-$config['dtcore']['pages']['dashboard']['index']['en']['header.small'] = "welcome";
+$config['dtcore']['pages']['dashboard']['index']['en']['header.small.text'] = "welcome";
 $config['dtcore']['pages']['dashboard']['index']['en']['projects.viewall.text'] = "View all your projects";

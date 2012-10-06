@@ -15,7 +15,7 @@
 
   $config = Configure::read('dtcore'); 
 
-  echo $this->Bootstrap->page_header($config['pages']['dashboard']['index']['en']['header.text'] . " <small>" . $config['pages']['dashboard']['index']['en']['header.small'] . " " . strtolower($user_name) . "</small>");
+  echo $this->Bootstrap->page_header($config['pages']['dashboard']['index']['en']['header.text'] . " <small>" . $config['pages']['dashboard']['index']['en']['header.small.text'] . " " . strtolower($user_name) . "</small>");
 
   echo $this->element('beta_warning');
 ?>
@@ -63,7 +63,7 @@
         <? if (!empty($projects)){
           echo $this->Element("Project/list", array('projects' => $projects, 'nospan' => true));
         } else {
-          echo "<div class='well'>You have no projects. Why not create one?</div>";
+          echo "<div class='well'>" . $config['pages']['projects']['all']['en']['noprojects.text'] . "</div>";
         }?>
     </div>
 </div>
