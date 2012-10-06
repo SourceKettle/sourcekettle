@@ -236,13 +236,13 @@ class Project extends AppModel {
             $project = null;
         }
 
-	// In some cases, auth_user_id isn't set (like GitCommand)
-	if (!$skip_perms) {
+	    // In some cases, auth_user_id isn't set (like GitCommand)
+	    if (!$skip_perms && !$this->_auth_user_is_admin) {
         	// Lock out those who are not allowed to read
         	if ( !$this->hasRead($this->_auth_user_id, $project['Project']['id']) ) {
 	            throw new ForbiddenException(__('You do not have permissions to access this project.'));
 	        }
-	}
+	    }
 
         return $project;
     }

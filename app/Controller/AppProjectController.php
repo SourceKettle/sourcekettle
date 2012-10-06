@@ -47,7 +47,6 @@ class AppProjectController extends AppController {
         } else {
             $__model = $this->{$this->modelClass}->Project;
         }
-        // Check for existent project (skip permissions check for now, as that's what we're about to do)
         $project = $__model->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
@@ -57,6 +56,11 @@ class AppProjectController extends AppController {
         $this->set('isAdmin', $__model->isAdmin());
 
         $this->set('previousPage', $this->referer(array('action' => 'index', 'project' => $project['Project']['name']), true));
+
+        // Site admins may have access to any project
+        if( $this->Auth->user('is_admin') == 1 ){
+            return $project;
+        }
 
         // Lock out those who aren't allowed to write
         if ($needWrite && !$__model->hasWrite($__model->_auth_user_id) ) {
