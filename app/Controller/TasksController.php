@@ -577,10 +577,10 @@ class TasksController extends AppProjectController {
 
         $data = array();
         $request = array();
-
+        
         // Fetch the request from the user
-        if (!is_null($this->params->data)) {
-            $request = $this->params->data;
+        if (!is_null($this->request->query)) {
+            $request = $this->request->query;
         }
 
         $user = $this->Auth->user('id');

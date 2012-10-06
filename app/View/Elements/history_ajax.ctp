@@ -24,12 +24,20 @@ $this->Html->scriptBlock("
     jQuery(function(){
         var details = {};
         details['project'] = '$projectName';
-        $.post('$url', details, function(data) {
-            $('#histId$rand').fadeOut('slow', function() {
-                $('#histId$rand').html('<div class=\"well\">' + data + '$more</div>');
-                $('#histId$rand').fadeIn();
-            });
+        console.log('$url');
+        $.ajax({
+            url: '$url',
+            cache: false,
+            data: details,
+            type: 'GET',
+            success: function(data){
+                $('#histId$rand').fadeOut('slow', function() {
+                    $('#histId$rand').html('<div class=\"well\">' + data + '$more</div>');
+                    $('#histId$rand').fadeIn();
+                });
+            }
         });
+
     });
 ", array('inline' => false));
 ?>

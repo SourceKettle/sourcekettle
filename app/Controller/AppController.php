@@ -49,6 +49,7 @@ class AppController extends Controller {
         'RequestHandler',
         'Session',
         'Flash',
+        'Security',
         'Useful',
         'Auth' => array(
             'actionPath' => 'controllers/',

@@ -42,15 +42,19 @@ $this->Html->scriptBlock("
             if (milestone != '') {
                 details['milestone'] = milestone;
             }
-
-            $.post('".$this->Html->url('/api/tasks/marshalled/')."', details, function(data) {
-                $('#tasksCol').html(data);
-                if (milestone != '') {
-                    $.getJSON('".$this->Html->url('/api/milestones/view/')."' + milestone, function(data) {
-                        $('#milestoneProgress').attr('style', 'width: ' + data['percent'] + '%;');
-                    });
-                } else {
-                    $('#milestoneProgress').attr('style', 'width: 0%;');
+            $.ajax({
+                url: '".$this->Html->url('/api/tasks/marshalled/')."',
+                data: details,
+                type: 'GET',
+                success: function(data){
+                    $('#tasksCol').html(data);
+                    if (milestone != '') {
+                        $.getJSON('".$this->Html->url('/api/milestones/view/')."' + milestone, function(data) {
+                            $('#milestoneProgress').attr('style', 'width: ' + data['percent'] + '%;');
+                        });
+                    } else {
+                        $('#milestoneProgress').attr('style', 'width: 0%;');
+                    }
                 }
             });
         }

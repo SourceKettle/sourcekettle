@@ -394,7 +394,7 @@ class ProjectsController extends AppProjectController {
      * @return void
      */
     public function api_history($number = 0) {
-        $project = $this->_projectCheck($this->request->data['project']);
+        $project = $this->_projectCheck($this->request->params['named']['project']);
         $this->layout = 'ajax';
 
         if (!is_numeric($number) || $number < 1 || $number > 50) {
