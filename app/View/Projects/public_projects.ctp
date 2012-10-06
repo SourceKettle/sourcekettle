@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * View class for APP/projects/index for the DevTrack system
- * View will render a list of all the projects a user has access to
+ * View class for APP/projects/public_projects for the DevTrack system
+ * View will render a list of all the public projects
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -14,15 +14,21 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header("My Projects <small>all the projects you care about</small>"); ?>
+echo $this->Bootstrap->page_header("Public Projects <small>projects people have shared</small>"); ?>
 
 <div class="row">
-    <?= $this->Element("Project/topbar") ?>
-
-    <? if (!empty($projects)){
+  <?= $this->Element("Project/topbar") ?>
+</div>
+<div class='row'>  
+  <? if (!empty($projects)){
         echo $this->Element("Project/list", array('projects' => $projects));
       } else {
         $config = Configure::read('dtcore'); 
         echo "<div class='well span4'>" . $config['pages']['projects']['all']['en']['noprojects.text'] . "</div>";
       }?>
+</div>
+<div class='row'>
+  <? if (!empty($projects)){
+    echo $this->element('pagination');
+  } ?>
 </div>

@@ -26,7 +26,7 @@ class GitShell extends AppShell {
 		// Don't bother unless a key's actually been changed...
 		$sync_required = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
 
-		//if ($sync_required['Setting']['value'] == 1) {
+	    if ($sync_required['Setting']['value'] == 1) {
 
 			// Work out where to put the SSH keys (git user's homedir)
 			$devtrack_config = Configure::read('devtrack');
@@ -91,7 +91,7 @@ class GitShell extends AppShell {
 			// Don't sync again unless keys have changed
 			$sync_required['Setting']['value'] = 0;
 			$this->Setting->save($sync_required);
-		//}
+		}
 	}
 
 	// Helper functions to validate git commands

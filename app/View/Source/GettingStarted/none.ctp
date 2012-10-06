@@ -12,7 +12,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$smallText = " <small>" . $project['Project']['description'] . " </small>";
+$smallText = " <small>source code</small>";
 $pname = $project['Project']['name'];
 
 // Header for the page
@@ -28,7 +28,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
 
                 <div class="hero-unit span9">
                   <h1>Nothing to see here</h1>
-                  <p>Unfortunately this project was created repository-less and as such, there is no soure to view.</p>
+                  <p>Unfortunately this project was created repository-less and as such, there is no source to view.</p>
                   <p>If you would like this to change, please contact an Administrator for this project.</p>
                 </div>
         </div>

@@ -23,7 +23,7 @@ class ProjectsController extends AppProjectController {
      * Project helpers
      * @var type
      */
-    public $helpers = array('Time', 'GoogleChart.GoogleChart');
+    public $helpers = array('Time', 'GoogleChart.GoogleChart', 'Paginator');
 
     public $uses = array('Project', 'RepoType');
 
@@ -44,7 +44,7 @@ class ProjectsController extends AppProjectController {
     public function history($project) {
         $project = $this->_projectCheck($project);
 
-        $this->set('historyCount', 50);
+        $this->set('historyCount', 25);
     }
 
     /**
@@ -54,12 +54,25 @@ class ProjectsController extends AppProjectController {
      */
     public function index() {
         $this->Project->Collaborator->recursive = 0;
+
         $projects = $this->Project->Collaborator->find(
           'all', array(
             'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
-            'order' => array('Project.name')
+            'order' => array('Project.modified DESC')
           )
         );
+        $this->set('projects', $projects);
+    }
+
+    public function public_projects() {
+        $this->Project->recursive = -1;
+        $this->paginate = array(
+            'conditions' => array('Project.public' => true),
+            'limit' => 15,
+            'order' => 'Project.modified DESC'
+        );
+        $projects = $this->paginate('Project');
+
         $this->set('projects', $projects);
     }
 
@@ -381,7 +394,7 @@ class ProjectsController extends AppProjectController {
      * @return void
      */
     public function api_history($number = 0) {
-        $project = $this->_projectCheck($this->request->data['project']);
+        $project = $this->_projectCheck($this->request->params['named']['project']);
         $this->layout = 'ajax';
 
         if (!is_numeric($number) || $number < 1 || $number > 50) {

@@ -240,7 +240,7 @@ class Project extends AppModel {
 	if (!$skip_perms) {
         	// Lock out those who are not allowed to read
         	if ( !$this->hasRead($this->_auth_user_id, $project['Project']['id']) ) {
-	            throw new ForbiddenException(__('You do not have permissions to access this project. ID <<' . $this->_auth_user_id . ">>"));
+	            throw new ForbiddenException(__('You do not have permissions to access this project.'));
 	        }
 	}
 

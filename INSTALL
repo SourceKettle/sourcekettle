@@ -1,14 +1,73 @@
-Quick and dirty setup guide, assumes reasonable prior knowledge of Things:
+
+Quick install instructions
+==========================
+
+Prerequisites
+-------------
+
+* Apache
+* mod_rewrite
+* mod_php (PHP >= 5.2.8)
+* MySQL (>= 5.1)
+
+Get everything in place
+-----------------------
 
 * Make sure you've got all submodules:
   git submodule update --init --recursive
-* Install apache with mod_rewrite, mysql and php5
-* Get apache/mysql/php running
+
+Webserver setup
+---------------
+
 * Make sure your apache virtualhost config allows the use of .htaccess files
 * Point apache at the devtrack directory (the parent directory of 'app')
+
+DevTrack setup
+--------------
+
 * Run scm-scripts/devtrack-setup.py
+* Ensure permissions are correct (TODO put this in the setup script):
+  chown -R apache:devtrack tmp/ Plugin/TwitterBootswatch/webroot/ # set user and group as appropriate
+* Set 'Security.cipherSeed' and 'Security.salt' in Config/core.php
 * Reload/restart apache
 * Load the webpage, then go to /setup to see any possible problems
 
+LDAP authentication
+-------------------
 
+To use this, currently it's a case of "add some lines to the AppController" :-(
+
+Edit app/Controller/AppController.php and add something like this to the authenticate array (before Form):
+
+	'LDAPAuthCake.LDAP' => array(
+		// Connection details, the user account only needs read access
+	    'ldap_url'      => 'ldaps://ldap.example.org',
+    	'ldap_bind_dn'  => 'cn=LdapReadOnlyUser,ou=User,dc=example,dc=org',
+	    'ldap_bind_pw'  => 'CorrectHorseBatteryStaple',
+
+		// Base DN to search under
+    	'ldap_base_dn'  => 'ou=User,dc=example,dc=org',
+
+		// %USERNAME% will be replaced with the email address - this should be a valid LDAP
+		// filter that will find a user account based on the email address.
+		// Finding by proxyAddresses should allow them to use ANY email address they have.
+    	'ldap_filter'   => '(| (proxyAddresses=SMTP:%USERNAME%) (proxyAddresses=smtp:%USERNAME%) )',
+
+		// These are DevTrack-specific, leave alone
+    	'form_fields'   => array ('username' => 'email', 'password' => 'password'),
+
+		// Mapping of LDAP attributes to DevTrack database fields
+		// Should just need name and email fields.
+	    'ldap_to_user'  => array(
+    	    'displayName' => 'name',
+	        'mail'        => 'email',
+    	),
+
+		// Default flags to set when creating the DevTrack account entry on first login.
+		// This is pretty sane...
+	    'defaults'      => array(
+    		'is_active'   => 1,
+	        'is_admin'    => 0,
+		),
+	),
 

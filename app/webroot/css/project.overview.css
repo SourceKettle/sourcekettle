@@ -35,3 +35,7 @@
 .pager {
     margin-bottom: 0;
 }
+
+#full_description {
+  display: none;
+}

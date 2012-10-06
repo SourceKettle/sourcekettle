@@ -111,11 +111,13 @@ class TasksController extends AppProjectController {
             } else {
                 $this->Flash->error('The comment could not be saved. Please, try again.');
             }
+
+			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+			return;
         }
 
         // If a User has updated a comment
         if ($this->request->is('post') && isset($this->request->data['TaskCommentEdit'])) {
-
             $this->request->data['TaskComment'] = array(
                 'comment' => $this->request->data['TaskCommentEdit']['comment'],
                 'id' => $this->request->data['TaskCommentEdit']['id']
@@ -130,6 +132,9 @@ class TasksController extends AppProjectController {
             } else {
                 $this->Flash->error('The comment could not be updated. Please, try again.');
             }
+
+			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+			return;
         }
 
         // If a User has assigned someone
@@ -148,6 +153,9 @@ class TasksController extends AppProjectController {
             } else {
                 $this->Flash->error('The assignee could not be updated. Please, try again.');
             }
+
+			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+			return;
         }
 
         // Re-read to pick up changes
@@ -314,7 +322,7 @@ class TasksController extends AppProjectController {
                 $taskPriorities[$id] = ucfirst(strtolower($p));
             }
             $availableTasks = $this->Task->find('list', array(
-                'conditions' => array('project_id =' => $project['Project']['id']),
+                'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
                 'fields' => array('Task.id', 'Task.subject'),
             ));
 
@@ -577,10 +585,10 @@ class TasksController extends AppProjectController {
 
         $data = array();
         $request = array();
-
+        
         // Fetch the request from the user
-        if (!is_null($this->params->data)) {
-            $request = $this->params->data;
+        if (!is_null($this->request->query)) {
+            $request = $this->request->query;
         }
 
         $user = $this->Auth->user('id');

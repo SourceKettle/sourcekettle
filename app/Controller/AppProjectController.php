@@ -17,6 +17,19 @@ App::uses('AppController', 'Controller');
 
 class AppProjectController extends AppController {
 
+
+    public function beforeFilter(){
+        parent::beforeFilter();
+        // Redirect urls that use the id of a project to the name of the project
+        if (isset($this->request->params['project']) && is_numeric($this->request->params['project'])){
+            $this->loadModel('Project');
+            $project = $this->Project->findById($this->request->params['project']);
+            if (isset($project) && !empty($project)){
+                $this->redirect(array('controller' => $this->request->params['controller'], 'action' => $this->request->params['action'], 'project' => $project['Project']['name']));
+            }
+        }
+    }
+    
     /*
      * _projectCheck
      * Space saver to ensure user can view content
@@ -34,7 +47,7 @@ class AppProjectController extends AppController {
         } else {
             $__model = $this->{$this->modelClass}->Project;
         }
-        // Check for existent project
+        // Check for existent project (skip permissions check for now, as that's what we're about to do)
         $project = $__model->getProject($name);
         if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
 
@@ -45,12 +58,12 @@ class AppProjectController extends AppController {
 
         $this->set('previousPage', $this->referer(array('action' => 'index', 'project' => $project['Project']['name']), true));
 
-        // Lock out those who arnt allowed to write
+        // Lock out those who aren't allowed to write
         if ($needWrite && !$__model->hasWrite($__model->_auth_user_id) ) {
             throw new ForbiddenException(__('You do not have permissions to write to this project'));
         }
 
-        // Lock out those who arnt admins
+        // Lock out those who aren't admins
         if ($needAdmin && !$__model->isAdmin($__model->_auth_user_id) ) {
             throw new ForbiddenException(__('You need to be an admin to access this page'));
         }

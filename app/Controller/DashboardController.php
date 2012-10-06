@@ -17,8 +17,30 @@ App::uses('AppController', 'Controller');
 
 class DashboardController extends AppController {
 
+    public $uses = array('Project', 'Task');
+
+    public $helpers = array('Time');
+
     function index() {
-        
+        // Get the recent projects
+        $this->set('projects', $this->getRecentProjects());
+
+    }
+
+    private function getRecentProjects(){
+      $this->Project->Collaborator->recursive = 0;
+
+        return $this->Project->Collaborator->find(
+          'all', array(
+            'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
+            'order' => array('Project.modified DESC'),
+            'limit' => 5
+          )
+        );
+    }
+
+    private function getUserTasks(){
+
     }
 
 }

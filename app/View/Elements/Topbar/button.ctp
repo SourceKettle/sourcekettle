@@ -15,7 +15,13 @@
  */
 ?>
 
-<div class="span10">
+<? if (isset($span)){
+    echo "<div class='span" . $span . "'>";
+} else {
+    ?>
+    <div class="span10">
+    <?
+} ?>
     <div class="btn-toolbar">
 <?php
     $prefs = array(

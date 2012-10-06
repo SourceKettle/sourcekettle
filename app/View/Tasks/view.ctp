@@ -16,27 +16,14 @@
 
 $this->Html->css('tasks.view', null, array ('inline' => false));
 
-$edit_comment  = $this->Form->create('TaskCommentEdit');
-$edit_comment .= $this->Form->hidden('id');
-$edit_comment .= $this->Bootstrap->input("comment", array(
-    "input" => $this->Form->textarea("comment", array("class" => "span12", "rows" => 5)),"label" => false)
-);
-$edit_comment .= $this->Bootstrap->button($this->DT->t('history.editcomment.submit'), array("style" => "primary", 'class' => 'controls'));
-$edit_comment .= $this->Form->end();
 
 // The following JS will change a comment box into an input box
 $this->Html->scriptBlock("
     $('.comment').find(':button.edit').bind('click', function() {
-        var open = $('[name=\"data[TaskCommentEdit][id]\"]').parent('form').parent('.comment');
-        if (open) {
-            open.find('form').remove();
-            open.find('p').show();
-        }
+		$('.comment form').hide();
         var p = $(this).parent('.comment');
         p.find('p').hide();
-        p.append('$edit_comment');
-        p.find('textarea').html(p.find('p').text());
-        $('[name=\"data[TaskCommentEdit][id]\"]').attr('value', p.attr('id'));
+        p.find('form').show();
     });
 ", array('inline' => false));
 
@@ -122,7 +109,7 @@ echo $this->element('Task/modal_assign');
 
                                         <dd>
                                         <? foreach($task['DependsOn'] as $dep){
-                                          echo $this->element('Task/dependency', array('task' => $dep));
+                                          echo $this->element('Task/dependency', array('project' => $task['Project']['name'], 'task' => $dep));
                                         }?>
                                         </dd>
                                     </dl>
@@ -144,7 +131,7 @@ echo $this->element('Task/modal_assign');
                                         <dt>Depended on by:</dt>
                                         <dd>
                                         <? foreach($task['DependedOnBy'] as $dep){
-                                          echo $this->element('Task/dependency', array('task' => $dep));
+                                          echo $this->element('Task/dependency', array('project' => $task['Project']['name'], 'task' => $dep));
                                         }?>
                                         </dd>
                                     </dl>

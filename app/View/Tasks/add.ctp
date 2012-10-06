@@ -15,6 +15,13 @@
  */
 
 $this->Html->css('tasks.add', null, array ('inline' => false));
+$this->Html->scriptBlock ("
+		jQuery(function() {
+			$('#unselect-all').click (function() {
+				$('#DependsOnDependsOn option:selected').removeAttr ('selected');
+			});
+		});
+	", array ("inline" => false));
 
 ?>
 
@@ -54,6 +61,7 @@ $this->Html->css('tasks.add', null, array ('inline' => false));
                                 "options" => $availableTasks, 
                             )),
                             "label" => $this->DT->t('form.dependent_tasks.label').' '.$this->Bootstrap->icon('tasks'),
+							"help_block" => "<a href='#' id='unselect-all'>Unselect All</a>"
                         ));
 
                         echo $this->Bootstrap->input("milestone_id", array(

@@ -49,6 +49,7 @@ class AppController extends Controller {
         'RequestHandler',
         'Session',
         'Flash',
+        'Security',
         'Useful',
         'Auth' => array(
             'actionPath' => 'controllers/',
@@ -115,7 +116,6 @@ class AppController extends Controller {
             $this->set('user_is_admin', false);
         }
 
-
         // if admin pages are being requested
         if(isset($this->params['admin'])) {
             // check the admin is logged in
@@ -140,6 +140,7 @@ class AppController extends Controller {
             $user = $_USER_MODEL->findById($user_id);
             $this->set('user_is_devtrack_managed', User::isDevTrackManaged($user));
         }
+
     }
 
     protected function _api_auth_level() {

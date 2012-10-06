@@ -28,7 +28,9 @@ CREATE TABLE IF NOT EXISTS `collaborators` (
   `modified` datetime NOT NULL,
   `deleted` int(1) NOT NULL DEFAULT '0',
   `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `project_id` (`project_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
@@ -48,7 +50,8 @@ CREATE TABLE IF NOT EXISTS `email_confirmation_keys` (
   `key` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
@@ -72,7 +75,9 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `modified` datetime NOT NULL,
   `deleted` int(1) NOT NULL DEFAULT '0',
   `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `repo_type` (`repo_type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
@@ -99,7 +104,10 @@ CREATE TABLE IF NOT EXISTS `project_histories` (
   `row_field_new` text,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `modified` (`modified`),
+  KEY `created` (`modified`),
+  KEY `project_id` (`project_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
@@ -143,7 +151,8 @@ CREATE TABLE IF NOT EXISTS `ssh_keys` (
   `comment` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
@@ -217,7 +226,8 @@ CREATE TABLE IF NOT EXISTS `lost_password_keys` (
   `key` varchar(25) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
 --
@@ -233,7 +243,8 @@ CREATE TABLE IF NOT EXISTS `lost_password_keys` (
 CREATE TABLE IF NOT EXISTS `source` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
@@ -253,7 +264,8 @@ CREATE TABLE IF NOT EXISTS `api_keys` (
   `comment` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
 
@@ -279,7 +291,10 @@ CREATE TABLE IF NOT EXISTS `times` (
   `modified` datetime NOT NULL,
   `deleted` int(1) NOT NULL DEFAULT '0',
   `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`),
+  KEY `user_id` (`user_id`),
+  KEY `task_id` (`task_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
 --
@@ -306,7 +321,14 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `modified` datetime NOT NULL,
   `deleted` int(1) NOT NULL DEFAULT '0',
   `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`),
+  KEY `task_status_id` (`task_status_id`),
+  KEY `owner_id` (`owner_id`),
+  KEY `task_type_id` (`task_type_id`),
+  KEY `assignee_id` (`assignee_id`),
+  KEY `milestone_id` (`milestone_id`),
+  KEY `task_priority_id` (`task_priority_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
 --
@@ -324,7 +346,9 @@ CREATE TABLE IF NOT EXISTS `task_dependencies` (
   `parent_task_id` int(10) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `child_task_id` (`child_task_id`),
+  KEY `parent_task_id` (`parent_task_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
 --
@@ -370,7 +394,8 @@ CREATE TABLE IF NOT EXISTS `task_comments` (
   `modified` datetime NOT NULL,
   `deleted` int(1) NOT NULL DEFAULT '0',
   `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `task_id` (`task_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
 --
@@ -438,7 +463,8 @@ CREATE TABLE IF NOT EXISTS `milestones` (
   `modified` datetime NOT NULL,
   `deleted` int(1) NOT NULL DEFAULT '0',
   `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
 --
@@ -461,7 +487,8 @@ CREATE TABLE IF NOT EXISTS `attachments` (
   `md5` varchar(255) NOT NULL,
   `content` longblob,
   `created` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
 --
