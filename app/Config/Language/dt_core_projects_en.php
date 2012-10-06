@@ -25,7 +25,7 @@
  * APP/Projects
  */
 
-$config['dtcore']['pages']['projects']['all']['en']['noprojects.text'] = "You have no projects. Why not create one?";
+$config['dtcore']['pages']['projects']['all']['en']['noprojects.text'] = "<strong>No projects :(</strong> Why don't you create one?";
 
 // APP/Projects/view
 $config['dtcore']['pages']['projects']['view']['en']['header.text'] = "Project overview";

@@ -108,9 +108,21 @@ echo $this->element('Task/modal_assign');
                                         <dt>Depends on:</dt>
 
                                         <dd>
-                                        <? foreach($task['DependsOn'] as $dep){
-                                          echo $this->element('Task/dependency', array('project' => $task['Project']['name'], 'task' => $dep));
-                                        }?>
+                                        <?php
+                                        foreach($task['DependsOn'] as $dep){
+                                            echo $this->Html->link(
+                                                '<strong>#'.$dep['id'].'</strong> - '.$this->Text->truncate ($dep['subject'], 30),
+                                                array(
+                                                    'api' => false,
+                                                    'controller' => 'tasks',
+                                                    'project' => $project['Project']['name'],
+                                                    'action' => 'view',
+                                                    $dep['id']
+                                                ),
+                                                array('escape' => false)
+                                            );
+                                            echo "<br>";
+                                        } ?>
                                         </dd>
                                     </dl>
                                     <dl class="dl-horizontal span6">
@@ -130,9 +142,21 @@ echo $this->element('Task/modal_assign');
                                         <dd><?= $this->Time->timeAgoInWords($task['Task']['modified']) ?></dd>
                                         <dt>Depended on by:</dt>
                                         <dd>
-                                        <? foreach($task['DependedOnBy'] as $dep){
-                                          echo $this->element('Task/dependency', array('project' => $task['Project']['name'], 'task' => $dep));
-                                        }?>
+                                        <?php
+                                        foreach($task['DependedOnBy'] as $dep){
+                                            echo $this->Html->link(
+                                                '<strong>#'.$dep['id'].'</strong> - '.$this->Text->truncate ($dep['subject'], 30),
+                                                array(
+                                                    'api' => false,
+                                                    'controller' => 'tasks',
+                                                    'project' => $project['Project']['name'],
+                                                    'action' => 'view',
+                                                    $dep['id']
+                                                ),
+                                                array('escape' => false)
+                                            );
+                                            echo "<br>";
+                                        } ?>
                                         </dd>
                                     </dl>
                                 </div>
