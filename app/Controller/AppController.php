@@ -64,22 +64,6 @@ class AppController extends Controller {
                 'action' => 'index'
             ),
             'authenticate' => array(
-                'LDAPAuthCake.LDAP' => array(
-                    'ldap_url'      => 'ldaps://nlbldap.soton.ac.uk',
-                    'ldap_bind_dn'  => '',
-                    'ldap_bind_pw'  => '',
-                    'ldap_base_dn'  => 'ou=User,dc=soton,dc=ac,dc=uk',
-                    'ldap_filter'   => '(| (proxyAddresses=SMTP:%USERNAME%) (proxyAddresses=smtp:%USERNAME%) )',
-                    'form_fields'   => array ('username' => 'email', 'password' => 'password'),
-                    'ldap_to_user'  => array(
-                      'displayName' => 'name',
-                      'mail'        => 'email',
-                    ),
-                    'defaults'      => array(
-                      'is_active'   => 1,
-                      'is_admin'    => 0,
-                    ),
-                ),
                 'Form' => array(
                     'fields' => array ('username' => 'email', 'password' => 'password')
                 ),
