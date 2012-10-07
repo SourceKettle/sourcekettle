@@ -69,6 +69,7 @@ $config['dtcore']['pages']['times']['view']['en']['info.time.logged'] = "Time Lo
 $config['dtcore']['pages']['times']['view']['en']['info.time.description'] = "Description";
 $config['dtcore']['pages']['times']['view']['en']['info.time.date'] = "Date";
 $config['dtcore']['pages']['times']['view']['en']['info.time.created'] = "Created By";
+$config['dtcore']['pages']['times']['view']['en']['info.time.task'] = "Attached Task";
 
 // APP Time/add
 $config['dtcore']['pages']['times']['add']['en']['header.text'] = "to the nearest 30 mins, please";
