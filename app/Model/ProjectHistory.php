@@ -190,6 +190,18 @@ class ProjectHistory extends AppModel {
                 $events[$a]['Subject']['title'] = $this->Project->{$model}->getTitleForHistory($result['ProjectHistory']['row_id']);
                 $events[$a]['Subject']['exists'] = true;
             }
+
+            switch ($events[$a]['Type']) {
+                case 'Collaborator':
+                    $this->Project->Collaborator->id = $events[$a]['Subject']['id'];
+                    if ($this->Project->Collaborator->exists()) {
+                        $events[$a]['url'] = array('controller' => 'users', 'action' => 'view', $this->Project->Collaborator->field('user_id'));
+                    }
+                    break;
+                case 'Time':
+                    $events[$a]['Subject']['title'] = 'logged time';
+                    break;
+            }
         }
 
         return $events;

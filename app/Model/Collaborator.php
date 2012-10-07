@@ -87,14 +87,6 @@ class Collaborator extends AppModel {
      */
     public function fetchHistory($project = '', $number = 50, $offset = 0, $user = -1, $query = array()) {
         $events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user,'collaborator');
-
-        // Currently there are no view pages for collaborators
-        foreach ($events as $x => $event) {
-            $this->id = $event['Subject']['id'];
-            if ($this->exists()) {
-                $events[$x]['url'] = array('controller' => 'users', 'action' => 'view', $this->field('user_id'));
-            }
-        }
         return $events;
     }
 
