@@ -330,7 +330,7 @@ class Project extends AppModel {
         $this->Source->init();
 
         // Types of event to collect
-        $_types = array('Collaborator', 'Time', 'Source', 'Task');
+        $_types = array('Collaborator', 'Time', 'Source', 'Task', 'Milestone');
 
         // Iterate over all of the types of event
         foreach ( $_types as $x ) {
