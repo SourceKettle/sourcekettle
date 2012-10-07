@@ -97,6 +97,7 @@ class TimesController extends AppProjectController {
         } else {
             $this->request->data = $time;
             $this->request->data['Time']['mins'] = $this->request->data['Time']['mins']['s'];
+            $this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
         }
     }
 
@@ -202,5 +203,6 @@ class TimesController extends AppProjectController {
     public function view($project, $id = null) {
         $project = $this->_projectCheck($project);
         $this->set('time', $this->Time->open($id));
+        $this->set('task', $this->Time->Project->Task->findById($this->Time->field('task_id')));
     }
 }
