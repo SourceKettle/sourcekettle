@@ -60,7 +60,7 @@ foreach ( $events as $event ) {
     }
 
     // Create Project Link
-    $project = $this->Html->link($event['Project']['name'], array('controller' => 'projects', 'action' => 'view', $event['Project']['id']));
+    $project = $this->Html->link($event['Project']['name'], array('controller' => 'projects', 'action' => 'view', 'project' => $event['Project']['name']));
 
     // Build the DT plugin request string
     $_dt_string = 'log.'.strtolower($event['Type']).'.';
