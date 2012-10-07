@@ -56,3 +56,16 @@ $config['dtcore']['pages']['all']['history']['en']['log.task.created'] = "{actio
 $config['dtcore']['pages']['all']['history']['en']['log.task.deleted.context'] = "{actioner} deleted task {subject} from {project}";
 $config['dtcore']['pages']['all']['history']['en']['log.task.deleted.short'] = "{actioner} deleted task {subject}";
 $config['dtcore']['pages']['all']['history']['en']['log.task.deleted'] = "{actioner} deleted task {subject} from the project";
+
+
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.updated.context'] = "{actioner} updated milestone {subject} in {project}";
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.updated.short'] = "{actioner} updated milestone {subject}";
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.updated'] = "{actioner} updated milestone {subject} &rarr; '{field}' was modified";
+
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.created.context'] = "{actioner} added a milestone ({subject}) to {project}";
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.created.short'] = "{actioner} added milestone {subject}";
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.created'] = "{actioner} added a milestone ({subject}) to the project";
+
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.deleted.context'] = "{actioner} deleted milestone {subject} from {project}";
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.deleted.short'] = "{actioner} deleted milestone {subject}";
+$config['dtcore']['pages']['all']['history']['en']['log.milestone.deleted'] = "{actioner} deleted milestone {subject} from the project";

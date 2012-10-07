@@ -7,6 +7,7 @@ $prefs = array(
     'Time'         => array('icon' => 'time', 'color' => 'info'),
     'Source'       => array('icon' => 'pencil', 'color' => 'success'),
     'Task'         => array('icon' => 'file', 'color' => 'important'),
+    'Milestone'    => array('icon' => 'road', 'color' => ''),
 );
 
 // Pick a date that cant have happened yet
