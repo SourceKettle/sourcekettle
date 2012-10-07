@@ -36,8 +36,8 @@ $config['dtcore']['pages']['all']['history']['en']['log.collaborator.deleted'] =
 $config['dtcore']['pages']['all']['history']['en']['log.time.updated.context'] = "{actioner} updated some {subject} in {project}";
 $config['dtcore']['pages']['all']['history']['en']['log.time.updated'] = "{actioner} updated some {subject}";
 
-$config['dtcore']['pages']['all']['history']['en']['log.time.created.context'] = "{actioner} {subject} to {project}";
-$config['dtcore']['pages']['all']['history']['en']['log.time.created'] = "{actioner} {subject} to the project";
+$config['dtcore']['pages']['all']['history']['en']['log.time.created.context'] = "{actioner} logged {subject} to {project}";
+$config['dtcore']['pages']['all']['history']['en']['log.time.created'] = "{actioner} logged {subject} to the project";
 
 $config['dtcore']['pages']['all']['history']['en']['log.time.deleted.context'] = "{actioner} removed some {subject} from {project}";
 $config['dtcore']['pages']['all']['history']['en']['log.time.deleted'] = "{actioner} removed {subject} from the project";

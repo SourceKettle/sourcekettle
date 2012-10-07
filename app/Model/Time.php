@@ -158,11 +158,7 @@ class Time extends AppModel {
      * @return void
      */
     public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
-        $events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'time');
-        foreach ($events as $x => $event) {
-            $events[$x]['Subject']['title'] = 'allocated time';
-        }
-        return $events;
+        return $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'time');
     }
 
     /**

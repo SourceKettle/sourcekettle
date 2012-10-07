@@ -72,4 +72,4 @@ $config['dtcore']['pages']['times']['view']['en']['info.time.created'] = "Create
 $config['dtcore']['pages']['times']['view']['en']['info.time.task'] = "Attached Task";
 
 // APP Time/add
-$config['dtcore']['pages']['times']['add']['en']['header.text'] = "to the nearest 30 mins, please";
+$config['dtcore']['pages']['times']['add']['en']['header.text'] = "record your effort";
