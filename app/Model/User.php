@@ -177,6 +177,9 @@ class User extends AppModel {
             $this->whitelist = $wl;
         }
 
+        // Lowercase the email address for storage
+        $this->data[$this->alias]['email'] = strtolower($this->data[$this->alias]['email']);
+
         if ( isset($this->data[$this->alias]['password'])) {
             $this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
         }
@@ -221,6 +224,17 @@ class User extends AppModel {
           isset($data['User']['password'])
           && !empty($data['User']['password'])
         );
+    }
+
+    // Case-insensitive findByEmail
+    public function findByEmail($email, $fields = null, $order = null) {
+        return $this->find('first', array(
+          'conditions' => array(
+            'LOWER(email)' => strtolower($email),
+          ),
+          'fields' => $fields,
+          'order' => $order
+        ));
     }
 
 }
