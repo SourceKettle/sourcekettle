@@ -125,6 +125,19 @@ class ProjectHistory extends AppModel {
             }
         }
 
+        // If a user is specified
+        if ($project == null && $user > 0) {
+            $search['conditions']['project_id'] = array_values(
+                $this->Project->Collaborator->find(
+                    'list',
+                    array(
+                        'conditions' => array('user_id' => $user),
+                        'fields' => array('project_id')
+                    )
+                )
+            );
+        }
+
         if ($project != null && $project = $this->Project->getProject($project)) {
             $search['conditions']['project_id'] = $project['Project']['id'];
         }
