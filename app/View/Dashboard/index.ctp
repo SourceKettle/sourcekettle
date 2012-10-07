@@ -22,11 +22,22 @@
 
 
 <div class="row">
-    <div class="span8">
+    <div class='span5'>
+      <h3>Recent events</h3>
+        <?= $this->element('history', array('context_global' => true, 'events' => $history)) ?>
     </div>
-
+    <div class="span3">
+      <h3>Assigned tasks</h3>
+      <? if (!empty($tasks)){
+        foreach ($tasks as $task){
+          echo $this->element('Task/element_1', array('task' => $task));
+        }
+      } else {
+        ?><div class='alert alert-success'>You have no assigned tasks! Why don't you assign yourself one?</div><?
+      }?>
+    </div>
     <div class="span4">
-        <h3>Your recent projects</h3>
+        <h3>Recent projects</h3>
         <div class='row'>
           <?
              $options = array(
@@ -62,7 +73,7 @@
         <? if (!empty($projects)){
           echo $this->Element("Project/list", array('projects' => $projects, 'nospan' => true));
         } else {
-          echo "<div class='well'>" . $config['pages']['projects']['all']['en']['noprojects.text'] . "</div>";
+          echo $this->element('Project/noprojectsalert');
         }?>
     </div>
 </div>

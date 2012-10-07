@@ -17,14 +17,14 @@ App::uses('AppController', 'Controller');
 
 class DashboardController extends AppController {
 
-    public $uses = array('Project', 'Task');
+    public $uses = array('Project', 'Task', 'ProjectHistory');
 
-    public $helpers = array('Time');
+    public $helpers = array('Time', 'Task');
 
     function index() {
-        // Get the recent projects
         $this->set('projects', $this->getRecentProjects());
-
+        $this->set('tasks', $this->getUserTasks());
+        $this->set('history', $this->getProjectsHistory());
     }
 
     private function getRecentProjects(){
@@ -34,13 +34,24 @@ class DashboardController extends AppController {
           'all', array(
             'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
             'order' => array('Project.modified DESC'),
-            'limit' => 5
+            'limit' => 3
           )
         );
     }
 
     private function getUserTasks(){
+        return $this->Task->find('all', array(
+            'conditions' => array(
+                'Task.assignee_id' => $this->Task->_auth_user_id
+            ), 
+            'recursive' => 3,
+            'order' => 'task_priority_id DESC',
+            'limit' => 10
+        ));
+    }
 
+    private function getProjectsHistory(){
+        return $this->ProjectHistory->fetchHistory(null, 25, 0, $this->Project->_auth_user_id);
     }
 
 }
