@@ -51,7 +51,7 @@ class DashboardController extends AppController {
     }
 
     private function getProjectsHistory(){
-        return $this->ProjectHistory->fetchHistory(null, 25, 0, $this->Project->_auth_user_id);
+        return $this->ProjectHistory->fetchHistory(null, 30, 0, $this->Project->_auth_user_id);
     }
 
 }
