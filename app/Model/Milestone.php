@@ -119,7 +119,7 @@ class Milestone extends AppModel {
      * @access public
      * @return void
      */
-    public function beforeDelete(Model $Model, $cascade = false) {
+    public function beforeDelete($cascade = false) {
         foreach ($this->Task->find('all', array('conditions' => array('milestone_id' => $this->id, 'task_status_id <' => 3))) as $task) {
             $this->Task->id = $task['Task']['id'];
             $this->Task->set('milestone_id', null);
@@ -269,5 +269,23 @@ class Milestone extends AppModel {
             $closed = $_diff;
         }
         return $closed;
+    }
+
+    /**
+     * @OVERRIDE
+     *
+     * fetchHistory function.
+     *
+     * @access public
+     * @param string $project (default: '')
+     * @param int $number (default: 10)
+     * @param int $offset (default: 0)
+     * @param float $user (default: -1)
+     * @param array $query (default: array())
+     * @return void
+     */
+    public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
+        $events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'milestone');
+        return $events;
     }
 }
