@@ -148,8 +148,11 @@ class AppController extends Controller {
     public function appBlackhole($type){
         if ($type == 'csrf') {
             // if a CSRF violation
-            $this->Flash->errorReason("The request was blackholed due to a CSRF violation");
-            $this->redirect($this->referer());
+            $this->Flash->errorReason("The request was blackholed due to a CSRF violation. You have either tried to submit this form more than once or submitted the form from another web site");
+
+            if (!empty($this->referer()) && !$this->request->is('ajax')){
+                $this->redirect($this->referer());
+            }
         }
     }
 
