@@ -420,7 +420,7 @@ class ProjectsController extends AppProjectController {
             && $this->request->query['query'] != null
             && strlen($this->request->query['query']) > 1) {
 
-            $query = mysql_real_escape_string($this->request->query['query']);
+            $query = $this->request->query['query'];
             $projects = $this->Project->find(
                 "all",
                 array(

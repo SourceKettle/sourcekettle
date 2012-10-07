@@ -328,7 +328,7 @@ class CollaboratorsController extends AppProjectController {
             && strlen($this->request->query['query']) > 2
             && isset($this->request['named']['project'])) {
 
-            $query = mysql_real_escape_string($this->request->query['query']);
+            $query = $this->request->query['query'];
             $users = $this->Collaborator->find(
                 "all",
                 array(
