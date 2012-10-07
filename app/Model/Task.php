@@ -151,6 +151,11 @@ class Task extends AppModel {
             'foreignKey' => 'task_id',
             'dependent'  => true,
         ),
+        'Time' => array(
+            'className'  => 'Time',
+            'foreignKey' => 'task_id',
+            'dependent'  => true,
+        ),
     );
 
     public $hasAndBelongsToMany = array(
@@ -270,5 +275,33 @@ class Task extends AppModel {
         } else {
             return '#'.$id;
         }
+    }
+
+    public function fetchLoggableTasks() {
+        $myTasks = $this->find(
+            'list',
+            array(
+                'conditions' => array(
+                    'Task.task_status_id <' => 4,
+                    'Task.project_id' => $this->Project->id,
+                    'Task.assignee_id' => $this->_auth_user_id,
+                )
+            )
+        );
+        $othersTasks = $this->find(
+            'list',
+            array(
+                'conditions' => array(
+                    'Task.task_status_id <' => 4,
+                    'Task.project_id' => $this->Project->id,
+                    'Task.assignee_id !=' => $this->_auth_user_id,
+                )
+            )
+        );
+        return array(
+            'No Assigned Task',
+            'Your Tasks' => $myTasks,
+            'Others Tasks' => $othersTasks
+        );
     }
 }

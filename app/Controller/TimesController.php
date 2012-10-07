@@ -55,6 +55,7 @@ class TimesController extends AppProjectController {
                 $this->request->data['Time']['mins'] = $origTime; // Show the user what they put in, its just nice
             }
         }
+        $this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
     }
 
     /**
@@ -128,7 +129,7 @@ class TimesController extends AppProjectController {
         $week_tasks[] = array('Task' => array('id' => 0, 'subject' => 'No associated task'));
 
         $this->set('week', $this->Time->timesForWeek($year, $week));
-        $this->set('tasks', $week_tasks);
+        $this->set('weekTasks', $week_tasks);
 
         $this->set('thisWeek', $week);
         $this->set('thisYear', $year);
@@ -148,6 +149,7 @@ class TimesController extends AppProjectController {
             $this->set('prevWeek', $week - 1);
             $this->set('prevYear', $year);
         }
+        $this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
     }
 
     /**

@@ -13,8 +13,10 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-echo $this->Bootstrap->page_header('Error, Will Robinson, ERROR!');
 ?>
+<div class="page-header">
+  <h1>Error, Will Robinson, ERROR!</h1>
+</div>
 <div class="row">
     <div class="span12">
         <div class="well error">

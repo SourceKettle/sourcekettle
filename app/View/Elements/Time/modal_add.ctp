@@ -16,7 +16,7 @@
 // Submit the serialize data on submit click
 $this->Js->get('#UserMyaddForm')->event('submit',
     $this->Js->request(
-        array('action' => 'add', 'project' => $project['Project']['name']),
+        array('action' => 'add', 'project' => $project['Project']['name'], 'controller' => 'times'),
         array(
             'update' => '#flashes', // element to update
             // after form submission

@@ -25,7 +25,7 @@
         <div class="span10">
             <?= $this->Form->create('Time', array('project' => $project['Project']['id'], 'class' => 'form-horizontal')) ?>
             <div class="well times form">
-                <?= $this->element('Time/add') ?>
+                <?= $this->element('Time/add', array('span' => 4)) ?>
                 <?= $this->Bootstrap->button("Submit", array("style" => "primary", 'class' => 'controls')) ?>
             </div>
             <?= $this->Form->end() ?>

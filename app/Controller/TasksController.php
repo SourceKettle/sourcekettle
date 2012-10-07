@@ -112,8 +112,8 @@ class TasksController extends AppProjectController {
                 $this->Flash->error('The comment could not be saved. Please, try again.');
             }
 
-			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-			return;
+            $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+            return;
         }
 
         // If a User has updated a comment
@@ -133,8 +133,8 @@ class TasksController extends AppProjectController {
                 $this->Flash->error('The comment could not be updated. Please, try again.');
             }
 
-			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-			return;
+            $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+            return;
         }
 
         // If a User has assigned someone
@@ -154,8 +154,8 @@ class TasksController extends AppProjectController {
                 $this->Flash->error('The assignee could not be updated. Please, try again.');
             }
 
-			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-			return;
+            $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+            return;
         }
 
         // Re-read to pick up changes
@@ -217,6 +217,17 @@ class TasksController extends AppProjectController {
         usort($changes, $cmp);
         $this->set('change_users', $change_users);
         $this->set('changes', $changes);
+
+        $times = $this->Task->Time->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'Time.task_id' => $this->Task->id
+                )
+            )
+        );
+        $this->set('times', $times);
+        $this->set('tasks', $this->Task->fetchLoggableTasks());
     }
 
     /**
@@ -327,7 +338,7 @@ class TasksController extends AppProjectController {
             ));
 
             $this->Task->bindModel(array('hasOne' => array('TaskDependency')));
-            
+
             $this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
         }
     }
@@ -585,7 +596,7 @@ class TasksController extends AppProjectController {
 
         $data = array();
         $request = array();
-        
+
         // Fetch the request from the user
         if (!is_null($this->request->query)) {
             $request = $this->request->query;

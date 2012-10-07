@@ -23,7 +23,10 @@ $this->Html->scriptBlock("
     $('.tempoBody').bind('click', function() {
         var a = $('#' + $(this).attr('data-toggle'));
 
-        $('.dp1').val($(this).attr('id'));
+        $('.dp1').val($(this).attr('data-date'));
+
+        var taskId = $(this).attr('data-taskId');
+        $('option[value='+taskId+']').attr('selected', 'selected');
 
         if (a.size() === 0) {
             $('#addTimeModal').modal('show');
@@ -51,7 +54,7 @@ echo $this->element('Time/modal_add');
         <tbody>
         <?php
             $elements = '';
-            foreach ($tasks as $task) {
+            foreach ($weekTasks as $task) {
                 $eventTitle = $task['Task']['subject'];
 
                 if ($task['Task']['id'] > 0) {
@@ -86,7 +89,7 @@ echo $this->element('Time/modal_add');
 
                     $today = ($times['today']) ? 'today' : '';
 
-                    $columns .= "<td id='{$times['date']}' class='tempoBody $today' data-toggle='$popover'>$total</td>";
+                    $columns .= "<td data-date='{$times['date']}' data-taskId='{$taskId}' class='tempoBody $today' data-toggle='$popover'>$total</td>";
                 }
 
                 echo "<tr><td>$eventTitle</td>$columns</tr>";

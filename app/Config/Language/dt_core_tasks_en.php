@@ -145,6 +145,9 @@ $config['dtcore']['pages']['tasks']['view']['en']['details.updated'] = "Last upd
 
 $config['dtcore']['pages']['tasks']['view']['en']['description.title'] = "Description";
 
+$config['dtcore']['pages']['tasks']['view']['en']['time.title'] = "Allocated Time";
+$config['dtcore']['pages']['tasks']['view']['en']['time.button'] = "Log Time";
+
 $config['dtcore']['pages']['tasks']['view']['en']['history.create.action'] = "created this task";
 $config['dtcore']['pages']['tasks']['view']['en']['history.change.action'] = "updated the tasks";
 $config['dtcore']['pages']['tasks']['view']['en']['history.commented.action'] = "commented";
