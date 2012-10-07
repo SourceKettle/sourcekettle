@@ -77,12 +77,12 @@ class TaskComment extends AppModel {
     function beforeSave($options = array()) {
         // Lock out those who are not allowed to write
         if ( !$this->Task->Project->hasWrite($this->_auth_user_id) ) {
-            throw new ForbiddenException(__('You do not have permissions to modifiy this project'));
+            throw new ForbiddenException(__('You do not have permissions to modify this project'));
         }
         return true;
     }
 
-    function open($id, $task_id = null, $ownershipRequired = false) {
+    function open($id, $task_id = null, $ownershipRequired = false, $allowAdmin = false) {
         $this->id = $id;
 
         if (!$this->exists()) {
@@ -92,7 +92,9 @@ class TaskComment extends AppModel {
             throw new NotFoundException(__('Invalid '.$this->name));
         }
         if ($ownershipRequired && $this->field('user_id') != $this->_auth_user_id) {
-            throw new ForbiddenException(__('Ownership required'));
+			if (!$allowAdmin || !$this->_auth_user_is_admin) {
+				throw new ForbiddenException(__('Ownership required'));
+			}
         }
         return $this->read();
     }

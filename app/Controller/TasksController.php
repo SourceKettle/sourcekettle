@@ -118,7 +118,16 @@ class TasksController extends AppProjectController {
 
 		// If a user is deleting a comment
 		if ($this->request->is('post') && isset($this->request->data['TaskCommentDelete'])) {
-			$this->Task->TaskComment->open ($this->request->data['TaskCommentDelete']['id'], $id, true);
+            try
+			{
+				$this->Task->TaskComment->open($this->request->data['TaskCommentDelete']['id'], $task['Task']['id'], true, true);
+		    }
+			catch ( ForbiddenException $e )
+			{
+				$this->Flash->error (__('You don\'t have permission to delete that comment'));
+            	$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+				return;
+			}
 			
 			if ($this->Task->TaskComment->delete ($this->request->data['TaskCommentDelete']['id'])) {
 				$this->Flash->info ('The comment has been deleted successfully.');
@@ -138,7 +147,18 @@ class TasksController extends AppProjectController {
             );
             unset($this->request->data['TaskCommentEdit']);
 
-            $this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id'], true);
+            try
+			{
+				$this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id'], true, true);
+		    }
+			catch ( ForbiddenException $e )
+			{
+			var_dump ($e);
+			return;
+				$this->Flash->error (__('You don\'t have permission to edit that comment'));
+            	$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+				return;
+			}
 
             if ($this->Task->TaskComment->save($this->request->data)) {
                 $this->Flash->info('The comment has been updated successfully');
