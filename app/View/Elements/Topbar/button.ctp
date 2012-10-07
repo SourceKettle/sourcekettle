@@ -35,11 +35,11 @@
     $c1 = $this->request['controller'];
     $a1 = $this->request['action'];
 
-    if (isset($options['back'])) {
-        echo '<div class="btn-group">';
-            echo $this->Bootstrap->button_link($this->Bootstrap->icon('backward'), $options['back'], array('escape'=>false));
-        echo '</div>';
-    }
+    //if (isset($options['back'])) {
+    //    echo '<div class="btn-group">';
+    //        echo $this->Bootstrap->button_link($this->Bootstrap->icon('backward'), $options['back'], array('escape'=>false));
+    //    echo '</div>';
+    //}
 
     foreach ($options['left'] as $block) {
         echo '<div class="btn-group">';
