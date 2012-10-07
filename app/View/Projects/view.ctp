@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('project.overview', null, array ('inline' => false));
+$this->Html->css('projects.overview', null, array ('inline' => false));
 
 ?>
 

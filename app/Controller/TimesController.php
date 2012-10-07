@@ -86,6 +86,7 @@ class TimesController extends AppProjectController {
     public function edit($project, $id = null) {
         $project = $this->_projectCheck($project, true);
         $time = $this->Time->open($id, true);
+        $this->set('time', $time);
 
         if ($this->request->is('post') || $this->request->is('put')) {
             $this->request->data['Time']['user_id'] = $this->Time->_auth_user_id;

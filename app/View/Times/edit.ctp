@@ -24,7 +24,7 @@ $this->Html->css('datepicker', null, array ('inline' => false));
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Time/topbar_edit', array('id' => $this->request->data['Time']['id'])) ?>
+        <?= $this->element('Time/topbar_edit', array('id' => $time['Time']['id']))//$this->request->data['Time']['id'])) ?>
         <div class="span10">
             <?= $this->Form->create('Time', array('class' => 'form-horizontal')) ?>
             <div class="well times form">
