@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `collaborators` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `project_id` (`project_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `collaborators`
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `email_confirmation_keys` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `email_confirmation_keys`
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `repo_type` (`repo_type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `projects`
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `project_histories` (
   KEY `modified` (`modified`),
   KEY `created` (`modified`),
   KEY `project_id` (`project_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `project_histories`
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `repo_types` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `repo_types`
@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `ssh_keys` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `ssh_keys`
@@ -173,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=2 ;
 
 --
 -- Dumping data for table `settings`
@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `deleted` int(1) NOT NULL DEFAULT '0',
   `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `users`
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `lost_password_keys` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE utf8_bin;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE utf8_bin;
 
 --
 -- Dumping data for table `lost_password_keys`
@@ -245,7 +245,7 @@ CREATE TABLE IF NOT EXISTS `source` (
   `project_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
 
 --
 -- Dumping data for table `source`
@@ -266,7 +266,7 @@ CREATE TABLE IF NOT EXISTS `api_keys` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE utf8_bin;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE utf8_bin;
 
 
 --
@@ -295,7 +295,7 @@ CREATE TABLE IF NOT EXISTS `times` (
   KEY `project_id` (`project_id`),
   KEY `user_id` (`user_id`),
   KEY `task_id` (`task_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `times`
@@ -329,7 +329,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   KEY `assignee_id` (`assignee_id`),
   KEY `milestone_id` (`milestone_id`),
   KEY `task_priority_id` (`task_priority_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `tasks`
@@ -349,7 +349,7 @@ CREATE TABLE IF NOT EXISTS `task_dependencies` (
   PRIMARY KEY (`id`),
   KEY `child_task_id` (`child_task_id`),
   KEY `parent_task_id` (`parent_task_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `tasks`
@@ -366,7 +366,7 @@ CREATE TABLE IF NOT EXISTS `task_types` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `task_types`
@@ -396,7 +396,7 @@ CREATE TABLE IF NOT EXISTS `task_comments` (
   `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `task_id` (`task_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `task_comments`
@@ -413,7 +413,7 @@ CREATE TABLE IF NOT EXISTS `task_statuses` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `task_statuses`
@@ -436,7 +436,7 @@ CREATE TABLE IF NOT EXISTS `task_priorities` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `task_priorities`
@@ -465,7 +465,7 @@ CREATE TABLE IF NOT EXISTS `milestones` (
   `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `milestones`
@@ -489,7 +489,7 @@ CREATE TABLE IF NOT EXISTS `attachments` (
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `attachments`
