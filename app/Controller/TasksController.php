@@ -116,6 +116,20 @@ class TasksController extends AppProjectController {
             return;
         }
 
+		// If a user is deleting a comment
+		if ($this->request->is('post') && isset($this->request->data['TaskCommentDelete'])) {
+			$this->Task->TaskComment->open ($this->request->data['TaskCommentDelete']['id'], $id, true);
+			
+			if ($this->Task->TaskComment->delete ($this->request->data['TaskCommentDelete']['id'])) {
+				$this->Flash->info ('The comment has been deleted successfully.');
+			} else {
+				$this->Flash->error ('The comment could not be deleted. Please, try again.');
+			}
+
+            $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+            return;
+		}
+
         // If a User has updated a comment
         if ($this->request->is('post') && isset($this->request->data['TaskCommentEdit'])) {
             $this->request->data['TaskComment'] = array(

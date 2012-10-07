@@ -24,12 +24,13 @@
     </div>
     <div class="span10">
         <div class="well col comment" id="<?= $comment['TaskComment']['id'] ?>">
-            <?php
-                if ($user_id == $comment['User']['id']) {
-                    echo '<button type="button" class="close delete">'.$this->Bootstrap->icon('remove-circle').'</button>';
-                    echo '<button type="button" class="close edit">'.$this->Bootstrap->icon('pencil').'</button>';
-                }
-            ?>
+            <?php if ($user_id == $comment['User']['id']): ?>
+            	<button type="button" class="close delete"><?= $this->Bootstrap->icon('remove-circle'); ?></button>
+                <button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
+				<?= $this->Form->create ('TaskCommentDelete', array ('class' => 'hide comment-delete')); ?>
+				<?= $this->Form->hidden ('id', array ('value' => $comment['TaskComment']['id'])); ?>
+				<?= $this->Form->end(); ?>
+            <?php endif; ?>
             <h5><?= $this->Bootstrap->icon('comment') ?><small> <?= $comment['User']['name'] ?> <?= $this->DT->t('history.commented.action') ?> <?= $this->Time->timeAgoInWords($comment['TaskComment']['created']) ?></small></h5>
             <hr />
             <p><?= $comment['TaskComment']['comment'] ?></p>
