@@ -46,35 +46,28 @@
                     </a>
                     <?= $this->Html->link($devtrack_config['global']['alias'], '/', array('class' => 'brand')); ?>
 
-                    <?php
-                    if(isset($user_name)){
-                        ?>
-                    <div class="btn-group pull-right" id='login-button'>
-                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="icon-user"></i> <?= $user_name?>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><?= $this->Html->link (__('Account settings'), array ('controller' => 'users')) ?></li>
-                            <li class="divider"></li>
-                            <li><?= $this->Html->link (__('Log Out'), array ('controller' => 'login', 'action' => 'logout')) ?></li>
-                        </ul>
-                    </div>
-                    <?
-                    } else {
-                    ?>
-                    <?= $this->Html->link (
-                        '<i class="icon-user"></i>' . __('Login'),
-                        array ('controller' => 'login'),
-                        array ('class' => 'btn pull-right', 'id' => 'login-button', 'escape' => false)) ?>
-                    <?php
-                    }?>
+                    <ul class="nav pull-right">
+                    <? if(isset($user_name)){ ?>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> <?= $user_name ?><b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><?= $this->Html->link(__('Account settings'), array ('controller' => 'users')) ?></li>
+                                <li class="divider"></li>
+                                <li><?= $this->Html->link(__('Log Out'), array ('controller' => 'login', 'action' => 'logout')) ?></li>
+                            </ul>
+                        </li>
+                    <? } else { ?>
+                        <li>
+                            <?= $this->Html->link('<i class="icon-user icon-white"></i> '.__('Login'), array ('controller' => 'login'), array('escape' => false, 'id' => 'login-button')) ?>
+                        </li>
+                    <? } ?>
+                    </ul>
                     <div class="nav-collapse">
                         <ul class="nav">
                             <?php
                             $navItems = array(
-                            	'dashboard' => __('Dashboard'),
-                            	'projects' => __('Projects'),
+                                'dashboard' => __('Dashboard'),
+                                'projects' => __('Projects'),
                                 'help' => __('Help'),
                             );
                             if($user_is_admin){

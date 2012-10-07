@@ -24,7 +24,12 @@
 <div class="row">
     <div class='span5'>
       <h3>Recent events</h3>
-        <?= $this->element('history', array('context_global' => true, 'events' => $history)) ?>
+        <? if (!empty($history)){
+          ?><div class='alert alert-info'><strong>In progress!</strong> Source code events are not shown here yet.</div><?
+          echo $this->element('history', array('context_global' => true, 'events' => $history));
+        } else {
+          ?><div class='alert alert-info'><strong>No events!</strong> There is no activity related to your account.</div><?
+        }?>
     </div>
     <div class="span3">
       <h3>Assigned tasks</h3>

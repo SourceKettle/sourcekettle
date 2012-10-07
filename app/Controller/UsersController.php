@@ -685,7 +685,7 @@ class UsersController extends AppController {
             && $this->request->query['query'] != null
             && strlen($this->request->query['query']) > 2) {
 
-            $query = mysql_real_escape_string($this->request->query['query']);
+            $query = $this->request->query['query'];
             $users = $this->User->find(
                 "all",
                 array(
