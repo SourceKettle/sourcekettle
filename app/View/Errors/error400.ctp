@@ -13,6 +13,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->layout = 'error';
 ?>
 <div class="page-header">
   <h1>Error, Will Robinson, ERROR!</h1>
@@ -21,7 +22,7 @@
     <div class="span12">
         <div class="well error">
             <h2><?=$name?></h2>
-            <h5>Is there an error with our error?<small> Email us at <?=$this->Text->autoLinkEmails($devtrack_config['sysadmin_email'])?></small></h5>
+            <h5>If the problem persists then contact your systems administrator</h5>
         </div>
     </div>
 </div>

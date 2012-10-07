@@ -13,14 +13,16 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-echo $this->Bootstrap->page_header('Oh Crikey, Batman! <small>An Internal Error Has Occurred!</small>');
+$this->layout = 'error';
+
 ?>
+<h1>Oh Crikey, Batman! <small>An Internal Error Has Occurred!</small></h1>
 <div class="row">
     <div class="span12">
         <div class="well">
             <h2>Darn! This is horribly embarrassing...</h2>
             <h4>Whatever you've requested has gone and caused a pesky error in the system.</h4>
-            <h6><small>Let us know what went wrong and email us at <?=$this->Text->autoLinkEmails($devtrack_config['sysadmin_email'])?></small></h6>
+            <h5>If the problem persists then contact your systems administrator</h5>
         </div>
     </div>
 </div>

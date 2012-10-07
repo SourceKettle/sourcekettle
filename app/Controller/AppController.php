@@ -79,6 +79,8 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
 
+        $this->Security->blackHoleCallback = 'appBlackhole';
+
         // Load config file in
         $this->devtrack_config = array_merge(
           Configure::read('devtrack'),
@@ -141,7 +143,14 @@ class AppController extends Controller {
             $user = $_USER_MODEL->findById($user_id);
             $this->set('user_is_devtrack_managed', User::isDevTrackManaged($user));
         }
+    }
 
+    public function appBlackhole($type){
+        if ($type == 'csrf') {
+            // if a CSRF violation
+            $this->Flash->errorReason("The request was blackholed due to a CSRF violation");
+            $this->redirect($this->referer());
+        }
     }
 
     protected function _api_auth_level() {
