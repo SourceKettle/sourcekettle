@@ -18,6 +18,7 @@
   echo $this->Bootstrap->page_header($config['pages']['dashboard']['index']['en']['header.text'] . " <small>" . $config['pages']['dashboard']['index']['en']['header.small.text'] . " " . strtolower($user_name) . "</small>");
 
   echo $this->element('beta_warning');
+  $this->Html->css('tasks.index', null, array ('inline' => false));
 ?>
 
 
