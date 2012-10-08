@@ -49,7 +49,13 @@
                     <ul class="nav pull-right">
                     <? if(isset($user_name)){ ?>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> <?= $user_name ?><b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <?= $this->Gravatar->image(
+                                    $user_email,
+                                    array('size' => 20),
+                                    array('alt' => $user_name)
+                                ) ?> <?= $user_name ?>
+                                <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users')) ?></li>
                                 <li class="divider"></li>
