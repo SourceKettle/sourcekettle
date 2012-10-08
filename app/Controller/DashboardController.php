@@ -54,4 +54,8 @@ class DashboardController extends AppController {
         return $this->ProjectHistory->fetchHistory(null, 30, 0, $this->Project->_auth_user_id);
     }
 
+    public function admin_index(){
+        $this->redirect(array('controller' => 'dashboard', 'action' => 'index', 'admin' => false)); // redirect to user dashboard until admin dashboard is created
+    }
+
 }
