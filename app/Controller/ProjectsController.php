@@ -23,7 +23,7 @@ class ProjectsController extends AppProjectController {
      * Project helpers
      * @var type
      */
-    public $helpers = array('Time', 'GoogleChart.GoogleChart', 'Paginator');
+    public $helpers = array('Time', 'GoogleChart.GoogleChart', 'Paginator', 'Markitup');
 
     public $uses = array('Project', 'RepoType');
 
@@ -280,6 +280,16 @@ class ProjectsController extends AppProjectController {
 
         $this->Flash->D($this->Project->delete());
         $this->redirect(array('action' => 'admin_index'));
+    }
+
+    public function markupPreview() {
+        $this->layout = 'ajax';
+        $content = '';
+        if (isset($this->request->query['data'])) {
+            $content = $this->request->query['data'];
+        }
+        $this->set(compact('content'));
+        $this->render('/Elements/Markitup/preview');
     }
 
     /***************************************************
