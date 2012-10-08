@@ -54,8 +54,25 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                              'controller'=>'tasks'
                                            ))?>
                                         </li>
-                                        <li class="closed-tasks"><?= $number_of_closed_tasks ?> - <?= $this->DT->t('summary.issues.closed') ?></li>
-                                        <li class="total-tasks"><?= $number_of_tasks ?> - <?= $this->DT->t('summary.issues.total') ?></li>
+
+                                        <li class="closed-tasks">
+                                          <?= $this->Html->link(
+                                            "$number_of_closed_tasks - ".$this->DT->t('summary.issues.closed'),
+                                           array(
+                                             'project'=>$project['Project']['name'],
+                                             'controller'=>'tasks'
+                                          ))?>
+                                        </li>
+
+                                        <li class="total-tasks">
+                                          <?=$this->Html->link(
+                                            "$number_of_tasks - ".$this->DT->t('summary.issues.total'),
+                                           array(
+                                             'project'=>$project['Project']['name'],
+                                             'controller'=>'tasks'
+                                            ))?>
+                                        </li>
+
                                         <li><?= $percent_of_tasks ?>% <?= $this->DT->t('summary.issues.percent') ?></li>
                                     </ul>
                                     <?= $this->Html->link(
