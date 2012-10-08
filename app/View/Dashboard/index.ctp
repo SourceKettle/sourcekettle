@@ -43,7 +43,7 @@
       }?>
     </div>
     <div class="span4">
-        <h3>Recent projects</h3>
+        <h3>Most recent projects</h3>
         <div class='row'>
           <?
              $options = array(

@@ -34,7 +34,7 @@ class DashboardController extends AppController {
           'all', array(
             'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
             'order' => array('Project.modified DESC'),
-            'limit' => 3
+            'limit' => 5
           )
         );
     }
