@@ -34,7 +34,7 @@ class DashboardController extends AppController {
           'all', array(
             'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
             'order' => array('Project.modified DESC'),
-            'limit' => 3
+            'limit' => 5
           )
         );
     }
@@ -52,6 +52,10 @@ class DashboardController extends AppController {
 
     private function getProjectsHistory(){
         return $this->ProjectHistory->fetchHistory(null, 30, 0, $this->Project->_auth_user_id);
+    }
+
+    public function admin_index(){
+        $this->redirect(array('controller' => 'dashboard', 'action' => 'index', 'admin' => false)); // redirect to user dashboard until admin dashboard is created
     }
 
 }

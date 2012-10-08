@@ -53,6 +53,18 @@ try {
                     </a>
                     <?= $this->Html->link($devtrack_config['global']['alias'], '/', array('class' => 'brand')); ?>
 
+                    <ul class="nav pull-right">
+                    <? if(isset($user_name)){ ?>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> <?= $user_name ?><b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users')) ?></li>
+                                <li class="divider"></li>
+                                <li><?= $this->Html->link(__('Log Out'), array ('admin' => false, 'controller' => 'login', 'action' => 'logout')) ?></li>
+                            </ul>
+                        </li>
+                    <? } ?>
+
                     <div class="nav-collapse">
                         <ul class="nav">
                             <?php
@@ -61,6 +73,9 @@ try {
                                 'projects' => __('Projects'),
                                 'help' => __('Help'),
                             );
+                            if(isset($user_is_admin) && $user_is_admin) {
+                                $navItems['admin'] = __('Administration');
+                            }
 
                             // Make the projects nav element highlighted if the current page is anything to do with a project
                             $current_controller = $this->params['controller'];

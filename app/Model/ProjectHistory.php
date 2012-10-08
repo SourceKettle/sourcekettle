@@ -205,7 +205,9 @@ class ProjectHistory extends AppModel {
                     }
                     break;
                 case 'Time':
-                    $events[$a]['Subject']['title'] = 'logged time';
+                    if (!empty($events[$a]['Change']['field_old'])){
+                        $events[$a]['Subject']['title'] = 'logged time';
+                    }
                     break;
             }
         }
