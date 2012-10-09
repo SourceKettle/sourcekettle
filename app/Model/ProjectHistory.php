@@ -195,7 +195,13 @@ class ProjectHistory extends AppModel {
                 case 'Collaborator':
                     $this->Project->Collaborator->id = $events[$a]['Subject']['id'];
                     if ($this->Project->Collaborator->exists()) {
-                        $events[$a]['url'] = array('controller' => 'users', 'action' => 'view', $this->Project->Collaborator->field('user_id'));
+                        $events[$a]['url'] = array(
+                            'api' => false,
+                            'admin' => false,
+                            'controller' => 'users',
+                            'action' => 'view',
+                            $this->Project->Collaborator->field('user_id')
+                        );
                     }
                     break;
                 case 'Time':
