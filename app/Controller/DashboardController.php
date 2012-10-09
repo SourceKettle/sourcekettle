@@ -42,7 +42,8 @@ class DashboardController extends AppController {
     private function getUserTasks(){
         return $this->Task->find('all', array(
             'conditions' => array(
-                'Task.assignee_id' => $this->Task->_auth_user_id
+                'Task.assignee_id' => $this->Task->_auth_user_id,
+                'Task.task_status_id <>' => '4' 
             ), 
             'recursive' => 3,
             'order' => 'task_priority_id DESC',
