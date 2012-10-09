@@ -37,7 +37,6 @@ $this->Html->scriptBlock("
 echo $this->element('Task/modal_close');
 echo $this->element('Task/modal_assign');
 
-
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -48,7 +47,7 @@ echo $this->element('Task/modal_assign');
     <div class="row">
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar_view', array('id' => $task['Task']['id'])) ?>
+            <?= $this->element('Task/topbar_view', array('id' => $task['Task']['id'], 'dependenciesComplete' => $task['Task']['dependenciesComplete'])) ?>
             <div class="span10">
 
                 <div class="row-fluid">
@@ -60,7 +59,7 @@ echo $this->element('Task/modal_assign');
                             array('escape' => false, 'class' => 'thumbnail')
                         ) ?>
                     </div>
-                    <div class="span10">
+                    <div class="span11">
                         <div class="well col">
                             <h5>
                                 <?= $this->Bootstrap->icon('pencil') ?>
@@ -128,7 +127,7 @@ echo $this->element('Task/modal_assign');
                             array('escape' => false, 'class' => 'thumbnail')
                         ) ?>
                     </div>
-                    <div class="span10">
+                    <div class="span11">
                         <div class="well col">
                             <?php
                             echo $this->Form->create('TaskComment', array('class' => 'form'));
@@ -147,7 +146,6 @@ echo $this->element('Task/modal_assign');
                             ?>
                         </div>
                     </div>
-                    <div class="span1"></div>
 
                 </div>
 

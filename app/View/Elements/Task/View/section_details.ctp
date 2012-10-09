@@ -33,13 +33,14 @@
             <?= (isset($task['Milestone']['subject'])) ? $this->Html->link(
                     $task['Milestone']['subject'],
                     array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
-                )  : 'n/a' ?>
+                )  : 'Not set' ?>
             </dd>
 
             <dt>Depends on:</dt>
 
             <dd>
             <?php
+            $dependenciesMet = true;
             foreach($task['DependsOn'] as $dep){
                 echo $this->Html->link(
                     '<strong>#'.$dep['id'].'</strong> - '.$this->Text->truncate ($dep['subject'], 30),
@@ -53,7 +54,20 @@
                     array('escape' => false)
                 );
                 echo "<br>";
-            } ?>
+
+                if (!$task['Task']['dependenciesComplete']){
+                    $dependenciesMet = false;
+                }
+
+            }
+            if (!empty($task['DependsOn'])){
+                if (!$dependenciesMet){
+                    echo "<span class='badge badge-important'>Dependencies not completed</span>";
+                } else {
+                    echo "<span class='badge badge-success'>Dependencies completed</span>";
+                }
+            }
+            ?>
             </dd>
         </dl>
         <dl class="dl-horizontal span6">
@@ -62,7 +76,7 @@
                 <?= (isset($task['Assignee']['name'])) ? $this->Html->link(
                     $task['Assignee']['name'],
                     array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
-                )  : 'n/a' ?>
+                )  : 'Not set' ?>
             </dd>
             <dt><?= $this->DT->t('details.status') ?>:</dt>
             <dd><?= $this->Task->status($task['Task']['task_status_id']) ?></dd>

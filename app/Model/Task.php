@@ -173,6 +173,61 @@ class Task extends AppModel {
         ),
     );
 
+    /**
+     * Determine whether the dependencies of a task are met
+     */
+    public function afterFind($results, $primary = false){
+        parent::afterFind($results, $primary);
+
+        if (isset($results['Task'])){
+            return $this->setDependenciesComplete($results);
+        } else {
+            foreach ($results as $key => $value) {
+                $results[$key] = $this->setDependenciesComplete($value); 
+            }
+        }
+        return $results;
+    }
+
+    private function setDependenciesComplete($result){
+        if (isset($result['DependsOn'])){
+
+            
+
+            if (!empty($result['DependsOn'][0])){
+                $completed = true;
+                foreach ($result['DependsOn'] as $dependsOn) {
+                    if ($dependsOn['task_status_id'] < 3){
+                        $completed = false;
+                        break;
+                    }
+                }
+                if ($completed){
+                    if (isset($result['Task'])){
+                        $result['Task']['dependenciesComplete'] = true;
+                    } else {
+                        $result['dependenciesComplete'] = true;
+                    }
+                } else {
+                    if (isset($result['Task'])){
+                        $result['Task']['dependenciesComplete'] = false;
+                    } else {
+                        $result['dependenciesComplete'] = false;
+                    }
+                }
+            } else {
+                if (isset($result['Task'])){
+                    $result['Task']['dependenciesComplete'] = false;
+                } else {
+                    $result['dependenciesComplete'] = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+
+
 
     /**
      * __construct function.
