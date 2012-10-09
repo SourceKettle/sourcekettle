@@ -80,13 +80,13 @@ $_levels = array(
                                 <td><?= $this->Html->link("$_user_name &lt;$_user_mail&gt;", $_user_url, array('escape' => false)) ?></td>
                                 <td><?= "$_access_icon $_access_text" ?></td>
                                 <td>
-                                    <? if ($_promote_url) echo $this->Bootstrap->button_form($_up_icon, $_promote_url, array('escape'=>false, 'size' => 'mini')); else echo $_blank_button; ?>
-                                    <? if ($_demote_url) echo $this->Bootstrap->button_form($_down_icon, $_demote_url, array('escape'=>false, 'size' => 'mini')); else echo $_blank_button; ?>
+                                    <? if ($_promote_url) echo $this->Bootstrap->button_form($_up_icon, $_promote_url, array('escape'=>false, 'size' => 'mini', 'title' => 'Promote user')); else echo $_blank_button; ?>
+                                    <? if ($_demote_url) echo $this->Bootstrap->button_form($_down_icon, $_demote_url, array('escape'=>false, 'size' => 'mini', 'title' => 'Demote user')); else echo $_blank_button; ?>
                                 <?php
                                     echo $this->Bootstrap->button_link(
                                         $this->Bootstrap->icon('eject', 'white'),
                                         $_delete_url,
-                                        array('escape'=>false, 'style' => 'danger', 'size' => 'mini')
+                                        array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'title' => 'Remove user from project')
                                     );
                                 ?>
                                 </td>
