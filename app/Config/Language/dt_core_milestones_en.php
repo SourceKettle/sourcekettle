@@ -28,6 +28,7 @@
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.option1.text'] = "Open Milestones";
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.option2.text'] = "Closed Milestones";
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.create.text'] = "Create Milestone";
+$config['dtcore']['pages']['milestones']['topbar']['en']['topbar.createtask.text'] = "Create Task";
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.edit.text'] = "Edit";
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.view.text'] = "View";
 $config['dtcore']['pages']['milestones']['topbar']['en']['topbar.delete.text'] = "Delete";

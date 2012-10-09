@@ -40,6 +40,16 @@
     'right' => array(
         array(
             array(
+                'text' => $this->DT->t('topbar.createtask.text', array('action' => 'topbar')),
+                'url' => array(
+                    'action' => 'add',
+                    'controller' => 'tasks',
+                ),
+                'props' => array('class' => 'btn-primary'),
+            ),
+        ),
+        array(
+            array(
                 'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),
                 'url' => array(
                     'action' => 'add',
