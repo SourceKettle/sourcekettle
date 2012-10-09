@@ -112,7 +112,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                             <h3>Quick Stats</h3>
                             <hr />
                             <ul class="unstyled">
-                                <li><strong><?= $numCollab ?> <?= Inflector::pluralize('user', $numCollab) ?></strong> are working on this project.</li>
+                                <li><strong><?= $this->Html->link($numCollab . " " . Inflector::pluralize('user', $numCollab), array('controller' => 'collaborators', 'action' => 'all', 'project' => $project['Project']['name']))?></strong> are working on this project.</li>
                                 <li>Last activity was <strong><?= $this->Time->timeAgoInWords($project['Project']['modified']) ?></strong>.</li>
                             </ul>
                         </div>

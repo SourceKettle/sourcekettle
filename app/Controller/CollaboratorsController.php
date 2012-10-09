@@ -51,6 +51,24 @@ class CollaboratorsController extends AppProjectController {
     }
 
     /**
+     * List the collaborators on the project
+     */
+    public function all($project = null){
+        $project = $this->_projectCheck($project, false, false);
+
+        $this->Collaborator->recursive = 0;
+
+        $collaborators = $this->Collaborator->find('all', array(
+            'conditions' => array(
+                'project_id' => $project['Project']['id']
+            ),
+            'order' => 'access_level DESC'
+        ));
+
+        $this->set('collaborators', $collaborators);
+    }
+
+    /**
      * add method
      *
      * @param string $name project name
