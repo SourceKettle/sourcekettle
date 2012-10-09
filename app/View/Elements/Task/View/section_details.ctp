@@ -40,7 +40,6 @@
 
             <dd>
             <?php
-            $dependenciesMet = true;
             foreach($task['DependsOn'] as $dep){
                 echo $this->Html->link(
                     '<strong>#'.$dep['id'].'</strong> - '.$this->Text->truncate ($dep['subject'], 30),
@@ -55,13 +54,9 @@
                 );
                 echo "<br>";
 
-                if (!$task['Task']['dependenciesComplete']){
-                    $dependenciesMet = false;
-                }
-
             }
             if (!empty($task['DependsOn'])){
-                if (!$dependenciesMet){
+                if (!$task['Task']['dependenciesComplete']){
                     echo "<span class='badge badge-important'>Dependencies not completed</span>";
                 } else {
                     echo "<span class='badge badge-success'>Dependencies completed</span>";
