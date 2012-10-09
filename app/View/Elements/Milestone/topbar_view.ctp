@@ -12,7 +12,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- $pl = 'Milestone #'.$id;
+ $pl = $this->Text->truncate($name, 20);
 
  $options = array(
     'back' => $previousPage,

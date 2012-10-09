@@ -24,7 +24,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Milestone/topbar_view', array('id' => $milestone['Milestone']['id'])) ?>
+            <?= $this->element('Milestone/topbar_view', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
             <div class="span10">
                 <div class="row-fluid">
 
