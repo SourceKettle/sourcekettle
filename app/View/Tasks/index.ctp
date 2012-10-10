@@ -16,7 +16,7 @@
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
 $this->Html->scriptBlock("
-        var repeat = function(statuses = null) {
+        var repeat = function(statuses) {
             var details = {};
 
             // Set the project
