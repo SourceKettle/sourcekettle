@@ -75,11 +75,11 @@ if ($task['Task']['task_status_id'] != 4) {
                 'props' => array('data-toggle' => 'modal'),
             ),
             $progress,
-//            array(
-//                'text' => $this->DT->t('bar.resolve'),
-//                'url' => '#resolveModal',
-//                'props' => array('data-toggle' => 'modal'),
-//            ),
+           // array(
+           //     'text' => $this->DT->t('bar.resolve'),
+           //     'url' => '#resolveModal',
+           //     'props' => array('data-toggle' => 'modal'),
+           // ),
             $state,
         ),
     ),

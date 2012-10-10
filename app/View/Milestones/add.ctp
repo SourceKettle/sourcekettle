@@ -27,7 +27,7 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Milestone/topbar_index') ?>
+            <?= $this->element('Milestone/topbar_add') ?>
             <div class="span10">
 
                 <?= $this->element('Milestone/add_edit') ?>

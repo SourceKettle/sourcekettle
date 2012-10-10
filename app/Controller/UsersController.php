@@ -463,6 +463,65 @@ class UsersController extends AppController {
     }
 
     /**
+     * Function to delete a user
+     * Use at your own peril
+     *
+     * Deletes the specified user and any projects for which there are no other
+     * collaborators - but only if the current user is a system admin.
+     */
+    public function admin_delete($user_id){
+
+        /*Debugger::dump($this);
+        Debugger::dump($this->request);
+        exit;*/
+
+        // Check we're logged in as an admin
+        // TODO - pretty sure by this point we've already checked, but I'm in a paranoid mood
+        $this->User->id = $this->Auth->user('id');
+        $current_user_data = $this->User->read();
+
+        if(!$current_user_data['User']['is_admin']){
+            $this->redirect('/');
+        }
+
+        // Check user ID is numeric...
+        $user_id = trim($user_id);
+        if(!is_numeric($user_id)){
+            $this->Session->setFlash(__('Could not delete user - bad user ID was given'), 'error', array(), '');
+            $this->redirect(array('action' => 'admin_index'));
+        }
+
+        
+
+        if($this->request->is('post')){
+            $this->User->id = $user_id;
+            $target_user_data = $this->User->read();
+
+            $this->set('external_account', false);
+            if(!User::isDevtrackManaged($target_user_data)){
+                $this->Session->setFlash(__('Account could not be deleted - it is not managed by DevTrack'), 'default', array(), 'error');
+                $this->redirect(array('action' => 'admin_index'));
+            }
+
+
+            //Now delete the user
+            if ($this->User->delete($this->Auth->id)) {
+                $this->Session->setFlash(__('Account deleted'), 'default', array(), 'success');
+                $this->log("[UsersController.delete] user[".$this->Auth->user('id')."] deleted", 'devtrack');
+                $this->redirect(array('action' => 'admin_index'));
+            }
+
+            // TODO check what projects made this fail
+            $this->Session->setFlash(__('Account was not deleted'), 'default', array(), 'error');
+            $this->redirect(array('action' => 'admin_index'));
+
+        } else {
+            // We only respond to POSTs, otherwise bounce to index page
+            $this->redirect(array('action' => 'admin_index'));
+        }
+    }
+
+    /**
      * Generates a random key of a given length
      * @param type $length The length of the key
      * @return string The random key

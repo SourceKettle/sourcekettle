@@ -32,7 +32,7 @@ $this->Html->scriptBlock ("
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar_index') ?>
+            <?= $this->element('Task/topbar_add') ?>
             <div class="span10">
                 <?= $this->Form->create('Task', array('class' => 'well form-horizontal')) ?>
                 <div class="row-fluid">

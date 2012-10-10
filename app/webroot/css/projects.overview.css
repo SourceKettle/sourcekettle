@@ -12,15 +12,15 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-.open-tasks {
+.open-tasks a {
     color: #3266cc;
 }
 
-.closed-tasks {
+.closed-tasks a {
     color: #c5d8ff;
 }
 
-.total-tasks {
+.total-tasks a {
     color: #000000;
 }
 

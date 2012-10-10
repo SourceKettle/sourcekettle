@@ -35,3 +35,7 @@ $config['dtcore']['pages']['collaborators']['index']['en']['users.actions'] = "A
 $config['dtcore']['pages']['collaborators']['index']['en']['users.actions.delete'] = "Are you sure you want to remove {user} from the project?";
 
 $config['dtcore']['pages']['collaborators']['index']['en']['add.header'] = "Add a User";
+
+
+// APP/Collaborators/all
+$config['dtcore']['pages']['collaborators']['all']['en']['header.text'] = "Collaborators working on the project";

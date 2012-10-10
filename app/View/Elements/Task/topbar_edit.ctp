@@ -49,11 +49,6 @@ if ($this->request->data['Task']['task_status_id'] != 4) {
                 'url' => '#assignModal',
                 'props' => array('data-toggle' => 'modal'),
             ),
-            array(
-                'text' => $this->DT->t('bar.resolve'),
-                'url' => '#resolveModal',
-                'props' => array('data-toggle' => 'modal'),
-            ),
             $state,
         ),
     ),

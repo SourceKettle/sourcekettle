@@ -12,7 +12,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- $pl = 'Milestone #'.$id;
+ $pl = $this->Text->truncate($name, 20);
 
  $options = array(
     'back' => $previousPage,
@@ -38,6 +38,16 @@
         ),
     ),
     'right' => array(
+        array(
+            array(
+                'text' => $this->DT->t('topbar.createtask.text', array('action' => 'topbar')),
+                'url' => array(
+                    'action' => 'add',
+                    'controller' => 'tasks',
+                ),
+                'props' => array('class' => 'btn-primary'),
+            ),
+        ),
         array(
             array(
                 'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),

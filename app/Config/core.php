@@ -175,7 +175,7 @@ Configure::write('Routing.prefixes', array('admin', 'api'));
 	Configure::write('Session', array(
 		'defaults' => 'php',
 		'cookie' => 'devtrack',
-		'timeout' => 1440
+		'timeout' => 2880
 	));
 
 /**

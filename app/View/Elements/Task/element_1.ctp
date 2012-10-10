@@ -13,9 +13,12 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+if (!isset($draggable)){
+    $dragable = false;
+}
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
 ?>
-<div onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="true">
+<div onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="<? if ($task['Task']['dependenciesComplete'] && $draggable){ echo 'true'; } else { echo 'false';}?>">
     <div class="task">
         <div class="well type_bar_<?= $task['TaskType']['name'] ?>">
             <div class="row-fluid">
@@ -26,6 +29,16 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                         </p>
                         <?= $this->Task->priority($task['Task']['task_priority_id']) ?>
                         <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
+
+                        <?
+                        if (!empty($task['DependsOn'])){
+                            if (!$task['Task']['dependenciesComplete']){
+                                echo "<span class='label label-important'>Dependencies</span>";
+                            } else {
+                                echo "<span class='label label-success'>Dependencies</span>";
+                            }
+                        }
+                        ?>
                     </div>
                     <div class="span2">
                         <?= $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm'), array('alt' => $task['Assignee']['name'])) ?>

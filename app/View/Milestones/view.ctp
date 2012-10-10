@@ -24,7 +24,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Milestone/topbar_view', array('id' => $milestone['Milestone']['id'])) ?>
+            <?= $this->element('Milestone/topbar_view', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
             <div class="span10">
                 <div class="row-fluid">
 
@@ -70,13 +70,13 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                                 <? for ($x = 0; $x < sizeof($iceBox); $x = $x + 3) : ?>
                                     <div class="row-fluid">
                                         <div class="span4">
-                                            <?= $this->element('Task/element_1', array('task' => $iceBox[$x])) ?>
+                                            <?= $this->element('Task/element_1', array('task' => $iceBox[$x], 'draggable' => true)) ?>
                                         </div>
                                         <div class="span4">
-                                            <?= (isset($iceBox[$x + 1])) ? $this->element('Task/element_1', array('task' => $iceBox[$x + 1])) : '' ?>
+                                            <?= (isset($iceBox[$x + 1])) ? $this->element('Task/element_1', array('task' => $iceBox[$x + 1], 'draggable' => true)) : '' ?>
                                         </div>
                                         <div class="span4">
-                                            <?= (isset($iceBox[$x + 2])) ? $this->element('Task/element_1', array('task' => $iceBox[$x + 2])) : '' ?>
+                                            <?= (isset($iceBox[$x + 2])) ? $this->element('Task/element_1', array('task' => $iceBox[$x + 2], 'draggable' => true)) : '' ?>
                                         </div>
                                     </div>
                                 <? endfor; ?>
