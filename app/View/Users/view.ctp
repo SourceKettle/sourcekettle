@@ -8,7 +8,7 @@
             array('alt' => $user['User']['name'])
         ) ?>
     </div>
-    <dl class="dl-horizontal span9 pull-right">
+    <dl class="dl-horizontal span9">
         <dt>
         Email address
         </dt>
@@ -23,24 +23,25 @@
         </dd>
     </dl>
 </div>
+<?php
+    if (!empty($shared_projects)) {
+        echo '<hr>';
+        echo '<div class="row">';
+        echo "<h3 class='span12'>Projects shared with this user</h3>";
+        echo $this->Element("Project/list", array('projects' => $shared_projects));
+        echo '</div>';
+    }
+?>
 <hr>
 <div class="row">
     <?php
+    if (!empty($shared_projects)) echo "<h3 class='span12'>Users public projects</h3>";
+
     // Loop through all the projects that a user has access to
     if (empty($projects)) {
         echo "<p class='span12'>This user has no public projects</p>";
     } else {
-        foreach ($projects as $project):
-            ?>
-            <div class="span4">
-                <div class="well project-well">
-                    <h3 class="project-title"><?= $this->Html->link($project['Project']['name'], array('controller' => 'projects', 'action' => '.', 'project' => $project['Project']['name']), array('class' => 'project-link')) ?>
-                        <span class="pull-right"><?= $this->Bootstrap->icon((($project['Project']['public']) ? 'globe' : 'lock'), 'black') ?></span></h3>
-                    <p class="project-desc"><?= $project['Project']['description'] ?></p>
-                    <p class="project-time">Last Modified: <?= $this->Time->timeAgoInWords($project['Project']['modified']) ?></p>
-                </div>
-            </div>
-    <?php endforeach;
+        echo $this->Element("Project/list", array('projects' => $projects));
     } ?>
 </div>
 

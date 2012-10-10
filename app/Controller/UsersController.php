@@ -260,6 +260,17 @@ class UsersController extends AppController {
         $this->User->Collaborator->Project->Collaborator->recursive = 0;
         $this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
         $this->set('user', $this->User->read(null, $id));
+
+        $you  = $this->User->_auth_user_id;
+        $them = $this->User->id;
+        $join_projects = array();
+
+        // TODO - Make one query
+        if ($you != $them) {
+            $them_projects = array_values($this->User->Collaborator->find('list', array('conditions' => array('user_id' => $them), 'fields' => array('project_id'))));
+            $join_projects = $this->User->Collaborator->find('all', array('conditions' => array('user_id' => $you, 'project_id' => $them_projects)));
+        }
+        $this->set('shared_projects', $join_projects);
     }
 
     /**
