@@ -16,15 +16,17 @@
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
 $this->Html->scriptBlock("
-        var repeat = function() {
+        var repeat = function(statuses = null) {
             var details = {};
 
             // Set the project
             details['project'] = '".$project['Project']['id']."';
 
             // Get the status of the desired tasks
-            var status = $('#taskStatus').find('.active').find('a').attr('status-id');
-            details['status'] = status;
+            if(statuses == null){
+                statuses = $('#taskStatus').find('.active').find('a').attr('status-id');
+            }
+            details['statuses'] = statuses;
 
             // Get the desired owner of tasks
             details['requester'] = '".$this->request['action']."';
@@ -74,7 +76,7 @@ $this->Html->scriptBlock("
                 repeat();
             });
 
-            repeat();
+            repeat('".$task_status_filter."');
         });
     ", array('inline' => false));
 ?>

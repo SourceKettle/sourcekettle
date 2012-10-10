@@ -50,8 +50,10 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                           <?= $this->Html->link(
                                            "$number_of_open_tasks - ".$this->DT->t('summary.issues.open'),
                                            array(
-                                             'project'=>$project['Project']['name'],
-                                             'controller'=>'tasks'
+                                             'project'    => $project['Project']['name'],
+                                             'controller' => 'tasks',
+                                             'action'     => 'all',
+                                             '1,2' // Task status IDs
                                            ))?>
                                         </li>
 
@@ -59,8 +61,10 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                           <?= $this->Html->link(
                                             "$number_of_closed_tasks - ".$this->DT->t('summary.issues.closed'),
                                            array(
-                                             'project'=>$project['Project']['name'],
-                                             'controller'=>'tasks'
+                                             'project'    => $project['Project']['name'],
+                                             'controller' => 'tasks',
+                                             'action'     => 'all',
+                                             '3,4' // Task status IDs
                                           ))?>
                                         </li>
 
@@ -68,8 +72,9 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                           <?=$this->Html->link(
                                             "$number_of_tasks - ".$this->DT->t('summary.issues.total'),
                                            array(
-                                             'project'=>$project['Project']['name'],
-                                             'controller'=>'tasks'
+                                             'project'    => $project['Project']['name'],
+                                             'controller' => 'tasks',
+                                             'action'     => 'all'
                                             ))?>
                                         </li>
 
