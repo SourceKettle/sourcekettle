@@ -53,7 +53,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
                                              'action'     => 'all',
-                                             '1,2' // Task status IDs
+                                             '1,2,3' // Task status IDs
                                            ))?>
                                         </li>
 
@@ -64,7 +64,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
                                              'action'     => 'all',
-                                             '3,4' // Task status IDs
+                                             '4' // Task status IDs
                                           ))?>
                                         </li>
 
