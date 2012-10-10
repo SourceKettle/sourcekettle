@@ -262,6 +262,7 @@ class TasksController extends AppProjectController {
         );
         $this->set('times', $times);
         $this->set('tasks', $this->Task->fetchLoggableTasks());
+        $this->set('collaborators', $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']));
     }
 
     /**

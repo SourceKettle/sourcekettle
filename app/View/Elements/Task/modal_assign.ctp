@@ -24,23 +24,14 @@
         <?php
             echo $this->Form->create('TaskAssignee', array('class' => 'form-inline'));
 
-            echo $this->element('components/user_typeahead_input',
-                array(
-                    'name' => 'assignee',
-                    'properties' => array(
-                        'id' => 'appendedInputButton',
-                        'class' => 'span5',
-                        "placeholder" => "john.smith@example.com",
-                        'label' => false
-                    ),
-                    'url' => array(
-                        'project' => $project['Project']['id'],
-                        'controller' => 'collaborators',
-                        'action' => 'autocomplete',
-                        'api' => true
-                    )
-                )
-            );
+            echo $this->Form->input('assignee', array(
+                'options' => $collaborators,
+                'empty' => false,
+                'selected' => "$user_name [$user_email]",
+                'label' => false,
+                'id' => 'appendedInputButton',
+                'class' => 'span5',
+            ));
         ?>
     </div>
     <div class="modal-footer">

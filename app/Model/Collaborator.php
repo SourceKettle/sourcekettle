@@ -108,4 +108,23 @@ class Collaborator extends AppModel {
             return $this->User->field('name');
         }
     }
+
+	/**
+	 * collaboratorsForProject function.
+	 *
+	 * @access public
+	 * @param mixed $project (default: null)
+	 * @return void
+	 */
+	public function collaboratorsForProject($project = null) {
+		$users = array();
+		$collaborators = $this->find('all', array(
+			'conditions' => array('Collaborator.project_id' => $project)
+		));
+		foreach ($collaborators as $collaborator) {
+			$collaborator = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
+			$users[$collaborator] = $collaborator;
+		}
+		return $users;
+	}
 }
