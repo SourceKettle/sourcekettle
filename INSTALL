@@ -1,4 +1,3 @@
-
 Quick install instructions
 ==========================
 
@@ -31,6 +30,19 @@ DevTrack setup
 * Set 'Security.cipherSeed' and 'Security.salt' in Config/core.php
 * Reload/restart apache
 * Load the webpage, then go to /setup to see any possible problems
+
+Multiple VirtualHosts
+---------------------
+
+If you want to set up several DevTrack installations in different vhosts, this is supported - simply
+run through the setup steps above for each installation.  You should of course set a different user,
+group, Security.salt, Security.cipherSeed and repository directory for each install.
+
+You will also need to change the following settings in app/Config/core.php:
+
+* $prefix - MUST be different for each installation, or Weird Caching Things will happen and you will be sad
+* Session => cookie - this doesn't necessarily need to be different, but will make it more obvious when debugging problems!
+
 
 LDAP authentication
 -------------------
