@@ -60,7 +60,7 @@
 <div class="row-fluid">
 
     <div class="span1"></div>
-    <div class="span10">
+    <div class="span11">
         <div class="colchange">
             <p>
                 <?= $this->Bootstrap->label($this->Bootstrap->icon('pencil', 'white').' Update') ?>
@@ -73,6 +73,5 @@
             </p>
         </div>
     </div>
-    <div class="span1"></div>
 
 </div>

@@ -22,7 +22,7 @@
             array('escape' => false, 'class' => 'thumbnail')
         ) ?>
     </div>
-    <div class="span10">
+    <div class="span11">
         <div class="well col comment" id="<?= $comment['TaskComment']['id'] ?>">
             <?php if ($user_is_admin || $user_id == $comment['User']['id']): ?>
             	<button type="button" class="close delete"><?= $this->Bootstrap->icon('remove-circle'); ?></button>
@@ -42,6 +42,5 @@
 			<?= $this->Form->end(); ?>
        </div>
     </div>
-    <div class="span1"></div>
 
 </div>

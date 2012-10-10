@@ -104,7 +104,6 @@ echo $this->element('Task/modal_assign');
                             </div>
                         </div>
                     </div>
-                    <div class="span1"></div>
 
                 </div>
 

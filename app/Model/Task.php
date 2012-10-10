@@ -179,11 +179,13 @@ class Task extends AppModel {
     public function afterFind($results, $primary = false){
         parent::afterFind($results, $primary);
 
-        if (isset($results['Task'])){
+        if (isset($results['id'])) {
+            return $results;
+        } else if (isset($results['Task'])){
             return $this->setDependenciesComplete($results);
         } else {
             foreach ($results as $key => $value) {
-                $results[$key] = $this->setDependenciesComplete($value); 
+                $results[$key] = $this->setDependenciesComplete($value);
             }
         }
         return $results;
@@ -192,7 +194,7 @@ class Task extends AppModel {
     private function setDependenciesComplete($result){
         if (isset($result['DependsOn'])){
 
-            
+
 
             if (!empty($result['DependsOn'][0])){
                 $completed = true;
