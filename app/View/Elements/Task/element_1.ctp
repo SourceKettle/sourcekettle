@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (!isset($draggable)){
-    $dragable = false;
+    $draggable = false;
 }
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
 ?>
