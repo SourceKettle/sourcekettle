@@ -137,6 +137,14 @@ class UsersController extends AppController {
             //generate random password and email it to them
             $user = $this->User->findByEmail($this->request->data['User']['email']); //Get the user attached to the given email
 
+
+            if ($user['User']['password'] == null) {
+                $this->Session->setFlash("It looks like you're using an account that is not managed by devtrack - ".
+                    "unfortunately, we can't help you reset your password.  Try talking to ".
+                    "<a href='mailto:".$this->devtrack_config['sysadmin_email']."'>the system administrator</a>.", 'default', array(), 'error');
+                $this->redirect('/login');
+            }
+
             if (!empty($user)){
                 //Now to create the key and send the email
                 $this->User->LostPasswordKey->save(

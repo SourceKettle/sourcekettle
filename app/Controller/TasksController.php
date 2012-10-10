@@ -44,9 +44,13 @@ class TasksController extends AppProjectController {
      *
      * @return void
      */
-    public function index($project = null) {
+    public function index($project = null, $statuses = null) {
         $project = $this->_projectCheck($project);
-
+        if(preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)){
+            $this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
+        } else{
+            $this->set('task_status_filter', 0);
+        }
         $this->set('events', $this->Task->fetchHistory($project['Project']['id'], 5));
         $this->set('open_milestones', $this->Task->Milestone->getOpenMilestones(true));
     }
@@ -58,8 +62,8 @@ class TasksController extends AppProjectController {
      * @param mixed $project (default: null)
      * @return void
      */
-    public function others($project = null) {
-        $this->index($project);
+    public function others($project = null, $statuses = null) {
+        $this->index($project, $statuses);
         $this->render('index');
     }
 
@@ -70,8 +74,8 @@ class TasksController extends AppProjectController {
      * @param mixed $project (default: null)
      * @return void
      */
-    public function nobody($project = null) {
-        $this->index($project);
+    public function nobody($project = null, $statuses = null) {
+        $this->index($project, $statuses);
         $this->render('index');
     }
 
@@ -82,8 +86,8 @@ class TasksController extends AppProjectController {
      * @param mixed $project (default: null)
      * @return void
      */
-    public function all($project = null) {
-        $this->index($project);
+    public function all($project = null, $statuses = null) {
+        $this->index($project, $statuses);
         $this->render('index');
     }
 
@@ -680,10 +684,22 @@ class TasksController extends AppProjectController {
             }
 
             // Ive assumed the user is logged in
-            if (array_key_exists('status', $request)) {
-                $status = $this->Task->TaskStatus->findByName(strtolower($request['status']));
-                if ($status != null) {
-                    $conditions['task_status_id'] = $status['TaskStatus']['id'];
+
+            // If they want one or more specific task statuses, add some conditions
+            if (array_key_exists('statuses', $request)) {
+                $or = array();
+
+                foreach (preg_split('/\s*,\s*/', trim($request['statuses'])) as $status_id){
+                    
+                    $status = $this->Task->TaskStatus->findById($status_id);
+
+                    if ($status != null) {
+                        $or[] = array('Task.task_status_id' => $status['TaskStatus']['id']);
+                    }
+                }
+
+                if(!empty($or)){
+                    $conditions['OR'] = $or;
                 }
             }
 
