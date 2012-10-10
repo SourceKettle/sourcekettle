@@ -23,7 +23,7 @@ $this->Html->scriptBlock("
             details['project'] = '".$project['Project']['id']."';
 
             // Get the status of the desired tasks
-            var status = $('#taskStatus').find('.active').find('a').html();
+            var status = $('#taskStatus').find('.active').find('a').attr('status-id');
             details['status'] = status;
 
             // Get the desired owner of tasks
@@ -106,20 +106,20 @@ $this->Html->scriptBlock("
                             <div class="row-fluid">
                                 <div class="span6">
                                     <ul id="taskStatus" class="nav nav-pills nav-stacked">
-                                        <li class="active">
-                                            <a href="#"><?= $this->DT->t('column.options.statuses.all') ?></a>
+                                        <li class="active"> <?//TODO remove hard-coded status IDs...?>
+                                            <a href="#" status-id="0"><?= $this->DT->t('column.options.statuses.all') ?></a>
                                         </li>
                                         <li class="">
-                                            <a href="#"><?= $this->DT->t('column.options.statuses.open') ?></a>
+                                            <a href="#" status-id="1"><?= $this->DT->t('column.options.statuses.open') ?></a>
                                         </li>
                                         <li class="">
-                                            <a href="#"><?= $this->DT->t('column.options.statuses.progress') ?></a>
+                                            <a href="#" status-id="2"><?= $this->DT->t('column.options.statuses.progress') ?></a>
                                         </li>
                                         <li class="">
-                                            <a href="#"><?= $this->DT->t('column.options.statuses.resolved') ?></a>
+                                            <a href="#" status-id="3"><?= $this->DT->t('column.options.statuses.resolved') ?></a>
                                         </li>
                                         <li class="">
-                                            <a href="#"><?= $this->DT->t('column.options.statuses.closed') ?></a>
+                                            <a href="#" status-id="4"><?= $this->DT->t('column.options.statuses.closed') ?></a>
                                         </li>
                                     </ul>
                                 </div>

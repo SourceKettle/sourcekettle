@@ -681,7 +681,7 @@ class TasksController extends AppProjectController {
 
             // Ive assumed the user is logged in
             if (array_key_exists('status', $request)) {
-                $status = $this->Task->TaskStatus->findByName(strtolower($request['status']));
+                $status = $this->Task->TaskStatus->findById(trim($request['status']));
                 if ($status != null) {
                     $conditions['task_status_id'] = $status['TaskStatus']['id'];
                 }
