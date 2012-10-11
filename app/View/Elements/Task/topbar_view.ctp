@@ -53,8 +53,19 @@ if ($task['Task']['task_status_id'] != 4) {
             'controller' => 'tasks',
             $id
          ),
+
          'props' => array("class" => "btn-info")
      );
+ }
+
+ if ($task['Task']['task_status_id'] <= 2) {
+    $resolve = array(
+        'text' => $this->DT->t('bar.resolve'),
+        'url' => '#resolveModal',
+        'props' => array('data-toggle' => 'modal')
+    );
+ } else {
+     $resolve = '';
  }
 
  $options = array(
@@ -75,11 +86,7 @@ if ($task['Task']['task_status_id'] != 4) {
                 'props' => array('data-toggle' => 'modal'),
             ),
             $progress,
-           // array(
-           //     'text' => $this->DT->t('bar.resolve'),
-           //     'url' => '#resolveModal',
-           //     'props' => array('data-toggle' => 'modal'),
-           // ),
+            $resolve,
             $state,
         ),
     ),

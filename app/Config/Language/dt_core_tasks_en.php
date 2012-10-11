@@ -170,6 +170,12 @@ $config['dtcore']['pages']['tasks']['view']['en']['modal.close.close'] = "Cancel
 $config['dtcore']['pages']['tasks']['view']['en']['modal.close.submit'] = "Close Task";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.close.body'] = "Before the task can be closed, please leave an explanation.";
 
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.header'] = "Resolve the task";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.comment.placeholder'] = "Enter a comment for resolving this task...";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.close'] = "Cancel";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.submit'] = "Resolve Task";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.body'] = "Before the task can be resolved, please leave an explanation.";
+
 // APP/Tasks/api_marshalled
 
 $config['dtcore']['pages']['tasks']['api_marshalled']['en']['column.tasks.empty'] = "No Tasks found...";
