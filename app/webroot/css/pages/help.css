@@ -2,6 +2,10 @@
 	color: #cfcfcf;
 }
 
+.greyOut img {
+	opacity: 0.25;
+}
+
 .greyOut a {
 	color: #cfcfcf;
 }
