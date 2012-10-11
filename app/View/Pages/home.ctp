@@ -16,8 +16,13 @@
 
 echo $this->element('cookieInfo');
 
-?>
+// Load the sysadmin-configurable home page content out of the Config directory
+$basedir = realpath(dirname(__FILE__).'/../../');
 
-<h1>Home page</h1>
+if(file_exists("$basedir/Config/homepage.php")){
+    include("$basedir/Config/homepage.php");
+} else{?>
+   <h1>Welcome to DevTrack!</h1>
+   <?= $this->Html->link('Click here', array('controller' => 'login'))?> to get started.
+<?}
 
-<p>Content goes here</p>

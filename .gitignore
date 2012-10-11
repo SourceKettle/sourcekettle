@@ -2,6 +2,7 @@ tmp/*
 config/database.php
 app/tmp/*
 app/Config/database.php
+app/Config/homepage.php
 !empty
 nbproject/
 *.DS_Store

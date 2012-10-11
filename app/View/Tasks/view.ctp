@@ -35,6 +35,12 @@ $this->Html->scriptBlock("
 ", array('inline' => false));
 
 echo $this->element('Task/modal_close');
+
+if ($task['Task']['task_status_id'] ==  1 || $task['Task']['task_status_id'] ==  2){
+    echo $this->element('Task/modal_resolve'); 
+} else if ($task['Task']['task_status_id'] ==  3){
+    echo $this->element('Task/modal_unresolve');
+}
 echo $this->element('Task/modal_assign');
 
 ?>

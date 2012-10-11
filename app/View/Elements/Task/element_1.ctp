@@ -33,9 +33,9 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                         <?
                         if (!empty($task['DependsOn'])){
                             if (!$task['Task']['dependenciesComplete']){
-                                echo "<span class='label label-important'>Dependencies</span>";
+                                echo "<span class='label label-important' title='Dependencies incomplete'>D</span>";
                             } else {
-                                echo "<span class='label label-success'>Dependencies</span>";
+                                echo "<span class='label label-success' title='Dependencies complete'>D</span>";
                             }
                         }
                         ?>

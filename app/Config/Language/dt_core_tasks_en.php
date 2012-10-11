@@ -109,6 +109,7 @@ $config['dtcore']['pages']['tasks']['edit']['en']['bar.task'] = "Task #";
 $config['dtcore']['pages']['tasks']['edit']['en']['bar.view'] = "View";
 $config['dtcore']['pages']['tasks']['edit']['en']['bar.assign'] = "Assign";
 $config['dtcore']['pages']['tasks']['edit']['en']['bar.resolve'] = "Resolve";
+$config['dtcore']['pages']['tasks']['edit']['en']['bar.unresolve'] = "Un-resolve";
 $config['dtcore']['pages']['tasks']['edit']['en']['bar.close'] = "Close task";
 $config['dtcore']['pages']['tasks']['edit']['en']['bar.open'] = "Re-open task";
 
@@ -130,6 +131,7 @@ $config['dtcore']['pages']['tasks']['view']['en']['bar.task'] = "Task #";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.edit'] = "Edit";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.assign'] = "Assign";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.resolve'] = "Resolve";
+$config['dtcore']['pages']['tasks']['view']['en']['bar.unresolve'] = "Un-resolve";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.close'] = "Close task";
 $config['dtcore']['pages']['tasks']['view']['en']['bar.open'] = "Re-open task";
 
@@ -169,6 +171,18 @@ $config['dtcore']['pages']['tasks']['view']['en']['modal.close.comment.placehold
 $config['dtcore']['pages']['tasks']['view']['en']['modal.close.close'] = "Cancel";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.close.submit'] = "Close Task";
 $config['dtcore']['pages']['tasks']['view']['en']['modal.close.body'] = "Before the task can be closed, please leave an explanation.";
+
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.header'] = "Resolve the task";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.comment.placeholder'] = "Enter a comment for resolving this task...";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.close'] = "Cancel";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.submit'] = "Resolve Task";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.resolve.body'] = "Before the task can be resolved, please leave an explanation.";
+
+$config['dtcore']['pages']['tasks']['view']['en']['modal.unresolve.header'] = "Un-resolve the task";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.unresolve.comment.placeholder'] = "Enter a comment for un-resolving this task...";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.unresolve.close'] = "Cancel";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.unresolve.submit'] = "Un-resolve Task";
+$config['dtcore']['pages']['tasks']['view']['en']['modal.unresolve.body'] = "Before the task can be un-resolved, please leave an explanation.";
 
 // APP/Tasks/api_marshalled
 

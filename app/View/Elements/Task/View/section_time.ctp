@@ -12,18 +12,25 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$closed = ($task['Task']['task_status_id'] == 4);
 
-$this->Html->scriptBlock("
-    $('.timeButton').bind('click', function() {
-        $('option[value={$task['Task']['id']}]').attr('selected', 'selected');
-    });
-", array('inline' => false));
+if (!$closed){
+    $this->Html->scriptBlock("
+        $('.timeButton').bind('click', function() {
+            $('option[value={$task['Task']['id']}]').attr('selected', 'selected');
+        });
+    ", array('inline' => false));
 
-echo $this->element('Time/modal_add');
+    echo $this->element('Time/modal_add');
+}
 ?>
 <h3>
     <?= $this->DT->t('time.title') ?>
-    <?= $this->Bootstrap->button_link($this->DT->t('time.button'), '#addTimeModal', array('size' => 'mini', 'data-toggle' => 'modal', 'class' => 'timeButton')) ?>
+    <? if (!$closed){
+    echo $this->Bootstrap->button_link($this->DT->t('time.button'), '#addTimeModal', array('size' => 'mini', 'data-toggle' => 'modal', 'class' => 'timeButton'));
+    } else {
+        echo $this->Bootstrap->button_link($this->DT->t('time.button'), '#addTimeModal', array('size' => 'mini', 'data-toggle' => 'modal', 'class' => 'timeButton', 'disabled'));
+    }?>
 </h3>
 <div>
 <?php
