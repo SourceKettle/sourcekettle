@@ -23,6 +23,6 @@ if(file_exists("$basedir/Config/homepage.php")){
     include("$basedir/Config/homepage.php");
 } else{?>
    <h1>Welcome to DevTrack!</h1>
-   <a href='/login'>Click here</a> to get started.
+   <?= $this->Html->link('Click here', array('controller' => 'login'))?> to get started.
 <?}
 
