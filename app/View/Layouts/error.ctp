@@ -58,13 +58,13 @@ try {
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> <?= $user_name ?><b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users')) ?></li>
+                                <li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users', 'action' => 'index')) ?></li>
                                 <li class="divider"></li>
                                 <li><?= $this->Html->link(__('Log Out'), array ('admin' => false, 'controller' => 'login', 'action' => 'logout')) ?></li>
                             </ul>
                         </li>
                     <? } ?>
-
+                    </ul>
                     <div class="nav-collapse">
                         <ul class="nav">
                             <?php
