@@ -35,6 +35,7 @@ $this->Html->scriptBlock("
 ", array('inline' => false));
 
 echo $this->element('Task/modal_close');
+echo $this->element('Task/modal_resolve');
 echo $this->element('Task/modal_assign');
 
 ?>
