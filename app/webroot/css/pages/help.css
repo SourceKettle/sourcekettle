@@ -1,0 +1,20 @@
+.greyOut {
+	color: #cfcfcf;
+}
+
+.greyOut a {
+	color: #cfcfcf;
+}
+
+.greyOut .bar {
+	background-color: #cfcfcf;
+}
+
+.example, .example li {
+	font-size: 10px;
+	line-height: 15px !important;
+}
+
+.example h3 {
+	font-size: 18px;;
+}
