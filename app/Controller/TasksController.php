@@ -515,6 +515,26 @@ class TasksController extends AppProjectController {
         $this->redirect(array('project' => $project, 'action' => 'view', $id));
     }
 
+    public function unresolve($project = null, $id = null){
+        $success = $this->_update_task_status($project, $id, 1);
+
+        // If a User has commented
+        if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+            $this->Task->TaskComment->create();
+
+            $this->request->data['TaskComment']['task_id'] = $id;
+            $this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+            if ($this->Task->TaskComment->save($this->request->data)) {
+                $this->Flash->info('The comment has been added successfully');
+                unset($this->request->data['TaskComment']);
+            } else {
+                $this->Flash->error('The comment could not be saved. Please, try again.');
+            }
+        }
+        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+    }
+
     /**
      * _update_task_status function.
      *

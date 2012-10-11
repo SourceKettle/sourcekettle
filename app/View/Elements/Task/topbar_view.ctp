@@ -64,6 +64,12 @@ if ($task['Task']['task_status_id'] != 4) {
         'url' => '#resolveModal',
         'props' => array('data-toggle' => 'modal')
     );
+} else if ($task['Task']['task_status_id'] == 3){
+    $resolve = array(
+        'text' => $this->DT->t('bar.unresolve'),
+        'url' => '#unresolveModal',
+        'props' => array('data-toggle' => 'modal')
+    );
  } else {
      $resolve = '';
  }
