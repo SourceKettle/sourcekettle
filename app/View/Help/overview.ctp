@@ -17,7 +17,7 @@
 $this->Html->css('projects.overview', null, array ('inline' => false));
 $this->Html->css('pages/help', null, array ('inline' => false));
 
-echo $this->Bootstrap->page_header('HELP!<small> the project overview page...</small>'); ?>
+echo $this->Bootstrap->page_header('Help!<small> the project overview page...</small>'); ?>
 
 <div class="row">
 	<div class="span2">
