@@ -20,5 +20,13 @@
 }
 
 .example h3 {
-	font-size: 18px;;
+	font-size: 18px;
+}
+
+.example h4 {
+	font-size: 13px;
+}
+
+.example h5 {
+	font-size: 10px;
 }
