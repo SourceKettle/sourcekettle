@@ -24,6 +24,11 @@ class SourceController extends AppProjectController {
         parent::beforeFilter();
     }
 
+    public function _projectCheck($name) {
+        parent::_projectCheck($name);
+
+        $this->Source->init();
+    }
     public function index($name = null) {
         $this->redirect(array('action' => 'tree', 'project' => $name));
     }
@@ -35,15 +40,7 @@ class SourceController extends AppProjectController {
      * @param $name string name of the project
      */
     public function tree($name = null) {
-
-        // TODO I'm positive this is a Fudge Factor 5 moment...
-        // previously we were ending up with the first project in the database
-        // instead of the one we requested, not sure where Source->Project was
-        // getting initialised though...
         $project = $this->_projectCheck($name);
-        $this->Source->Project->id = $project['Project']['id'];
-        $this->Source->Project->read();
-        $this->Source->init();
 
         $branches = $this->Source->branches();
 
