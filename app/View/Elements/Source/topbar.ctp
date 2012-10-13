@@ -20,8 +20,5 @@
         <li class="pull-right<? if ($a1=='gettingStarted') echo ' active'; ?>">
             <?= $this->Html->link('Get The Code', array('action' => 'gettingStarted', 'controller' => 'source', 'project' => $this->params['project'])) ?>
         </li>
-        <li class="pull-right<? if ($a1=='downloads') echo ' active'; ?>">
-            <?= $this->Html->link('Downloads', array('action' => 'downloads', 'controller' => 'source', 'project' => $this->params['project'])) ?>
-        </li>
     </ul>
 </div>

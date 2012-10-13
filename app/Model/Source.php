@@ -302,21 +302,24 @@ class Source extends AppModel {
 
     private function _gitTree($branch, $folderPath) {
         $tree = $this->GitCake->tree($branch, $folderPath);
+
         if ($tree['type'] == 'tree') {
             foreach ($tree['content'] as $t => $element) {
-                if ($element['type'] == 'commit') {
-                    if (!isset($submodules)) $submodules = $this->GitCake->submodules($branch);
-                    $tree['content'][$t]['remote'] = $submodules[$tree['path']."/".$element['name']]['remote'];
+                if (is_array($element)) {
+                    if ($element['type'] == 'commit') {
+                        if (!isset($submodules)) $submodules = $this->GitCake->submodules($branch);
+                        $tree['content'][$t]['remote'] = $submodules[$tree['path']."/".$element['name']]['remote'];
+                    }
+                    $tree['content'][$t]['commit'] = trim($this->GitCake->exec("rev-list -n 1 $branch -- ".$tree['path']."/".$element['name']));
+                    $tree['content'][$t]['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' ".$tree['content'][$t]['commit']));
+                    $tree['content'][$t]['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' ".$tree['content'][$t]['commit']));
                 }
-                $tree['content'][$t]['commit'] = trim($this->GitCake->exec("rev-list --all -n 1 $branch -- ".$tree['path']."/".$element['name']));
-                $tree['content'][$t]['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' ".$tree['content'][$t]['commit']));
-                $tree['content'][$t]['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' ".$tree['content'][$t]['commit']));
             }
         }
         if ($tree['type'] == 'blob') {
-            $tree['commit'] = trim($this->GitCake->exec("rev-list --all -n 1 $branch -- ".$tree['path']));
-            $tree['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' ".$tree['commit']));
-            $tree['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' ".$tree['commit']));
+            $tree['commit'] = $branch;
+            $tree['updated'] = trim($this->GitCake->exec("--no-pager show -s --format='%ci' $branch"));
+            $tree['message'] = trim($this->GitCake->exec("--no-pager show -s --format='%s' $branch"));
         }
         return $tree;
     }

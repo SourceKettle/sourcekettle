@@ -85,7 +85,6 @@ class SourceController extends AppProjectController {
             // Fetch branch
             $branch = $this->_getBranch();
             $path = $this->_getPath();
-            $node = $this->Source->tree($branch, $path);
 
             $this->set("branch", $branch);
             $this->set("path", $path);

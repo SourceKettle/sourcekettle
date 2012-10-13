@@ -14,6 +14,7 @@
             <th>message</th>
         </tr>
     <? foreach ($files as $file) : ?>
+    	<? if (is_array($file)) : ?>
         <? $url[] = $file['name']; ?>
         <tr>
             <?php
@@ -23,7 +24,7 @@
                     if (preg_match('#(git|http)://(?P<url>\S+)#', $file['remote'], $match)){
                         $link = $this->Html->link($file['name'], 'http://'.$match['url'], array('escape' => false));
                     } else {
-                        $link = $file['name']; 
+                        $link = $file['name'];
                     }
                 }
             ?>
@@ -32,6 +33,7 @@
             <td><?= substr(ucfirst($file['message']), 0, 100) ?></td>
         </tr>
         <? array_pop($url); ?>
+        <? endif; ?>
     <? endforeach; ?>
     </table>
 </div>
