@@ -87,6 +87,7 @@ class SourceController extends AppProjectController {
         }
 
         $this->set('file', $file);
+        $this->set('commit', array('hash' => $hash));
         $this->set('diff', $this->Source->Commit->diff($hash, $parent, $file));
 
         $this->render('/Elements/Source/commit_changeset_item');

@@ -42,6 +42,7 @@ class SourceHelper extends AppHelper {
             'project' => $repo,
             'branch'  => $branch,
             'action'  => 'tree',
+            'ajax'    => false,
         ), true);
         return "{$url}/{$file}";
     }
@@ -51,6 +52,7 @@ class SourceHelper extends AppHelper {
             'project' => $repo,
             'branch'  => $branch,
             'action'  => 'raw',
+            'ajax'    => false,
         ), true);
         return "{$url}/{$file}";
     }
@@ -60,6 +62,7 @@ class SourceHelper extends AppHelper {
             'project' => $repo,
             'branch'  => $branch,
             'action'  => 'commits',
+            'ajax'    => false,
         ), true);
         return "{$url}/{$file}/page:$page";
     }
