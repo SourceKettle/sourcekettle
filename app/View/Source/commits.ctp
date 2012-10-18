@@ -16,18 +16,17 @@
 
 $this->Html->css('pages/source', null, array ('inline' => false));
 
-$smallText = " <small>source code</small>";
-$pname = $project['Project']['name'];
-
 // Base url for the view
-$url = array('project' => $project['Project']['name'], 'action' => 'commits', $branch);
+$url = array('project' => $project['Project']['name'], 'action' => 'tree', $branch);
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
-$this->Bootstrap->add_crumb("Commit History", $url);
 
-// Header for the page
-echo $this->Bootstrap->page_header($pname . $smallText);
-
+// Create the base url to be used for all links and add breadcrumbs
+foreach (explode('/',$path) as $crumb) {
+    $url[] = $crumb;
+    $this->Bootstrap->add_crumb($crumb, $url);
+}
 ?>
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -38,26 +37,38 @@ echo $this->Bootstrap->page_header($pname . $smallText);
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
         </div>
         <div class="span10">
-            <table class="well table table-striped">
-            <? foreach ($commits as $commit) : ?>
-                <? $text = ucfirst((strlen($commit['Commit']['subject']) > 100) ? substr($commit['Commit']['subject'], 0, 100).'...' : $commit['Commit']['subject']); ?>
-                <tr>
-                    <td>
-                        <h4><?= $this->Html->link($text, array('project'=>$project['Project']['name'],'action'=>'commit',$commit['Commit']['hash'])) ?></h4>
-                        <h5><?= $commit['Commit']['author']['name'].' &lt;'.$commit['Commit']['author']['email'].'&gt;' ?> <small>authored <?= $this->Time->timeAgoinWords($commit['Commit']['date']) ?></small></h5>
-                    </td>
-                </tr>
-            <? endforeach; ?>
-            </table>
+            <div class="row-fluid">
+                <?php
+                    $date = null;
+                    foreach ($commits as $commit) {
+                        $newDate = date('M d, Y', strtotime($commit['date']));
+                        if ($date != $newDate) {
+                            if ($date != null) {
+                                echo '</div>';
+                            }
+                            $date = $newDate;
+                            echo '<div class="well commits">';
+                            echo "<div class='dateHeader'><strong>$newDate</strong></div>";
+                        }
+                        echo $this->element('Source/commits_row', array('commit' => $commit));
+                    }
+                ?>
+            </div>
             <ul class="pager">
                 <? if ($page > 1) : ?>
                 <li class="previous">
-                    <?= $this->Html->link('&larr; Newer', array('project' => $project['Project']['name'], 'action' => 'commits', $branch, 'page' => ($page - 1)), array('escape' => false)) ?>
+                    <?= $this->Html->link('&larr; Newer',
+                        $this->Source->fetchHistoryUrl($project['Project']['name'], $branch, $path, $page - 1),
+                        array('escape' => false)
+                    ) ?>
                 </li>
                 <? endif; ?>
                 <? if ($more_pages) : ?>
                 <li class="next">
-                    <?= $this->Html->link('Older  &rarr;', array('project' => $project['Project']['name'], 'action' => 'commits', $branch, 'page' => ($page + 1)), array('escape' => false)) ?>
+                    <?= $this->Html->link('Older  &rarr;',
+                        $this->Source->fetchHistoryUrl($project['Project']['name'], $branch, $path, $page + 1),
+                        array('escape' => false)
+                    ) ?>
                 </li>
                 <? endif; ?>
             </ul>

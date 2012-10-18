@@ -65,6 +65,7 @@
         Router::connect('/project/:project/time/:action/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/time/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[\w]+'));
 
+        Router::connect('/project/:project/source/:action/:branch/*', array('controller' => 'source', 'action' => 'tree'), array('pass' => array('project', 'branch'), 'project' => '[\w]+'));
         Router::connect('/project/:project/source/:action/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));
         Router::connect('/project/:project/source/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[\w]+'));
 

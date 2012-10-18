@@ -18,218 +18,242 @@ App::uses('AppProjectController', 'Controller');
 
 class SourceController extends AppProjectController {
 
-    public $helpers = array('Time', 'CommandLineColor');
+    public $helpers = array('Time', 'Source');
 
-    public function beforeFilter() {
-        parent::beforeFilter();
-    }
-
-    public function _projectCheck($name) {
-        parent::_projectCheck($name);
-
-        $this->Source->init();
-    }
-    public function index($name = null) {
-        $this->redirect(array('action' => 'tree', 'project' => $name));
-    }
-
-    /*
-     * tree
-     * display an element in the tree
+    /**
+     * getPath function.
      *
-     * @param $name string name of the project
+     * @access private
+     * @return void
      */
-    public function tree($name = null) {
-        $project = $this->_projectCheck($name);
-
-        $branches = $this->Source->branches();
-
-        if(empty($branches)) {
-            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
-        } else {
-            // Fetch branch
-            $branch = $this->_getBranch();
-            $path = $this->_getPath();
-            $node = $this->Source->tree($branch, $path);
-
-            $this->set("branch", $branch);
-            $this->set("path", $path);
-            $this->set('branches', $branches);
-
-            switch ($node['type']) {
-                case 'tree':
-                    $this->set("tree", $node);
-                    break;
-                case 'blob':
-                    $this->set("tree", $node);
-                    break;
-                default:
-                    $this->render('not_found');
-            }
-        }
-    }
-
-    /*
-     * history
-     * display the history of a file
-     *
-     * @param $name string name of the project
-     */
-    public function history($name = null) {
-        $this->_projectCheck($name);
-
-        $branches = $this->Source->branches();
-        if(empty($branches)) {
-            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
-        } else {
-            // Fetch branch
-            $branch = $this->_getBranch();
-            $path = $this->_getPath();
-
-            $this->set("branch", $branch);
-            $this->set("path", $path);
-            $this->set('branches', $branches);
-
-            $logs = $this->Source->log($branch, 10, 0, $path);
-            foreach ($logs as $a => $commit) {
-                $c = $this->Source->showCommit($commit['Commit']['hash']);
-                $logs[$a]['Commit']['diff'][$path] = $c['Commit']['diff'][$path];
-            }
-            $this->set("logs", $logs);
-        }
-    }
-
-    public function gettingStarted($name = null) {
-        $this->_projectCheck($name);
-        $this->set('user', $this->Auth->user());
-        switch ($this->Source->Project->field('repo_type')) {
-            case '1':
-                $this->render('GettingStarted/none');
-                break;
-            case '2':
-                $this->render('GettingStarted/git');
-                break;
-            case '3':
-                $this->render('GettingStarted/svn');
-                break;
-        }
-    }
-
-    /*
-     * raw
-     * Same as tree but the raw file
-     *
-     * @see tree
-     * @param $name string name of the project
-     */
-    public function raw($name = null) {
-        $this->_projectCheck($name);
-
-        // Fetch branch
-        $branch = $this->_getBranch();
-        $path = $this->_getPath();
-        $node = $this->Source->tree($branch, $path);
-
-        if ($node['type'] != 'blob') {
-            $this->set("branch", $branch);
-            $this->set('branches', $this->Source->branches());
-            $this->render('not_found');
-        } else {
-            $this->set("source_files", $node['content']);
-        }
-    }
-
-    /*
-     * commits
-     * Load the commits for a user to view the history of a project
-     *
-     * @param $name string name of the project
-     */
-    public function commits($name = null) {
-        $this->_projectCheck($name);
-
-        $branches = $this->Source->branches();
-        if(empty($branches)) {
-            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
-        } else {
-            // Fetch branch
-            $branch = $this->_getBranch();
-
-            $page = 1;
-            $num_per_page = 10;
-
-            // Lets make sure its a valid int
-            if(isset($this->params['named']['page'])) {
-                $_page = (int) $this->params['named']['page'];
-                if ($_page > 1 and $_page < 100) {
-                    $page = $_page;
-                }
-            }
-
-            $commits = $this->Source->log($branch, $num_per_page+1, (($page-1)*$num_per_page));
-            if (sizeof($commits) == $num_per_page+1) {
-                unset($commits[$num_per_page]);
-                $this->set("more_pages", true);
-            } else {
-                $this->set("more_pages", false);
-            }
-
-            $this->set("branch", $branch);
-            $this->set('branches', $branches);
-            $this->set("commits", $commits);
-            $this->set("page", $page);
-        }
-    }
-
-    /*
-     * commit
-     * Load a commit for a user to view
-     *
-     * @param $name string name of the project
-     */
-    public function commit($name = null, $hash = null) {
-        $this->_projectCheck($name);
-
-        $branches = $this->Source->branches();
-        if(empty($branches)) {
-            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
-        } else {
-            $this->set("branch", null);
-            $this->set('branches', $branches);
-            $this->set("commit", $this->Source->showCommit($hash));
-        }
-    }
-
-    /*
-     * _getPath
-     * Return the path the user is currently viewing
-     *
-     */
-    private function _getPath() {
+    private function getPath() {
         $route = $this->params['pass'];
         unset($route[0]); // Project name
         unset($route[1]); // Branch name
         return implode('/',$route);
     }
 
-    /*
-     * _getBranch
-     * Return the branch the user is currently viewing
+    /**
+     * initialiseResources function.
      *
+     * @access private
+     * @param mixed $name
+     * @return void
      */
-    private function _getBranch() {
-        // Check to see if a branch is set, if not redirect to master
-        if ( !isset($this->params['pass'][1]) ) {
-            $this->redirect(array('project' => $this->params['pass'][0], 'action' => $this->request['action'], $this->Source->defaultBranch()));
+    private function initialiseResources($name, $ref = null) {
+        $project = parent::_projectCheck($name);
+        $this->Source->init();
+
+        $branches = $this->Source->getBranches();
+        if(empty($branches) && $this->request['action'] != 'gettingStarted') {
+            $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
+        }
+        $this->set('branches', $branches);
+
+        if ($ref != null) {
+            if (!in_array($ref, $branches) && !$this->Source->Commit->exists($ref)) {
+                throw new NotFoundException(__('Invalid Ref'));
+            }
         }
 
-        // Check valid branch is selected
-        if ( !$this->Source->hasBranch($this->params['pass'][1]) ) {
-            $this->Session->setFlash(__("The tree '".$this->params['pass'][1]."' does not exist."), 'default', array(), 'error');
-            $this->redirect(array('project' => $this->params['pass'][0], 'action' => $this->request['action'], $this->Source->defaultBranch()));
+        return $project;
+    }
+
+    /**
+     * ajax_diff function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @return void
+     */
+    public function ajax_diff($project = null) {
+        $this->layout = 'ajax';
+
+        if ($project == null && isset($this->request->params['named'])) {
+            $project = $this->request->params['named'];
+        }
+        $project = $this->initialiseResources($project);
+
+        if (!isset($this->request->data['file']) || !isset($this->request->data['parent']) || !isset($this->request->data['hash'])) {
+            throw new NotFoundException(__('Invalid Parameters'));
         }
 
-        return $this->params['pass'][1];
+        $hash   = $this->request->data['hash'];
+        $parent = $this->request->data['parent'];
+        $file   = $this->request->data['file'];
+
+        if (($parent != '' && !$this->Source->Commit->exists($parent)) || !$this->Source->Commit->exists($hash)) {
+            throw new NotFoundException(__('Invalid HashRefs'));
+        }
+
+        $this->set('file', $file);
+        $this->set('diff', $this->Source->Commit->diff($hash, $parent, $file));
+
+        $this->render('/Elements/Source/commit_changeset_item');
+    }
+
+    /**
+     * commit function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $hash (default: null)
+     * @return void
+     */
+    public function commit($project = null, $hash = null) {
+        $project = $this->initialiseResources($project, $hash);
+
+        $commit = $this->Source->Commit->fetch($hash);
+
+        $maxDiffSize = 20;
+        $lazyLoad = false;
+        $commit['diff'] = array();
+
+        if (sizeof($commit['changeset']) > $maxDiffSize) {
+            $lazyLoad = false;
+        } else {
+            $maxDiffSize = sizeof($commit['changeset']);
+        }
+        for ($i = 0; $i < $maxDiffSize; $i++) {
+            $file = $commit['changeset'][$i];
+            $commit['diff'][$file] = $this->Source->Commit->diff($commit['hash'], $commit['parent'], $file);
+        }
+
+        $this->set("branch", null);
+        $this->set("commit", $commit);
+        $this->set("lazyLoad", $lazyLoad);
+    }
+
+    /**
+     * commits function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $branch (default: null)
+     * @return void
+     */
+    public function commits($project = null, $branch = null) {
+        $project = $this->initialiseResources($project, $branch);
+        $path    = $this->getPath();
+
+        if ($branch == null) {
+            $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+        }
+
+        $num_per_page = 10;
+
+        // Lets make sure its a valid int
+        if(isset($this->params['named']['page'])) {
+            $page = $this->params['named']['page'];
+
+            if (!is_numeric($page) || $page < 1 || $page > 1000) {
+                $page = 1;
+            }
+        } else {
+            $page = 1;
+        }
+
+        foreach ($this->Source->Commit->history($branch, $num_per_page+1, (($page-1)*$num_per_page), $path) as $a => $commit) {
+            $commits[$a] = $this->Source->Commit->fetch($commit);
+        }
+
+        if (sizeof($commits) == $num_per_page+1) {
+            unset($commits[$num_per_page]);
+            $this->set("more_pages", true);
+        } else {
+            $this->set("more_pages", false);
+        }
+
+        $this->set("branch", $branch);
+        $this->set("commits", $commits);
+        $this->set("page", $page);
+        $this->set("path", $path);
+    }
+
+    /**
+     * gettingStarted function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @return void
+     */
+    public function gettingStarted($project = null) {
+        $project = $this->initialiseResources($project);
+        $type    = $this->Source->getType();
+
+        $this->set('user', $this->Auth->user());
+        if ($type == RepoTypes::Git) {
+            $this->render('GettingStarted/git');
+        } else if ($type == RepoTypes::Subversion) {
+            $this->render('GettingStarted/svn');
+        } else {
+            $this->render('GettingStarted/none');
+        }
+    }
+
+    /**
+     * index function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @return void
+     */
+    public function index($project = null) {
+        $this->redirect(array('action' => 'tree', 'project' => $project));
+    }
+
+    /**
+     * raw function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $branch (default: null)
+     * @return void
+     */
+    public function raw($project = null, $branch = null) {
+        $this->layout = 'ajax';
+
+        $project = $this->initialiseResources($project, $branch);
+        $path    = $this->getPath();
+
+        if ($branch == null) {
+            throw new NotFoundException(__('Invalid Branch'));
+        }
+
+        $blob = $this->Source->Blob->fetch($branch, $path);
+
+        if ($blob['type'] != 'blob') {
+            throw new NotFoundException(__('Invalid Location'));
+        }
+
+        $this->set('sourceFile', $blob['content']);
+    }
+
+    /**
+     * tree function.
+     *
+     * @access public
+     * @param mixed $project (default: null)
+     * @param mixed $branch (default: null)
+     * @return void
+     */
+    public function tree($project = null, $branch = null) {
+        $project = $this->initialiseResources($project, $branch);
+        $path    = $this->getPath();
+
+        if ($branch == null) {
+            $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+        }
+
+        $blob = $this->Source->Blob->fetch($branch, $path);
+
+        if (!in_array($blob['type'], array('tree', 'blob'))) {
+            throw new NotFoundException(__('Invalid Location'));
+        }
+
+        $this->set('tree', $blob);
+        $this->set("path", $path);
+        $this->set("branch", $branch);
     }
 
 }

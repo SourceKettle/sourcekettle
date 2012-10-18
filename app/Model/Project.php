@@ -201,7 +201,7 @@ class Project extends AppModel {
     }
 
     public function beforeDelete($cascade = true) {
-        $location = $this->Source->_repoLocation();
+        $location = $this->Source->getRepositoryLocation();
         if ($location == NULL || !is_dir($location)) {
             return true;
         }

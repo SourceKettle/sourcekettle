@@ -7,9 +7,6 @@
 [submodule "app/Plugin/GitCake"]
 	path = app/Plugin/GitCake
 	url = git://github.com/pwhittlesea/GitCake.git
-[submodule "app/Plugin/SVNCake"]
-	path = app/Plugin/SVNCake
-	url = git://github.com/pwhittlesea/SVNCake.git
 [submodule "app/Plugin/TwitterBootswatch"]
 	path = app/Plugin/TwitterBootswatch
 	url = git://github.com/pwhittlesea/TwitterBootswatchHelper.git

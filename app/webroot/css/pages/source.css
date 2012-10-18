@@ -1,7 +1,56 @@
 .branch_button {
     height: 34px;
 }
-.raw_button {
-    height: 24px;
-    width: 75%;
+
+.codewell {
+    padding: 5px 0px 0px 0px;
+}
+
+.prettyprint {
+    line-height: 20px;
+    margin-bottom: 0px !important;
+    border-top: 1px solid #DDD !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0px !important;
+    padding: 0px !important;
+}
+
+.prettyprintheader>div {
+    padding: 0px 5px 0px 5px;
+}
+
+.prettyprintheader>div>p {
+    margin: 3px 0px;
+}
+
+.nocode {
+    background-color: #DDD;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.commitsRow {
+    border-top: 1px solid #DDD;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.commitsRow p {
+    margin-bottom: 0px;
+}
+
+.commitsRow .btn-group {
+    margin-top: 8px;
+    margin-right: 8px;
+}
+
+.commits {
+    padding: 0px;
+}
+
+.commits>.dateHeader{
+    background-color: #DDD;
+    padding: 5px;
 }

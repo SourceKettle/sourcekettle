@@ -29,7 +29,7 @@ class AppProjectController extends AppController {
             }
         }
     }
-    
+
     /*
      * _projectCheck
      * Space saver to ensure user can view content

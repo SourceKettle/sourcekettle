@@ -14,96 +14,60 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+$this->Html->css('pages/source', null, array ('inline' => false));
 $this->Html->css('pages/diff', null, array ('inline' => false));
 
-$smallText = " <small>source code</small>";
-$pname = $project['Project']['name'];
+$ajaxUrl = $this->Html->url(array(
+    'ajax' => true,
+    'project' => $project['Project']['name'],
+    'action' => 'diff',
+    'controller' => 'source'
+));
+$this->Html->scriptBlock("
+    $('.fileDiff').find ('.moreButton').click (function() {
+        var details = {};
+        details['file'] = $(this).attr('data-file');
+        details['parent'] = '{$commit['parent']}';
+        details['hash'] = '{$commit['hash']}';
+        var element = $(this).parents('.fileDiff');
 
-// Header for the page
-echo $this->Bootstrap->page_header($pname . $smallText);
-
+        $.ajax({
+            url: '{$ajaxUrl}',
+            type: 'POST',
+            data: details,
+            success: function(data){
+                $(element).html(data);
+                $(element).focus();
+            }
+        });
+        return false;
+    });
+", array('inline' => false));
 ?>
+
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="span10">
-        <div class="row">
-            <?= $this->element('Source/topbar', array('branches' => $branches, 'branch' => $branch)) ?>
-            <div class="span10">
-                <div class="well">
-                    <div class="row-fluid">
-                        <div class="span10">
-                            <h4>
-                                <?= ucfirst($commit['Commit']['subject']) ?>
-                            </h4>
-                            <br>
-                            <h5>
-                                <small><?= $commit['Commit']['body'] ?></small>
-                            </h5>
-                             <h5>
-                                <?= $commit['Commit']['author']['name'].' &lt;'.$commit['Commit']['author']['email'].'&gt;' ?>
-                                <small>authored <?= $this->Time->timeAgoinWords($commit['Commit']['date']) ?></small>
-                            </h5>
-                        </div>
-                        <div class="span2">
-                            <?= $this->Bootstrap->button_link('See Code', array('project' => $project['Project']['name'], 'action' => 'tree', $commit['Commit']['hash']), array("style" => "info", "class" => "pull-right")) ?>
-                        </div>
-                    </div>
-                </div>
+    <div class="row">
+        <?= $this->element('Source/topbar') ?>
+        <div class="span10">
+            <?= $this->element('Source/tree_commit_header_extended') ?>
+        </div>
+        <div class="span10">
+            <div class="row-fluid">
+            <?php
+                $i = 0;
+                foreach ($commit['changeset'] as $file) {
+                    if (isset($commit['diff'][$file])) {
+                        echo $this->element('Source/commit_changeset_item', array('file' => $file, 'diff' => $commit['diff'][$file]));
+                    } else {
+                        echo $this->element('Source/commit_changeset_item_ajax', array('file' => $file, 'no' => $i++));
+                    }
+                }
+            ?>
             </div>
-            <? foreach ($commit['Commit']['diff'] as $file => $diff) : ?>
-            <div class="span10">
-                <div class="well">
-                    <div class="row-fluid">
-                        <div class="span10">
-                            <h4><?= $file ?></h4>
-                            <h6>
-                                <span class="label label-success">Added</span> <span class="green_front"><?= $diff['more'] ?></span>
-                                <span class="label label-important">Deleted</span> <span class="red_front"><?= $diff['less'] ?></span>
-                            </h6>
-                        </div>
-                        <div class="span2">
-                            <?= $this->Bootstrap->button_link('See File', array_merge(array('project' => $project['Project']['name'], 'action' => 'tree', $commit['Commit']['hash']), explode('/', $file)), array("style" => "info", "class" => "pull-right")) ?>
-                        </div>
-                    </div>
-                    <br>
-                    <table class="diff_table">
-                    <?php
-                        foreach ($diff['hunks'] as $a => $hunk) {
-                            $d_m = $diff['hunks_def'][$a]['-'];
-                            $d_a = $diff['hunks_def'][$a]['+'];
-                            ?>
-                            <tr class="diff_row">
-                                <td class="diff_col old_col">...</td>
-                                <td class="diff_col new_col">...</td>
-                                <td class="pre_col">
-                                    <pre class="diff_pre hunk_header">   @@ -<?=$d_m[0]?>,<?=$d_m[1]?> +<?=$d_a[0]?>,<?=$d_a[1]?> @@ </pre>
-                                </td>
-                            </tr>
-                            <?
-                            foreach ($hunk as $line) {
-                                switch ($line[0]) {
-                                    case '+': $color = "pre_green green_back"; break;
-                                    case '-': $color = "pre_red red_back"; break;
-                                    case ' ': $color = "pre_normal"; break;
-                                }
-                                ?>
-                                <tr class="diff_row">
-                                    <td class="diff_col old_col"><?= $line[1] ?></td>
-                                    <td class="diff_col new_col"><?= $line[2] ?></td>
-                                    <td class="pre_col">
-                                        <pre class="diff_pre <?= $color ?>"> <?= $line[0] ?> <?= $line[3] ?></pre>
-                                    </td>
-                                </tr>
-                                <?
-                            }
-                        }
-                    ?>
-                    </table>
-                </div>
-            </div>
-            <? endforeach; ?>
         </div>
     </div>
 </div>

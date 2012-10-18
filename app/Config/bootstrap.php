@@ -100,6 +100,7 @@ Configure::load('Language/dt_core_collaborators_en');
 Configure::load('Language/dt_core_attachments_en');
 Configure::load('Language/dt_core_settings_en');
 Configure::load('Language/dt_core_dashboard_en');
+Configure::load('Language/dt_core_source_en');
 
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
@@ -149,6 +150,5 @@ Configure::load('Language/dt_core_dashboard_en');
 CakePlugin::load('TwitterBootstrap');
 CakePlugin::load('GoogleChart');
 CakePlugin::load('GitCake');
-CakePlugin::load('SVNCake');
 CakePlugin::load('TwitterBootswatch');
 CakePlugin::load('LDAPAuthCake');

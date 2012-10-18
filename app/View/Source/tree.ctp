@@ -19,9 +19,6 @@ $this->Html->css('prettify/prettify', null, array ('inline' => false));
 $this->Html->script('prettify/prettify', array('block' => 'scriptBottom'));
 $this->Html->scriptBlock("prettyPrint()", array('inline' => false));
 
-$smallText = " <small>source code</small>";
-$pname = $project['Project']['name'];
-
 // Base url for the view
 $url = array('project' => $project['Project']['name'], 'action' => 'tree', $branch);
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
@@ -31,11 +28,8 @@ foreach (explode('/',$path) as $crumb) {
     $url[] = $crumb;
     $this->Bootstrap->add_crumb($crumb, $url);
 }
-
-// Header for the page
-echo $this->Bootstrap->page_header($pname . $smallText);
-
 ?>
+<?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -45,7 +39,16 @@ echo $this->Bootstrap->page_header($pname . $smallText);
         <div class="span10">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
         </div>
-        <? if ($tree['type'] == 'tree') echo $this->element('Source/folder_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'files' => $tree['content'])); ?>
-        <? if ($tree['type'] == 'blob') echo $this->element('Source/file_view', array('url' => $url, 'branches' => $branches, 'branch' => $branch, 'file' => $tree)) ?>
+        <?php
+            if ($tree['type'] == 'tree') {
+                if ($tree['path'] == '.') {
+                    echo $this->element('Source/tree_commit_header', array('commit' => $tree['commit']));
+                }
+                echo $this->element('Source/tree_folder_content', array('files' => $tree['content']));
+            } else if ($tree['type'] == 'blob') {
+                echo $this->element('Source/tree_commit_header', array('commit' => $tree['updated']));
+                echo $this->element('Source/tree_blob_content');
+            }
+        ?>
     </div>
 </div>
