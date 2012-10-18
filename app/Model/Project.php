@@ -228,9 +228,9 @@ class Project extends AppModel {
 
         $project = null;
         if (is_numeric($key)) {
-            $project = $this->find('first', array('conditions' => array('Project.id' => $key)));
+            $project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.id' => $key)));
         } else {
-            $project = $this->find('first', array('conditions' => array('Project.name' => $key)));
+            $project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.name' => $key)));
         }
         if (empty($project)){
             $project = null;
