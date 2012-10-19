@@ -221,16 +221,23 @@ class Project extends AppModel {
      *
      * @return Project The project found by the given key, null if no project is found
      */
-    public function getProject($key, $skip_perms = false) {
+    public function getProject($key, $skip_perms = false, $recursive = false) {
         if ($key == null){ //Sanity check
             return null;
         }
 
+        // Convert from true/false to the rather bizarre Cake style 0/-1...
+        if($recursive){
+            $recursive = 0;
+        } else{
+            $recursive = -1;
+        }
+
         $project = null;
         if (is_numeric($key)) {
-            $project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.id' => $key)));
+            $project = $this->find('first', array('recursive' => $recursive, 'conditions' => array('Project.id' => $key)));
         } else {
-            $project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.name' => $key)));
+            $project = $this->find('first', array('recursive' => $recursive, 'conditions' => array('Project.name' => $key)));
         }
         if (empty($project)){
             $project = null;
