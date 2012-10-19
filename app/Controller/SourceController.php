@@ -54,6 +54,7 @@ class SourceController extends AppProjectController {
             if (!in_array($ref, $branches) && !$this->Source->Commit->exists($ref)) {
                 throw new NotFoundException(__('Invalid Ref'));
             }
+            $this->set('branchDetail', $this->Source->Commit->fetch($ref));
         }
 
         return $project;

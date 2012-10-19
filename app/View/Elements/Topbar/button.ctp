@@ -77,6 +77,8 @@
                 } else {
                     $isFeat = ($c1==$c2 && ($a1==$a2 || ($a1=='index' && $a2=='.') || $a2=='*'));
                 }
+            } else {
+                $isFeat = false;
             }
 
             if ($isFeat) {
@@ -99,7 +101,9 @@
                 $option['url']['project'] = $this->params['project'];
             }
 
-            if (isset($option['type'])) {
+            if (isset($option['type']) && $option['type'] == 'dropdown') {
+                echo $this->Bootstrap->button_dropdown($option['text'], $option['props']);
+            } else if (isset($option['type'])) {
                 echo $this->Bootstrap->$option['type']($option['text'], $option['url'], (isset($option['props'])) ? $option['props'] : null);
             } else {
                 echo $this->Bootstrap->button_link($option['text'], $option['url'], (isset($option['props'])) ? $option['props'] : null);
