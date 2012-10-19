@@ -181,7 +181,66 @@ class Source extends AppModel {
 
     public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
         $events = array();
+        $branches = $this->getBranches();
+        $project = $this->Project->getProject($project);
 
-        return array();
+        if (!empty ($branches)) {
+            foreach ($branches as $branch) {
+
+                foreach ($this->Commit->history($branch, $number, $offset, '') as $a => $commit) {
+                    $commit = $this->Commit->fetch($commit);
+
+                    $newEvent = array();
+                    $newEvent['modified'] = date('Y-m-d H:i:s', strtotime($commit['date']));
+                    $newEvent['Type'] = 'Source';
+
+                    // Gather project details
+                    $newEvent['Project']['id'] = $project['Project']['id'];
+                    $newEvent['Project']['name'] = $project['Project']['name'];
+
+                    // Gather user details
+                    $newEvent['Actioner']['id'] = -1;
+                    $newEvent['Actioner']['name'] = $commit['author']['name'];
+                    $newEvent['Actioner']['email'] = $commit['author']['email'];
+                    $newEvent['Actioner']['exists'] = false;
+
+                    // Gather subject details
+                    $newEvent['Subject']['id'] = $commit['hash'];
+                    $newEvent['Subject']['title'] = $commit['subject'];
+                    $newEvent['Subject']['exists'] = true;
+
+                    // Gather change details
+                    $newEvent['Change']['field'] = '+';
+                    $newEvent['Change']['field_old'] = null;
+                    $newEvent['Change']['field_new'] = null;
+
+                    // Check if the actioner exists
+                    $actioner = $this->Project->Collaborator->User->findByEmail('pw@thega.me.uk');
+                    if($actioner) {
+                        $newEvent['Actioner']['id'] = $actioner['User']['id'];
+                        $newEvent['Actioner']['name'] = $actioner['User']['name'];
+                        $newEvent['Actioner']['exists'] = true;
+                    }
+
+                    // Store URL override
+                    $newEvent['url'] = array('api' => false, 'project' => $project['Project']['name'], 'controller' => 'source', 'action' => 'commit', $commit['hash']);
+                    $events[] = $newEvent;
+                }
+            }
+        }
+
+        // Collect time events
+
+        // Sort function for events
+        // assumes $array{ $array{ 'modified' => 'date' }, ... }
+        $cmp = function($a, $b) {
+            if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
+            if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
+            return -1;
+        };
+
+        usort($events, $cmp);
+
+        return $events;
     }
 }
