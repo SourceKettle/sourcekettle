@@ -62,7 +62,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I log time?</small>'); ?
 
 		<div class="well">
 			<h4>Where to log time</h4>
-			<p>In DevTrack, we try to integrate all of our features together where possible. For this reason there are more than a handful of ways in which you can log time. Here we will go through the two most common ways.</p>
+			<p>At DevTrack, we try to integrate all of our features together where possible. For this reason there are more than a handful of ways in which you can log time. Here we will go through the two most common ways.</p>
 
 			<h5>1) The 'week' page</h5>
 			<p>Select '<a href="#"><i class="icon-book"></i> Time</a>' from the projects sidebar and then select <button class="btn btn-mini">History</button> from the time menu bar at the top of the page. If you've found your way correctly then you will encounter a view similar to that shown in <strong>exhibit 2</strong>.</p>
