@@ -35,7 +35,7 @@ foreach (explode('/',$path) as $crumb) {
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Source/topbar', array('branches' => $branches, 'branch' => $branch)) ?>
+        <?= $this->element('Source/topbar') ?>
         <div class="span10">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
         </div>

@@ -8,7 +8,7 @@
  *
  * @copyright     DevTrack Development Team 2012
  * @link          http://github.com/chrisbulmer/devtrack
- * @package       DevTrack.View.Elements.Source
+ * @package       DevTrack.View.Elements.Topbar
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ foreach ($branches as $b) {
                 'url' => array(
                     'action' => 'tree',
                     'controller' => 'source',
-                    'branch' => $branch,
+                    'branch' => $commit['hash'],
                 ),
             ),
             array(
@@ -33,7 +33,7 @@ foreach ($branches as $b) {
                 'url' => array(
                     'action' => 'commits',
                     'controller' => 'source',
-                    'branch' => $branch,
+                    'branch' => $commit['hash'],
                 ),
             ),
         ),
@@ -50,7 +50,7 @@ foreach ($branches as $b) {
         ),
         array(
             array(
-                'text' => $this->Bootstrap->icon('random', 'white')." ".$this->DT->t('bar.branch').": ".$branchDetail['abbv'],
+                'text' => $this->Bootstrap->icon('random', 'white')." ".$this->DT->t('bar.branch'),
                 'url' => '#',
                 'type' => 'dropdown',
                 'props' => array(
