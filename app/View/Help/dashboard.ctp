@@ -23,6 +23,16 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
     <div class="span10">
         <div class="well">
           <h3>Dashboard</h3>
+          <p>
+            The Dashboard display shows current information relating to everything you are working on:
+
+            <ul>
+              <li><strong>Recent events:</strong> What's been happening on projects you're working on ("What's everybody up to?")</li>
+              <li><strong>Assigned tasks:</strong> Tasks that are assigned to you ("what am I supposed to be doing?")</li>
+              <li><strong>Most recent projects:</strong> A list of your most recently created projects</li>
+            </ul>
+          </p>
+
         </div>
     </div>
 </div>
