@@ -126,6 +126,10 @@ class Time extends AppModel {
      * and turn it into a number of mins
      */
     public function beforeValidate($options = array()) {
+        if (!isset($this->data['Time']['mins'])) {
+            return true;
+        }
+
         $string = $this->data['Time']['mins'];
 
         if (is_int($string)) {

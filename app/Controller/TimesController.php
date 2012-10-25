@@ -203,7 +203,9 @@ class TimesController extends AppProjectController {
      */
     public function view($project, $id = null) {
         $project = $this->_projectCheck($project);
-        $this->set('time', $this->Time->open($id));
-        $this->set('task', $this->Time->Project->Task->findById($this->Time->field('task_id')));
+        $time    = $this->Time->open($id);
+
+        $this->set('time', $time);
+        $this->set('task', $this->Time->Project->Task->findById($time['Time']['task_id']));
     }
 }
