@@ -50,6 +50,11 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
             </ul>
           </p>
 
+          <h4>SSH keys</h4>
+          <p>
+            Now you've set up your acount, you'll probably want to add some SSH keys - <a href='addkey'>click here</a> for more information!
+          </p>
+
         </div>
     </div>
 </div>
