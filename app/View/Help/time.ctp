@@ -34,7 +34,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I log time?</small>'); ?
 				<li><strong>Time Taken:</strong> signifies how long you spent doing whatever it was that you were doing.</li>
 				<li><strong>Date:</strong> specifies when exactly you did the work you did.</li>
 			</ol>
-			<p>And two pieces of optional information:</p>
+			<p>And 2 pieces of optional information:</p>
 			<ol start="3">
 				<li><strong>Description:</strong> most of the time, telling your team what you were up to is a good idea.</li>
 				<li><strong>Attached Task:</strong> allows you to log time to a specific task.</li>
