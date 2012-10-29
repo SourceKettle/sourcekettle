@@ -177,6 +177,31 @@ class Milestone extends AppModel {
         return $this->tasksOfStatusForMilestone($id, 4);
     }
 
+    public function closedOrResolvedTasksForMilestone($id = null){
+        $this->id = $id;
+
+        if (!$this->exists()) return null;
+
+        $tasks = $this->Task->find(
+            'all',
+            array(
+                'field' => array('milestone_id'),
+                'conditions' => array(
+                    'OR' => array(
+                        'task_status_id ' => 3,
+                        'task_status_id ' => 4,
+                    ),
+                    'AND' => array(
+                        'milestone_id =' => $id
+                    )
+                ),
+                'order' => 'task_priority_id DESC'
+            )
+        );
+        return $tasks;
+
+    }
+
     /**
      * tasksOfStatusForMilestone function.
      *
