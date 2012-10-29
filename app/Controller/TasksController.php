@@ -639,7 +639,7 @@ class TasksController extends AppProjectController {
 
         switch ($this->_api_auth_level()) {
             case 1:
-                foreach ($this->Task->find("all") as $task) {
+                foreach ($this->Task->find("all", array('conditions' => array('order' => 'task_priority_id DESC'))) as $task) {
                     //task_type_id
                     unset($task['Task']['task_type_id']);
                     $task['Task']['type'] = $task['TaskType']['name'];
@@ -752,7 +752,7 @@ class TasksController extends AppProjectController {
                 }
             }
 
-            foreach ($this->Task->find("all", array('conditions' => $conditions)) as $task) {
+            foreach ($this->Task->find("all", array('conditions' => $conditions, 'order' => array('task_status_id ASC', 'task_priority_id DESC'))) as $task) {
                 $data[] = $task;
             }
         }
