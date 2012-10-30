@@ -46,7 +46,7 @@ class DashboardController extends AppController {
                 'Task.task_status_id <>' => '4' 
             ), 
             'recursive' => 3,
-            'order' => array('task_priority_id DESC', 'task_status_id ASC')
+            'order' => array('task_priority_id DESC', 'task_status_id ASC'),
             'limit' => 10
         ));
     }
