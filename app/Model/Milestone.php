@@ -187,11 +187,13 @@ class Milestone extends AppModel {
             array(
                 'field' => array('milestone_id'),
                 'conditions' => array(
-                    'OR' => array(
-                        'task_status_id ' => 3,
-                        'task_status_id ' => 4,
-                    ),
                     'AND' => array(
+                        array(
+                            'OR' => array(
+                                array('task_status_id ' => 3),
+                                array('task_status_id ' => 4)
+                            ),
+                        ),
                         'milestone_id =' => $id
                     )
                 ),
