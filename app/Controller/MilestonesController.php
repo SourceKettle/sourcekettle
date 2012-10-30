@@ -125,8 +125,8 @@ class MilestonesController extends AppProjectController {
             'conditions' => array(
                 'Task.project_id' => $project['Project']['id'],
                 'OR' => array(
-                    'milestone_id' => NULL, 
-                    'milestone_id' => 0
+                    array('milestone_id' => NULL), 
+                    array('milestone_id' => 0)
                 ),
             )
         ));
