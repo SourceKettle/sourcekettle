@@ -233,7 +233,7 @@ class Project extends AppModel {
             $project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.name' => $key)));
         }
         if (empty($project)){
-            $project = null;
+            throw new NotFoundException("Project could not be found with reference {$key}");
         }
 
 	    // In some cases, auth_user_id isn't set (like GitCommand)
@@ -254,8 +254,12 @@ class Project extends AppModel {
      * @return boolean true if read permissions
      */
     public function hasRead($user = null, $project = null) {
-        if ( $user == null ) $user = $this->_auth_user_id;
-        if ( $user == null ) return false;
+        if ( $user == null ) {
+            $user = $this->_auth_user_id;
+        }
+        if ( $user == null ) {
+            return false;
+        }
 
         if ($this->id) $project = $this->id;
 
@@ -279,10 +283,16 @@ class Project extends AppModel {
      * @return boolean true if write permissions
      */
     public function hasWrite($user = null, $project = null) {
-        if ( $user == null ) $user = $this->_auth_user_id;
-        if ( $user == null ) return false;
+        if ( $user == null ) {
+            $user = $this->_auth_user_id;
+        }
+        if ( $user == null ) {
+            return false;
+        }
 
-        if ($this->id) $project = $this->id;
+        if ($this->id) {
+            $project = $this->id;
+        }
 
         $member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $project), 'fields' => array('access_level')));
 
