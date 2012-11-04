@@ -119,13 +119,18 @@ class MilestonesController extends AppProjectController {
 
         $backlog = $this->Milestone->openTasksForMilestone($id);
         $inProgress = $this->Milestone->inProgressTasksForMilestone($id);
-        $resolved = $this->Milestone->resolvedTasksForMilestone($id);
-        $completed = $this->Milestone->closedTasksForMilestone($id);
+        $completed = $this->Milestone->closedOrResolvedTasksForMilestone($id);
 
-        $iceBox = $this->Milestone->Task->find('all', array('conditions' => array('milestone_id' => NULL, 'Task.project_id' => $project['Project']['id'])));
+        $iceBox = $this->Milestone->Task->find('all', array(
+            'conditions' => array(
+                'Task.project_id' => $project['Project']['id'],
+                'OR' => array(
+                    array('milestone_id' => NULL), 
+                    array('milestone_id' => 0)
+                ),
+            )
+        ));
 
-        // Theres only 3 cols
-        $completed = array_merge($completed, $resolved);
 
         // Sort function for tasks
         $cmp = function($a, $b) {

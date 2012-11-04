@@ -19,6 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Controller', 'Controller');
+App::uses('Sanitize', 'Utility');
 
 
 class AppController extends Controller {
@@ -79,6 +80,8 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
 
+        $this->data = Sanitize::clean($this->data);
+
         $this->Security->blackHoleCallback = 'appBlackhole';
 
         // Load config file in
@@ -88,7 +91,7 @@ class AppController extends Controller {
         );
 
         $this->set('devtrack_config', $this->devtrack_config);
-        $this->set('devtrackVersion', 'v0.9');
+        $this->set('devtrackVersion', 'v1.0');
 
 
         // Set up the devtrack-specific auth model

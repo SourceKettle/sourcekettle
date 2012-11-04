@@ -202,13 +202,18 @@ class GitShell extends AppShell {
 
 		// We don't need to set all the details, just the ID so we can call hasRead/hasWrite
 		$this->Project->id = $project['Project']['id'];
+        $rt = $this->Project->RepoType->find(
+          'first', array(
+            'conditions' => array('RepoType.id' => $project['Project']['repo_type']),
+            'recursive'  => -1
+        ));
 
 		// Get the repository location
 		$devtrack_config = Configure::read('devtrack');
 		$repo_path = $devtrack_config['repo']['base'] . "/$_proj_name.git";
 
 		// Make sure there's actually a git repository for this project...
-		if (strtolower($project['RepoType']['name']) != 'git' or !is_dir($repo_path)) {
+		if (strtolower($rt['RepoType']['name']) != 'git' or !is_dir($repo_path)) {
 			$this->err("Error: You do not have the necessary permissions");
 			exit(1);
 		}

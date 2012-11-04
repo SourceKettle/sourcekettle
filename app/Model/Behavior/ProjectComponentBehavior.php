@@ -50,19 +50,23 @@ class ProjectComponentBehavior extends ModelBehavior {
         if (!$Model->exists()) {
             throw new NotFoundException(__('Invalid '.$Model->name));
         }
-        if ($Model->Project->id && ($Model->field('project_id') != $Model->Project->id)) {
+
+        $object = $Model->findById($Model->id);
+
+        if ($Model->Project->id && ($object[$Model->name]['project_id'] != $Model->Project->id)) {
             throw new NotFoundException(__('Invalid '.$Model->name));
         }
 
         if ($ownerRequired) {
-            $_is_not_owner = ($Model->field('user_id') != $Model->_auth_user_id);
+            $_is_not_owner = ($object[$Model->name]['user_id'] != $Model->_auth_user_id);
             $_is_not_admin = !$Model->Project->isAdmin();
 
             if ($_is_not_owner && $_is_not_admin) {
                 throw new ForbiddenException(__('Ownership required'));
             }
         }
-        return $Model->findById($Model->id);
+
+        return $object;
     }
 
     /**

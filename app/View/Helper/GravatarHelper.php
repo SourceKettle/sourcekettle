@@ -62,7 +62,7 @@ class GravatarHelper extends AppHelper
             $attributes['width'] = $options['size'];
         }
         if (!isset($options['d'])) {
-            $options['d'] = 'wavatar';
+            $options['d'] = 'retro';
         }
         if (!empty($options)) {
             $query = '?' . http_build_query($options);

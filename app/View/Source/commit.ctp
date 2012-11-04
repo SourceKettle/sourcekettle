@@ -61,7 +61,11 @@ $this->Html->scriptBlock("
                 $i = 0;
                 foreach ($commit['changeset'] as $file) {
                     if (isset($commit['diff'][$file])) {
-                        echo $this->element('Source/commit_changeset_item', array('file' => $file, 'diff' => $commit['diff'][$file]));
+                        if (isset($commit['diff'][$file]['folder'])) {
+                            echo $this->element('Source/commit_changeset_item_folder', array('file' => $file, 'diff' => $commit['diff'][$file]));
+                        } else if (isset($commit['diff'][$file]['hunks'])) {
+                            echo $this->element('Source/commit_changeset_item', array('file' => $file, 'diff' => $commit['diff'][$file]));
+                        }
                     } else {
                         echo $this->element('Source/commit_changeset_item_ajax', array('file' => $file, 'no' => $i++));
                     }

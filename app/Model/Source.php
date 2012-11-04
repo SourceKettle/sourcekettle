@@ -215,7 +215,7 @@ class Source extends AppModel {
                     $newEvent['Change']['field_new'] = null;
 
                     // Check if the actioner exists
-                    $actioner = $this->Project->Collaborator->User->findByEmail('pw@thega.me.uk');
+                    $actioner = $this->Project->Collaborator->User->findByEmail($newEvent['Actioner']['email']);
                     if($actioner) {
                         $newEvent['Actioner']['id'] = $actioner['User']['id'];
                         $newEvent['Actioner']['name'] = $actioner['User']['name'];
