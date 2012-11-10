@@ -1,37 +1,72 @@
 <?php
+/**
+*
+* Email Confirmation Unit Tests for the DevTrack system
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     DevTrack Development Team 2012
+* @link          http://github.com/chrisbulmer/devtrack
+* @package       DevTrack.Test.Case.Model
+* @since         DevTrack v 1.0
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
 App::uses('LostPasswordKey', 'Model');
 
-/**
- * LostPasswordKey Test Case
- *
- */
 class LostPasswordKeyTestCase extends CakeTestCase {
-/**
- * Fixtures
- *
- * @var array
- */
-	public $fixtures = array('app.lost_password_key', 'app.user', 'app.collaborator', 'app.project', 'app.repo_type', 'app.email_confirmation_key', 'app.ssh_key');
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->LostPasswordKey = ClassRegistry::init('LostPasswordKey');
-	}
+    /**
+     * fixtures - Populate the database with data of the following models
+     */
+    public $fixtures = array('app.lost_password_key', 'app.user');
 
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		unset($this->LostPasswordKey);
+    /**
+     * setUp function.
+     * Run before each unit test.
+     * Corrrecly sets up the test environment.
+     *
+     * @access public
+     * @return void
+     */
+    public function setUp() {
+        parent::setUp();
+        $this->LostPasswordKey = ClassRegistry::init('LostPasswordKey');
+    }
 
-		parent::tearDown();
-	}
+    /**
+     * tearDown function.
+     * Tear down all created data after the tests.
+     *
+     * @access public
+     * @return void
+     */
+    public function tearDown() {
+        unset($this->LostPasswordKey);
 
+        parent::tearDown();
+    }
+
+    /**
+     * test fixtures function.
+     *
+     * @access public
+     * @return void
+     */
+    public function testFixture() {
+        $this->LostPasswordKey->recursive = -1;
+        $fixtures = array(
+            array(
+                'LostPasswordKey' => array(
+                    'id' => "1",
+                    'user_id' => "1",
+                    'key' => 'ab169f5ff7fbbcdd7db9bd077',
+                    'created' => '2012-11-04 13:16:47',
+                    'modified' => '2012-11-04 13:16:47'
+                ),
+            ),
+        );
+        $fixturesB = $this->LostPasswordKey->find('all');
+        $this->assertEquals($fixtures, $fixturesB, "Arrays were not equal");
+    }
 }
