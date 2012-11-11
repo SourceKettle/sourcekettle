@@ -19,16 +19,16 @@ App::uses('AppModel', 'Model');
 class Time extends AppModel {
 
     private $Date;
-    private $_minYear;
-    private $_maxYear;
+    private $minYear;
+    private $maxYear;
 
     public function __construct(){
         parent::__construct();
 
         $this->Date = new DateTime;
 
-        $this->_minYear = 2010;
-        $this->_maxYear = $this->currentYear(1);
+        $this->minYear = 2010;
+        $this->maxYear = $this->currentYear(1);
     }
 
     /**
@@ -98,6 +98,52 @@ class Time extends AppModel {
             'order' => ''
         )
     );
+
+    /**
+     * getMaxAllowedYear function.
+     * returns the maximum allowed year for this model
+     *
+     * @access public
+     * @return void
+     */
+    public function getMaxAllowedYear() {
+        return $this->maxYear;
+    }
+
+    /**
+     * getMinAllowedYear function.
+     * returns the minimum allowed year for this model
+     *
+     * @access public
+     * @return void
+     */
+    public function getMinAllowedYear() {
+        return $this->minYear;
+    }
+
+    /**
+     * setMaxAllowedYear function.
+     * Sets the maximum allowed year for this model
+     *
+     * @access public
+     * @param mixed $maxYear
+     * @return void
+     */
+    public function setMaxAllowedYear($maxYear) {
+        $this->maxYear = $maxYear;
+    }
+
+    /**
+     * setMinAllowedYear function.
+     * Sets the minimum allowed year for this model
+     *
+     * @access public
+     * @param mixed $minYear
+     * @return void
+     */
+    public function setMinAllowedYear($minYear) {
+        $this->minYear = $minYear;
+    }
 
     public function afterFind($results, $primary = false) {
         foreach ($results as $a => $result) {
@@ -207,8 +253,8 @@ class Time extends AppModel {
         if ($year == null) {
             return $this->currentYear();
         }
-        if (!is_numeric($year) || $year < $this->_minYear || $year > $this->_maxYear) {
-            throw new NotFoundException(__("Invalid Year (allowed 2010 - {$this->_maxYear})"));
+        if (!is_numeric($year) || $year < $this->minYear || $year > $this->maxYear) {
+            throw new NotFoundException(__("Invalid Year (allowed 2010 - {$this->maxYear})"));
         }
         return $year;
     }
