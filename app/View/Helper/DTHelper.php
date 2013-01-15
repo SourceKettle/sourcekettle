@@ -21,6 +21,22 @@ class DTHelper extends AppHelper {
     var $helpers = array('TwitterBootstrap.TwitterBootstrap');
 
     /**
+     * _lazyLoad function.
+     *
+     * @access private
+     * @param mixed $c
+     * @param mixed $lang
+     * @return void
+     */
+    private function _lazyLoad($c, $lang) {
+        //debug($c);
+        if (!isset($this->_config['pages'][$c])) {
+            Configure::load('Language/dt_core_'.$c.'_'.$lang);
+            $this->_config = Configure::read('dtcore');
+        }
+    }
+
+    /**
      * __construct function.
      *
      * @access public
@@ -45,6 +61,8 @@ class DTHelper extends AppHelper {
 
         $c = (isset($overrides['controller']) != null) ? $overrides['controller'] : $this->request['controller'];
         $a = (isset($overrides['action']) != null) ? $overrides['action'] : $this->request['action'];
+
+        $this->_lazyLoad($c, $lang);
 
         return $this->_config['pages'][$c][$a][$lang][$string];
     }

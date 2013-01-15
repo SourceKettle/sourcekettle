@@ -12,9 +12,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-  $config = Configure::read('dtcore');
 ?>
-
 <div class="alert alert-info<?if(isset($span)){ echo ' span3';}?>">
-  <?= $config['pages']['projects']['all']['en']['noprojects.text'] ?>
+    <?= $this->DT->t('noprojects.text', array('action' => 'all', 'controller' => 'projects')) ?>
 </div>

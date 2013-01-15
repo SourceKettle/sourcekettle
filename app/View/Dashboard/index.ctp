@@ -13,9 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-  $config = Configure::read('dtcore'); 
-
-  echo $this->Bootstrap->page_header($config['pages']['dashboard']['index']['en']['header.text'] . " <small>" . $config['pages']['dashboard']['index']['en']['header.small.text'] . " " . strtolower($user_name) . "</small>");
+  echo $this->Bootstrap->page_header($this->DT->t('header.text') . " <small>" . $this->DT->t('header.small.text') . " " . strtolower($user_name) . "</small>");
 
   echo $this->element('beta_warning');
   $this->Html->css('tasks.index', null, array ('inline' => false));
