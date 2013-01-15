@@ -50,7 +50,9 @@ class AppController extends Controller {
         'RequestHandler',
         'Session',
         'Flash',
-        'Security',
+        'Security' => array(
+            'csrfUseOnce' => false
+        ),
         'Useful',
         'Auth' => array(
             'actionPath' => 'controllers/',
