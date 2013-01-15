@@ -76,7 +76,7 @@ class DTHelper extends AppHelper {
      * @return void
      */
     public function parse($text = '') {
-        $r_before = array("\n");
+        $r_before = array("\\n");
         $r_after  = array("<br>");
 
         return str_replace($r_before, $r_after, $text);
