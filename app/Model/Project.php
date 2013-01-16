@@ -16,6 +16,8 @@
 
 App::uses('AppModel', 'Model');
 App::uses('Folder', 'Utility');
+App::uses('UnsupportedRepositoryType', 'Exception');
+
 /**
  * Project Model
  *
@@ -344,10 +346,14 @@ class Project extends AppModel {
         $project = $this->getProject($this->id);
 
         $events = array();
-        $this->Source->init();
 
         // Types of event to collect
-        $_types = array('Collaborator', 'Time', 'Source', 'Task', 'Milestone');
+        $_types = array('Collaborator', 'Time', 'Task', 'Milestone');
+
+        try {
+            $this->Source->init();
+            array_push($_types, 'Source');
+        } catch (UnsupportedRepositoryType $e) {}
 
         // Iterate over all of the types of event
         foreach ( $_types as $x ) {

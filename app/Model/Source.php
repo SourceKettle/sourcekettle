@@ -15,6 +15,7 @@
 */
 
 App::uses('AppModel', 'Model');
+App::uses('UnsupportedRepositoryType', 'Exception');
 
 /**
  * Source Model
@@ -73,9 +74,10 @@ class Source extends AppModel {
         );
         $repoType = $this->Project->field('repo_type');
 
-        // TODO Could throw a 'no repo' exception here if type is null
-
-        return $types[$repoType];
+        if (isset($types[$repoType])) {
+            return $types[$repoType];
+        }
+        throw new UnsupportedRepositoryType(__("Repository type not supported"));
     }
 
     /**
@@ -97,7 +99,7 @@ class Source extends AppModel {
             App::uses('SourceSubversion', 'GitCake.Model');
             return SourceSubversion::create($location, 'g+rwX', 'group');
         } else {
-            throw new NotFoundException(__("Repository type '$type' is unknown"));
+            throw new UnsupportedRepositoryType(__("Repository type not supported"));
         }
     }
 
@@ -158,7 +160,7 @@ class Source extends AppModel {
         } else if ($type == RepoTypes::Subversion) {
             $type = 'svn';
         } else {
-            throw new NotFoundException(__("Repository type '$type' is unknown"));
+            throw new UnsupportedRepositoryType(__("Repository type not supported"));
         }
 
         return "{$base}{$name}.{$type}/";

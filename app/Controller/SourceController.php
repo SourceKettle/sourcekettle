@@ -240,22 +240,26 @@ class SourceController extends AppProjectController {
      * @return void
      */
     public function tree($project = null, $branch = null) {
-        $project = $this->initialiseResources($project, $branch);
-        $path    = $this->getPath();
+        try {
+            $project = $this->initialiseResources($project, $branch);
+            $path    = $this->getPath();
 
-        if ($branch == null) {
-            $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+            if ($branch == null) {
+                $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+            }
+
+            $blob = $this->Source->Blob->fetch($branch, $path);
+
+            if (!in_array($blob['type'], array('tree', 'blob'))) {
+                throw new NotFoundException(__('Invalid Location'));
+            }
+
+            $this->set('tree', $blob);
+            $this->set("path", $path);
+            $this->set("branch", $branch);
+        } catch (UnsupportedRepositoryType $e) {
+            $this->render('GettingStarted/none');
         }
-
-        $blob = $this->Source->Blob->fetch($branch, $path);
-
-        if (!in_array($blob['type'], array('tree', 'blob'))) {
-            throw new NotFoundException(__('Invalid Location'));
-        }
-
-        $this->set('tree', $blob);
-        $this->set("path", $path);
-        $this->set("branch", $branch);
     }
 
 }
