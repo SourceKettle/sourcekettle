@@ -8,16 +8,23 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/chrisbulmer/devtrack
- * @package       DevTrack.Controller
- * @since         DevTrack v 0.1
+ * @link          http://github.com/CodeKettle
+ * @package       CodeKettle.Controller
+ * @since         CodeKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('AppProjectController', 'Controller');
 
 class TimesController extends AppProjectController {
 
-    public $helpers = array('Time', 'GoogleChart.GoogleChart');
+    /**
+     * helpers for additional rendering support
+     */
+    public $helpers = array(
+        'Time',
+        'GoogleChart.GoogleChart'
+    );
 
     /**
      * add
@@ -52,7 +59,8 @@ class TimesController extends AppProjectController {
             if ($this->Flash->C($this->Time->save($this->request->data))) {
                 $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
             } else {
-                $this->request->data['Time']['mins'] = $origTime; // Show the user what they put in, its just nice
+                // Show the user what they put in, its just nice
+                $this->request->data['Time']['mins'] = $origTime;
             }
         }
         $this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
@@ -97,7 +105,7 @@ class TimesController extends AppProjectController {
             }
         } else {
             $this->request->data = $time;
-            $this->request->data['Time']['mins'] = $this->request->data['Time']['mins']['s'];
+            $this->request->data['Time']['mins'] = $this->request->data['Time']['minutes']['s'];
             $this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
         }
     }
@@ -176,21 +184,8 @@ class TimesController extends AppProjectController {
     public function users($project) {
         $project = $this->_projectCheck($project);
 
-        $tTime = $this->Time->find('all', array(
-            'conditions' => array('Time.project_id' => $project['Project']['id']),
-            'fields' => array('SUM(Time.mins)')
-        ));
-        $users = $this->Time->find('all', array(
-            'conditions' => array('Time.project_id' => $project['Project']['id']),
-            'group' => array('Time.user_id'),
-            'fields' => array('User.id', 'User.name', 'User.email', 'SUM(Time.mins)')
-        ));
-
-        foreach ($users as $a => $user) {
-            $users[$a]['Time']['time'] = $this->Time->splitMins($user[0]["SUM(`Time`.`mins`)"]);
-        }
-        $this->set('total_time', $this->Time->splitMins($tTime[0][0]['SUM(`Time`.`mins`)']));
-        $this->set('users', $users);
+        $this->set('total_time', $this->Time->fetchTotalTimeForProject());
+        $this->set('users', $this->Time->fetchUserTimesForProject());
     }
 
     /**

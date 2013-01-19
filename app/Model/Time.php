@@ -1,65 +1,75 @@
 <?php
 /**
-*
-* Time model for the DevTrack system
-* Represents a time segment
-*
-* Licensed under The MIT License
-* Redistributions of files must retain the above copyright notice.
-*
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/chrisbulmer/devtrack
-* @package       DevTrack.Model
-* @since         DevTrack v 0.1
-* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
-*/
+ *
+ * Time model for the CodeKettle system
+ * Represents a time segment
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     DevTrack Development Team 2012
+ * @link          http://github.com/CodeKettle
+ * @package       CodeKettle.Model
+ * @since         CodeKettle v 0.1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::uses('AppModel', 'Model');
+App::uses('InvalidArgumentException', 'Exception');
 
 class Time extends AppModel {
 
-    private $Date;
-    private $minYear;
-    private $maxYear;
-
-    public function __construct(){
-        parent::__construct();
-
-        $this->Date = new DateTime;
-
-        $this->minYear = 2010;
-        $this->maxYear = $this->currentYear(1);
-    }
+    /**
+     * currentDate
+     * The current date used for validating input.
+     */
+    private $currentDate;
 
     /**
-    * Display field
-    *
-    * @var string
-    */
+     * minimumAllowedYear
+     * The minimum year which can be used for allocated time.
+     */
+    private $minimumAllowedYear = 2010;
+
+    /**
+     * maximumAllowedYear
+     * The maximum year which can be used for allocated time.
+     */
+    private $maximumAllowedYear;
+
+    /**
+     * name
+     * Class name.
+     */
+    public $name = 'Time';
+
+    /**
+     * displayField
+     * The field used as a label for the model.
+     */
     public $displayField = 'id';
 
+    /**
+     * actsAs
+     * List of Behaviors that apply to this Model.
+     */
     public $actsAs = array(
         'ProjectComponent',
         'ProjectHistory'
     );
 
     /**
-     * Validation rules
-     *
-     * @var array
+     * Validation rules.
+     * Ensure that saved data adheres to the defined rules.
      */
     public $validate = array(
         'project_id' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-                'message' => 'A valid project id was not entered',
-            ),
+            'rule' => 'numeric',
+            'message' => 'A valid project id was not entered',
         ),
         'user_id' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-                'message' => 'A valid user id was not entered',
-            ),
+            'rule' => array('numeric'),
+            'message' => 'A valid user id was not entered',
         ),
         'mins' => array(
             'maximum' => array(
@@ -71,103 +81,46 @@ class Time extends AppModel {
                 'message' => 'Time logged must be greater than 0.',
             ),
         ),
-        'date' => array(
-            'rule' => array('date','ymd'),
-            'message' => 'Enter a valid date in YYYY-MM-DD format.',
-        ),
+        'date' => 'date',
     );
 
     /**
     * belongsTo associations
-    *
-    * @var array
     */
     public $belongsTo = array(
         'Project' => array(
             'className' => 'Project',
-            'foreignKey' => 'project_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
+            'foreignKey' => 'project_id'
         ),
         'User' => array(
             'className' => 'User',
-            'foreignKey' => 'user_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
+            'foreignKey' => 'user_id'
         )
     );
 
-    /**
-     * getMaxAllowedYear function.
-     * returns the maximum allowed year for this model
-     *
-     * @access public
-     * @return void
-     */
-    public function getMaxAllowedYear() {
-        return $this->maxYear;
+    public function __construct(){
+        parent::__construct();
+
+        // Set the current date
+        $this->currentDate = new DateTime();
+        $this->maximumAllowedYear = $this->currentYear(1);
     }
 
     /**
-     * getMinAllowedYear function.
-     * returns the minimum allowed year for this model
-     *
-     * @access public
-     * @return void
+     * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
+     * Pre-format the mins to prevent additional formatting later
      */
-    public function getMinAllowedYear() {
-        return $this->minYear;
-    }
-
-    /**
-     * setMaxAllowedYear function.
-     * Sets the maximum allowed year for this model
-     *
-     * @access public
-     * @param mixed $maxYear
-     * @return void
-     */
-    public function setMaxAllowedYear($maxYear) {
-        $this->maxYear = $maxYear;
-    }
-
-    /**
-     * setMinAllowedYear function.
-     * Sets the minimum allowed year for this model
-     *
-     * @access public
-     * @param mixed $minYear
-     * @return void
-     */
-    public function setMinAllowedYear($minYear) {
-        $this->minYear = $minYear;
-    }
-
     public function afterFind($results, $primary = false) {
-        foreach ($results as $a => $result) {
-            if (isset($result['Time']['mins'])) {
-                $results[$a]['Time']['mins'] = $this->splitMins($result['Time']['mins']);
+        foreach ($results as $key => $val) {
+            if (isset($val['Time']['mins'])) {
+                $results[$key]['Time']['minutes'] = $this->splitMins($val['Time']['mins']);
             }
         }
         return $results;
     }
 
-    public function splitMins($in) {
-        $hours = 0;
-        $mins = (int) $in;
-
-        while ($mins >= 60) {
-            $hours += 1;
-            $mins -= 60;
-        }
-
-        return array('h' => $hours, 'm' => $mins, 's' => "${hours}h ${mins}m", 't' => (int) $in);
-    }
-
     /**
-     * beforeValidate
+     * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
      * Take the mins string with hours and mins in it (e.g. 1h 20m)
      * and turn it into a number of mins
      */
@@ -195,17 +148,40 @@ class Time extends AppModel {
     }
 
     /**
+     * currentYear function.
+     * Return the current year ± offset of years
+     *
+     * @param int $offset the difference between the current year
+     */
+    public function currentYear($offset = 0) {
+        return date('Y', strtotime("+$offset year"));
+    }
+
+    /**
+     * currentWeek function.
+     * Return the current week ± offset of years
+     *
+     * @param int $offset the difference between the current week
+     */
+    public function currentWeek($offset = 0) {
+        return date('W', strtotime("+$offset week"));
+    }
+
+    /**
+     * dayOfWeek function.
+     * Return the day of the week based on a year, week and day number
+     *
+     * @param mixed $year the year
+     * @param mixed $week the week
+     * @param mixed $day the day
+     */
+    public function dayOfWeek($year, $week, $day) {
+        $this->currentDate->setISODate($year, $week, $day);
+        return $this->currentDate->format('Y-m-d');
+    }
+
+    /**
      * @OVERRIDE
-     *
-     * fetchHistory function.
-     *
-     * @access public
-     * @param string $project (default: '')
-     * @param int $number (default: 10)
-     * @param int $offset (default: 0)
-     * @param float $user (default: -1)
-     * @param array $query (default: array())
-     * @return void
      */
     public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
         $events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'time');
@@ -213,121 +189,183 @@ class Time extends AppModel {
     }
 
     /**
+     * fetchTotalTimeForProject function.
+     * Fetch all of the allocated time for a project
+     *
+     * @param mixed $projectId the project to check
+     */
+    public function fetchTotalTimeForProject($projectId = null) {
+        $projectId = ($projectId == null) ? $this->Project->id : $projectId;
+
+        if ($projectId == null) {
+            throw new InvalidArgumentException("Could not fetch times for unknown project");
+        }
+
+        $totalLoggedTime = $this->find('all', array(
+            'conditions' => array('Time.project_id' => $projectId),
+            'fields' => array('SUM(Time.mins)')
+        ));
+
+        $totalLoggedTime = $totalLoggedTime[0][0]['SUM(`Time`.`mins`)'];
+
+        try{
+            $totalLoggedTime = $this->splitMins($totalLoggedTime);
+        } catch (InvalidArgumentException $e) {}
+
+        return $totalLoggedTime;
+    }
+
+    /**
+     * fetchUserTimesForProject function.
+     * Fetch time for a project split among those who logged it
+     *
+     * @param mixed $projectId the project to check
+     */
+    public function fetchUserTimesForProject($projectId = null) {
+        $projectId = ($projectId == null) ? $this->Project->id : $projectId;
+
+        if ($projectId == null) {
+            throw new InvalidArgumentException("Could not fetch times for unknown project");
+        }
+
+        $userTimes = $this->find('all', array(
+            'conditions' => array('Time.project_id' => $projectId),
+            'group' => array('Time.user_id'),
+            'fields' => array(
+                'User.id',
+                'User.name',
+                'User.email',
+                'SUM(Time.mins)'
+            )
+        ));
+
+        foreach ($userTimes as $key => $value) {
+            $userTimes[$key]['Time']['time'] = $this->splitMins($value[0]["SUM(`Time`.`mins`)"]);
+        }
+
+        return $userTimes;
+    }
+
+    /**
+     * getMaxAllowedYear function.
+     * returns the maximum allowed year for this model
+     */
+    public function getMaxAllowedYear() {
+        return $this->maximumAllowedYear;
+    }
+
+    /**
+     * getMinAllowedYear function.
+     * returns the minimum allowed year for this model
+     */
+    public function getMinAllowedYear() {
+        return $this->minimumAllowedYear;
+    }
+
+    /**
      * @OVERRIDE
-     *
-     * getTitleForHistory function.
-     *
-     * @access public
-     * @param mixed $id
-     * @return void
      */
     public function getTitleForHistory($id) {
         $this->id = $id;
         if (!$this->exists()) {
             return null;
         } else {
-            $mins = $this->field('mins');
+            $mins = $this->splitMins($this->field('mins'));
             return $mins['s'];
         }
     }
 
     /**
-     * currentYear function.
-     *
-     * @access public
-     * @param int $offset (default: 0)
-     * @return void
-     */
-    public function currentYear($offset = 0) {
-        return date('Y', strtotime("+$offset year"));
-    }
-
-    /**
-     * validateYear function.
-     *
-     * @access public
-     * @param mixed $year (default: null)
-     * @return void
-     */
-    public function validateYear($year = null) {
-        if ($year == null) {
-            return $this->currentYear();
-        }
-        if (!is_numeric($year) || $year < $this->minYear || $year > $this->maxYear) {
-            throw new NotFoundException(__("Invalid Year (allowed 2010 - {$this->maxYear})"));
-        }
-        return $year;
-    }
-
-    /**
-     * currentWeek function.
-     *
-     * @access public
-     * @param int $offset (default: 0)
-     * @return void
-     */
-    public function currentWeek($offset = 0) {
-        return date('W', strtotime("+$offset week"));
-    }
-
-    /**
-     * validateWeek function.
-     *
-     * @access public
-     * @param mixed $week (default: null)
-     * @return void
-     */
-    public function validateWeek($week = null, $year = null) {
-        if ($week == null) {
-            return $this->currentWeek();
-        }
-        if (!is_numeric($week) || $week < 1 || $week > $this->lastWeekOfYear($year)) {
-            throw new NotFoundException(__('Invalid Week of the Year'));
-        }
-        return $week;
-    }
-
-    /**
      * lastWeekOfYear function.
+     * Find the last week of the year
      *
-     * @access public
-     * @param mixed $year (default: null)
-     * @return string last week of year
+     * @param mixed $year The year to check
      */
     public function lastWeekOfYear($year = null) {
-        $this->Date->setISODate($year, 53);
-        return ($this->Date->format("W") === "53" ? '53' : '52');
+        $this->currentDate->setISODate($year, 53);
+        return ($this->currentDate->format("W") === "53" ? '53' : '52');
+    }
+
+    /**
+     * setMaxAllowedYear function.
+     * Sets the maximum allowed year for this model
+     *
+     * @param mixed $maxYear The new maxYear
+     */
+    public function setMaxAllowedYear($maxYear) {
+        $this->maximumAllowedYear = $maxYear;
+    }
+
+    /**
+     * setMinAllowedYear function.
+     * Sets the minimum allowed year for this model
+     *
+     * @param mixed $minYear The new minYear
+     */
+    public function setMinAllowedYear($minYear) {
+        $this->minimumAllowedYear = $minYear;
+    }
+
+    /**
+     * splitMins function.
+     * Take a number of minutes and convert it to D-H-M
+     *
+     * @param mixed $in the number of minutes
+     */
+    public function splitMins($in) {
+        if (!is_numeric($in)) {
+            throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
+        }
+
+        $days = 0;
+        $hours = 0;
+        $mins = (int) $in;
+
+        while ($mins >= 60) {
+            $hours += 1;
+            $mins -= 60;
+        }
+
+        while ($hours >= 24) {
+            $days += 1;
+            $hours -= 24;
+        }
+
+        $output = array(
+            'd' => $days,
+            'h' => $hours,
+            'm' => $mins,
+            't' => (int) $in, //legacy TODO: remove
+            's' => "${hours}h ${mins}m",
+        );
+
+        if ($days > 0) {
+            $output['s'] = "${days}d ${hours}h ${mins}m";
+        }
+
+        return $output;
     }
 
     /**
      * startOfWeek function.
+     * The start day of a week.
      *
-     * @access public
-     * @param mixed $year
-     * @param mixed $week
-     * @return void
+     * @param mixed $year the year
+     * @param mixed $week the week
      */
     public function startOfWeek($year, $week) {
         return $this->dayOfWeek($year, $week, 0);
     }
 
     /**
-     * dayOfWeek function.
+     * tasksForWeek function.
+     * Return a list of tasks worked on this week
      *
-     * @access public
-     * @param mixed $year
-     * @param mixed $week
-     * @param mixed $day
-     * @return void
+     * @param mixed $year the year
+     * @param mixed $week the week
      */
-    public function dayOfWeek($year, $week, $day) {
-        $this->Date->setISODate($year, $week, $day);
-        return $this->Date->format('Y-m-d');
-    }
-
-// REMOVE
     public function tasksForWeek($year, $week) {
-        return array_values($this->find(
+        $tasksForWeek = $this->find(
             'list',
             array(
                 'fields'     => array('Time.task_id'),
@@ -341,9 +379,17 @@ class Time extends AppModel {
                     'Time.user_id'    => $this->_auth_user_id
                 )
             )
-        ));
+        );
+        return array_values($tasksForWeek);
     }
 
+    /**
+     * timesForWeek function.
+     * Fetch the time logged in a week
+     *
+     * @param mixed $year the year
+     * @param mixed $week the week
+     */
     public function timesForWeek($year, $week) {
         $this->recursive = -1;
         $weekEvents = array();
@@ -381,8 +427,8 @@ class Time extends AppModel {
                     $weekEvents[$day]['totalTimes'][$time['Time']['task_id']] = 0;
                 }
                 $weekEvents[$day]['times'][$time['Time']['task_id']][] = $time;
-                $weekEvents[$day]['totalTimes'][$time['Time']['task_id']] += $time['Time']['mins']['t'];
-                $weekEvents[$day]['totalTime'] += $time['Time']['mins']['t'];
+                $weekEvents[$day]['totalTimes'][$time['Time']['task_id']] += $time['Time']['mins'];
+                $weekEvents[$day]['totalTime'] += $time['Time']['mins'];
             }
 
             // Change the total to a useful format
@@ -393,11 +439,61 @@ class Time extends AppModel {
             $totalTime = $this->splitMins($weekEvents[$day]['totalTime']);
             $weekEvents[$day]['totalTime'] = $totalTime['h'] + round($totalTime['m']/60, 1);
 
-            $weekEvents[$this->Date->format('D')] = $weekEvents[$day];
+            $weekEvents[$this->currentDate->format('D')] = $weekEvents[$day];
 
             unset($weekEvents[$day]);
         }
 
         return $weekEvents;
+    }
+
+    /**
+     * toString function.
+     *
+     * @param mixed $id the optional id of the time element
+     */
+    public function toString($id = null) {
+        $id = ($id == null) ? $this->id : $id;
+
+        if ($id == null) {
+            throw new InvalidArgumentException("Could not print undefined time element");
+        }
+
+        $this->recursive = -1;
+        $time = $this->findById($id);
+        return $time['Time']['minutes']['s'];
+    }
+
+    /**
+     * validateYear function.
+     * Ensure a year is within our bounds
+     *
+     * @param mixed $year the year to validate
+     */
+    public function validateYear($year = null) {
+        if ($year == null) {
+            return $this->currentYear();
+        }
+        if (!is_numeric($year) || $year < $this->minimumAllowedYear || $year > $this->maximumAllowedYear) {
+            throw new InvalidArgumentException("Invalid Year (allowed 2010 - {$this->maximumAllowedYear})");
+        }
+        return $year;
+    }
+
+    /**
+     * validateWeek function.
+     * Ensure the week is a valid week
+     *
+     * @param mixed $week the week
+     * @param mixed $year the year
+     */
+    public function validateWeek($week = null, $year = null) {
+        if ($week == null) {
+            return $this->currentWeek();
+        }
+        if (!is_numeric($week) || $week < 1 || $week > $this->lastWeekOfYear($year)) {
+            throw new InvalidArgumentException('Invalid Week of the Year');
+        }
+        return $week;
     }
 }

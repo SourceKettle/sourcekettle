@@ -26,7 +26,7 @@
             <div class="well times form form-horizontal">
                 <dl class="dl-horizontal">
                     <dt><?= $this->DT->t('info.time.logged') ?></dt>
-                    <dd><?= $time['Time']['mins']['s'] ?></dd>
+                    <dd><?= $time['Time']['minutes']['s'] ?></dd>
 
                     <dt><?= $this->DT->t('info.time.description') ?></dt>
                     <dd><?= ($time['Time']['description']) ? $time['Time']['description'] : 'n/a' ?></dd>
