@@ -32,7 +32,7 @@ unset($times['total']);
 
                 echo "<tr>";
                 echo "<td>".$this->Html->link($txt, $url)."</td>";
-                echo "<td>".$time['Time']['mins']['s']."</td>";
+                echo "<td>".$time['Time']['minutes']['s']."</td>";
                 echo "</tr>";
             }
         ?>
