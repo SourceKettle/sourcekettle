@@ -1,0 +1,49 @@
+a#notification-icon {
+  color: white;
+  background-color: red;
+  border-radius: 15px;
+  padding: 5px 15px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+a#notification-icon:hover {
+  background-color: #f66;
+}
+
+.notifications.dropdown-menu {
+  min-width: 350px;
+}
+
+.notifications.dropdown-menu form {
+  margin: 0px;
+}
+
+.notifications.dropdown-menu li {
+  padding: 15px 5px;
+  border-top: 1px solid #cdcdcd;
+}
+
+.notifications.dropdown-menu li:first-child {
+  border-top: none;
+}
+
+.notifications.dropdown-menu .notification-actions {
+  width: 120px;
+  float: right;
+}
+
+.notifications.dropdown-menu .btn-small, .notifications.dropdown-menu .btn-inverse {
+  color: white;
+  padding: 3px;
+  margin: 0px;
+  width: 50px;
+  margin-right: 5px;
+  float: left;
+  clear: none;
+}
+
+.notifications.dropdown-menu form button {
+  height: 28px;
+  width: 50px;
+}

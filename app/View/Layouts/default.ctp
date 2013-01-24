@@ -27,6 +27,7 @@
     <?= ($user_theme != 'default') ? $this->TwitterBootswatch->cssForTheme($user_theme) : '' ?>
     <?= $this->Html->css('layout'); ?>
     <?= $this->Html->css('bootstrap-responsive.min') ?>
+    <?= $this->Html->css('notifications') ?>
     <?= $this->fetch ('css') ?>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -48,6 +49,9 @@
 
                     <ul class="nav pull-right">
                     <? if(isset($user_name)){ ?>
+
+                        <?= $this->Notification->navbarContent($notifications) ?>
+
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <?= $this->Gravatar->image(
@@ -116,6 +120,7 @@
     <!-- JavaScript! Placed at the end of the file for faster page loading -->
     <?= $this->Html->script('jquery.min.js'); ?>
     <?= $this->Html->script('bootstrap.min') ?>
+    <?= $this->Html->script('notifications') ?>
     <?= $this->Popover->requirements() ?>
     <?= $this->fetch('scriptBottom') ?>
     <?= $scripts_for_layout ?>

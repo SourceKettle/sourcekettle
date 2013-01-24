@@ -23,7 +23,7 @@ App::uses('Sanitize', 'Utility');
 
 
 class AppController extends Controller {
-
+    public $uses = array("Notification");
 
     /**
      * The global helpers
@@ -39,7 +39,8 @@ class AppController extends Controller {
         'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'),
         'Popover',
         'TwitterBootswatch.TwitterBootswatch',
-        'Gravatar'
+        'Gravatar',
+        'Notification'
     );
 
     /**
@@ -51,7 +52,8 @@ class AppController extends Controller {
         'Session',
         'Flash',
         'Security' => array(
-            'csrfUseOnce' => false
+            'csrfUseOnce' => false,
+            'allowedControllers' => array('notification')
         ),
         'Useful',
         'Auth' => array(
@@ -147,6 +149,10 @@ class AppController extends Controller {
             $_USER_MODEL = ClassRegistry::init('User');
             $user = $_USER_MODEL->findById($user_id);
             $this->set('user_is_devtrack_managed', User::isDevTrackManaged($user));
+        }
+
+        if ( isset($user_id)) {
+            $this->set("notifications", $this->Notification->forUser($user_id));
         }
     }
 
