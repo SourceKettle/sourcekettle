@@ -255,7 +255,7 @@ class Task extends AppModel {
      * @param array $options (default: empty array)
      * @return bool True if the save was successful.
      */
-    public function beforeSave(array $options = array()) {
+    public function beforeSave($options = array()) {
         if(isset ($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
             foreach($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
                 if ($dependsOn == $this->id) {
