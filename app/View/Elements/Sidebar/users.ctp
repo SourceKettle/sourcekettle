@@ -36,6 +36,13 @@
                     'controller' => 'users',
                 ),
             ),
+            'Notifications' => array(
+                'icon' => 'bell',
+                'url' => array(
+                    'action' => 'notifications',
+                    'controller' => 'users',
+                ),
+            ),
             'Delete Account' => array(
                 'icon' => 'remove',
                 'url' => array(

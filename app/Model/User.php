@@ -78,6 +78,27 @@ class User extends AppModel {
     //The Associations below have been created with all possible keys, those that are not needed can be removed
 
     /**
+     * hasOne associations
+     *
+     * @var array
+     */
+    public $hasOne = array(
+        'NotificationSetting' => array(
+            'className' => 'NotificationSetting',
+            'foreignKey' => 'user_id',
+            'dependent' => true,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        )
+    );
+
+    /**
      * hasMany associations
      *
      * @var array
@@ -150,6 +171,7 @@ class User extends AppModel {
         )
     );
 
+
     public function afterFind($results, $primary = false) {
         if ($this->_is_api) {
             foreach ($results as $x => $item) {
@@ -186,6 +208,20 @@ class User extends AppModel {
         return true;
     }
 
+
+    public function afterSave($created = false){
+        if ($created){
+            $notificationSetting = array(
+                'NotificationSetting' => array(
+                    'user_id' => $this->id,
+                    'email_notifications' => true,
+                    'all_notifications' => false
+                    )
+                );
+
+            $this->NotificationSetting->save($notificationSetting);
+        }
+    }
 
     public function beforeDelete($cascade = true) {
 

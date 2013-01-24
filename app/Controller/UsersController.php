@@ -365,6 +365,36 @@ class UsersController extends AppController {
         $this->request->data['User']['password'] = null;
     }
 
+    public function notifications(){
+        $this->User->id = $this->Auth->user('id'); //get the current user
+        $user = $this->User->read(null, $this->User->id);
+        $notificationSetting = $user['NotificationSetting'];
+        $user = $user['User'];
+
+        if ($this->request->is('post')){
+            $data = $this->request->data;
+            $data['NotificationSetting']['user_id'] = $user['id'];
+            $data['NotificationSetting']['id'] = $notificationSetting['id'];
+            if ($this->User->NotificationSetting->save($data)){
+                $this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+                $this->log("[UsersController.notification] user[".$this->Auth->user('id')."] changed notification settings", 'devtrack');
+            } else {
+                foreach ($this->User->NotificationSetting->validationErrors as $field => $errors) {
+                    foreach ($errors as $errorMessage) {
+                        $this->Session->setFlash($errorMessage, 'default', array(), 'error');
+                    }
+                }
+            }
+        }
+
+        //Update the page details
+        $user = $this->Auth->user();
+        $this->set('user', $user);
+        $this->User->id = $user['id'];
+        $this->request->data = $this->User->read();
+        $this->request->data['User']['password'] = null;
+    }
+
     /**
      * Edit the current users password
      */
