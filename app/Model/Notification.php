@@ -1,5 +1,6 @@
 <?php
 App::uses('AppModel', 'Model');
+App::uses('CakeEmail', 'Network/Email');
 /**
  * Notification Model
  *
@@ -109,6 +110,16 @@ class Notification extends AppModel {
   		);
 
     	$this->save($notification);
+      $settings = ClassRegistry::init('NotificationSetting');
+      $userSettings = $settings->find('first', array("conditions" => array('user_id' => $user_id)));
+
+      if ($userSettings['NotificationSetting']['email_notifications']){
+        $email = new CakeEmail('smtp');
+        $email->to($userSettings['User']['email']);
+        $email->subject("New notification");
+        $email->send("Test message!");
+      }
+          
     }
 	}
 

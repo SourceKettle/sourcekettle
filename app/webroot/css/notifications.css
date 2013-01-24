@@ -15,6 +15,13 @@ a#notification-icon:hover {
   min-width: 350px;
 }
 
+ul.notifications {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
 .notifications.dropdown-menu form {
   margin: 0px;
 }
