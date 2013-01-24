@@ -110,6 +110,7 @@ class Notification extends AppModel {
   		);
 
     	$this->save($notification);
+      $last_id = $this->getInsertId();
       $settings = ClassRegistry::init('NotificationSetting');
       $userSettings = $settings->find('first', array("conditions" => array('user_id' => $user_id)));
 
@@ -117,7 +118,7 @@ class Notification extends AppModel {
         $email = new CakeEmail('smtp');
         $email->to($userSettings['User']['email']);
         $email->subject("New notification");
-        $email->send("Test message!");
+        $email->send($text);
       }
           
     }
