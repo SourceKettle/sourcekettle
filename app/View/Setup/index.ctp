@@ -13,7 +13,7 @@
  *
  * @copyright     Original: Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @copyright     Modifications: DevTrack Development Team 2012
- * @link          http://github.com/chrisbulmer/devtrack
+ * @link          http://github.com/SourceKettle/devtrack
  * @package       DevTrack.View.Setup
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)

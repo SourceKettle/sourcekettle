@@ -5,7 +5,7 @@
  * Renders a message informing about the cookies DevTrack uses
  * 
  * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/chrisbulmer/devtrack
+ * @link          http://github.com/SourceKettle/devtrack
  * @package       DevTrack.View.Elements
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
