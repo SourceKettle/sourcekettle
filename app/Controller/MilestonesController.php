@@ -54,18 +54,18 @@ class MilestonesController extends AppProjectController {
 		$milestones = array();
 		// Iterate over all milestones
 		foreach ($this->Milestone->getOpenMilestones() as $x) {
-			$o_tasks = $this->Milestone->openTasksForMilestone($x);
-			$i_tasks = $this->Milestone->inProgressTasksForMilestone($x);
-			$r_tasks = $this->Milestone->resolvedTasksForMilestone($x);
-			$c_tasks = $this->Milestone->closedTasksForMilestone($x);
+			$oTasks = $this->Milestone->openTasksForMilestone($x);
+			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
+			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
+			$cTasks = $this->Milestone->closedTasksForMilestone($x);
 
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
 
-			$milestone['Milestone']['c_tasks'] = count($c_tasks);
-			$milestone['Milestone']['i_tasks'] = count($i_tasks);
-			$milestone['Milestone']['r_tasks'] = count($r_tasks);
-			$milestone['Milestone']['o_tasks'] = count($o_tasks);
+			$milestone['Milestone']['cTasks'] = count($cTasks);
+			$milestone['Milestone']['iTasks'] = count($iTasks);
+			$milestone['Milestone']['rTasks'] = count($rTasks);
+			$milestone['Milestone']['oTasks'] = count($oTasks);
 
 			$milestones[$x] = $milestone;
 		}
@@ -84,21 +84,21 @@ class MilestonesController extends AppProjectController {
 		$milestones = array();
 		// Iterate over all milestones
 		foreach ($this->Milestone->getClosedMilestones() as $x) {
-			$o_tasks = $this->Milestone->openTasksForMilestone($x);
-			$i_tasks = $this->Milestone->inProgressTasksForMilestone($x);
-			$r_tasks = $this->Milestone->resolvedTasksForMilestone($x);
-			$c_tasks = $this->Milestone->closedTasksForMilestone($x);
+			$oTasks = $this->Milestone->openTasksForMilestone($x);
+			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
+			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
+			$cTasks = $this->Milestone->closedTasksForMilestone($x);
 
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
 
-			$milestone['Milestone']['c_tasks'] = count($c_tasks);
-			$milestone['Milestone']['i_tasks'] = count($i_tasks);
-			$milestone['Milestone']['r_tasks'] = count($r_tasks);
-			$milestone['Milestone']['o_tasks'] = count($o_tasks);
+			$milestone['Milestone']['cTasks'] = count($cTasks);
+			$milestone['Milestone']['iTasks'] = count($iTasks);
+			$milestone['Milestone']['rTasks'] = count($rTasks);
+			$milestone['Milestone']['oTasks'] = count($oTasks);
 
-			$milestone['Milestone']['closed_tasks'] = count($c_tasks);
-			$milestone['Milestone']['open_tasks'] = count($o_tasks);
+			$milestone['Milestone']['closed_tasks'] = count($cTasks);
+			$milestone['Milestone']['open_tasks'] = count($oTasks);
 
 			$milestones[$x] = $milestone;
 		}
