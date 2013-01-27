@@ -76,7 +76,7 @@ class CollaboratorsController extends AppProjectController {
  */
 	public function add($project = null) {
 		$project = $this->_projectCheck($project, true, true);
-		$this->_add($project, $this->request->data, array('project' => $project['Project']['name'], 'action' => '.'));
+		$this->__add($project, $this->request->data, array('project' => $project['Project']['name'], 'action' => '.'));
 	}
 
 /**
@@ -86,7 +86,7 @@ class CollaboratorsController extends AppProjectController {
  */
 	public function admin_add() {
 		$project = $this->_projectCheck($this->request->data['Project']['id']);
-		$this->_add($project, $this->request->data, array('controller' => 'projects', 'action' => 'admin_view', $project['Project']['id']));
+		$this->__add($project, $this->request->data, array('controller' => 'projects', 'action' => 'admin_view', $project['Project']['id']));
 	}
 
 /**
@@ -97,10 +97,13 @@ class CollaboratorsController extends AppProjectController {
  * @param mixed $project
  * @param mixed $data
  * @param mixed $redirect
+ * @throws MethodNotAllowedException
  * @return void
  */
-	private function _add($project, $data, $redirect) {
-		if (!$this->request->is('post')) throw new MethodNotAllowedException();
+	private function __add($project, $data, $redirect) {
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
 
 		// Check for existant user
 		$this->Collaborator->User->recursive = -1;
@@ -145,7 +148,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function makeadmin($project = null, $id = null) {
-		$this->changepermissionlevel($project, $id, 2);
+		$this->__changePermissionLevel($project, $id, 2);
 	}
 
 /**
@@ -157,7 +160,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function admin_makeadmin($id = null) {
-		$this->_admin_changepermissionlevel($id, 2);
+		$this->__adminChangePermissionLevel($id, 2);
 	}
 
 /**
@@ -169,7 +172,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function makeuser($project = null, $id = null) {
-		$this->changepermissionlevel($project, $id, 1);
+		$this->__changePermissionLevel($project, $id, 1);
 	}
 
 /**
@@ -180,7 +183,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function admin_makeuser($id = null) {
-		$this->_admin_changepermissionlevel($id, 1);
+		$this->__adminChangePermissionLevel($id, 1);
 	}
 
 /**
@@ -192,7 +195,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function makeguest($project = null, $id = null) {
-		$this->changepermissionlevel($project, $id, 0);
+		$this->__changePermissionLevel($project, $id, 0);
 	}
 
 /**
@@ -203,18 +206,18 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function admin_makeguest($id = null) {
-		$this->_admin_changepermissionlevel($id, 0);
+		$this->__adminChangePermissionLevel($id, 0);
 	}
 
 /**
- * changepermissionlevel
+ * changePermissionLevel
  *
  * @param string $project project name
  * @param string $id user to change
  * @param string $newaccesslevel new access level to assign
  * @return void
  */
-	private function changepermissionlevel($project = null, $id = null, $newaccesslevel = 0) {
+	private function __changePermissionLevel($project = null, $id = null, $newaccesslevel = 0) {
 		$project = $this->_projectCheck($project, true, true);
 		$collaborator = $this->Collaborator->open($id);
 
@@ -245,13 +248,13 @@ class CollaboratorsController extends AppProjectController {
 	}
 
 /**
- * admin_changepermissionlevel
+ * adminChangePermissionLevel
  *
  * @param string $id collaborator to change
  * @param string $newaccesslevel new access level to assign
  * @return void
  */
-	private function _admin_changepermissionlevel($id = null, $newaccesslevel = 0) {
+	private function __adminChangePermissionLevel($id = null, $newaccesslevel = 0) {
 		$collaborator = $this->Collaborator->open($id);
 
 		// Save the changes to the user
@@ -311,12 +314,15 @@ class CollaboratorsController extends AppProjectController {
  *
  * @param string $name project name
  * @param string $id
+ * @throws MethodNotAllowedException
  * @return void
  */
 	public function admin_delete($id = null) {
 		$collaborator = $this->Collaborator->open($id);
 
-		if (!$this->request->is('post')) throw new MethodNotAllowedException();
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
 
 		$this->Flash->setUp();
 		$this->Flash->D($this->Collaborator->delete());
