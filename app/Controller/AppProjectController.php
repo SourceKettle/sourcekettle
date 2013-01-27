@@ -43,6 +43,8 @@ class AppProjectController extends AppController {
  * @param mixed $name
  * @param bool $needWrite (default: false)
  * @param bool $needAdmin (default: false)
+ * @throws NotFoundException
+ * @throws ForbiddenException
  * @return void
  */
 	protected function _projectCheck($name, $needWrite = false, $needAdmin = false) {
