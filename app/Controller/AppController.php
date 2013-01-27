@@ -24,11 +24,6 @@ App::uses('Sanitize', 'Utility');
 
 class AppController extends Controller {
 
-
-	/**
-	 * The global helpers
-	 * @var type
-	 */
 	public $helpers = array(
 		'DT',
 		'Js',
@@ -42,10 +37,6 @@ class AppController extends Controller {
 		'Gravatar'
 	);
 
-	/**
-	 * Global components used for authentication, authorisation and session management.
-	 * @var type
-	 */
 	public $components = array(
 		'RequestHandler',
 		'Session',
@@ -74,11 +65,11 @@ class AppController extends Controller {
 		)
 	);
 
-	/**
-	 * Before filter method acts first in the controller
-	 *
-	 * Configures the auth component to use the email column as the user name
-	 */
+/**
+ * Before filter method acts first in the controller
+ *
+ * Configures the auth component to use the email column as the user name
+ */
 	public function beforeFilter() {
 		parent::beforeFilter();
 
@@ -95,7 +86,6 @@ class AppController extends Controller {
 		$this->set('devtrack_config', $this->devtrack_config);
 		$this->set('devtrackVersion', 'v1.0');
 
-
 		// Set up the devtrack-specific auth model
 		$this->Auth->userModel = 'User';
 
@@ -110,7 +100,7 @@ class AppController extends Controller {
 		//Use sha256 as the hashing algorithm for the site as it is the most secure out of the allowed options.
 		Security::setHash('sha256');
 
-		if($this->Auth->loggedIn()){
+		if ($this->Auth->loggedIn()) {
 			$user_id	= $this->Auth->user('id');
 			$user_name	= $this->Auth->user('name');
 			$user_email	= $this->Auth->user('email');
@@ -120,18 +110,18 @@ class AppController extends Controller {
 			$this->set('user_name',		$user_name);
 			$this->set('user_email',	$user_email);
 			$this->set('user_is_admin',	$is_admin);
-		} else{
+		} else {
 			$this->set('user_is_admin',	false);
 		}
 
 		// if admin pages are being requested
-		if(isset($this->params['admin'])) {
+		if (isset($this->params['admin'])) {
 			// check the admin is logged in
 			if ( !isset($user_id) || empty($user_id) ) $this->redirect('/login');
 			if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
 			$this->Flash->message('You are currently in the ADMIN section of the site..');
 		}
-		if(isset($this->params['api'])) {
+		if (isset($this->params['api'])) {
 			// The following line kinda breaks the M->V->C thing
 			$this->{$this->modelClass}->_is_api = true;
 		}
@@ -143,19 +133,19 @@ class AppController extends Controller {
 		}
 
 		// Is the user account devtrack-managed or external e.g. LDAP?
-		if(isset($user_id)){
+		if (isset($user_id)) {
 			$_USER_MODEL = ClassRegistry::init('User');
 			$user = $_USER_MODEL->findById($user_id);
 			$this->set('user_is_devtrack_managed', User::isDevTrackManaged($user));
 		}
 	}
 
-	public function appBlackhole($type){
+	public function appBlackhole($type) {
 		if ($type == 'csrf') {
 			// if a CSRF violation
 			$this->Flash->errorReason("The request was blackholed due to a CSRF violation. You have either tried to submit this form more than once or submitted the form from another web site");
 
-			if (!$this->request->is('ajax')){
+			if (!$this->request->is('ajax')) {
 				$this->redirect($this->referer());
 			}
 		}
