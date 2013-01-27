@@ -151,7 +151,7 @@ class AppController extends Controller {
 		}
 	}
 
-	protected function _api_auth_level() {
+	protected function _apiAuthLevel() {
 		$_userModel = ClassRegistry::init('User');
 
 		if (array_key_exists('key', $this->request->query)) {

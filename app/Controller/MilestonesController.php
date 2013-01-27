@@ -262,7 +262,7 @@ class MilestonesController extends AppProjectController {
 
 				$_part_of_project = $this->Milestone->Project->hasRead($this->Auth->user('id'));
 				$_public_project	= $this->Milestone->Project->field('public');
-				$_is_admin = ($this->_api_auth_level() == 1);
+				$_is_admin = ($this->_apiAuthLevel() == 1);
 
 				if ($_public_project || $_is_admin || $_part_of_project) {
 					$milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $id))));
@@ -293,7 +293,7 @@ class MilestonesController extends AppProjectController {
 		$this->Milestone->recursive = -1;
 		$data = array();
 
-		switch ($this->_api_auth_level()) {
+		switch ($this->_apiAuthLevel()) {
 			case 1:
 				foreach ($this->Milestone->find("all") as $milestone) {
 					$milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $milestone['Milestone']['id']))));

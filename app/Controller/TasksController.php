@@ -594,7 +594,7 @@ class TasksController extends AppProjectController {
 
 				$_part_of_project = $this->Task->Project->hasRead($this->Auth->user('id'));
 				$_public_project	= $this->Task->Project->field('public');
-				$_is_admin = ($this->_api_auth_level() == 1);
+				$_is_admin = ($this->_apiAuthLevel() == 1);
 
 				if ($_public_project || $_is_admin || $_part_of_project) {
 					//task_type_id
@@ -633,7 +633,7 @@ class TasksController extends AppProjectController {
 		$this->Task->recursive = 0;
 		$data = array();
 
-		switch ($this->_api_auth_level()) {
+		switch ($this->_apiAuthLevel()) {
 			case 1:
 				foreach ($this->Task->find("all", array('conditions' => array('order' => 'task_priority_id DESC'))) as $task) {
 					//task_type_id

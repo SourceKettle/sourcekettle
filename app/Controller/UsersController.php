@@ -724,7 +724,7 @@ class UsersController extends AppController {
 		$this->User->recursive = -1;
 		$data = array();
 
-		switch ($this->_api_auth_level()) {
+		switch ($this->_apiAuthLevel()) {
 			case 1:
 				foreach ($this->User->find("all") as $user) {
 					$data[] = $user['User'];

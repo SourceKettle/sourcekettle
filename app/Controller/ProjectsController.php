@@ -349,7 +349,7 @@ class ProjectsController extends AppProjectController {
 
 				$_part_of_project = $this->Project->hasRead();
 				$_public_project	= $this->Project->field('public');
-				$_is_admin = ($this->_api_auth_level() == 1);
+				$_is_admin = ($this->_apiAuthLevel() == 1);
 
 				if ($_public_project || $_part_of_project || $_is_admin) {
 					$data = $project['Project'];
@@ -378,7 +378,7 @@ class ProjectsController extends AppProjectController {
 		$this->Project->recursive = -1;
 		$data = array();
 
-		switch ($this->_api_auth_level()) {
+		switch ($this->_apiAuthLevel()) {
 			case 1:
 				foreach ($this->Project->find("all") as $project) {
 					// Collaborators
