@@ -20,6 +20,7 @@ App::uses('AppController', 'Controller');
 class UsersController extends AppController {
 
 	public $helpers = array('Time');
+
 	public $components = array('Email');
 
 	public $uses = array('User', 'Setting');
@@ -37,9 +38,9 @@ class UsersController extends AppController {
 		);
 	}
 
-	/**
-	 * Function to allow users to register with the application
-	 */
+/**
+ * Function to allow users to register with the application
+ */
 	public function register() {
 		$this->set('title_for_layout', 'Register');
 		//Check if registration is allowed by the user
@@ -68,7 +69,7 @@ class UsersController extends AppController {
 								$sync_required['Setting']['value'] = 1;
 								$this->Setting->save($sync_required);
 
-								$this->log("[UsersController.register] sshkey[".$this->User->SshKey->getLastInsertID()."] added to user[${id}]", 'devtrack');
+								$this->log("[UsersController.register] sshkey[" . $this->User->SshKey->getLastInsertID() . "] added to user[${id}]", 'devtrack');
 							}
 
 							//Now to create the key and send the email
@@ -96,10 +97,10 @@ class UsersController extends AppController {
 		}
 	}
 
-	/**
-	 * Used to activate user accounts
-	 * @param type $key The key used to activate an account
-	 */
+/**
+ * Used to activate user accounts
+ * @param type $key The key used to activate an account
+ */
 	public function activate($key = null) {
 		if ($key == null) {
 			$this->Session->setFlash("The key given was not a valid activation key.", 'default', array(), 'error');
@@ -116,7 +117,7 @@ class UsersController extends AppController {
 				if ($this->User->save($newrecord['User'])) {
 					$this->User->EmailConfirmationKey->delete($record['EmailConfirmationKey']['id'], false); //delete the email confirmation key
 					$this->Session->setFlash(__("<h4 class='alert-heading'>Success</h4>Your account is now activated. You can now login."), 'default', array(), 'success');
-					$this->log("[UsersController.activate] user[".$newrecord['User']['id']."] activated", 'devtrack');
+					$this->log("[UsersController.activate] user[" . $newrecord['User']['id'] . "] activated", 'devtrack');
 
 					$this->redirect('/login');
 				} else {
@@ -129,23 +130,22 @@ class UsersController extends AppController {
 		}
 	}
 
-	/**
-	 * Function to allow for users to reset their passwords. Will generate a key and an email.
-	 */
+/**
+ * Function to allow for users to reset their passwords. Will generate a key and an email.
+ */
 	public function lost_password($key = null) {
-		if ($this->request->is('post')){
+		if ($this->request->is('post')) {
 			//generate random password and email it to them
 			$user = $this->User->findByEmail($this->request->data['User']['email']); //Get the user attached to the given email
 
-
 			if ($user['User']['password'] == null) {
-				$this->Session->setFlash("It looks like you're using an account that is not managed by devtrack - ".
-					"unfortunately, we can't help you reset your password.	Try talking to ".
-					"<a href='mailto:".$this->devtrack_config['sysadmin_email']."'>the system administrator</a>.", 'default', array(), 'error');
+				$this->Session->setFlash("It looks like you're using an account that is not managed by devtrack - " .
+					"unfortunately, we can't help you reset your password.	Try talking to " .
+					"<a href='mailto:" . $this->devtrack_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
 				$this->redirect('/login');
 			}
 
-			if (!empty($user)){
+			if (!empty($user)) {
 				//Now to create the key and send the email
 				$this->User->LostPasswordKey->save(
 					array('LostPasswordKey' => array(
@@ -154,19 +154,19 @@ class UsersController extends AppController {
 					))
 				);
 				$this->_sendForgottenPasswordMail($user['User']['id'], $this->User->LostPasswordKey->getLastInsertID());
-				$this->log("[UsersController.lost_password] lost password email sent to user[".$user['User']['id']."]", 'devtrack');
+				$this->log("[UsersController.lost_password] lost password email sent to user[" . $user['User']['id'] . "]", 'devtrack');
 			}
 			$this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
 			$this->redirect('/login');
-		} else if($this->request->is('get')){
+		} else if $this->request->is('get')) {
 			//display the form or act on the link
-			if ($key == null){
+			if ($key == null) {
 				// Display the form
 				$this->render('lost_password');
 			} else {
 				// act on the key
 				$passwordkey = $this->User->LostPasswordKey->findByKey($key);
-				if (empty($passwordkey)){
+				if (empty($passwordkey)) {
 					$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
 					$this->render('lost_password');
 				} else {
@@ -176,31 +176,31 @@ class UsersController extends AppController {
 		}
 	}
 
-	/**
-	 * The function to reset a password
-	 * @param type $key The LostPasswordKey to use
-	 */
-	public function reset_password($key = null){
-		if ($key == null){
+/**
+ * The function to reset a password
+ * @param type $key The LostPasswordKey to use
+ */
+	public function reset_password($key = null) {
+		if ($key == null) {
 			$this->Session->setFlash("A valid password reset key was not given.", 'default', array(), 'error');
 			$this->redirect('/');
 		} else {
 			$passwordkey = $this->User->LostPasswordKey->findByKey($key);
-			if (empty($passwordkey)){
+			if (empty($passwordkey)) {
 				$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
 				$this->redirect('lost_password');
-			} else if ($this->request->is('post')){
+			} else if ($this->request->is('post')) {
 				//Check if the key has expired
 
 				App::uses('CakeTime', 'Utility');
 				$keytime = CakeTime::toUnix($passwordkey['LostPasswordKey']['created']);
-				if ($keytime + 1800 >= time()){
-					if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']){ //if the passwords match
+				if ($keytime + 1800 >= time()) {
+					if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']) { //if the passwords match
 						$this->User->id = $passwordkey['User']['id'];
-						if ($this->User->save($this->request->data)){
+						if ($this->User->save($this->request->data)) {
 							$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
 							$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
-							$this->log("[UsersController.reset_password] password reset for user[".$passwordkey['User']['id']."]", 'devtrack');
+							$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'devtrack');
 
 							$this->redirect('/login');
 						} else {
@@ -217,32 +217,32 @@ class UsersController extends AppController {
 		}
 	}
 
-	/**
-	 * Allows admins to see all users
-	 */
+/**
+ * Allows admins to see all users
+ */
 	public function admin_index() {
 		if ($this->request->is('post') && isset($this->request->data['User']['name']) && $user = $this->request->data['User']['name']) {
 			if ($user = $this->User->findByEmail($this->Useful->extractEmail($user))) {
 				$this->redirect(array('action' => 'view', $user['User']['id']));
 			} else {
-				$this->Flash->error('The specified User does not exist. Please try again.');
+				$this->Flash->error('The specif ed User does not exist. Please try again.');
 			}
 		}
 		$this->User->recursive = 0;
 		$this->set('users', $this->paginate());
 	}
 
-	/**
-	 * Allows users to view their profile
-	 */
+/**
+ * Allows users to view their profile
+ */
 	public function index() {
 		$this->redirect(array ('action' => 'details'));
 	}
 
-	/**
-	 * View a user in admin mode
-	 * @param type $id The id of the user to view
-	 */
+/**
+ * View a user in admin mode
+ * @param type $id The id of the user to view
+ */
 	public function admin_view($id = null) {
 		$this->User->id = $id;
 
@@ -255,11 +255,11 @@ class UsersController extends AppController {
 		$this->request->data['User']['password'] = null;
 	}
 
-	/**
-	 * Function for viewing a user's public page
-	 * @param type $id The id of the user to view
-	 */
-	public function view($id = null){
+/**
+ * Function for viewing a user's public page
+ * @param type $id The id of the user to view
+ */
+	public function view($id = null) {
 		$this->User->id = $id;
 
 		if (!$this->User->exists()) throw new NotFoundException(__('Invalid user'));
@@ -281,22 +281,22 @@ class UsersController extends AppController {
 		$this->set('shared_projects', $join_projects);
 	}
 
-	/**
-	 * Create a new user
-	 */
+/**
+ * Create a new user
+ */
 	public function add() {
 		$this->redirect('register');
 	}
 
-	/**
-	 * Create a new user
-	 */
+/**
+ * Create a new user
+ */
 	public function admin_add() {
 		if ($this->request->is('post')) { // if data was posted therefore a submitted form
 			$this->User->create();
 			if ($this->User->save($this->request->data['User'])) {
 				$id = $this->User->getLastInsertID();
-				$this->log("[UsersController.admin_add] user[${id}] created by user[".$this->Auth->user('id')."]", 'devtrack');
+				$this->log("[UsersController.admin_add] user[${id}] created by user[" . $this->Auth->user('id') . "]", 'devtrack');
 
 				//Now to create the key and send the email
 				$this->User->EmailConfirmationKey->save(
@@ -307,7 +307,7 @@ class UsersController extends AppController {
 				);
 				$this->_sendAdminCreatedUserMail($id, $this->User->LostPasswordKey->getLastInsertID());
 				$this->Session->setFlash(__('New User added successfully.'), 'default', array(), 'success');
-				$this->log("[UsersController.admin_add] user[".$id."] added by user[".$this->Auth->user('id')."]", 'devtrack');
+				$this->log("[UsersController.admin_add] user[" . $id . "] added by user[" . $this->Auth->user('id') . "]", 'devtrack');
 				$this->redirect(array('action' => 'view', $id));
 			} else {
 				$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
@@ -315,19 +315,19 @@ class UsersController extends AppController {
 		}
 	}
 
-	/**
-	 * Edit the name and the email address of a user
-	 * @param type $id The id of the user to edit
-	 */
-	public function admin_edit($id = null){
+/**
+ * Edit the name and the email address of a user
+ * @param type $id The id of the user to edit
+ */
+	public function admin_edit($id = null) {
 		$this->User->id = $id;
 
 		if (!$this->User->exists()) throw new NotFoundException(__('Invalid user'));
 
-		if ($this->request->is('post')){
-			if ($this->User->save($this->request->data)){
+		if ($this->request->is('post')) {
+			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-				$this->log("[UsersController.admin_edit] user[".$this->Auth->user('id')."] edited details of user[".$this->User->id."]", 'devtrack');
+				$this->log("[UsersController.admin_edit] user[" . $this->Auth->user('id') . "] edited details of user[" . $this->User->id . "]", 'devtrack');
 			} else {
 				$this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
 			}
@@ -335,16 +335,16 @@ class UsersController extends AppController {
 		$this->redirect(array('controller' => 'users', 'action' => 'admin_view', $this->User->id));
 	}
 
-	/**
-	 * Edit the name and the email address of the current user
-	 */
-	public function details(){
+/**
+ * Edit the name and the email address of the current user
+ */
+	public function details() {
 		$this->User->id = $this->Auth->user('id'); //get the current user
 
-		if ($this->request->is('post')){
-			if ($this->User->save($this->request->data)){
+		if ($this->request->is('post')) {
+			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-				$this->log("[UsersController.details] user[".$this->User->id."] edited details", 'devtrack');
+				$this->log("[UsersController.details] user[" . $this->User->id . "] edited details", 'devtrack');
 
 				// NB we have to re-read this as we may not have updated the email address
 				// (external accounts will throw it away)
@@ -365,20 +365,20 @@ class UsersController extends AppController {
 		$this->request->data['User']['password'] = null;
 	}
 
-	/**
-	 * Edit the current users password
-	 */
-	public function security(){
+/**
+ * Edit the current users password
+ */
+	public function security() {
 		$this->User->id = $this->Auth->user('id'); //get the current user
 		$user = $this->User->read(null, $this->User->id);
 		$user = $user['User'];
-		if ($this->request->is('post')){
-			if ($user['password'] == $this->Auth->password($this->request->data['User']['password_current'])){ //check their current password
-				if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']){ //check passwords match
+		if ($this->request->is('post')) {
+			if ($user['password'] == $this->Auth->password($this->request->data['User']['password_current'])) { //check their current password
+				if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']) { //check passwords match
 
-					if ($this->User->save($this->request->data)){
+					if ($this->User->save($this->request->data)) {
 						$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-						$this->log("[UsersController.security] user[".$this->Auth->user('id')."] changed password", 'devtrack');
+						$this->log("[UsersController.security] user[" . $this->Auth->user('id') . "] changed password", 'devtrack');
 					} else {
 						foreach ($this->User->validationErrors as $field => $errors) {
 							foreach ($errors as $errorMessage) {
@@ -402,21 +402,21 @@ class UsersController extends AppController {
 		$this->request->data['User']['password'] = null;
 	}
 
-	/**
-	 * Edit the current users theme
-	 */
-	public function theme(){
+/**
+ * Edit the current users theme
+ */
+	public function theme() {
 		$this->User->id = $this->Auth->user('id'); //get the current user
 
-		if ($this->request->is('post')){
+		if ($this->request->is('post')) {
 			$this->User->set('theme', (string) $this->request->data['User']['theme']);
 
-			if ($this->User->save()){
+			if ($this->User->save()) {
 
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-				$this->log("[UsersController.theme] user[".$this->Auth->user('id')."] changed theme", 'devtrack');
-				$this->Session->write('Auth.User.theme', (string) $this->request->data['User']['theme']);
-				$this->redirect(array('action'=>'theme'));
+				$this->log("[UsersController.theme] user[" . $this->Auth->user('id') . "] changed theme", 'devtrack');
+				$this->Session->write('Auth.User.theme', (string)$this->request->data['User']['theme']);
+				$this->redirect(array('action' => 'theme'));
 			} else {
 				$this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
 			}
@@ -429,31 +429,31 @@ class UsersController extends AppController {
 		$this->request->data['User']['password'] = null; // We need to set the password to null, otherwise it get's changed!
 	}
 
-	/**
-	 * Function to delete a user
-	 * Use at your own peril
-	 *
-	 * Deletes the current user (the one that is authenticated with the system) and any projects for which there are no other
-	 * collaborators
-	 */
-	public function delete(){
+/**
+ * Function to delete a user
+ * Use at your own peril
+ *
+ * Deletes the current user (the one that is authenticated with the system) and any projects for which there are no other
+ * collaborators
+ */
+	public function delete() {
 		// Check whether the user account is DevTrack-managed (if not it's an LDAP
 		// account or similar, so we can't really delete it properly)
 		$this->User->id = $this->Auth->user('id');
 		$this->request->data = $this->User->read();
 		$this->set('external_account', false);
-		if(!User::isDevtrackManaged($this->User->data)){
+		if (!User::isDevtrackManaged($this->User->data)) {
 			$this->set('external_account', true);
 			return;
 		}
 
-		if($this->request->is('post')){
+		if ($this->request->is('post')) {
 			$this->User->id = $this->Auth->user('id');
 
 			//Now delete the user
 			if ($this->User->delete($this->Auth->id)) {
 				$this->Session->setFlash(__('Account deleted'), 'default', array(), 'success');
-				$this->log("[UsersController.delete] user[".$this->Auth->user('id')."] deleted", 'devtrack');
+				$this->log("[UsersController.delete] user[" . $this->Auth->user('id') . "] deleted", 'devtrack');
 
 				//Now log them out of the system
 				$this->Auth->logout();
@@ -470,52 +470,45 @@ class UsersController extends AppController {
 		}
 	}
 
-	/**
-	 * Function to delete a user
-	 * Use at your own peril
-	 *
-	 * Deletes the specified user and any projects for which there are no other
-	 * collaborators - but only if the current user is a system admin.
-	 */
-	public function admin_delete($user_id){
-
-		/*Debugger::dump($this);
-		Debugger::dump($this->request);
-		exit;*/
+/**
+ * Function to delete a user
+ * Use at your own peril
+ *
+ * Deletes the specif ed user and any projects for which there are no other
+ * collaborators - but only if the current user is a system admin.
+ */
+	public function admin_delete($user_id) {
 
 		// Check we're logged in as an admin
 		// TODO - pretty sure by this point we've already checked, but I'm in a paranoid mood
 		$this->User->id = $this->Auth->user('id');
 		$current_user_data = $this->User->read();
 
-		if(!$current_user_data['User']['is_admin']){
+		if (!$current_user_data['User']['is_admin']) {
 			$this->redirect('/');
 		}
 
 		// Check user ID is numeric...
 		$user_id = trim($user_id);
-		if(!is_numeric($user_id)){
+		if (!is_numeric($user_id)) {
 			$this->Session->setFlash(__('Could not delete user - bad user ID was given'), 'error', array(), '');
 			$this->redirect(array('action' => 'admin_index'));
 		}
 
-		
-
-		if($this->request->is('post')){
+		if ($this->request->is('post')) {
 			$this->User->id = $user_id;
 			$target_user_data = $this->User->read();
 
 			$this->set('external_account', false);
-			if(!User::isDevtrackManaged($target_user_data)){
+			if (!User::isDevtrackManaged($target_user_data)) {
 				$this->Session->setFlash(__('Account could not be deleted - it is not managed by DevTrack'), 'default', array(), 'error');
 				$this->redirect(array('action' => 'admin_index'));
 			}
 
-
 			//Now delete the user
 			if ($this->User->delete($this->Auth->id)) {
 				$this->Session->setFlash(__('Account deleted'), 'default', array(), 'success');
-				$this->log("[UsersController.delete] user[".$this->Auth->user('id')."] deleted", 'devtrack');
+				$this->log("[UsersController.delete] user[" . $this->Auth->user('id') . "] deleted", 'devtrack');
 				$this->redirect(array('action' => 'admin_index'));
 			}
 
@@ -529,11 +522,11 @@ class UsersController extends AppController {
 		}
 	}
 
-	/**
-	 * Generates a random key of a given length
-	 * @param type $length The length of the key
-	 * @return string The random key
-	 */
+/**
+ * Generates a random key of a given length
+ * @param type $length The length of the key
+ * @return string The random key
+ */
 	private function _generate_key($length) {
 		$key = "";
 		$i = 0;
@@ -550,12 +543,12 @@ class UsersController extends AppController {
 		return $key;
 	}
 
-	/*
-	 * _sendNewUserMail
-	 * Send a user a registration email
-	 *
-	 * @param $id int the id of the user to email
-	 */
+/**
+ * _sendNewUserMail
+ * Send a user a registration email
+ *
+ * @param $id int the id of the user to email
+ */
 	private function _sendNewUserMail($id) {
 		// No sending emails in debug mode
 		if ( Configure::read('debug') > 1 ) {
@@ -565,12 +558,12 @@ class UsersController extends AppController {
 		$Addr = $this->Setting->field('value', array('name' => 'sysadmin_email'));
 		$Key	= $this->User->EmailConfirmationKey->field('key', array('user_id' => $id));
 
-		$this->Email->to = $User['User']['email'];
-		$this->Email->bcc = array('secret@example.com');
-		$this->Email->subject = 'Welcome to DevTrack - Account activation';
-		$this->Email->replyTo = $Addr;
-		$this->Email->from = 'DevTrack Admin <'.$Addr.'>';
-		$this->Email->template = 'email_activation';
+		$this->Email->to		= $User['User']['email'];
+		$this->Email->bcc		= array('secret@example.com');
+		$this->Email->subject	= 'Welcome to DevTrack - Account activation';
+		$this->Email->replyTo	= $Addr;
+		$this->Email->from		= 'DevTrack Admin <' . $Addr . '>';
+		$this->Email->template	= 'email_activation';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
 
@@ -583,28 +576,28 @@ class UsersController extends AppController {
 		return false;
 	}
 
-	/*
-	 * _sendForgottenPasswordMail
-	 * Send a user a forgotten password email
-	 *
-	 * @param $id int the id of the user to email
-	 * @param $key int the id of the key to send
-	 */
+/**
+ * _sendForgottenPasswordMail
+ * Send a user a forgotten password email
+ *
+ * @param $id int the id of the user to email
+ * @param $key int the id of the key to send
+ */
 	private function _sendForgottenPasswordMail($id, $key) {
 		// No sending emails in debug mode
 		if ( Configure::read('debug') > 1 ) {
 			$this->Email->delivery = 'debug';
 		}
-		$User = $this->User->read(null,$id);
-		$Key	= $this->User->LostPasswordKey->read(null,$id);
-		$Addr = $this->Setting->field('value', array('name' => 'sysadmin_email'));
+		$User	= $this->User->read(null, $id);
+		$Key	= $this->User->LostPasswordKey->read(null, $id);
+		$Addr	= $this->Setting->field('value', array('name' => 'sysadmin_email'));
 
-		$this->Email->to = $User['User']['email'];
-		//$this->Email->bcc = array('secret@example.com');
-		$this->Email->subject = 'DevTrack - Forgotten Password';
-		$this->Email->replyTo = $Addr;
-		$this->Email->from = 'DevTrack Admin <'.$Addr.'>';
-		$this->Email->template = 'email_forgotten_password';
+		$this->Email->to		= $User['User']['email'];
+		//$this->Email->bcc		= array('secret@example.com');
+		$this->Email->subject	= 'DevTrack - Forgotten Password';
+		$this->Email->replyTo	= $Addr;
+		$this->Email->from		= 'DevTrack Admin <' . $Addr . '>';
+		$this->Email->template	= 'email_forgotten_password';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
 
@@ -617,28 +610,28 @@ class UsersController extends AppController {
 		return false;
 	}
 
-	/*
-	 * _sendAdminCreatedUserMail
-	 * Send a user a email saying an account has been created
-	 *
-	 * @param $id int the id of the user to email
-	 * @param $key int the id of the key to send
-	 */
+/**
+ * _sendAdminCreatedUserMail
+ * Send a user a email saying an account has been created
+ *
+ * @param $id int the id of the user to email
+ * @param $key int the id of the key to send
+ */
 	private function _sendAdminCreatedUserMail($id, $key) {
 		// No sending emails in debug mode
 		if ( Configure::read('debug') > 1 ) {
 			$this->Email->delivery = 'debug';
 		}
-		$User = $this->User->read(null,$id);
-		$Key	= $this->User->LostPasswordKey->read(null,$id);
-		$Addr = $this->Setting->field('value', array('name' => 'sysadmin_email'));
+		$User	= $this->User->read(null, $id);
+		$Key	= $this->User->LostPasswordKey->read(null, $id);
+		$Addr	= $this->Setting->field('value', array('name' => 'sysadmin_email'));
 
-		$this->Email->to = $User['User']['email'];
-		//$this->Email->bcc = array('secret@example.com');
-		$this->Email->subject = 'Welcome to DevTrack - Suprise!';
-		$this->Email->replyTo = $Addr;
-		$this->Email->from = 'DevTrack Admin <'.$Addr.'>';
-		$this->Email->template = 'email_admin_create';
+		$this->Email->to		= $User['User']['email'];
+		//$this->Email->bcc		= array('secret@example.com');
+		$this->Email->subject	= 'Welcome to DevTrack - Suprise!';
+		$this->Email->replyTo	= $Addr;
+		$this->Email->from		= 'DevTrack Admin <' . $Addr . '>';
+		$this->Email->template	= 'email_admin_create';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
 
@@ -651,17 +644,17 @@ class UsersController extends AppController {
 		return false;
 	}
 
-	/***************************************************
-	*													*
-	*			API SECTION OF CONTROLLER			 *
-	*			 CAUTION: PUBLIC FACING				*
-	*													*
-	***************************************************/
+	/* ************************************************* *
+	 *													 *
+	 *			API SECTION OF CONTROLLER				 *
+	 *			 CAUTION: PUBLIC FACING					 *
+	 *													 *
+	 * ************************************************* */
 
-	/**
-	 * Register a user via an API call
-	 * TODO Doesnt work
-	 */
+/**
+ * Register a user via an API call
+ * TODO Doesnt work
+ */
 	public function api_register() {
 		$this->layout = 'ajax';
 
@@ -676,13 +669,13 @@ class UsersController extends AppController {
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_view function.
-	 *
-	 * @access public
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * api_view function.
+ *
+ * @access public
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function api_view($id = null) {
 		$this->layout = 'ajax';
 
@@ -691,8 +684,8 @@ class UsersController extends AppController {
 
 		if ($id == null) {
 			$this->response->statusCode(400);
-			$data['error'] = 400;
-			$data['message'] = 'Bad request, no user id specified.';
+			$data['error']		= 400;
+			$data['message']	= 'Bad request, no user id specif ed.';
 		}
 
 		if ($id == 'all') {
@@ -705,9 +698,9 @@ class UsersController extends AppController {
 
 			if (!$this->User->exists()) {
 				$this->response->statusCode(404);
-				$data['error'] = 404;
-				$data['message'] = 'No user found of that ID.';
-				$data['id'] = $id;
+				$data['error']		= 404;
+				$data['message']	= 'No user found of that ID.';
+				$data['id']			= $id;
 			} else {
 				$user = $this->User->read();
 				$data = $user['User'];
@@ -718,13 +711,13 @@ class UsersController extends AppController {
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_all function.
-	 * ADMINS only
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * api_all function.
+ * ADMINS only
+ *
+ * @access public
+ * @return void
+ */
 	public function api_all() {
 		$this->layout = 'ajax';
 
@@ -743,16 +736,16 @@ class UsersController extends AppController {
 				$data['message'] = 'You are not authorised to access this.';
 		}
 
-		$this->set('data',$data);
+		$this->set('data', $data);
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_autocomplete function.
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * api_autocomplete function.
+ *
+ * @access public
+ * @return void
+ */
 	public function api_autocomplete() {
 		$this->layout = 'ajax';
 
@@ -769,8 +762,8 @@ class UsersController extends AppController {
 				array(
 					'conditions' => array(
 						'OR' => array(
-							'User.name	LIKE' => $query.'%',
-							'User.email LIKE' => $query.'%'
+							'User.name	LIKE' => $query . '%',
+							'User.email LIKE' => $query . '%'
 						)
 					),
 					'fields' => array(
@@ -780,11 +773,11 @@ class UsersController extends AppController {
 				)
 			);
 			foreach ($users as $user) {
-				$data['users'][] = $user['User']['name']." [".$user['User']['email']."]";
+				$data['users'][] = $user['User']['name'] . " [" . $user['User']['email'] . "]";
 			}
 
 		}
-		$this->set('data',$data);
+		$this->set('data', $data);
 		$this->render('/Elements/json');
 	}
 }
