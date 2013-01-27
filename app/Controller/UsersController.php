@@ -477,7 +477,7 @@ class UsersController extends AppController {
  * Deletes the specif ed user and any projects for which there are no other
  * collaborators - but only if the current user is a system admin.
  */
-	public function admin_delete($user_id) {
+	public function admin_delete($userId) {
 
 		// Check we're logged in as an admin
 		// TODO - pretty sure by this point we've already checked, but I'm in a paranoid mood
@@ -489,14 +489,14 @@ class UsersController extends AppController {
 		}
 
 		// Check user ID is numeric...
-		$user_id = trim($user_id);
-		if (!is_numeric($user_id)) {
+		$userId = trim($userId);
+		if (!is_numeric($userId)) {
 			$this->Session->setFlash(__('Could not delete user - bad user ID was given'), 'error', array(), '');
 			$this->redirect(array('action' => 'admin_index'));
 		}
 
 		if ($this->request->is('post')) {
-			$this->User->id = $user_id;
+			$this->User->id = $userId;
 			$target_user_data = $this->User->read();
 
 			$this->set('external_account', false);
