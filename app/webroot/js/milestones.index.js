@@ -10,13 +10,13 @@ $(function () {
             resolved: "Resolved"
         },
         taskStatusLabelTypes = {
-            open: "important",
-            in_progress: "warning",
-            resolved: "success"
-        }
+            open: "label-important",
+            in_progress: "label-warning",
+            resolved: "label-success label-info"
+        };
 
     taskContainers.bind("dragstart", function (ev) {
-        $(this).css ("opacity", "0.4");
+        $(this).css("opacity", "0.4");
 
         var e = ev.originalEvent;
 
@@ -29,14 +29,18 @@ $(function () {
         fromColumn = $(this).parent().get(0);
     });
 
-    taskContainers.bind("dragend", function (ev) {
-        $(this).css ("opacity", "1.0");
+    taskContainers.bind("dragend", function () {
+        $(this).css("opacity", "1.0");
     });
 
     sprintboardColumns.bind("dragover", function (ev) {
-        var e = ev.originalEvent;
+        var e = ev.originalEvent,
+            from_status = $(fromColumn).attr("data-taskstatus"),
+            to_status = $(this).attr("data-taskstatus"),
+            task_id = e.dataTransfer.getData("Text"),
+            task = $("#" + task_id);
 
-        if (this !== fromColumn) {
+        if (this !== fromColumn && !(from_status === "resolved" && to_status === "in_progress")) {
             e.preventDefault();
         }
     });
@@ -72,17 +76,14 @@ $(function () {
                 if (data.error === "no_error") {
                     // Remove any invisible wells
                     var $column = $(column),
-                        taskStatusLabel = task.find (".taskstatus");
+                        taskStatusLabel = task.find(".taskstatus");
 
                     $column.find("> .invisiblewell").remove();
 
-                    task.detach();
-                    task.appendTo($column);
-
                     // Change the task label
-                    taskStatusLabel.html (taskStatusLabels[to_status]);
-                    taskStatusLabel.removeClass ("label-" + taskStatusLabelTypes[from_status]);
-                    taskStatusLabel.addClass ("label-" + taskStatusLabelTypes[to_status]);
+                    taskStatusLabel.html(taskStatusLabels[to_status]);
+                    taskStatusLabel.removeClass(taskStatusLabelTypes[from_status]);
+                    taskStatusLabel.addClass(taskStatusLabelTypes[to_status]);
 
                 } else if (data.error === "failed_to_save") {
                     alert("Could not save.");
