@@ -613,7 +613,7 @@ class TasksController extends AppProjectController {
     }
 
     public function freeze ($project = null, $taskId = null) {
-        if (!$this->request->isAjax()) {
+        if (!$this->request->is("ajax")) {
             throw new MethodNotAllowedException();
         }
 
@@ -631,7 +631,7 @@ class TasksController extends AppProjectController {
     }
 
     public function thaw ($project = null, $taskId = null ) {
-        if (!$this->request->isAjax()) {
+        if (!$this->request->is("ajax")) {
             throw new MethodNotAllowedException();
         }
 
