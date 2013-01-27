@@ -8,24 +8,24 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Controller
- * @since         DevTrack v 0.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	DevTrack Development Team 2012
+ * @link		http://github.com/SourceKettle/devtrack
+ * @package		DevTrack.Controller
+ * @since		DevTrack v 0.1
+ * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppController', 'Controller');
 
 class AdminController extends AppController {
 
-    var $usetable = false;
+	public $useTable = false;
 
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function admin_index() {
-    }
+/**
+ * index method
+ *
+ * @return void
+ */
+	public function admin_index() {
+	}
 
 }
