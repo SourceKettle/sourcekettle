@@ -18,19 +18,19 @@ App::uses('AppProjectController', 'Controller');
 
 class TasksController extends AppProjectController {
 
-	/**
-	 * Helpers
-	 *
-	 * @var array
-	 */
+/**
+ * Helpers
+ *
+ * @var array
+ */
 	public $helpers = array('Time', 'Task');
 
-	/**
-	 * beforeFilter function.
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * beforeFilter function.
+ *
+ * @access public
+ * @return void
+ */
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow(
@@ -39,11 +39,11 @@ class TasksController extends AppProjectController {
 		);
 	}
 
-	/**
-	 * index method
-	 *
-	 * @return void
-	 */
+/**
+ * index method
+ *
+ * @return void
+ */
 	public function index($project = null, $statuses = null) {
 		$project = $this->_projectCheck($project);
 		if(preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)){
@@ -55,48 +55,48 @@ class TasksController extends AppProjectController {
 		$this->set('open_milestones', $this->Task->Milestone->getOpenMilestones(true));
 	}
 
-	/**
-	 * others function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @return void
-	 */
+/**
+ * others function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @return void
+ */
 	public function others($project = null, $statuses = null) {
 		$this->index($project, $statuses);
 		$this->render('index');
 	}
 
-	/**
-	 * View tasks assigned to nobody
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @return void
-	 */
+/**
+ * View tasks assigned to nobody
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @return void
+ */
 	public function nobody($project = null, $statuses = null) {
 		$this->index($project, $statuses);
 		$this->render('index');
 	}
 
-	/**
-	 * View all tasks
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @return void
-	 */
+/**
+ * View all tasks
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @return void
+ */
 	public function all($project = null, $statuses = null) {
 		$this->index($project, $statuses);
 		$this->render('index');
 	}
 
-	/**
-	 * view method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * view method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function view($project = null, $id = null) {
 		$project = $this->_projectCheck($project);
 		$task = $this->Task->open($id);
@@ -132,7 +132,7 @@ class TasksController extends AppProjectController {
 				$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
 				return;
 			}
-			
+
 			if ($this->Task->TaskComment->delete ($this->request->data['TaskCommentDelete']['id'])) {
 				$this->Flash->info ('The comment has been deleted successfully.');
 			} else {
@@ -269,11 +269,11 @@ class TasksController extends AppProjectController {
 		$this->set('collaborators', $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']));
 	}
 
-	/**
-	 * add method
-	 *
-	 * @return void
-	 */
+/**
+ * add method
+ *
+ * @return void
+ */
 	public function add($project = null) {
 		$project = $this->_projectCheck($project, true);
 
@@ -336,12 +336,12 @@ class TasksController extends AppProjectController {
 
 	}
 
-	/**
-	 * edit method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * edit method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function edit($project = null, $id = null) {
 		$project = $this->_projectCheck($project, true);
 		$task = $this->Task->open($id);
@@ -382,7 +382,7 @@ class TasksController extends AppProjectController {
 		}
 	}
 
-	/**
+	/* *
 	 * delete method
 	 *
 	 * @param string $id
@@ -400,14 +400,14 @@ class TasksController extends AppProjectController {
 	//	 $this->redirect(array('action' => 'index'));
 	// }
 
-	/**
-	 * starttask function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * starttask function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function starttask($project = null, $id = null) {
 		$task = $this->Task->open($id);
 
@@ -427,14 +427,14 @@ class TasksController extends AppProjectController {
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	/**
-	 * stoptask function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * stoptask function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function stoptask($project = null, $id = null) {
 		$task = $this->Task->open($id);
 
@@ -454,27 +454,27 @@ class TasksController extends AppProjectController {
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	/**
-	 * opentask function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * opentask function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function opentask($project = null, $id = null) {
 		$success = $this->_update_task_status($project, $id, 1);
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	/**
-	 * closetask function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * closetask function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function closetask($project = null, $id = null) {
 		$success = $this->_update_task_status($project, $id, 4);
 
@@ -535,14 +535,14 @@ class TasksController extends AppProjectController {
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	/**
-	 * _update_task_status function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * _update_task_status function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	private function _update_task_status($project = null, $id = null, $status = null) {
 		$project = $this->_projectCheck($project, true);
 		$task = $this->Task->open($id);
@@ -551,20 +551,20 @@ class TasksController extends AppProjectController {
 		return $this->Flash->U($this->Task->save());
 	}
 
-	/***************************************************
-	*													*
-	*			API SECTION OF CONTROLLER			 *
-	*			 CAUTION: PUBLIC FACING				*
-	*													*
-	***************************************************/
+	/* ************************************************* *
+	*													 *
+	*			API SECTION OF CONTROLLER				 *
+	*			 CAUTION: PUBLIC FACING					 *
+	*													 *
+	* ************************************************** */
 
-	/**
-	 * api_view function.
-	 *
-	 * @access public
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * api_view function.
+ *
+ * @access public
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function api_view($id = null) {
 		$this->layout = 'ajax';
 
@@ -624,13 +624,13 @@ class TasksController extends AppProjectController {
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_all function.
-	 * ADMINS only
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * api_all function.
+ * ADMINS only
+ *
+ * @access public
+ * @return void
+ */
 	public function api_all() {
 		$this->layout = 'ajax';
 
@@ -663,13 +663,13 @@ class TasksController extends AppProjectController {
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_marshalled function.
-	 * THIS RETURNS HTML
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * api_marshalled function.
+ * THIS RETURNS HTML
+ *
+ * @access public
+ * @return void
+ */
 	public function api_marshalled() {
 		$this->layout = 'ajax';
 
@@ -730,7 +730,7 @@ class TasksController extends AppProjectController {
 				$or = array();
 
 				foreach (preg_split('/\s*,\s*/', trim($request['statuses'])) as $status_id){
-					
+
 					$status = $this->Task->TaskStatus->findById($status_id);
 
 					if ($status != null) {
