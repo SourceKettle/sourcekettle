@@ -62,10 +62,10 @@ class MilestonesController extends AppProjectController {
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
 
-			$milestone['Milestone']['c_tasks'] = sizeof($c_tasks);
-			$milestone['Milestone']['i_tasks'] = sizeof($i_tasks);
-			$milestone['Milestone']['r_tasks'] = sizeof($r_tasks);
-			$milestone['Milestone']['o_tasks'] = sizeof($o_tasks);
+			$milestone['Milestone']['c_tasks'] = count($c_tasks);
+			$milestone['Milestone']['i_tasks'] = count($i_tasks);
+			$milestone['Milestone']['r_tasks'] = count($r_tasks);
+			$milestone['Milestone']['o_tasks'] = count($o_tasks);
 
 			$milestones[$x] = $milestone;
 		}
@@ -92,13 +92,13 @@ class MilestonesController extends AppProjectController {
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
 
-			$milestone['Milestone']['c_tasks'] = sizeof($c_tasks);
-			$milestone['Milestone']['i_tasks'] = sizeof($i_tasks);
-			$milestone['Milestone']['r_tasks'] = sizeof($r_tasks);
-			$milestone['Milestone']['o_tasks'] = sizeof($o_tasks);
+			$milestone['Milestone']['c_tasks'] = count($c_tasks);
+			$milestone['Milestone']['i_tasks'] = count($i_tasks);
+			$milestone['Milestone']['r_tasks'] = count($r_tasks);
+			$milestone['Milestone']['o_tasks'] = count($o_tasks);
 
-			$milestone['Milestone']['closed_tasks'] = sizeof($c_tasks);
-			$milestone['Milestone']['open_tasks'] = sizeof($o_tasks);
+			$milestone['Milestone']['closed_tasks'] = count($c_tasks);
+			$milestone['Milestone']['open_tasks'] = count($o_tasks);
 
 			$milestones[$x] = $milestone;
 		}
@@ -139,13 +139,13 @@ class MilestonesController extends AppProjectController {
 		usort($completed, $cmp);
 
 		// Final value is min size of the board
-		$max = max(sizeof($backlog), sizeof($inProgress), sizeof($completed), 3);
+		$max = max(count($backlog), count($inProgress), count($completed), 3);
 
 		$this->set('milestone', $milestone);
 
-		$this->set('backlog_empty', $max - sizeof($backlog));
-		$this->set('inProgress_empty', $max - sizeof($inProgress));
-		$this->set('completed_empty', $max - sizeof($completed));
+		$this->set('backlog_empty', $max - count($backlog));
+		$this->set('inProgress_empty', $max - count($inProgress));
+		$this->set('completed_empty', $max - count($completed));
 		$this->set(compact('backlog', 'inProgress', 'completed', 'iceBox'));
 	}
 

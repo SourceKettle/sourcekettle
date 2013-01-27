@@ -113,10 +113,10 @@ class SourceController extends AppProjectController {
 		$lazyLoad = false;
 		$commit['diff'] = array();
 
-		if (sizeof($commit['changeset']) > $maxDiffSize) {
+		if (count($commit['changeset']) > $maxDiffSize) {
 			$lazyLoad = false;
 		} else {
-			$maxDiffSize = sizeof($commit['changeset']);
+			$maxDiffSize = count($commit['changeset']);
 		}
 		for ($i = 0; $i < $maxDiffSize; $i++) {
 			$file = $commit['changeset'][$i];
@@ -161,7 +161,7 @@ class SourceController extends AppProjectController {
 			$commits[$a] = $this->Source->Commit->fetch($commit);
 		}
 
-		if (sizeof($commits) == $num_per_page + 1) {
+		if (count($commits) == $num_per_page + 1) {
 			unset($commits[$num_per_page]);
 			$this->set("more_pages", true);
 		} else {
