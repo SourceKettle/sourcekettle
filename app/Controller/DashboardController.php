@@ -7,56 +7,56 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  * 
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Controller
- * @since         DevTrack v 0.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	 DevTrack Development Team 2012
+ * @link		  http://github.com/SourceKettle/devtrack
+ * @package	   DevTrack.Controller
+ * @since		 DevTrack v 0.1
+ * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppController', 'Controller');
 
 class DashboardController extends AppController {
 
-    public $uses = array('Project', 'Task', 'ProjectHistory');
+	public $uses = array('Project', 'Task', 'ProjectHistory');
 
-    public $helpers = array('Time', 'Task');
+	public $helpers = array('Time', 'Task');
 
-    function index() {
-        $this->set('projects', $this->getRecentProjects());
-        $this->set('tasks', $this->getUserTasks());
-        $this->set('history', $this->getProjectsHistory());
-    }
+	function index() {
+		$this->set('projects', $this->getRecentProjects());
+		$this->set('tasks', $this->getUserTasks());
+		$this->set('history', $this->getProjectsHistory());
+	}
 
-    private function getRecentProjects(){
-      $this->Project->Collaborator->recursive = 0;
+	private function getRecentProjects(){
+	  $this->Project->Collaborator->recursive = 0;
 
-        return $this->Project->Collaborator->find(
-          'all', array(
-            'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
-            'order' => array('Project.modified DESC'),
-            'limit' => 5
-          )
-        );
-    }
+		return $this->Project->Collaborator->find(
+		  'all', array(
+			'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
+			'order' => array('Project.modified DESC'),
+			'limit' => 5
+		  )
+		);
+	}
 
-    private function getUserTasks(){
-        return $this->Task->find('all', array(
-            'conditions' => array(
-                'Task.assignee_id' => $this->Task->_auth_user_id,
-                'Task.task_status_id <>' => '4' 
-            ), 
-            'recursive' => 3,
-            'order' => array('task_priority_id DESC', 'task_status_id ASC'),
-            'limit' => 10
-        ));
-    }
+	private function getUserTasks(){
+		return $this->Task->find('all', array(
+			'conditions' => array(
+				'Task.assignee_id' => $this->Task->_auth_user_id,
+				'Task.task_status_id <>' => '4' 
+			), 
+			'recursive' => 3,
+			'order' => array('task_priority_id DESC', 'task_status_id ASC'),
+			'limit' => 10
+		));
+	}
 
-    private function getProjectsHistory(){
-        return $this->ProjectHistory->fetchHistory(null, 30, 0, $this->Project->_auth_user_id);
-    }
+	private function getProjectsHistory(){
+		return $this->ProjectHistory->fetchHistory(null, 30, 0, $this->Project->_auth_user_id);
+	}
 
-    public function admin_index(){
-        $this->redirect(array('controller' => 'dashboard', 'action' => 'index', 'admin' => false)); // redirect to user dashboard until admin dashboard is created
-    }
+	public function admin_index(){
+		$this->redirect(array('controller' => 'dashboard', 'action' => 'index', 'admin' => false)); // redirect to user dashboard until admin dashboard is created
+	}
 
 }
