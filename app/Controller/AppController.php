@@ -101,15 +101,15 @@ class AppController extends Controller {
 		Security::setHash('sha256');
 
 		if ($this->Auth->loggedIn()) {
-			$user_id	= $this->Auth->user('id');
-			$user_name	= $this->Auth->user('name');
-			$user_email	= $this->Auth->user('email');
-			$is_admin	= ($this->Auth->user('is_admin') == 1);
-			$this->{$this->modelClass}->setCurrentUserData($user_id, $user_name, $user_email, $is_admin);
-			$this->set('user_id',		$user_id);
-			$this->set('user_name',		$user_name);
-			$this->set('user_email',	$user_email);
-			$this->set('user_is_admin',	$is_admin);
+			$userId	= $this->Auth->user('id');
+			$userName	= $this->Auth->user('name');
+			$userEmail	= $this->Auth->user('email');
+			$isAdmin	= ($this->Auth->user('is_admin') == 1);
+			$this->{$this->modelClass}->setCurrentUserData($userId, $userName, $userEmail, $isAdmin);
+			$this->set('user_id',		$userId);
+			$this->set('user_name',		$userName);
+			$this->set('user_email',	$userEmail);
+			$this->set('user_is_admin',	$isAdmin);
 		} else {
 			$this->set('user_is_admin',	false);
 		}
@@ -117,7 +117,7 @@ class AppController extends Controller {
 		// if admin pages are being requested
 		if (isset($this->params['admin'])) {
 			// check the admin is logged in
-			if ( !isset($user_id) || empty($user_id) ) $this->redirect('/login');
+			if ( !isset($userId) || empty($userId) ) $this->redirect('/login');
 			if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
 			$this->Flash->message('You are currently in the ADMIN section of the site..');
 		}
@@ -133,9 +133,9 @@ class AppController extends Controller {
 		}
 
 		// Is the user account devtrack-managed or external e.g. LDAP?
-		if (isset($user_id)) {
-			$_USER_MODEL = ClassRegistry::init('User');
-			$user = $_USER_MODEL->findById($user_id);
+		if (isset($userId)) {
+			$_userModel = ClassRegistry::init('User');
+			$user = $_userModel->findById($userId);
 			$this->set('user_is_devtrack_managed', User::isDevTrackManaged($user));
 		}
 	}
@@ -152,23 +152,23 @@ class AppController extends Controller {
 	}
 
 	protected function _api_auth_level() {
-		$_USER_MODEL = ClassRegistry::init('User');
+		$_userModel = ClassRegistry::init('User');
 
 		if (array_key_exists('key', $this->request->query)) {
-			$api_key = $this->request->query['key'];
+			$apiKey = $this->request->query['key'];
 		} else {
-			$api_key = null;
+			$apiKey = null;
 		}
 
 		// Check if an admin cookie exists
-		if (!($user_id = $this->Auth->user('id'))) {
+		if (!($userId = $this->Auth->user('id'))) {
 			// Get User with this API key
-			$user_id = $_USER_MODEL->ApiKey->field('user_id', array('key' => $api_key));
+			$userId = $_userModel->ApiKey->field('user_id', array('key' => $apiKey));
 		}
 
-		$user = $_USER_MODEL->findById($user_id);
+		$user = $_userModel->findById($userId);
 
-		if ($user != FALSE && $user['User']['is_admin']) {
+		if ($user != false && $user['User']['is_admin']) {
 			return 1;
 		}
 		return 0;
