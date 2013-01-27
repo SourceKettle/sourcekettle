@@ -34,18 +34,17 @@ class AppProjectController extends AppController {
 		}
 	}
 
-	/*
-	 * _projectCheck
-	 * Space saver to ensure user can view content
-	 * Also sets commonly needed variables related to the project
-	 *
-	 * @access protected
-	 * @param mixed $name
-	 * @param bool $needWrite (default: false)
-	 * @param bool $needAdmin (default: false)
-	 * @return void
-	 */
-
+/**
+ * _projectCheck
+ * Space saver to ensure user can view content
+ * Also sets commonly needed variables related to the project
+ *
+ * @access protected
+ * @param mixed $name
+ * @param bool $needWrite (default: false)
+ * @param bool $needAdmin (default: false)
+ * @return void
+ */
 	protected function _projectCheck($name, $needWrite = false, $needAdmin = false) {
 		if ( $this->modelClass == "Project" ) {
 			$model = $this->Project;
