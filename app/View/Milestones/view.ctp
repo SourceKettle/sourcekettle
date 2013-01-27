@@ -28,7 +28,7 @@ $this->Html->script ("milestones.index", array ('inline' => false));
             <?= $this->element('Milestone/topbar_view', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
             <div class="span10">
                 <div class="row-fluid">
-                    <div class="span4" class="sprintboard-column">
+                    <div class="span4">
                         <div class="well col sprintboard-column" data-taskstatus="open">
                             <h2><?= $this->DT->t('column.backlog.title') ?></h2>
                             <hr />
@@ -48,8 +48,8 @@ $this->Html->script ("milestones.index", array ('inline' => false));
                         </div>
                     </div>
 
-                    <div class="span4" class="sprintboard-column" data-taskstatus="resolved">
-                        <div class="well col sprintboard-column">
+                    <div class="span4">
+                        <div class="well col sprintboard-column" data-taskstatus="resolved">
                             <h2><?= $this->DT->t('column.completed.title') ?></h2>
                             <hr />
                             <?= $this->element('Task/Board/'.((!empty($completed))?'full_column':'empty'),
