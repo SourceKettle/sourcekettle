@@ -89,6 +89,7 @@ class AttachmentsController extends AppProjectController{
  * @access public
  * @param mixed $project (default: null)
  * @param mixed $id (default: null)
+ * @throws InternalErrorException
  * @return void
  */
 	public function view($project = null, $id = null) {
@@ -132,13 +133,16 @@ class AttachmentsController extends AppProjectController{
  *
  * @param string $name project name
  * @param string $id
+ * @throws MethodNotAllowedException
  * @return void
  */
 	public function delete($project = null, $id = null) {
 		$project = $this->_projectCheck($project, true);
 		$attachment = $this->Attachment->open($id);
 
-		if (!$this->request->is('post')) throw new MethodNotAllowedException();
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
 
 		$this->Flash->setUp();
 		$this->Flash->D($this->Attachment->delete());
