@@ -90,7 +90,7 @@ class TaskHelper extends AppHelper {
             3 => 'success',
             4 => 'info',
         );
-        return $this->Bootstrap->label($text[$id], $colour[$id]);
+        return $this->Bootstrap->label($text[$id], $colour[$id], array ("class" => "taskstatus"));
     }
 
     /**

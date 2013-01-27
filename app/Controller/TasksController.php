@@ -25,6 +25,8 @@ class TasksController extends AppProjectController {
      */
     public $helpers = array('Time', 'Task');
 
+    public $components = array("RequestHandler");
+
     /**
      * beforeFilter function.
      *
@@ -411,20 +413,46 @@ class TasksController extends AppProjectController {
     public function starttask($project = null, $id = null) {
         $task = $this->Task->open($id);
 
+        $isAjax = $this->request->is("ajax");
+
         // check assigned
         if (!$this->Task->isAssignee()) {
-            $this->Flash->error('You can not start work on a task not assigned to you.');
-            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+            if ($isAjax) {
+                $this->set("error", "not_assignee");
+                $this->set("_serialize", array("error"));
+            } else {
+                $this->Flash->error('You can not start work on a task not assigned to you.');
+                $this->redirect(array('project' => $project, 'action' => 'view', $id));
+            }
+
+            return;
         }
 
         //check open
         if (!$this->Task->isOpen()) {
-            $this->Flash->error('You can not start work on a task that is not open.');
-            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+            if ($isAjax) {
+                $this->set("error", "not_open");
+                $this->set("_serialize", array("error"));
+            } else {
+                $this->Flash->error('You can not start work on a task that is not open.');
+                $this->redirect(array('project' => $project, 'action' => 'view', $id));
+            }
+
+            return;
         }
 
-        $this->_update_task_status($project, $id, 2);
-        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        $updated = $this->_update_task_status($project, $id, 2, $isAjax);
+
+        if ($isAjax) {
+            if ($updated) {
+                $this->set("error", "no_error");
+            } else {
+                $this->set("error", "failed_to_save");
+            }
+            $this->set("_serialize", array("error"));
+        } else {
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
     }
 
     /**
@@ -436,22 +464,48 @@ class TasksController extends AppProjectController {
      * @return void
      */
     public function stoptask($project = null, $id = null) {
+        $isAjax = $this->request->is("ajax");
+
         $task = $this->Task->open($id);
 
         // check assigned
         if (!$this->Task->isAssignee()) {
-            $this->Flash->error('You can not stop work on a task not assigned to you.');
-            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+            if ($isAjax) {
+                $this->set("error", "not_assignee");
+                $this->set("_serialize", array("error"));
+            } else {
+                $this->Flash->error('You can not stop work on a task not assigned to you.');
+                $this->redirect(array('project' => $project, 'action' => 'view', $id));
+            }
+
+            return;
         }
 
         //check inProgress
         if (!$this->Task->isInProgress()) {
-            $this->Flash->error('You can not stop work on a task that is not in progress.');
-            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+            if ($isAjax) {
+                $this->set("error", "not_in_progress");
+                $this->set("_serialize", array("error"));
+            } else {
+                $this->Flash->error('You can not stop work on a task that is not in progress.');
+                $this->redirect(array('project' => $project, 'action' => 'view', $id));
+            }
+
+            return;
+            
         }
 
-        $this->_update_task_status($project, $id, 1);
-        $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        $updated = $this->_update_task_status($project, $id, 1, $isAjax);
+        if ($isAjax) {
+            if ($updated) {
+                $this->set("error", "no_error");
+            } else {
+                $this->set("error", "failed_to_save");
+            }
+            $this->set("_serialize", array("error"));
+        } else {
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
+        }
     }
 
     /**
@@ -496,43 +550,66 @@ class TasksController extends AppProjectController {
     }
 
     public function resolve($project = null, $id = null){
-        $success = $this->_update_task_status($project, $id, 3);
+        $isAjax = $this->request->is("ajax");
 
-        // If a User has commented
-        if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
-            $this->Task->TaskComment->create();
-
-            $this->request->data['TaskComment']['task_id'] = $id;
-            $this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
-
-            if ($this->Task->TaskComment->save($this->request->data)) {
-                $this->Flash->info('The comment has been added successfully');
-                unset($this->request->data['TaskComment']);
+        $success = $this->_update_task_status($project, $id, 3, $isAjax);
+        if ($isAjax) {
+            if ($success) {
+                $this->set ("error", "no_error");
             } else {
-                $this->Flash->error('The comment could not be saved. Please, try again.');
+                $this->set ("error", "failed_to_save");
             }
+
+            $this->set ("_serialize", array ("error"));
+        } else {
+            // If a User has commented
+            if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+                $this->Task->TaskComment->create();
+
+                $this->request->data['TaskComment']['task_id'] = $id;
+                $this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+                if ($this->Task->TaskComment->save($this->request->data)) {
+                    $this->Flash->info('The comment has been added successfully');
+                    unset($this->request->data['TaskComment']);
+                } else {
+                    $this->Flash->error('The comment could not be saved. Please, try again.');
+                }
+            }
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
         }
-        $this->redirect(array('project' => $project, 'action' => 'view', $id));
     }
 
     public function unresolve($project = null, $id = null){
-        $success = $this->_update_task_status($project, $id, 1);
+        $isAjax = $this->request->is("ajax");
 
-        // If a User has commented
-        if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
-            $this->Task->TaskComment->create();
+        $success = $this->_update_task_status($project, $id, 1, $isAjax);
 
-            $this->request->data['TaskComment']['task_id'] = $id;
-            $this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
-
-            if ($this->Task->TaskComment->save($this->request->data)) {
-                $this->Flash->info('The comment has been added successfully');
-                unset($this->request->data['TaskComment']);
+        if ($isAjax) {
+            if ($success) {
+                $this->set ("error", "no_error");
             } else {
-                $this->Flash->error('The comment could not be saved. Please, try again.');
+                $this->set ("error", "failed_to_save");
             }
+
+            $this->set ("_serialize", array ("error"));
+        } else {
+            // If a User has commented
+            if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+                $this->Task->TaskComment->create();
+
+                $this->request->data['TaskComment']['task_id'] = $id;
+                $this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+                if ($this->Task->TaskComment->save($this->request->data)) {
+                    $this->Flash->info('The comment has been added successfully');
+                    unset($this->request->data['TaskComment']);
+                } else {
+                    $this->Flash->error('The comment could not be saved. Please, try again.');
+                }
+            }
+            $this->redirect(array('project' => $project, 'action' => 'view', $id));
         }
-        $this->redirect(array('project' => $project, 'action' => 'view', $id));
     }
 
     /**
@@ -543,12 +620,17 @@ class TasksController extends AppProjectController {
      * @param mixed $id (default: null)
      * @return void
      */
-    private function _update_task_status($project = null, $id = null, $status = null) {
+    private function _update_task_status($project = null, $id = null, $status = null, $isAjax = false) {
         $project = $this->_projectCheck($project, true);
         $task = $this->Task->open($id);
 
         $this->Task->set('task_status_id', $status);
-        return $this->Flash->U($this->Task->save());
+        $saved = $this->Task->save();
+        if ($isAjax) {
+            return true;
+        } else {
+            return $this->Flash->U($saved);
+        }
     }
 
     /***************************************************

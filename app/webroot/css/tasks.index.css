@@ -103,3 +103,8 @@
 .label, .lead {
     margin-bottom: 2px;
 }
+
+.sprintboard-column.over {
+	border-style: dashed;
+	border-color: #858585;
+}
