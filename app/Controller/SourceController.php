@@ -20,12 +20,12 @@ class SourceController extends AppProjectController {
 
 	public $helpers = array('Time', 'Source');
 
-	/**
-	 * getPath function.
-	 *
-	 * @access private
-	 * @return void
-	 */
+/**
+ * getPath function.
+ *
+ * @access private
+ * @return void
+ */
 	private function getPath() {
 		$route = $this->params['pass'];
 		unset($route[0]); // Project name
@@ -33,19 +33,20 @@ class SourceController extends AppProjectController {
 		return implode('/',$route);
 	}
 
-	/**
-	 * initialiseResources function.
-	 *
-	 * @access private
-	 * @param mixed $name
-	 * @return void
-	 */
+/**
+ * initialiseResources function.
+ *
+ * @access private
+ * @param mixed $name
+ * @throws NotFoundException
+ * @return void
+ */
 	private function initialiseResources($name, $ref = null) {
 		$project = parent::_projectCheck($name);
 		$this->Source->init();
 
 		$branches = $this->Source->getBranches();
-		if(empty($branches) && $this->request['action'] != 'gettingStarted') {
+		if (empty($branches) && $this->request['action'] != 'gettingStarted') {
 			$this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
 		}
 		$this->set('branches', $branches);
@@ -60,13 +61,14 @@ class SourceController extends AppProjectController {
 		return $project;
 	}
 
-	/**
-	 * ajax_diff function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @return void
-	 */
+/**
+ * ajax_diff function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @throws NotFoundException
+ * @return void
+ */
 	public function ajax_diff($project = null) {
 		$this->layout = 'ajax';
 
@@ -94,14 +96,14 @@ class SourceController extends AppProjectController {
 		$this->render('/Elements/Source/commit_changeset_item');
 	}
 
-	/**
-	 * commit function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $hash (default: null)
-	 * @return void
-	 */
+/**
+ * commit function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $hash (default: null)
+ * @return void
+ */
 	public function commit($project = null, $hash = null) {
 		$project = $this->initialiseResources($project, $hash);
 
@@ -126,14 +128,14 @@ class SourceController extends AppProjectController {
 		$this->set("lazyLoad", $lazyLoad);
 	}
 
-	/**
-	 * commits function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $branch (default: null)
-	 * @return void
-	 */
+/**
+ * commits function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $branch (default: null)
+ * @return void
+ */
 	public function commits($project = null, $branch = null) {
 		$project = $this->initialiseResources($project, $branch);
 		$path	= $this->getPath();
@@ -145,7 +147,7 @@ class SourceController extends AppProjectController {
 		$num_per_page = 10;
 
 		// Lets make sure its a valid int
-		if(isset($this->params['named']['page'])) {
+		if (isset($this->params['named']['page'])) {
 			$page = $this->params['named']['page'];
 
 			if (!is_numeric($page) || $page < 1 || $page > 1000) {
@@ -155,11 +157,11 @@ class SourceController extends AppProjectController {
 			$page = 1;
 		}
 
-		foreach ($this->Source->Commit->history($branch, $num_per_page+1, (($page-1)*$num_per_page), $path) as $a => $commit) {
+		foreach ($this->Source->Commit->history($branch, $num_per_page + 1, (($page - 1) * $num_per_page), $path) as $a => $commit) {
 			$commits[$a] = $this->Source->Commit->fetch($commit);
 		}
 
-		if (sizeof($commits) == $num_per_page+1) {
+		if (sizeof($commits) == $num_per_page + 1) {
 			unset($commits[$num_per_page]);
 			$this->set("more_pages", true);
 		} else {
@@ -172,13 +174,13 @@ class SourceController extends AppProjectController {
 		$this->set("path", $path);
 	}
 
-	/**
-	 * gettingStarted function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @return void
-	 */
+/**
+ * gettingStarted function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @return void
+ */
 	public function gettingStarted($project = null) {
 		$project = $this->initialiseResources($project);
 		$type	= $this->Source->getType();
@@ -193,25 +195,26 @@ class SourceController extends AppProjectController {
 		}
 	}
 
-	/**
-	 * index function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @return void
-	 */
+/**
+ * index function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @return void
+ */
 	public function index($project = null) {
 		$this->redirect(array('action' => 'tree', 'project' => $project));
 	}
 
-	/**
-	 * raw function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $branch (default: null)
-	 * @return void
-	 */
+/**
+ * raw function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $branch (default: null)
+ * @throws NotFoundException
+ * @return void
+ */
 	public function raw($project = null, $branch = null) {
 		$this->layout = 'ajax';
 
@@ -231,14 +234,15 @@ class SourceController extends AppProjectController {
 		$this->set('sourceFile', $blob['content']);
 	}
 
-	/**
-	 * tree function.
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $branch (default: null)
-	 * @return void
-	 */
+/**
+ * tree function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $branch (default: null)
+ * @throws NotFoundException
+ * @return void
+ */
 	public function tree($project = null, $branch = null) {
 		try {
 			$project = $this->initialiseResources($project, $branch);
