@@ -260,11 +260,11 @@ class MilestonesController extends AppProjectController {
 
 				$this->Milestone->Project->id = $milestone['Milestone']['project_id'];
 
-				$_part_of_project = $this->Milestone->Project->hasRead($this->Auth->user('id'));
-				$_public_project	= $this->Milestone->Project->field('public');
-				$_is_admin = ($this->_apiAuthLevel() == 1);
+				$partOfProject = $this->Milestone->Project->hasRead($this->Auth->user('id'));
+				$publicProject	= $this->Milestone->Project->field('public');
+				$isAdmin = ($this->_apiAuthLevel() == 1);
 
-				if ($_public_project || $_is_admin || $_part_of_project) {
+				if ($publicProject || $isAdmin || $partOfProject) {
 					$milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $id))));
 
 					$data = $milestone['Milestone'];
