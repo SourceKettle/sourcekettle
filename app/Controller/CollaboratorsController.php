@@ -31,7 +31,7 @@ class CollaboratorsController extends AppProjectController {
  * @param string $project project name
  * @return void
  */
-	public function index($project = null) {
+	public function index ($project = null) {
 		$project = $this->_projectCheck($project, true, true);
 
 		$collaborators = array();
@@ -53,7 +53,7 @@ class CollaboratorsController extends AppProjectController {
 /**
  * List the collaborators on the project
  */
-	public function all($project = null){
+	public function all ($project = null) {
 		$project = $this->_projectCheck($project, false, false);
 
 		$this->Collaborator->recursive = 0;
@@ -128,9 +128,9 @@ class CollaboratorsController extends AppProjectController {
 
 		// Save the new collaborator
 		if ($this->Collaborator->save($collaborator)) {
-			$this->Flash->info($user['User']['name'].' has been added to the project');
+			$this->Flash->info($user['User']['name'] . ' has been added to the project');
 		} else {
-			$this->Flash->error($user['User']['name'].' could not be added to the project. Please, try again.');
+			$this->Flash->error($user['User']['name'] . ' could not be added to the project. Please, try again.');
 		}
 
 		$this->redirect($redirect);
@@ -214,7 +214,7 @@ class CollaboratorsController extends AppProjectController {
  * @param string $newaccesslevel new access level to assign
  * @return void
  */
-	private function changepermissionlevel($project = null, $id = null, $newaccesslevel = 0){
+	private function changepermissionlevel($project = null, $id = null, $newaccesslevel = 0) {
 		$project = $this->_projectCheck($project, true, true);
 		$collaborator = $this->Collaborator->open($id);
 
@@ -236,9 +236,9 @@ class CollaboratorsController extends AppProjectController {
 
 		// Save the changes to the user
 		if ($this->Collaborator->set('access_level', $newaccesslevel) && $this->Collaborator->save()) {
-			$this->Flash->info("Permissions level successfully changed for '".$collaborator['User']['name']."'");
+			$this->Flash->info("Permissions level successfully changed for '" . $collaborator['User']['name'] . "'");
 		} else {
-			$this->Flash->error("Permissions level for '".$collaborator['User']['name']."' not be updated. Please, try again.");
+			$this->Flash->error("Permissions level for '" . $collaborator['User']['name'] . "' not be updated. Please, try again.");
 		}
 
 		$this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
@@ -251,14 +251,14 @@ class CollaboratorsController extends AppProjectController {
  * @param string $newaccesslevel new access level to assign
  * @return void
  */
-	private function _admin_changepermissionlevel($id = null, $newaccesslevel = 0){
+	private function _admin_changepermissionlevel($id = null, $newaccesslevel = 0) {
 		$collaborator = $this->Collaborator->open($id);
 
 		// Save the changes to the user
 		if ($this->Collaborator->set('access_level', $newaccesslevel) && $this->Collaborator->save()) {
-			$this->Flash->info("Permissions level successfully changed for '".$collaborator['User']['name']."'");
+			$this->Flash->info("Permissions level successfully changed for '" . $collaborator['User']['name'] . "'");
 		} else {
-			$this->Flash->error("Permissions level for '".$collaborator['User']['name']."' not be updated. Please, try again.");
+			$this->Flash->error("Permissions level for '" . $collaborator['User']['name'] . "' not be updated. Please, try again.");
 		}
 
 		$this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $collaborator['Collaborator']['project_id']));
@@ -352,8 +352,8 @@ class CollaboratorsController extends AppProjectController {
 				array(
 					'conditions' => array(
 						'OR' => array(
-							'User.name	LIKE' => $query.'%',
-							'User.email LIKE' => $query.'%'
+							'User.name	LIKE' => $query . '%',
+							'User.email LIKE' => $query . '%'
 						),
 						'Project.id' => $this->request['named']['project']
 					),
@@ -364,7 +364,7 @@ class CollaboratorsController extends AppProjectController {
 				)
 			);
 			foreach ($users as $user) {
-				$data['users'][] = $user['User']['name']." [".$user['User']['email']."]";
+				$data['users'][] = $user['User']['name'] . " [" . $user['User']['email'] . "]";
 			}
 
 		}
