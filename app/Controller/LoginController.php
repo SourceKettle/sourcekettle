@@ -20,10 +20,6 @@ class LoginController extends AppController{
 
 	public $uses = array('User');
 
-	public function beforeFilter() {
-		parent::beforeFilter();
-	}
-
 /**
  * The login function.
  * Allows users to login using their username and password.
