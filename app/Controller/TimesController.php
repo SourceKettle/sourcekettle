@@ -131,15 +131,15 @@ class TimesController extends AppProjectController {
 			$this->redirect(array('project' => $project['Project']['name'], 'year' => $year, 'week' => $_week));
 		}
 
-		$week_tasks = $this->Time->Project->Task->find('all', array(
+		$weekTasks = $this->Time->Project->Task->find('all', array(
 			'conditions'	=> array(
 				'Task.id' => $this->Time->tasksForWeek($year, $week),
 			)
 		));
-		$week_tasks[] = array('Task' => array('id' => 0, 'subject' => 'No associated task'));
+		$weekTasks[] = array('Task' => array('id' => 0, 'subject' => 'No associated task'));
 
 		$this->set('week', $this->Time->timesForWeek($year, $week));
-		$this->set('weekTasks', $week_tasks);
+		$this->set('weekTasks', $weekTasks);
 
 		$this->set('thisWeek', $week);
 		$this->set('thisYear', $year);
