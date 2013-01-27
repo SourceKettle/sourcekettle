@@ -8,10 +8,10 @@
  * Redistributions of files must retain the above copyright notice.
  * 
  * @copyright	 DevTrack Development Team 2012
- * @link		  http://github.com/SourceKettle/devtrack
- * @package	   DevTrack.Controller
+ * @link			http://github.com/SourceKettle/devtrack
+ * @package		DevTrack.Controller
  * @since		 DevTrack v 0.1
- * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppController', 'Controller');
 
@@ -28,14 +28,14 @@ class DashboardController extends AppController {
 	}
 
 	private function getRecentProjects(){
-	  $this->Project->Collaborator->recursive = 0;
+		$this->Project->Collaborator->recursive = 0;
 
 		return $this->Project->Collaborator->find(
-		  'all', array(
+			'all', array(
 			'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
 			'order' => array('Project.modified DESC'),
 			'limit' => 5
-		  )
+			)
 		);
 	}
 
