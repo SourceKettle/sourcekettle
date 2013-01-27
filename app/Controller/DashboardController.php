@@ -21,13 +21,13 @@ class DashboardController extends AppController {
 
 	public $helpers = array('Time', 'Task');
 
-	function index() {
-		$this->set('projects', $this->getRecentProjects());
-		$this->set('tasks', $this->getUserTasks());
-		$this->set('history', $this->getProjectsHistory());
+	public function index() {
+		$this->set('projects', $this->__getRecentProjects());
+		$this->set('tasks', $this->__getUserTasks());
+		$this->set('history', $this->__getProjectsHistory());
 	}
 
-	private function getRecentProjects(){
+	private function __getRecentProjects() {
 		$this->Project->Collaborator->recursive = 0;
 
 		return $this->Project->Collaborator->find(
@@ -39,23 +39,23 @@ class DashboardController extends AppController {
 		);
 	}
 
-	private function getUserTasks(){
+	private function __getUserTasks() {
 		return $this->Task->find('all', array(
 			'conditions' => array(
 				'Task.assignee_id' => $this->Task->_auth_user_id,
-				'Task.task_status_id <>' => '4' 
-			), 
+				'Task.task_status_id <>' => '4'
+			),
 			'recursive' => 3,
 			'order' => array('task_priority_id DESC', 'task_status_id ASC'),
 			'limit' => 10
 		));
 	}
 
-	private function getProjectsHistory(){
+	private function __getProjectsHistory() {
 		return $this->ProjectHistory->fetchHistory(null, 30, 0, $this->Project->_auth_user_id);
 	}
 
-	public function admin_index(){
+	public function admin_index() {
 		$this->redirect(array('controller' => 'dashboard', 'action' => 'index', 'admin' => false)); // redirect to user dashboard until admin dashboard is created
 	}
 
