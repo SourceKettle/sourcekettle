@@ -46,9 +46,9 @@ class TasksController extends AppProjectController {
  */
 	public function index($project = null, $statuses = null) {
 		$project = $this->_projectCheck($project);
-		if(preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)){
+		if (preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
 			$this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
-		} else{
+		} else {
 			$this->set('task_status_filter', 0);
 		}
 		$this->set('events', $this->Task->fetchHistory($project['Project']['id'], 5));
@@ -151,14 +151,12 @@ class TasksController extends AppProjectController {
 			);
 			unset($this->request->data['TaskCommentEdit']);
 
-			try
-			{
+			try {
 				$this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id'], true, true);
-			}
-			catch ( ForbiddenException $e )
-			{
-			var_dump ($e);
-			return;
+			} catch (ForbiddenException $e) {
+				// TODO spurious dump and return :-(
+				var_dump ($e);
+				return;
 				$this->Flash->error (__('You don\'t have permission to edit that comment'));
 				$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
 				return;
@@ -213,17 +211,17 @@ class TasksController extends AppProjectController {
 		$comments = $this->Task->TaskComment->find('all', array('conditions' => array('Task.id' => $this->Task->id)));
 
 		// They are in the wrong format for the sort function - so move the modified field
-		foreach ( $changes as $x => $change ) {
+		foreach ($changes as $x => $change) {
 			$changes[$x]['created'] = $change['ProjectHistory']['created'];
 		}
-		foreach ( $comments as $x => $comment ) {
+		foreach ($comments as $x => $comment) {
 			$comments[$x]['created'] = $comment['TaskComment']['created'];
 		}
 
 		// Fetch any additional users that may be needed
 		$change_users = array();
 		$this->Task->Assignee->recursive = -1;
-		foreach ( $changes as $change ) {
+		foreach ($changes as $change) {
 			if ($change['ProjectHistory']['row_field'] == 'assignee_id') {
 				$_old = $change['ProjectHistory']['row_field_old'];
 				$_new = $change['ProjectHistory']['row_field_new'];
@@ -282,7 +280,7 @@ class TasksController extends AppProjectController {
 
 			$this->request->data['Task']['project_id']		= $project['Project']['id'];
 			$this->request->data['Task']['owner_id']		= $this->Task->_auth_user_id;
-			$this->request->data['Task']['assignee_id']	 = null;
+			$this->request->data['Task']['assignee_id']		= null;
 			$this->request->data['Task']['task_status_id']	= 1;
 
 			if (isset($this->request->data['Task']['milestone_id']) && $this->request->data['Task']['milestone_id'] == 0) {
@@ -323,17 +321,15 @@ class TasksController extends AppProjectController {
 		if (!empty($milestonesClosed)) {
 			$milestones['Closed'] = $milestonesClosed;
 		}
-		foreach ( $taskPriorities as $id => $p ) {
+		foreach ($taskPriorities as $id => $p) {
 			$taskPriorities[$id] = ucfirst(strtolower($p));
 		}
-
 
 		$availableTasks = $this->Task->find('list', array(
 			'conditions' => array('project_id =' => $project['Project']['id']),
 			'fields' => array('Task.id', 'Task.subject'),
 		));
 		$this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
-
 	}
 
 /**
@@ -368,7 +364,7 @@ class TasksController extends AppProjectController {
 			if (!empty($milestonesClosed)) {
 				$milestones['Closed'] = $milestonesClosed;
 			}
-			foreach ( $taskPriorities as $id => $p ) {
+			foreach ($taskPriorities as $id => $p) {
 				$taskPriorities[$id] = ucfirst(strtolower($p));
 			}
 			$availableTasks = $this->Task->find('list', array(
@@ -495,7 +491,7 @@ class TasksController extends AppProjectController {
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	public function resolve($project = null, $id = null){
+	public function resolve($project = null, $id = null) {
 		$success = $this->_update_task_status($project, $id, 3);
 
 		// If a User has commented
@@ -515,7 +511,7 @@ class TasksController extends AppProjectController {
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	public function unresolve($project = null, $id = null){
+	public function unresolve($project = null, $id = null) {
 		$success = $this->_update_task_status($project, $id, 1);
 
 		// If a User has commented
@@ -729,7 +725,7 @@ class TasksController extends AppProjectController {
 			if (array_key_exists('statuses', $request)) {
 				$or = array();
 
-				foreach (preg_split('/\s*,\s*/', trim($request['statuses'])) as $status_id){
+				foreach (preg_split('/\s*,\s*/', trim($request['statuses'])) as $status_id) {
 
 					$status = $this->Task->TaskStatus->findById($status_id);
 
@@ -738,7 +734,7 @@ class TasksController extends AppProjectController {
 					}
 				}
 
-				if(!empty($or)){
+				if (!empty($or)) {
 					$conditions['OR'] = $or;
 				}
 			}
