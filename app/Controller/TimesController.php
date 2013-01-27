@@ -18,22 +18,22 @@ App::uses('AppProjectController', 'Controller');
 
 class TimesController extends AppProjectController {
 
-	/**
-	 * helpers for additional rendering support
-	 */
+/**
+ * helpers for additional rendering support
+ */
 	public $helpers = array(
 		'Time',
 		'GoogleChart.GoogleChart'
 	);
 
-	/**
-	 * add
-	 * allows users to log time
-	 *
-	 * @access public
-	 * @param mixed $project
-	 * @return void
-	 */
+/**
+ * add
+ * allows users to log time
+ *
+ * @access public
+ * @param mixed $project
+ * @return void
+ */
 	public function add($project) {
 		$project = $this->_projectCheck($project, true);
 
@@ -66,14 +66,14 @@ class TimesController extends AppProjectController {
 		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
 	}
 
-	/**
-	 * delete function.
-	 *
-	 * @access public
-	 * @param mixed $project
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * delete function.
+ *
+ * @access public
+ * @param mixed $project
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function delete($project, $id = null) {
 		$project = $this->_projectCheck($project, true);
 		$time = $this->Time->open($id, true);
@@ -83,14 +83,14 @@ class TimesController extends AppProjectController {
 		$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 	}
 
-	/**
-	 * edit function.
-	 *
-	 * @access public
-	 * @param mixed $project
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * edit function.
+ *
+ * @access public
+ * @param mixed $project
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function edit($project, $id = null) {
 		$project = $this->_projectCheck($project, true);
 		$time = $this->Time->open($id, true);
@@ -110,25 +110,25 @@ class TimesController extends AppProjectController {
 		}
 	}
 
-	/**
-	 * history
-	 * list the amount of time logged
-	 *
-	 * @access public
-	 * @param mixed $project (default: null)
-	 * @param mixed $week (default: null)
-	 * @return void
-	 */
+/**
+ * history
+ * list the amount of time logged
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $week (default: null)
+ * @return void
+ */
 	public function history($project = null, $year = null, $week = null) {
 		$project = $this->_projectCheck($project);
 
 		// Validate the Year
 		if (($_year = $this->Time->validateYear($year)) != $year) {
-			$this->redirect(array('project'=>$project['Project']['name'],'year'=>$_year,'week'=>$week));
+			$this->redirect(array('project' => $project['Project']['name'], 'year' => $_year, 'week' => $week));
 		}
 		// Validate the week
 		if (($_week = $this->Time->validateWeek($week, $year)) != $week) {
-			$this->redirect(array('project'=>$project['Project']['name'],'year'=>$year,'week'=>$_week));
+			$this->redirect(array('project' => $project['Project']['name'], 'year' => $year, 'week' => $_week));
 		}
 
 		$week_tasks = $this->Time->Project->Task->find('all', array(
@@ -162,25 +162,25 @@ class TimesController extends AppProjectController {
 		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
 	}
 
-	/**
-	 * index function.
-	 *
-	 * @access public
-	 * @param mixed $project
-	 * @return void
-	 */
+/**
+ * index function.
+ *
+ * @access public
+ * @param mixed $project
+ * @return void
+ */
 	public function index($project) {
-		$this->redirect(array('project'=>$project,'controller'=>'times','action'=>'users'));
+		$this->redirect(array('project' => $project, 'controller' => 'times', 'action' => 'users'));
 	}
 
-	/**
-	 * users
-	 * list the amount of time each user has logged
-	 *
-	 * @access public
-	 * @param mixed $project
-	 * @return void
-	 */
+/**
+ * users
+ * list the amount of time each user has logged
+ *
+ * @access public
+ * @param mixed $project
+ * @return void
+ */
 	public function users($project) {
 		$project = $this->_projectCheck($project);
 
@@ -188,14 +188,14 @@ class TimesController extends AppProjectController {
 		$this->set('users', $this->Time->fetchUserTimesForProject());
 	}
 
-	/**
-	 * view function.
-	 *
-	 * @access public
-	 * @param mixed $project
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * view function.
+ *
+ * @access public
+ * @param mixed $project
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function view($project, $id = null) {
 		$project = $this->_projectCheck($project);
 		$time	= $this->Time->open($id);
