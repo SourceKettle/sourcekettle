@@ -242,11 +242,14 @@ class UsersController extends AppController {
 /**
  * View a user in admin mode
  * @param type $id The id of the user to view
+ * @throws NotFoundException
  */
 	public function admin_view($id = null) {
 		$this->User->id = $id;
 
-		if (!$this->User->exists()) throw new NotFoundException(__('Invalid user'));
+		if (!$this->User->exists()) {
+			throw new NotFoundException(__('Invalid user'));
+		}
 
 		//Find the users projects they are working on
 		$this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
@@ -258,11 +261,14 @@ class UsersController extends AppController {
 /**
  * Function for viewing a user's public page
  * @param type $id The id of the user to view
+ * @throws NotFoundException
  */
 	public function view($id = null) {
 		$this->User->id = $id;
 
-		if (!$this->User->exists()) throw new NotFoundException(__('Invalid user'));
+		if (!$this->User->exists()) {
+			throw new NotFoundException(__('Invalid user'));
+		}
 
 		//Find the users public projects or public projects they are working on
 		$this->User->Collaborator->Project->Collaborator->recursive = 0;
@@ -318,11 +324,14 @@ class UsersController extends AppController {
 /**
  * Edit the name and the email address of a user
  * @param type $id The id of the user to edit
+ * @throws NotFoundException
  */
 	public function admin_edit($id = null) {
 		$this->User->id = $id;
 
-		if (!$this->User->exists()) throw new NotFoundException(__('Invalid user'));
+		if (!$this->User->exists()) {
+			throw new NotFoundException(__('Invalid user'));
+		}
 
 		if ($this->request->is('post')) {
 			if ($this->User->save($this->request->data)) {
