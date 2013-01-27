@@ -612,6 +612,44 @@ class TasksController extends AppProjectController {
         }
     }
 
+    public function freeze ($project = null, $taskId = null) {
+        if (!$this->request->isAjax()) {
+            throw new MethodNotAllowedException();
+        }
+
+        $project = $this->_projectCheck($project, true);
+        $this->Task->open ($taskId);
+        $this->Task->set ("milestone_id", 0);
+
+        if (!$this->Task->save()) {
+            $this->set ("error", "failed_to_save");
+        } else {
+            $this->set ("error", "no_error");
+        }
+
+        $this->set ("_serialize", array ("error"));
+    }
+
+    public function thaw ($project = null, $taskId = null ) {
+        if (!$this->request->isAjax()) {
+            throw new MethodNotAllowedException();
+        }
+
+        $milestone = $this->request->data['milestone'];
+
+        $project = $this->_projectCheck($project, true);
+        $this->Task->open ($taskId);
+        $this->Task->set ("milestone_id", $milestone);
+
+        if (!$this->Task->save()) {
+            $this->set ("error", "failed_to_save");
+        } else {
+            $this->set ("error", "no_error");
+        }
+
+        $this->set ("_serialize", array ("error"));
+    }
+
     /**
      * _update_task_status function.
      *

@@ -63,7 +63,7 @@ $this->Html->script ("milestones.index", array ('inline' => false));
 
                 <div class="row-fluid">
                     <div class="span12">
-                        <div class="well col sprintboard-column" data-taskstatus="on_ice">
+                        <div class="well col" data-taskstatus="on_ice">
                             <h2><?= $this->DT->t('column.icebox.title') ?></h2>
                             <hr />
                             <? if (!empty($iceBox)) : ?>

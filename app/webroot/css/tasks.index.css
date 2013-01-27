@@ -104,6 +104,10 @@
     margin-bottom: 2px;
 }
 
+.sprintboard-column {
+	min-height: 300px;
+}
+
 .sprintboard-column.over {
 	border-style: dashed;
 	border-color: #858585;

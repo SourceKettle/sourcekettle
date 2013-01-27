@@ -15,6 +15,19 @@ $(function () {
             resolved: "label-success label-info"
         };
 
+    function equaliseSprintboardColumns() {
+        var maxHeight = 0;
+
+        // Reset the column heights first.
+        sprintboardColumns.height ("");
+
+        // Then resize them.
+        sprintboardColumns.each(function (index, column) {
+            var height = $(column).height();
+            maxHeight = height > maxHeight ? height : maxHeight;
+        }).height(maxHeight + "px");
+    }
+
     taskContainers.bind("dragstart", function (ev) {
         $(this).css("opacity", "0.4");
 
@@ -36,9 +49,7 @@ $(function () {
     sprintboardColumns.bind("dragover", function (ev) {
         var e = ev.originalEvent,
             from_status = $(fromColumn).attr("data-taskstatus"),
-            to_status = $(this).attr("data-taskstatus"),
-            task_id = e.dataTransfer.getData("Text"),
-            task = $("#" + task_id);
+            to_status = $(this).attr("data-taskstatus");
 
         if (this !== fromColumn && !(from_status === "resolved" && to_status === "in_progress")) {
             e.preventDefault();
@@ -55,21 +66,22 @@ $(function () {
                 open: {
                     in_progress: "../../tasks/starttask/",
                     resolved: "../../tasks/resolve/",
-                    on_ice: ""
+                    on_ice: "../../tasks/freeze/"
                 },
                 in_progress: {
                     open: "../../tasks/stoptask/",
                     resolved: "../../tasks/resolve/",
-                    on_ice: ""
+                    on_ice: "../../tasks/freeze/"
                 },
                 resolved: {
                     open: "../../tasks/unresolve/",
-                    in_progress: "../../tasks/",
-                    on_ice: ""
+                    in_progress: "",
+                    on_ice: "../../tasks/freeze/"
                 }
             },
             from_status = $(fromColumn).attr("data-taskstatus"),
-            to_status = $(this).attr("data-taskstatus");
+            to_status = $(this).attr("data-taskstatus"),
+            oldColumn = fromColumn;
 
         $.post(transitions[from_status][to_status] + real_id,
             function (data) {
@@ -80,11 +92,17 @@ $(function () {
 
                     $column.find("> .invisiblewell").remove();
 
-                    // Change the task label
-                    taskStatusLabel.html(taskStatusLabels[to_status]);
-                    taskStatusLabel.removeClass(taskStatusLabelTypes[from_status]);
-                    taskStatusLabel.addClass(taskStatusLabelTypes[to_status]);
+                    task.detach();
+                    task.appendTo($column);
 
+                    // Change the task label
+                    if (to_status !== "on_ice") {
+                        taskStatusLabel.html(taskStatusLabels[to_status]);
+                        taskStatusLabel.removeClass(taskStatusLabelTypes[from_status]);
+                        taskStatusLabel.addClass(taskStatusLabelTypes[to_status]);
+                    }
+
+                    equaliseSprintboardColumns();
                 } else if (data.error === "failed_to_save") {
                     alert("Could not save.");
                 } else if (data.error === "not_assignee") {
@@ -101,4 +119,6 @@ $(function () {
 
         fromColumn = null;
     });
+
+    equaliseSprintboardColumns();
 });
