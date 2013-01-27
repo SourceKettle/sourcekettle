@@ -18,15 +18,14 @@ App::uses('AppProjectController', 'Controller');
 
 class MilestonesController extends AppProjectController {
 
-
 	public $helpers = array('Task');
 
-	/**
-	 * beforeFilter function.
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * beforeFilter function.
+ *
+ * @access public
+ * @return void
+ */
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow(
@@ -35,20 +34,20 @@ class MilestonesController extends AppProjectController {
 		);
 	}
 
-	/**
-	 * index method
-	 *
-	 * @return void
-	 */
+/**
+ * index method
+ *
+ * @return void
+ */
 	public function index($project = null) {
-		$this->redirect(array('project'=>$project,'action'=>'open'));
+		$this->redirect(array('project' => $project, 'action' => 'open'));
 	}
 
-	/**
-	 * index method
-	 *
-	 * @return void
-	 */
+/**
+ * index method
+ *
+ * @return void
+ */
 	public function open($project = null) {
 		$project = $this->_projectCheck($project);
 
@@ -68,18 +67,17 @@ class MilestonesController extends AppProjectController {
 			$milestone['Milestone']['r_tasks'] = sizeof($r_tasks);
 			$milestone['Milestone']['o_tasks'] = sizeof($o_tasks);
 
-
 			$milestones[$x] = $milestone;
 		}
 		$this->set('milestones', $milestones);
 		$this->render('open_closed');
 	}
 
-	/**
-	 * index method
-	 *
-	 * @return void
-	 */
+/**
+ * index method
+ *
+ * @return void
+ */
 	public function closed($project = null) {
 		$project = $this->_projectCheck($project);
 
@@ -108,11 +106,11 @@ class MilestonesController extends AppProjectController {
 		$this->render('open_closed');
 	}
 
-	/**
-	 * view method
-	 *
-	 * @return void
-	 */
+/**
+ * view method
+ *
+ * @return void
+ */
 	public function view($project = null, $id = null) {
 		$project = $this->_projectCheck($project);
 		$milestone = $this->Milestone->open($id);
@@ -125,12 +123,11 @@ class MilestonesController extends AppProjectController {
 			'conditions' => array(
 				'Task.project_id' => $project['Project']['id'],
 				'OR' => array(
-					array('milestone_id' => NULL), 
+					array('milestone_id' => null),
 					array('milestone_id' => 0)
 				),
 			)
 		));
-
 
 		// Sort function for tasks
 		$cmp = function($a, $b) {
@@ -152,11 +149,11 @@ class MilestonesController extends AppProjectController {
 		$this->set(compact('backlog', 'inProgress', 'completed', 'iceBox'));
 	}
 
-	/**
-	 * add method
-	 *
-	 * @return void
-	 */
+/**
+ * add method
+ *
+ * @return void
+ */
 	public function add($project = null) {
 		$project = $this->_projectCheck($project, true);
 
@@ -171,12 +168,12 @@ class MilestonesController extends AppProjectController {
 		}
 	}
 
-	/**
-	 * edit method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * edit method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function edit($project = null, $id = null) {
 		$project = $this->_projectCheck($project, true);
 		$milestone = $this->Milestone->open($id);
@@ -192,12 +189,12 @@ class MilestonesController extends AppProjectController {
 		}
 	}
 
-	/**
-	 * delete method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * delete method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function delete($project = null, $id = null) {
 		$project = $this->_projectCheck($project, true, true);
 		$milestone = $this->Milestone->open($id);
@@ -217,20 +214,20 @@ class MilestonesController extends AppProjectController {
 		$this->render('/Elements/Project/delete');
 	}
 
-	/***************************************************
+	/* ************************************************ *
 	*													*
-	*			API SECTION OF CONTROLLER			 *
-	*			 CAUTION: PUBLIC FACING				*
+	*			API SECTION OF CONTROLLER				*
+	*			 CAUTION: PUBLIC FACING					*
 	*													*
-	***************************************************/
+	* ************************************************* */
 
-	/**
-	 * api_view function.
-	 *
-	 * @access public
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * api_view function.
+ *
+ * @access public
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function api_view($id = null) {
 		$this->layout = 'ajax';
 
@@ -283,13 +280,13 @@ class MilestonesController extends AppProjectController {
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_all function.
-	 * ADMINS only
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * api_all function.
+ * ADMINS only
+ *
+ * @access public
+ * @return void
+ */
 	public function api_all() {
 		$this->layout = 'ajax';
 
