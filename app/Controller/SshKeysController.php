@@ -20,19 +20,19 @@ class SshKeysController extends AppController {
 
 	public $uses = array('SshKey', 'Setting');
 
-	/**
-	 * Add an SSH key for the current user
-	 */
-	public function add(){
-		if ($this->request->is('post')){
+/**
+ * Add an SSH key for the current user
+ */
+	public function add() {
+		if ($this->request->is('post')) {
 
 			$this->request->data['SshKey']['user_id'] = $this->SshKey->_auth_user_id; //Set the key to belong to the current user
 
-			if ($this->Flash->C($this->SshKey->save($this->request->data))){
+			if ($this->Flash->C($this->SshKey->save($this->request->data))) {
 				$this->Setting->syncRequired(); // Update the sync required flag
 
-				$this->log("[UsersController.addkey] sshkey[".$this->SshKey->getLastInsertID()."] added to user[".$this->SshKey->_auth_user_id."]", 'devtrack');
-				$this->redirect(array('action'=>'view'));
+				$this->log("[UsersController.addkey] sshkey[" . $this->SshKey->getLastInsertID() . "] added to user[" . $this->SshKey->_auth_user_id . "]", 'devtrack');
+				$this->redirect(array('action' => 'view'));
 			}
 		}
 
@@ -41,12 +41,14 @@ class SshKeysController extends AppController {
 		$this->request->data['User']['password'] = null;
 	}
 
-	/**
-	 * Deletes a ssh key of the current user
-	 * @param type $id The id of the key to delete
-	 */
-	public function delete($id = null){
-		if ($this->request->is('post') && $id != null){
+/**
+ * Deletes a ssh key of the current user
+ * @param type $id The id of the key to delete
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ */
+	public function delete($id = null) {
+		if ($this->request->is('post') && $id != null) {
 			$this->SshKey->id = $id;
 
 			if (!$this->SshKey->exists()) {
@@ -58,17 +60,17 @@ class SshKeysController extends AppController {
 			}
 
 			$this->Flash->setUp();
-			if ($this->Flash->D($this->SshKey->delete())){
-				$this->log("[UsersController.deletekey] sshkey[".$id."] deleted by user[".$this->Auth->user('id')."]", 'devtrack');
+			if ($this->Flash->D($this->SshKey->delete())) {
+				$this->log("[UsersController.deletekey] sshkey[" . $id . "] deleted by user[" . $this->Auth->user('id') . "]", 'devtrack');
 				$this->Setting->syncRequired(); // Update the sync required flag
 			}
 		}
-		$this->redirect(array('action'=>'view'));
+		$this->redirect(array('action' => 'view'));
 	}
 
-	/**
-	 * Displays the ssh keys of the current user
-	 */
+/**
+ * Displays the ssh keys of the current user
+ */
 	public function view() {
 		$this->SshKey->User->id = $this->SshKey->_auth_user_id;
 		$this->request->data = $this->SshKey->User->read();
