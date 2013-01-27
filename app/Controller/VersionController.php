@@ -25,9 +25,9 @@ class VersionController extends AppController {
 		$this->Auth->allow('api_index');
 	}
 
-	/**
-	 * Register a user via an API call
-	 */
+/**
+ * Register a user via an API call
+ */
 	public function api_index() {
 		$this->set('data', array(
 			'version' => '0.0.1',
