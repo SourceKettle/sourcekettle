@@ -36,7 +36,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function index($project = null) {
-		$this->_attachment_with_restrictions($project);
+		$this->__attachmentWithRestrictions($project);
 	}
 
 /**
@@ -47,7 +47,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function image($project = null) {
-		$this->_attachment_with_restrictions($project, array('mime' => $this->Attachment->_mime_image));
+		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->_mime_image));
 	}
 
 /**
@@ -58,7 +58,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function video($project = null) {
-		$this->_attachment_with_restrictions($project, array('mime' => $this->Attachment->_mime_video));
+		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->_mime_video));
 	}
 
 /**
@@ -69,7 +69,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function text($project = null) {
-		$this->_attachment_with_restrictions($project, array('mime' => $this->Attachment->_mime_text));
+		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->_mime_text));
 	}
 
 /**
@@ -80,7 +80,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function other($project = null) {
-		$this->_attachment_with_restrictions($project, array('mime' => $this->Attachment->_mime_other));
+		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->_mime_other));
 	}
 
 /**
@@ -122,7 +122,7 @@ class AttachmentsController extends AppProjectController{
 
 		if (!empty($this->data)) {
 			if ($this->Flash->C($this->Attachment->upload($this->data))) {
-				 $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
+				$this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
 			}
 		}
 	}
@@ -146,14 +146,14 @@ class AttachmentsController extends AppProjectController{
 	}
 
 /**
- * _attachment_with_restrictions function.
+ * __attachmentWithRestrictions function.
  *
  * @access private
  * @param mixed $project (default: null)
  * @param array $conditions (default: array())
  * @return void
  */
-	private function _attachment_with_restrictions($project = null, $conditions = array()) {
+	private function __attachmentWithRestrictions($project = null, $conditions = array()) {
 		$project = $this->_projectCheck($project);
 		$conditions['Attachment.project_id'] = $project['Project']['id'];
 		$conditions['Attachment.model'] = null;
