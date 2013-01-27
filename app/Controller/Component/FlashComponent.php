@@ -16,14 +16,18 @@
 App::uses('Component', 'Controller');
 class FlashComponent extends Component {
 
-	var $components = array('Session');
+	// TODO switched from 'var' to 'public' - is public correct? Should be private?
+	public $components = array('Session');
 
-	var $Controller;
-	var $Model;
-	var $name;
+	public $Controller;
 
-	var $_name;
-	var $_id;
+	public $Model;
+
+	public $name;
+
+	protected $_name;
+
+	protected $_id;
 
 /**
  * initialize function.
@@ -39,36 +43,38 @@ class FlashComponent extends Component {
 	}
 
 	public function info($message) {
-		$this->flashBoolean($message, true);
+		$this->__flashBoolean($message, true);
 	}
+
 	public function message($message) {
 		$subject = "<h4 class='alert-heading'>Please Note:</h4>{reason}.";
 		$search	= array('{reason}');
 		$replace = array($message);
-		$this->flash(str_replace($search, $replace, $subject), 'info');
+		$this->__flash(str_replace($search, $replace, $subject), 'info');
 	}
+
 	public function error($message) {
-		$this->flashBoolean($message, false);
+		$this->__flashBoolean($message, false);
 	}
+
 	public function errorReason($reason) {
 		$subject = "<h4 class='alert-heading'>The Request could not be completed</h4>{reason}.";
 		$search	= array('{reason}');
 		$replace = array($reason);
-		$this->flashBoolean(str_replace($search, $replace, $subject), false);
+		$this->__flashBoolean(str_replace($search, $replace, $subject), false);
 	}
 
 	public function C($winning = false) {
-		return $this->objectFlash("has been created", "could not be created", $winning);
+		return $this->__objectFlash("has been created", "could not be created", $winning);
 	}
-	//public function R($winning = false) {
-	//	return $this->objectFlash("", "", $winning);
-	//}
+
 	public function U($winning = false) {
-		return $this->objectFlash("has been updated", "could not be updated", $winning);
+		return $this->__objectFlash("has been updated", "could not be updated", $winning);
 	}
+
 	public function D($winning = false) {
 		if (in_array('SoftDeletable', $this->Model->actsAs)) $winning = true;
-		return $this->objectFlash("has been deleted", "could not be deleted", $winning);
+		return $this->__objectFlash("has been deleted", "could not be deleted", $winning);
 	}
 
 /**
@@ -80,9 +86,9 @@ class FlashComponent extends Component {
  * @param mixed $winning
  * @return void
  */
-	private function objectFlash($messageA, $messageB, $winning) {
+	private function __objectFlash($messageA, $messageB, $winning) {
 		$this->setUp();
-		$message = ($winning) ? $messageA : $messageB.'. Please try again';
+		$message = ($winning) ? $messageA : $messageB . '. Please try again';
 
 		$subject = "{class} '<strong>{name}</strong>' {message}.";
 		$search	= array('{class}', '{name}', '{message}');
@@ -90,7 +96,7 @@ class FlashComponent extends Component {
 
 		$replaced = str_replace($search, $replace, $subject);
 
-		return $this->flashBoolean($replaced, $winning);
+		return $this->__flashBoolean($replaced, $winning);
 	}
 
 /**
@@ -101,8 +107,8 @@ class FlashComponent extends Component {
  * @param bool $winning (default: false)
  * @return void
  */
-	private function flashBoolean($message, $winning = false) {
-		$this->flash($message, ($winning) ? 'success' : 'error');
+	private function __flashBoolean($message, $winning = false) {
+		$this->__flash($message, ($winning) ? 'success' : 'error');
 		return $winning;
 	}
 
@@ -114,7 +120,7 @@ class FlashComponent extends Component {
  * @param mixed $color
  * @return void
  */
-	private function flash($message, $color) {
+	private function __flash($message, $color) {
 		$this->Session->setFlash(__($message), 'default', array(), $color);
 	}
 
