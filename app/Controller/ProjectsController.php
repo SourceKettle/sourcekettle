@@ -19,20 +19,20 @@ App::uses('AppProjectController', 'Controller');
 
 class ProjectsController extends AppProjectController {
 
-	/**
-	 * Project helpers
-	 * @var type
-	 */
+/**
+ * Project helpers
+ * @var type
+ */
 	public $helpers = array('Time', 'GoogleChart.GoogleChart', 'Paginator', 'Markitup');
 
 	public $uses = array('Project', 'RepoType');
 
-	/**
-	 * beforeFilter function.
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * beforeFilter function.
+ *
+ * @access public
+ * @return void
+ */
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow(
@@ -47,11 +47,11 @@ class ProjectsController extends AppProjectController {
 		$this->set('historyCount', 25);
 	}
 
-	/**
-	 * index method
-	 *
-	 * @return void
-	 */
+/**
+ * index method
+ *
+ * @return void
+ */
 	public function index() {
 		$this->Project->Collaborator->recursive = 0;
 
@@ -76,11 +76,11 @@ class ProjectsController extends AppProjectController {
 		$this->set('projects', $projects);
 	}
 
-	/**
-	 * admin_index method
-	 *
-	 * @return void
-	 */
+/**
+ * admin_index method
+ *
+ * @return void
+ */
 	public function admin_index() {
 		if ($this->request->is('post') && isset($this->request->data['Project']['name']) && $project = $this->request->data['Project']['name']) {
 			if ($project = $this->Project->findByName($project)) {
@@ -93,12 +93,12 @@ class ProjectsController extends AppProjectController {
 		$this->set('projects', $this->paginate());
 	}
 
-	/**
-	 * view method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * view method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function view($name = null) {
 		$project = $this->_projectCheck($name);
 
@@ -107,7 +107,7 @@ class ProjectsController extends AppProjectController {
 		$number_of_tasks = $number_of_closed_tasks + $number_of_open_tasks;
 
 		$percent_of_tasks = 0;
-		if($number_of_tasks > 0){
+		if ($number_of_tasks > 0) {
 			$percent_of_tasks = round($number_of_closed_tasks / $number_of_tasks * 100, 1);
 		}
 
@@ -125,28 +125,31 @@ class ProjectsController extends AppProjectController {
 		$this->set('historyCount', 8);
 	}
 
-	/**
-	 * admin_view method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * admin_view method
+ *
+ * @param string $id
+ * @throws NotFoundException
+ * @return void
+ */
 	public function admin_view($name = null) {
 		// Check for valid project name
 		$project = $this->Project->getProject($name);
-		if ( empty($project) ) throw new NotFoundException(__('Invalid project'));
+		if ( empty($project)) {
+			throw new NotFoundException(__('Invalid project'));
+		}
 
 		$this->Project->recursive = 2;
 		$this->Project->id = $project['Project']['id'];
 		$this->request->data = $this->Project->read();
 	}
 
-	/**
-	 * add
-	 * Create a new project for the current user
-	 *
-	 * @return void
-	 */
+/**
+ * add
+ * Create a new project for the current user
+ *
+ * @return void
+ */
 	public function add() {
 		$repoTypes = $this->Project->RepoType->find('list');
 
@@ -170,14 +173,14 @@ class ProjectsController extends AppProjectController {
 				// Need to know the repo type so we can skip repo creation if necessary...
 				$repo_type = $repoTypes[$_request_data['Project']['repo_type']];
 
-				$this->log("[ProjectController.add] project[".$this->Project->id."] added by user[".$this->Project->_auth_user_id."]", 'devtrack');
-				$this->log("[ProjectController.add] user[".$this->Project->_auth_user_id."] added to project[".$this->Project->id."] automatically as an admin", 'devtrack');
+				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . $this->Project->_auth_user_id . "]", 'devtrack');
+				$this->log("[ProjectController.add] user[" . $this->Project->_auth_user_id . "] added to project[" . $this->Project->id . "] automatically as an admin", 'devtrack');
 
 				// Create the actual repository, if required - if it fails, delete the database content
 				if (strtolower($repo_type) == 'none') {
-					$this->log("[ProjectController.add] project[".$this->Project->id."] does not require a repository", 'devtrack');
+					$this->log("[ProjectController.add] project[" . $this->Project->id . "] does not require a repository", 'devtrack');
 				} elseif (!$this->Project->Source->create()) {
-					$this->log("[ProjectController.add] project[".$this->Project->id."] repository creation failed - automatically removing project data", 'devtrack');
+					$this->log("[ProjectController.add] project[" . $this->Project->id . "] repository creation failed - automatically removing project data", 'devtrack');
 					$this->Project->delete();
 					$this->Flash->C(false);
 				} else {
@@ -193,11 +196,11 @@ class ProjectsController extends AppProjectController {
 		$this->set(compact('repoTypes'));
 	}
 
-	/**
-	 * admin_add method
-	 *
-	 * @return void
-	 */
+/**
+ * admin_add method
+ *
+ * @return void
+ */
 	public function admin_add() {
 		if ($this->request->is('post')) {
 			$this->Project->create();
@@ -208,30 +211,30 @@ class ProjectsController extends AppProjectController {
 		$this->set('repoTypes', $this->Project->RepoType->find('list'));
 	}
 
-	/**
-	 * edit method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * edit method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function edit($project = null) {
 		$project = $this->_projectCheck($project, true, true);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Flash->U($this->Project->save($this->request->data))) {
-				$this->log("[ProjectController.edit] user[".$this->Project->_auth_user_id."] edited project[".$this->Project->id."]", 'devtrack');
+				$this->log("[ProjectController.edit] user[" . $this->Project->_auth_user_id . "] edited project[" . $this->Project->id . "]", 'devtrack');
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view'));
 			}
 		}
 		$this->request->data = $project;
 	}
 
-	/**
-	 * admin_edit method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * admin_edit method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function admin_edit($project = null) {
 		$project = $this->_projectCheck($project);
 
@@ -244,14 +247,14 @@ class ProjectsController extends AppProjectController {
 		$this->set('repoTypes', $this->Project->RepoType->find('list'));
 	}
 
-	/**
-	 * delete
-	 * remove a project and its sub components from the database
-	 *
-	 * @param string $project
-	 *
-	 * @return void
-	 */
+/**
+ * delete
+ * remove a project and its sub components from the database
+ *
+ * @param string $project
+ *
+ * @return void
+ */
 	public function delete($project = null) {
 		$project = $this->_projectCheck($project, true, true);
 
@@ -262,21 +265,24 @@ class ProjectsController extends AppProjectController {
 				$this->redirect(array('action' => 'index'));
 			}
 		}
-		$this->set('object', array('name'=>$project['Project']['name']));
+		$this->set('object', array('name' => $project['Project']['name']));
 		$this->set('objects', $this->Project->preDelete());
 		$this->render('/Elements/Project/delete');
 	}
 
-	/**
-	 * admin_delete method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * admin_delete method
+ *
+ * @param string $id
+ * @throws MethodNotAllowedException
+ * @return void
+ */
 	public function admin_delete($name = null) {
 		$project = $this->_projectCheck($name);
 
-		if (!$this->request->is('post')) throw new MethodNotAllowedException();
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
 
 		$this->Flash->D($this->Project->delete());
 		$this->redirect(array('action' => 'admin_index'));
@@ -292,20 +298,20 @@ class ProjectsController extends AppProjectController {
 		$this->render('/Elements/Markitup/preview');
 	}
 
-	/***************************************************
+	/* ************************************************ *
 	*													*
-	*			API SECTION OF CONTROLLER			 *
-	*			 CAUTION: PUBLIC FACING				*
+	*			API SECTION OF CONTROLLER				*
+	*			 CAUTION: PUBLIC FACING					*
 	*													*
-	***************************************************/
+	* ************************************************* */
 
-	/**
-	 * api_view function.
-	 *
-	 * @access public
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * api_view function.
+ *
+ * @access public
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function api_view($id = null) {
 		$this->layout = 'ajax';
 
@@ -359,13 +365,13 @@ class ProjectsController extends AppProjectController {
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_all function.
-	 * ADMINS only
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * api_all function.
+ * ADMINS only
+ *
+ * @access public
+ * @return void
+ */
 	public function api_all() {
 		$this->layout = 'ajax';
 
@@ -395,14 +401,14 @@ class ProjectsController extends AppProjectController {
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_history function.
-	 * not strictly an API call, consider moving to ajax routing
-	 *
-	 * @access public
-	 * @param int $number (default: 0)
-	 * @return void
-	 */
+/**
+ * api_history function.
+ * not strictly an API call, consider moving to ajax routing
+ *
+ * @access public
+ * @param int $number (default: 0)
+ * @return void
+ */
 	public function api_history($number = 0) {
 		$project = $this->_projectCheck($this->request->params['named']['project']);
 		$this->layout = 'ajax';
@@ -415,12 +421,12 @@ class ProjectsController extends AppProjectController {
 		$this->render('/Elements/history');
 	}
 
-	/**
-	 * api_autocomplete function.
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * api_autocomplete function.
+ *
+ * @access public
+ * @return void
+ */
 	public function api_autocomplete() {
 		$this->layout = 'ajax';
 
@@ -436,8 +442,8 @@ class ProjectsController extends AppProjectController {
 				array(
 					'conditions' => array(
 						'OR' => array(
-							'Project.name LIKE' => $query.'%',
-							'Project.description LIKE' => $query.'%'
+							'Project.name LIKE' => $query . '%',
+							'Project.description LIKE' => $query . '%'
 						),
 					),
 					'fields' => array(
