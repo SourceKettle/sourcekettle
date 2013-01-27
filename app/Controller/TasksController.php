@@ -219,22 +219,22 @@ class TasksController extends AppProjectController {
 		}
 
 		// Fetch any additional users that may be needed
-		$change_users = array();
+		$changeUsers = array();
 		$this->Task->Assignee->recursive = -1;
 		foreach ($changes as $change) {
 			if ($change['ProjectHistory']['row_field'] == 'assignee_id') {
 				$_old = $change['ProjectHistory']['row_field_old'];
 				$_new = $change['ProjectHistory']['row_field_new'];
 
-				if ($_old && !isset($change_users[$_old])) {
+				if ($_old && !isset($changeUsers[$_old])) {
 					$this->Task->Assignee->id = $_old;
 					$_temp = $this->Task->Assignee->read();
-					$change_users[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+					$changeUsers[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
 				}
-				if ($_new && !isset($change_users[$_new])) {
+				if ($_new && !isset($changeUsers[$_new])) {
 					$this->Task->Assignee->id = $_new;
 					$_temp = $this->Task->Assignee->read();
-					$change_users[$_new] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+					$changeUsers[$_new] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
 				}
 			}
 		}
@@ -251,7 +251,7 @@ class TasksController extends AppProjectController {
 		};
 
 		usort($changes, $cmp);
-		$this->set('change_users', $change_users);
+		$this->set('change_users', $changeUsers);
 		$this->set('changes', $changes);
 
 		$times = $this->Task->Time->find(
@@ -419,7 +419,7 @@ class TasksController extends AppProjectController {
 			$this->redirect(array('project' => $project, 'action' => 'view', $id));
 		}
 
-		$this->_update_task_status($project, $id, 2);
+		$this->__updateTaskStatus($project, $id, 2);
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
@@ -446,7 +446,7 @@ class TasksController extends AppProjectController {
 			$this->redirect(array('project' => $project, 'action' => 'view', $id));
 		}
 
-		$this->_update_task_status($project, $id, 1);
+		$this->__updateTaskStatus($project, $id, 1);
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
@@ -459,7 +459,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function opentask($project = null, $id = null) {
-		$success = $this->_update_task_status($project, $id, 1);
+		$success = $this->__updateTaskStatus($project, $id, 1);
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
@@ -472,7 +472,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function closetask($project = null, $id = null) {
-		$success = $this->_update_task_status($project, $id, 4);
+		$success = $this->__updateTaskStatus($project, $id, 4);
 
 		// If a User has commented
 		if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
@@ -492,7 +492,7 @@ class TasksController extends AppProjectController {
 	}
 
 	public function resolve($project = null, $id = null) {
-		$success = $this->_update_task_status($project, $id, 3);
+		$success = $this->__updateTaskStatus($project, $id, 3);
 
 		// If a User has commented
 		if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
@@ -512,7 +512,7 @@ class TasksController extends AppProjectController {
 	}
 
 	public function unresolve($project = null, $id = null) {
-		$success = $this->_update_task_status($project, $id, 1);
+		$success = $this->__updateTaskStatus($project, $id, 1);
 
 		// If a User has commented
 		if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
@@ -532,14 +532,14 @@ class TasksController extends AppProjectController {
 	}
 
 /**
- * _update_task_status function.
+ * __updateTaskStatus function.
  *
  * @access public
  * @param mixed $project (default: null)
  * @param mixed $id (default: null)
  * @return void
  */
-	private function _update_task_status($project = null, $id = null, $status = null) {
+	private function __updateTaskStatus($project = null, $id = null, $status = null) {
 		$project = $this->_projectCheck($project, true);
 		$task = $this->Task->open($id);
 
@@ -592,11 +592,11 @@ class TasksController extends AppProjectController {
 
 				$this->Task->Project->id = $task['Task']['project_id'];
 
-				$_part_of_project = $this->Task->Project->hasRead($this->Auth->user('id'));
-				$_public_project	= $this->Task->Project->field('public');
-				$_is_admin = ($this->_apiAuthLevel() == 1);
+				$partOfProject = $this->Task->Project->hasRead($this->Auth->user('id'));
+				$publicProject	= $this->Task->Project->field('public');
+				$isAdmin = ($this->_apiAuthLevel() == 1);
 
-				if ($_public_project || $_is_admin || $_part_of_project) {
+				if ($publicProject || $isAdmin || $partOfProject) {
 					//task_type_id
 					unset($task['Task']['task_type_id']);
 					$task['Task']['type'] = $task['TaskType']['name'];
@@ -725,9 +725,9 @@ class TasksController extends AppProjectController {
 			if (array_key_exists('statuses', $request)) {
 				$or = array();
 
-				foreach (preg_split('/\s*,\s*/', trim($request['statuses'])) as $status_id) {
+				foreach (preg_split('/\s*,\s*/', trim($request['statuses'])) as $statusId) {
 
-					$status = $this->Task->TaskStatus->findById($status_id);
+					$status = $this->Task->TaskStatus->findById($statusId);
 
 					if ($status != null) {
 						$or[] = array('Task.task_status_id' => $status['TaskStatus']['id']);
