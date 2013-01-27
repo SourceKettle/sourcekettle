@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/chrisbulmer/devtrack
+ * @link          http://github.com/SourceKettle/devtrack
  * @package       DevTrack.Model
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -255,7 +255,7 @@ class Task extends AppModel {
      * @param array $options (default: empty array)
      * @return bool True if the save was successful.
      */
-    public function beforeSave(array $options = array()) {
+    public function beforeSave($options = array()) {
         if(isset ($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
             foreach($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
                 if ($dependsOn == $this->id) {

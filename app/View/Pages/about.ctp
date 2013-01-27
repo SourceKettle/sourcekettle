@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/chrisbulmer/devtrack
+ * @link          http://github.com/SourceKettle/devtrack
  * @package       DevTrack.View.Help
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -22,7 +22,7 @@ echo $this->element('beta_warning');
     <h1>We &hearts; open-source</h1>
     <p>
         DevTrack is built using a variety of open-source software such as CakePHP, Bootstrap from Twitter and many other open-source projects.
-        You can view our source and download DevTrack from GitHub <?=$this->Html->link('here', 'https://github.com/chrisbulmer/devtrack')?>.
+        You can view our source and download DevTrack from GitHub <?=$this->Html->link('here', 'https://github.com/SourceKettle/devtrack')?>.
     </p>
 </div>
 
@@ -43,7 +43,7 @@ echo $this->element('beta_warning');
         <p><?=$this->Html->link('@pwhittlesea', 'https://github.com/pwhittlesea/')?></p>
         <p><?=$this->Html->link('@chrisbulmer', 'https://github.com/chrisbulmer/')?></p>
         <p><?=$this->Html->link('@amn-ecs', 'https://github.com/amn-ecs/')?></p>
-        <p><?=$this->Html->link('et al.', 'https://github.com/chrisbulmer/devtrack/graphs/contributors')?></p>
+        <p><?=$this->Html->link('et al.', 'https://github.com/SourceKettle/devtrack/graphs/contributors')?></p>
     </div>
     <div class="span4" style="text-align:center">
         <h4>The Many Who Inspired Us</h4>
