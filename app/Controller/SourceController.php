@@ -21,12 +21,12 @@ class SourceController extends AppProjectController {
 	public $helpers = array('Time', 'Source');
 
 /**
- * getPath function.
+ * __getPath function.
  *
  * @access private
  * @return void
  */
-	private function getPath() {
+	private function __getPath() {
 		$route = $this->params['pass'];
 		unset($route[0]); // Project name
 		unset($route[1]); // Branch name
@@ -34,14 +34,14 @@ class SourceController extends AppProjectController {
 	}
 
 /**
- * initialiseResources function.
+ * __initialiseResources function.
  *
  * @access private
  * @param mixed $name
  * @throws NotFoundException
  * @return void
  */
-	private function initialiseResources($name, $ref = null) {
+	private function __initialiseResources($name, $ref = null) {
 		$project = parent::_projectCheck($name);
 		$this->Source->init();
 
@@ -75,7 +75,7 @@ class SourceController extends AppProjectController {
 		if ($project == null && isset($this->request->params['named'])) {
 			$project = $this->request->params['named'];
 		}
-		$project = $this->initialiseResources($project);
+		$project = $this->__initialiseResources($project);
 
 		if (!isset($this->request->data['file']) || !isset($this->request->data['parent']) || !isset($this->request->data['hash'])) {
 			throw new NotFoundException(__('Invalid Parameters'));
@@ -105,7 +105,7 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function commit($project = null, $hash = null) {
-		$project = $this->initialiseResources($project, $hash);
+		$project = $this->__initialiseResources($project, $hash);
 
 		$commit = $this->Source->Commit->fetch($hash);
 
@@ -137,14 +137,14 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function commits($project = null, $branch = null) {
-		$project = $this->initialiseResources($project, $branch);
-		$path	= $this->getPath();
+		$project = $this->__initialiseResources($project, $branch);
+		$path	= $this->__getPath();
 
 		if ($branch == null) {
 			$this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
 		}
 
-		$num_per_page = 10;
+		$numPerPage = 10;
 
 		// Lets make sure its a valid int
 		if (isset($this->params['named']['page'])) {
@@ -157,12 +157,12 @@ class SourceController extends AppProjectController {
 			$page = 1;
 		}
 
-		foreach ($this->Source->Commit->history($branch, $num_per_page + 1, (($page - 1) * $num_per_page), $path) as $a => $commit) {
+		foreach ($this->Source->Commit->history($branch, $numPerPage + 1, (($page - 1) * $numPerPage), $path) as $a => $commit) {
 			$commits[$a] = $this->Source->Commit->fetch($commit);
 		}
 
-		if (count($commits) == $num_per_page + 1) {
-			unset($commits[$num_per_page]);
+		if (count($commits) == $numPerPage + 1) {
+			unset($commits[$numPerPage]);
 			$this->set("more_pages", true);
 		} else {
 			$this->set("more_pages", false);
@@ -182,7 +182,7 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function gettingStarted($project = null) {
-		$project = $this->initialiseResources($project);
+		$project = $this->__initialiseResources($project);
 		$type	= $this->Source->getType();
 
 		$this->set('user', $this->Auth->user());
@@ -218,8 +218,8 @@ class SourceController extends AppProjectController {
 	public function raw($project = null, $branch = null) {
 		$this->layout = 'ajax';
 
-		$project = $this->initialiseResources($project, $branch);
-		$path	= $this->getPath();
+		$project = $this->__initialiseResources($project, $branch);
+		$path	= $this->__getPath();
 
 		if ($branch == null) {
 			throw new NotFoundException(__('Invalid Branch'));
@@ -245,8 +245,8 @@ class SourceController extends AppProjectController {
  */
 	public function tree($project = null, $branch = null) {
 		try {
-			$project = $this->initialiseResources($project, $branch);
-			$path	= $this->getPath();
+			$project = $this->__initialiseResources($project, $branch);
+			$path	= $this->__getPath();
 
 			if ($branch == null) {
 				$this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
