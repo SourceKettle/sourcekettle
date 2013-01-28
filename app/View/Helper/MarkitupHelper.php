@@ -18,14 +18,14 @@ class MarkitupHelper extends AppHelper {
 
 	public $vendors = array('markdown' => 'Markdown');
 
-	/**
-	 * editor function.
-	 *
-	 * @access public
-	 * @param mixed $name
-	 * @param array $settings (default: array())
-	 * @return void
-	 */
+/**
+ * editor function.
+ *
+ * @access public
+ * @param mixed $name
+ * @param array $settings (default: array())
+ * @return void
+ */
 	public function editor($name, $settings = array()) {
 		$default = array(
 			'set' => 'markdown',
@@ -58,7 +58,7 @@ class MarkitupHelper extends AppHelper {
 				$('.{$id}').markItUp(
 					{$settings['settings']},
 					{
-						previewParserPath: '".$this->Html->url($settings['parser'])."',
+						previewParserPath: '" . $this->Html->url($settings['parser']) . "',
 						previewAutoRefresh: false,
 						previewInElement: '#markitup_input',
 						afterInsert: 'afterInsert'
@@ -70,7 +70,7 @@ class MarkitupHelper extends AppHelper {
 		$html = '
 		<div class="tabbable tabs-below">
 			<div class="tab-content">
-				<div class="tab-pane active" id="markitup_edit">'.$this->Form->input($name, $textarea).'</div>
+				<div class="tab-pane active" id="markitup_edit">' . $this->Form->input($name, $textarea) . '</div>
 				<div class="tab-pane" id="markitup_view"><div class="span9" id="markitup_input"></div></div>
 			</div>
 			<ul class="nav nav-tabs">
@@ -83,13 +83,13 @@ class MarkitupHelper extends AppHelper {
 		return $this->output($html);
 	}
 
-	/**
-	 * parse function.
-	 *
-	 * @access public
-	 * @param mixed $content
-	 * @return void
-	 */
+/**
+ * parse function.
+ *
+ * @access public
+ * @param mixed $content
+ * @return void
+ */
 	public function parse($content) {
 		$this->Html->css('markitup/preview', null, array('inline' => false));
 		App::import('Vendor', 'Markdown/markdown');
