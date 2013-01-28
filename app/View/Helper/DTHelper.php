@@ -6,97 +6,98 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Helper
- * @since         DevTrack v 0.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	 DevTrack Development Team 2012
+ * @link			http://github.com/SourceKettle/devtrack
+ * @package		DevTrack.View.Helper
+ * @since		 DevTrack v 0.1
+ * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 class DTHelper extends AppHelper {
 
-    var $_config;
-    var $_lang = 'en';
+	private $__config;
 
-    var $helpers = array('TwitterBootstrap.TwitterBootstrap');
+	private $__lang = 'en';
 
-    /**
-     * _lazyLoad function.
-     *
-     * @access private
-     * @param mixed $c
-     * @param mixed $lang
-     * @return void
-     */
-    private function _lazyLoad($c, $lang) {
-        //debug($c);
-        if (!isset($this->_config['pages'][$c])) {
-            Configure::load('Language/dt_core_'.$c.'_'.$lang);
-            $this->_config = Configure::read('dtcore');
-        }
-    }
+	public $helpers = array('TwitterBootstrap.TwitterBootstrap');
 
-    /**
-     * __construct function.
-     *
-     * @access public
-     * @param mixed $options (default: null)
-     * @return void
-     */
-    public function __construct($options = null) {
-        parent::__construct($options);
-        $this->_config = Configure::read('dtcore');
-    }
+/**
+ * __lazyLoad function.
+ *
+ * @access private
+ * @param mixed $c
+ * @param mixed $lang
+ * @return void
+ */
+	private function __lazyLoad($c, $lang) {
+		//debug($c);
+		if (!isset($this->__config['pages'][$c])) {
+			Configure::load('Language/dt_core_' . $c . '_' . $lang);
+			$this->__config = Configure::read('dtcore');
+		}
+	}
 
-    /**
-     * t function.
-     *
-     * @access public
-     * @param mixed $string
-     * @param array $overrides (default: array())
-     * @return void
-     */
-    public function t($string, $overrides = array()) {
-        $lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->_lang;
+/**
+ * __construct function.
+ *
+ * @access public
+ * @param mixed $options (default: null)
+ * @return void
+ */
+	public function __construct($options = null) {
+		parent::__construct($options);
+		$this->__config = Configure::read('dtcore');
+	}
 
-        $c = (isset($overrides['controller']) != null) ? $overrides['controller'] : $this->request['controller'];
-        $a = (isset($overrides['action']) != null) ? $overrides['action'] : $this->request['action'];
+/**
+ * t function.
+ *
+ * @access public
+ * @param mixed $string
+ * @param array $overrides (default: array())
+ * @return void
+ */
+	public function t($string, $overrides = array()) {
+		$lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->__lang;
 
-        $this->_lazyLoad($c, $lang);
+		$c = (isset($overrides['controller']) != null) ? $overrides['controller'] : $this->request['controller'];
+		$a = (isset($overrides['action']) != null) ? $overrides['action'] : $this->request['action'];
 
-        return $this->_config['pages'][$c][$a][$lang][$string];
-    }
+		$this->__lazyLoad($c, $lang);
 
-    /**
-     * pHeader function.
-     *
-     * @access public
-     * @param array $overrides (default: array())
-     * @return void
-     */
-    public function pHeader($overrides = array()) {
-        $lang = (isset($overrides['lang'])) ? $overrides['lang'] : $this->_lang;
-        $text = (isset($overrides['text'])) ? $overrides['text'] : $this->t('header.text', $overrides);
+		return $this->__config['pages'][$c][$a][$lang][$string];
+	}
 
-        $r_before = array("{project}", "{text}");
-        $r_after  = array($this->request['project'], $text);
+/**
+ * pHeader function.
+ *
+ * @access public
+ * @param array $overrides (default: array())
+ * @return void
+ */
+	public function pHeader($overrides = array()) {
+		$lang = (isset($overrides['lang'])) ? $overrides['lang'] : $this->__lang;
+		$text = (isset($overrides['text'])) ? $overrides['text'] : $this->t('header.text', $overrides);
 
-        $h = str_replace($r_before, $r_after, $this->_config['common']['header']['project']['format']);
+		$rBefore	= array("{project}", "{text}");
+		$rAfter	= array($this->request['project'], $text);
 
-        return $this->TwitterBootstrap->page_header($h);
-    }
+		$h = str_replace($rBefore, $rAfter, $this->__config['common']['header']['project']['format']);
 
-    /**
-     * parse function.
-     *
-     * @access public
-     * @param string $text (default: '')
-     * @return void
-     */
-    public function parse($text = '') {
-        $r_before = array("\\n");
-        $r_after  = array("<br>");
+		return $this->TwitterBootstrap->page_header($h);
+	}
 
-        return str_replace($r_before, $r_after, $text);
-    }
+/**
+ * parse function.
+ *
+ * @access public
+ * @param string $text (default: '')
+ * @return void
+ */
+	public function parse($text = '') {
+		$rBefore	= array("\\n");
+		$rAfter	= array("<br>");
+
+		return str_replace($rBefore, $rAfter, $text);
+	}
 }

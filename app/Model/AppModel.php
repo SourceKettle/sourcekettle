@@ -19,62 +19,63 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Model', 'Model');
 
-/**
- * Application model for Cake.
- *
- * Add your application-wide methods in the class below, your models
- * will inherit them.
- *
- * @package       app.Model
- */
 class AppModel extends Model {
 
-    // The logged in user
-    public $_auth_user_id;
-    public $_auth_user_name;
-    public $_auth_user_email;
-    public $_auth_user_is_admin;
+	// The logged in user
+	public $_auth_user_id;
 
-    // Is this an API request?
-    public $_is_api = false;
+	public $_auth_user_name;
 
-    /**
-     * setCurrentUserData function.
-     * Recursively traverse the MODELS and set the current logged in users data
-     * This should hopefully mean we can have fatter models
-     *
-     * @access public
-     * @param mixed $id (default: null)
-     * @param mixed $name (default: null)
-     * @param mixed $email (default: null)
-     * @return void
-     */
-    public function setCurrentUserData($id = null, $name = null, $email = null, $is_admin = false) {
-        if ($this->_auth_user_id) return true;
+	public $_auth_user_email;
 
-        $this->_auth_user_id = $id;
-        $this->_auth_user_name = $name;
-        $this->_auth_user_email = $email;
-        $this->_auth_user_is_admin = $is_admin;
+	public $_auth_user_is_admin;
 
-        foreach (array_keys($this->hasMany) as $key) {
-            $this->{$key}->setCurrentUserData($id, $name, $email, $is_admin);
-        }
-        foreach (array_keys($this->belongsTo) as $key) {
-            $this->{$key}->setCurrentUserData($id, $name, $email, $is_admin);
-        }
-        foreach (array_keys($this->hasAndBelongsToMany) as $key) {
-            $this->{$key}->setCurrentUserData($id, $name, $email, $is_admin);
-        }
-    }
+	// Is this an API request?
+	public $_is_api = false;
 
-    public function __deleteDependent($id, $cascade) {
-        $this->_deleteDependent($id, $cascade);
-    }
-    public function __deleteLinks($id) {
-        $this->_deleteLinks($id);
-    }
+/**
+ * setCurrentUserData function.
+ * Recursively traverse the MODELS and set the current logged in users data
+ * This should hopefully mean we can have fatter models
+ *
+ * @access public
+ * @param mixed $id (default: null)
+ * @param mixed $name (default: null)
+ * @param mixed $email (default: null)
+ * @return void
+ */
+	public function setCurrentUserData($id = null, $name = null, $email = null, $isAdmin = false) {
+		if ($this->_auth_user_id) return true;
+
+		$this->_auth_user_id = $id;
+		$this->_auth_user_name = $name;
+		$this->_auth_user_email = $email;
+		$this->_auth_user_is_admin = $isAdmin;
+
+		foreach (array_keys($this->hasMany) as $key) {
+			$this->{$key}->setCurrentUserData($id, $name, $email, $isAdmin);
+		}
+		foreach (array_keys($this->belongsTo) as $key) {
+			$this->{$key}->setCurrentUserData($id, $name, $email, $isAdmin);
+		}
+		foreach (array_keys($this->hasAndBelongsToMany) as $key) {
+			$this->{$key}->setCurrentUserData($id, $name, $email, $isAdmin);
+		}
+	}
+
+/**
+ * Fix for deletable plugin
+ */
+	public function __deleteDependent($id, $cascade) {
+		$this->_deleteDependent($id, $cascade);
+	}
+
+/**
+ * Fix for deletable plugin
+ */
+	public function __deleteLinks($id) {
+		$this->_deleteLinks($id);
+	}
 }

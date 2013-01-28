@@ -297,7 +297,7 @@ class CollaboratorsController extends AppProjectController {
 		}
 
 		// If the user has confimed deletion
-		if ($this->request->is('post') && $this->Flash->D($this->Collaborator->delete())) {
+		if ($this->request->is('post') && $this->Flash->d($this->Collaborator->delete())) {
 			$this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
 		}
 
@@ -325,7 +325,7 @@ class CollaboratorsController extends AppProjectController {
 		}
 
 		$this->Flash->setUp();
-		$this->Flash->D($this->Collaborator->delete());
+		$this->Flash->d($this->Collaborator->delete());
 		$this->redirect(array('controller' => 'projects', 'action' => 'admin_view', $collaborator['Project']['id']));
 	}
 

@@ -15,29 +15,24 @@
  *
  * @property Task $Task
  */
-
 App::uses('AppModel', 'Model');
 
 class TaskPriority extends AppModel {
 
-    /**
-     * Display field
-     *
-     * @var string
-     */
-    public $displayField = 'name';
+/**
+ * Display field
+ */
+	public $displayField = 'name';
 
-    /**
-     * hasMany associations
-     *
-     * @var array
-     */
-    public $hasMany = array(
-        'Task' => array(
-            'className' => 'Task',
-            'foreignKey' => 'task_priority_id',
-            'dependent' => false,
-        )
-    );
+/**
+ * hasMany associations
+ */
+	public $hasMany = array(
+		'Task' => array(
+			'className' => 'Task',
+			'foreignKey' => 'task_priority_id',
+			'dependent' => false,
+		)
+	);
 
 }

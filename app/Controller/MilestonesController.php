@@ -18,15 +18,14 @@ App::uses('AppProjectController', 'Controller');
 
 class MilestonesController extends AppProjectController {
 
-
 	public $helpers = array('Task');
 
-	/**
-	 * beforeFilter function.
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * beforeFilter function.
+ *
+ * @access public
+ * @return void
+ */
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow(
@@ -35,39 +34,38 @@ class MilestonesController extends AppProjectController {
 		);
 	}
 
-	/**
-	 * index method
-	 *
-	 * @return void
-	 */
+/**
+ * index method
+ *
+ * @return void
+ */
 	public function index($project = null) {
-		$this->redirect(array('project'=>$project,'action'=>'open'));
+		$this->redirect(array('project' => $project, 'action' => 'open'));
 	}
 
-	/**
-	 * index method
-	 *
-	 * @return void
-	 */
+/**
+ * index method
+ *
+ * @return void
+ */
 	public function open($project = null) {
 		$project = $this->_projectCheck($project);
 
 		$milestones = array();
 		// Iterate over all milestones
 		foreach ($this->Milestone->getOpenMilestones() as $x) {
-			$o_tasks = $this->Milestone->openTasksForMilestone($x);
-			$i_tasks = $this->Milestone->inProgressTasksForMilestone($x);
-			$r_tasks = $this->Milestone->resolvedTasksForMilestone($x);
-			$c_tasks = $this->Milestone->closedTasksForMilestone($x);
+			$oTasks = $this->Milestone->openTasksForMilestone($x);
+			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
+			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
+			$cTasks = $this->Milestone->closedTasksForMilestone($x);
 
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
 
-			$milestone['Milestone']['c_tasks'] = sizeof($c_tasks);
-			$milestone['Milestone']['i_tasks'] = sizeof($i_tasks);
-			$milestone['Milestone']['r_tasks'] = sizeof($r_tasks);
-			$milestone['Milestone']['o_tasks'] = sizeof($o_tasks);
-
+			$milestone['Milestone']['cTasks'] = count($cTasks);
+			$milestone['Milestone']['iTasks'] = count($iTasks);
+			$milestone['Milestone']['rTasks'] = count($rTasks);
+			$milestone['Milestone']['oTasks'] = count($oTasks);
 
 			$milestones[$x] = $milestone;
 		}
@@ -75,32 +73,32 @@ class MilestonesController extends AppProjectController {
 		$this->render('open_closed');
 	}
 
-	/**
-	 * index method
-	 *
-	 * @return void
-	 */
+/**
+ * index method
+ *
+ * @return void
+ */
 	public function closed($project = null) {
 		$project = $this->_projectCheck($project);
 
 		$milestones = array();
 		// Iterate over all milestones
 		foreach ($this->Milestone->getClosedMilestones() as $x) {
-			$o_tasks = $this->Milestone->openTasksForMilestone($x);
-			$i_tasks = $this->Milestone->inProgressTasksForMilestone($x);
-			$r_tasks = $this->Milestone->resolvedTasksForMilestone($x);
-			$c_tasks = $this->Milestone->closedTasksForMilestone($x);
+			$oTasks = $this->Milestone->openTasksForMilestone($x);
+			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
+			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
+			$cTasks = $this->Milestone->closedTasksForMilestone($x);
 
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
 
-			$milestone['Milestone']['c_tasks'] = sizeof($c_tasks);
-			$milestone['Milestone']['i_tasks'] = sizeof($i_tasks);
-			$milestone['Milestone']['r_tasks'] = sizeof($r_tasks);
-			$milestone['Milestone']['o_tasks'] = sizeof($o_tasks);
+			$milestone['Milestone']['cTasks'] = count($cTasks);
+			$milestone['Milestone']['iTasks'] = count($iTasks);
+			$milestone['Milestone']['rTasks'] = count($rTasks);
+			$milestone['Milestone']['oTasks'] = count($oTasks);
 
-			$milestone['Milestone']['closed_tasks'] = sizeof($c_tasks);
-			$milestone['Milestone']['open_tasks'] = sizeof($o_tasks);
+			$milestone['Milestone']['closed_tasks'] = count($cTasks);
+			$milestone['Milestone']['open_tasks'] = count($oTasks);
 
 			$milestones[$x] = $milestone;
 		}
@@ -108,11 +106,11 @@ class MilestonesController extends AppProjectController {
 		$this->render('open_closed');
 	}
 
-	/**
-	 * view method
-	 *
-	 * @return void
-	 */
+/**
+ * view method
+ *
+ * @return void
+ */
 	public function view($project = null, $id = null) {
 		$project = $this->_projectCheck($project);
 		$milestone = $this->Milestone->open($id);
@@ -125,12 +123,11 @@ class MilestonesController extends AppProjectController {
 			'conditions' => array(
 				'Task.project_id' => $project['Project']['id'],
 				'OR' => array(
-					array('milestone_id' => NULL), 
+					array('milestone_id' => null),
 					array('milestone_id' => 0)
 				),
 			)
 		));
-
 
 		// Sort function for tasks
 		$cmp = function($a, $b) {
@@ -142,21 +139,21 @@ class MilestonesController extends AppProjectController {
 		usort($completed, $cmp);
 
 		// Final value is min size of the board
-		$max = max(sizeof($backlog), sizeof($inProgress), sizeof($completed), 3);
+		$max = max(count($backlog), count($inProgress), count($completed), 3);
 
 		$this->set('milestone', $milestone);
 
-		$this->set('backlog_empty', $max - sizeof($backlog));
-		$this->set('inProgress_empty', $max - sizeof($inProgress));
-		$this->set('completed_empty', $max - sizeof($completed));
+		$this->set('backlog_empty', $max - count($backlog));
+		$this->set('inProgress_empty', $max - count($inProgress));
+		$this->set('completed_empty', $max - count($completed));
 		$this->set(compact('backlog', 'inProgress', 'completed', 'iceBox'));
 	}
 
-	/**
-	 * add method
-	 *
-	 * @return void
-	 */
+/**
+ * add method
+ *
+ * @return void
+ */
 	public function add($project = null) {
 		$project = $this->_projectCheck($project, true);
 
@@ -165,18 +162,18 @@ class MilestonesController extends AppProjectController {
 
 			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->C($this->Milestone->save($this->request->data))) {
+			if ($this->Flash->c($this->Milestone->save($this->request->data))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
 			}
 		}
 	}
 
-	/**
-	 * edit method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * edit method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function edit($project = null, $id = null) {
 		$project = $this->_projectCheck($project, true);
 		$milestone = $this->Milestone->open($id);
@@ -184,7 +181,7 @@ class MilestonesController extends AppProjectController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->U($this->Milestone->save($this->request->data))) {
+			if ($this->Flash->u($this->Milestone->save($this->request->data))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 		} else {
@@ -192,12 +189,12 @@ class MilestonesController extends AppProjectController {
 		}
 	}
 
-	/**
-	 * delete method
-	 *
-	 * @param string $id
-	 * @return void
-	 */
+/**
+ * delete method
+ *
+ * @param string $id
+ * @return void
+ */
 	public function delete($project = null, $id = null) {
 		$project = $this->_projectCheck($project, true, true);
 		$milestone = $this->Milestone->open($id);
@@ -205,7 +202,7 @@ class MilestonesController extends AppProjectController {
 		$this->Flash->setUp();
 
 		if ($this->request->is('post')) {
-			if ($this->Flash->D($this->Milestone->delete())) {
+			if ($this->Flash->d($this->Milestone->delete())) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 		}
@@ -217,20 +214,20 @@ class MilestonesController extends AppProjectController {
 		$this->render('/Elements/Project/delete');
 	}
 
-	/***************************************************
+	/* ************************************************ *
 	*													*
-	*			API SECTION OF CONTROLLER			 *
-	*			 CAUTION: PUBLIC FACING				*
+	*			API SECTION OF CONTROLLER				*
+	*			 CAUTION: PUBLIC FACING					*
 	*													*
-	***************************************************/
+	* ************************************************* */
 
-	/**
-	 * api_view function.
-	 *
-	 * @access public
-	 * @param mixed $id (default: null)
-	 * @return void
-	 */
+/**
+ * api_view function.
+ *
+ * @access public
+ * @param mixed $id (default: null)
+ * @return void
+ */
 	public function api_view($id = null) {
 		$this->layout = 'ajax';
 
@@ -263,11 +260,11 @@ class MilestonesController extends AppProjectController {
 
 				$this->Milestone->Project->id = $milestone['Milestone']['project_id'];
 
-				$_part_of_project = $this->Milestone->Project->hasRead($this->Auth->user('id'));
-				$_public_project	= $this->Milestone->Project->field('public');
-				$_is_admin = ($this->_api_auth_level() == 1);
+				$partOfProject = $this->Milestone->Project->hasRead($this->Auth->user('id'));
+				$publicProject	= $this->Milestone->Project->field('public');
+				$isAdmin = ($this->_apiAuthLevel() == 1);
 
-				if ($_public_project || $_is_admin || $_part_of_project) {
+				if ($publicProject || $isAdmin || $partOfProject) {
 					$milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $id))));
 
 					$data = $milestone['Milestone'];
@@ -283,20 +280,20 @@ class MilestonesController extends AppProjectController {
 		$this->render('/Elements/json');
 	}
 
-	/**
-	 * api_all function.
-	 * ADMINS only
-	 *
-	 * @access public
-	 * @return void
-	 */
+/**
+ * api_all function.
+ * ADMINS only
+ *
+ * @access public
+ * @return void
+ */
 	public function api_all() {
 		$this->layout = 'ajax';
 
 		$this->Milestone->recursive = -1;
 		$data = array();
 
-		switch ($this->_api_auth_level()) {
+		switch ($this->_apiAuthLevel()) {
 			case 1:
 				foreach ($this->Milestone->find("all") as $milestone) {
 					$milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $milestone['Milestone']['id']))));

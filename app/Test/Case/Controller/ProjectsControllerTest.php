@@ -5,6 +5,7 @@ App::uses('ProjectsController', 'Controller');
  * TestProjectsController *
  */
 class TestProjectsController extends ProjectsController {
+
 /**
  * Auto render
  *
@@ -23,6 +24,7 @@ class TestProjectsController extends ProjectsController {
 	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
+
 }
 
 /**
@@ -30,6 +32,7 @@ class TestProjectsController extends ProjectsController {
  *
  */
 class ProjectsControllerTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *
@@ -65,7 +68,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testIndex() {
-
 	}
 /**
  * testView method
@@ -73,7 +75,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testView() {
-
 	}
 /**
  * testAdd method
@@ -81,7 +82,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdd() {
-
 	}
 /**
  * testEdit method
@@ -89,7 +89,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testEdit() {
-
 	}
 /**
  * testDelete method
@@ -97,7 +96,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testDelete() {
-
 	}
 /**
  * testAdminIndex method
@@ -105,7 +103,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminIndex() {
-
 	}
 /**
  * testAdminView method
@@ -113,7 +110,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminView() {
-
 	}
 /**
  * testAdminAdd method
@@ -121,7 +117,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminAdd() {
-
 	}
 /**
  * testAdminEdit method
@@ -129,7 +124,6 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminEdit() {
-
 	}
 /**
  * testAdminDelete method
@@ -137,6 +131,5 @@ class ProjectsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminDelete() {
-
 	}
 }

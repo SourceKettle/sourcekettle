@@ -65,7 +65,7 @@ class SettingsController extends AppController {
  * @return void
  */
 	public function admin_setRegistration($value = null) {
-		$this->admin_setField('register_enabled', $value);
+		$this->__adminSetField('register_enabled', $value);
 	}
 
 /**
@@ -76,7 +76,7 @@ class SettingsController extends AppController {
  * @return void
  */
 	public function admin_setFeatureTime($value = null) {
-		$this->admin_setField('feature_time_enabled', $value);
+		$this->__adminSetField('feature_time_enabled', $value);
 	}
 
 /**
@@ -87,7 +87,7 @@ class SettingsController extends AppController {
  * @return void
  */
 	public function admin_setFeatureTask($value = null) {
-		$this->admin_setField('feature_task_enabled', $value);
+		$this->__adminSetField('feature_task_enabled', $value);
 	}
 
 /**
@@ -98,7 +98,7 @@ class SettingsController extends AppController {
  * @return void
  */
 	public function admin_setFeatureSource($value = null) {
-		$this->admin_setField('feature_source_enabled', $value);
+		$this->__adminSetField('feature_source_enabled', $value);
 	}
 
 /**
@@ -109,18 +109,18 @@ class SettingsController extends AppController {
  * @return void
  */
 	public function admin_setFeatureAttachment($value = null) {
-		$this->admin_setField('feature_attachment_enabled', $value);
+		$this->__adminSetField('feature_attachment_enabled', $value);
 	}
 
 /**
- * admin_setField function.
+ * adminSetField function.
  *
  * @access private
  * @param mixed $field (default: null)
  * @param mixed $value (default: null)
  * @return void
  */
-	private function admin_setField($field = null, $value = null) {
+	private function __adminSetField($field = null, $value = null) {
 		$this->Setting->id = $this->Setting->field('id', array('name' => $field));
 		if (!$this->Setting->exists()) {
 			$this->Flash->error('The specified setting does not exist in the database. Please create "' . $field . '" and try again.');
