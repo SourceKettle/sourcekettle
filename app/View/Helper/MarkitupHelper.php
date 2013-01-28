@@ -14,7 +14,7 @@
  */
 class MarkitupHelper extends AppHelper {
 
-	var $helpers = array('Html', 'Form');
+	public $helpers = array('Html', 'Form');
 
 	public $vendors = array('markdown' => 'Markdown');
 
