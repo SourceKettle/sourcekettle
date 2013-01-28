@@ -158,7 +158,7 @@ class UsersController extends AppController {
 			}
 			$this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
 			$this->redirect('/login');
-		} else if ( $this->request->is('get')) {
+		} else if ($this->request->is('get')) {
 			//display the form or act on the link
 			if ($key == null) {
 				// Display the form
