@@ -17,6 +17,3 @@
 foreach ($tasks as $task) {
     echo $this->element('Task/element_1', array('task' => $task, 'draggable' => true));
 }
-while ($e-- > 0) {
-    echo '<div class="invisiblewell"></div>';
-}

@@ -15,6 +15,7 @@
  */
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
+$this->Html->script ("milestones.index", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -27,9 +28,8 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
             <?= $this->element('Milestone/topbar_view', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
             <div class="span10">
                 <div class="row-fluid">
-
                     <div class="span4">
-                        <div class="well col">
+                        <div class="well col sprintboard-column" data-taskstatus="open">
                             <h2><?= $this->DT->t('column.backlog.title') ?></h2>
                             <hr />
                             <?= $this->element('Task/Board/'.((!empty($backlog))?'full_column':'empty'),
@@ -39,7 +39,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                     </div>
 
                     <div class="span4">
-                        <div class="well col">
+                        <div class="well col sprintboard-column" data-taskstatus="in_progress">
                             <h2><?= $this->DT->t('column.inprogress.title') ?></h2>
                             <hr />
                             <?= $this->element('Task/Board/'.((!empty($inProgress))?'full_column':'empty'),
@@ -49,7 +49,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
                     </div>
 
                     <div class="span4">
-                        <div class="well col">
+                        <div class="well col sprintboard-column" data-taskstatus="resolved">
                             <h2><?= $this->DT->t('column.completed.title') ?></h2>
                             <hr />
                             <?= $this->element('Task/Board/'.((!empty($completed))?'full_column':'empty'),
@@ -63,7 +63,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
 
                 <div class="row-fluid">
                     <div class="span12">
-                        <div class="well col">
+                        <div class="well col" data-taskstatus="on_ice">
                             <h2><?= $this->DT->t('column.icebox.title') ?></h2>
                             <hr />
                             <? if (!empty($iceBox)) : ?>

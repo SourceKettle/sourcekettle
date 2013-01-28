@@ -17,6 +17,3 @@
 <div class="task empty invisiblewell">
     <h3><small><?= $this->DT->t('column.'.$c.'.empty') ?></small></h3>
 </div>
-<? while ($e-- > 1) : ?>
-<div class="invisiblewell"></div>
-<? endwhile; ?>
