@@ -15,25 +15,25 @@
 
 class DTHelper extends AppHelper {
 
-	var $_config;
+	private $__config;
 
-	var $_lang = 'en';
+	private $__lang = 'en';
 
-	var $helpers = array('TwitterBootstrap.TwitterBootstrap');
+	public $helpers = array('TwitterBootstrap.TwitterBootstrap');
 
 /**
- * _lazyLoad function.
+ * __lazyLoad function.
  *
  * @access private
  * @param mixed $c
  * @param mixed $lang
  * @return void
  */
-	private function _lazyLoad($c, $lang) {
+	private function __lazyLoad($c, $lang) {
 		//debug($c);
-		if (!isset($this->_config['pages'][$c])) {
+		if (!isset($this->__config['pages'][$c])) {
 			Configure::load('Language/dt_core_' . $c . '_' . $lang);
-			$this->_config = Configure::read('dtcore');
+			$this->__config = Configure::read('dtcore');
 		}
 	}
 
@@ -46,7 +46,7 @@ class DTHelper extends AppHelper {
  */
 	public function __construct($options = null) {
 		parent::__construct($options);
-		$this->_config = Configure::read('dtcore');
+		$this->__config = Configure::read('dtcore');
 	}
 
 /**
@@ -58,14 +58,14 @@ class DTHelper extends AppHelper {
  * @return void
  */
 	public function t($string, $overrides = array()) {
-		$lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->_lang;
+		$lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->__lang;
 
 		$c = (isset($overrides['controller']) != null) ? $overrides['controller'] : $this->request['controller'];
 		$a = (isset($overrides['action']) != null) ? $overrides['action'] : $this->request['action'];
 
-		$this->_lazyLoad($c, $lang);
+		$this->__lazyLoad($c, $lang);
 
-		return $this->_config['pages'][$c][$a][$lang][$string];
+		return $this->__config['pages'][$c][$a][$lang][$string];
 	}
 
 /**
@@ -76,13 +76,13 @@ class DTHelper extends AppHelper {
  * @return void
  */
 	public function pHeader($overrides = array()) {
-		$lang = (isset($overrides['lang'])) ? $overrides['lang'] : $this->_lang;
+		$lang = (isset($overrides['lang'])) ? $overrides['lang'] : $this->__lang;
 		$text = (isset($overrides['text'])) ? $overrides['text'] : $this->t('header.text', $overrides);
 
-		$r_before	= array("{project}", "{text}");
-		$r_after	= array($this->request['project'], $text);
+		$rBefore	= array("{project}", "{text}");
+		$rAfter	= array($this->request['project'], $text);
 
-		$h = str_replace($r_before, $r_after, $this->_config['common']['header']['project']['format']);
+		$h = str_replace($rBefore, $rAfter, $this->__config['common']['header']['project']['format']);
 
 		return $this->TwitterBootstrap->page_header($h);
 	}
@@ -95,9 +95,9 @@ class DTHelper extends AppHelper {
  * @return void
  */
 	public function parse($text = '') {
-		$r_before	= array("\\n");
-		$r_after	= array("<br>");
+		$rBefore	= array("\\n");
+		$rAfter	= array("<br>");
 
-		return str_replace($r_before, $r_after, $text);
+		return str_replace($rBefore, $rAfter, $text);
 	}
 }
