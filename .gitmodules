@@ -16,3 +16,6 @@
 [submodule "app/Plugin/LDAPAuthCake"]
 	path = app/Plugin/LDAPAuthCake
 	url = git://github.com/amn-ecs/LDAPAuthCake.git
+[submodule "app/Plugin/ChangeLogger"]
+	path = app/Plugin/ChangeLogger
+	url = git://github.com/pwhittlesea/ChangeLogger.git
