@@ -21,7 +21,7 @@ class SourceHelper extends AppHelper {
  * @var string
  * @access public
  */
-	var $helpers = array('Html', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'));
+	public $helpers = array('Html', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'));
 
 	public $icons = array(
 		'blob' => 'file',
