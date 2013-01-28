@@ -15,12 +15,12 @@
 
 class SourceHelper extends AppHelper {
 
-	/**
-	 * helpers
-	 *
-	 * @var string
-	 * @access public
-	 */
+/**
+ * helpers
+ *
+ * @var string
+ * @access public
+ */
 	var $helpers = array('Html', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'));
 
 	public $icons = array(
@@ -34,7 +34,7 @@ class SourceHelper extends AppHelper {
 		if (!isset($this->icons[$type])) {
 			$type = 'error';
 		}
-		return '<i class="icon-'.$this->icons[$type].'"></i>';
+		return '<i class="icon-' . $this->icons[$type] . '"></i>';
 	}
 
 	public function fetchTreeUrl($repo, $branch, $file) {
