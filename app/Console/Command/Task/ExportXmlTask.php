@@ -16,23 +16,23 @@
 class ExportXmlTask extends Shell {
 
 /**
- * fileParamNumber
+ * __fileParamNumber
  * The number that is used to fetch the
  * output file from input params
  *
  * @var int
  * @access private
  */
-	private $fileParamNumber = 5;
+	private $__fileParamNumber = 5;
 
 /**
- * rootXMLElement
+ * __rootXMLElement
  * The root XML element
  *
  * @var string
  * @access private
  */
-	private $rootXMLElement = 'codekettle';
+	private $__rootXMLElement = 'codekettle';
 
 /**
  * uses
@@ -54,37 +54,37 @@ class ExportXmlTask extends Shell {
 	);
 
 /**
- * _checkStartupParams function.
+ * __checkStartupParams function.
  * Check the parameters that have been given to us
  *
  * @access private
  * @param mixed $params
  */
-	private function _checkStartupParams($params) {
-		if (isset($params['argv'][$this->fileParamNumber])) {
-			$file = $params['argv'][$this->fileParamNumber];
+	private function __checkStartupParams($params) {
+		if (isset($params['argv'][$this->__fileParamNumber])) {
+			$file = $params['argv'][$this->__fileParamNumber];
 			if (substr($file, 0, strlen('--')) == '--') {
-				$this->_criticalError('Please specify a valid output file');
+				$this->__criticalError('Please specify a valid output file');
 			}
 		} else {
-			$this->_criticalError('Please specify a valid output file');
+			$this->__criticalError('Please specify a valid output file');
 		}
 	}
 
 /**
- * _criticalError function.
+ * __criticalError function.
  * Prints a formatted error to the screen and exits the app
  *
  * @access private
  * @param string $reason reason for exiting
  */
-	private function _criticalError($reason) {
+	private function __criticalError($reason) {
 		$this->out('<error>Error:</error> ' . $reason, 1, Shell::NORMAL);
 		exit(1);
 	}
 
 /**
- * _genericGather function.
+ * __genericGather function.
  * Gather and refactor elements based on supplied arguments
  *
  * @access private
@@ -93,7 +93,7 @@ class ExportXmlTask extends Shell {
  * @param mixed $search The item to pull out of items
  * @return mixed array of result
  */
-	private function _genericGather($item, $items, $search) {
+	private function __genericGather($item, $items, $search) {
 		$outputArray = array(
 			$item => array()
 		);
@@ -112,26 +112,26 @@ class ExportXmlTask extends Shell {
  * @return void
  */
 	public function execute($params = array()) {
-		$this->_checkStartupParams($params);
+		$this->__checkStartupParams($params);
 
-		$outputFile = new File($params['argv'][$this->fileParamNumber]);
+		$outputFile = new File($params['argv'][$this->__fileParamNumber]);
 		if ($outputFile->exists()) {
-			$this->_criticalError('Output file already exists');
+			$this->__criticalError('Output file already exists');
 		}
 		$this->out('About to export into ' . $outputFile->path, 1, Shell::VERBOSE);
 
 		if (!$outputFile->create() || !$outputFile->exists()) {
-			$this->_criticalError('Output file could not be created');
+			$this->__criticalError('Output file could not be created');
 		}
 
 		$elements = array(
-			$this->rootXMLElement => array()
+			$this->__rootXMLElement => array()
 		);
 
 		foreach ($this->uses as $a => $from) {
 			$toGroup = strtolower($from);
 			$toSingle = Inflector::singularize($toGroup);
-			$elements[$this->rootXMLElement][$toGroup] = $this->_genericGather($toSingle, $this->{$from}->find('all'), $from);
+			$elements[$this->__rootXMLElement][$toGroup] = $this->__genericGather($toSingle, $this->{$from}->find('all'), $from);
 		}
 
 		$xmlObject = Xml::fromArray($elements, array('format' => 'tags'));
