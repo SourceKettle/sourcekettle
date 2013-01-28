@@ -15,21 +15,21 @@
 
 class TaskHelper extends AppHelper {
 
-	/**
-	* helpers
-	*
-	* @var string
-	* @access public
-	*/
+/**
+ * helpers
+ *
+ * @var string
+ * @access public
+ */
 	var $helpers = array('Html', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'));
 
-	/**
-	 * priority function.
-	 *
-	 * @access public
-	 * @param mixed $id
-	 * @return void
-	 */
+/**
+ * priority function.
+ *
+ * @access public
+ * @param mixed $id
+ * @return void
+ */
 	public function priority($id) {
 		$text = array(
 			1 => 'Minor',
@@ -43,16 +43,16 @@ class TaskHelper extends AppHelper {
 			3 => 'exclamation-sign',
 			4 => 'ban-circle',
 		);
-		return $this->Bootstrap->label($text[$id].' '.$this->Bootstrap->icon($content[$id], "white"), "inverse");
+		return $this->Bootstrap->label($text[$id] . ' ' . $this->Bootstrap->icon($content[$id], "white"), "inverse");
 	}
 
-	/**
-	 * status function.
-	 *
-	 * @access public
-	 * @param mixed $id
-	 * @return void
-	 */
+/**
+ * status function.
+ *
+ * @access public
+ * @param mixed $id
+ * @return void
+ */
 	public function status($id) {
 		$text = array(
 			1 => 'Open',
@@ -70,13 +70,13 @@ class TaskHelper extends AppHelper {
 		return $text[$id];
 	}
 
-	/**
-	 * Get a label to show the status of a task
-	 * 
-	 * @access public
-	 * @param mixed $id
-	 * @return void
-	 */
+/**
+ * Get a label to show the status of a task
+ * 
+ * @access public
+ * @param mixed $id
+ * @return void
+ */
 	public function statusLabel($id) {
 		$text = array(
 			1 => 'Open',
@@ -93,13 +93,13 @@ class TaskHelper extends AppHelper {
 		return $this->Bootstrap->label($text[$id], $colour[$id]);
 	}
 
-	/**
-	 * type function.
-	 *
-	 * @access public
-	 * @param mixed $id
-	 * @return void
-	 */
+/**
+ * type function.
+ *
+ * @access public
+ * @param mixed $id
+ * @return void
+ */
 	public function type($id) {
 		$colour = array(
 			1 => 'important',
