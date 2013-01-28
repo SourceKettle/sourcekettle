@@ -15,35 +15,36 @@
 
 class CommandLineColorHelper extends AppHelper {
 
-	private $foreground_colors = array();
-	private $background_colors = array();
+	private $__foregroundColors = array();
+
+	private $__backgroundColors = array();
 
 	public function __construct() {
 		// Set up shell colors
-		$this->foreground_colors['Black']		= '30';
-		$this->foreground_colors['Blue']		= '34';
-		$this->foreground_colors['Green']		= '32';
-		$this->foreground_colors['DarkGray']	= '36';
-		$this->foreground_colors['Red']			= '31';
-		$this->foreground_colors['Purple']		= '35';
-		$this->foreground_colors['Yellow']		= '33';
-		$this->foreground_colors['LightGray']	= '37';
+		$this->__foregroundColors['Black']		= '30';
+		$this->__foregroundColors['Blue']		= '34';
+		$this->__foregroundColors['Green']		= '32';
+		$this->__foregroundColors['DarkGray']	= '36';
+		$this->__foregroundColors['Red']		= '31';
+		$this->__foregroundColors['Purple']		= '35';
+		$this->__foregroundColors['Yellow']		= '33';
+		$this->__foregroundColors['LightGray']	= '37';
 
-		$this->background_colors['black']		= '40';
-		$this->background_colors['red']			= '41';
-		$this->background_colors['green']		= '42';
-		$this->background_colors['yellow']		= '43';
-		$this->background_colors['blue']		= '44';
-		$this->background_colors['magenta']		= '45';
-		$this->background_colors['cyan']		= '46';
-		$this->background_colors['light_gray']	= '47';
+		$this->__backgroundColors['black']		= '40';
+		$this->__backgroundColors['red']		= '41';
+		$this->__backgroundColors['green']		= '42';
+		$this->__backgroundColors['yellow']		= '43';
+		$this->__backgroundColors['blue']		= '44';
+		$this->__backgroundColors['magenta']	= '45';
+		$this->__backgroundColors['cyan']		= '46';
+		$this->__backgroundColors['light_gray']	= '47';
 	}
 
 	public function translateColors($text) {
-		foreach ($this->foreground_colors as $color => $ascii) {
+		foreach ($this->__foregroundColors as $color => $ascii) {
 			$text = preg_replace('/\[' . $ascii . 'm(.*?)\[m/i', '<span style="color:' . $color . ';">${1}</span>', $text);
 		}
-		foreach ($this->background_colors as $color => $ascii) {
+		foreach ($this->__backgroundColors as $color => $ascii) {
 			$text = preg_replace('/\[' . $ascii . 'm(.*?)\[m/i', '<span style="background-color:' . $color . ';">${1}</span>', $text);
 		}
 		return str_replace("[m", "", $text);
