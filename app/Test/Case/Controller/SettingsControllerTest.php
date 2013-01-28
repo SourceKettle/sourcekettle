@@ -5,6 +5,7 @@ App::uses('SettingsController', 'Controller');
  * TestSettingsController *
  */
 class TestSettingsController extends SettingsController {
+
 /**
  * Auto render
  *
@@ -23,6 +24,7 @@ class TestSettingsController extends SettingsController {
 	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
+
 }
 
 /**
@@ -30,6 +32,7 @@ class TestSettingsController extends SettingsController {
  *
  */
 class SettingsControllerTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *
@@ -65,7 +68,6 @@ class SettingsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminIndex() {
-
 	}
 /**
  * testAdminView method
@@ -73,7 +75,6 @@ class SettingsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminView() {
-
 	}
 /**
  * testAdminAdd method
@@ -81,7 +82,6 @@ class SettingsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminAdd() {
-
 	}
 /**
  * testAdminEdit method
@@ -89,7 +89,6 @@ class SettingsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminEdit() {
-
 	}
 /**
  * testAdminDelete method
@@ -97,6 +96,6 @@ class SettingsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminDelete() {
-
 	}
+
 }

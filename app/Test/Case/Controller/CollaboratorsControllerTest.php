@@ -5,6 +5,7 @@ App::uses('CollaboratorsController', 'Controller');
  * TestCollaboratorsController *
  */
 class TestCollaboratorsController extends CollaboratorsController {
+
 /**
  * Auto render
  *
@@ -23,6 +24,7 @@ class TestCollaboratorsController extends CollaboratorsController {
 	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
+
 }
 
 /**
@@ -30,6 +32,7 @@ class TestCollaboratorsController extends CollaboratorsController {
  *
  */
 class CollaboratorsControllerTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *
@@ -65,7 +68,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testIndex() {
-
 	}
 /**
  * testView method
@@ -73,7 +75,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testView() {
-
 	}
 /**
  * testAdd method
@@ -81,7 +82,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdd() {
-
 	}
 /**
  * testEdit method
@@ -89,7 +89,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testEdit() {
-
 	}
 /**
  * testDelete method
@@ -97,7 +96,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testDelete() {
-
 	}
 /**
  * testAdminIndex method
@@ -105,7 +103,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminIndex() {
-
 	}
 /**
  * testAdminView method
@@ -113,7 +110,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminView() {
-
 	}
 /**
  * testAdminAdd method
@@ -121,7 +117,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminAdd() {
-
 	}
 /**
  * testAdminEdit method
@@ -129,7 +124,6 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminEdit() {
-
 	}
 /**
  * testAdminDelete method
@@ -137,6 +131,5 @@ class CollaboratorsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminDelete() {
-
 	}
 }

@@ -5,6 +5,7 @@ App::uses('SourcesController', 'Controller');
  * TestSourcesController *
  */
 class TestSourcesController extends SourcesController {
+
 /**
  * Auto render
  *
@@ -23,6 +24,7 @@ class TestSourcesController extends SourcesController {
 	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
+
 }
 
 /**
@@ -30,6 +32,7 @@ class TestSourcesController extends SourcesController {
  *
  */
 class SourcesControllerTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *
@@ -65,7 +68,6 @@ class SourcesControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testIndex() {
-
 	}
 /**
  * testView method
@@ -73,7 +75,6 @@ class SourcesControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testView() {
-
 	}
 /**
  * testAdd method
@@ -81,7 +82,6 @@ class SourcesControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdd() {
-
 	}
 /**
  * testEdit method
@@ -89,7 +89,6 @@ class SourcesControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testEdit() {
-
 	}
 /**
  * testDelete method
@@ -97,6 +96,6 @@ class SourcesControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testDelete() {
-
 	}
+
 }
