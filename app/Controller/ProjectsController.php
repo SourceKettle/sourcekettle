@@ -102,26 +102,26 @@ class ProjectsController extends AppProjectController {
 	public function view($name = null) {
 		$project = $this->_projectCheck($name);
 
-		$number_of_open_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id <' => 4, 'Task.project_id' => $project['Project']['id'])));
-		$number_of_closed_tasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 4, 'Task.project_id' => $project['Project']['id'])));
-		$number_of_tasks = $number_of_closed_tasks + $number_of_open_tasks;
+		$numberOfOpenTasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id <' => 4, 'Task.project_id' => $project['Project']['id'])));
+		$numberOfClosedTasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 4, 'Task.project_id' => $project['Project']['id'])));
+		$numberOfTasks = $numberOfClosedTasks + $numberOfOpenTasks;
 
-		$percent_of_tasks = 0;
-		if ($number_of_tasks > 0) {
-			$percent_of_tasks = round($number_of_closed_tasks / $number_of_tasks * 100, 1);
+		$percentOfTasks = 0;
+		if ($numberOfTasks > 0) {
+			$percentOfTasks = round($numberOfClosedTasks / $numberOfTasks * 100, 1);
 		}
 
-		$_o_milestones = $this->Project->Milestone->getOpenMilestones();
-		$_o_milestones = $this->Project->Milestone->find('all', array('conditions' => array('Milestone.id' => array_values($_o_milestones)), 'order' => 'Milestone.created ASC'));
-		if (empty($_o_milestones)) {
+		$openMilestones = $this->Project->Milestone->getOpenMilestones();
+		$openMilestones = $this->Project->Milestone->find('all', array('conditions' => array('Milestone.id' => array_values($openMilestones)), 'order' => 'Milestone.created ASC'));
+		if (empty($openMilestones)) {
 			$milestone = null;
 		} else {
-			$milestone = $_o_milestones[0];
+			$milestone = $openMilestones[0];
 		}
 
-		$numCollab = sizeof($this->Project->Collaborator->findAllByProjectId($project['Project']['id']));
+		$numCollab = count($this->Project->Collaborator->findAllByProjectId($project['Project']['id']));
 
-		$this->set(compact('milestone', 'number_of_open_tasks', 'number_of_closed_tasks', 'number_of_tasks', 'percent_of_tasks', 'numCollab'));
+		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfClosedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab'));
 		$this->set('historyCount', 8);
 	}
 
@@ -159,7 +159,7 @@ class ProjectsController extends AppProjectController {
 			$this->Project->create();
 
 			// Lets vet the data coming in
-			$_request_data = array(
+			$requestData = array(
 				'Project' => $this->request->data['Project'],
 				'Collaborator' => array(
 					array(
@@ -169,15 +169,15 @@ class ProjectsController extends AppProjectController {
 				)
 			);
 
-			if ($this->Project->saveAll($_request_data)) {
+			if ($this->Project->saveAll($requestData)) {
 				// Need to know the repo type so we can skip repo creation if necessary...
-				$repo_type = $repoTypes[$_request_data['Project']['repo_type']];
+				$repoType = $repoTypes[$requestData['Project']['repo_type']];
 
 				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . $this->Project->_auth_user_id . "]", 'devtrack');
 				$this->log("[ProjectController.add] user[" . $this->Project->_auth_user_id . "] added to project[" . $this->Project->id . "] automatically as an admin", 'devtrack');
 
 				// Create the actual repository, if required - if it fails, delete the database content
-				if (strtolower($repo_type) == 'none') {
+				if (strtolower($repoType) == 'none') {
 					$this->log("[ProjectController.add] project[" . $this->Project->id . "] does not require a repository", 'devtrack');
 				} elseif (!$this->Project->Source->create()) {
 					$this->log("[ProjectController.add] project[" . $this->Project->id . "] repository creation failed - automatically removing project data", 'devtrack');
@@ -187,7 +187,7 @@ class ProjectsController extends AppProjectController {
 					$this->Flash->C(true);
 				}
 
-				$this->redirect(array('project' => $_request_data['Project']['name'], 'action' => 'view', $this->Project->_auth_user_id));
+				$this->redirect(array('project' => $requestData['Project']['name'], 'action' => 'view', $this->Project->_auth_user_id));
 			} else {
 				$this->Flash->C(false);
 			}
@@ -347,11 +347,11 @@ class ProjectsController extends AppProjectController {
 				// Repo Type
 				$project['Project']['repo_type'] = $this->Project->RepoType->field('name');
 
-				$_part_of_project = $this->Project->hasRead();
-				$_public_project	= $this->Project->field('public');
-				$_is_admin = ($this->_apiAuthLevel() == 1);
+				$partOfProject = $this->Project->hasRead();
+				$publicProject	= $this->Project->field('public');
+				$isAdmin = ($this->_apiAuthLevel() == 1);
 
-				if ($_public_project || $_part_of_project || $_is_admin) {
+				if ($publicProject || $partOfProject || $isAdmin) {
 					$data = $project['Project'];
 				} else {
 					$data['error'] = 401;

@@ -48,7 +48,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                     <ul class="unstyled">
                                         <li class="open-tasks">
                                           <?= $this->Html->link(
-                                           "$number_of_open_tasks - ".$this->DT->t('summary.issues.open'),
+                                           "$numberOfOpenTasks - ".$this->DT->t('summary.issues.open'),
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
@@ -59,7 +59,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
 
                                         <li class="closed-tasks">
                                           <?= $this->Html->link(
-                                            "$number_of_closed_tasks - ".$this->DT->t('summary.issues.closed'),
+                                            "$numberOfClosedTasks - ".$this->DT->t('summary.issues.closed'),
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
@@ -70,7 +70,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
 
                                         <li class="total-tasks">
                                           <?=$this->Html->link(
-                                            "$number_of_tasks - ".$this->DT->t('summary.issues.total'),
+                                            "$numberOfTasks - ".$this->DT->t('summary.issues.total'),
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
@@ -78,7 +78,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                             ))?>
                                         </li>
 
-                                        <li><?= $percent_of_tasks ?>% <?= $this->DT->t('summary.issues.percent') ?></li>
+                                        <li><?= $percentOfTasks ?>% <?= $this->DT->t('summary.issues.percent') ?></li>
                                     </ul>
                                     <?= $this->Html->link(
                                       'Create a task',
@@ -89,7 +89,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                     ))?>
                                 </div>
                                 <div class="span6">
-                                    <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array($number_of_open_tasks, $number_of_closed_tasks)); ?>
+                                    <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array($numberOfOpenTasks, $numberOfClosedTasks)); ?>
                                 </div>
                             </div>
                         </div>
