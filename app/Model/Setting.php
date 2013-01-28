@@ -13,36 +13,39 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('AppModel', 'Model');
+
 class Setting extends AppModel {
 
-    public $displayField = 'name';
+/**
+ * Display field
+ */
+	public $displayField = 'name';
 
-    public $validate = array(
-        'name' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-            ),
-        ),
-        'value' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-            ),
-        ),
-    );
+/**
+ * Validation rules
+ */
+	public $validate = array(
+		'name' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+			),
+		),
+		'value' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+			),
+		),
+	);
 
-    /**
-     * syncRequired function.
-     * Notify the system that the keys need to be sync'd
-     *
-     * @access public
-     * @return void
-     */
-    public function syncRequired() {
-        $setting = $this->findByName('sync_required', array('id'));
-        $this->id = $setting['Setting']['id'];
-        $this->set('value', '1');
-        $this->save();
-    }
+/**
+ * syncRequired function.
+ * Notify the system that the keys need to be sync'd
+ */
+	public function syncRequired() {
+		$setting = $this->findByName('sync_required', array('id'));
+		$this->id = $setting['Setting']['id'];
+		$this->set('value', '1');
+		$this->save();
+	}
 }

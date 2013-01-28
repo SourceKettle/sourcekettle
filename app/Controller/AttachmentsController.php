@@ -47,7 +47,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function image($project = null) {
-		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->_mime_image));
+		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->mimeImage));
 	}
 
 /**
@@ -58,7 +58,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function video($project = null) {
-		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->_mime_video));
+		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->mimeVideo));
 	}
 
 /**
@@ -69,7 +69,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function text($project = null) {
-		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->_mime_text));
+		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->mimeText));
 	}
 
 /**
@@ -80,7 +80,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function other($project = null) {
-		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->_mime_other));
+		$this->__attachmentWithRestrictions($project, array('mime' => $this->Attachment->mimeOther));
 	}
 
 /**
