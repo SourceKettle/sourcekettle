@@ -56,7 +56,7 @@ class TimesController extends AppProjectController {
 			$this->request->data['Time']['user_id'] = $this->Auth->user('id');
 			$this->request->data['Time']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->C($this->Time->save($this->request->data))) {
+			if ($this->Flash->c($this->Time->save($this->request->data))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			} else {
 				// Show the user what they put in, its just nice
@@ -79,7 +79,7 @@ class TimesController extends AppProjectController {
 		$time = $this->Time->open($id, true);
 
 		$this->Flash->setUp();
-		$this->Flash->D($this->Time->delete());
+		$this->Flash->d($this->Time->delete());
 		$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 	}
 
@@ -100,7 +100,7 @@ class TimesController extends AppProjectController {
 			$this->request->data['Time']['user_id'] = $this->Time->_auth_user_id;
 			$this->request->data['Time']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->U($this->Time->save($this->request->data))) {
+			if ($this->Flash->u($this->Time->save($this->request->data))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 		} else {

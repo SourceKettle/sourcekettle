@@ -162,7 +162,7 @@ class MilestonesController extends AppProjectController {
 
 			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->C($this->Milestone->save($this->request->data))) {
+			if ($this->Flash->c($this->Milestone->save($this->request->data))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
 			}
 		}
@@ -181,7 +181,7 @@ class MilestonesController extends AppProjectController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->U($this->Milestone->save($this->request->data))) {
+			if ($this->Flash->u($this->Milestone->save($this->request->data))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 		} else {
@@ -202,7 +202,7 @@ class MilestonesController extends AppProjectController {
 		$this->Flash->setUp();
 
 		if ($this->request->is('post')) {
-			if ($this->Flash->D($this->Milestone->delete())) {
+			if ($this->Flash->d($this->Milestone->delete())) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 		}

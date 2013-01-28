@@ -16,7 +16,6 @@
 App::uses('Component', 'Controller');
 class FlashComponent extends Component {
 
-	// TODO switched from 'var' to 'public' - is public correct? Should be private?
 	public $components = array('Session');
 
 	public $Controller;
@@ -64,15 +63,15 @@ class FlashComponent extends Component {
 		$this->__flashBoolean(str_replace($search, $replace, $subject), false);
 	}
 
-	public function C($winning = false) {
+	public function c($winning = false) {
 		return $this->__objectFlash("has been created", "could not be created", $winning);
 	}
 
-	public function U($winning = false) {
+	public function u($winning = false) {
 		return $this->__objectFlash("has been updated", "could not be updated", $winning);
 	}
 
-	public function D($winning = false) {
+	public function d($winning = false) {
 		if (in_array('SoftDeletable', $this->Model->actsAs)) $winning = true;
 		return $this->__objectFlash("has been deleted", "could not be deleted", $winning);
 	}

@@ -28,7 +28,7 @@ class SshKeysController extends AppController {
 
 			$this->request->data['SshKey']['user_id'] = $this->SshKey->_auth_user_id; //Set the key to belong to the current user
 
-			if ($this->Flash->C($this->SshKey->save($this->request->data))) {
+			if ($this->Flash->c($this->SshKey->save($this->request->data))) {
 				$this->Setting->syncRequired(); // Update the sync required flag
 
 				$this->log("[UsersController.addkey] sshkey[" . $this->SshKey->getLastInsertID() . "] added to user[" . $this->SshKey->_auth_user_id . "]", 'devtrack');
@@ -60,7 +60,7 @@ class SshKeysController extends AppController {
 			}
 
 			$this->Flash->setUp();
-			if ($this->Flash->D($this->SshKey->delete())) {
+			if ($this->Flash->d($this->SshKey->delete())) {
 				$this->log("[UsersController.deletekey] sshkey[" . $id . "] deleted by user[" . $this->Auth->user('id') . "]", 'devtrack');
 				$this->Setting->syncRequired(); // Update the sync required flag
 			}

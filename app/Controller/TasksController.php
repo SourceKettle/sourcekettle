@@ -182,7 +182,7 @@ class TasksController extends AppProjectController {
 			if ($user = $this->Task->Assignee->findByEmail($_email)) {
 				if ($this->Task->Project->hasWrite($user['Assignee']['id'])) {
 					$this->Task->set('assignee_id', $user['Assignee']['id']);
-					$this->Flash->U($this->Task->save());
+					$this->Flash->u($this->Task->save());
 				} else {
 					$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
 				}
@@ -304,7 +304,7 @@ class TasksController extends AppProjectController {
 					echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not add task to the project. Please, try again.</div>';
 				}
 			} else if ($this->request->is('post')) {
-				if ($this->Flash->C($this->Task->saveAll($this->request->data))) {
+				if ($this->Flash->c($this->Task->saveAll($this->request->data))) {
 					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
 				}
 			}
@@ -347,7 +347,7 @@ class TasksController extends AppProjectController {
 			unset($this->request->data['Task']['project_id']);
 			unset($this->request->data['Task']['owner_id']);
 
-			if ($this->Flash->U($this->Task->save($this->request->data))) {
+			if ($this->Flash->u($this->Task->save($this->request->data))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
 			}
 		} else {
@@ -392,7 +392,7 @@ class TasksController extends AppProjectController {
 	//	 if (!$this->request->is('post')) throw new MethodNotAllowedException();
 	//
 	//	 $this->Flash->setUp();
-	//	 $this->Flash->D($this->Task->delete());
+	//	 $this->Flash->d($this->Task->delete());
 	//	 $this->redirect(array('action' => 'index'));
 	// }
 
@@ -544,7 +544,7 @@ class TasksController extends AppProjectController {
 		$task = $this->Task->open($id);
 
 		$this->Task->set('task_status_id', $status);
-		return $this->Flash->U($this->Task->save());
+		return $this->Flash->u($this->Task->save());
 	}
 
 	/* ************************************************* *

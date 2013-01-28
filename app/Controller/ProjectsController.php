@@ -182,14 +182,14 @@ class ProjectsController extends AppProjectController {
 				} elseif (!$this->Project->Source->create()) {
 					$this->log("[ProjectController.add] project[" . $this->Project->id . "] repository creation failed - automatically removing project data", 'devtrack');
 					$this->Project->delete();
-					$this->Flash->C(false);
+					$this->Flash->c(false);
 				} else {
-					$this->Flash->C(true);
+					$this->Flash->c(true);
 				}
 
 				$this->redirect(array('project' => $requestData['Project']['name'], 'action' => 'view', $this->Project->_auth_user_id));
 			} else {
-				$this->Flash->C(false);
+				$this->Flash->c(false);
 			}
 		}
 
@@ -204,7 +204,7 @@ class ProjectsController extends AppProjectController {
 	public function admin_add() {
 		if ($this->request->is('post')) {
 			$this->Project->create();
-			if ($this->Flash->C($this->Project->save($this->request->data))) {
+			if ($this->Flash->c($this->Project->save($this->request->data))) {
 				$this->redirect(array('action' => 'index'));
 			}
 		}
@@ -221,7 +221,7 @@ class ProjectsController extends AppProjectController {
 		$project = $this->_projectCheck($project, true, true);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Flash->U($this->Project->save($this->request->data))) {
+			if ($this->Flash->u($this->Project->save($this->request->data))) {
 				$this->log("[ProjectController.edit] user[" . $this->Project->_auth_user_id . "] edited project[" . $this->Project->id . "]", 'devtrack');
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view'));
 			}
@@ -239,7 +239,7 @@ class ProjectsController extends AppProjectController {
 		$project = $this->_projectCheck($project);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Flash->U($this->Project->save($this->request->data))) {
+			if ($this->Flash->u($this->Project->save($this->request->data))) {
 				$this->redirect(array('action' => 'admin_view', $this->Project->id));
 			}
 		}
@@ -261,7 +261,7 @@ class ProjectsController extends AppProjectController {
 		$this->Flash->setUp();
 
 		if ($this->request->is('post')) {
-			if ($this->Flash->D($this->Project->delete())) {
+			if ($this->Flash->d($this->Project->delete())) {
 				$this->redirect(array('action' => 'index'));
 			}
 		}
@@ -284,7 +284,7 @@ class ProjectsController extends AppProjectController {
 			throw new MethodNotAllowedException();
 		}
 
-		$this->Flash->D($this->Project->delete());
+		$this->Flash->d($this->Project->delete());
 		$this->redirect(array('action' => 'admin_index'));
 	}
 
