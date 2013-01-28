@@ -25,7 +25,7 @@ class XmlShell extends AppShell {
  * @return void
  */
 	public function import() {
-		$this->ImportXml->execute($this->_collectParameters());
+		$this->ImportXml->execute($this->__collectParameters());
 	}
 
 /**
@@ -36,17 +36,17 @@ class XmlShell extends AppShell {
  * @return void
  */
 	public function export() {
-		$this->ExportXml->execute($this->_collectParameters());
+		$this->ExportXml->execute($this->__collectParameters());
 	}
 
 /**
- * _collectParameters function.
+ * __collectParameters function.
  * Collect all of the variables needed for execution
  *
  * @access private
  * @return array of server params
  */
-	private function _collectParameters() {
+	private function __collectParameters() {
 		return array_merge($_SERVER, $_ENV);
 	}
 
