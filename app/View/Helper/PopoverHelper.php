@@ -15,21 +15,21 @@
 
 class PopoverHelper extends AppHelper {
 
-	var $hasBeenCalled = false;
+	private $__hasBeenCalled = false;
 
-	var $helpers = array('Html');
+	public $helpers = array('Html');
 
 /**
  * popover
  * Wrapper for a Html link that will render a popover
  *
- * @param $a_text string the text to display on page
- * @param $p_title string the title for the popover
- * @param $p_content string the concent for the popover
+ * @param $aText string the text to display on page
+ * @param $pTitle string the title for the popover
+ * @param $pContent string the concent for the popover
  */
-	public function popover($a_text, $p_title, $p_content) {
-		$this->hasBeenCalled = true;
-		return $this->Html->link($a_text, '#', array('class' => 'popover-devtrack', 'rel' => 'popover', 'data-content' => $p_content, 'data-original-title' => $p_title));
+	public function popover($aText, $pTitle, $pContent) {
+		$this->__hasBeenCalled = true;
+		return $this->Html->link($aText, '#', array('class' => 'popover-devtrack', 'rel' => 'popover', 'data-content' => $pContent, 'data-original-title' => $pTitle));
 	}
 
 /**
@@ -38,7 +38,7 @@ class PopoverHelper extends AppHelper {
  *
  */
 	public function requirements() {
-		if ($this->hasBeenCalled) {
+		if ($this->__hasBeenCalled) {
 			return $this->Html->script(array('bootstrap-tooltip', 'bootstrap-popover')) . $this->Html->scriptBlock("$('.popover-devtrack').popover()");
 		}
 	}
