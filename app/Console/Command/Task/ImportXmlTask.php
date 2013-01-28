@@ -16,23 +16,23 @@
 class ImportXmlTask extends Shell {
 
 /**
- * fileParamNumber
+ * __fileParamNumber
  * The number that is used to fetch the
  * output file from input params
  *
  * @var int
  * @access private
  */
-	private $fileParamNumber = 5;
+	private $__fileParamNumber = 5;
 
 /**
- * rootXMLElement
+ * __rootXMLElement
  * The root XML element
  *
  * @var string
  * @access private
  */
-	private $rootXMLElement = 'codekettle';
+	private $__rootXMLElement = 'codekettle';
 
 /**
  * uses
@@ -54,20 +54,20 @@ class ImportXmlTask extends Shell {
 	);
 
 /**
- * _checkStartupParams function.
+ * __checkStartupParams function.
  * Check the parameters that have been given to us
  *
  * @access private
  * @param mixed $params
  */
-	private function _checkStartupParams($params) {
-		if (isset($params['argv'][$this->fileParamNumber])) {
-			$file = $params['argv'][$this->fileParamNumber];
+	private function __checkStartupParams($params) {
+		if (isset($params['argv'][$this->__fileParamNumber])) {
+			$file = $params['argv'][$this->__fileParamNumber];
 			if (substr($file, 0, strlen('--')) == '--') {
-				$this->_criticalError('Please specify a valid output file');
+				$this->__criticalError('Please specify a valid output file');
 			}
 		} else {
-			$this->_criticalError('Please specify a valid output file');
+			$this->__criticalError('Please specify a valid output file');
 		}
 	}
 
@@ -78,13 +78,13 @@ class ImportXmlTask extends Shell {
  * @access private
  * @param string $reason reason for exiting
  */
-	private function _criticalError($reason) {
+	private function __criticalError($reason) {
 		$this->out('<error>Error:</error> ' . $reason, 1, Shell::NORMAL);
 		exit(1);
 	}
 
 /**
- * _genericGather function.
+ * __genericGather function.
  * Gather the XML and insert into the database
  *
  * @param mixed $item The item to set the content as
@@ -92,7 +92,7 @@ class ImportXmlTask extends Shell {
  * @param mixed $search The item to pull out of items
  * @return mixed array of result
  */
-	private function _genericGather($item, $items, $search) {
+	private function __genericGather($item, $items, $search) {
 		$insertions = $items[$item];
 		if (is_array($insertions)) {
 			if (isset($insertions['id'])) {
@@ -123,11 +123,11 @@ class ImportXmlTask extends Shell {
  * @return void
  */
 	public function execute($params = array()) {
-		$this->_checkStartupParams($params);
+		$this->__checkStartupParams($params);
 
-		$inputFile = new File($params['argv'][$this->fileParamNumber]);
+		$inputFile = new File($params['argv'][$this->__fileParamNumber]);
 		if (!$inputFile->exists()) {
-			$this->_criticalError('Input file does not exist');
+			$this->__criticalError('Input file does not exist');
 		}
 		$this->out('About to import from ' . $inputFile->path, 1, Shell::VERBOSE);
 
@@ -135,14 +135,14 @@ class ImportXmlTask extends Shell {
 		try {
 			$inputArray = Xml::toArray(Xml::build($inputFile->read()));
 		} catch (Exception $e) {
-			$this->_criticalError($e->getMessage());
+			$this->__criticalError($e->getMessage());
 		}
 
 		foreach ($this->uses as $a => $from) {
 			$toGroup = strtolower($from);
 			$toSingle = Inflector::singularize($toGroup);
-			if (isset($inputArray[$this->rootXMLElement][$toGroup])) {
-				$this->_genericGather($toSingle, $inputArray[$this->rootXMLElement][$toGroup], $from);
+			if (isset($inputArray[$this->__rootXMLElement][$toGroup])) {
+				$this->__genericGather($toSingle, $inputArray[$this->__rootXMLElement][$toGroup], $from);
 			}
 		}
 	}
