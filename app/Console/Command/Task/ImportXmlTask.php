@@ -14,6 +14,7 @@
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class ImportXmlTask extends Shell {
+
 /**
  * fileParamNumber
  * The number that is used to fetch the
@@ -62,7 +63,7 @@ class ImportXmlTask extends Shell {
 	private function _checkStartupParams($params) {
 		if (isset($params['argv'][$this->fileParamNumber])) {
 			$file = $params['argv'][$this->fileParamNumber];
-			if (substr($file, 0, strlen('--'))=='--') {
+			if (substr($file, 0, strlen('--')) == '--') {
 				$this->_criticalError('Please specify a valid output file');
 			}
 		} else {
