@@ -442,7 +442,7 @@ class TasksController extends AppProjectController {
 			return;
 		}
 
-		$updated = $this->_update_task_status($project, $id, 2, $isAjax);
+		$updated = $this->__updateTaskStatus($project, $id, 2, $isAjax);
 
 		if ($isAjax) {
 			if ($updated) {
@@ -495,7 +495,7 @@ class TasksController extends AppProjectController {
 			return;
 		}
 
-		$updated = $this->_update_task_status($project, $id, 1, $isAjax);
+		$updated = $this->__updateTaskStatus($project, $id, 1, $isAjax);
 		if ($isAjax) {
 			if ($updated) {
 				$this->set("error", "no_error");
@@ -552,7 +552,7 @@ class TasksController extends AppProjectController {
 	public function resolve($project = null, $id = null){
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->_update_task_status($project, $id, 3, $isAjax);
+		$success = $this->__updateTaskStatus($project, $id, 3, $isAjax);
 		if ($isAjax) {
 			if ($success) {
 				$this->set ("error", "no_error");
@@ -583,7 +583,7 @@ class TasksController extends AppProjectController {
 	public function unresolve($project = null, $id = null){
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->_update_task_status($project, $id, 1, $isAjax);
+		$success = $this->__updateTaskStatus($project, $id, 1, $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
