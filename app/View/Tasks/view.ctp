@@ -70,7 +70,7 @@ echo $this->element('Task/modal_assign');
                             <h5>
                                 <?= $this->Bootstrap->icon('pencil') ?>
                                 <small>
-                                    <?= $task['Owner']['name'] ?>
+                                    <?= h($task['Owner']['name']) ?>
                                     <?= $this->DT->t('history.create.action') ?>
                                     <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
                                 </small>
@@ -91,7 +91,7 @@ echo $this->element('Task/modal_assign');
                                     <? endif; ?>
                                 </span>
                             </h5>
-                            <h3><?= $task['Task']['subject'] ?></h3>
+                            <h3><?= h($task['Task']['subject']) ?></h3>
                             <hr />
 
                             <?= $this->element('Task/View/section_details') ?>
