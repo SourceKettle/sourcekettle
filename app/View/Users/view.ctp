@@ -13,7 +13,7 @@
         Email address
         </dt>
         <dd>
-            <?= $user['User']['email'] ?>
+            <?= h($user['User']['email']) ?>
         </dd>
         <dt>
         User registered
