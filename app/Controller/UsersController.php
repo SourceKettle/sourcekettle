@@ -153,11 +153,19 @@ class UsersController extends AppController {
 						'key' => $this->__generateKey(25),
 					))
 				);
-				$this->__sendForgottenPasswordMail($user['User']['id'], $this->User->LostPasswordKey->getLastInsertID());
-				$this->log("[UsersController.lost_password] lost password email sent to user[" . $user['User']['id'] . "]", 'devtrack');
+				if ($this->__sendForgottenPasswordMail($user['User']['id'], $this->User->LostPasswordKey->getLastInsertID())) {
+					$this->log("[UsersController.lost_password] lost password email sent to user[" . $user['User']['id'] . "]", 'devtrack');
+				} else {
+					$this->log("[UsersController.lost_password] lost password email could NOT be sent to user[" . $user['User']['id'] . "]", 'devtrack');
+					$this->Session->setFlash("There was a problem sending the lost password email", 'default', array(), 'error');
+					$this->render('lost_password');
+					return;
+				}
 			}
+
 			$this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
 			$this->redirect('/login');
+
 		} else if ($this->request->is('get')) {
 			//display the form or act on the link
 			if ($key == null) {
@@ -591,14 +599,20 @@ class UsersController extends AppController {
  * @param $id int the id of the user to email
  * @param $key int the id of the key to send
  */
-	private function __sendForgottenPasswordMail($id, $key) {
+	private function __sendForgottenPasswordMail($userId, $keyId) {
 		// No sending emails in debug mode
 		if ( Configure::read('debug') > 1 ) {
 			$this->Email->delivery = 'debug';
 		}
-		$User	= $this->User->read(null, $id);
-		$Key	= $this->User->LostPasswordKey->read(null, $id);
+		$User	= $this->User->read(null, $userId);
+		$Key	= $this->User->LostPasswordKey->read(null, $keyId);
 		$Addr	= $this->Setting->field('value', array('name' => 'sysadmin_email'));
+
+		// Couldn't find the user or the key for some reason, FAILURE.
+		if (!$User || !$Key) {
+			$this->log("[UsersController.__sendForgottenPasswordMail] lost password email could NOT be sent - User is $User ($userId), Key is $Key ($keyId)", 'devtrack');
+			return false;
+		}
 
 		$this->Email->to		= $User['User']['email'];
 		//$this->Email->bcc		= array('secret@example.com');
@@ -612,9 +626,12 @@ class UsersController extends AppController {
 		//Set view variables as normal
 		$this->set('User', $User);
 		$this->set('Key', $Key);
+
 		if ($this->Email->send()) {
+			$this->log("[UsersController.__sendForgottenPasswordMail] Lost password key ID $keyId sent to user ID $userId", 'devtrack');
 			return true;
 		}
+		$this->log("[UsersController.__sendForgottenPasswordMail] lost password email could NOT be sent to user[" . $User['User']['id'] . "]", 'devtrack');
 		return false;
 	}
 
@@ -625,13 +642,13 @@ class UsersController extends AppController {
  * @param $id int the id of the user to email
  * @param $key int the id of the key to send
  */
-	private function __sendAdminCreatedUserMail($id, $key) {
+	private function __sendAdminCreatedUserMail($userId, $keyId) {
 		// No sending emails in debug mode
 		if ( Configure::read('debug') > 1 ) {
 			$this->Email->delivery = 'debug';
 		}
-		$User	= $this->User->read(null, $id);
-		$Key	= $this->User->LostPasswordKey->read(null, $id);
+		$User	= $this->User->read(null, $userId);
+		$Key	= $this->User->LostPasswordKey->read(null, $keyId);
 		$Addr	= $this->Setting->field('value', array('name' => 'sysadmin_email'));
 
 		$this->Email->to		= $User['User']['email'];
@@ -643,7 +660,7 @@ class UsersController extends AppController {
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
 
-		//Set view variables as normal
+		// Set view variables as normal
 		$this->set('User', $User);
 		$this->set('Key', $Key);
 		if ($this->Email->send()) {
