@@ -21,7 +21,7 @@ if (isset($projects)){
                 <span style="float: right;"><?= $this->Bootstrap->icon((($project['Project']['public']) ? 'globe' : 'lock'), 'black') ?></span></h3>
 
                 <? if (!empty($project['Project']['description'])){
-                    ?><p class="project-desc"><?= $this->Text->truncate($project['Project']['description'], 100)?></p><?
+                    ?><p class="project-desc"><?= $this->Text->truncate(h($project['Project']['description']), 100)?></p><?
                 } else {
                     ?><p class="project-desc"><em>No description available</em></p><?
                 }?>

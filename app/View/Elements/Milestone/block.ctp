@@ -87,7 +87,7 @@ $link_edit = $this->Html->link(
         </div>
 
         <hr>
-        <p><?= $this->DT->parse($milestone['Milestone']['description']) ?></p>
+        <p><?= $this->DT->parse(h($milestone['Milestone']['description'])) ?></p>
         </div>
     </div>
 </div>

@@ -34,9 +34,9 @@ $_levels = array(
     <div class='span3'>
       <?= $this->Html->link($collaborator['User']['name'], array('controller' => 'users', 'action' => 'view', $collaborator['User']['id']))?>
       <br>
-      <?= $collaborator['User']['email'] ?>
+      <?= h($collaborator['User']['email']) ?>
       <br>
-      <span class='muted'><?= $_levels[$collaborator['Collaborator']['access_level']] ?></span>
+      <span class='muted'><?= h($_levels[$collaborator['Collaborator']['access_level']]) ?></span>
     </div>
   </div>
 </div>
