@@ -26,7 +26,7 @@ try {
 <html>
 <head>
     <title>
-        <?= $devtrack_config['global']['alias'] ?> - <?= $title_for_layout ?>
+        <?= h($devtrack_config['global']['alias']) ?> - <?= h($title_for_layout) ?>
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
@@ -56,7 +56,7 @@ try {
                     <ul class="nav pull-right">
                     <? if(isset($user_name)){ ?>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> <?= $user_name ?><b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> <?= h($user_name) ?><b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users', 'action' => 'index')) ?></li>
                                 <li class="divider"></li>
