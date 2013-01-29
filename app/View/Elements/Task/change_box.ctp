@@ -13,9 +13,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-    $field = $change['ProjectHistory']['row_field'];
-    $old = $change['ProjectHistory']['row_field_old'];
-    $new = $change['ProjectHistory']['row_field_new'];
+    $field = h($change['ProjectHistory']['row_field']);
+    $old = h($change['ProjectHistory']['row_field_old']);
+    $new = h($change['ProjectHistory']['row_field_new']);
 
     switch ( $field ) {
         case 'task_type_id':

@@ -25,7 +25,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                 <div>
                     <div class="span10">
                         <p>
-                            <?= $this->Html->link('<strong>#'.$task['Task']['id'].'</strong> - '.$task['Task']['subject'], $url, array('escape' => false)) ?>
+                            <?= $this->Html->link('<strong>#'.$task['Task']['id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
                         </p>
                         <?= $this->Task->priority($task['Task']['task_priority_id']) ?>
                         <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>

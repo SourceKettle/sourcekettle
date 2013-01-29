@@ -73,8 +73,6 @@ class AppController extends Controller {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
-		$this->data = Sanitize::clean($this->data);
-
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
 		// Load config file in

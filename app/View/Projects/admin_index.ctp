@@ -69,7 +69,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
 
                                 <? $more_link = '... <span id="view_more_button">' .$this->Html->link('Read More', '#') . '</span>'; ?>
 
-                                <?= $this->Text->truncate($project['Project']['description'], 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
+                                <?= $this->Text->truncate(h($project['Project']['description']), 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
                                 <div id='full_description' style='display: none'>
                                     <?= h($project['Project']['description']) ?>
                                 </div>

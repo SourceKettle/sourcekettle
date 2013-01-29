@@ -1,4 +1,4 @@
-<?= $this->Bootstrap->page_header($user['User']['name']); ?>
+<?= $this->Bootstrap->page_header(h($user['User']['name'])); ?>
 
 <div class="row">
     <div class="span3">

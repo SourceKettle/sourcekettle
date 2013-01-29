@@ -14,10 +14,10 @@
                 <?= $this->Source->fetchIcon($file['type']) ?>
                 <?php
                     if ($file['type'] != 'commit') {
-                        echo $this->Html->link($file['name'], $this->Source->fetchTreeUrl($project['Project']['name'], $branch, $file['path']), array('escape' => false));
+                        echo $this->Html->link(h($file['name']), $this->Source->fetchTreeUrl($project['Project']['name'], $branch, $file['path']), array('escape' => false));
                     } else {
                         if ($file['remote'] != ''){
-                            echo $this->Html->link($file['name'], 'http://'.$file['remote'], array('escape' => false));
+                            echo $this->Html->link(h($file['name']), 'http://'.$file['remote'], array('escape' => false));
                         } else {
                             echo h($file['name']);
                         }

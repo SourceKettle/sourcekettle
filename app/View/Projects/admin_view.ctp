@@ -103,14 +103,14 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                                     "size" => "mini",
                                     'class' => 'pull-right',
                                     "links" => array(
-                                        $this->Html->link($this->Bootstrap->icon($details[2]['icon'])." Make an ".$details[2]['text'],
+                                        $this->Html->link($this->Bootstrap->icon($details[2]['icon'])." Make an ".h($details[2]['text']),
                                                 array('controller' => 'collaborators', 'action' => $details[2]['action'], $c['id']),
                                                 array('escape' => false)),
-                                        $this->Html->link($this->Bootstrap->icon($details[1]['icon'])." Make a " .$details[1]['text'],
+                                        $this->Html->link($this->Bootstrap->icon($details[1]['icon'])." Make a " .h($details[1]['text']),
                                                 array('controller' => 'collaborators', 'action' => $details[1]['action'], $c['id']),
                                                 array('escape' => false)),
                                         null,
-                                        $this->Html->link($this->Bootstrap->icon($details[0]['icon'])." Make a " .$details[0]['text'],
+                                        $this->Html->link($this->Bootstrap->icon($details[0]['icon'])." Make a " .h($details[0]['text']),
                                                 array('controller' => 'collaborators', 'action' => $details[0]['action'], $c['id']),
                                                 array('escape' => false)),
                                     )

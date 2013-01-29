@@ -64,8 +64,8 @@ $_levels = array(
 
                             foreach ($collaborators[$_access_level] as $collaborator) :
 
-                                $_user_name = $collaborator['User']['name'];
-                                $_user_mail = $collaborator['User']['email'];
+                                $_user_name = h($collaborator['User']['name']);
+                                $_user_mail = h($collaborator['User']['email']);
                                 $_user_id   = $collaborator['User']['id'];
                                 $_user_url  = array('controller' => 'users', 'action' => 'view', $_user_id);
                                 $_c_id      = $collaborator['Collaborator']['id'];
