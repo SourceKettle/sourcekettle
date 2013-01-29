@@ -26,13 +26,13 @@
             <div class="well times form form-horizontal">
                 <dl class="dl-horizontal">
                     <dt><?= $this->DT->t('info.time.logged') ?></dt>
-                    <dd><?= $time['Time']['minutes']['s'] ?></dd>
+                    <dd><?= h($time['Time']['minutes']['s']) ?></dd>
 
                     <dt><?= $this->DT->t('info.time.description') ?></dt>
-                    <dd><?= ($time['Time']['description']) ? $time['Time']['description'] : 'n/a' ?></dd>
+                    <dd><?= ($time['Time']['description']) ? h($time['Time']['description']) : 'n/a' ?></dd>
 
                     <dt><?= $this->DT->t('info.time.date') ?></dt>
-                    <dd><?= $time['Time']['date'] ?></dd>
+                    <dd><?= h($time['Time']['date']) ?></dd>
 
                     <? if ($task['Task']['id']) { ?>
                     <dt><?= $this->DT->t('info.time.task') ?></dt>
