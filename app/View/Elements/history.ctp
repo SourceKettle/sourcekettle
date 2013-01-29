@@ -91,7 +91,7 @@ foreach ( $events as $event ) {
     echo ' ';
 
     $find = array('{subject}','{actioner}','{project}','{field}','{old}','{new}');
-    $repl = array($subject, $user, $project, $event['Change']['field'], $event['Change']['field_old'], $event['Change']['field_new']);
+    $repl = array($subject, $user, $project, h($event['Change']['field']), h($event['Change']['field_old']), h($event['Change']['field_new']));
     echo str_replace($find, $repl, $this->DT->t($_dt_string, array('controller' => 'all', 'action' => 'history')));
     if (isset($event['detailString'])) {
         echo ' '.str_replace($find, $repl, $this->DT->t($event['detailString'], array('controller' => 'all', 'action' => 'history')));
