@@ -71,7 +71,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
 
                                 <?= $this->Text->truncate($project['Project']['description'], 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
                                 <div id='full_description' style='display: none'>
-                                    <?= $project['Project']['description'] ?>
+                                    <?= h($project['Project']['description']) ?>
                                 </div>
                             </div>
                         </td>
@@ -81,7 +81,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                                 $this->Bootstrap->icon('eject', 'white'),
                                 $this->Html->url(array('controller' => 'projects', 'action' => 'admin_delete', $project['Project']['id']), true),
                                 array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
-                                "Are you sure you want to delete " . $project['Project']['name'] . "?"
+                                "Are you sure you want to delete " . h($project['Project']['name']) . "?"
                             );
                         ?>
                         </td>

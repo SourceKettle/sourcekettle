@@ -67,7 +67,7 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
 
                     <dt>Updated</dt><dd><?= $this->Time->timeAgoInWords($this->request->data['Project']['modified']) ?></dd>
 
-                    <dt>Type</dt><dd><?= $this->request->data['RepoType']['name'] ?></dd>
+                    <dt>Type</dt><dd><?= h($this->request->data['RepoType']['name']) ?></dd>
                 </dl>
             </div>
             <div class="span5 well">
@@ -81,7 +81,7 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                 <?= $this->Form->end() ?>
 
                 <? foreach ( $details as $level => $detail ) : ?>
-                <h3>Project <?= $detail['text'] ?>s</h3>
+                <h3>Project <?= h($detail['text']) ?>s</h3>
                 <table class="table table-striped">
                     <tbody>
                     <? foreach ( $this->request->data['Collaborator'] as $c ) : ?>
@@ -96,7 +96,7 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                                     $this->Bootstrap->icon('eject', 'white'),
                                     $this->Html->url(array('controller' => 'collaborators', 'action' => 'admin_delete', $c['id']), true),
                                     array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => 'pull-right'),
-                                    "Are you sure you want to remove " . $c['User']['name'] . "?"
+                                    "Are you sure you want to remove " . h($c['User']['name']) . "?"
                                 );
                                 echo $this->Bootstrap->button_dropdown($this->Bootstrap->icon($details[$c['access_level']]['icon'], 'white'), array(
                                     "style" => "primary",
