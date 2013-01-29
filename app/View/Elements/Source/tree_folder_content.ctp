@@ -19,7 +19,7 @@
                         if ($file['remote'] != ''){
                             echo $this->Html->link($file['name'], 'http://'.$file['remote'], array('escape' => false));
                         } else {
-                            echo $file['name'];
+                            echo h($file['name']);
                         }
                     }
                 ?>
@@ -31,7 +31,7 @@
             </td>
             <td>
                 <?php
-                    echo $this->Text->truncate($file['updated']['subject'], 100, array('exact' => false, 'html' => false));
+                    echo $this->Text->truncate(h($file['updated']['subject']), 100, array('exact' => false, 'html' => false));
                 ?>
             </td>
         </tr>
