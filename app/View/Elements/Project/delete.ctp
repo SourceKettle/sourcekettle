@@ -164,4 +164,4 @@ $this->Html->css('deletable', null, array ('inline' => false));
             </div>
         </div>
     </div>
-<)/div>
+</div>
