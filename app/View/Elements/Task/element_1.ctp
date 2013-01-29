@@ -20,7 +20,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 ?>
 <div id="task_<?= $task['Task']['id'] ?>" class="task-container" onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="<? if (empty($task['DependsOn']) || $task['Task']['dependenciesComplete'] && $draggable){ echo 'true'; } else { echo 'false';}?>" data-taskid="<?= $task['Task']['id'] ?>">
     <div class="task">
-        <div class="well type_bar_<?= $task['TaskType']['name'] ?>">
+        <div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
             <div class="row-fluid">
                 <div>
                     <div class="span10">
