@@ -288,6 +288,7 @@ class Project extends AppModel {
 		foreach ($_types as $x) {
 			$_modelEvents = array();
 			$_x = 0;
+			$numberOfEvents = 0;
 
 			// While the number of events we have for this type is too few
 			while ($numberOfEvents < $number) {
