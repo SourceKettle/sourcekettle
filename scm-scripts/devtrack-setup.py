@@ -340,6 +340,8 @@ if create_db:
     for i in range(15):
         db_pass += choice(chars)
 
+    print "I have auto-generated a database password for you (%s)" % (db_pass)
+
     c.execute("GRANT ALL ON `%s`.* TO `%s`@`%s` IDENTIFIED BY '%s'" % (db_name, db_name, gethostname(), db_pass))
 
     # If the database server is running locally, also grant to localhost
