@@ -329,24 +329,25 @@ if problem:
 
 ## Now we have all the info we need, start the setup process
 
+# Generate a random password containing only a-z, A-Z, 0-9
+db_pass = ''
+chars = string.letters + string.digits
+for i in range(15):
+    db_pass += choice(chars)
+
+print "I have auto-generated a database password for you (%s)" % (db_pass)
+
+c.execute("GRANT ALL ON `%s`.* TO `%s`@`%s` IDENTIFIED BY '%s'" % (db_name, db_name, gethostname(), db_pass))
+
+# If the database server is running locally, also grant to localhost
+if db_host.lower() == 'localhost':
+    c.execute("GRANT ALL ON `%s`.* TO `%s`@`localhost` IDENTIFIED BY '%s'" % (db_name, db_name, db_pass))
+
 if create_db:
     print "Creating DevTrack database..."
     c=dbc.cursor()
     c.execute('CREATE DATABASE `%s`' % db_name)
 
-    # Generate a random password containing only a-z, A-Z, 0-9
-    db_pass = ''
-    chars = string.letters + string.digits
-    for i in range(15):
-        db_pass += choice(chars)
-
-    print "I have auto-generated a database password for you (%s)" % (db_pass)
-
-    c.execute("GRANT ALL ON `%s`.* TO `%s`@`%s` IDENTIFIED BY '%s'" % (db_name, db_name, gethostname(), db_pass))
-
-    # If the database server is running locally, also grant to localhost
-    if db_host.lower() == 'localhost':
-        c.execute("GRANT ALL ON `%s`.* TO `%s`@`localhost` IDENTIFIED BY '%s'" % (db_name, db_name, db_pass))
 
     print "Creating database schema..."
 
@@ -490,4 +491,4 @@ db.close()
 
 print "Setup complete!"
 print "Your auto-generated MySQL password is: '%s'" % db_pass
-
+print "This password has been added to the DevTrack config file, but you may wish to make a note of it."
