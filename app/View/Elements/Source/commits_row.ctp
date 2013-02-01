@@ -6,13 +6,13 @@
         <p>
             <strong>
                 <?= $this->Html->link(
-                    $this->Text->truncate($commit['subject'], 50, array('exact' => false, 'html' => false)),
+                    $this->Text->truncate(h($commit['subject']), 50, array('exact' => false, 'html' => false)),
                     array('project' => $project['Project']['name'], 'action' => 'commit', $commit['hash'])
                 ) ?>
             </strong>
             <br>
             <small class="muted">
-                <?= $commit['author']['name'].' &lt;'.$commit['author']['email'].'&gt;' ?>
+                <?= h($commit['author']['name']).' &lt;'.h($commit['author']['email']).'&gt;' ?>
                 authored <?= $this->Time->timeAgoinWords($commit['date']) ?>
             </small>
         </p>

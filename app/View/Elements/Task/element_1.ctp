@@ -20,12 +20,12 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 ?>
 <div id="task_<?= $task['Task']['id'] ?>" class="task-container" onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="<? if (empty($task['DependsOn']) || $task['Task']['dependenciesComplete'] && $draggable){ echo 'true'; } else { echo 'false';}?>" data-taskid="<?= $task['Task']['id'] ?>">
     <div class="task">
-        <div class="well type_bar_<?= $task['TaskType']['name'] ?>">
+        <div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
             <div class="row-fluid">
                 <div>
                     <div class="span10">
                         <p>
-                            <?= $this->Html->link('<strong>#'.$task['Task']['id'].'</strong> - '.$task['Task']['subject'], $url, array('escape' => false)) ?>
+                            <?= $this->Html->link('<strong>#'.$task['Task']['id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
                         </p>
                         <?= $this->Task->priority($task['Task']['task_priority_id']) ?>
                         <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>

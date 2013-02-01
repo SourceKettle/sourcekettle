@@ -67,7 +67,7 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
 
                     <dt>Updated</dt><dd><?= $this->Time->timeAgoInWords($this->request->data['Project']['modified']) ?></dd>
 
-                    <dt>Type</dt><dd><?= $this->request->data['RepoType']['name'] ?></dd>
+                    <dt>Type</dt><dd><?= h($this->request->data['RepoType']['name']) ?></dd>
                 </dl>
             </div>
             <div class="span5 well">
@@ -81,7 +81,7 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                 <?= $this->Form->end() ?>
 
                 <? foreach ( $details as $level => $detail ) : ?>
-                <h3>Project <?= $detail['text'] ?>s</h3>
+                <h3>Project <?= h($detail['text']) ?>s</h3>
                 <table class="table table-striped">
                     <tbody>
                     <? foreach ( $this->request->data['Collaborator'] as $c ) : ?>
@@ -96,21 +96,21 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                                     $this->Bootstrap->icon('eject', 'white'),
                                     $this->Html->url(array('controller' => 'collaborators', 'action' => 'admin_delete', $c['id']), true),
                                     array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => 'pull-right'),
-                                    "Are you sure you want to remove " . $c['User']['name'] . "?"
+                                    "Are you sure you want to remove " . h($c['User']['name']) . "?"
                                 );
                                 echo $this->Bootstrap->button_dropdown($this->Bootstrap->icon($details[$c['access_level']]['icon'], 'white'), array(
                                     "style" => "primary",
                                     "size" => "mini",
                                     'class' => 'pull-right',
                                     "links" => array(
-                                        $this->Html->link($this->Bootstrap->icon($details[2]['icon'])." Make an ".$details[2]['text'],
+                                        $this->Html->link($this->Bootstrap->icon($details[2]['icon'])." Make an ".h($details[2]['text']),
                                                 array('controller' => 'collaborators', 'action' => $details[2]['action'], $c['id']),
                                                 array('escape' => false)),
-                                        $this->Html->link($this->Bootstrap->icon($details[1]['icon'])." Make a " .$details[1]['text'],
+                                        $this->Html->link($this->Bootstrap->icon($details[1]['icon'])." Make a " .h($details[1]['text']),
                                                 array('controller' => 'collaborators', 'action' => $details[1]['action'], $c['id']),
                                                 array('escape' => false)),
                                         null,
-                                        $this->Html->link($this->Bootstrap->icon($details[0]['icon'])." Make a " .$details[0]['text'],
+                                        $this->Html->link($this->Bootstrap->icon($details[0]['icon'])." Make a " .h($details[0]['text']),
                                                 array('controller' => 'collaborators', 'action' => $details[0]['action'], $c['id']),
                                                 array('escape' => false)),
                                     )

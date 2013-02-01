@@ -27,7 +27,7 @@
 
     foreach ($options as $title => $section) {
 
-        echo '<li class="nav-header">'.$title.'</li>';
+        echo '<li class="nav-header">'.h($title).'</li>';
 
         // Iterate over the sidebar options in $sshkey
         foreach ( $section as $feature => $options ){
@@ -59,7 +59,7 @@
             }
 
             echo $this->Html->link(
-                $this->Bootstrap->icon($options['icon'], ($isFeat) ? 'white' : 'black').' '.ucwords($feature),
+                $this->Bootstrap->icon($options['icon'], ($isFeat) ? 'white' : 'black').' '.h(ucwords($feature)),
                 $options['url'],
                 array('escape' => false)
             );

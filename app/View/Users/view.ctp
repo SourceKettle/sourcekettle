@@ -1,4 +1,4 @@
-<?= $this->Bootstrap->page_header($user['User']['name']); ?>
+<?= $this->Bootstrap->page_header(h($user['User']['name'])); ?>
 
 <div class="row">
     <div class="span3">
@@ -13,7 +13,7 @@
         Email address
         </dt>
         <dd>
-            <?= $user['User']['email'] ?>
+            <?= h($user['User']['email']) ?>
         </dd>
         <dt>
         User registered

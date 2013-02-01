@@ -32,9 +32,9 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
 
                         <? $more_link = '... <span id="view_more_button">' .$this->Html->link('Read More', '#') . '</span>'; ?>
 
-                        <?= $this->Text->truncate($project['Project']['description'], 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
+                        <?= $this->Text->truncate(h($project['Project']['description']), 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
                         <div id='full_description'>
-                            <?= $project['Project']['description'] ?>
+                            <?= h($project['Project']['description']) ?>
                         </div>
                     </div>
                 <?}?>
@@ -78,7 +78,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                             ))?>
                                         </li>
 
-                                        <li><?= $percentOfTasks ?>% <?= $this->DT->t('summary.issues.percent') ?></li>
+                                        <li><?= h($percentOfTasks) ?>% <?= $this->DT->t('summary.issues.percent') ?></li>
                                     </ul>
                                     <?= $this->Html->link(
                                       'Create a task',
@@ -107,7 +107,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                         $milestone['Milestone']['id']
                                     )) ?></strong></li>
                                 <br>
-                                <li>Due: <?= $milestone['Milestone']['due'] ?></li>
+                                <li>Due: <?= h($milestone['Milestone']['due']) ?></li>
                                 <?= $this->Bootstrap->progress(array("width" => (int) $milestone['Milestone']['percent'], "striped" => true)) ?>
                                 <? endif; ?>
                                 <li><?= $this->Html->link('Create a milestone', array('project'=>$project['Project']['name'],'controller'=>'milestones','action'=>'add')) ?></li>

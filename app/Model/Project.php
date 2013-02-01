@@ -288,9 +288,9 @@ class Project extends AppModel {
 		foreach ($_types as $x) {
 			$_modelEvents = array();
 			$_x = 0;
+			$numberOfEvents = 0;
 
 			// While the number of events we have for this type is too few
-			$numberOfEvents = count($_modelEvents);
 			while ($numberOfEvents < $number) {
 
 				// Escape if we have no more events
@@ -313,6 +313,7 @@ class Project extends AppModel {
 					}
 					$_lEvent = $_mEvent;
 				}
+				$numberOfEvents = count($_modelEvents);
 			}
 
 			// Bring all the events back together

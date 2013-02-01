@@ -21,7 +21,7 @@ $this->layout = 'error';
 <div class="row">
     <div class="span12">
         <div class="well error">
-            <h2><?=$name?></h2>
+            <h2><?=h($name)?></h2>
             <h5>If the problem persists then contact your systems administrator</h5>
         </div>
     </div>

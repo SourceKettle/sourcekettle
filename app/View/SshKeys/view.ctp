@@ -37,9 +37,9 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
                 <? endif; ?>
                 <? foreach ($this->request->data['SshKey'] as $key) : ?>
                     <tr>
-                        <td><?= $key['comment'] ?></td>
-                        <td style='overflow: hidden; max-width: 388px; word-wrap: break-word;'><tt><?= $this->Text->truncate($key['key'], 40) ?></tt></td>
-                        <td class='span1'><?= $this->Bootstrap->button_form("Delete", $this->Html->url(array('controller' => 'sshKeys', 'action' => 'delete' , $key['id']), true), array('style' => 'danger'), "Are you sure you want to delete the SSH key '" . $key['comment'] . "'?") ?></td>
+                        <td><?= h($key['comment']) ?></td>
+                        <td style='overflow: hidden; max-width: 388px; word-wrap: break-word;'><tt><?= $this->Text->truncate(h($key['key']), 40) ?></tt></td>
+                        <td class='span1'><?= $this->Bootstrap->button_form("Delete", $this->Html->url(array('controller' => 'sshKeys', 'action' => 'delete' , $key['id']), true), array('style' => 'danger'), "Are you sure you want to delete the SSH key '" . h($key['comment']) . "'?") ?></td>
                     </tr>
                 <? endforeach; ?>
                 </tbody>

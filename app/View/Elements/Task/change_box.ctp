@@ -13,9 +13,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-    $field = $change['ProjectHistory']['row_field'];
-    $old = $change['ProjectHistory']['row_field_old'];
-    $new = $change['ProjectHistory']['row_field_new'];
+    $field = h($change['ProjectHistory']['row_field']);
+    $old = h($change['ProjectHistory']['row_field_old']);
+    $new = h($change['ProjectHistory']['row_field_new']);
 
     switch ( $field ) {
         case 'task_type_id':
@@ -25,8 +25,8 @@
             $pop_over = 'priority: '.$this->Task->priority($old).' &rarr; '.$this->Task->priority($new);
             break;
         case 'assignee_id':
-            $old = ($old) ? $this->Gravatar->image($change_users[$old][1], array('d' => 'mm', 's' => 24)).' '.$change_users[$old][0] : '<small>No-one assigned</small>';
-            $new = ($new) ? $this->Gravatar->image($change_users[$new][1], array('d' => 'mm', 's' => 24)).' '.$change_users[$new][0] : '<small>No-one assigned</small>';
+            $old = ($old) ? $this->Gravatar->image($change_users[$old][1], array('d' => 'mm', 's' => 24)).' '.h($change_users[$old][0]) : '<small>No-one assigned</small>';
+            $new = ($new) ? $this->Gravatar->image($change_users[$new][1], array('d' => 'mm', 's' => 24)).' '.h($change_users[$new][0]) : '<small>No-one assigned</small>';
             $pop_over = $this->Popover->popover(
                 'assignee',
                 'Tasks \'Assignee\' changed',

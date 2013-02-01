@@ -15,5 +15,5 @@
 ?>
 <h3><?= $this->DT->t('description.title') ?></h3>
 <div style="word-wrap: break-word;">
-    <p><?= $this->DT->parse($task['Task']['description']) ?></p>
+    <p><?= $this->DT->parse(h($task['Task']['description'])) ?></p>
 </div>

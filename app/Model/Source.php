@@ -15,6 +15,7 @@
  */
 App::uses('AppModel', 'Model');
 App::uses('UnsupportedRepositoryType', 'Exception');
+App::uses('RepoTypes', 'GitCake.Model');
 
 class Source extends AppModel {
 

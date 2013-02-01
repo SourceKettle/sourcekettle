@@ -64,7 +64,7 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
                                 $this->Bootstrap->icon('eject', 'white'),
                                 $this->Html->url(array('controller' => 'users', 'action' => 'admin_delete', $user['User']['id']), true),
                                 array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
-                                "Are you sure you want to delete " . $user['User']['email'] . "?"
+                                "Are you sure you want to delete " . h($user['User']['email']) . "?"
                             );
                         ?>
                         </td>

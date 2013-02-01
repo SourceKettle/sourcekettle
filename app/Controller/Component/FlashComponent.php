@@ -91,7 +91,7 @@ class FlashComponent extends Component {
 
 		$subject = "{class} '<strong>{name}</strong>' {message}.";
 		$search	= array('{class}', '{name}', '{message}');
-		$replace = array($this->name, $this->_name, $message);
+		$replace = array($this->name, h($this->_name), $message);
 
 		$replaced = str_replace($search, $replace, $subject);
 

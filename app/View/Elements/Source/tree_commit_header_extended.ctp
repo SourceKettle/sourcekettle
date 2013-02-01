@@ -7,10 +7,10 @@
             <div class="row-fluid">
                 <div class="span10">
                     <h4>
-                        <?= $commit['subject'] ?>
+                        <?= h($commit['subject']) ?>
                     </h4>
                     <h5>
-                        <small><?= $commit['body'] ?></small>
+                        <small><?= h($commit['body']) ?></small>
                     </h5>
                 </div>
                 <div class="span2">
@@ -25,13 +25,13 @@
             <div class="row-fluid">
                 <div class="span10">
                      <p>
-                        <?= $commit['author']['name'].' &lt;'.$commit['author']['email'].'&gt;' ?>
+                        <?= h($commit['author']['name']).' &lt;'.h($commit['author']['email']).'&gt;' ?>
                         <small class="muted">authored <?= $this->Time->timeAgoinWords($commit['date']) ?></small>
                     </p>
                 </div>
                 <div class="span2">
                     <p class="pull-right">
-                        abbv: <abbr title="<?= $commit['hash'] ?>"><?= $commit['abbv'] ?></abbr>
+                        abbv: <abbr title="<?= h($commit['hash']) ?>"><?= h($commit['abbv']) ?></abbr>
                     </p>
                 </div>
             </div>

@@ -27,9 +27,9 @@ $this->Html->css('deletable', null, array ('inline' => false));
                     <?php
                         echo "<h4>";
                         if (sizeof($objects) < 1) {
-                            echo "Deleting '".$object['name']."' is irreversible!";
+                            echo "Deleting '".h($object['name'])."' is irreversible!";
                         } else {
-                            echo "If you delete '".$object['name']."' you will also be deleting:";
+                            echo "If you delete '".h($object['name'])."' you will also be deleting:";
                         }
                         echo "</h4>";
                         echo "<ul class='span6 offset3'>";

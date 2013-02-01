@@ -39,9 +39,9 @@ if (!$closed){
     }
     foreach ($times as $time) {
         $i = $this->Bootstrap->label($this->Bootstrap->icon("time", "white"), "info");
-        $o = $time['User']['name'];
+        $o = h($time['User']['name']);
         $a = $this->Html->link(
-            $time['Time']['mins']['s'],
+            $time['Time']['minutes']['s'],
             array(
                 'project' => $project['Project']['name'],
                 'controller' => 'times',

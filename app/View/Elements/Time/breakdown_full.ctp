@@ -40,7 +40,7 @@
                     array('controller' => 'users', 'action' => 'view', $user['User']['id'])
                 );
                 echo "</td><td>";
-                echo $user['Time']['time']['s'];
+                echo h($user['Time']['time']['s']);
                 echo "</td></tr>";
             }
         ?>

@@ -64,8 +64,8 @@ $_levels = array(
 
                             foreach ($collaborators[$_access_level] as $collaborator) :
 
-                                $_user_name = $collaborator['User']['name'];
-                                $_user_mail = $collaborator['User']['email'];
+                                $_user_name = h($collaborator['User']['name']);
+                                $_user_mail = h($collaborator['User']['email']);
                                 $_user_id   = $collaborator['User']['id'];
                                 $_user_url  = array('controller' => 'users', 'action' => 'view', $_user_id);
                                 $_c_id      = $collaborator['Collaborator']['id'];
@@ -78,7 +78,7 @@ $_levels = array(
                             ?>
                             <tr>
                                 <td><?= $this->Html->link("$_user_name &lt;$_user_mail&gt;", $_user_url, array('escape' => false)) ?></td>
-                                <td><?= "$_access_icon $_access_text" ?></td>
+                                <td><?= $_access_icon . " " . h($_access_text) ?></td>
                                 <td>
                                     <? if ($_promote_url) echo $this->Bootstrap->button_form($_up_icon, $_promote_url, array('escape'=>false, 'size' => 'mini', 'title' => 'Promote user')); else echo $_blank_button; ?>
                                     <? if ($_demote_url) echo $this->Bootstrap->button_form($_down_icon, $_demote_url, array('escape'=>false, 'size' => 'mini', 'title' => 'Demote user')); else echo $_blank_button; ?>
