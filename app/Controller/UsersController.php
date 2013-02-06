@@ -133,11 +133,13 @@ class UsersController extends AppController {
  */
 	public function lost_password($key = null) {
 		if ($this->request->is('post')) {
-			//generate random password and email it to them
-			$user = $this->User->findByEmail($this->request->data['User']['email']); //Get the user attached to the given email
 
+			// Generate a random reset key and email it to them
+			$user = $this->User->findByEmail($this->request->data['User']['email']);
+
+			// Check the user account is internally managed by SourceKettle
 			if ($user['User']['password'] == null) {
-				$this->Session->setFlash("It looks like you're using an account that is not managed by devtrack - " .
+				$this->Session->setFlash("It looks like you're using an account that is not managed by ".$this->devtrack_config['global']['alias']." - " .
 					"unfortunately, we can't help you reset your password.	Try talking to " .
 					"<a href='mailto:" . $this->devtrack_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
 				$this->redirect('/login');
@@ -165,12 +167,12 @@ class UsersController extends AppController {
 			$this->redirect('/login');
 
 		} else if ($this->request->is('get')) {
-			//display the form or act on the link
+			// Display the form or act on the link
 			if ($key == null) {
 				// Display the form
 				$this->render('lost_password');
 			} else {
-				// act on the key
+				// Act on the key
 				$passwordkey = $this->User->LostPasswordKey->findByKey($key);
 				if (empty($passwordkey)) {
 					$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
@@ -187,40 +189,64 @@ class UsersController extends AppController {
  * @param type $key The LostPasswordKey to use
  */
 	public function reset_password($key = null) {
+
+		// No key given, bomb out
 		if ($key == null) {
 			$this->Session->setFlash("A valid password reset key was not given.", 'default', array(), 'error');
 			$this->redirect('/');
-		} else {
-			$passwordkey = $this->User->LostPasswordKey->findByKey($key);
-			if (empty($passwordkey)) {
-				$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
-				$this->redirect('lost_password');
-			} else if ($this->request->is('post')) {
-				//Check if the key has expired
-
-				App::uses('CakeTime', 'Utility');
-				$keytime = CakeTime::toUnix($passwordkey['LostPasswordKey']['created']);
-				if ($keytime + 1800 >= time()) {
-					if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']) { //if the passwords match
-						$this->User->id = $passwordkey['User']['id'];
-						if ($this->User->save($this->request->data)) {
-							$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
-							$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
-							$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'devtrack');
-
-							$this->redirect('/login');
-						} else {
-							$this->Session->setFlash("There was problem resetting your password. Please try again.", 'default', array(), 'error');
-						}
-					} else {
-						$this->Session->setFlash("Your passwords do not match. Please try again.", 'default', array(), 'error');
-					}
-				} else {
-					$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
-					$this->redirect('lost_password');
-				}
-			}
+			return;
 		}
+
+		// Try to find the key in the DB, bomb out if we can't
+		$passwordkey = $this->User->LostPasswordKey->findByKey($key);
+		if (empty($passwordkey)) {
+			$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
+			$this->redirect('lost_password');
+			return;
+		}
+		
+		// Bomb out if it's not a POST request
+		// TODO does this need an error message?
+		if (!$this->request->is('post')) {
+			return;
+		}
+
+		// Get unix timestamp of the key for comparison
+		App::uses('CakeTime', 'Utility');
+		$keytime = CakeTime::toUnix($passwordkey['LostPasswordKey']['created']);
+
+		// Bomb out if the key has expired
+		// TODO hard-coded expiry time, should be in config
+		if ($keytime + 1800 >= time()) {
+			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
+			$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
+			$this->redirect('lost_password');
+			return;
+		}
+
+		// Bomb out if the passwords do not match
+		if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']) {
+			$this->Session->setFlash("Your passwords do not match. Please try again.", 'default', array(), 'error');
+			return;
+		}
+
+		// At this point, we have validated everything - the user has supplied
+		// a valid reset key and two matching passwords.
+
+		// Save the user object with their newly-chosen password
+		$this->User->id = $passwordkey['User']['id'];
+		if ($this->User->save($this->request->data)) {
+
+			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
+				
+			$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
+			$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'devtrack');
+
+			$this->redirect('/login');
+		} else {
+			$this->Session->setFlash("There was problem resetting your password. Please try again.", 'default', array(), 'error');
+		}
+
 	}
 
 /**
