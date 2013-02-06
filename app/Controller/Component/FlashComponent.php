@@ -1,15 +1,15 @@
 <?php
 /**
  *
- * Flash Component for the DevTrack system
+ * Flash Component for the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller.Component
- * @since		 DevTrack v 0.1
+ * @copyright	SourceKettle Development Team 2012
+ * @link		http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller.Component
+ * @since		SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -36,8 +36,8 @@ class FlashComponent extends Component {
  * @return void
  */
 	public function initialize(Controller $Controller) {
-		$this->Controller = $Controller;
-		$this->name		= Inflector::singularize($Controller->name);
+		$this->Controller	= $Controller;
+		$this->name			= Inflector::singularize($Controller->name);
 		$this->Model		= $this->Controller->{$this->name};
 	}
 
@@ -130,11 +130,18 @@ class FlashComponent extends Component {
  * @return void
  */
 	public function setUp() {
+
+		// If the model exists in the database, we need to pull out its display field
 		if ($this->Model->id) {
 			if ($this->Model->actsAs && in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(false);
 			$this->_name = $this->Model->field($this->Model->displayField);
 			$this->_id	= $this->Model->id;
 			if ($this->Model->actsAs && in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(true);
+
+		// Otherwise, pull it out of the model's data array as the save failed
+		// TODO is this a massive hack or the Right Thing? I can't tell at the moment.
+		} else {
+			$this->_name = $this->Model->data[$this->name][$this->Model->displayField];
 		}
 	}
 }
