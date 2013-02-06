@@ -30,7 +30,7 @@
     <div class="span4">
         <h3>What is a 'Milestone'?</h3>
         <div>
-            <p>At DevTrack, we define a Milestone as a sort of target. It guides us in what work should be done by a certain time. A Milestone can help to prevent you, and your team mates, from straying from the path of progress.</p>
+            <p>At SourceKettle, we define a Milestone as a sort of target. It guides us in what work should be done by a certain time. A Milestone can help to prevent you, and your team mates, from straying from the path of progress.</p>
             <br>
             <p><strong>Step 1)</strong> Pick a target, or list of features/things you would like done by a certain time.</p>
             <br>
