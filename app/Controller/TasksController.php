@@ -161,12 +161,9 @@ class TasksController extends AppProjectController {
 			try {
 				$this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id'], true, true);
 			} catch (ForbiddenException $e) {
-				// TODO spurious dump and return :-(
-				var_dump ($e);
-				return;
-				/*$this->Flash->error (__('You don\'t have permission to edit that comment'));
+				$this->Flash->error (__('You don\'t have permission to edit that comment'));
 				$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-				return;*/
+				return;
 			}
 
 			if ($this->Task->TaskComment->save($this->request->data)) {
