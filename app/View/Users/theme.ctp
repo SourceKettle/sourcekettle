@@ -24,7 +24,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
         <?= $this->Form->create('User', array('class' => 'well form-horizontal', 'type' => 'post')) ?>
         <h3>Select your theme</h3>
         <?php
-        $options = array('default' => $devtrack_config['global']['alias'].' default');
+        $options = array('default' => 'SourceKettle default');
         foreach ($this->TwitterBootswatch->getThemes() as $a => $theme) {
 
             $options[$a] = $this->Popover->popover(
