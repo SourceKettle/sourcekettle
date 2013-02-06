@@ -28,7 +28,7 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
 
           <p>Click on the navigation links on the left to find the relevant section.</p> 
 
-          <p>Still can't find what you're looking for? Ask us on Github <?= $this->Html->link("https://github.com/SourceKettle/devtrack/issues", "https://github.com/SourceKettle/devtrack/issues") ?></p>
+          <p>Still can't find what you're looking for? Ask us on Github <?= $this->Html->link("https://github.com/SourceKettle/sourcekettle", "https://github.com/SourceKettle/sourcekettle") ?></p>
         </div>
     </div>
 </div>
