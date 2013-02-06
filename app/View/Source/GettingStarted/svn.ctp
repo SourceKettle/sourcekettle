@@ -1,15 +1,15 @@
 <?php
 /**
  *
- * View class for APP/Source/gettingStarted for the DevTrack system
+ * View class for APP/Source/gettingStarted for the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Source
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Source
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 $smallText = " <small>source code</small>";
@@ -21,7 +21,7 @@ echo $this->Bootstrap->page_header($pname . $smallText);
 $public_key = $this->Popover->popover(
     'Public Key',
     "How does one acquire a 'Public Key' good Sir?",
-    "Here at DevTrack, we love making source code control easy as pie, unfortunately computers are more like an apple turnover.<br>
+    "Here at SourceKettle, we love making source code control easy as pie, unfortunately computers are more like an apple turnover.<br>
      <br>
      What this pop-up box is trying to say is:<br>
      <i>For the most up-to-date advice on SSH Keys, Google 'how to set up public private key &lt;OS&gt;'!</i><br>
