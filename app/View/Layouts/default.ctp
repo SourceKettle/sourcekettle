@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Default layout for the DevTrack system
+ * Default layout for the SourceKettle system
  * Layout which all views will render inside
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Layouts
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Layouts
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
@@ -107,7 +107,7 @@
         </div>
         <div id='footer'>
             <hr>
-            <?=$this->Html->link("About DevTrack $devtrackVersion", '/about');?>
+            <?=$this->Html->link("About SourceKettle $devtrackVersion", '/about');?>
             <?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
             <?//=$this->Html->link('SVN help', '/svn_help');?>
         </div>
