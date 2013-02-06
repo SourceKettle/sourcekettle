@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/ssh_keys/view for the DevTrack system
+ * View class for APP/ssh_keys/view for the SourceKettle system
  * Displays all the users SSH Keys.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.SSH_Keys
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.SSH_Keys
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -48,7 +48,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
     <div class="span4">
         <h3>What be all the hype about SSH keys?</h3>
         <p>
-            Here at DevTrack, we think the world of computers moves pretty fast! It's hard for us to keep up with all the lastest and greatest tech, and as such,
+            Here at SourceKettle, we think the world of computers moves pretty fast! It's hard for us to keep up with all the lastest and greatest tech, and as such,
             if you would like to know about SSH keys and how they work on your device, please head over to Google.
         </p>
         <p>
