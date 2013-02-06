@@ -1,20 +1,20 @@
 <?php
 /**
 *
-* Registration view for the DevTrack system
+* Registration view for the SourceKettle system
 * Renders a form allowing users to sign up
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
 * 
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/SourceKettle/devtrack
-* @package       DevTrack.View.Login
-* @since         DevTrack v 0.1
+* @copyright     SourceKettle Development Team 2012
+* @link          https://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.View.Login
+* @since         SourceKettle v 0.1
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-echo $this->Bootstrap->page_header("Register with DevTrack <small>Hello! Bonjour! Willkommen!..</small>");
+echo $this->Bootstrap->page_header("Register with SourceKettle <small>Hello! Bonjour! Willkommen!..</small>");
 ?>
 <div class="row">
     <div class="span8">
@@ -52,16 +52,16 @@ echo $this->Bootstrap->page_header("Register with DevTrack <small>Hello! Bonjour
         ?>
     </div>
     <div class="span4">
-        <h3>What is DevTrack?</h3>
+        <h3>What is SourceKettle?</h3>
         <p>
-            DevTrack is a <strong>project management</strong> and <strong>source code management</strong> tool designed to make developing applications simpler.
+            SourceKettle is a <strong>project management</strong> and <strong>source code management</strong> tool designed to make developing applications simpler.
             It allows you to use an <strong>Subversion</strong> or <strong>Git</strong> repository to host your code and allows for easily managing tasks, the 
             time spent developing and documentation throughout your projects.
         </p>
         <br>
-        <h3>What makes DevTrack special?</h3>
+        <h3>What makes SourceKettle special?</h3>
         <p>
-            DevTrack is <strong>all</strong> of the following:
+            SourceKettle is <strong>all</strong> of the following:
             <ul>
                 <li>Open Source</li>
                 <li>Simple to use</li>
@@ -72,7 +72,7 @@ echo $this->Bootstrap->page_header("Register with DevTrack <small>Hello! Bonjour
         <br>
         <h3>What do our developers think?</h3>
         <blockquote>
-            <p>I wish DevTrack was around when we were developing DevTrack!</p>
+            <p>I wish SourceKettle was around when we were developing SourceKettle!</p>
             <small>@pwhittlesea</small>
         </blockquote>
     </div>

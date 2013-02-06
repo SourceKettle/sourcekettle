@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/users/security for the DevTrack system
+ * View class for APP/users/security for the SourceKettle system
  * Displays a form to let the user update their password.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Users
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Users
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  
@@ -45,7 +45,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
     <div class="span4">
         <h3>What makes a super s3cr3t_pa55W0rd?</h3>
         <p>
-            Here at DevTrack, we aren't your parents.<br>
+            Here at SourceKettle, we aren't your parents.<br>
             However we do know a thing or two (maybe more) about what makes a secure password.
         </p>
         <p>
