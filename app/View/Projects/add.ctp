@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/projects/add for the DevTrack system
+ * View class for APP/projects/add for the SourceKettle system
  * View will allow user to create a new project
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Projects
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Projects
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -64,11 +64,11 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
     </div>
 
     <div class="span6">
-        <h3>All DevTrack projects include...</h3>
+        <h3>All SourceKettle projects include...</h3>
         <div>
             <h4>Dynamic Task Tracking</h4>
             <p>When it's more than just you working on a project, it can become troublesome keeping track of who's doing what.
-            DevTrack provides task/bug tracking to manage your collaborators.</p>
+            SourceKettle provides task/bug tracking to manage your collaborators.</p>
 		    <br>
         </div>
 		<div>
