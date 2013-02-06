@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/help/create for the DevTrack system
+ * View class for APP/help/create for the SourceKettle system
  * Display the help page for creating new projects
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Help
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Help
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -25,7 +25,7 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
           <h3>Themes</h3>
 
           <p>
-            Thanks to the awesome people at <?= $this->Html->link('BootSwatch', 'http://bootswatch.com')?>, you have access to a variety of interesting themes to make DevTrack look Amazing and Wonderful<sup>TM</sup>!
+            Thanks to the awesome people at <?= $this->Html->link('BootSwatch', 'http://bootswatch.com')?>, you have access to a variety of interesting themes to make SourceKettle look Amazing and Wonderful<sup>TM</sup>!
           </p>
 
           <p>

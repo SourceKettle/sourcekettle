@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/help/project_list for the DevTrack system
+ * View class for APP/help/project_list for the SourceKettle system
  * Display the help page for the list projects part of the application
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Help
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Help
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -24,11 +24,11 @@ echo $this->Bootstrap->page_header('Help! <small>What do all the project icons m
 		<div class="well">
 			<h3>Listing projects</h3>
 
-			<p>Here at DevTrack, we have tried to pack as much information into the project views as possible. This can however, be daunting to new users who do not know what all the little icons mean, so here is a breakdown:</p>
+			<p>Here at SourceKettle, we have tried to pack as much information into the project views as possible. This can however, be daunting to new users who do not know what all the little icons mean, so here is a breakdown:</p>
 
 			<h4>1) Public vs. Private</h4>
 
-			<p>See that little <i class="icon-lock"></i> at the top right of <strong>exhibit 1</strong>? That means that the project is private and you should keep its existence super secret! If you see a <i class="icon-globe"></i> (<strong>exhibit 2</strong>) then this means the project is public and can be viewed by any DevTrack member.</p>
+			<p>See that little <i class="icon-lock"></i> at the top right of <strong>exhibit 1</strong>? That means that the project is private and you should keep its existence super secret! If you see a <i class="icon-globe"></i> (<strong>exhibit 2</strong>) then this means the project is public and can be viewed by any SourceKettle member.</p>
 
 		</div>
 		<div class="row-fluid">

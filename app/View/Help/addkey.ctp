@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/help/addkey for the DevTrack system
+ * View class for APP/help/addkey for the SourceKettle system
  * Display the help page for logging time
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Help
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Help
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -27,7 +27,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage my SSH keys?</s
       <div class="well">
       <h3>Adding SSH keys</h3>
       <p>
-        At some point, if your project has a source code repository (most projects do), you'll probably want to start getting some code in and out of it.  DevTrack does this using SSH (Secure Shell), a remote access protocol that encrypts both the authentication and data transfer from your machine to the server.  We're using SSH public/private key-based authentication to give you access to your data.
+        At some point, if your project has a source code repository (most projects do), you'll probably want to start getting some code in and out of it.  SourceKettle does this using SSH (Secure Shell), a remote access protocol that encrypts both the authentication and data transfer from your machine to the server.  We're using SSH public/private key-based authentication to give you access to your data.
       </p>
 
       <h4>So, what's an SSH key?</h4>
@@ -50,7 +50,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage my SSH keys?</s
       </p>
 
       <p>
-        You may also want to look up <strong>SSH agents</strong> for your operating system.  An SSH agent is a program that can provide your SSH key to programs automatically, and only ask you for the passphrase the first time it loads.  Mac OSX and various Linux desktop environments provide some nice SSH agent and login keychain integration, so you can log in and without typing any more passwords your SSH key will be available to let you log into DevTrack (and other SSH servers).
+        You may also want to look up <strong>SSH agents</strong> for your operating system.  An SSH agent is a program that can provide your SSH key to programs automatically, and only ask you for the passphrase the first time it loads.  Mac OSX and various Linux desktop environments provide some nice SSH agent and login keychain integration, so you can log in and without typing any more passwords your SSH key will be available to let you log into SourceKettle (and other SSH servers).
       </p>
 
       <h4>What do I need to upload?</h4>
@@ -75,7 +75,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage my SSH keys?</s
 
       <h4>I still can't get at my code!</h4>
       <p>
-        Whoa there, hold your horses! Due to the way SSH keys work, they have to be automatically synced every few minutes before you can actually access your DevTrack project repositories.  By default this happens every 2 minutes, although the system administrator may have changed this.
+        Whoa there, hold your horses! Due to the way SSH keys work, they have to be automatically synced every few minutes before you can actually access your SourceKettle project repositories.  By default this happens every 2 minutes, although the system administrator may have changed this.
       </p>
 
       <h4>No really, it's been over a day now and I still can't get in - what gives?</h4>

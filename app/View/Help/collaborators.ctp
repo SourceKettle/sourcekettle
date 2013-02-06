@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/help/collaborators for the DevTrack system
+ * View class for APP/help/collaborators for the SourceKettle system
  * Display the help page for logging time
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Help
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Help
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -35,7 +35,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
           </p>
 
           <div class="alert alert-error">
-            Note: the user must have an account on your DevTrack system before you can add them as a collaborator.  Unfortunately, you can't just add any old email address - if your team member isn't showing up, tell them to get their skates on and head over to the registration page!
+            Note: the user must have an account on your SourceKettle system before you can add them as a collaborator.  Unfortunately, you can't just add any old email address - if your team member isn't showing up, tell them to get their skates on and head over to the registration page!
           </div>
 
           <h4>Managing collaborators and permissions</h4>
@@ -51,7 +51,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
           </ul>
 
           <p>
-            Note that user accounts may also be set as system administrators - this is a global setting, and allows total access to the whole system.  Generally this will be the person or people who set up and maintain the DevTrack system.
+            Note that user accounts may also be set as system administrators - this is a global setting, and allows total access to the whole system.  Generally this will be the person or people who set up and maintain the SourceKettle system.
           </p>
 
           <h4>Changing roles and removing collaborators</h4>

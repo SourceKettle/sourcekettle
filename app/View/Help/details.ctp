@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/help/create for the DevTrack system
+ * View class for APP/help/create for the SourceKettle system
  * Display the help page for creating new projects
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Help
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Help
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -30,11 +30,11 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
 
           <h4>Internal vs. External accounts</h4>
           <p>
-            DevTrack has its own user account system ("internal accounts"), but can also be integrated with your organisation's existing account system if you have one ("external accounts").
+            SourceKettle has its own user account system ("internal accounts"), but can also be integrated with your organisation's existing account system if you have one ("external accounts").
           </p>
 
           <p>
-            If you are using an "external" account, some settings cannot be changed - the email address and password are not managed within DevTrack, so you do not have the option to change them.
+            If you are using an "external" account, some settings cannot be changed - the email address and password are not managed within SourceKettle, so you do not have the option to change them.
           </p>
 
           <h4>Your name</h4>
