@@ -124,7 +124,8 @@ class Project extends AppModel {
 
 	public function beforeSave($options = array()) {
 		if (!empty($this->data['Project']['name'])) {
-			$this->data['Project']['name'] = strtolower($this->data['Project']['name']);
+			$this->data['Project']['name'] = ($this->data['Project']['name']);
+
 		}
 		return true;
 	}

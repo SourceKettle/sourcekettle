@@ -187,7 +187,7 @@ class ProjectsController extends AppProjectController {
 					$this->Flash->c(true);
 				}
 
-				$this->redirect(array('project' => $requestData['Project']['name'], 'action' => 'view', $this->Project->_auth_user_id));
+				$this->redirect(array('project' => $requestData['Project']['name'], 'action' => 'view'));
 			} else {
 				$this->Flash->c(false);
 			}
