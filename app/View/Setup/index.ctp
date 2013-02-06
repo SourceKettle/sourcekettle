@@ -1,21 +1,21 @@
 <?php
 /**
  *
- * Setup page for the DevTrack system
+ * Setup page for the SourceKettle system
  * Guides users through appropriate system configuration steps
  *
  * Base system: CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Base system: Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * Modifications: DevTrack Development Team 2012
+ * Modifications: SourceKettle Development Team 2012
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Original: Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @copyright     Modifications: DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Setup
- * @since         DevTrack v 0.1
+ * @copyright     Modifications: SourceKettle Development Team 2012
+ * @link          https://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Setup
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (Configure::read('debug') == 0):
@@ -166,7 +166,7 @@ function phpVersionCheck() {
         return 1;
     } else {
         echo '<div class="alert alert-error">';
-            echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.8 or higher to use DevTrack.');
+            echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.8 or higher to use SourceKettle.');
         echo '</div>';
         return 0;
     }
@@ -237,11 +237,11 @@ function databaseCheck() {
     }
     if ($connected && $connected->isConnected()) {
         echo '<div class="alert alert-success">';
-        echo __d('cake_dev', 'DevTrack is able to connect to the database.');
+        echo __d('cake_dev', 'SourceKettle is able to connect to the database.');
         echo '</div>';
     } else {
         echo '<div class="alert alert-error">';
-        echo __d('cake_dev', 'DevTrack is NOT able to connect to the database.');
+        echo __d('cake_dev', 'SourceKettle is NOT able to connect to the database.');
         echo '<br /><br />';
         echo $connectionError->getMessage();
         echo '</div>';
@@ -251,7 +251,7 @@ function databaseCheck() {
     $tables = $db->listSources();
     if ( empty($tables) ) {
         echo '<div class="alert alert-error">';
-        echo __d('cake_dev', 'The database tables required for DevTracks operation, are missing. ');
+        echo __d('cake_dev', 'The database tables required for SourceKettle\'s operation, are missing. ');
         echo __d('cake_dev', 'Please use the \'db.sql\' script to initialise the database.');
         echo '</div>';
         return 0;
@@ -321,8 +321,8 @@ if ( gitRepoLocationSet()){
 if ( $complete ) {
     echo '<div class="alert alert-info">';
     echo '<strong>';
-    echo 'DevTrack is set up and ready to go! ';
+    echo 'SourceKettle is set up and ready to go! ';
     echo '</strong>';
-    echo 'Just change the value of \'debug\' in app/Config/core.php to a \'0\' to place DevTrack in production mode.';
+    echo 'Just change the value of \'debug\' in app/Config/core.php to a \'0\' to place SourceKettle in production mode.';
     echo '</div>';
 }
