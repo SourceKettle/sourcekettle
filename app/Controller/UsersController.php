@@ -217,15 +217,15 @@ class UsersController extends AppController {
 
 		// Bomb out if the key has expired
 		// TODO hard-coded expiry time, should be in config
-		if ($keytime + 1800 >= time()) {
+		if ($keytime + 1800 < time()) {
 			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
-			$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
+			$this->Session->setFlash("The key given has expired", 'default', array(), 'error');
 			$this->redirect('lost_password');
 			return;
 		}
 
 		// Bomb out if the passwords do not match
-		if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']) {
+		if ($this->request->data['User']['password'] != $this->request->data['User']['password_confirm']) {
 			$this->Session->setFlash("Your passwords do not match. Please try again.", 'default', array(), 'error');
 			return;
 		}
@@ -235,6 +235,11 @@ class UsersController extends AppController {
 
 		// Save the user object with their newly-chosen password
 		$this->User->id = $passwordkey['User']['id'];
+
+		// Add in the email field, as otherwise all we have is the password.
+		// TODO why do we need to do this? The email field gets blanked otherwise - not the name field though
+		$this->request->data['User']['email'] = $this->User->field('email');
+
 		if ($this->User->save($this->request->data)) {
 
 			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
@@ -257,7 +262,7 @@ class UsersController extends AppController {
 			if ($user = $this->User->findByEmail($this->Useful->extractEmail($user))) {
 				$this->redirect(array('action' => 'view', $user['User']['id']));
 			} else {
-				$this->Flash->error('The specif ed User does not exist. Please try again.');
+				$this->Flash->error('The specified User does not exist. Please try again.');
 			}
 		}
 		$this->User->recursive = 0;
@@ -332,15 +337,19 @@ class UsersController extends AppController {
 	public function admin_add() {
 		if ($this->request->is('post')) { // if data was posted therefore a submitted form
 			$this->User->create();
+			// Fudge in a random password to stop it looking like an external account
+			// TODO FUDGE FACTOR 15 until #273 is resolved and we have an is_internal flag
+			$this->request->data['User']['password'] = $this->__generateKey(25);
+
 			if ($this->User->save($this->request->data['User'])) {
 				$id = $this->User->getLastInsertID();
 				$this->log("[UsersController.admin_add] user[${id}] created by user[" . $this->Auth->user('id') . "]", 'devtrack');
 
 				//Now to create the key and send the email
-				$this->User->EmailConfirmationKey->save(
-					array('EmailConfirmationKey' => array(
+				$this->User->LostPasswordKey->save(
+					array('LostPasswordKey' => array(
 						'user_id' => $id,
-						'key' => $this->__generateKey(20),
+						'key' => $this->__generateKey(25),
 					))
 				);
 				$this->__sendAdminCreatedUserMail($id, $this->User->LostPasswordKey->getLastInsertID());
