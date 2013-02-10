@@ -1,4 +1,4 @@
-DevTrack is a multi-user project management and source code management tool.
+SourceKettle is a multi-user project management and source code management tool.
 
 The feature list includes:
 * Git repositories
