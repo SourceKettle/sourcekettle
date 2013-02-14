@@ -94,7 +94,7 @@ class ProjectTestCase extends CakeTestCase {
         } catch (NotFoundException $e) {
             $this->assertTrue(true, "getProject threw exception {$e->getMessage()}");
         } catch (Exception $e) {
-            $this-assertTrue(false, "getProject threw wrong exception {$e->getMessage()}");
+            $this->assertTrue(false, "getProject threw wrong exception {$e->getMessage()}");
         }
     }
 
