@@ -122,14 +122,6 @@ class Project extends AppModel {
 		)
 	);
 
-	public function beforeSave($options = array()) {
-		if (!empty($this->data['Project']['name'])) {
-			$this->data['Project']['name'] = ($this->data['Project']['name']);
-
-		}
-		return true;
-	}
-
 	public function beforeDelete($cascade = true) {
 		$location = $this->Source->getRepositoryLocation();
 		if ($location == null || !is_dir($location)) {

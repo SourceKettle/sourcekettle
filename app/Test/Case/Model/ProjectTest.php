@@ -51,23 +51,6 @@ class ProjectTestCase extends CakeTestCase {
     }
 
     /**
-     * test the Project->beforeSave function.
-     * Tests that the before save function makes all project names lowercase.
-     *
-     * @access public
-     * @return void
-     */
-    public function testBeforeSave() {
-        $this->Project->data = array(
-            'Project' => array(
-                'name' => 'NAME'
-            )
-        );
-        $results = $this->Project->beforeSave();
-        $this->assertEquals('name', $this->Project->data['Project']['name'], "name was not converted to lower case");
-    }
-
-    /**
      * test Project->getProject function.
      * Tests that requesting a null project will return a null project.
      *
