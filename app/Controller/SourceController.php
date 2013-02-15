@@ -186,9 +186,9 @@ class SourceController extends AppProjectController {
 		$type	= $this->Source->getType();
 
 		$this->set('user', $this->Auth->user());
-		if ($type == RepoTypes::Git) {
+		if ($type == RepoTypes::GIT) {
 			$this->render('GettingStarted/git');
-		} else if ($type == RepoTypes::Subversion) {
+		} else if ($type == RepoTypes::SVN) {
 			$this->render('GettingStarted/svn');
 		} else {
 			$this->render('GettingStarted/none');

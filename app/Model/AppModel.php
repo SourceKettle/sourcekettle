@@ -23,47 +23,8 @@ App::uses('Model', 'Model');
 
 class AppModel extends Model {
 
-	// The logged in user
-	public $_auth_user_id;
-
-	public $_auth_user_name;
-
-	public $_auth_user_email;
-
-	public $_auth_user_is_admin;
-
 	// Is this an API request?
 	public $_is_api = false;
-
-/**
- * setCurrentUserData function.
- * Recursively traverse the MODELS and set the current logged in users data
- * This should hopefully mean we can have fatter models
- *
- * @access public
- * @param mixed $id (default: null)
- * @param mixed $name (default: null)
- * @param mixed $email (default: null)
- * @return void
- */
-	public function setCurrentUserData($id = null, $name = null, $email = null, $isAdmin = false) {
-		if ($this->_auth_user_id) return true;
-
-		$this->_auth_user_id = $id;
-		$this->_auth_user_name = $name;
-		$this->_auth_user_email = $email;
-		$this->_auth_user_is_admin = $isAdmin;
-
-		foreach (array_keys($this->hasMany) as $key) {
-			$this->{$key}->setCurrentUserData($id, $name, $email, $isAdmin);
-		}
-		foreach (array_keys($this->belongsTo) as $key) {
-			$this->{$key}->setCurrentUserData($id, $name, $email, $isAdmin);
-		}
-		foreach (array_keys($this->hasAndBelongsToMany) as $key) {
-			$this->{$key}->setCurrentUserData($id, $name, $email, $isAdmin);
-		}
-	}
 
 /**
  * Fix for deletable plugin

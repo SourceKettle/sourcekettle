@@ -312,7 +312,7 @@ class UsersController extends AppController {
 		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
 		$this->set('user', $this->User->read(null, $id));
 
-		$you	= $this->User->_auth_user_id;
+		$you	= User::get('id');
 		$them = $this->User->id;
 		$joinProjects = array();
 

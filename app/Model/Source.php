@@ -53,8 +53,8 @@ class Source extends AppModel {
 	public function getType() {
 		$types = array(
 			1 => null,
-			2 => RepoTypes::Git,
-			3 => RepoTypes::Subversion
+			2 => RepoTypes::GIT,
+			3 => RepoTypes::SVN
 		);
 		$repoType = $this->Project->field('repo_type');
 
@@ -76,10 +76,10 @@ class Source extends AppModel {
 		$type = $this->getType();
 		$location = $this->getRepositoryLocation();
 
-		if ($type == RepoTypes::Git) {
+		if ($type == RepoTypes::GIT) {
 			App::uses('SourceGit', 'GitCake.Model');
 			return SourceGit::create($location, 'g+rwX', 'group');
-		} else if ($type == RepoTypes::Subversion) {
+		} else if ($type == RepoTypes::SVN) {
 			App::uses('SourceSubversion', 'GitCake.Model');
 			return SourceSubversion::create($location, 'g+rwX', 'group');
 		} else {
@@ -103,9 +103,9 @@ class Source extends AppModel {
 		$branches = $this->getBranches();
 		$type = $this->getType();
 
-		if ($type == RepoTypes::Git) {
+		if ($type == RepoTypes::GIT) {
 			$master = 'master';
-		} else if ($type == RepoTypes::Subversion) {
+		} else if ($type == RepoTypes::SVN) {
 			$master = 'HEAD';
 		} else {
 			$master = null;
@@ -135,9 +135,9 @@ class Source extends AppModel {
 		$name = $this->Project->field('name');
 		$type = $this->getType();
 
-		if ($type == RepoTypes::Git) {
+		if ($type == RepoTypes::GIT) {
 			$type = 'git';
-		} else if ($type == RepoTypes::Subversion) {
+		} else if ($type == RepoTypes::SVN) {
 			$type = 'svn';
 		} else {
 			throw new UnsupportedRepositoryType(__("Repository type not supported"));

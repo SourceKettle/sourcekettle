@@ -71,7 +71,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
             $exception = true;
         }
 
-        if ( !$exception && !$Model->Project->hasWrite($Model->_auth_user_id) ) {
+        if ( !$exception && !$Model->Project->hasWrite(User::get('id')) ) {
             throw new ForbiddenException(__('You do not have permissions to write to this project'));
         }
 
@@ -104,8 +104,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
                     $field,
                     $value,
                     $Model->field($field),
-                    $Model->_auth_user_id,
-                    $Model->_auth_user_name
+                    User::get('id'),
+                    User::get('name')
                 );
             }
         } else {
@@ -117,8 +117,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
                 '+',
                 null,
                 null,
-                $Model->_auth_user_id,
-                $Model->_auth_user_name
+                User::get('id'),
+                User::get('name')
             );
         }
         return true;
@@ -152,8 +152,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
             '-',
             null,
             null,
-            $Model->_auth_user_id,
-            $Model->_auth_user_name
+            User::get('id'),
+            User::get('name')
         );
         return true;
     }
