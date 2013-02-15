@@ -114,7 +114,7 @@ class TasksController extends AppProjectController {
 			$this->Task->TaskComment->create();
 
 			$this->request->data['TaskComment']['task_id'] = $id;
-			$this->request->data['TaskComment']['user_id'] = $this->Task->_auth_user_id;
+			$this->request->data['TaskComment']['user_id'] = User::get('id');
 
 			if ($this->Task->TaskComment->save($this->request->data)) {
 				$this->Flash->info('The comment has been added successfully');
@@ -283,7 +283,7 @@ class TasksController extends AppProjectController {
 			$this->Task->create();
 
 			$this->request->data['Task']['project_id']		= $project['Project']['id'];
-			$this->request->data['Task']['owner_id']		= $this->Task->_auth_user_id;
+			$this->request->data['Task']['owner_id']		= User::get('id');
 			$this->request->data['Task']['assignee_id']		= null;
 			$this->request->data['Task']['task_status_id']	= 1;
 

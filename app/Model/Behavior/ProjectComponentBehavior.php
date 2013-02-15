@@ -59,7 +59,7 @@ class ProjectComponentBehavior extends ModelBehavior {
 		}
 
 		if ($ownerRequired) {
-			$isNotOwner = ($object[$Model->name]['user_id'] != $Model->_auth_user_id);
+			$isNotOwner = ($object[$Model->name]['user_id'] != User::get('id'));
 			$isNotAdmin = !$Model->Project->isAdmin();
 
 			if ($isNotOwner && $isNotAdmin) {
