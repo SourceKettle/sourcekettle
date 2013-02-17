@@ -16,7 +16,13 @@
         echo "<br>";
 
         echo $this->Bootstrap->input("due", array(
-            "input" => $this->Form->text("due", array("class" => "dp1", "value" => date('Y-m-d', time()), "data-date-format" => "yyyy-mm-dd")),
+            "input" => $this->Form->text("due", array(
+                "class" => "dp1",
+                "value" => isset($this->request->data['Milestone'])
+                    ? $this->request->data['Milestone']['due']
+                    : date('Y-m-d', time()),
+                "data-date-format" => "yyyy-mm-dd")
+            ),
             "label" => $this->DT->t('form.due.label'),
             "help_block" => $this->DT->t('form.due.help')
         ));
