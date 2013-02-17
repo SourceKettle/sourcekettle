@@ -256,7 +256,7 @@ class Task extends AppModel {
  * Returns true if the current user is assigned to the task
  */
 	public function isAssignee() {
-		return $this->_auth_user_id == $this->field('assignee_id');
+		return User::get('id') == $this->field('assignee_id');
 	}
 
 /**
@@ -302,7 +302,7 @@ class Task extends AppModel {
 				'conditions' => array(
 					'Task.task_status_id <' => 4,
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id' => $this->_auth_user_id,
+					'Task.assignee_id' => User::get('id'),
 				)
 			)
 		);
@@ -312,7 +312,7 @@ class Task extends AppModel {
 				'conditions' => array(
 					'Task.task_status_id <' => 4,
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id !=' => $this->_auth_user_id,
+					'Task.assignee_id !=' => User::get('id'),
 				)
 			)
 		);

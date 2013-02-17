@@ -73,12 +73,12 @@ class AppProjectController extends AppController {
 		}
 
 		// Lock out those who aren't allowed to write
-		if ($needWrite && !$model->hasWrite($model->_auth_user_id) ) {
+		if ($needWrite && !$model->hasWrite(User::get('id')) ) {
 			throw new ForbiddenException(__('You do not have permissions to write to this project'));
 		}
 
 		// Lock out those who aren't admins
-		if ($needAdmin && !$model->isAdmin($model->_auth_user_id) ) {
+		if ($needAdmin && !$model->isAdmin(User::get('id')) ) {
 			throw new ForbiddenException(__('You need to be an admin to access this page'));
 		}
 
