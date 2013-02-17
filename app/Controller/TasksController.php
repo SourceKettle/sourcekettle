@@ -514,7 +514,9 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function opentask($project = null, $id = null) {
-		$success = $this->__updateTaskStatus($project, $id, 1);
+		$isAjax = $this->request->is("ajax");
+
+		$success = $this->__updateTaskStatus($project, $id, 1, $isAjax);
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
@@ -527,7 +529,9 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function closetask($project = null, $id = null) {
-		$success = $this->__updateTaskStatus($project, $id, 4);
+		$isAjax = $this->request->is("ajax");
+
+		$success = $this->__updateTaskStatus($project, $id, 4, $isAjax);
 
 		// If a User has commented
 		if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
@@ -663,12 +667,17 @@ class TasksController extends AppProjectController {
  * @param mixed $id (default: null)
  * @return void
  */
-	private function __updateTaskStatus($project = null, $id = null, $status = null) {
+	private function __updateTaskStatus($project = null, $id = null, $status = null, $isAjax = false) {
 		$project = $this->_projectCheck($project, true);
 		$task = $this->Task->open($id);
 
 		$this->Task->set('task_status_id', $status);
-		return $this->Flash->u($this->Task->save());
+        $result = $this->Task->save();
+        if ($isAjax) {
+            return $result;
+        } else {
+            return $this->Flash->U($result);
+        }
 	}
 
 	/* ************************************************* *
