@@ -23,6 +23,25 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+// Enable the Dispatcher filters for plugin assets, and
+// CacheHelper.
+Configure::write('Dispatcher.filters', array(
+    'AssetDispatcher',
+    'CacheDispatcher'
+));
+
+// Add logging configuration.
+CakeLog::config('debug', array(
+    'engine' => 'FileLog',
+    'types' => array('notice', 'info', 'debug'),
+    'file' => 'debug',
+));
+CakeLog::config('error', array(
+    'engine' => 'FileLog',
+    'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
+    'file' => 'error',
+));
+
 /**
  * Cache Engine Configuration
  * Default settings provided below
@@ -83,7 +102,7 @@
  *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
  */
-Cache::config('default', array('engine' => 'Apc'));
+Cache::config('default', array('engine' => 'File'));
 Configure::load('devtrack');
 
 /**
@@ -142,3 +161,4 @@ CakePlugin::load('GoogleChart');
 CakePlugin::load('GitCake');
 CakePlugin::load('TwitterBootswatch');
 CakePlugin::load('LDAPAuthCake');
+
