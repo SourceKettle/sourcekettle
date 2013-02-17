@@ -25,3 +25,8 @@ $config['devtrack']['repo']['user'] = 'git';
 // set to folder where you would like SCM repositories placed
 $config['devtrack']['repo']['base'] = '/home/git/repositories';
 
+$config['daemon']['maxNodes'] = 10;
+
+$config['daemon']['nodes'] = array(
+	'SshSync'
+);

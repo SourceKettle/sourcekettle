@@ -19,3 +19,6 @@
 [submodule "app/Plugin/ChangeLogger"]
 	path = app/Plugin/ChangeLogger
 	url = git://github.com/pwhittlesea/ChangeLogger.git
+[submodule "app/Plugin/CakeDaemon"]
+	path = app/Plugin/CakeDaemon
+	url = git://github.com/pwhittlesea/CakeDaemon.git
