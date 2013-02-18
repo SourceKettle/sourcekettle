@@ -44,6 +44,13 @@ class TasksController extends AppProjectController {
 			'api_all',
 			'api_view'
 		);
+
+        $this->Security->unlockedActions = array (
+            "starttask",
+            "stoptask",
+            "resolve",
+            "unresolve"
+        );
 	}
 
 /**
