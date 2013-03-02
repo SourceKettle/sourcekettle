@@ -118,29 +118,6 @@ CREATE TABLE IF NOT EXISTS `project_histories` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `repo_types`
---
-
-CREATE TABLE IF NOT EXISTS `repo_types` (
-  `id` int(2) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1 ;
-
---
--- Dumping data for table `repo_types`
---
-
-INSERT INTO `repo_types` (`id`, `name`, `created`, `modified`) VALUES
-(1, 'None', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(2, 'Git', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(3, 'SVN', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `ssh_keys`
 --
 

@@ -41,5 +41,41 @@ class ProjectFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:46:07',
             'modified' => '2012-06-01 12:46:07'
         ),
+        array(
+            'id' => 3,
+            'name' => 'git',
+            'description' => 'desc',
+            'public' => 1,
+            'repo_type' => 2,
+            'wiki_enabled' => 1,
+            'task_tracking_enabled' => 1,
+            'time_management_enabled' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
+        array(
+            'id' => 4,
+            'name' => 'svn',
+            'description' => 'desc',
+            'public' => 1,
+            'repo_type' => 3,
+            'wiki_enabled' => 1,
+            'task_tracking_enabled' => 1,
+            'time_management_enabled' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
+        array(
+            'id' => 5,
+            'name' => 'wrong',
+            'description' => 'desc',
+            'public' => 1,
+            'repo_type' => 4,
+            'wiki_enabled' => 1,
+            'task_tracking_enabled' => 1,
+            'time_management_enabled' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
     );
 }

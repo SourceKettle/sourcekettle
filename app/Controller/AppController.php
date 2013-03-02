@@ -20,6 +20,7 @@
  */
 App::uses('Controller', 'Controller');
 App::uses('Sanitize', 'Utility');
+App::uses('ArraySource', 'Model/Datasource');
 App::import('Model', 'User');
 
 class AppController extends Controller {
@@ -72,6 +73,9 @@ class AppController extends Controller {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
+
+		// Add new db config
+		ConnectionManager::create('array', array('datasource' => 'ArraySource'));
 
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
