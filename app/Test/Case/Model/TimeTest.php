@@ -16,156 +16,167 @@ App::uses('Time', 'Model');
 
 class TimeTestCase extends CakeTestCase {
 
-    /**
-     * setUp function.
-     * Run before each unit test.
-     * Corrrecly sets up the test environment.
-     *
-     * @access public
-     * @return void
-     */
-    public $fixtures = array(
-        'app.time',
-        'app.project',
-        'app.collaborator',
-        'app.user',
-    );
+	public $fixtures = array('app.time');
 
-    /**
-     * setUp function.
-     * Run before each unit test.
-     * Corrrecly sets up the test environment.
-     *
-     * @access public
-     * @return void
-     */
-    public function setUp() {
-        parent::setUp();
-        $this->Time = ClassRegistry::init('Time');
-    }
+/**
+ * setUp function.
+ * Run before each unit test.
+ * Corrrecly sets up the test environment.
+ *
+ * @access public
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->Time =& ClassRegistry::init('Time');
+	}
 
-    /**
-     * tearDown function.
-     * Tear down all created data after the tests.
-     *
-     * @access public
-     * @return void
-     */
-    public function tearDown() {
-        unset($this->Time);
+/**
+ * tearDown function.
+ * Tear down all created data after the tests.
+ *
+ * @access public
+ * @return void
+ */
+	public function tearDown() {
+		unset($this->Time);
 
-        parent::tearDown();
-    }
+		parent::tearDown();
+	}
 
-    /**
-     * test fixtures function.
-     *
-     * @access public
-     * @return void
-     */
-    public function testFixture() {
-        $this->Time->recursive = -1;
-        $fixtures = array(
-            array(
-                'Time' => array(
-                    'id' => '1',
-                    'project_id' => '1',
-                    'user_id' => '1',
-                    'task_id' => null,
-                    'mins' => array(
-                        'h' => '1',
-                        'm' => '30',
-                        's' => '1h 30m',
-                        't' => '90',
-                    ),
-                    'description' => 'A description.',
-                    'date' => '2012-11-11',
-                    'created' => '2012-11-11 10:24:06',
-                    'modified' => '2012-11-11 10:24:06'
-                ),
-            ),
-        );
-        //$fixturesB = $this->Time->find('all');
-        //$this->assertEquals($fixtures, $fixturesB, json_encode($fixturesB)."Arrays were not equal");
-    }
+	public function testSplitMinsA() {
+		$expectedResult = array(
+			'd' => 0,
+			'h' => 1,
+			'm' => 0,
+			's' => '1h 0m',
+			't' => 60
+		);
+		$this->assertEquals($expectedResult, $this->Time->splitMins(60));
+	}
 
-    /**
-     * test Time->splitMins function.
-     * Tests that mins are correctly split into hours and mins
-     *
-     * @access public
-     * @return void
-     */
-    public function testSplitMins() {
-        $expectedResult = array(
-            'h' => '1',
-            'm' => '0',
-            's' => '1h 0m',
-            't' => '60'
-        );
-        $this->assertEquals($this->Time->splitMins(60), $expectedResult);
+	public function testSplitMinsB() {
+		$expectedResult = array(
+			'd' => 0,
+			'h' => 0,
+			'm' => 59,
+			's' => '0h 59m',
+			't' => 59
+		);
+		$this->assertEquals($expectedResult, $this->Time->splitMins(59));
+	}
 
-        $expectedResult = array(
-            'h' => '0',
-            'm' => '59',
-            's' => '0h 59m',
-            't' => '59'
-        );
-        $this->assertEquals($this->Time->splitMins(59), $expectedResult);
+	public function testSplitMinsC() {
+		$expectedResult = array(
+			'd' => 0,
+			'h' => 1,
+			'm' => 1,
+			's' => '1h 1m',
+			't' => 61
+		);
+		$this->assertEquals($expectedResult, $this->Time->splitMins(61));
+	}
 
-        $expectedResult = array(
-            'h' => '1',
-            'm' => '1',
-            's' => '1h 1m',
-            't' => '61'
-        );
-        $this->assertEquals($this->Time->splitMins(61), $expectedResult);
+	public function testSplitMinsD() {
+		$expectedResult = array(
+			'd' => 0,
+			'h' => 1,
+			'm' => 30,
+			's' => '1h 30m',
+			't' => 90
+		);
+		$this->assertEquals($expectedResult, $this->Time->splitMins(90));
+	}
 
-        $expectedResult = array(
-            'h' => '1',
-            'm' => '30',
-            's' => '1h 30m',
-            't' => '90'
-        );
-        $this->assertEquals($this->Time->splitMins(90), $expectedResult);
-    }
+	public function testCurrentYear() {
+		$this->assertEquals(date('Y'), $this->Time->currentYear(), "Wrong year returned");
+	}
 
-    /**
-     * test Time->validateYear function.
-     * Tests that the validate year prevents times being allocated to
-     * years outside of the specified range.
-     *
-     * @access public
-     * @return void
-     */
-    public function testValidateYear() {
-        $this->Time->setMinAllowedYear(2009);
-        $this->Time->setMaxAllowedYear(2010);
+	public function testCurrentWeek() {
+		$this->assertEquals(date('W'), $this->Time->currentWeek(), "Wrong week returned");
+	}
 
-        $this->assertEquals(2009, $this->Time->getMinAllowedYear(), "Wrong min year set");
-        $this->assertEquals(2010, $this->Time->getMaxAllowedYear(), "Wrong max year set");
+	public function testDayOfWeek() {
+		$this->assertEquals('1989-09-24', $this->Time->dayOfWeek(1989, 38, 7));
+	}
 
-        try {
-            $this->Time->validateYear(2008);
-            $this->assertTrue(false, "Validate year allowed a year below minimum");
-        } catch (NotFoundException $e) {
-            $this->assertTrue(true);
-        } catch (Exception $e) {
-            $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
-        }
+	public function testGetMaxAllowedYear() {
+		$this->Time->setMaxAllowedYear(2010);
+		$this->assertEquals(2010, $this->Time->getMaxAllowedYear());
+	}
 
-        $this->assertEquals(2009, $this->Time->validateYear(2009), "Wrong year returned");
-        $this->assertEquals(2010, $this->Time->validateYear(2010), "Wrong year returned");
+	public function testGetMinAllowedYear() {
+		$this->Time->setMinAllowedYear(2010);
+		$this->assertEquals(2010, $this->Time->getMinAllowedYear());
+	}
 
-        $this->assertEquals(date('Y'), $this->Time->validateYear(), "Wrong year returned");
+	public function testLastWeekOfYear52() {
+		$this->assertEquals(52, $this->Time->lastWeekOfYear(2012));
+		$this->assertEquals(52, $this->Time->lastWeekOfYear(2013));
+		$this->assertEquals(52, $this->Time->lastWeekOfYear(2014));
+	}
 
-        try {
-            $this->Time->validateYear(2011);
-            $this->assertTrue(false, "Validate year allowed a year above maximum");
-        } catch (NotFoundException $e) {
-            $this->assertTrue(true);
-        } catch (Exception $e) {
-            $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
-        }
-    }
+	public function testLastWeekOfYear53() {
+		$this->assertEquals(53, $this->Time->lastWeekOfYear(2009));
+		$this->assertEquals(53, $this->Time->lastWeekOfYear(2015));
+	}
+
+	public function testStartOfWeek() {
+		$this->assertEquals('1989-09-17', $this->Time->startOfWeek(1989, 38));
+	}
+
+	public function testValidateYearTooLow() {
+		$this->expectError('InvalidArgumentException');
+		$this->Time->setMinAllowedYear(2009);
+		$this->Time->setMaxAllowedYear(2010);
+
+		$this->Time->validateYear(2008);
+	}
+
+	public function testValidateYearBottomRange() {
+		$this->Time->setMinAllowedYear(2009);
+		$this->Time->setMaxAllowedYear(2010);
+
+		$this->assertEquals(2009, $this->Time->validateYear(2009), "Wrong year returned");
+	}
+
+	public function testValidateYearTopRange() {
+		$this->Time->setMinAllowedYear(2009);
+		$this->Time->setMaxAllowedYear(2010);
+
+		$this->assertEquals(2010, $this->Time->validateYear(2010), "Wrong year returned");
+	}
+
+	public function testValidateYearNoneSupplied() {
+		$this->Time->setMinAllowedYear(2009);
+		$this->Time->setMaxAllowedYear(2010);
+
+		$this->assertEquals(date('Y'), $this->Time->validateYear(), "Wrong year returned");
+	}
+
+	public function testValidateYearTooHigh() {
+		$this->expectError('InvalidArgumentException');
+		$this->Time->setMinAllowedYear(2009);
+		$this->Time->setMaxAllowedYear(2010);
+
+		$this->Time->validateYear(2011);
+	}
+
+	public function testValidateWeekTooLow() {
+		$this->expectError('InvalidArgumentException');
+		$this->Time->validateWeek(-1, 2010);
+	}
+
+	public function testValidateWeekGood() {
+		$this->assertEquals(12, $this->Time->validateWeek(12, 2010));
+	}
+
+	public function testValidateWeekNoneSupplied() {
+		$this->assertEquals(date('W'), $this->Time->validateWeek(), "Wrong week returned");
+	}
+
+	public function testValidateWeekTooHigh() {
+		$this->expectError('InvalidArgumentException');
+		$this->Time->validateWeek(54, 2010);
+	}
 }
