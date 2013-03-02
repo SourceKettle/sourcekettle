@@ -22,7 +22,7 @@ class Source extends AppModel {
 /**
  * useTable
  */
-	public $useTable = 'source';
+	public $useTable = false;
 
 /**
  * belongsTo associations
