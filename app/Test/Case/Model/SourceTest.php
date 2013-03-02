@@ -1,5 +1,6 @@
 <?php
 App::uses('Source', 'Model');
+App::uses('RepoTypes', 'GitCake.Model');
 
 /**
  * Source Test Case
@@ -11,7 +12,7 @@ class SourceTestCase extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('app.source');
+	public $fixtures = array('app.project');
 
 /**
  * setUp method
@@ -32,6 +33,11 @@ class SourceTestCase extends CakeTestCase {
 		unset($this->Source);
 
 		parent::tearDown();
+	}
+
+	public function testGetType() {
+		$this->Source->Project->id = 3;
+		$this->assertEquals(RepoTypes::GIT, $this->Source->getType());
 	}
 
 }
