@@ -32,7 +32,7 @@ class SshSyncTaskTest extends CakeTestCase {
 	}
 
 	public function testCron() {
-		$this->assertEquals(1, $this->Task->cron());
+		$this->assertEquals('30 seconds', $this->Task->cron());
 	}
 
 	public function testSingleton() {
@@ -44,7 +44,11 @@ class SshSyncTaskTest extends CakeTestCase {
 	}
 
 	public function testBuildEmptyKeyString() {
-		$this->assertEquals('', $this->Task->buildKeyString(array()));
+		$out = "#\n";
+		$out .= "# This file is maintained by SourceKettle\n";
+		$out .= "# Please refer to the manual\n";
+		$out .= "#\n";
+		$this->assertEquals($out, $this->Task->buildKeyString(array()));
 	}
 
 	public function testBuildSingleKeyString() {
@@ -56,9 +60,13 @@ class SshSyncTaskTest extends CakeTestCase {
 				'User' => array('id' => $userId)
 			)
 		);
+		$expectedOutput = "#\n";
+		$expectedOutput .= "# This file is maintained by SourceKettle\n";
+		$expectedOutput .= "# Please refer to the manual\n";
+		$expectedOutput .= "#\n";
 		$template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
 		$cmd = APP . 'scm-scripts' . DS . 'git-serve.py';
-		$expectedOutput = sprintf($template, $cmd, $userId, $keyContent) . "\n";
+		$expectedOutput .= sprintf($template, $cmd, $userId, $keyContent) . "\n";
 		$this->assertEquals($expectedOutput, $this->Task->buildKeyString($keys));
 	}
 }
