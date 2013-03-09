@@ -20,7 +20,11 @@ class SshSyncTask extends Shell {
 
 		// Build up a list of SSH keys to write to file
 		// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...
-		$out = '';
+		$out = "#\n";
+		$out .= "# This file is maintained by SourceKettle\n";
+		$out .= "# Please refer to the manual\n";
+		$out .= "#";
+
 		foreach ($keys as $key) {
 			$sshkey = $key['SshKey']['key'];
 			$userid = $key['User']['id'];
@@ -32,7 +36,7 @@ class SshSyncTask extends Shell {
 	}
 
 	public function cron() {
-		return 1;
+		return '30 seconds';
 	}
 
 	public function execute($params = array()) {
