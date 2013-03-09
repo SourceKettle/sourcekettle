@@ -23,7 +23,7 @@ class SshSyncTask extends Shell {
 		$out = "#\n";
 		$out .= "# This file is maintained by SourceKettle\n";
 		$out .= "# Please refer to the manual\n";
-		$out .= "#";
+		$out .= "#\n";
 
 		foreach ($keys as $key) {
 			$sshkey = $key['SshKey']['key'];
