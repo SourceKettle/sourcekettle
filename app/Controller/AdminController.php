@@ -20,12 +20,23 @@ class AdminController extends AppController {
 
 	public $useTable = false;
 
+	public $uses = array('BackgroundDaemon');
+
+	public $helpers = array(
+		'GoogleChart.GoogleChart',
+		'Time'
+	);
+
 /**
  * index method
  *
  * @return void
  */
 	public function admin_index() {
+		$this->set("daemonState", $this->BackgroundDaemon->checkDaemonRunning());
+		$this->set("daemonData", $this->BackgroundDaemon->fetchDaemonData());
+		$this->set("lastSshKeyRun", $this->BackgroundDaemon->lastRunOfType(1));
+		$this->set("lastMonitorRun", $this->BackgroundDaemon->lastRunOfType(2));
 	}
 
 }

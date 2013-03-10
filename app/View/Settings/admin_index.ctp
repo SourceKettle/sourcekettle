@@ -13,24 +13,15 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->extend('/Common/sidebar_layout_admin');
 
+$this->assign('title', $this->Bootstrap->page_header('Administration <small>System-wide configuration</small>'));
 $this->Html->css('pages/settings', null, array ('inline' => false));
-?>
 
-<?= $this->Bootstrap->page_header('System-wide configuration') ?>
-<div class="row">
-    <div class="span2">
-        <?= $this->element('Sidebar/admin') ?>
-    </div>
-    <div class="span10">
-        <div class="row">
-            <!-- topbar -->
-            <div class="span10">
-                <div class="row-fluid">
-                    <?= $this->element('Setting/admin_global') ?>
-                    <?= $this->element('Setting/admin_features') ?>
-                </div>
-            </div>
-        </div>
-    </div>
+?>
+<div class="row-fluid">
+	<?php
+		echo $this->element('Setting/admin_global');
+		echo $this->element('Setting/admin_features');
+	?>
 </div>

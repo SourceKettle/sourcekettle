@@ -28,5 +28,6 @@ $config['devtrack']['repo']['base'] = '/home/git/repositories';
 $config['daemon']['maxNodes'] = 10;
 
 $config['daemon']['nodes'] = array(
+	'TaskMetric',
 	'SshSync'
 );
