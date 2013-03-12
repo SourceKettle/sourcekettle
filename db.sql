@@ -473,3 +473,43 @@ CREATE TABLE IF NOT EXISTS `attachments` (
 --
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `daemon_queue`
+--
+CREATE TABLE `daemon_queue` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `created` datetime NOT NULL,
+  `task` int(10) NOT NULL,
+  `subtask` int(10) NOT NULL,
+  `focus` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `daemon_queue`
+--
+
+INSERT INTO `daemon_queue` (`id`, `created`, `task`, `subtask`, `focus`) VALUES
+(1, '0000-00-00 00:00:00', 1, 0, 0),
+(2, '0000-00-00 00:00:00', 2, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `daemon_history`
+--
+CREATE TABLE `daemon_history` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `number_of_nodes` int(10) NOT NULL DEFAULT '0',
+  `running_nodes` int(10) NOT NULL DEFAULT '0',
+  `queue_length` int(10) NOT NULL DEFAULT '0',
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin AUTO_INCREMENT=1;
+
+--
+-- Dumping data for table `daemon_history`
+--
+
+-- --------------------------------------------------------
