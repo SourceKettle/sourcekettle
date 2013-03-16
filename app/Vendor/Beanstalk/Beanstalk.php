@@ -95,7 +95,7 @@ class BeanStalk
 
         $this->select_mode = $in_connection_settings['select'];
 
-        $split = split(' ',$this->select_mode);
+        $split = explode(' ',$this->select_mode);
         $reserver = '_reserve_'.array_pop($split);
         $nextserver = implode(' ',$split);
 
@@ -575,7 +575,7 @@ class BeanQueue
 
     public function __construct($in_server_str, $in_conn_to, $in_conn_r, $in_auto_unyaml, $in_logfile)
     {
-        $server = split(':',$in_server_str);
+        $server = explode(':',$in_server_str);
 
         if (ip2long($server[0]) === false)
             throw new BeanQueueInvalidServerException();

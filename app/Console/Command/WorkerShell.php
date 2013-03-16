@@ -57,6 +57,25 @@ class WorkerShell extends AbstractWorker {
 		//TODO handle the death of a child
 	}
 
+/**
+ * stop function.
+ * Force stop the running instance.
+ */
+	public function stop() {
+		// Setup
+		$options = array(
+			'appName' => 'sourcekettle',
+			'logLocation' => TMP . "logs" . DS . 'sourcekettle.log',
+		);
+
+		System_Daemon::setOptions($options);
+		System_Daemon::stopRunning();
+	}
+
+/**
+ * start function.
+ * Start an instance of the worker.
+ */
 	public function start() {
 		$this->out('Starting Commander...');
 
@@ -102,6 +121,27 @@ class WorkerShell extends AbstractWorker {
 		}
 
 		System_Daemon::stop();
+	}
+
+/**
+ * status function.
+ * Check the status of the daemon
+ */
+	public function status() {
+		// Setup
+		$options = array(
+			'appName' => 'sourcekettle',
+			'logLocation' => TMP . "logs" . DS . 'sourcekettle.log',
+		);
+		System_Daemon::setOptions($options);
+
+		if (System_Daemon::isRunning() == true) {
+			$this->out('Daemon is running');
+			exit(0);
+		} else {
+			$this->out('Daemon is not running');
+			exit(1);
+		}
 	}
 
 	function task($job) {
