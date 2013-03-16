@@ -1,11 +1,15 @@
 <?php
-
-
 /**
- * Description of GitShell
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- * @author Chris
+ * @copyright   SourceKettle Development Team 2013
+ * @link        http://github.com/SourceKettle/sourcekettle
+ * @package     SourceKettle.Console.Command
+ * @since       SourceKettle v 1.0
+ * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 class GitShell extends AppShell {
 
 	public $uses = array('SshKey', 'Project', 'Collaborator');

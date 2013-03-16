@@ -31,18 +31,6 @@ class SshSyncTaskTest extends CakeTestCase {
 		unset($this->Task);
 	}
 
-	public function testCron() {
-		$this->assertEquals('30 seconds', $this->Task->cron());
-	}
-
-	public function testSingleton() {
-		$this->assertEquals(true, SshSyncTask::$singleton);
-	}
-
-	public function testGetTaskId() {
-		$this->assertEquals(1, $this->Task->getTaskId());
-	}
-
 	public function testBuildEmptyKeyString() {
 		$out = "#\n";
 		$out .= "# This file is maintained by SourceKettle\n";

@@ -142,4 +142,4 @@ CakePlugin::load('GoogleChart');
 CakePlugin::load('GitCake');
 CakePlugin::load('TwitterBootswatch');
 CakePlugin::load('LDAPAuthCake');
-CakePlugin::load('CakeDaemon');
+CakePlugin::load('Queue');

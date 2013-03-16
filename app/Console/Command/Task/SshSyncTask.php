@@ -1,14 +1,19 @@
 <?php
-
+/**
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright   SourceKettle Development Team 2013
+ * @link        http://github.com/SourceKettle/sourcekettle
+ * @package     SourceKettle.Console.Command.Task
+ * @since       SourceKettle v 1.0
+ * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 App::uses('File', 'Utility');
 
 class SshSyncTask extends Shell {
 
-	const UPDATEKEYS = 1;
-
-	public static $taskName = 'SshSync';
-
-	public static $singleton = true;
+	public $responsibleFor = array('sync_keys');
 
 	public function buildKeyString($keys = array()) {
 		// We will auto-run our git serve command when the git user logs in, and we should disable any
@@ -35,34 +40,17 @@ class SshSyncTask extends Shell {
 		return $out;
 	}
 
-	public function cron() {
-		return '30 seconds';
-	}
+	function execute($params = array()) {
+		$coreConfig = Configure::read('devtrack');
+		$gitHomedir = $this->getValidHomeDir($coreConfig);
 
-	public function execute($params = array()) {
-		$this->Setting = ClassRegistry::init('Setting');
+		// Get all of the SSH keys from the database
+		$keys = ClassRegistry::init('SshKey')->find('all');
 
-		// Don't bother unless a key's actually been changed...
-		$syncRequired = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
-		if ($syncRequired['Setting']['value'] == 1) {
-			$coreConfig = Configure::read('devtrack');
-			$gitHomedir = $this->getValidHomeDir($coreConfig);
+		$keyString = $this->buildKeyString($keys);
+		$this->__storeKeys($gitHomedir, $keyString);
 
-			// Get all of the SSH keys from the database
-			$keys = ClassRegistry::init('SshKey')->find('all');
-
-			$keyString = $this->buildKeyString($keys);
-			$this->__storeKeys($gitHomedir, $keyString);
-
-			// Don't sync again unless keys have changed
-			$syncRequired['Setting']['value'] = 0;
-			$this->Setting->save($syncRequired);
-		}
 		return true;
-	}
-
-	public function getTaskId() {
-		return 1;
 	}
 
 	public function getValidHomeDir($coreConfig) {
@@ -72,7 +60,7 @@ class SshSyncTask extends Shell {
 
 		// Sanity check #1, fail if the user doesn't exist...
 		if(!$gitDetails){
-			$this->err("Cannot sync keys - git user '$gitUser' does not exist - have you set up DevTrack properly?");
+			$this->err("Cannot sync keys - git user '$gitUser' does not exist - have you set up SourceKettle properly?");
 			exit(1);
 		}
 
@@ -81,7 +69,7 @@ class SshSyncTask extends Shell {
 
 		// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
 		if(!is_dir($gitHomedir)){
-			$this->err("Cannot sync keys - $gitHomedir not found - have you set up DevTrack properly?");
+			$this->err("Cannot sync keys - $gitHomedir not found - have you set up SourceKettle properly?");
 			exit(1);
 		}
 

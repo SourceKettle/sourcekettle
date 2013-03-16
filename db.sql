@@ -159,7 +159,6 @@ CREATE TABLE IF NOT EXISTS `settings` (
 INSERT INTO `settings` (`id`, `name`, `value`, `created`, `modified`) VALUES
 (1, 'register_enabled', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (2, 'sysadmin_email', 'sysadmin@example.com', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(3, 'sync_required', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (4, 'feature_time_enabled', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (5, 'feature_source_enabled', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (6, 'feature_task_enabled', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
