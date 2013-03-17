@@ -102,6 +102,7 @@ class WorkerShell extends AbstractWorker {
 		$this->_log('Starting ' . $this->__numOfWorkers . ' worker(s)');
 		for($i = 1; $i <= $this->__numOfWorkers; $i++) {
 			$this->__childPid[$i] = $this->__spawnWorker($i);
+			sleep(1);
 		}
 
 		// Here we have to do several things
@@ -111,13 +112,7 @@ class WorkerShell extends AbstractWorker {
 			$this->_log('Running periodic checks');
 			//TODO Check that all our children are still ok
 
-			// Sometimes our sleep is inturrupted
-			// This could be by a very noisy owl, or by a completed child process.
-			$timeToSleep = 20;
-			while ($timeToSleep > 0) {
-				$timeToSleep = sleep($timeToSleep);
-			}
-			clearstatcache();
+			$this->_rest();
 		}
 
 		System_Daemon::stop();

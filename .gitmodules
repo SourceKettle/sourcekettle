@@ -24,4 +24,4 @@
 	url = git://github.com/tomglue/system_daemon.git
 [submodule "app/Plugin/Queue"]
 	path = app/Plugin/Queue
-	url = git://github.com/carlipa/cakephp-queue.git
+	url = git://github.com/pwhittlesea/cakephp-queue.git

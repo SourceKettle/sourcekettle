@@ -47,11 +47,12 @@ abstract class AbstractWorker extends AppShell {
 
 		while(true) {
 			// get latest job
-			$job = $this->Beanstalk->reserve();
+			$this->_debug('Attempting to fetch a job.');
+			$job = $this->Beanstalk->reserve_with_timeout(2);
 
 			if(!$job) {
-				// kind of serious error. yet to see this occur.
-				$this->_log('Invalid job found. Not processing.');
+				$this->_debug('No job found. Sleeping.');
+				$this->_rest(5);
 			} else {
 				// announce the job id being processed
 				$job_id = $job->get_jid();
@@ -86,5 +87,20 @@ abstract class AbstractWorker extends AppShell {
 		return true;
 	}
 
+	protected function _debug($message) {
+		if ($this->params['verbose']) {
+			$this->_log($message);
+		}
+	}
+
 	protected function _log($message) { }
+
+	protected function _rest($timeToSleep = 20) {
+		// Sometimes our sleep is inturrupted
+		// This could be by a very noisy owl, or by a completed child process.
+		while ($timeToSleep > 0) {
+			$timeToSleep = sleep($timeToSleep);
+		}
+		clearstatcache();
+	}
 }
