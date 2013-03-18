@@ -76,6 +76,17 @@ class SshSyncTask extends Shell {
 		return $gitHomedir;
 	}
 
+	public function reschedule($lastPassed = true) {
+		$payload = array(
+			'task' => 'sync_keys',
+		);
+		$options = array(
+			'tube' => 'sourcekettle',
+			'delay' => 30
+		);
+		return ClassRegistry::init('Queue.Job')->put($payload, $options);
+	}
+
 	private function __storeKeys($gitHomedir, $keyString) {
 		// Write to the file, making sure we get an exclusive lock to prevent corruption
 		return file_put_contents($gitHomedir . DS . 'authorized_keys', $keyString, LOCK_EX);

@@ -148,7 +148,11 @@ class WorkerShell extends AbstractWorker {
 			$task = $this->{$task};
 			foreach ($task->responsibleFor as $responsibility) {
 				if ($responsibility == $job['task']) {
-					return $task->execute($job);
+					$response = $task->execute($job);
+					if (method_exists($task, 'reschedule')) {
+						$task->reschedule($response);
+					}
+					return $response;
 				}
 			}
 		}
