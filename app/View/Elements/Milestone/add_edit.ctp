@@ -15,8 +15,13 @@
 
         echo "<br>";
 
+		$due_date = date('Y-m-d', time());
+		if(isset($this->data['Milestone']['due'])){
+			$due_date = $this->data['Milestone']['due'];
+		}
+
         echo $this->Bootstrap->input("due", array(
-            "input" => $this->Form->text("due", array("class" => "dp1", "value" => date('Y-m-d', time()), "data-date-format" => "yyyy-mm-dd")),
+            "input" => $this->Form->text("due", array("class" => "dp1", "value" => $due_date, "data-date-format" => "yyyy-mm-dd")),
             "label" => $this->DT->t('form.due.label'),
             "help_block" => $this->DT->t('form.due.help')
         ));
