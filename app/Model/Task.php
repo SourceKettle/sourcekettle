@@ -58,7 +58,7 @@ class Task extends AppModel {
 				'rule' => array('notempty'),
 			),
 			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,5,6,'1','2','3','4','5','6')),
+				'rule' => array('inlist', array(1,2,3,4,5,6,7,8,'1','2','3','4','5','6','7','8')),
 				'message' => 'Select a task type',
 			),
 		),

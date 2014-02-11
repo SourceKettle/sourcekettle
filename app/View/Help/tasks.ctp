@@ -147,6 +147,16 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage tasks?</small>'
                   <input type="checkbox" name="data[wontfix]"  value="6" checked="checked" id="wontfix"/>
                   wontfix
                 </div>
+                <div class="tasktype label label-info">
+                  <input type="hidden" name="data[documentation]" id="documentation_" value="0"/>
+                  <input type="checkbox" name="data[documentation]"  value="7" checked="checked" id="documentation"/>
+                  documentation
+                </div>
+                <div class="tasktype label label-info">
+                  <input type="hidden" name="data[meeting]" id="meeting_" value="0"/>
+                  <input type="checkbox" name="data[meeting]"  value="8" checked="checked" id="meeting"/>
+				  meeting
+                </div>
             </div>
 
         </div>
