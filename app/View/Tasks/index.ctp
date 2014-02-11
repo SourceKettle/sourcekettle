@@ -132,6 +132,8 @@ $this->Html->scriptBlock("
                                     <div class="tasktype label"><?= $this->Form->checkbox('invalid', array('value'=>4,'checked'=>true)) ?> invalid</div>
                                     <div class="tasktype label label-info"><?= $this->Form->checkbox('question', array('value'=>5,'checked'=>true)) ?> question</div>
                                     <div class="tasktype label label-inverse"><?= $this->Form->checkbox('wontfix', array('value'=>6,'checked'=>true)) ?> wontfix</div>
+                                    <div class="tasktype label label-info"><?= $this->Form->checkbox('documentation', array('value'=>7,'checked'=>true)) ?> documentation</div>
+                                    <div class="tasktype label label-info"><?= $this->Form->checkbox('meeting', array('value'=>8,'checked'=>true)) ?> meeting</div>
                                 </div>
                             </div>
                             <hr>
