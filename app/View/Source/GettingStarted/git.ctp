@@ -67,6 +67,11 @@ git push -u origin master</pre>
 git remote add origin <?= $devtrack_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= h($project['Project']['name']) ?>.git
 git push -u origin master</pre>
                 <p><?= $this->Bootstrap->label('Not sure?', 'warning') ?> If you don't quite get some of the commands above, head over to the Git documentation at <?= $this->Html->link('http://git-scm.com/docs', 'http://git-scm.com/docs') ?></p>
+
+                <h4><?= $this->Bootstrap->label('2c', 'info', array('style'=>'font-size:18px')) ?> Need to check out your code?</h4>
+				<p>
+				<pre>git checkout <?= $devtrack_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= h($project['Project']['name']) ?>.git</pre>
+				</p>
             </div>
 
             <div class="well span9">

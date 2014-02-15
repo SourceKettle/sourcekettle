@@ -97,6 +97,8 @@ $this->Html->scriptBlock ("
                                 4 => '<div class="tasktype label">invalid</div>',
                                 5 => '<div class="tasktype label label-info">question</div>',
                                 6 => '<div class="tasktype label label-inverse">wontfix</div>',
+                                7 => '<div class="tasktype label label-info">documentation</div>',
+                                8 => '<div class="tasktype label label-info">meeting</div>',
                             ),
                             "label" => false,
                             "control" => false

@@ -108,6 +108,8 @@ class TaskHelper extends AppHelper {
 			4 => '',
 			5 => 'info',
 			6 => 'inverse',
+			7 => 'info',
+			8 => 'info',
 		);
 		$text = array(
 			1 => 'bug',
@@ -116,6 +118,8 @@ class TaskHelper extends AppHelper {
 			4 => 'invalid',
 			5 => 'question',
 			6 => 'wontfix',
+			7 => 'documentation',
+			8 => 'meeting',
 		);
 		return $this->Bootstrap->label($text[$id], $colour[$id]);
 	}

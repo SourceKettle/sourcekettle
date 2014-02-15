@@ -35,7 +35,7 @@ echo $this->Bootstrap->page_header('Help! <small>What do all the project icons m
 			<div class="offset1 span5">
 				<div class="well project-well">
 					<h3 class="project-title">
-						<a href="#" class="project-link">SuperSect3t</a>
+						<a href="#" class="project-link">SuperSecr3t</a>
 						<span style="float: right;"><i class="icon-lock"></i></span>
 					</h3>
 					<p class="project-desc">A very secret project that you shouldn't tell anyone about.</p>

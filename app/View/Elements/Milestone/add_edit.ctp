@@ -15,12 +15,16 @@
 
         echo "<br>";
 
+		// If we have a due date use it, otherwise default to 1 week in the future
+		$due_date = date('Y-m-d', time() + (7 * 24 * 60 * 60));
+		if(isset($this->data['Milestone']['due'])){
+			$due_date = $this->data['Milestone']['due'];
+		}
+
         echo $this->Bootstrap->input("due", array(
             "input" => $this->Form->text("due", array(
                 "class" => "dp1",
-                "value" => isset($this->request->data['Milestone'])
-                    ? $this->request->data['Milestone']['due']
-                    : date('Y-m-d', time()),
+				"value" => $due_date,
                 "data-date-format" => "yyyy-mm-dd")
             ),
             "label" => $this->DT->t('form.due.label'),
