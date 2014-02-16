@@ -1,18 +1,18 @@
 #!/bin/bash
 
 
-# git setup script for the DevTrack system
-# Sets up the git user to work with DevTrack
-# Creates the user with appropriate settings, creates the SSH key files and 
+# git setup script for the SourceKettle system
+# Sets up the git user to work with SourceKettle
+# Creates the user with appropriate settings, creates the SSH key files and
 # adds the webserver user to the git group so it can view repositories
 #
 # Licensed under The MIT License
 # Redistributions of files must retain the above copyright notice.
 #
-# @copyright     DevTrack Development Team 2012
-# @link          http://github.com/SourceKettle/devtrack
-# @package       DevTrack.scm-scripts
-# @since         DevTrack v 0.1
+# @copyright     SourceKettle Development Team 2012
+# @link          http://github.com/SourceKettle/sourcekettle
+# @package       SourceKettle.scm-scripts
+# @since         SourceKettle v 0.1
 # @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 # Firstly we create the git user.
@@ -79,7 +79,7 @@ do
 	if [ -z $WWW_USER ]; then
 		WWW_USER=$DEFAULT_WWW_USER
 	fi
-    if [ -z "$(getent passwd $WWW_USER)" ] 
+    if [ -z "$(getent passwd $WWW_USER)" ]
     then
             echo "$(tput setaf 1) Error. The given user does not exist. Please try again.$(tput sgr0)"
     else
@@ -144,24 +144,24 @@ sudo -H -u $GIT_USER chmod 0600 /home/$GIT_USER/.ssh/authorized_keys
 echo "$(tput setaf 2) Done!$(tput sgr0)"
 
 
-### Create devtrack group and add git user + webserver user ###
+### Create sourcekettle group and add git user + webserver user ###
 
 
-echo "Creating devtrack group..."
-if [ -z "$(getent group devtrack)" ]
+echo "Creating sourcekettle group..."
+if [ -z "$(getent group sourcekettle)" ]
 then
-	groupadd --system devtrack
+	groupadd --system sourcekettle
 else
 	echo
-	echo "The devtrack group already exists, skipping..."
+	echo "The sourcekettle group already exists, skipping..."
 fi
 
 
-echo "Adding webserver user $WWW_USER to devtrack group..."
-usermod -aG devtrack $WWW_USER
+echo "Adding webserver user $WWW_USER to sourcekettle group..."
+usermod -aG sourcekettle $WWW_USER
 
-echo "Adding git user to devtrack group..."
-usermod -aG devtrack $GIT_USER 
+echo "Adding git user to sourcekettle group..."
+usermod -aG sourcekettle $GIT_USER
 echo "$(tput setaf 2) Done!$(tput sgr0)"
 
 
@@ -188,7 +188,7 @@ fi
 
 echo "Creating repository directory [$REPO_DIR] and setting permissions..."
 mkdir -p $REPO_DIR
-chown -R $GIT_USER:devtrack $REPO_DIR
+chown -R $GIT_USER:sourcekettle $REPO_DIR
 chmod -R g+rwxs $REPO_DIR
 
 echo "$(tput setaf 2) Done!$(tput sgr0)"
