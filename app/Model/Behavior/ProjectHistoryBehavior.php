@@ -79,7 +79,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
         $this->_cache[$Model->name][$Model->id] = array();
 
         foreach ($Model->data[$Model->name] as $field => $value) {
-            if ($field != 'modified' && $before[$Model->name][$field] != $value) {
+            if (isset($before[$Model->name]) && $field != 'modified' && $before[$Model->name][$field] != $value) {
                 $this->_cache[$Model->name][$Model->id][$field] = $before[$Model->name][$field];
             }
         }

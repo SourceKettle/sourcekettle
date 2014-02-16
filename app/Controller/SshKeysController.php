@@ -59,8 +59,9 @@ class SshKeysController extends AppController {
 				throw new ForbiddenException(__('Ownership required'));
 			}
 
+			$comment = $this->SshKey->field('comment');
 			$this->Flash->setUp();
-			if ($this->Flash->d($this->SshKey->delete())) {
+			if ($this->Flash->d($this->SshKey->delete(), $comment)) {
 				$this->log("[UsersController.deletekey] sshkey[" . $id . "] deleted by user[" . $this->Auth->user('id') . "]", 'devtrack');
 				$this->Setting->syncRequired(); // Update the sync required flag
 			}

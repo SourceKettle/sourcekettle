@@ -79,7 +79,7 @@ class TimesController extends AppProjectController {
 		$time = $this->Time->open($id, true);
 
 		$this->Flash->setUp();
-		$this->Flash->d($this->Time->delete());
+		$this->Flash->d($this->Time->delete(), $time['Time']['id']);
 		$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 	}
 

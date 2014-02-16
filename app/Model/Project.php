@@ -123,16 +123,20 @@ class Project extends AppModel {
 	);
 
 	public function beforeDelete($cascade = true) {
-		$location = $this->Source->getRepositoryLocation();
-		if ($location == null || !is_dir($location)) {
-			return true;
-		}
-		$folder = new Folder($location);
-		if ($folder->delete()) {
-			// Successfully deleted project and its nested folders
-			return true;
+		if ($this->Source->getType() != null) {
+			$location = $this->Source->getRepositoryLocation();
+			if ($location == null || !is_dir($location)) {
+				return true;
+			}
+			$folder = new Folder($location);
+			if ($folder->delete()) {
+				// Successfully deleted project and its nested folders
+				return true;
+			} else {
+				return false;
+			}
 		} else {
-			return false;
+			return true;
 		}
 	}
 

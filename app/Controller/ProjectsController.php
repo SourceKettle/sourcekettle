@@ -261,7 +261,7 @@ class ProjectsController extends AppProjectController {
 		$this->Flash->setUp();
 
 		if ($this->request->is('post')) {
-			if ($this->Flash->d($this->Project->delete())) {
+			if ($this->Flash->d($this->Project->delete(), $project['Project']['name'])) {
 				$this->redirect(array('action' => 'index'));
 			}
 		}
@@ -284,7 +284,7 @@ class ProjectsController extends AppProjectController {
 			throw new MethodNotAllowedException();
 		}
 
-		$this->Flash->d($this->Project->delete());
+		$this->Flash->d($this->Project->delete(), $project['Project']['name']);
 		$this->redirect(array('action' => 'admin_index'));
 	}
 
