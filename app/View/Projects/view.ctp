@@ -32,9 +32,9 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
 
                         <? $more_link = '... <span id="view_more_button">' .$this->Html->link('Read More', '#') . '</span>'; ?>
 
-                        <?= $this->Text->truncate(h($project['Project']['description']), 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
+                        <?= $this->Text->truncate($this->Markitup->parse($project['Project']['description']), 100, array('ending' => $more_link, 'exact' => false, 'html' => true)) ?>
                         <div id='full_description'>
-                            <?= h($project['Project']['description']) ?>
+                            <?= $this->Markitup->parse($project['Project']['description']) ?>
                         </div>
                     </div>
                 <?}?>
