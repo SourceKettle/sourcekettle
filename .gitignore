@@ -1,20 +1,23 @@
 tmp/*
-config/database.php
 app/tmp/*
+
+### Config files need to be ignored
+app/Config/sourcekettle.php
+app/Config/global.php
 app/Config/database.php
 app/Config/homepage.php
+
 !empty
 nbproject/
 *.DS_Store
 build.*
-### /home/je5g09/.gitignore-boilerplates/Global/vim.gitignore
+### .gitignore-boilerplates/Global/vim.gitignore
 
 .*.sw[a-z]
 *.un~
 Session.vim
 
-
-### /home/je5g09/.gitignore-boilerplates/Global/Emacs.gitignore
+### .gitignore-boilerplates/Global/Emacs.gitignore
 
 *~
 \#*\#
@@ -29,7 +32,7 @@ tramp
 .org-id-locations
 *_archive
 
-### /home/je5g09/.gitignore-boilerplates/Global/OSX.gitignore
+### .gitignore-boilerplates/Global/OSX.gitignore
 
 .DS_Store
 
@@ -40,7 +43,7 @@ tramp
 .Spotlight-V100
 .Trashes
 
-### /home/je5g09/.gitignore-boilerplates/Global/Linux.gitignore
+### .gitignore-boilerplates/Global/Linux.gitignore
 
 .*
 !.gitignore
@@ -49,8 +52,7 @@ tramp
 # KDE
 .directory
 
-
-### /home/je5g09/.gitignore-boilerplates/Global/Windows.gitignore
+### .gitignore-boilerplates/Global/Windows.gitignore
 
 # Windows image file caches
 Thumbs.db
@@ -60,5 +62,3 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
-
-

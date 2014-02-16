@@ -19,6 +19,19 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+// Import the overrides file.
+// If this does not exist then the user has no overridden the defined defaults.
+// We prefer if the user places overrides in /etc
+if (is_readable('/etc/sourcekettle/global.php')) {
+	include_once '/etc/sourcekettle/global.php';
+	$sk_core_overrides = true;
+} else if (is_readable(dirname(__FILE__) . '/global.php')) {
+	include_once 'global.php';
+	$sk_core_overrides = true;
+} else {
+	$sk_core_overrides = false;
+}
+
 /**
  * CakePHP Debug Level:
  *
@@ -32,7 +45,11 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', 2);
+	$sk_core_debug_level = 2;
+	if (isset($sk_core_overrides, $DEBUG_LEVEL)) {
+		$sk_core_debug_level = $DEBUG_LEVEL;
+	}
+	Configure::write('debug', $sk_core_debug_level);
 
 /**
  * Configure the Error handler used to handle errors for your application.  By default
@@ -186,12 +203,20 @@ Configure::write('Routing.prefixes', array('admin', 'api', 'ajax'));
 /**
  * A random string used in security hashing methods.
  */
-	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
+	$sk_salt = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
+	if (isset($sk_core_overrides, $SALT)) {
+		$sk_salt = $SALT;
+	}
+	Configure::write('Security.salt', $sk_salt);
 
 /**
  * A random numeric string (digits only) used to encrypt/decrypt strings.
  */
-	Configure::write('Security.cipherSeed', '76859309657453542496749683645');
+	$sk_cipherSeed = '76859309657453542496749683645';
+	if (isset($sk_core_overrides, $CIPHERSEED)) {
+		$sk_cipherSeed = $CIPHERSEED;
+	}
+	Configure::write('Security.cipherSeed', $sk_cipherSeed);
 
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).
@@ -254,6 +279,9 @@ if (Configure::read('debug') >= 1) {
 
 // Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
 $prefix = 'devtrack_';
+if (isset($sk_core_overrides, $CACHE_PREFIX)) {
+	$prefix = $CACHE_PREFIX;
+}
 
 /**
  * Configure the cache used for general framework caching.  Path information,
