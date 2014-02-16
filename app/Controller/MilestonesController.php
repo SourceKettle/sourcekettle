@@ -58,6 +58,18 @@ class MilestonesController extends AppProjectController {
 			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
 			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
 			$cTasks = $this->Milestone->closedTasksForMilestone($x);
+			$dPoints = 0;
+			foreach (array_merge($rTasks, $cTasks) as $task) {
+				if ($task['Task']['story_points'] != null) {
+					$dPoints += $task['Task']['story_points'];
+				}
+			}
+			$tPoints = $dPoints;
+			foreach (array_merge($oTasks, $iTasks) as $task) {
+				if ($task['Task']['story_points'] != null) {
+					$tPoints += $task['Task']['story_points'];
+				}
+			}
 
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
@@ -66,6 +78,8 @@ class MilestonesController extends AppProjectController {
 			$milestone['Milestone']['iTasks'] = count($iTasks);
 			$milestone['Milestone']['rTasks'] = count($rTasks);
 			$milestone['Milestone']['oTasks'] = count($oTasks);
+			$milestone['Milestone']['tPoints'] = $tPoints;
+			$milestone['Milestone']['dPoints'] = $dPoints;
 
 			$milestones[$x] = $milestone;
 		}

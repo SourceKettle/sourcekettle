@@ -86,6 +86,11 @@ class Task extends AppModel {
 				'message' => 'Select a task priority',
 			),
 		),
+		'story_points' => array(
+			'numeric' => array(
+				'rule' => array('numeric'),
+			),
+		),
 		'subject' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),

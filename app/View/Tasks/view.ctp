@@ -37,7 +37,7 @@ $this->Html->scriptBlock("
 echo $this->element('Task/modal_close');
 
 if ($task['Task']['task_status_id'] ==  1 || $task['Task']['task_status_id'] ==  2){
-    echo $this->element('Task/modal_resolve'); 
+    echo $this->element('Task/modal_resolve');
 } else if ($task['Task']['task_status_id'] ==  3){
     echo $this->element('Task/modal_unresolve');
 }
@@ -67,31 +67,37 @@ echo $this->element('Task/modal_assign');
                     </div>
                     <div class="span11">
                         <div class="well col">
-                            <h5>
-                                <?= $this->Bootstrap->icon('pencil') ?>
-                                <small>
-                                    <?= h($task['Owner']['name']) ?>
-                                    <?= $this->DT->t('history.create.action') ?>
-                                    <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
-                                </small>
-                                <span class="pull-right">
-                                    <? if (!is_null($task['Assignee']['id'])) : ?>
-                                        <?= $this->DT->t('history.assignee.assigned') ?>
-                                        <?= $this->Html->link(
-                                            $task['Assignee']['name'],
-                                            array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
-                                        ) ?>
-                                        <?= $this->Html->link(
-                                            $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm', 's' => 24)),
-                                            array('controller' => 'users', 'action' => 'view', $task['Assignee']['id']),
-                                            array('escape' => false, 'class' => '')
-                                        ) ?>
-                                    <? else : ?>
-                                        <?= $this->DT->t('history.assignee.none') ?>
-                                    <? endif; ?>
-                                </span>
-                            </h5>
-                            <h3><?= h($task['Task']['subject']) ?></h3>
+                            <div class="row-fluid">
+                                <h5>
+                                    <?= $this->Bootstrap->icon('pencil') ?>
+                                    <small>
+                                        <?= h($task['Owner']['name']) ?>
+                                        <?= $this->DT->t('history.create.action') ?>
+                                        <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
+                                    </small>
+                                    <span class="pull-right">
+                                        <? if (!is_null($task['Assignee']['id'])) : ?>
+                                            <?= $this->DT->t('history.assignee.assigned') ?>
+                                            <?= $this->Html->link(
+                                                $task['Assignee']['name'],
+                                                array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
+                                            ) ?>
+                                            <?= $this->Html->link(
+                                                $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm', 's' => 24)),
+                                                array('controller' => 'users', 'action' => 'view', $task['Assignee']['id']),
+                                                array('escape' => false, 'class' => '')
+                                            ) ?>
+                                        <? else : ?>
+                                            <?= $this->DT->t('history.assignee.none') ?>
+                                        <? endif; ?>
+                                    </span>
+                                </h5>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <h3><?= h($task['Task']['subject']) ?></h3>
+                                </div>
+                            </div>
                             <hr />
 
                             <?= $this->element('Task/View/section_details') ?>
@@ -137,7 +143,7 @@ echo $this->element('Task/modal_assign');
                             <?php
                             echo $this->Form->create('TaskComment', array('class' => 'form'));
 
-							echo $this->Bootstrap->input("comment", array( 
+							echo $this->Bootstrap->input("comment", array(
 								"input" => $this->Markitup->editor("comment", array(
 									"class" => "span11",
 									"label" => false,

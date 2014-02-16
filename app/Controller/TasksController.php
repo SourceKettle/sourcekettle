@@ -45,12 +45,12 @@ class TasksController extends AppProjectController {
 			'api_view'
 		);
 
-        $this->Security->unlockedActions = array (
-            "starttask",
-            "stoptask",
-            "resolve",
-            "unresolve"
-        );
+		$this->Security->unlockedActions = array (
+			"starttask",
+			"stoptask",
+			"resolve",
+			"unresolve"
+		);
 	}
 
 /**
@@ -382,8 +382,6 @@ class TasksController extends AppProjectController {
 				'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
 				'fields' => array('Task.id', 'Task.subject'),
 			));
-
-			$this->Task->bindModel(array('hasOne' => array('TaskDependency')));
 
 			$this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
 		}

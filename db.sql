@@ -315,6 +315,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `task_priority_id` int(10) NOT NULL,
   `assignee_id` int(10) NULL DEFAULT NULL,
   `milestone_id` int(10) NULL DEFAULT NULL,
+  `story_points` int(10) DEFAULT NULL,
   `subject` varchar(50) NOT NULL,
   `description` text,
   `created` datetime NOT NULL,
