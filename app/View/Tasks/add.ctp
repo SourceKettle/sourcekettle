@@ -72,15 +72,14 @@ $this->Html->scriptBlock ("
                             "label" => $this->DT->t('form.milestone.label').' '.$this->Bootstrap->icon('road'),
                         ));
 
-                        echo $this->Bootstrap->input("description", array(
-                            "input" => $this->Form->input("description", array(
-                                "type" => "textarea",
-                                "class" => "span12",
-                                "label" => false,
-                                "placeholder" => $this->DT->t('form.description.placeholder')
-                            )),
-                            "label" => $this->DT->t('form.description.label'),
-                        ));
+						echo $this->Bootstrap->input("description", array( 
+							"input" => $this->Markitup->editor("description", array(
+								"class" => "span7",
+								"label" => false,
+								"placeholder" => $this->DT->t('form.description.placeholder')
+							)),
+							"label" => false,
+						));
 
                         echo $this->Bootstrap->button($this->DT->t('form.submit'), array("style" => "primary", 'class' => 'controls'));
                         ?>
