@@ -137,14 +137,14 @@ echo $this->element('Task/modal_assign');
                             <?php
                             echo $this->Form->create('TaskComment', array('class' => 'form'));
 
-                            echo $this->Bootstrap->input("comment", array(
-                                "input" => $this->Form->textarea("comment", array(
-                                    "class" => "span12",
-                                    "rows" => 5,
-                                    "placeholder" => $this->DT->t('history.newcomment.placeholder')
-                                )),
-                                "label" => false,
-                            ));
+							echo $this->Bootstrap->input("comment", array( 
+								"input" => $this->Markitup->editor("comment", array(
+									"class" => "span11",
+									"label" => false,
+									"placeholder" => $this->DT->t('history.newcomment.placeholder')
+								)),
+								"label" => false,
+							));
 
                             echo $this->Bootstrap->button($this->DT->t('history.newcomment.submit'), array("style" => "primary", 'class' => 'controls'));
                             echo $this->Form->end();

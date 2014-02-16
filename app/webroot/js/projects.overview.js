@@ -14,6 +14,6 @@
 
 $(document).ready(function(){
   $('#view_more_button a').click(function(){
-    $('#project_description').text($('#full_description').text());
+    $('#project_description').html($('#full_description').html());
   });
 });
