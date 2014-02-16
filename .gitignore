@@ -4,6 +4,7 @@ app/tmp/*
 ### Config files need to be ignored
 app/Config/sourcekettle.php
 app/Config/global.php
+app/Config/devtrack.php
 app/Config/database.php
 app/Config/homepage.php
 
