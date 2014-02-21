@@ -389,7 +389,12 @@ class TasksController extends AppProjectController {
 				'fields' => array('Task.id', 'Task.subject'),
 			));
 
-			$this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
+			$assignees = array("0" => "(Nobody)");
+			foreach ($this->Project->Collaborator->find('all') as $collaborator){
+				$assignees[ $collaborator['User']['id'] ] = $collaborator['User']['name'];
+			}
+
+			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
 	}
 

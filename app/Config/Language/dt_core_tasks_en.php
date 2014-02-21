@@ -120,6 +120,7 @@ $config['dtcore']['pages']['tasks']['edit']['en']['form.description.label'] = "D
 $config['dtcore']['pages']['tasks']['edit']['en']['form.description.placeholder'] = "Longer and more descriptive explanation...";
 $config['dtcore']['pages']['tasks']['edit']['en']['form.type.label'] = "Issue Type";
 $config['dtcore']['pages']['tasks']['edit']['en']['form.priority.label'] = "Priority";
+$config['dtcore']['pages']['tasks']['edit']['en']['form.assignee.label'] = "Assigned to";
 $config['dtcore']['pages']['tasks']['edit']['en']['form.dependent_tasks.label'] = "Depends on";
 $config['dtcore']['pages']['tasks']['edit']['en']['form.milestone.label'] = "Milestone";
 $config['dtcore']['pages']['tasks']['edit']['en']['form.submit'] = "Submit";

@@ -54,6 +54,15 @@ $this->Html->scriptBlock ("
                             "label" => $this->DT->t('form.priority.label'),
                         ));
 
+                        echo $this->Bootstrap->input("assignee_id", array(
+                            "input" => $this->Form->input("assignee_id", array(
+                                "label"   => false,
+                                "default" => "2",
+                                "class"   => "span3",
+                            )),
+                            "label" => $this->DT->t('form.assignee.label'),
+                        ));
+
                         echo $this->Bootstrap->input("story_points", array(
                             "input" => $this->Form->input("story_points", array(
                                 "label" => false,
