@@ -351,7 +351,7 @@ if create_db:
 
     print "Creating database schema..."
 
-    sql_file = abspath(dirname(__file__)+'/../db.sql')
+    sql_file = abspath(dirname(__file__)+'/../app/Config/Schema/sourcekettle_db.sql')
     print "Importing from "+str(sql_file)
 
     sql_obj = open(sql_file, 'r')
