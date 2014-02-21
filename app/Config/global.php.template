@@ -32,12 +32,12 @@ $DEBUG_LEVEL = 1;
 /**
  * A random string used in security hashing methods.
  */
-$SALT = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
+$SALT = '__SALT__';
 
 /**
  * A random numeric string (digits only) used to encrypt/decrypt strings.
  */
-$CIPHERSEED = '76859309657453542496749683645';
+$CIPHERSEED = '__SEED__';
 
 // Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
 $CACHE_PREFIX = '_sourcekettle';

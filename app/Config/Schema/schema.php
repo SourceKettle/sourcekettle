@@ -1,13 +1,83 @@
 <?php 
+App::uses('ClassRegistry', 'Utility');
 class AppSchema extends CakeSchema {
 
-	public $file = 'schema_6.php';
+	public $file = 'schema.php';
 
 	public function before($event = array()) {
+		$db = ConnectionManager::getDataSource($this->connection);
+		$db->cacheSources = false;
 		return true;
 	}
 
 	public function after($event = array()) {
+
+		if (isset($event['create'])) {
+			echo "Event created: ".$event['create']."\n";
+			switch ($event['create']) {
+				case 'settings':
+					$setting = ClassRegistry::init('Setting');
+					$setting->create();
+					$setting->saveMany(array(
+						array('name' => 'register_enabled',           'value' => '1'),
+						array('name' => 'sysadmin_email',             'value' => 'sysadmin@example.com'),
+						array('name' => 'sync_required',              'value' => '0'),
+						array('name' => 'feature_time_enabled',       'value' => '1'),
+						array('name' => 'feature_source_enabled',     'value' => '1'),
+						array('name' => 'feature_task_enabled',       'value' => '1'),
+						array('name' => 'feature_attachment_enabled', 'value' => '0')
+					));
+					break;
+
+				case 'repo_types':
+					$type = ClassRegistry::init('RepoType');
+					$type->create();
+					$type->saveMany( array(
+						array('name' => 'None'),
+						array('name' => 'Git'),
+						array('name' => 'SVN')
+					));
+					break;
+
+				case 'task_types':
+					$type = ClassRegistry::init('TaskType');
+					$type->create();
+					$type->saveMany( array('TaskType' => array(
+						array('name' => 'bug'),
+						array('name' => 'duplicate'),
+						array('name' => 'enhancement'),
+						array('name' => 'invalid'),
+						array('name' => 'question'),
+						array('name' => 'wontfix'),
+						array('name' => 'documentation'),
+						array('name' => 'meeting')
+					)));
+					break;
+
+				case 'task_statuses':
+					$status = ClassRegistry::init('TaskStatus');
+					$status->create();
+					$status->saveMany( array('TaskStatus' => array(
+						array('name' => 'open'),
+						array('name' => 'in progress'),
+						array('name' => 'resolved'),
+						array('name' => 'closed')
+					)));
+					break;
+
+				case 'task_priorities':
+					$prio = ClassRegistry::init('TaskPriority');
+					$prio->create();
+					$prio->saveMany( array('TaskPriority' => array(
+						array('name' => 'minor'),
+						array('name' => 'major'),
+						array('name' => 'urgent'),
+						array('name' => 'blocker')
+					)));
+					break;
+
+			}
+		}
 	}
 
 	public $api_keys = array(

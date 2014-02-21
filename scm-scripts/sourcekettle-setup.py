@@ -35,7 +35,9 @@ if str(current_user) != 'root':
     print "Error - this script must be run as root (try using sudo)"
     sys.exit(1)
 
-
+# Run everything from within the app directory for simplicity,
+# also because the cake shell requires it
+os.chdir(abspath(dirname(__file__)+'/../app'))
 
 # Default values for everything we need to know,
 # so the user can basically thump return a lot and
@@ -337,40 +339,21 @@ for i in range(15):
 
 print "I have auto-generated a database password for you (%s)" % (db_pass)
 
+# Also generate a random salt (alphanumeric) and seed (numeric)
+salt = ''
+seed = ''
+for i in range(48):
+    salt += choice(chars)
+    seed += choice(string.digits)
+
+print "I have also auto-generated a random salt and cipher seed for your application."
+print "NOTE: I have used the system's pseudo-random number generator, it's probably fine unless you're storing highly classified information. If you're worried, change them now."
+
 c.execute("GRANT ALL ON `%s`.* TO `%s`@`%s` IDENTIFIED BY '%s'" % (db_name, db_name, gethostname(), db_pass))
 
 # If the database server is running locally, also grant to localhost
 if db_host.lower() == 'localhost':
     c.execute("GRANT ALL ON `%s`.* TO `%s`@`localhost` IDENTIFIED BY '%s'" % (db_name, db_name, db_pass))
-
-if create_db:
-    print "Creating SourceKettle database..."
-    c=dbc.cursor()
-    c.execute('CREATE DATABASE `%s`' % db_name)
-
-
-    print "Creating database schema..."
-
-    sql_file = abspath(dirname(__file__)+'/../app/Config/Schema/sourcekettle_db.sql')
-    print "Importing from "+str(sql_file)
-
-    sql_obj = open(sql_file, 'r')
-    if not sql_obj:
-        print "Error importing database schema from %s!" % sql_file
-
-    # So, yeeeah, this is much easier than 'cat db.sql | mysql' ...
-    import_cmd = 'mysql %s -h %s -u %s --password=%s' % (db_name, db_host, db_name, db_pass)
-
-    try:
-        p = subprocess.Popen(shlex.split(import_cmd), stdin=subprocess.PIPE)
-    except subprocess.CalledProcessError:
-        bail("Failed to load database schema")
-
-    line = sql_obj.readline()
-    while line:
-        p.stdin.write(line)
-        line = sql_obj.readline()
-
 
 
 print "Creating user and group..."
@@ -446,8 +429,8 @@ chmod_r(repo_dir, stat.S_IRWXU | stat.S_ISGID)
 
 print "Building SourceKettle config files..."
 
-config_template = abspath(dirname(__file__)+'/../app/Config/devtrack.php.template')
-config_file     = abspath(dirname(__file__)+'/../app/Config/devtrack.php')
+config_template = './Config/devtrack.php.template'
+config_file     = './Config/devtrack.php'
 
 config_tpl = open(config_template, 'r')
 if not config_tpl:
@@ -467,8 +450,8 @@ while line:
 config_tpl.close()
 config.close()
 
-db_template = abspath(dirname(__file__)+'/../app/Config/database.php.template')
-db_file     = abspath(dirname(__file__)+'/../app/Config/database.php')
+db_template = './Config/database.php.template'
+db_file     = './Config/database.php'
 
 db_tpl = open(db_template, 'r')
 if not db_tpl:
@@ -489,8 +472,8 @@ while line:
 db_tpl.close()
 db.close()
 
-core_template = abspath(dirname(__file__)+'/../app/Config/global.php.template')
-core_file     = abspath(dirname(__file__)+'/../app/Config/global.php')
+core_template = './Config/global.php.template'
+core_file     = './Config/global.php'
 
 core_tpl = open(core_template, 'r')
 if not core_tpl:
@@ -502,11 +485,35 @@ if not core:
 
 line = core_tpl.readline()
 while line:
+    line = line.replace('__SALT__', salt)
+    line = line.replace('__SEED__', seed)
     core.write(line)
     line = core_tpl.readline()
 
 core_tpl.close()
 core.close()
+
+# Must create the schema AFTER we have generated the config
+if create_db:
+    print "Creating SourceKettle database..."
+    c=dbc.cursor()
+    c.execute('CREATE DATABASE `%s`' % db_name)
+
+
+    print "Creating database schema..."
+    schema_cmd = './Console/cake schema create'
+
+    try:
+        # Oh dear, what a fudge :-(
+        # It seems that the cake shell doesn't have a "don't ask questions" option.
+        yes = subprocess.Popen(shlex.split("/bin/echo -ne 'y\\ny\\n'"), stdout=subprocess.PIPE)
+        schema = subprocess.Popen(shlex.split(schema_cmd), stdin=yes.stdout, stdout=subprocess.PIPE)
+        output = schema.communicate()[0]
+
+        print "Schema output: %s" % output
+    except subprocess.CalledProcessError:
+        bail("Failed to load database schema")
+
 
 print "Setup complete!"
 print "Your auto-generated MySQL password is: '%s'" % db_pass
