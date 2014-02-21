@@ -46,19 +46,28 @@ $this->Html->scriptBlock ("
 
                         echo $this->Bootstrap->input("task_priority_id", array(
                             "input" => $this->Form->input("task_priority_id", array(
-                                "label" => false,
+                                "label"   => false,
                                 "default" => "2",
-                                "class" => "span3"
+                                "class"   => "span3"
                             )),
                             "label" => $this->DT->t('form.priority.label'),
                         ));
 
+                        echo $this->Bootstrap->input("assignee_id", array(
+                            "input" => $this->Form->input("assignee_id", array(
+                                "label"   => false,
+                                "default" => "2",
+                                "class"   => "span3",
+                            )),
+                            "label" => $this->DT->t('form.assignee.label'),
+                        ));
+
                         echo $this->Bootstrap->input("DependsOn.DependsOn", array(
                             "input" => $this->Form->input("DependsOn.DependsOn", array(
-                                "label" => false,
-                                "class" => "span6",
+                                "label"    => false,
+                                "class"    => "span6",
                                 "multiple" => "multiple",
-                                "options" => $availableTasks, 
+                                "options"  => $availableTasks, 
                             )),
                             "label" => $this->DT->t('form.dependent_tasks.label').' '.$this->Bootstrap->icon('tasks'),
 							"help_block" => "<a href='#' id='unselect-all'>Unselect All</a>"

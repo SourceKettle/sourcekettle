@@ -25,6 +25,8 @@ class TasksController extends AppProjectController {
  */
 	public $helpers = array('Time', 'Task');
 
+	public $uses = array('Task', 'Project');
+
 /**
  * Components
  *
@@ -338,9 +340,14 @@ class TasksController extends AppProjectController {
 
 		$availableTasks = $this->Task->find('list', array(
 			'conditions' => array('project_id =' => $project['Project']['id']),
-			'fields' => array('Task.id', 'Task.subject'),
+			'fields'     => array('Task.id', 'Task.subject'),
 		));
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
+
+		$assignees = array("0" => "(Nobody)");
+		foreach ($this->Project->Collaborator->find('all') as $collaborator){
+			$assignees[ $collaborator['User']['id'] ] = $collaborator['User']['name'];
+		}
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 	}
 
 /**
