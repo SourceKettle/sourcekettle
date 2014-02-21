@@ -293,7 +293,6 @@ class TasksController extends AppProjectController {
 
 			$this->request->data['Task']['project_id']		= $project['Project']['id'];
 			$this->request->data['Task']['owner_id']		= User::get('id');
-			$this->request->data['Task']['assignee_id']		= null;
 			$this->request->data['Task']['task_status_id']	= 1;
 
 			if (isset($this->request->data['Task']['milestone_id']) && $this->request->data['Task']['milestone_id'] == 0) {
