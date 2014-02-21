@@ -62,6 +62,14 @@ $this->Html->scriptBlock ("
                             "label" => $this->DT->t('form.assignee.label'),
                         ));
 
+                        echo $this->Bootstrap->input("story_points", array(
+                            "input" => $this->Form->input("story_points", array(
+                                "label" => false,
+                                "class" => "span3"
+                            )),
+                            "label" => __('Story Points'),
+                        ));
+
                         echo $this->Bootstrap->input("DependsOn.DependsOn", array(
                             "input" => $this->Form->input("DependsOn.DependsOn", array(
                                 "label"    => false,
