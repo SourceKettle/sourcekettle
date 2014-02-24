@@ -52,6 +52,11 @@ class Milestone extends AppModel {
 				'message' => 'Short names must be less than 50 characters long',
 			),
 		),
+		'is_open' => array(
+			'boolean' => array(
+				'rule' => array('boolean'),
+			)
+		)
 	);
 
 /**
