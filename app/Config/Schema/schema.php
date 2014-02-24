@@ -13,7 +13,6 @@ class AppSchema extends CakeSchema {
 	public function after($event = array()) {
 
 		if (isset($event['create'])) {
-			echo "Event created: ".$event['create']."\n";
 			switch ($event['create']) {
 				case 'settings':
 					$setting = ClassRegistry::init('Setting');
@@ -42,7 +41,7 @@ class AppSchema extends CakeSchema {
 				case 'task_types':
 					$type = ClassRegistry::init('TaskType');
 					$type->create();
-					$type->saveMany( array('TaskType' => array(
+					$type->saveMany( array(
 						array('name' => 'bug'),
 						array('name' => 'duplicate'),
 						array('name' => 'enhancement'),
@@ -51,29 +50,29 @@ class AppSchema extends CakeSchema {
 						array('name' => 'wontfix'),
 						array('name' => 'documentation'),
 						array('name' => 'meeting')
-					)));
+					));
 					break;
 
 				case 'task_statuses':
 					$status = ClassRegistry::init('TaskStatus');
 					$status->create();
-					$status->saveMany( array('TaskStatus' => array(
+					$status->saveMany( array(
 						array('name' => 'open'),
 						array('name' => 'in progress'),
 						array('name' => 'resolved'),
 						array('name' => 'closed')
-					)));
+					));
 					break;
 
 				case 'task_priorities':
 					$prio = ClassRegistry::init('TaskPriority');
 					$prio->create();
-					$prio->saveMany( array('TaskPriority' => array(
+					$prio->saveMany( array(
 						array('name' => 'minor'),
 						array('name' => 'major'),
 						array('name' => 'urgent'),
 						array('name' => 'blocker')
-					)));
+					));
 					break;
 
 			}
