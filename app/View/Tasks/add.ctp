@@ -62,6 +62,14 @@ $this->Html->scriptBlock ("
                             "label" => $this->DT->t('form.assignee.label'),
                         ));
 
+                        echo $this->Bootstrap->input("time_estimate", array(
+                            "input" => $this->Form->input("time_estimate", array(
+                                "label" => false,
+                                "class" => "span3"
+                            )),
+                            "label" => __('Time Estimate'),
+                        ));
+
                         echo $this->Bootstrap->input("story_points", array(
                             "input" => $this->Form->input("story_points", array(
                                 "label" => false,

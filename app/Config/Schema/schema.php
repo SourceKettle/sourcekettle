@@ -331,6 +331,7 @@ class AppSchema extends CakeSchema {
 		'task_priority_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'assignee_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'milestone_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'key' => 'index'),
+		'time_estimate' => array('type' => 'integer', 'null' => true, 'default' => null),
 		'story_points' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10),
 		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'description' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),

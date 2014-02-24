@@ -316,6 +316,7 @@ class Time extends AppModel {
  * @param mixed $in the number of minutes
  * @throws InvalidArgumentException
  */
+ 	// TODO make this a library function
 	public function splitMins($in) {
 		if (!is_numeric($in)) {
 			throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
