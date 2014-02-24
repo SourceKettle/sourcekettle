@@ -40,6 +40,12 @@
                 <dd class="muted">Not set</dd>
             <? } ?>
             <dt><?=__('Estimate')?>:</dt>
+            <? if (isset($task['Task']['time_estimate'])) { ?>
+                <dd><?=$task['Task']['time_estimate']?></dd>
+            <? } else { ?>
+                <dd class="muted">n/a</dd>
+            <? } ?>
+
             <? if (isset($task['Task']['story_points'])) { ?>
                 <dd><?=$task['Task']['story_points']?> points</dd>
             <? } else { ?>
