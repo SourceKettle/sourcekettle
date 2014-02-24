@@ -43,13 +43,13 @@
             <? if (isset($task['Task']['time_estimate'])) { ?>
                 <dd><?=$task['Task']['time_estimate']?></dd>
             <? } else { ?>
-                <dd class="muted">n/a</dd>
+                <dd class="muted">No time estimate</dd>
             <? } ?>
 
             <? if (isset($task['Task']['story_points'])) { ?>
                 <dd><?=$task['Task']['story_points']?> points</dd>
             <? } else { ?>
-                <dd class="muted">n/a</dd>
+                <dd class="muted">No story point estimate</dd>
             <? } ?>
 
             <dt>Depends on:</dt>
