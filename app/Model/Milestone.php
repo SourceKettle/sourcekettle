@@ -237,7 +237,7 @@ class Milestone extends AppModel {
 	public function getOpenMilestones($assoc = false) {
 
 		if($assoc){
-			$fields = array('id', 'name');
+			$fields = array('id', 'subject');
 		} else {
 			$fields = array('id');
 		}
@@ -263,7 +263,7 @@ class Milestone extends AppModel {
  */
 	public function getClosedMilestones($assoc = false) {
 		if($assoc){
-			$fields = array('id', 'name');
+			$fields = array('id', 'subject');
 		} else {
 			$fields = array('id');
 		}
