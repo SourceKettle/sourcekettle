@@ -15,7 +15,7 @@
 
   echo $this->Bootstrap->page_header($this->DT->t('header.text') . " <small>" . $this->DT->t('header.small.text') . " " . h(strtolower($user_name)) . "</small>");
 
-  echo $this->element('beta_warning');
+  //echo $this->element('beta_warning'); // TODO show this for dev versions
   $this->Html->css('tasks.index', null, array ('inline' => false));
 ?>
 
