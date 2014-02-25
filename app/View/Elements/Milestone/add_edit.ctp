@@ -31,6 +31,14 @@
             "help_block" => $this->DT->t('form.due.help')
         ));
 
+		// TODO use placeholder text
+		if(isset($this->data['Milestone']['id'])){
+    	    echo $this->Bootstrap->input("is_open", array(
+				"input" => $this->Form->checkbox("is_open"),
+				"label" => "Milestone is open?",
+			));
+		}
+
         echo $this->Bootstrap->button($this->DT->t('form.submit'), array("style" => "primary", "size" => "normal", 'class' => 'controls'));
 
         echo $this->Form->end();
