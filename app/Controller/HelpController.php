@@ -79,6 +79,21 @@ class HelpController extends AppController{
 	public function admin_index() {
 	}
 
+	public function admin_settings() {
+	}
+
+	public function admin_usersearch() {
+	}
+
+	public function admin_useradd() {
+	}
+
+	public function admin_projectsearch() {
+	}
+
+	public function admin_projectadd() {
+	}
+
 	private function __test() {
 	}
 
