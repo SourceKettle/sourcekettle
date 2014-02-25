@@ -65,18 +65,22 @@ $this->Html->scriptBlock ("
                         echo $this->Bootstrap->input("time_estimate", array(
                             "input" => $this->Form->input("time_estimate", array(
                                 "label" => false,
-                                "class" => "span3"
-                            )),
+                                "class" => "span3",
+								"placeholder" => "e.g. 2d 4h 3m",
+							)),
+							"help_inline" => "Roughly how much time will the task take to finish?",
                             "label" => __('Time Estimate'),
                         ));
 
                         echo $this->Bootstrap->input("story_points", array(
                             "input" => $this->Form->input("story_points", array(
                                 "label" => false,
-                                "class" => "span3"
+                                "class" => "span3",
                             )),
+							"help_inline" => "An abstract estimate of how complex the task is to implement",
                             "label" => __('Story Points'),
                         ));
+						
 
                         echo $this->Bootstrap->input("DependsOn.DependsOn", array(
                             "input" => $this->Form->input("DependsOn.DependsOn", array(
