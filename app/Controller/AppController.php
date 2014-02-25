@@ -82,7 +82,7 @@ class AppController extends Controller {
 		);
 
 		$this->set('devtrack_config', $this->devtrack_config);
-		$this->set('devtrackVersion', 'v1.0');
+		$this->set('devtrackVersion', 'v1.1');
 
 		// Set up the devtrack-specific auth model
 		$this->Auth->userModel = 'User';
