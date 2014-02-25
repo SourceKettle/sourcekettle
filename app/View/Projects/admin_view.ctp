@@ -88,7 +88,7 @@ echo $this->Bootstrap->page_header('Administration <small>what does this bit do<
                         <? if ( $c['access_level'] == $level ) : ?>
                         <tr>
                             <td>
-                                <?= $this->Html->link($c['User']['name'], array('controllers' => 'users', 'action' => 'admin_view', $c['User']['id'])) ?>
+                                <?= $this->Html->link($c['User']['name'], array('controller' => 'users', 'action' => 'admin_view', $c['User']['id'])) ?>
                             </td>
                             <td>
                             <?php
