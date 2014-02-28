@@ -46,3 +46,41 @@ h1, h2, h3 {
 .typeahead {
     margin-top: 0px !important;
 }
+
+.navbar-admin .brand {
+    color: #ffeeee;
+    display: block;
+    float: left;
+    font-size: 20px;
+    font-weight: 200;
+    margin-left: -20px;
+    padding: 10px 20px;
+    text-shadow: 0 1px 0 #550000;
+}
+
+.navbar-admin .navbar-inner {
+    background-color: #990000;
+    background-image: linear-gradient(to bottom, #990000, #330000);
+    background-repeat: repeat-x;
+}
+
+.navbar-admin .nav > .active > a, .navbar-admin .nav > .active > a:hover, .navbar-admin .nav > .active > a:focus {
+    background-color: #c50000;
+    color: #000000;
+    text-decoration: none;
+    text-shadow: none;
+}
+
+.navbar-admin .nav > li > a {
+    color: #ffeeee;
+    float: none;
+    padding: 10px 15px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #330000;
+}
+.navbar-admin .nav > li > a:hover{
+    color: #ff0000;
+}
+.navbar-admin a.brand:hover{
+    color: #ff0000;
+}
