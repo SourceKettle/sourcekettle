@@ -24,6 +24,14 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
         <div class="well">
             <div class="row">
 			<div class="span10">
+			  <p>
+				The user search page gives a paginated list of all the users in the system.
+			  </p>
+			  <ul>
+				<li>Clicking on the user link will take you to the 'edit account' page</li>
+				<li>Clicking on the delete button will delete the user</li>
+				<li>The search box is currently very limited; you need to type in exact email addresses :-( This is being worked on!</li>
+			  </ul>
 			</div>
             </div>
         </div>
