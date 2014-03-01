@@ -23,6 +23,8 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
     <div class="span10">
         <div class="well">
             <div class="row">
+			<div class="span10">
+			</div>
             </div>
         </div>
     </div>

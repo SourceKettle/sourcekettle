@@ -92,6 +92,7 @@ class HelpController extends AppController{
 	}
 
 	public function admin_projectadd() {
+		$this->render('create');
 	}
 
 	private function __test() {
