@@ -84,3 +84,8 @@ h1, h2, h3 {
 .navbar-admin a.brand:hover{
     color: #ff0000;
 }
+
+.navbar-admin .nav li.dropdown.open>.dropdown-toggle, .navbar-admin .nav li.dropdown.active>.dropdown-toggle, .navbar-admin .nav li.dropdown.open.active>.dropdown-toggle {
+color: #000000;
+background-color: #c50000;
+}
