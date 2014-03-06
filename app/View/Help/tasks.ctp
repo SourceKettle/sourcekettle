@@ -55,6 +55,12 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage tasks?</small>'
             <li>The milestone - generally speaking tasks not assigned to a milestone will fall by the wayside...</li>
           </ul>
 
+		  Tasks also have two optional estimates (educated guesses) which you may wish to use:
+		  <ul>
+		    <li><strong>Time estimate:</strong> An estimate at how long the task will take</li>
+		    <li><strong>Story points:</strong> An estimate of the relative complexity of the task, generally used when planning; see <a href='http://agilefaq.wordpress.com/2007/11/13/what-is-a-story-point/'>this page</a> for a description of how to use story points</li>
+		  </ul>
+
           The starting status of all tasks is "Open" - i.e. "We know this needs doing, but we haven't started yet".
         </p>
 

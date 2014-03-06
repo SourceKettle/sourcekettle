@@ -69,6 +69,7 @@ $this->Html->scriptBlock ("
                                 "class" => "span3"
                             )),
                             "label" => __('Time Estimate'),
+							"help_inline" => "Roughly how much time will the task take to finish?",
                         ));
 
                         echo $this->Bootstrap->input("story_points", array(
@@ -76,6 +77,7 @@ $this->Html->scriptBlock ("
                                 "label" => false,
                                 "class" => "span3"
                             )),
+							"help_inline" => "An abstract estimate of how complex the task is to implement",
                             "label" => __('Story Points'),
                         ));
 

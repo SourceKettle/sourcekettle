@@ -82,7 +82,7 @@ class AppController extends Controller {
 		);
 
 		$this->set('devtrack_config', $this->devtrack_config);
-		$this->set('devtrackVersion', 'v1.0');
+		$this->set('devtrackVersion', 'v1.1');
 
 		// Set up the devtrack-specific auth model
 		$this->Auth->userModel = 'User';
@@ -118,7 +118,6 @@ class AppController extends Controller {
 			// check the admin is logged in
 			if ( !isset($userId) || empty($userId) ) $this->redirect('/login');
 			if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
-			$this->Flash->message('You are currently in the ADMIN section of the site..');
 		}
 		if (isset($this->params['api'])) {
 			// The following line kinda breaks the M->V->C thing

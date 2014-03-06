@@ -15,7 +15,7 @@
  */
 
 
-echo $this->element('beta_warning');
+//echo $this->element('beta_warning'); // TODO show this for dev versions
 
 ?>
 <div class='hero-unit'>

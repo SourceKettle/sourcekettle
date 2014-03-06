@@ -132,9 +132,10 @@ class ProjectsController extends AppProjectController {
  * @throws NotFoundException
  * @return void
  */
-	public function admin_view($name = null) {
+	public function admin_view($project = null) {
+
 		// Check for valid project name
-		$project = $this->Project->getProject($name);
+		$project = $this->Project->getProject($project);
 		if ( empty($project)) {
 			throw new NotFoundException(__('Invalid project'));
 		}
