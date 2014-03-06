@@ -91,7 +91,6 @@ class MarkitupHelper extends AppHelper {
  * @return void
  */
 	public function parse($content) {
-		$this->Html->css('markitup/preview', null, array('inline' => false));
 		App::import('Vendor', 'Markdown/markdown');
 		return Markdown($content);
 	}

@@ -73,7 +73,7 @@ class TaskComment extends AppModel {
  */
 	public function beforeSave($options = array()) {
 		// Lock out those who are not allowed to write
-		if ( !$this->Task->Project->hasWrite($this->_auth_user_id) ) {
+		if ( !$this->Task->Project->hasWrite(User::get('id')) ) {
 			throw new ForbiddenException(__('You do not have permissions to modify this project'));
 		}
 		return true;
@@ -99,8 +99,8 @@ class TaskComment extends AppModel {
 		if ($taskId && $this->field('task_id') != $taskId) {
 			throw new NotFoundException(__('Invalid ' . $this->name));
 		}
-		if ($ownershipRequired && $this->field('user_id') != $this->_auth_user_id) {
-			if (!$allowAdmin || !$this->_auth_user_is_admin) {
+		if ($ownershipRequired && $this->field('user_id') != User::get('id')) {
+			if (!$allowAdmin || !User::get('is_admin')) {
 				throw new ForbiddenException(__('Ownership required'));
 			}
 		}

@@ -24,17 +24,15 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
         <div class="well">
             <div class="row">
 			<div class="span10">
-			SourceKettle system administrators have more options available to them
-			in the admin section of the site. As an admin, you are able to:
-
+			<p>
+			The "add user" page will allow you to manually add users to the system. If registration is disabled, then this is the only way that new users can be added.
+			</p>
+			<p>
+			You will need to provide a name and email address, plus the following two settings:
+			</p>
 			<ul>
-			  <li>Configure global system options</li>
-			  <li>Enable and disable system features</li>
-			  <li>Edit the details of ANY project</li>
-			  <li>Delete ANY project</li>
-			  <li>Add and remove users to ANY project, or grant/revoke permissions</li>
-			  <li>Create new users</li>
-			  <li>Change any user's details, enable/disable accounts and grant/revoke admin status</li>
+			  <li><strong>System Admin:</strong> Tick this box if the new user should be be a system administrator, i.e. they can use the system-wide admin pages</li>
+			  <li><strong>Account Active:</strong> Untick this box if the account should be inactive, i.e. the account <em>cannot be used</em>. Usually you should leave this box ticked!</li>
 			</ul>
 			</div>
             </div>

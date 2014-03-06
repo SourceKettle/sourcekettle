@@ -20,7 +20,7 @@
  */
 App::uses('Controller', 'Controller');
 App::uses('Sanitize', 'Utility');
-
+App::import('Model', 'User');
 
 class AppController extends Controller {
 
@@ -82,7 +82,7 @@ class AppController extends Controller {
 		);
 
 		$this->set('devtrack_config', $this->devtrack_config);
-		$this->set('devtrackVersion', 'v1.0');
+		$this->set('devtrackVersion', 'v1.1');
 
 		// Set up the devtrack-specific auth model
 		$this->Auth->userModel = 'User';
@@ -99,17 +99,18 @@ class AppController extends Controller {
 		Security::setHash('sha256');
 
 		if ($this->Auth->loggedIn()) {
-			$userId	= $this->Auth->user('id');
-			$userName	= $this->Auth->user('name');
-			$userEmail	= $this->Auth->user('email');
-			$isAdmin	= ($this->Auth->user('is_admin') == 1);
-			$this->{$this->modelClass}->setCurrentUserData($userId, $userName, $userEmail, $isAdmin);
-			$this->set('user_id',		$userId);
-			$this->set('user_name',		$userName);
-			$this->set('user_email',	$userEmail);
-			$this->set('user_is_admin',	$isAdmin);
+			User::store($this->Auth->user());
+
+			$userId = User::get('id');
+			$userName = User::get('name');
+			$userEmail = User::get('email');
+			$isAdmin = (User::get('is_admin') == 1);
+			$this->set('user_id', $userId);
+			$this->set('user_name', $userName);
+			$this->set('user_email', $userEmail);
+			$this->set('user_is_admin', $isAdmin);
 		} else {
-			$this->set('user_is_admin',	false);
+			$this->set('user_is_admin', false);
 		}
 
 		// if admin pages are being requested
@@ -117,7 +118,6 @@ class AppController extends Controller {
 			// check the admin is logged in
 			if ( !isset($userId) || empty($userId) ) $this->redirect('/login');
 			if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
-			$this->Flash->message('You are currently in the ADMIN section of the site..');
 		}
 		if (isset($this->params['api'])) {
 			// The following line kinda breaks the M->V->C thing

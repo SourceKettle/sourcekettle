@@ -6,7 +6,7 @@
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright	 DevTrack Development Team 2012
  * @link			http://github.com/SourceKettle/devtrack
  * @package		DevTrack.Controller
@@ -32,7 +32,7 @@ class DashboardController extends AppController {
 
 		return $this->Project->Collaborator->find(
 			'all', array(
-			'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
+			'conditions' => array('Collaborator.user_id' => User::get('id')),
 			'order' => array('Project.modified DESC'),
 			'limit' => 5
 			)
@@ -42,7 +42,7 @@ class DashboardController extends AppController {
 	private function __getUserTasks() {
 		return $this->Task->find('all', array(
 			'conditions' => array(
-				'Task.assignee_id' => $this->Task->_auth_user_id,
+				'Task.assignee_id' => User::get('id'),
 				'Task.task_status_id <>' => '4'
 			),
 			'recursive' => 3,
@@ -52,7 +52,7 @@ class DashboardController extends AppController {
 	}
 
 	private function __getProjectsHistory() {
-		return $this->ProjectHistory->fetchHistory(null, 30, 0, $this->Project->_auth_user_id);
+		return $this->ProjectHistory->fetchHistory(null, 30, 0, User::get('id'));
 	}
 
 	public function admin_index() {

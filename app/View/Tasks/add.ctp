@@ -46,19 +46,48 @@ $this->Html->scriptBlock ("
 
                         echo $this->Bootstrap->input("task_priority_id", array(
                             "input" => $this->Form->input("task_priority_id", array(
-                                "label" => false,
+                                "label"   => false,
                                 "default" => "2",
-                                "class" => "span3"
+                                "class"   => "span3"
                             )),
                             "label" => $this->DT->t('form.priority.label'),
                         ));
 
+                        echo $this->Bootstrap->input("assignee_id", array(
+                            "input" => $this->Form->input("assignee_id", array(
+                                "label"   => false,
+                                "default" => "2",
+                                "class"   => "span3",
+                            )),
+                            "label" => $this->DT->t('form.assignee.label'),
+                        ));
+
+                        echo $this->Bootstrap->input("time_estimate", array(
+                            "input" => $this->Form->input("time_estimate", array(
+                                "label" => false,
+                                "class" => "span3",
+								"placeholder" => "e.g. 2d 4h 3m",
+							)),
+							"help_inline" => "Roughly how much time will the task take to finish?",
+                            "label" => __('Time Estimate'),
+                        ));
+
+                        echo $this->Bootstrap->input("story_points", array(
+                            "input" => $this->Form->input("story_points", array(
+                                "label" => false,
+                                "class" => "span3",
+                            )),
+							"help_inline" => "An abstract estimate of how complex the task is to implement",
+                            "label" => __('Story Points'),
+                        ));
+						
+
                         echo $this->Bootstrap->input("DependsOn.DependsOn", array(
                             "input" => $this->Form->input("DependsOn.DependsOn", array(
-                                "label" => false,
-                                "class" => "span6",
+                                "label"    => false,
+                                "class"    => "span6",
                                 "multiple" => "multiple",
-                                "options" => $availableTasks, 
+                                "options"  => $availableTasks, 
                             )),
                             "label" => $this->DT->t('form.dependent_tasks.label').' '.$this->Bootstrap->icon('tasks'),
 							"help_block" => "<a href='#' id='unselect-all'>Unselect All</a>"
@@ -72,15 +101,14 @@ $this->Html->scriptBlock ("
                             "label" => $this->DT->t('form.milestone.label').' '.$this->Bootstrap->icon('road'),
                         ));
 
-                        echo $this->Bootstrap->input("description", array(
-                            "input" => $this->Form->input("description", array(
-                                "type" => "textarea",
-                                "class" => "span12",
-                                "label" => false,
-                                "placeholder" => $this->DT->t('form.description.placeholder')
-                            )),
-                            "label" => $this->DT->t('form.description.label'),
-                        ));
+						echo $this->Bootstrap->input("description", array( 
+							"input" => $this->Markitup->editor("description", array(
+								"class" => "span7",
+								"label" => false,
+								"placeholder" => $this->DT->t('form.description.placeholder')
+							)),
+							"label" => false,
+						));
 
                         echo $this->Bootstrap->button($this->DT->t('form.submit'), array("style" => "primary", 'class' => 'controls'));
                         ?>

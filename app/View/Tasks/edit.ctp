@@ -54,6 +54,33 @@ $this->Html->scriptBlock ("
                             "label" => $this->DT->t('form.priority.label'),
                         ));
 
+                        echo $this->Bootstrap->input("assignee_id", array(
+                            "input" => $this->Form->input("assignee_id", array(
+                                "label"   => false,
+                                "default" => "2",
+                                "class"   => "span3",
+                            )),
+                            "label" => $this->DT->t('form.assignee.label'),
+                        ));
+
+                        echo $this->Bootstrap->input("time_estimate", array(
+                            "input" => $this->Form->input("time_estimate", array(
+                                "label" => false,
+                                "class" => "span3"
+                            )),
+                            "label" => __('Time Estimate'),
+							"help_inline" => "Roughly how much time will the task take to finish?",
+                        ));
+
+                        echo $this->Bootstrap->input("story_points", array(
+                            "input" => $this->Form->input("story_points", array(
+                                "label" => false,
+                                "class" => "span3"
+                            )),
+							"help_inline" => "An abstract estimate of how complex the task is to implement",
+                            "label" => __('Story Points'),
+                        ));
+
                         echo $this->Bootstrap->input("DependsOn.DependsOn", array(
                             "input" => $this->Form->input("DependsOn.DependsOn", array(
                                 "label"    => false,
@@ -73,15 +100,14 @@ $this->Html->scriptBlock ("
                             "label" => $this->DT->t('form.milestone.label').' '.$this->Bootstrap->icon('road'),
                         ));
 
-                        echo $this->Bootstrap->input("description", array(
-                            "input" => $this->Form->input("description", array(
-                                "type" => "textarea",
-                                "class" => "span12",
-                                "label" => false,
-                                "placeholder" => $this->DT->t('form.description.placeholder')
-                            )),
-                            "label" => $this->DT->t('form.description.label'),
-                        ));
+						echo $this->Bootstrap->input("description", array(
+							"input" => $this->Markitup->editor("description", array(
+								"class" => "span7",
+								"label" => false,
+								"placeholder" => $this->DT->t('form.description.placeholder')
+							)),
+							"label" => false,
+						));
 
                         echo $this->Bootstrap->button($this->DT->t('form.submit'), array("style" => "primary", 'class' => 'controls'));
                         ?>

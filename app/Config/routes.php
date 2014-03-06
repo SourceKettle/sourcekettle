@@ -81,6 +81,11 @@
         Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
+		/*
+		 * Admin link for project names, this sorts out some issues with generating links from the admin pages
+		 */
+        Router::connect('/admin/projects/:project', array('controller' => 'projects', 'action' => 'view', 'admin' => true), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+
         /*
          * Add custom route for editing the sshkeys associated to a user
          */

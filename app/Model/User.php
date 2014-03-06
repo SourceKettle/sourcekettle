@@ -193,7 +193,7 @@ class User extends AppModel {
  * getInstance function.
  * Return the staticly stored user
  */
-	public function &getInstance($user=null) {
+	public static function &getInstance($user=null) {
 		static $instance = array();
 		if ($user) {
 			$instance[0] =& $user;
@@ -209,7 +209,7 @@ class User extends AppModel {
  * store function.
  * Store the provided data as the current user
  */
-	public function store($user) {
+	public static function store($user) {
 		User::getInstance($user);
 	}
 
@@ -220,7 +220,7 @@ class User extends AppModel {
  *
  * @param mixed $path the information to return
  */
-	public function get($path) {
+	public static function get($path) {
 		$_user =& User::getInstance();
 		$path = str_replace('.', '/', $path);
 		if (strpos($path, '/') !== 0) {

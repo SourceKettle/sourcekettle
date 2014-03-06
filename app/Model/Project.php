@@ -122,25 +122,21 @@ class Project extends AppModel {
 		)
 	);
 
-	public function beforeSave($options = array()) {
-		if (!empty($this->data['Project']['name'])) {
-			$this->data['Project']['name'] = ($this->data['Project']['name']);
-
-		}
-		return true;
-	}
-
 	public function beforeDelete($cascade = true) {
-		$location = $this->Source->getRepositoryLocation();
-		if ($location == null || !is_dir($location)) {
-			return true;
-		}
-		$folder = new Folder($location);
-		if ($folder->delete()) {
-			// Successfully deleted project and its nested folders
-			return true;
+		if ($this->Source->getType() != null) {
+			$location = $this->Source->getRepositoryLocation();
+			if ($location == null || !is_dir($location)) {
+				return true;
+			}
+			$folder = new Folder($location);
+			if ($folder->delete()) {
+				// Successfully deleted project and its nested folders
+				return true;
+			} else {
+				return false;
+			}
 		} else {
-			return false;
+			return true;
 		}
 	}
 
@@ -174,10 +170,10 @@ class Project extends AppModel {
 			throw new NotFoundException("Project could not be found with reference {$key}");
 		}
 
-		// In some cases, auth_user_id isn't set (like GitCommand)
-		if (!$skipPerms && !$this->_auth_user_is_admin) {
+		// In some cases, User::get('id') isn't set (like GitCommand)
+		if (!$skipPerms && !User::get('is_admin')) {
 			// Lock out those who are not allowed to read
-			if ( !$this->hasRead($this->_auth_user_id, $project['Project']['id']) ) {
+			if ( !$this->hasRead(User::get('id'), $project['Project']['id']) ) {
 				throw new ForbiddenException(__('You do not have permissions to access this project.'));
 			}
 		}
@@ -193,7 +189,7 @@ class Project extends AppModel {
  */
 	public function hasRead($user = null, $project = null) {
 		if ( $user == null ) {
-			$user = $this->_auth_user_id;
+			$user = User::get('id');
 		}
 		if ( $user == null ) {
 			return false;
@@ -222,7 +218,7 @@ class Project extends AppModel {
  */
 	public function hasWrite($user = null, $project = null) {
 		if ( $user == null ) {
-			$user = $this->_auth_user_id;
+			$user = User::get('id');
 		}
 		if ( $user == null ) {
 			return false;
@@ -248,7 +244,7 @@ class Project extends AppModel {
  * @return boolean true if admin
  */
 	public function isAdmin($user = null, $project = null) {
-		if ( $user == null ) $user = $this->_auth_user_id;
+		if ( $user == null ) $user = User::get('id');
 		if ( $user == null ) return false;
 
 		if ($this->id) $project = $this->id;

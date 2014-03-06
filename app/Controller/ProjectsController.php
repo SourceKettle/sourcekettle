@@ -57,7 +57,7 @@ class ProjectsController extends AppProjectController {
 
 		$projects = $this->Project->Collaborator->find(
 			'all', array(
-			'conditions' => array('Collaborator.user_id' => $this->Project->_auth_user_id),
+			'conditions' => array('Collaborator.user_id' => User::get('id')),
 			'order' => array('Project.modified DESC')
 			)
 		);
@@ -132,9 +132,10 @@ class ProjectsController extends AppProjectController {
  * @throws NotFoundException
  * @return void
  */
-	public function admin_view($name = null) {
+	public function admin_view($project = null) {
+
 		// Check for valid project name
-		$project = $this->Project->getProject($name);
+		$project = $this->Project->getProject($project);
 		if ( empty($project)) {
 			throw new NotFoundException(__('Invalid project'));
 		}
@@ -163,7 +164,7 @@ class ProjectsController extends AppProjectController {
 				'Project' => $this->request->data['Project'],
 				'Collaborator' => array(
 					array(
-						'user_id' => $this->Project->_auth_user_id,
+						'user_id' => User::get('id'),
 						'access_level' => 2 // Project admin
 					)
 				)
@@ -173,8 +174,8 @@ class ProjectsController extends AppProjectController {
 				// Need to know the repo type so we can skip repo creation if necessary...
 				$repoType = $repoTypes[$requestData['Project']['repo_type']];
 
-				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . $this->Project->_auth_user_id . "]", 'devtrack');
-				$this->log("[ProjectController.add] user[" . $this->Project->_auth_user_id . "] added to project[" . $this->Project->id . "] automatically as an admin", 'devtrack');
+				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . User::get('id') . "]", 'devtrack');
+				$this->log("[ProjectController.add] user[" . User::get('id') . "] added to project[" . $this->Project->id . "] automatically as an admin", 'devtrack');
 
 				// Create the actual repository, if required - if it fails, delete the database content
 				if (strtolower($repoType) == 'none') {
@@ -222,7 +223,7 @@ class ProjectsController extends AppProjectController {
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Flash->u($this->Project->save($this->request->data))) {
-				$this->log("[ProjectController.edit] user[" . $this->Project->_auth_user_id . "] edited project[" . $this->Project->id . "]", 'devtrack');
+				$this->log("[ProjectController.edit] user[" . User::get('id') . "] edited project[" . $this->Project->id . "]", 'devtrack');
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view'));
 			}
 		}
@@ -261,7 +262,7 @@ class ProjectsController extends AppProjectController {
 		$this->Flash->setUp();
 
 		if ($this->request->is('post')) {
-			if ($this->Flash->d($this->Project->delete())) {
+			if ($this->Flash->d($this->Project->delete(), $project['Project']['name'])) {
 				$this->redirect(array('action' => 'index'));
 			}
 		}
@@ -284,7 +285,7 @@ class ProjectsController extends AppProjectController {
 			throw new MethodNotAllowedException();
 		}
 
-		$this->Flash->d($this->Project->delete());
+		$this->Flash->d($this->Project->delete(), $project['Project']['name']);
 		$this->redirect(array('action' => 'admin_index'));
 	}
 
@@ -410,15 +411,24 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function api_history($number = 0) {
-		$project = $this->_projectCheck($this->request->params['named']['project']);
-		$this->layout = 'ajax';
+		if (!isset($this->request->params['named']['project'])) {
+			$this->response->statusCode(400);
+			$data['error'] = 400;
+			$data['message'] = 'Bad request, no project id specified.';
 
-		if (!is_numeric($number) || $number < 1 || $number > 50) {
-			$number = 8;
+			$this->layout = 'ajax';
+			$this->set('data',$data);
+			$this->render('/Elements/json');
+		} else {
+			$project = $this->_projectCheck($this->request->params['named']['project']);
+			$this->layout = 'ajax';
+
+			if (!is_numeric($number) || $number < 1 || $number > 50) {
+				$number = 8;
+			}
+			$this->set('events', $this->Project->fetchEventsForProject($number));
+			$this->render('/Elements/history');
 		}
-
-		$this->set('events', $this->Project->fetchEventsForProject($number));
-		$this->render('/Elements/history');
 	}
 
 /**

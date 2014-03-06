@@ -22,10 +22,22 @@
 		}
 
         echo $this->Bootstrap->input("due", array(
-            "input" => $this->Form->text("due", array("class" => "dp1", "value" => $due_date, "data-date-format" => "yyyy-mm-dd")),
+            "input" => $this->Form->text("due", array(
+                "class" => "dp1",
+				"value" => $due_date,
+                "data-date-format" => "yyyy-mm-dd")
+            ),
             "label" => $this->DT->t('form.due.label'),
             "help_block" => $this->DT->t('form.due.help')
         ));
+
+		// TODO use placeholder text
+		if(isset($this->data['Milestone']['id'])){
+    	    echo $this->Bootstrap->input("is_open", array(
+				"input" => $this->Form->checkbox("is_open"),
+				"label" => "Milestone is open?",
+			));
+		}
 
         echo $this->Bootstrap->button($this->DT->t('form.submit'), array("style" => "primary", "size" => "normal", 'class' => 'controls'));
 

@@ -25,6 +25,8 @@ class TasksController extends AppProjectController {
  */
 	public $helpers = array('Time', 'Task');
 
+	public $uses = array('Task', 'Project');
+
 /**
  * Components
  *
@@ -43,6 +45,13 @@ class TasksController extends AppProjectController {
 		$this->Auth->allow(
 			'api_all',
 			'api_view'
+		);
+
+		$this->Security->unlockedActions = array (
+			"starttask",
+			"stoptask",
+			"resolve",
+			"unresolve"
 		);
 	}
 
@@ -114,7 +123,7 @@ class TasksController extends AppProjectController {
 			$this->Task->TaskComment->create();
 
 			$this->request->data['TaskComment']['task_id'] = $id;
-			$this->request->data['TaskComment']['user_id'] = $this->Task->_auth_user_id;
+			$this->request->data['TaskComment']['user_id'] = User::get('id');
 
 			if ($this->Task->TaskComment->save($this->request->data)) {
 				$this->Flash->info('The comment has been added successfully');
@@ -283,8 +292,7 @@ class TasksController extends AppProjectController {
 			$this->Task->create();
 
 			$this->request->data['Task']['project_id']		= $project['Project']['id'];
-			$this->request->data['Task']['owner_id']		= $this->Task->_auth_user_id;
-			$this->request->data['Task']['assignee_id']		= null;
+			$this->request->data['Task']['owner_id']		= User::get('id');
 			$this->request->data['Task']['task_status_id']	= 1;
 
 			if (isset($this->request->data['Task']['milestone_id']) && $this->request->data['Task']['milestone_id'] == 0) {
@@ -331,9 +339,14 @@ class TasksController extends AppProjectController {
 
 		$availableTasks = $this->Task->find('list', array(
 			'conditions' => array('project_id =' => $project['Project']['id']),
-			'fields' => array('Task.id', 'Task.subject'),
+			'fields'     => array('Task.id', 'Task.subject'),
 		));
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
+
+		$assignees = array("0" => "(Nobody)");
+		foreach ($this->Project->Collaborator->find('all') as $collaborator){
+			$assignees[ $collaborator['User']['id'] ] = $collaborator['User']['name'];
+		}
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 	}
 
 /**
@@ -376,9 +389,12 @@ class TasksController extends AppProjectController {
 				'fields' => array('Task.id', 'Task.subject'),
 			));
 
-			$this->Task->bindModel(array('hasOne' => array('TaskDependency')));
+			$assignees = array("0" => "(Nobody)");
+			foreach ($this->Project->Collaborator->find('all') as $collaborator){
+				$assignees[ $collaborator['User']['id'] ] = $collaborator['User']['name'];
+			}
 
-			$this->set(compact('taskPriorities', 'milestones', 'availableTasks'));
+			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
 	}
 
@@ -514,7 +530,9 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function opentask($project = null, $id = null) {
-		$success = $this->__updateTaskStatus($project, $id, 1);
+		$isAjax = $this->request->is("ajax");
+
+		$success = $this->__updateTaskStatus($project, $id, 1, $isAjax);
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
@@ -527,7 +545,9 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function closetask($project = null, $id = null) {
-		$success = $this->__updateTaskStatus($project, $id, 4);
+		$isAjax = $this->request->is("ajax");
+
+		$success = $this->__updateTaskStatus($project, $id, 4, $isAjax);
 
 		// If a User has commented
 		if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
@@ -663,12 +683,17 @@ class TasksController extends AppProjectController {
  * @param mixed $id (default: null)
  * @return void
  */
-	private function __updateTaskStatus($project = null, $id = null, $status = null) {
+	private function __updateTaskStatus($project = null, $id = null, $status = null, $isAjax = false) {
 		$project = $this->_projectCheck($project, true);
 		$task = $this->Task->open($id);
 
 		$this->Task->set('task_status_id', $status);
-		return $this->Flash->u($this->Task->save());
+        $result = $this->Task->save();
+        if ($isAjax) {
+            return $result;
+        } else {
+            return $this->Flash->U($result);
+        }
 	}
 
 	/* ************************************************* *

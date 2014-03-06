@@ -1,0 +1,43 @@
+<?php
+/**
+ * This is core SourceKettle configuration file.
+ *
+ * Use it to configure core behavior of this Applicaiton.
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     SourceKettle Development Team 2014
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Config
+ * @since         SourceKettle v 1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+
+/**
+ * SourceKettle Debug Level:
+ *
+ * Production Mode:
+ * 	0: No error messages, errors, or warnings shown. Flash messages redirect.
+ *
+ * Development Mode:
+ * 	1: Errors and warnings shown, model caches refreshed, flash messages halted.
+ * 	2: As in 1, but also with full debug messages and SQL output.
+ *
+ * In production mode, flash messages redirect after a time interval.
+ * In development mode, you need to click the flash message to continue.
+ */
+$DEBUG_LEVEL = 1;
+
+/**
+ * A random string used in security hashing methods.
+ */
+$SALT = '__SALT__';
+
+/**
+ * A random numeric string (digits only) used to encrypt/decrypt strings.
+ */
+$CIPHERSEED = '__SEED__';
+
+// Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
+$CACHE_PREFIX = '_sourcekettle';

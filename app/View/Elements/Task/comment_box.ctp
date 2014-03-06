@@ -33,7 +33,7 @@
             <?php endif; ?>
             <h5><?= $this->Bootstrap->icon('comment') ?><small> <?= h($comment['User']['name']) ?> <?= $this->DT->t('history.commented.action') ?> <?= $this->Time->timeAgoInWords($comment['TaskComment']['created']) ?></small></h5>
             <hr />
-            <p><?= h($comment['TaskComment']['comment']) ?></p>
+            <p><?= $this->Markitup->parse($comment['TaskComment']['comment']) ?></p>
 			<?= $this->Form->create('TaskCommentEdit', array ('class' => 'hide')); ?>
 			<?= $this->Form->hidden('id', array ('value' => $comment['TaskComment']['id'])); ?>
 			<?= $this->Bootstrap->input("comment", array(

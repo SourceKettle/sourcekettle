@@ -10,7 +10,7 @@
         }
         echo $this->GoogleChart->create()->setType('pie', array('3d'))->setSize(600, 220)->setMargins(0, 0, 0, 0)->addData($times)->setPieChartLabels($names);
         ?>
-        <h5><small><?= str_replace(array('{hours}', '{mins}'), array($total_time['h'], $total_time['m']), $this->DT->t('pie.total')) ?></small></h5>
+        <h5><small><?= str_replace(array('{hours}', '{mins}'), array($total_time['h'] + 24 * $total_time['d'], $total_time['m']), $this->DT->t('pie.total')) ?></small></h5>
     </div>
 </div>
 <div class="span6">

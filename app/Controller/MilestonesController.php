@@ -58,6 +58,18 @@ class MilestonesController extends AppProjectController {
 			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
 			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
 			$cTasks = $this->Milestone->closedTasksForMilestone($x);
+			$dPoints = 0;
+			foreach (array_merge($rTasks, $cTasks) as $task) {
+				if ($task['Task']['story_points'] != null) {
+					$dPoints += $task['Task']['story_points'];
+				}
+			}
+			$tPoints = $dPoints;
+			foreach (array_merge($oTasks, $iTasks) as $task) {
+				if ($task['Task']['story_points'] != null) {
+					$tPoints += $task['Task']['story_points'];
+				}
+			}
 
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
@@ -66,6 +78,8 @@ class MilestonesController extends AppProjectController {
 			$milestone['Milestone']['iTasks'] = count($iTasks);
 			$milestone['Milestone']['rTasks'] = count($rTasks);
 			$milestone['Milestone']['oTasks'] = count($oTasks);
+			$milestone['Milestone']['tPoints'] = $tPoints;
+			$milestone['Milestone']['dPoints'] = $dPoints;
 
 			$milestones[$x] = $milestone;
 		}
@@ -88,6 +102,18 @@ class MilestonesController extends AppProjectController {
 			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
 			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
 			$cTasks = $this->Milestone->closedTasksForMilestone($x);
+			$dPoints = 0;
+			foreach (array_merge($rTasks, $cTasks) as $task) {
+				if ($task['Task']['story_points'] != null) {
+					$dPoints += $task['Task']['story_points'];
+				}
+			}
+			$tPoints = $dPoints;
+			foreach (array_merge($oTasks, $iTasks) as $task) {
+				if ($task['Task']['story_points'] != null) {
+					$tPoints += $task['Task']['story_points'];
+				}
+			}
 
 			$this->Milestone->id = $x;
 			$milestone = $this->Milestone->read();
@@ -96,6 +122,8 @@ class MilestonesController extends AppProjectController {
 			$milestone['Milestone']['iTasks'] = count($iTasks);
 			$milestone['Milestone']['rTasks'] = count($rTasks);
 			$milestone['Milestone']['oTasks'] = count($oTasks);
+			$milestone['Milestone']['tPoints'] = $tPoints;
+			$milestone['Milestone']['dPoints'] = $dPoints;
 
 			$milestone['Milestone']['closed_tasks'] = count($cTasks);
 			$milestone['Milestone']['open_tasks'] = count($oTasks);
@@ -161,6 +189,9 @@ class MilestonesController extends AppProjectController {
 			$this->Milestone->create();
 
 			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
+
+			// Force new milestones into the 'open' state, this makes the most sense...
+			$this->request->data['Milestone']['is_open'] = true;
 
 			if ($this->Flash->c($this->Milestone->save($this->request->data))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));

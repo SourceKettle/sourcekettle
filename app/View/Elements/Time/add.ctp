@@ -34,7 +34,13 @@ echo $this->Bootstrap->input("description", array(
 ));
 
 echo $this->Bootstrap->input("date", array(
-    "input" => $this->Form->text("date", array("class" => "dp1 span{$span}", "value" => date('Y-m-d', time()), "data-date-format" => "yyyy-mm-dd")),
+    "input" => $this->Form->text("date", array(
+        "class" => "dp1 span{$span}",
+        "value" => isset($this->request->data['Time'])
+            ? $this->request->data['Time']['date']
+            : date('Y-m-d', time()),
+        "data-date-format" => "yyyy-mm-dd")
+    ),
     "label" => "Date"
 ));
 

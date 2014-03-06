@@ -316,6 +316,7 @@ class Time extends AppModel {
  * @param mixed $in the number of minutes
  * @throws InvalidArgumentException
  */
+ 	// TODO make this a library function
 	public function splitMins($in) {
 		if (!is_numeric($in)) {
 			throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
@@ -380,7 +381,7 @@ class Time extends AppModel {
 						$this->startOfWeek($year, $week + 1)
 					),
 					'Time.project_id' => $this->Project->id,
-					'Time.user_id' => $this->_auth_user_id
+					'Time.user_id' => User::get('id')
 				)
 			)
 		);
@@ -417,7 +418,7 @@ class Time extends AppModel {
 				'all', array(
 				'conditions' => array(
 					'Time.date' => $today,
-					'Time.user_id' => $this->_auth_user_id,
+					'Time.user_id' => User::get('id'),
 					'Time.project_id' => $this->Project->id,
 				)
 			));

@@ -29,12 +29,28 @@
             <dt><?= $this->DT->t('details.priority') ?>:</dt>
             <dd><?= $this->Task->priority($task['Task']['task_priority_id']) ?></dd>
             <dt><?= $this->DT->t('details.milestone') ?>:</dt>
-            <dd>
-            <?= (isset($task['Milestone']['subject'])) ? $this->Html->link(
-                    $task['Milestone']['subject'],
-                    array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
-                )  : 'Not set' ?>
-            </dd>
+            <? if (isset($task['Milestone']['subject'])) { ?>
+                <dd>
+                    <?= $this->Html->link(
+                        $task['Milestone']['subject'],
+                        array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
+                    ) ?>
+                </dd>
+            <? } else { ?>
+                <dd class="muted">Not set</dd>
+            <? } ?>
+            <dt><?=__('Estimate')?>:</dt>
+            <? if (isset($task['Task']['time_estimate'])) { ?>
+                <dd><?=$task['Task']['time_estimate']?></dd>
+            <? } else { ?>
+                <dd class="muted">No time estimate</dd>
+            <? } ?>
+
+            <? if (isset($task['Task']['story_points'])) { ?>
+                <dd><?=$task['Task']['story_points']?> points</dd>
+            <? } else { ?>
+                <dd class="muted">No story point estimate</dd>
+            <? } ?>
 
             <dt>Depends on:</dt>
 
@@ -61,18 +77,24 @@
                 } else {
                     echo "<span class='badge badge-success'>Dependencies completed</span>";
                 }
+            } else {
+                echo '<span class="muted">n/a</span>';
             }
             ?>
             </dd>
         </dl>
         <dl class="dl-horizontal span6">
             <dt><?= $this->DT->t('details.assignee') ?>:</dt>
-            <dd>
-                <?= (isset($task['Assignee']['name'])) ? $this->Html->link(
-                    $task['Assignee']['name'],
-                    array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
-                )  : 'Not set' ?>
-            </dd>
+            <? if (isset($task['Assignee']['name'])) { ?>
+                <dd>
+                    <?= $this->Html->link(
+                        $task['Assignee']['name'],
+                        array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
+                    ) ?>
+                </dd>
+            <? } else { ?>
+                <dd class="muted">Not set</dd>
+            <? } ?>
             <dt><?= $this->DT->t('details.status') ?>:</dt>
             <dd><?= $this->Task->status($task['Task']['task_status_id']) ?></dd>
 
@@ -96,6 +118,9 @@
                     array('escape' => false)
                 );
                 echo "<br>";
+            }
+            if (empty($task['DependedOnBy'])) {
+                echo '<span class="muted">n/a</span>';
             } ?>
             </dd>
         </dl>

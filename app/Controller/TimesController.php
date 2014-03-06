@@ -79,7 +79,7 @@ class TimesController extends AppProjectController {
 		$time = $this->Time->open($id, true);
 
 		$this->Flash->setUp();
-		$this->Flash->d($this->Time->delete());
+		$this->Flash->d($this->Time->delete(), $time['Time']['id']);
 		$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 	}
 
@@ -97,7 +97,7 @@ class TimesController extends AppProjectController {
 		$this->set('time', $time);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$this->request->data['Time']['user_id'] = $this->Time->_auth_user_id;
+			$this->request->data['Time']['user_id'] = User::get('id');
 			$this->request->data['Time']['project_id'] = $project['Project']['id'];
 
 			if ($this->Flash->u($this->Time->save($this->request->data))) {

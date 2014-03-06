@@ -33,21 +33,17 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</sm
 
           <h4>The anatomy of a milestone</h4>
           <p>
-            Each milestone is made up of <a href='tasks'>tasks</a> which, when completed, mean that the milestone itself is considered complete.  The milestone itself contains very little extra information:
+            Each milestone is made up of <a href='tasks'>tasks</a> which, when completed, mean that the milestone itself should be considered complete.  The milestone itself contains very little extra information:
             <ol>
               <li><strong>Short name:</strong> A short name for display which is meaningful to your team - e.g. 'Sprint 1', or 'Implement user accounts and authentication'</li>
               <li><strong>Description:</strong> A more detailed description of the milestone, describing the overall goals</li>
               <li><strong>Completion target:</strong> When will the milestone be complete?</li>
+			  <li><strong>Open:</strong> Is the milestone currently open? (i.e. you can assign tasks to it and people are working on the tasks)</li>
             </ol>
           </p>
 
           <p>
             It is important to set a completion target and stick to this target - in order to do so, you may have to drop some features (remove tasks from the milestone) as you go.  More on this shortly.
-          </p>
-
-          <h4>Hang on, I've created a milestone and it shows up as closed! Bug alert!</h4>
-          <p>
-            Actually, milestones don't have their own open/closed status - it is based on the tasks <em>within</em> the milestone.  If any tasks are open, the milestone is open, otherwise it is closed.  If you've just created a milestone and it has no tasks, then there is no work to do on the milestone - so it shows up as closed! Simple.
           </p>
 
           <h4>Milestone overview</h4>

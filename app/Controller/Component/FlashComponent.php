@@ -71,9 +71,13 @@ class FlashComponent extends Component {
 		return $this->__objectFlash("has been updated", "could not be updated", $winning);
 	}
 
-	public function d($winning = false) {
-		if (in_array('SoftDeletable', $this->Model->actsAs)) $winning = true;
-		return $this->__objectFlash("has been deleted", "could not be deleted", $winning);
+	public function d($winning = false, $objectName = null) {
+		if (isset($this->Model->actsAs)) {
+			if (in_array('SoftDeletable', $this->Model->actsAs)) {
+				$winning = true;
+			}
+		}
+		return $this->__objectFlash("has been deleted", "could not be deleted", $winning, $objectName);
 	}
 
 /**
@@ -85,13 +89,14 @@ class FlashComponent extends Component {
  * @param mixed $winning
  * @return void
  */
-	private function __objectFlash($messageA, $messageB, $winning) {
+	private function __objectFlash($messageA, $messageB, $winning, $objectName = null) {
 		$this->setUp();
 		$message = ($winning) ? $messageA : $messageB . '. Please try again';
+		$objectName = ($objectName == null) ? h($this->_name) : h($objectName);
 
 		$subject = "{class} '<strong>{name}</strong>' {message}.";
 		$search	= array('{class}', '{name}', '{message}');
-		$replace = array($this->name, h($this->_name), $message);
+		$replace = array($this->name, $objectName, $message);
 
 		$replaced = str_replace($search, $replace, $subject);
 

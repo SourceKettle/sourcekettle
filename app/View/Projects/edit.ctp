@@ -29,11 +29,13 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                     <h3>Project description</h3>
                     <?php echo $this->Form->create('Project', array('class' => 'form-inline')); ?>
                     <?php
-
-                    echo $this->Bootstrap->input("description", array(
-                        "input" => $this->Form->textarea("description", array('class' => 'span12', 'rows' => 8)),
-                        "label" => false
-                    ));
+					echo $this->Bootstrap->input("description", array( 
+						"input" => $this->Markitup->editor("description", array(
+							"class" => "span7",
+							"label" => false,
+						)),
+						"label" => false,
+					));
                     ?>
                     <h3>Is the project public?</h3>
 

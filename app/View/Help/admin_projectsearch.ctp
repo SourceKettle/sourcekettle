@@ -24,18 +24,14 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
         <div class="well">
             <div class="row">
 			<div class="span10">
-			SourceKettle system administrators have more options available to them
-			in the admin section of the site. As an admin, you are able to:
-
-			<ul>
-			  <li>Configure global system options</li>
-			  <li>Enable and disable system features</li>
-			  <li>Edit the details of ANY project</li>
-			  <li>Delete ANY project</li>
-			  <li>Add and remove users to ANY project, or grant/revoke permissions</li>
-			  <li>Create new users</li>
-			  <li>Change any user's details, enable/disable accounts and grant/revoke admin status</li>
-			</ul>
+			  <p>
+				The project search page gives a paginated list of all the projects in the system.
+			  </p>
+			  <ul>
+				<li>Clicking on the project link will take you to the 'edit details' page</li>
+				<li>Clicking on the delete button will delete the project</li>
+				<li>The search box is currently very limited; you need to type in exact project names :-( This is being worked on!</li>
+			  </ul>
 			</div>
             </div>
         </div>
