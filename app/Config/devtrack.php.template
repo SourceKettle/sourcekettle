@@ -25,3 +25,6 @@
  // set to folder where you would like repositories placed
  $config['devtrack']['repo']['base'] = '__REPO_DIR__';
 
+  // Default repository type for new projects
+  $config['devtrack']['repo']['default'] = 'Git';
+

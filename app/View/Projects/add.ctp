@@ -58,7 +58,7 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
         ));
 
         echo $this->Bootstrap->input("repositoryType", array(
-            "input" => $this->Form->select('repo_type', $repoTypes, array('empty'=>false)),
+            "input" => $this->Form->select('repo_type', $repoTypes, array('empty'=>false, 'value' => $defaultRepo)),
         ));
         ?>
     </div>
