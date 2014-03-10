@@ -57,12 +57,7 @@ class AppController extends Controller {
 			'loginRedirect' => array(
 				'controller' => 'dashboard',
 				'action' => 'index'
-			),
-			/*'authenticate' => array(
-				'Form' => array(
-					'fields' => array ('username' => 'email', 'password' => 'password')
-				),
-			)*/
+			)
 		)
 	);
 
@@ -99,20 +94,23 @@ putenv('LDAPTLS_REQCERT=never');
 			$this->devtrack_config['ldap_enabled'] = false;
 		}
 
+		// Default to just form-based authentication
+		$this->Auth->authenticate = array('Form' => $form_config);
+
 		if($this->devtrack_config['ldap_enabled']){
 			$ldap_conf_errors = array();
 
 			// Check for existence of all LDAP config fields
-			if(!isset($this->devtrack_config['ldap_url'])){
+			if(!isset($this->devtrack_config['ldap_url']) || empty($this->devtrack_config['ldap_url'])){
 				$ldap_conf_errors[] = 'ldap config error: must specify an LDAP URL';
 			}
 			if(!isset($this->devtrack_config['ldap_bind_dn'])){
-				$ldap_conf_errors[] = 'ldap config error: must specify a bind DN';
+				$ldap_conf_errors[] = 'ldap config error: must specify a bind DN, or empty string';
 			}
 			if(!isset($this->devtrack_config['ldap_bind_pw'])){
-				$ldap_conf_errors[] = 'ldap config error: must specify a bind password';
+				$ldap_conf_errors[] = 'ldap config error: must specify a bind password, or empty string';
 			}
-			if(!isset($this->devtrack_config['ldap_base_dn'])){
+			if(!isset($this->devtrack_config['ldap_base_dn']) || empty($this->devtrack_config['ldap_base_dn'])){
 				$ldap_conf_errors[] = 'ldap config error: must specify an LDAP base DN';
 			}
 
@@ -131,40 +129,41 @@ putenv('LDAPTLS_REQCERT=never');
 				$this->devtrack_config['ldap_name_field'] = 'givenName sn';
 			}
 
-			// TODO some kind of error reporting
+			// Report errors, do not enable LDAP
+			if(count($ldap_conf_errors) > 0){
+				foreach ($ldap_conf_errors as $err){
+					$this->log($err, 'error');
+				}
+			} else {
+				$ldap_config = array(
+					'ldap_url'          => $this->devtrack_config['ldap_url'],
+						'ldap_bind_dn'      => $this->devtrack_config['ldap_bind_dn'],
+						'ldap_bind_pw'      => $this->devtrack_config['ldap_bind_pw'],
+						'ldap_base_dn'      => $this->devtrack_config['ldap_base_dn'],
+						'ldap_filter'       => $this->devtrack_config['ldap_filter'],
+						'ldap_to_user'      => array(
+							$this->devtrack_config['ldap_email_field'] => 'email',
+							$this->devtrack_config['ldap_name_field'] => 'name',
+						),
+						// TODO this is an array, we need to make sure we can DB-ify this
+						'all_usernames' => array(
+							'proxyAddresses',
+							'mail',
+						),
 
-			$ldap_config = array(
-				'ldap_url'          => $this->devtrack_config['ldap_url'],
-					'ldap_bind_dn'      => $this->devtrack_config['ldap_bind_dn'],
-					'ldap_bind_pw'      => $this->devtrack_config['ldap_bind_pw'],
-					'ldap_base_dn'      => $this->devtrack_config['ldap_base_dn'],
-					'ldap_filter'       => $this->devtrack_config['ldap_filter'],
-					'ldap_to_user'      => array(
-					    $this->devtrack_config['ldap_email_field'] => 'email',
-					    $this->devtrack_config['ldap_name_field'] => 'name',
-					),
-					// TODO this is an array, we need to make sure we can DB-ify this
-					'all_usernames' => array(
-					    'proxyAddresses',
-					    'mail',
-					),
+						// These are SourceKettle-specific, not server-specific
+						'form_fields'       => array ('username' => 'email', 'password' => 'password'),
+						'defaults'      => array(
+							'is_active' => 1,
+							'is_admin'  => 0,
+						)
+				);
 
-					// These are SourceKettle-specific, not server-specific
-					'form_fields'       => array ('username' => 'email', 'password' => 'password'),
-					'defaults'      => array(
-					    'is_active' => 1,
-					    'is_admin'  => 0,
-					)
-			);
+				// Put the LDAP authentication in before form auth
+				$this->Auth->authenticate = array('LDAPAuthCake.LDAP' => $ldap_config, 'Form' => $form_config);
 
-			// Put the LDAP authentication in before form auth
-			//array_unshift($this->Auth->authenticate, $ldap_config);
-			$this->Auth->authenticate = array('LDAPAuthCake.LDAP' => $ldap_config, 'Form' => $form_config);
+			}
 
-
-		// No LDAP, just form auth
-		} else{
-			$this->Auth->authenticate = array('Form' => $form_config);
 		}
 
 		$this->set('devtrack_config', $this->devtrack_config);
