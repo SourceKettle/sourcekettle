@@ -41,3 +41,16 @@ $CIPHERSEED = '__SEED__';
 
 // Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
 $CACHE_PREFIX = '_sourcekettle';
+
+/**
+ * Session settings: By default, just use PHP's session handling.
+ * You may wish to switch to database sessions, in which case
+ * you must run the console command:
+ * cake schema create Sessions
+ * ...then set 'defaults' to 'database'.
+ */
+$SESSION_SETTINGS = array(
+		'defaults' => 'php',
+		'cookie' => 'sourcekettle',
+		'timeout' => 2880
+);

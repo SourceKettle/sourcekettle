@@ -189,11 +189,17 @@ Configure::write('Routing.prefixes', array('admin', 'api', 'ajax'));
  * the cake shell command: cake schema create Sessions
  *
  */
-	Configure::write('Session', array(
+
+	$sk_core_session_settings = array(
 		'defaults' => 'php',
-		'cookie' => 'devtrack',
+		'cookie' => 'sourcekettle',
 		'timeout' => 2880
-	));
+	);
+
+	if (isset($sk_core_overrides, $SESSION_SETTINGS)) {
+		$sk_core_session_settings = $SESSION_SETTINGS;
+	}
+	Configure::write('Session', $sk_core_session_settings);
 
 /**
  * The level of CakePHP security.
