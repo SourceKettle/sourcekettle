@@ -36,7 +36,11 @@
 </head>
 <body>
     <header>
+		<?if(isset($this->params['admin']) && $this->params['admin'] == 1){?>
+        <div class="navbar navbar-admin navbar-fixed-top">
+		<?} else {?>
         <div class="navbar navbar-inverse navbar-fixed-top">
+		<?}?>
             <div class="navbar-inner">
                 <div class="container">
                     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -45,6 +49,7 @@
                         <span class="icon-bar"></span>
                     </a>
                     <?= $this->Html->link($devtrack_config['global']['alias'], '/', array('class' => 'brand')); ?>
+
 
                     <ul class="nav pull-right">
                     <? if(isset($user_name)){ ?>
@@ -91,7 +96,7 @@
                                 echo $this->Html->link($text, array ('controller' => $controller, 'action' => 'index'));
                                 echo "</li>";
                             }
-                            ?>
+                        ?>
                         </ul>
                     </div>
                 </div>

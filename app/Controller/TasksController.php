@@ -189,19 +189,19 @@ class TasksController extends AppProjectController {
 		// If a User has assigned someone
 		if ($this->request->is('post') && isset($this->request->data['TaskAssignee']) && isset($this->request->data['TaskAssignee']['assignee'])) {
 
-			$_email = $this->Useful->extractEmail($this->request->data['TaskAssignee']['assignee']);
-			unset($this->request->data['TaskAssignee']);
+			$assignee_id = $this->request->data['TaskAssignee']['assignee'];
 
-			if ($user = $this->Task->Assignee->findByEmail($_email)) {
-				if ($this->Task->Project->hasWrite($user['Assignee']['id'])) {
-					$this->Task->set('assignee_id', $user['Assignee']['id']);
-					$this->Flash->u($this->Task->save());
-				} else {
-					$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
-				}
+			if ($assignee_id == 0){
+				$this->Task->set('assignee_id', $assignee_id);
+				$this->Flash->u($this->Task->save());
+			} elseif ($this->Task->Project->hasWrite($assignee_id)) {
+				$this->Task->set('assignee_id', $assignee_id);
+				$this->Flash->u($this->Task->save());
 			} else {
-				$this->Flash->error('The assignee could not be updated. Please, try again.');
+				$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
 			}
+
+			unset($this->request->data['TaskAssignee']);
 
 			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
 			return;
@@ -277,7 +277,9 @@ class TasksController extends AppProjectController {
 		);
 		$this->set('times', $times);
 		$this->set('tasks', $this->Task->fetchLoggableTasks());
-		$this->set('collaborators', $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']));
+		$collabs = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		array_unshift($collabs, array(0 => "None"));
+		$this->set('collaborators', $collabs);
 	}
 
 /**
@@ -342,10 +344,9 @@ class TasksController extends AppProjectController {
 			'fields'     => array('Task.id', 'Task.subject'),
 		));
 
-		$assignees = array("0" => "(Nobody)");
-		foreach ($this->Project->Collaborator->find('all') as $collaborator){
-			$assignees[ $collaborator['User']['id'] ] = $collaborator['User']['name'];
-		}
+		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		array_unshift($assignees, "None");
+
 		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 	}
 
@@ -389,10 +390,8 @@ class TasksController extends AppProjectController {
 				'fields' => array('Task.id', 'Task.subject'),
 			));
 
-			$assignees = array("0" => "(Nobody)");
-			foreach ($this->Project->Collaborator->find('all') as $collaborator){
-				$assignees[ $collaborator['User']['id'] ] = $collaborator['User']['name'];
-			}
+			$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+			array_unshift($assignees, "None");
 
 			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}

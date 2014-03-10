@@ -119,10 +119,11 @@ class User extends AppModel {
 				$wl = array_diff($wl, array('email'));
 			}
 			$this->whitelist = $wl;
-		}
+		} else {
 
-		// Lowercase the email address for storage
-		$this->data[$this->alias]['email'] = strtolower($this->data[$this->alias]['email']);
+			// Lowercase the email address for storage (internal accounts only)
+			$this->data[$this->alias]['email'] = strtolower($this->data[$this->alias]['email']);
+		}
 
 		if ( isset($this->data[$this->alias]['password'])) {
 			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);

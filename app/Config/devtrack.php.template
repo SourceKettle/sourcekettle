@@ -25,3 +25,13 @@
  // set to folder where you would like repositories placed
  $config['devtrack']['repo']['base'] = '__REPO_DIR__';
 
+ // Default repository type for new projects
+ $config['devtrack']['repo']['default'] = 'Git';
+
+ // LDAP configuration - disabled by default, turn on here or in the DB
+/* $config['devtrack']['ldap_enabled'] = false;
+ $config['devtrack']['ldap_url'] = 'ldaps://ldap.example.org';
+ $config['devtrack']['ldap_bind_dn'] = '';
+ $config['devtrack']['ldap_bind_pw'] = '';
+ $config['devtrack']['ldap_base_dn'] = 'ou=User,dc=example,dc=org';
+ $config['devtrack']['ldap_filter'] = 'mail=%USERNAME%';*/

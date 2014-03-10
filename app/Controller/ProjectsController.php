@@ -132,9 +132,10 @@ class ProjectsController extends AppProjectController {
  * @throws NotFoundException
  * @return void
  */
-	public function admin_view($name = null) {
+	public function admin_view($project = null) {
+
 		// Check for valid project name
-		$project = $this->Project->getProject($name);
+		$project = $this->Project->getProject($project);
 		if ( empty($project)) {
 			throw new NotFoundException(__('Invalid project'));
 		}
@@ -152,6 +153,20 @@ class ProjectsController extends AppProjectController {
  */
 	public function add() {
 		$repoTypes = $this->Project->RepoType->find('list');
+
+		// Flip keys for values, then look up the ID of the default repo type name
+		$defaultRepo = array_flip($repoTypes);
+		if(isset($this->devtrack_config['repo']['default'])){
+			$d = $this->devtrack_config['repo']['default'];
+		} else {
+			$d = 'None';
+		}
+
+		if(array_key_exists($d, $defaultRepo)){
+			$defaultRepo = $defaultRepo[$d];
+		} else {
+			$defaultRepo = $defaultRepo['None'];
+		}
 
 		if ($this->request->is('post')) {
 
@@ -193,7 +208,7 @@ class ProjectsController extends AppProjectController {
 			}
 		}
 
-		$this->set(compact('repoTypes'));
+		$this->set(compact('repoTypes', 'defaultRepo'));
 	}
 
 /**

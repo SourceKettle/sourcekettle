@@ -33,7 +33,7 @@ $hover_waffle = $this->Popover->popover(
          <li>What the project does</li>
          <li>Why/how it does it</li>
      </ul>
-     For example:<br><i>'A project management system using the CakePHP MVC'</i> (Thats Devtrack)"
+     For example:<br><i>'A project management system using the CakePHP MVC'</i> (That's SourceKettle)"
 );
 
 echo $this->Bootstrap->page_header("New Project <small>where baby projects are made</small>"); ?>
@@ -58,7 +58,7 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
         ));
 
         echo $this->Bootstrap->input("repositoryType", array(
-            "input" => $this->Form->select('repo_type', $repoTypes, array('empty'=>false)),
+            "input" => $this->Form->select('repo_type', $repoTypes, array('empty'=>false, 'value' => $defaultRepo)),
         ));
         ?>
     </div>

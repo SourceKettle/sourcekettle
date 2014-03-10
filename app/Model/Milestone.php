@@ -52,6 +52,11 @@ class Milestone extends AppModel {
 				'message' => 'Short names must be less than 50 characters long',
 			),
 		),
+		'is_open' => array(
+			'boolean' => array(
+				'rule' => array('boolean'),
+			)
+		)
 	);
 
 /**
@@ -105,6 +110,7 @@ class Milestone extends AppModel {
  * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
  */
 	public function beforeDelete($cascade = false) {
+		// TODO hard-coded IDs!
 		foreach ($this->Task->find('all', array('conditions' => array('milestone_id' => $this->id, 'task_status_id <' => 3))) as $task) {
 			$this->Task->id = $task['Task']['id'];
 			$this->Task->set('milestone_id', null);
@@ -125,6 +131,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function openTasksForMilestone($id = null) {
+		// TODO hard-coded IDs!
 		return $this->tasksOfStatusForMilestone($id, 1);
 	}
 
@@ -135,6 +142,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function inProgressTasksForMilestone($id = null) {
+		// TODO hard-coded IDs!
 		return $this->tasksOfStatusForMilestone($id, 2);
 	}
 
@@ -145,6 +153,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function resolvedTasksForMilestone($id = null) {
+		// TODO hard-coded IDs!
 		return $this->tasksOfStatusForMilestone($id, 3);
 	}
 
@@ -155,6 +164,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function closedTasksForMilestone($id = null) {
+		// TODO hard-coded IDs!
 		return $this->tasksOfStatusForMilestone($id, 4);
 	}
 
@@ -177,6 +187,7 @@ class Milestone extends AppModel {
 					'AND' => array(
 						array(
 							'OR' => array(
+								// TODO hard-coded IDs!
 								array('task_status_id ' => 3),
 								array('task_status_id ' => 4)
 							),
@@ -198,6 +209,7 @@ class Milestone extends AppModel {
  * @param mixed $status the status
  */
 	public function tasksOfStatusForMilestone($id = null, $status = 1) {
+		// TODO hard coded default status ID!
 		$this->id = $id;
 
 		if (!$this->exists()) return null;
@@ -223,30 +235,24 @@ class Milestone extends AppModel {
  * @param bool $assoc true if names needed
  */
 	public function getOpenMilestones($assoc = false) {
+
+		if($assoc){
+			$fields = array('id', 'subject');
+		} else {
+			$fields = array('id');
+		}
+
 		// Fetch a list of milestones for the project
-		$_milestones = $this->find(
+		return $this->find(
 			'list',
 			array(
-				'fields' => array('id'),
-				'conditions' => array('project_id' => $this->Project->id)
+				'fields' => $fields,
+				'conditions' => array(
+					'project_id' => $this->Project->id,
+					'is_open' => true,
+				)
 			)
 		);
-		// If we require an associated result (with names)
-		if ($assoc) {
-			$open = $this->find(
-				'list',
-				array(
-					'fields' => array('id', 'subject'),
-					'conditions' => array(
-						'project_id' => $this->Project->id,
-						'id' => array_diff(array_values($_milestones), array_keys($this->getClosedMilestones($assoc)))
-					)
-				)
-			);
-		} else {
-			$open = array_diff(array_values($_milestones), array_values($this->getClosedMilestones($assoc)));
-		}
-		return $open;
 	}
 
 /**
@@ -256,43 +262,23 @@ class Milestone extends AppModel {
  * @param bool $assoc true if names needed
  */
 	public function getClosedMilestones($assoc = false) {
-		// Fetch a list of milestones for the project
-		$_milestones = $this->find(
-			'list',
-			array(
-				'fields' => array('id'),
-				'conditions' => array('project_id' => $this->Project->id)
-			)
-		);
-		// Fetch the milestone ids for open tasks for this project
-		$openTasks = $this->Task->find(
-			'list',
-			array(
-				'project_id' => $this->Project->id,
-				'group' => array('milestone_id'),
-				'fields' => array('milestone_id'),
-				'conditions' => array(
-					'milestone_id NOT' => null,
-					'task_status_id <' => 4)
-			)
-		);
-		$_diff = array_diff(array_values($_milestones), array_values($openTasks));
-		// If we require an associated result (with names)
-		if ($assoc) {
-			$closed = $this->find(
-				'list',
-				array(
-					'fields' => array('id', 'subject'),
-					'conditions' => array(
-						'project_id' => $this->Project->id,
-						'id' => $_diff
-					)
-				)
-			);
+		if($assoc){
+			$fields = array('id', 'subject');
 		} else {
-			$closed = $_diff;
+			$fields = array('id');
 		}
-		return $closed;
+
+		// Fetch a list of milestones for the project
+		return $this->find(
+			'list',
+			array(
+				'fields' => $fields,
+				'conditions' => array(
+					'project_id' => $this->Project->id,
+					'is_open' => false,
+				)
+			)
+		);
 	}
 
 /**

@@ -98,8 +98,8 @@ class Collaborator extends AppModel {
 			'conditions' => array('Collaborator.project_id' => $project)
 		));
 		foreach ($collaborators as $collaborator) {
-			$collaborator = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
-			$users[$collaborator] = $collaborator;
+			//$collaborator = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
+			$users[$collaborator['User']['id']] = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
 		}
 		return $users;
 	}

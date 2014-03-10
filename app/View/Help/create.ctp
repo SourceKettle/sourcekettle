@@ -35,13 +35,13 @@ echo $this->Bootstrap->page_header('Help! <small>How do I create a project?</sma
 			<div class="row-fluid">
 				<div class="span6">
 					<div class="alert alert-success">
-						<strong>Valid:</strong> devtrack_task_tracker
+						<strong>Valid:</strong> sourcekettle_task_tracker
 					</div>
 				</div>
 
 				<div class="span6">
 					<div class="alert alert-error">
-						<strong>Invalid:</strong> phill&chris'_(project)
+						<strong>Invalid:</strong> phill&amp;chris'_(project)
 					</div>
 				</div>
 			</div>

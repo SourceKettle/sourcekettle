@@ -23,11 +23,12 @@
         </p>
         <?php
             echo $this->Form->create('TaskAssignee', array('class' => 'form-inline'));
-
+			$assignee_id = isset($task['Task']['assignee_id'])? $task['Task']['assignee_id']: 0;
             echo $this->Form->input('assignee', array(
                 'options' => $collaborators,
                 'empty' => false,
-                'selected' => "$user_name [$user_email]",
+                //'selected' => "$user_name [$user_email]",
+				'selected' => $assignee_id,
                 'label' => false,
                 'id' => 'appendedInputButton',
                 'class' => 'span5',

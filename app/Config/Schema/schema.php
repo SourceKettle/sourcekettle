@@ -24,7 +24,13 @@ class AppSchema extends CakeSchema {
 						array('name' => 'feature_time_enabled',       'value' => '1'),
 						array('name' => 'feature_source_enabled',     'value' => '1'),
 						array('name' => 'feature_task_enabled',       'value' => '1'),
-						array('name' => 'feature_attachment_enabled', 'value' => '0')
+						array('name' => 'feature_attachment_enabled', 'value' => '0'),
+						array('name' => 'ldap_enabled',               'value' => '0'),
+						array('name' => 'ldap_url',                   'value' => ''),
+						array('name' => 'ldap_bind_dn',               'value' => ''),
+						array('name' => 'ldap_bind_pw',               'value' => ''),
+						array('name' => 'ldap_base_dn',               'value' => ''),
+						array('name' => 'ldap_filter',                'value' => 'mail=%USERNAME%'),
 					));
 					break;
 
@@ -160,6 +166,7 @@ class AppSchema extends CakeSchema {
 		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'description' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'due' => array('type' => 'date', 'null' => false, 'default' => null),
+		'is_open' => array('type' => 'boolean', 'null' => false, 'default' => '1'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'deleted' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
