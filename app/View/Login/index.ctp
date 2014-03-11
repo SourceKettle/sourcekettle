@@ -20,7 +20,9 @@
         <?= $this->Form->create('User', array('class' => 'well form-horizontal')) ?>
         <div class="row-fluid">
             <h1>Login to SourceKettle</h1>
+			<?php if($devtrack_config['register_enabled']){?>
             <p>Don't have an account? <?= $this->Html->link('Register here', '/register') ?></p>
+			<?php } ?>
 
             <?php
             echo $this->Bootstrap->input("email", array(

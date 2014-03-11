@@ -26,4 +26,4 @@ Not again?!
 If this keeps happening then please reply to this email accordingly.
 
 Regards,
-  The Devtrack Team
+  The SourceKettle Team

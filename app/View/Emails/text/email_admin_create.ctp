@@ -21,4 +21,4 @@ Head over to the following URL to change your password and get started:
 <?= $this->Html->url('/users/reset_password/'.$Key['LostPasswordKey']['key'], true) ?>
 
 Regards,
-  The Devtrack Team
+  The SourceKettle Team
