@@ -114,6 +114,14 @@ putenv('LDAPTLS_REQCERT=never');
 				$ldap_conf_errors[] = 'ldap config error: must specify an LDAP base DN';
 			}
 
+			// Make sure all-whitespace string is converted to empty string for binding...
+			if(preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_dn'])){
+				$this->devtrack_config['ldap_bind_dn'] = '';
+			}
+			if(preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_pw'])){
+				$this->devtrack_config['ldap_bind_pw'] = '';
+			}
+
 			// Default: look them up by the 'mail' field
 			if(!isset($this->devtrack_config['ldap_filter'])){
 				$this->devtrack_config['ldap_filter'] = '(mail=%USERNAME%)';

@@ -16,7 +16,7 @@
 
  // Tool name
  // value will be string that will be shown across the system in place of 'DevTrack'
- $config['devtrack']['global']['alias'] = 'DevTrack';
+ $config['devtrack']['global']['alias'] = 'SourceKettle';
 
  // Username for SSH access to git repositories
  $config['devtrack']['repo']['user'] = '__SCM_USER__';
