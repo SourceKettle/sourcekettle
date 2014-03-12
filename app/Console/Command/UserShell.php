@@ -11,9 +11,7 @@ class UserShell extends AppShell {
 
 	public $uses = array('User', 'SshKey', 'Project', 'Collaborator', 'Security');
 
-
-	public $min_password_length = 8;
-
+	public $minPasswordLength = 8;
 
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
@@ -116,9 +114,10 @@ class UserShell extends AppShell {
 
 		return $parser;
 	}
-	/**
-	 * Adds a user account
-	 */
+	
+/**
+ * Adds a user account
+ */
 	public function add() {
 		// TODO this is not set by default as we do not go near the AppController :-/
 		Security::setHash('sha256');
@@ -142,23 +141,22 @@ class UserShell extends AppShell {
 
 		$password = isset($this->params['password'])? $this->params['password']: null;
 
-		if(strlen($password) < $this->min_password_length){
-			$this->out(__("Password must be at least $this->min_password_length characters long!"));
+		if(strlen($password) < $this->minPasswordLength){
+			$this->out(__("Password must be at least $this->minPasswordLength characters long!"));
 			$password = null;
 		}
-
 
 		// If we have no password, ask for one and confirm it
 		while(empty($password)){
 			$password = $this->in(__('Enter a password:>'));
-			$confirm_password = $this->in(__('Confirm password:>'));
+			$confirmPassword = $this->in(__('Confirm password:>'));
 
-			if($password != $confirm_password){
+			if($password != $confirmPassword){
 				$this->out(__("Error: passwords don't match!"));
 				$password = null;
 
-			} elseif(strlen($password) < $this->min_password_length){
-				$this->out(__("Password must be at least $this->min_password_length characters long!"));
+			} elseif(strlen($password) < $this->minPasswordLength){
+				$this->out(__("Password must be at least $this->minPasswordLength characters long!"));
 				$password = null;
 			}		
 		}
@@ -181,14 +179,12 @@ class UserShell extends AppShell {
 		} else {
 			$this->out(__("User '$email' created."));
 		}
-		
 	}
 
-
-	/**
-	 * Disables a user account, found by email address
-	 */
-	public function disable(){
+/**
+ * Disables a user account, found by email address
+ */
+	public function disable() {
 		$this->out("Disabling a user account");
 		$email = $this->args[0];
 
@@ -214,10 +210,10 @@ class UserShell extends AppShell {
 		}
 	}
 
-	/**
-	 * Enables a user account, found by email address
-	 */
-	public function enable(){
+/**
+ * Enables a user account, found by email address
+ */
+	public function enable() {
 		$this->out("Enabling a user account");
 		$email = $this->args[0];
 
@@ -243,9 +239,9 @@ class UserShell extends AppShell {
 		}
 	}
 
-	/**
-	 * Promotes a normal user to sysadmin status
-	 */
+/**
+ * Promotes a normal user to sysadmin status
+ */
 	public function promote() {
 		$this->out("Promoting a normal user account to sysadmin");
 		$email = $this->args[0];
@@ -272,9 +268,9 @@ class UserShell extends AppShell {
 		}
 	}
 
-	/**
-	 * Demotes a sysadmin to normal user status
-	 */
+/**
+ * Demotes a sysadmin to normal user status
+ */
 	public function demote() {
 		$this->out("Demoting a sysadmin to a normal user account");
 		$email = $this->args[0];
@@ -303,4 +299,3 @@ class UserShell extends AppShell {
 
 }
 
-?>
