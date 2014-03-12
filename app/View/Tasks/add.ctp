@@ -24,7 +24,6 @@ $this->Html->scriptBlock ("
 	", array ("inline" => false));
 
 ?>
-
 <?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">

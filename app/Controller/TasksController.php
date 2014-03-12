@@ -114,6 +114,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function view($project = null, $id = null) {
+
 		$project = $this->_projectCheck($project);
 		$task = $this->Task->open($id);
 
@@ -190,7 +191,6 @@ class TasksController extends AppProjectController {
 		if ($this->request->is('post') && isset($this->request->data['TaskAssignee']) && isset($this->request->data['TaskAssignee']['assignee'])) {
 
 			$assignee_id = $this->request->data['TaskAssignee']['assignee'];
-
 			if ($assignee_id == 0){
 				$this->Task->set('assignee_id', $assignee_id);
 				$this->Flash->u($this->Task->save());
@@ -278,7 +278,8 @@ class TasksController extends AppProjectController {
 		$this->set('times', $times);
 		$this->set('tasks', $this->Task->fetchLoggableTasks());
 		$collabs = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
-		array_unshift($collabs, array(0 => "None"));
+		$collabs[0] = "None";
+		ksort($collabs);
 		$this->set('collaborators', $collabs);
 	}
 
@@ -322,6 +323,13 @@ class TasksController extends AppProjectController {
 					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
 				}
 			}
+
+		// GET request: set default priority, type and assignment
+		// TODO define the defaults somewhere useful?
+		} else {
+			$this->request->data['Task']['task_priority_id'] = 2;
+			$this->request->data['Task']['task_type_id'] = 1;
+			$this->request->data['Task']['assignee_id'] = 0;
 		}
 
 		// Fetch all the variables for the view
@@ -345,7 +353,8 @@ class TasksController extends AppProjectController {
 		));
 
 		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
-		array_unshift($assignees, "None");
+		$assignees[0] = "None";
+		ksort($assignees);
 
 		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 	}
@@ -391,7 +400,8 @@ class TasksController extends AppProjectController {
 			));
 
 			$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
-			array_unshift($assignees, "None");
+			$assignees[0] = "None";
+			ksort($assignees);
 
 			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
