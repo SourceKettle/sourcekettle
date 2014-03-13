@@ -114,7 +114,7 @@ class UserShell extends AppShell {
 
 		return $parser;
 	}
-	
+
 /**
  * Adds a user account
  */
@@ -135,30 +135,30 @@ class UserShell extends AppShell {
 		));
 
 		// If it exists, error out
-		if(!empty($found)){
+		if(!empty($found)) {
 			$this->error(__("Found an existing user with that email address!"));
 		}
 
 		$password = isset($this->params['password'])? $this->params['password']: null;
 
-		if(strlen($password) < $this->minPasswordLength){
+		if(strlen($password) < $this->minPasswordLength) {
 			$this->out(__("Password must be at least $this->minPasswordLength characters long!"));
 			$password = null;
 		}
 
 		// If we have no password, ask for one and confirm it
-		while(empty($password)){
+		while(empty($password)) {
 			$password = $this->in(__('Enter a password:>'));
 			$confirmPassword = $this->in(__('Confirm password:>'));
 
-			if($password != $confirmPassword){
+			if($password != $confirmPassword) {
 				$this->out(__("Error: passwords don't match!"));
 				$password = null;
 
-			} elseif(strlen($password) < $this->minPasswordLength){
+			} elseif(strlen($password) < $this->minPasswordLength) {
 				$this->out(__("Password must be at least $this->minPasswordLength characters long!"));
 				$password = null;
-			}		
+			}
 		}
 
 		// No existing account, create one
@@ -174,7 +174,7 @@ class UserShell extends AppShell {
 		)));
 		$ok = $this->User->save();
 
-		if(!$ok){
+		if(!$ok) {
 			$this->error(__("Failed to create user '$email'!"));
 		} else {
 			$this->out(__("User '$email' created."));
@@ -196,14 +196,14 @@ class UserShell extends AppShell {
 		));
 
 		// If it does not exist, error out
-		if(empty($found)){
+		if(empty($found)) {
 			$this->error(__("Could not find an account with that email address!"));
 		}
 
 		// Save with updated status
 		$this->User->id = $found['User']['id'];
 
-		if(!$this->User->saveField('is_active', 0)){
+		if(!$this->User->saveField('is_active', 0)) {
 			$this->error(__("Failed to disable user '$email'!"));
 		} else {
 			$this->out(__("User '$email' disabled."));
@@ -225,14 +225,14 @@ class UserShell extends AppShell {
 		));
 
 		// If it does not exist, error out
-		if(empty($found)){
+		if(empty($found)) {
 			$this->error(__("Could not find an account with that email address!"));
 		}
 
 		// Save with updated status
 		$this->User->id = $found['User']['id'];
 
-		if(!$this->User->saveField('is_active', 1)){
+		if(!$this->User->saveField('is_active', 1)) {
 			$this->error(__("Failed to enable user '$email'!"));
 		} else {
 			$this->out(__("User '$email' enabled."));
@@ -254,14 +254,14 @@ class UserShell extends AppShell {
 		));
 
 		// If it does not exist, error out
-		if(empty($found)){
+		if(empty($found)) {
 			$this->error(__("Could not find an account with that email address!"));
 		}
 
 		// Save with updated status
 		$this->User->id = $found['User']['id'];
 
-		if(!$this->User->saveField('is_admin', 1)){
+		if(!$this->User->saveField('is_admin', 1)) {
 			$this->error(__("Failed to promote user '$email'!"));
 		} else {
 			$this->out(__("User '$email' promoted to system administrator."));
@@ -283,14 +283,14 @@ class UserShell extends AppShell {
 		));
 
 		// If it does not exist, error out
-		if(empty($found)){
+		if(empty($found)) {
 			$this->error(__("Could not find an account with that email address!"));
 		}
 
 		// Save with updated status
 		$this->User->id = $found['User']['id'];
 
-		if(!$this->User->saveField('is_admin', 0)){
+		if(!$this->User->saveField('is_admin', 0)) {
 			$this->error(__("Failed to demote user '$email'!"));
 		} else {
 			$this->out(__("User '$email' demoted to normal user."));

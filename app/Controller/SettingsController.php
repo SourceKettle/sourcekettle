@@ -19,10 +19,11 @@ App::uses('AppController', 'Controller');
 class SettingsController extends AppController {
 
 	// Regexes for validating LDAP-related fields
-	private static $regex = array(
+	private static $_regex = array(
 		'ldap_url' => '/^ldap(s)?:\/\/[.a-zA-Z0-9-]+$/',
 		'ldap_dn'  => '/^[a-zA-Z]+=[a-zA-Z]+(,[a-zA-Z]+=[a-zA-Z]+)*$/',
 	);
+
 /**
  * admin_index method
  *
@@ -78,11 +79,11 @@ class SettingsController extends AppController {
  * @access public
  * @param mixed $value (default: null)
  * @return void
+ * @throws
  */
 	public function admin_setRegistration($value = null) {
 		$this->__adminSetField('register_enabled', $value);
 	}
-
 
 	public function admin_setLDAPEnabled($value = null) {
 		$this->__adminSetField('ldap_enabled', $value);
@@ -93,7 +94,7 @@ class SettingsController extends AppController {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
-		$ok = Validation::custom($this->request->data['Settings']['ldap_url'], self::$regex['ldap_url']);
+		$ok = Validation::custom($this->request->data['Settings']['ldap_url'], self::$_regex['ldap_url']);
 
 		$this->Setting->id = $this->Setting->field('id', array('name' => 'ldap_url'));
 		if ($this->Setting->exists() && $ok) {
@@ -108,7 +109,7 @@ class SettingsController extends AppController {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
-		$ok = Validation::custom($this->request->data['Settings']['ldap_base_dn'], self::$regex['ldap_dn']);
+		$ok = Validation::custom($this->request->data['Settings']['ldap_base_dn'], self::$_regex['ldap_dn']);
 		$this->Setting->id = $this->Setting->field('id', array('name' => 'ldap_base_dn'));
 		if ($this->Setting->exists() && $ok) {
 			$this->Setting->set('value', $this->request->data['Settings']['ldap_base_dn']);
@@ -122,7 +123,7 @@ class SettingsController extends AppController {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
-		$ok = Validation::custom($this->request->data['Settings']['ldap_bind_dn'], self::$regex['ldap_dn']);
+		$ok = Validation::custom($this->request->data['Settings']['ldap_bind_dn'], self::$_regex['ldap_dn']);
 		$this->Setting->id = $this->Setting->field('id', array('name' => 'ldap_bind_dn'));
 		if ($this->Setting->exists() && $ok) {
 			$this->Setting->set('value', $this->request->data['Settings']['ldap_bind_dn']);
