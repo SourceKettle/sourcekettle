@@ -348,8 +348,8 @@ class Task extends AppModel {
 		return $this->field('task_status_id') == 2;
 	}
 
-	// TODO make this a library function
 	public function splitMins($in) {
+		// TODO make this a library function
 		if (!is_numeric($in)) {
 			throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
 		}

@@ -75,25 +75,25 @@ class ProjectHistory extends AppModel {
 	);
 
 
-	public function logC($model, $row_id, $row_title, $row_field, $row_field_old, $row_field_new, $user_id, $user_name  ) {
-		if (is_array($row_field_old)) {
-			$row_field_old = serialize($row_field_old);
+	public function logC($model, $rowId, $rowTitle, $row_field, $rowFieldOld, $rowFieldNew, $userId, $userName  ) {
+		if (is_array($rowFieldOld)) {
+			$rowFieldOld = serialize($rowFieldOld);
 		}
-		if (is_array($row_field_new)) {
-			$row_field_new = serialize($row_field_new);
+		if (is_array($rowFieldNew)) {
+			$rowFieldNew = serialize($rowFieldNew);
 		}
 		$this->create();
 		return $this->save(array(
 			'ProjectHistory' => array(
 				'project_id' => $this->Project->id,
 				'model' => $model,
-				'row_id' => $row_id,
-				'row_title' => $row_title,
+				'row_id' => $rowId,
+				'row_title' => $rowTitle,
 				'row_field' => $row_field,
-				'row_field_old' => $row_field_old,
-				'row_field_new' => $row_field_new,
-				'user_id' => $user_id,
-				'user_name' => $user_name,
+				'row_field_old' => $rowFieldOld,
+				'row_field_new' => $rowFieldNew,
+				'user_id' => $userId,
+				'user_name' => $userName,
 			)
 		));
 	}
@@ -112,7 +112,7 @@ class ProjectHistory extends AppModel {
 	public function fetchHistory($project = null, $number = 50, $offset = 0, $user = -1, $model = null) {
 		$search = array(
 			'conditions' => array(),
-			'limit' => $number+$offset,
+			'limit' => $number + $offset,
 			'offset' => $offset,
 			'order' => 'ProjectHistory.created DESC'
 		);

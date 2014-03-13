@@ -43,13 +43,13 @@ class ProjectHistoryBehavior extends ModelBehavior {
  */
 	private $_cache = array();
 
-	public function setup(Model $model, $settings = array()) {
 /**
  * this-
  *
  * @var mixed
  * @access public
  */
+	public function setup(Model $model, $settings = array()) {
 		$this->settings[$model->name] = $settings;
 		$this->model = &$model;
 	}
@@ -165,7 +165,6 @@ class ProjectHistoryBehavior extends ModelBehavior {
  * @access public
  * @return void
  */
-	# @override
 	public function getTitleForHistory(Model $Model) {
 		if (method_exists($Model, 'getTitleForHistory')) {
 			return $Model->getTitleForHistory($Model->id);

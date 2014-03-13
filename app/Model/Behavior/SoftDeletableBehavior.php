@@ -67,7 +67,7 @@ class SoftDeletableBehavior extends ModelBehavior {
 				$data[$Model->alias][$attributes['field_date']] = date('Y-m-d H:i:s');
 			}
 
-			foreach(am(array_keys($data[$Model->alias]), array('field', 'field_date', 'find', 'delete')) as $field) {
+			foreach (am(array_keys($data[$Model->alias]), array('field', 'field_date', 'find', 'delete')) as $field) {
 				unset($attributes[$field]);
 			}
 
@@ -199,7 +199,7 @@ class SoftDeletableBehavior extends ModelBehavior {
 			$methods = array($methods);
 		}
 
-		foreach($methods as $method) {
+		foreach ($methods as $method) {
 			$this->__settings[$Model->alias][$method] = $enable;
 		}
 	}
@@ -227,7 +227,7 @@ class SoftDeletableBehavior extends ModelBehavior {
 					$this->__settings[$Model->alias]['field']
 				);
 
-				foreach($fields as $field) {
+				foreach ($fields as $field) {
 					if (preg_match('/^' . preg_quote($field) . '[\s=!]+/i', $queryData['conditions']) || preg_match('/\\x20+' . preg_quote($field) . '[\s=!]+/i', $queryData['conditions'])) {
 						$include = false;
 						break;
@@ -292,4 +292,3 @@ class SoftDeletableBehavior extends ModelBehavior {
 		}
 	}
 }
-?>

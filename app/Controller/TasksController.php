@@ -322,11 +322,9 @@ class TasksController extends AppProjectController {
 					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
 				}
 			}
-		}
-
-		// GET request: set default priority, type and assignment
-		// TODO define the defaults somewhere useful?
-		else {
+		} else {
+			// GET request: set default priority, type and assignment
+			// TODO define the defaults somewhere useful?
 			$this->request->data['Task']['task_priority_id'] = 2;
 			$this->request->data['Task']['task_type_id'] = 1;
 			$this->request->data['Task']['assignee_id'] = 0;
