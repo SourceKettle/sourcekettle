@@ -866,12 +866,12 @@ class TasksController extends AppProjectController {
 						$conditions['assignee_id'] = $user;
 						break;
 					case 'nobody':
-						$conditions['assignee_id'] = null;
+						$conditions['assignee_id'] = array(null, 0);
 						break;
 					case 'all':
 						break;
 					default:
-						$conditions['assignee_id !='] = $user;
+						$conditions['assignee_id !='] = array($user, 0);
 				}
 			} else {
 				$conditions['assignee_id'] = $user;
