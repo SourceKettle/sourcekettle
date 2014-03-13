@@ -68,7 +68,6 @@ class AppController extends Controller {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
-putenv('LDAPTLS_REQCERT=never');
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
 		// Load config file in
