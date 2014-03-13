@@ -15,167 +15,167 @@
 
 class ProjectHistoryBehavior extends ModelBehavior {
 
-    /**
-     * settings
-     *
-     * (default value: array())
-     *
-     * @var array
-     * @access public
-     */
-    var $settings = array();
+/**
+ * settings
+ *
+ * (default value: array())
+ *
+ * @var array
+ * @access public
+ */
+	public $settings = array();
 
-    /**
-     * model
-     *
-     * (default value: null)
-     *
-     * @var mixed
-     * @access public
-     */
-    var $model = null;
+/**
+ * model
+ *
+ * (default value: null)
+ *
+ * @var mixed
+ * @access public
+ */
+	public $model = null;
 
-    public function setup(Model $model, $settings = array()) {
-        /**
-         * this-
-         *
-         * @var mixed
-         * @access public
-         */
-        $this->settings[$model->name] = $settings;
-        $this->model = &$model;
-    }
+/**
+ * _cache
+ *
+ * @var array
+ * @access private
+ */
+	private $_cache = array();
 
+	public function setup(Model $model, $settings = array()) {
+/**
+ * this-
+ *
+ * @var mixed
+ * @access public
+ */
+		$this->settings[$model->name] = $settings;
+		$this->model = &$model;
+	}
 
-    /**
-     * _cache
-     *
-     * @var array
-     * @access private
-     */
-    private $_cache = array();
+/**
+ * beforeSave function.
+ *
+ * @access public
+ * @param array $options (default: array())
+ * @return void
+ * @throws
+ */
+	public function beforeSave(Model $Model) {
+		$exception = false;
+		$this->prepare($Model);
 
-    /**
-     * beforeSave function.
-     *
-     * @access public
-     * @param array $options (default: array())
-     * @return void
-     */
-    public function beforeSave(Model $Model) {
-        $exception = false;
-        $this->prepare($Model);
+		// Lock out those who aren't allowed to write
+		if ( $Model->name == 'Collaborator' && !$Model->findByProjectId($Model->Project->id) ) {
+			$exception = true;
+		}
 
-        // Lock out those who aren't allowed to write
-        if ( $Model->name == 'Collaborator' && !$Model->findByProjectId($Model->Project->id) ) {
-            $exception = true;
-        }
+		if ( !$exception && !$Model->Project->hasWrite(User::get('id')) ) {
+			throw new ForbiddenException(__('You do not have permissions to write to this project'));
+		}
 
-        if ( !$exception && !$Model->Project->hasWrite(User::get('id')) ) {
-            throw new ForbiddenException(__('You do not have permissions to write to this project'));
-        }
+		$before = $Model->findById($Model->id);
+		$this->_cache[$Model->name][$Model->id] = array();
 
-        $before = $Model->findById($Model->id);
-        $this->_cache[$Model->name][$Model->id] = array();
+		foreach ($Model->data[$Model->name] as $field => $value) {
+			if (isset($before[$Model->name]) && $field != 'modified' && $before[$Model->name][$field] != $value) {
+				$this->_cache[$Model->name][$Model->id][$field] = $before[$Model->name][$field];
+			}
+		}
+		return true;
+	}
 
-        foreach ($Model->data[$Model->name] as $field => $value) {
-            if (isset($before[$Model->name]) && $field != 'modified' && $before[$Model->name][$field] != $value) {
-                $this->_cache[$Model->name][$Model->id][$field] = $before[$Model->name][$field];
-            }
-        }
-        return true;
-    }
+/**
+ * afterSave function.
+ *
+ * @access public
+ * @param bool $created (default: false)
+ * @return void
+ */
+	public function afterSave(Model $Model, $created = false) {
+		if (!$created) {
+			// Some fields have been updated
+			foreach ($this->_cache[$Model->name][$Model->id] as $field => $value) {
+				$Model->Project->ProjectHistory->logC(
+					strtolower($Model->name),
+					$Model->id,
+					$this->getTitleForHistory($Model),
+					$field,
+					$value,
+					$Model->field($field),
+					User::get('id'),
+					User::get('name')
+				);
+			}
+		} else {
+			// We have a new Project => Use '+' to signify creation
+			$Model->Project->ProjectHistory->logC(
+				strtolower($Model->name),
+				$Model->id,
+				$this->getTitleForHistory($Model),
+				'+',
+				null,
+				null,
+				User::get('id'),
+				User::get('name')
+			);
+		}
+		return true;
+	}
 
-    /**
-     * afterSave function.
-     *
-     * @access public
-     * @param bool $created (default: false)
-     * @return void
-     */
-    public function afterSave(Model $Model, $created = false) {
-        if (!$created) {
-            // Some fields have been updated
-            foreach ($this->_cache[$Model->name][$Model->id] as $field => $value) {
-                $Model->Project->ProjectHistory->logC(
-                    strtolower($Model->name),
-                    $Model->id,
-                    $this->getTitleForHistory($Model),
-                    $field,
-                    $value,
-                    $Model->field($field),
-                    User::get('id'),
-                    User::get('name')
-                );
-            }
-        } else {
-            // We have a new Project => Use '+' to signify creation
-            $Model->Project->ProjectHistory->logC(
-                strtolower($Model->name),
-                $Model->id,
-                $this->getTitleForHistory($Model),
-                '+',
-                null,
-                null,
-                User::get('id'),
-                User::get('name')
-            );
-        }
-        return true;
-    }
+/**
+ * beforeDelete function.
+ *
+ * @access public
+ * @param Model $Model
+ * @param bool $cascade (default: true)
+ * @return void
+ */
+	public function beforeDelete(Model $Model, $cascade = true) {
+		$this->prepare($Model);
+		$this->_cache[$Model->name][$Model->id] = $this->getTitleForHistory($Model);
+		return true;
+	}
 
-    /**
-     * beforeDelete function.
-     *
-     * @access public
-     * @param Model $Model
-     * @param bool $cascade (default: true)
-     * @return void
-     */
-    public function beforeDelete(Model $Model, $cascade = true) {
-        $this->prepare($Model);
-        $this->_cache[$Model->name][$Model->id] = $this->getTitleForHistory($Model);
-        return true;
-    }
+/**
+ * afterDelete function.
+ *
+ * @access public
+ * @return void
+ */
+	public function afterDelete(Model $Model) {
+		$Model->Project->ProjectHistory->logC(
+			strtolower($Model->name),
+			$Model->id,
+			$this->_cache[$Model->name][$Model->id],
+			'-',
+			null,
+			null,
+			User::get('id'),
+			User::get('name')
+		);
+		return true;
+	}
 
-    /**
-     * afterDelete function.
-     *
-     * @access public
-     * @return void
-     */
-    public function afterDelete(Model $Model) {
-        $Model->Project->ProjectHistory->logC(
-            strtolower($Model->name),
-            $Model->id,
-            $this->_cache[$Model->name][$Model->id],
-            '-',
-            null,
-            null,
-            User::get('id'),
-            User::get('name')
-        );
-        return true;
-    }
+/**
+ * getTitleForHistory function.
+ * Designed to be overridden.
+ *
+ * @access public
+ * @return void
+ */
+	# @override
+	public function getTitleForHistory(Model $Model) {
+		if (method_exists($Model, 'getTitleForHistory')) {
+			return $Model->getTitleForHistory($Model->id);
+		}
+		return $Model->field($Model->displayField);
+	}
 
-    /**
-     * getTitleForHistory function.
-     * Designed to be overridden.
-     *
-     * @access public
-     * @return void
-     */
-    # @override
-    public function getTitleForHistory(Model $Model) {
-        if (method_exists($Model, 'getTitleForHistory')) {
-            return $Model->getTitleForHistory($Model->id);
-        }
-        return $Model->field($Model->displayField);
-    }
-
-    private function prepare(Model $Model) {
-        if (!isset($this->_cache[$Model->name])) {
-            $this->_cache[$Model->name] = array();
-        }
-    }
+	private function prepare(Model $Model) {
+		if (!isset($this->_cache[$Model->name])) {
+			$this->_cache[$Model->name] = array();
+		}
+	}
 }
