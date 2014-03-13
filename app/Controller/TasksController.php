@@ -114,7 +114,6 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function view($project = null, $id = null) {
-
 		$project = $this->_projectCheck($project);
 		$task = $this->Task->open($id);
 
@@ -190,12 +189,12 @@ class TasksController extends AppProjectController {
 		// If a User has assigned someone
 		if ($this->request->is('post') && isset($this->request->data['TaskAssignee']) && isset($this->request->data['TaskAssignee']['assignee'])) {
 
-			$assignee_id = $this->request->data['TaskAssignee']['assignee'];
-			if ($assignee_id == 0){
-				$this->Task->set('assignee_id', $assignee_id);
+			$assigneeId = $this->request->data['TaskAssignee']['assignee'];
+			if ($assigneeId == 0) {
+				$this->Task->set('assignee_id', $assigneeId);
 				$this->Flash->u($this->Task->save());
-			} elseif ($this->Task->Project->hasWrite($assignee_id)) {
-				$this->Task->set('assignee_id', $assignee_id);
+			} elseif ($this->Task->Project->hasWrite($assigneeId)) {
+				$this->Task->set('assignee_id', $assigneeId);
 				$this->Flash->u($this->Task->save());
 			} else {
 				$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
@@ -323,10 +322,11 @@ class TasksController extends AppProjectController {
 					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
 				}
 			}
+		}
 
 		// GET request: set default priority, type and assignment
 		// TODO define the defaults somewhere useful?
-		} else {
+		else {
 			$this->request->data['Task']['task_priority_id'] = 2;
 			$this->request->data['Task']['task_type_id'] = 1;
 			$this->request->data['Task']['assignee_id'] = 0;
@@ -575,7 +575,7 @@ class TasksController extends AppProjectController {
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	public function resolve($project = null, $id = null){
+	public function resolve($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
 		$success = $this->__updateTaskStatus($project, $id, 3, $isAjax);
@@ -606,7 +606,7 @@ class TasksController extends AppProjectController {
 		}
 	}
 
-	public function unresolve($project = null, $id = null){
+	public function unresolve($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
 		$success = $this->__updateTaskStatus($project, $id, 1, $isAjax);
@@ -697,12 +697,12 @@ class TasksController extends AppProjectController {
 		$task = $this->Task->open($id);
 
 		$this->Task->set('task_status_id', $status);
-        $result = $this->Task->save();
-        if ($isAjax) {
-            return $result;
-        } else {
-            return $this->Flash->U($result);
-        }
+		$result = $this->Task->save();
+		if ($isAjax) {
+			return $result;
+		} else {
+			return $this->Flash->U($result);
+		}
 	}
 
 	/* ************************************************* *

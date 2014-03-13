@@ -142,11 +142,9 @@ class FlashComponent extends Component {
 			$this->_id	= $this->Model->id;
 			if ($this->Model->actsAs && in_array('SoftDeletable', $this->Model->actsAs)) $this->Model->enableSoftDeletable(true);
 
-		}
-
-		// Otherwise, pull it out of the model's data array as the save failed
-		// TODO is this a massive hack or the Right Thing? I can't tell at the moment.
-		else {
+		} else {
+			// Otherwise, pull it out of the model's data array as the save failed
+			// TODO is this a massive hack or the Right Thing? I can't tell at the moment.
 			$this->_name = $this->Model->data[$this->name][$this->Model->displayField];
 		}
 	}

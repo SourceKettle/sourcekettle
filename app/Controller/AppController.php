@@ -83,55 +83,55 @@ putenv('LDAPTLS_REQCERT=never');
 		);
 
 		// Is LDAP authentication enabled?
-		if(!isset($this->devtrack_config['ldap_enabled'])) {
+		if (!isset($this->devtrack_config['ldap_enabled'])) {
 			$this->devtrack_config['ldap_enabled'] = false;
 		}
 
 		// Default to just form-based authentication
 		$this->Auth->authenticate = array('Form' => $formConfig);
 
-		if($this->devtrack_config['ldap_enabled']) {
+		if ($this->devtrack_config['ldap_enabled']) {
 			$ldapConfErrors = array();
 
 			// Check for existence of all LDAP config fields
-			if(!isset($this->devtrack_config['ldap_url']) || empty($this->devtrack_config['ldap_url'])) {
+			if (!isset($this->devtrack_config['ldap_url']) || empty($this->devtrack_config['ldap_url'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify an LDAP URL';
 			}
-			if(!isset($this->devtrack_config['ldap_bind_dn'])) {
+			if (!isset($this->devtrack_config['ldap_bind_dn'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify a bind DN, or empty string';
 			}
-			if(!isset($this->devtrack_config['ldap_bind_pw'])) {
+			if (!isset($this->devtrack_config['ldap_bind_pw'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify a bind password, or empty string';
 			}
-			if(!isset($this->devtrack_config['ldap_base_dn']) || empty($this->devtrack_config['ldap_base_dn'])) {
+			if (!isset($this->devtrack_config['ldap_base_dn']) || empty($this->devtrack_config['ldap_base_dn'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify an LDAP base DN';
 			}
 
 			// Make sure all-whitespace string is converted to empty string for binding...
-			if(preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_dn'])) {
+			if (preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_dn'])) {
 				$this->devtrack_config['ldap_bind_dn'] = '';
 			}
-			if(preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_pw'])) {
+			if (preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_pw'])) {
 				$this->devtrack_config['ldap_bind_pw'] = '';
 			}
 
 			// Default: look them up by the 'mail' field
-			if(!isset($this->devtrack_config['ldap_filter'])) {
+			if (!isset($this->devtrack_config['ldap_filter'])) {
 				$this->devtrack_config['ldap_filter'] = '(mail=%USERNAME%)';
 			}
 
 			// Default: use the email address the user typed in
-			if(!isset($this->devtrack_config['ldap_email_field'])) {
+			if (!isset($this->devtrack_config['ldap_email_field'])) {
 				$this->devtrack_config['ldap_email_field'] = '__SUPPLIED__';
 			}
 
 			// Default: use the given name and surname fields as the name
-			if(!isset($this->devtrack_config['ldap_name_field'])) {
+			if (!isset($this->devtrack_config['ldap_name_field'])) {
 				$this->devtrack_config['ldap_name_field'] = 'givenName sn';
 			}
 
 			// Report errors, do not enable LDAP
-			if(count($ldapConfErrors) > 0) {
+			if (count($ldapConfErrors) > 0) {
 				foreach ($ldapConfErrors as $err) {
 					$this->log($err, 'error');
 				}
