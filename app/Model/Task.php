@@ -203,7 +203,6 @@ class Task extends AppModel {
 		return $results;
 	}
 
-
 	private function __setDependenciesComplete($result) {
 		if (isset($result['DependsOn'])) {
 			if (!empty($result['DependsOn'][0])) {
@@ -292,7 +291,6 @@ class Task extends AppModel {
  * @return bool True if the save was successful.
  */
 	public function beforeSave($options = array()) {
-
 		// Parse time estimate string back into minutes
 		// TODO hacky
 		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
@@ -344,12 +342,13 @@ class Task extends AppModel {
 /**
  * isInProgress function.
  * Returns true if a task is in progress
+ * @throws
  */
 	public function isInProgress() {
 		return $this->field('task_status_id') == 2;
 	}
 
- 	// TODO make this a library function
+	// TODO make this a library function
 	public function splitMins($in) {
 		if (!is_numeric($in)) {
 			throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
