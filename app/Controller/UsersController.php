@@ -139,7 +139,7 @@ class UsersController extends AppController {
 
 			// Check the user account is internally managed by SourceKettle
 			if ($user['User']['password'] == null) {
-				$this->Session->setFlash("It looks like you're using an account that is not managed by ".$this->devtrack_config['global']['alias']." - " .
+				$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->devtrack_config['global']['alias'] . " - " .
 					"unfortunately, we can't help you reset your password.	Try talking to " .
 					"<a href='mailto:" . $this->devtrack_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
 				$this->redirect('/login');
@@ -189,7 +189,6 @@ class UsersController extends AppController {
  * @param type $key The LostPasswordKey to use
  */
 	public function reset_password($key = null) {
-
 		// No key given, bomb out
 		if ($key == null) {
 			$this->Session->setFlash("A valid password reset key was not given.", 'default', array(), 'error');
@@ -204,7 +203,7 @@ class UsersController extends AppController {
 			$this->redirect('lost_password');
 			return;
 		}
-		
+
 		// Bomb out if it's not a POST request
 		// TODO does this need an error message?
 		if (!$this->request->is('post')) {
@@ -243,7 +242,7 @@ class UsersController extends AppController {
 		if ($this->User->save($this->request->data)) {
 
 			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
-				
+
 			$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
 			$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'devtrack');
 
@@ -251,7 +250,6 @@ class UsersController extends AppController {
 		} else {
 			$this->Session->setFlash("There was problem resetting your password. Please try again.", 'default', array(), 'error');
 		}
-
 	}
 
 /**

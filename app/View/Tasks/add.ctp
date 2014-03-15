@@ -24,7 +24,6 @@ $this->Html->scriptBlock ("
 	", array ("inline" => false));
 
 ?>
-
 <?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
@@ -64,6 +63,8 @@ $this->Html->scriptBlock ("
 
                         echo $this->Bootstrap->input("time_estimate", array(
                             "input" => $this->Form->input("time_estimate", array(
+								// Force text field, as we convert  time string to integer
+								"type" => "text",
                                 "label" => false,
                                 "class" => "span3",
 								"placeholder" => "e.g. 2d 4h 3m",

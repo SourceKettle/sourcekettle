@@ -1,10 +1,10 @@
 <?php
-App::uses('SourcesController', 'Controller');
+App::uses('SourceController', 'Controller');
 
 /**
- * TestSourcesController *
+ * TestSourceController *
  */
-class TestSourcesController extends SourcesController {
+class TestSourceController extends SourceController {
 
 /**
  * Auto render
@@ -28,10 +28,10 @@ class TestSourcesController extends SourcesController {
 }
 
 /**
- * SourcesController Test Case
+ * SourceController Test Case
  *
  */
-class SourcesControllerTestCase extends CakeTestCase {
+class SourceControllerTestCase extends CakeTestCase {
 
 /**
  * Fixtures
@@ -47,8 +47,8 @@ class SourcesControllerTestCase extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Sources = new TestSourcesController();
-		$this->Sources->constructClasses();
+		$this->Source = new TestSourceController();
+		$this->Source->constructClasses();
 	}
 
 /**
@@ -57,7 +57,7 @@ class SourcesControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this->Sources);
+		unset($this->Source);
 
 		parent::tearDown();
 	}

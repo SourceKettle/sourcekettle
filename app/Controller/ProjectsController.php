@@ -133,7 +133,6 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_view($project = null) {
-
 		// Check for valid project name
 		$project = $this->Project->getProject($project);
 		if ( empty($project)) {
@@ -156,13 +155,13 @@ class ProjectsController extends AppProjectController {
 
 		// Flip keys for values, then look up the ID of the default repo type name
 		$defaultRepo = array_flip($repoTypes);
-		if(isset($this->devtrack_config['repo']['default'])){
+		if (isset($this->devtrack_config['repo']['default'])) {
 			$d = $this->devtrack_config['repo']['default'];
 		} else {
 			$d = 'None';
 		}
 
-		if(array_key_exists($d, $defaultRepo)){
+		if (array_key_exists($d, $defaultRepo)) {
 			$defaultRepo = $defaultRepo[$d];
 		} else {
 			$defaultRepo = $defaultRepo['None'];

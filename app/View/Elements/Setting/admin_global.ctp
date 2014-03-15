@@ -37,14 +37,60 @@
                     <h4><?= $this->DT->t('global.email.text') ?> <small>- <?= $this->DT->t('global.email.description') ?></small></h4>
                 </td>
                 <td>
-                <?= $this->Form->create('Settings', array('action'=>'setEmail')) ?>
-                    <div class="input-append">
-                        <?= $this->Form->text("sysadmin_email", array('id' => 'appendedInputButton', 'class' => 'xlarge', "value" => $sysadmin_email)) ?>
-                        <?= $this->Bootstrap->button("Update", array('escape' => false, 'style' => 'primary')) ?>
-                    </div>
-                <?= $this->Form->end() ?>
+					<?= $this->element('Setting/text_fields', array('action'=>'setEmail', 'name' => 'sysadmin_email', 'value' => $sysadmin_email)) ?>
                 </td>
             </tr>
+
+			<tr>
+				<td>
+					<h4><?= $this->DT->t('global.ldap.text') ?> <small>- <?= $this->DT->t('global.ldap.description') ?></small></h4>
+				</td>
+				<td>
+					<?= $this->element('Setting/on_off_buttons', array('action'=>'setLDAPEnabled', 'value' => $ldap['ldap_enabled'])) ?>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<h4><?= $this->DT->t('global.ldap_url.text') ?> <small>- <?= $this->DT->t('global.ldap_url.description') ?></small></h4>
+				</td>
+				<td>
+					<?= $this->element('Setting/text_fields', array('action'=>'setLdapUrl', 'name' => 'ldap_url', 'value' => $ldap['ldap_url'])) ?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h4><?= $this->DT->t('global.ldap_base_dn.text') ?> <small>- <?= $this->DT->t('global.ldap_base_dn.description') ?></small></h4>
+				</td>
+				<td>
+				<?= $this->element('Setting/text_fields', array('action'=>'setLdapBaseDN', 'name' => 'ldap_base_dn', 'value' => $ldap['ldap_base_dn'])) ?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h4><?= $this->DT->t('global.ldap_filter.text') ?> <small>- <?= $this->DT->t('global.ldap_filter.description') ?></small></h4>
+				</td>
+				<td>
+				<?= $this->element('Setting/text_fields', array('action'=>'setLdapFilter', 'name' => 'ldap_filter', 'value' => $ldap['ldap_filter'])) ?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h4><?= $this->DT->t('global.ldap_bind_dn.text') ?> <small>- <?= $this->DT->t('global.ldap_bind_dn.description') ?></small></h4>
+				</td>
+				<td>
+				<?= $this->element('Setting/text_fields', array('action'=>'setLdapBindDN', 'name' => 'ldap_bind_dn', 'value' => $ldap['ldap_bind_dn'])) ?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h4><?= $this->DT->t('global.ldap_bind_pw.text') ?> <small>- <?= $this->DT->t('global.ldap_bind_pw.description') ?></small></h4>
+				</td>
+				<td>
+				<?= $this->element('Setting/text_fields', array('action'=>'setLdapBindPW', 'name' => 'ldap_bind_pw', 'value' => $ldap['ldap_bind_pw'])) ?>
+				</td>
+			</tr>
+
         </tbody>
     </table>
 </div>

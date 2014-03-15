@@ -189,19 +189,18 @@ class TasksController extends AppProjectController {
 		// If a User has assigned someone
 		if ($this->request->is('post') && isset($this->request->data['TaskAssignee']) && isset($this->request->data['TaskAssignee']['assignee'])) {
 
-			$_email = $this->Useful->extractEmail($this->request->data['TaskAssignee']['assignee']);
-			unset($this->request->data['TaskAssignee']);
-
-			if ($user = $this->Task->Assignee->findByEmail($_email)) {
-				if ($this->Task->Project->hasWrite($user['Assignee']['id'])) {
-					$this->Task->set('assignee_id', $user['Assignee']['id']);
-					$this->Flash->u($this->Task->save());
-				} else {
-					$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
-				}
+			$assigneeId = $this->request->data['TaskAssignee']['assignee'];
+			if ($assigneeId == 0) {
+				$this->Task->set('assignee_id', $assigneeId);
+				$this->Flash->u($this->Task->save());
+			} elseif ($this->Task->Project->hasWrite($assigneeId)) {
+				$this->Task->set('assignee_id', $assigneeId);
+				$this->Flash->u($this->Task->save());
 			} else {
-				$this->Flash->error('The assignee could not be updated. Please, try again.');
+				$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
 			}
+
+			unset($this->request->data['TaskAssignee']);
 
 			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
 			return;
@@ -277,7 +276,10 @@ class TasksController extends AppProjectController {
 		);
 		$this->set('times', $times);
 		$this->set('tasks', $this->Task->fetchLoggableTasks());
-		$this->set('collaborators', $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']));
+		$collabs = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$collabs[0] = "None";
+		ksort($collabs);
+		$this->set('collaborators', $collabs);
 	}
 
 /**
@@ -320,6 +322,12 @@ class TasksController extends AppProjectController {
 					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
 				}
 			}
+		} else {
+			// GET request: set default priority, type and assignment
+			// TODO define the defaults somewhere useful?
+			$this->request->data['Task']['task_priority_id'] = 2;
+			$this->request->data['Task']['task_type_id'] = 1;
+			$this->request->data['Task']['assignee_id'] = 0;
 		}
 
 		// Fetch all the variables for the view
@@ -343,6 +351,8 @@ class TasksController extends AppProjectController {
 		));
 
 		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$assignees[0] = "None";
+		ksort($assignees);
 
 		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 	}
@@ -388,6 +398,9 @@ class TasksController extends AppProjectController {
 			));
 
 			$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+			$assignees[0] = "None";
+			ksort($assignees);
+
 			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
 	}
@@ -560,7 +573,7 @@ class TasksController extends AppProjectController {
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	public function resolve($project = null, $id = null){
+	public function resolve($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
 		$success = $this->__updateTaskStatus($project, $id, 3, $isAjax);
@@ -591,7 +604,7 @@ class TasksController extends AppProjectController {
 		}
 	}
 
-	public function unresolve($project = null, $id = null){
+	public function unresolve($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
 		$success = $this->__updateTaskStatus($project, $id, 1, $isAjax);
@@ -682,12 +695,12 @@ class TasksController extends AppProjectController {
 		$task = $this->Task->open($id);
 
 		$this->Task->set('task_status_id', $status);
-        $result = $this->Task->save();
-        if ($isAjax) {
-            return $result;
-        } else {
-            return $this->Flash->U($result);
-        }
+		$result = $this->Task->save();
+		if ($isAjax) {
+			return $result;
+		} else {
+			return $this->Flash->U($result);
+		}
 	}
 
 	/* ************************************************* *
@@ -851,12 +864,12 @@ class TasksController extends AppProjectController {
 						$conditions['assignee_id'] = $user;
 						break;
 					case 'nobody':
-						$conditions['assignee_id'] = null;
+						$conditions['assignee_id'] = array(null, 0);
 						break;
 					case 'all':
 						break;
 					default:
-						$conditions['assignee_id !='] = $user;
+						$conditions['assignee_id !='] = array($user, 0);
 				}
 			} else {
 				$conditions['assignee_id'] = $user;

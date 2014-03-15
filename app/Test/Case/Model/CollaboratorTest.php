@@ -1,15 +1,15 @@
 <?php
 /**
 *
-* Collaborator Unit Tests for the DevTrack system
+* Collaborator Unit Tests for the SourceKettle system
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
 *
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/SourceKettle/devtrack
-* @package       DevTrack.Test.Case.Model
-* @since         DevTrack v 1.0
+* @copyright     SourceKettle Development Team 2012
+* @link          http://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.Test.Case.Model
+* @since         SourceKettle v 1.0
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 App::uses('Collaborator', 'Model');
@@ -81,10 +81,10 @@ class CollaboratorTestCase extends CakeTestCase {
     public function testCollaboratorsForProject() {
         $usersA = $this->Collaborator->collaboratorsForProject(1);
         $usersB = array(
-            "Mr Smith [Mr.Smith@example.com]"  => "Mr Smith [Mr.Smith@example.com]",
-            "Mrs Guest [mrs.guest@example.com]"=> "Mrs Guest [mrs.guest@example.com]",
-            "Mr User [mr.user@example.com]"    => "Mr User [mr.user@example.com]",
-            "Mr Admin [mr.admin@example.com]"  => "Mr Admin [mr.admin@example.com]"
+            1 => "Mr Smith [Mr.Smith@example.com]",
+            3 => "Mrs Guest [mrs.guest@example.com]",
+            4 => "Mr User [mr.user@example.com]",
+            5 => "Mr Admin [mr.admin@example.com]"
         );
         $this->assertEquals($usersB, $usersA, json_encode($usersA));
     }
