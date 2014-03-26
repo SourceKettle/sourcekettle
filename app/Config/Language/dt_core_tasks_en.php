@@ -52,6 +52,7 @@ $config['dtcore']['pages']['tasks']['others']['en']['header.text'] = "Others' Ta
 $config['dtcore']['pages']['tasks']['others']['en']['column.tasks.empty'] = "There are currently no tasks";
 
 $config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.all'] = "All";
+$config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.active'] = "Active";
 $config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.open'] = "Open";
 $config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.progress'] = "In Progress";
 $config['dtcore']['pages']['tasks']['others']['en']['column.options.statuses.resolved'] = "Resolved";
@@ -65,6 +66,7 @@ $config['dtcore']['pages']['tasks']['nobody']['en']['header.text'] = "Unassigned
 $config['dtcore']['pages']['tasks']['nobody']['en']['column.tasks.empty'] = "There are currently no tasks";
 
 $config['dtcore']['pages']['tasks']['nobody']['en']['column.options.statuses.all'] = "All";
+$config['dtcore']['pages']['tasks']['nobody']['en']['column.options.statuses.active'] = "Active";
 $config['dtcore']['pages']['tasks']['nobody']['en']['column.options.statuses.open'] = "Open";
 $config['dtcore']['pages']['tasks']['nobody']['en']['column.options.statuses.progress'] = "In Progress";
 $config['dtcore']['pages']['tasks']['nobody']['en']['column.options.statuses.resolved'] = "Resolved";
@@ -78,6 +80,7 @@ $config['dtcore']['pages']['tasks']['all']['en']['header.text'] = "All Tasks for
 $config['dtcore']['pages']['tasks']['all']['en']['column.tasks.empty'] = "There are currently no tasks";
 
 $config['dtcore']['pages']['tasks']['all']['en']['column.options.statuses.all'] = "All";
+$config['dtcore']['pages']['tasks']['all']['en']['column.options.statuses.active'] = "Active";
 $config['dtcore']['pages']['tasks']['all']['en']['column.options.statuses.open'] = "Open";
 $config['dtcore']['pages']['tasks']['all']['en']['column.options.statuses.progress'] = "In Progress";
 $config['dtcore']['pages']['tasks']['all']['en']['column.options.statuses.resolved'] = "Resolved";
