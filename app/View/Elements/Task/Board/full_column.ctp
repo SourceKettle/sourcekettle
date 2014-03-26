@@ -14,6 +14,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+echo "<ul class='sprintboard-droplist'>\n";
 foreach ($tasks as $task) {
-    echo $this->element('Task/element_1', array('task' => $task, 'draggable' => true));
+    echo "<li>".$this->element('Task/element_1', array('task' => $task, 'draggable' => true))."</li>\n";
 }
+echo "</ul>\n";
