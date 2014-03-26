@@ -104,7 +104,7 @@ echo $this->element('Task/modal_assign');
                                             <?= _("Milestone:") ?>
                                             <?= $this->Html->link(
                                                 $task['Milestone']['subject'],
-                                                array('controller' => 'milestones', 'action' => 'view', $task['Milestone']['id'])
+												array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
                                             ) ?>
                                         <? else : ?>
                                             <?= __("No milestone") ?>
