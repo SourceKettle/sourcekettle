@@ -14,6 +14,5 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<div class="task empty invisiblewell">
-    <h3><small><?= $this->DT->t('column.'.$c.'.empty') ?></small></h3>
-</div>
+<ul class="sprintboard-droplist">
+</ul>

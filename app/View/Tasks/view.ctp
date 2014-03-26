@@ -94,9 +94,23 @@ echo $this->element('Task/modal_assign');
                                 </h5>
                             </div>
                             <div class="row-fluid">
-                                <div class="span12">
+                                <div class="span9">
                                     <h3><?= h($task['Task']['subject']) ?></h3>
                                 </div>
+
+                                <div class="span3">
+									  <h5>
+                                        <? if (!is_null($task['Milestone']['id'])) : ?>
+                                            <?= _("Milestone:") ?>
+                                            <?= $this->Html->link(
+                                                $task['Milestone']['subject'],
+												array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
+                                            ) ?>
+                                        <? else : ?>
+                                            <?= __("No milestone") ?>
+                                        <? endif; ?>
+									  </h5>
+                            	</div>
                             </div>
                             <hr />
 

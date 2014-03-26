@@ -44,6 +44,9 @@
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'tasks',
+					'?' => array(
+						'milestone' => $id,
+					),
                 ),
                 'props' => array('class' => 'btn-primary'),
             ),

@@ -62,11 +62,10 @@ class TasksController extends AppProjectController {
  */
 	public function index($project = null, $statuses = null) {
 		$project = $this->_projectCheck($project);
-		if (preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
-			$this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
-		} else {
-			$this->set('task_status_filter', 0);
+		if (!preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
+			$statuses = "1,2"; // Default to open/in progress tasks only
 		}
+		$this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
 		$this->set('events', $this->Task->fetchHistory($project['Project']['id'], 5));
 		$this->set('open_milestones', $this->Task->Milestone->getOpenMilestones(true));
 	}
@@ -288,6 +287,8 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function add($project = null) {
+
+
 		$project = $this->_projectCheck($project, true);
 
 		if ($this->request->is('ajax') || $this->request->is('post')) {
@@ -300,7 +301,6 @@ class TasksController extends AppProjectController {
 			if (isset($this->request->data['Task']['milestone_id']) && $this->request->data['Task']['milestone_id'] == 0) {
 				$this->request->data['Task']['milestone_id'] = null;
 			}
-
 			if (isset($this->request->data['Task']['task_type_id']) && $this->request->data['Task']['task_type_id'] == 0) {
 				$this->request->data['Task']['task_type_id'] = 3;
 			}
@@ -328,6 +328,12 @@ class TasksController extends AppProjectController {
 			$this->request->data['Task']['task_priority_id'] = 2;
 			$this->request->data['Task']['task_type_id'] = 1;
 			$this->request->data['Task']['assignee_id'] = 0;
+
+			if(!empty($this->request->query['milestone'])){
+				$this->request->data['Task']['milestone_id'] = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
+			} else{
+				$this->request->data['Task']['milestone_id'] = null;
+			}
 		}
 
 		// Fetch all the variables for the view

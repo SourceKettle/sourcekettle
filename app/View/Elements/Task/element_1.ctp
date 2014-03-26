@@ -18,7 +18,14 @@ if (!isset($draggable)){
 }
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
 ?>
-<div id="task_<?= $task['Task']['id'] ?>" class="task-container" onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="<? if (empty($task['DependsOn']) || $task['Task']['dependenciesComplete'] && $draggable){ echo 'true'; } else { echo 'false';}?>" data-taskid="<?= $task['Task']['id'] ?>">
+<div id="task_<?= $task['Task']['id'] ?>" 
+  class="task-container"
+  <?
+  // If it's a draggable item in the milestone board, do NOT make the whole thing a click target...
+  if(!$draggable){?>
+  onclick="location.href='<?= $this->Html->url($url) ?>';"
+  <?}?>
+  data-taskid="<?= $task['Task']['id'] ?>">
     <div class="task">
         <div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
             <div class="row-fluid">
