@@ -1,6 +1,33 @@
 $(function () {
-    'use strict';
 
+    
+    // Make all columns and the icebox connected sortable lists
+    $( ".sprintboard-droplist" ).sortable({
+        cursor: "move",
+        connectWith: ".sprintboard-droplist",
+
+        // Allow dropping on empty lists
+        dropOnEmpty: true,
+
+        // Rotate by 2 degrees while being dragged
+        start: function(event, ui){
+            ui.item.css('transform', 'rotate(2deg)');
+            
+        },
+
+        // ...and unrotate when dropped
+        stop: function(event, ui){
+            ui.item.css('transform', '');
+
+            // Also stop the click event from happening so we don't click through to the task
+            $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
+        }
+        }).disableSelection();
+
+
+});
+
+/*
     var taskContainers = $(".task-container"),
         sprintboardColumns = $(".sprintboard-column"),
         fromColumn = null,
@@ -26,10 +53,13 @@ $(function () {
             var height = $(column).height();
             maxHeight = height > maxHeight ? height : maxHeight;
         }).height(maxHeight + "px");
-    }
+    }*/
 
+
+
+/*
     taskContainers.bind("dragstart", function (ev) {
-        $(this).css("opacity", "0.4");
+        $(this).css('transform', 'rotate(2deg)');
 
         var e = ev.originalEvent;
 
@@ -43,7 +73,8 @@ $(function () {
     });
 
     taskContainers.bind("dragend", function () {
-        $(this).css("opacity", "1.0");
+        //$(this).css("opacity", "1.0");
+        $(this).css('transform', '');
     });
 
     sprintboardColumns.bind("dragover", function (ev) {
@@ -121,4 +152,4 @@ $(function () {
     });
 
     equaliseSprintboardColumns();
-});
+});*/

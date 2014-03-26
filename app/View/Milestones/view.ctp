@@ -16,6 +16,9 @@
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
 $this->Html->script ("milestones.index", array ('inline' => false));
+$this->Html->script ("jquery-ui.min", array ('inline' => false));
+$this->Html->script ("jquery.ui.touch-punch.min", array ('inline' => false));
+$this->Html->script ("milestones.index", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -32,9 +35,9 @@ $this->Html->script ("milestones.index", array ('inline' => false));
                         <div class="well col sprintboard-column" data-taskstatus="open">
                             <h2><?= $this->DT->t('column.backlog.title') ?></h2>
                             <hr />
-                            <?= $this->element('Task/Board/'.((!empty($backlog))?'full_column':'empty'),
+							  <?= $this->element('Task/Board/'.((!empty($backlog))?'full_column':'empty'),
                                 array('tasks' => $backlog, 'e' => $backlog_empty, 'c' => 'backlog')
-                            ) ?>
+                              ) ?>
                         </div>
                     </div>
 
@@ -42,9 +45,9 @@ $this->Html->script ("milestones.index", array ('inline' => false));
                         <div class="well col sprintboard-column" data-taskstatus="in_progress">
                             <h2><?= $this->DT->t('column.inprogress.title') ?></h2>
                             <hr />
-                            <?= $this->element('Task/Board/'.((!empty($inProgress))?'full_column':'empty'),
-                                array('tasks' => $inProgress, 'e' => $inProgress_empty, 'c' => 'inprogress')
-                            ) ?>
+                              <?= $this->element('Task/Board/'.((!empty($inProgress))?'full_column':'empty'),
+                                  array('tasks' => $inProgress, 'e' => $inProgress_empty, 'c' => 'inprogress')
+                              ) ?>
                         </div>
                     </div>
 
@@ -52,9 +55,9 @@ $this->Html->script ("milestones.index", array ('inline' => false));
                         <div class="well col sprintboard-column" data-taskstatus="resolved">
                             <h2><?= $this->DT->t('column.completed.title') ?></h2>
                             <hr />
-                            <?= $this->element('Task/Board/'.((!empty($completed))?'full_column':'empty'),
+                              <?= $this->element('Task/Board/'.((!empty($completed))?'full_column':'empty'),
                                 array('tasks' => $completed, 'e' => $completed_empty, 'c' => 'completed')
-                            ) ?>
+                              ) ?>
                         </div>
                     </div>
 
@@ -91,3 +94,4 @@ $this->Html->script ("milestones.index", array ('inline' => false));
         </div>
     </div>
 </div>
+
