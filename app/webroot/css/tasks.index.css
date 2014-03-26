@@ -41,7 +41,7 @@
 
 	-webkit-border-radius:4px 0 0 4px;
 	-moz-border-radius:4px 0 0 4px;
-	border-radius:4px 0 0 4px;
+	border-radius:14px;
 }
 
 .task img {
@@ -77,27 +77,43 @@
 }
 
 .type_bar_bug {
-	border-left: 7px solid #B94A48;
+	border-left:  7px solid #B94A48;
+	border-right: 7px solid #B94A48;
 }
 
 .type_bar_duplicate {
-	border-left: 7px solid  #F89406;
+	border-left:  7px solid  #F89406;
+	border-right: 7px solid  #F89406;
 }
 
 .type_bar_enhancement {
-	border-left: 7px solid #468847;
+	border-left:  7px solid #468847;
+	border-right: 7px solid #468847;
 }
 
 .type_bar_invalid {
-	border-left: 7px solid  #999;
+	border-left:  7px solid  #999;
+	border-right: 7px solid  #999;
 }
 
 .type_bar_question {
-	border-left: 7px solid  #3A87AD;
+	border-left:  7px solid  #3A87AD;
+	border-right: 7px solid  #3A87AD;
 }
 
 .type_bar_wontfix {
-	border-left: 7px solid  #333;
+	border-left:  7px solid  #333;
+	border-right: 7px solid  #333;
+}
+
+.type_bar_documentation {
+	border-left:  7px solid  #3A87AD;
+	border-right: 7px solid  #3A87AD;
+}
+
+.type_bar_meeting {
+	border-left:  7px solid  #3A87AD;
+	border-right: 7px solid  #3A87AD;
 }
 
 .label, .lead {
@@ -111,4 +127,26 @@
 .sprintboard-column.over {
 	border-style: dashed;
 	border-color: #858585;
+}
+
+.sprintboard-droplist {
+  list-style-type: none;
+  margin: 0;
+  padding: 0px;
+  float: left;
+  margin: 0px;
+  background: #eee;
+  width: 100%;
+  min-height: 20px;
+  overflow-x: hidden;
+  border-radius: 5px 5px 5px 5px;
+}
+
+/* Individual tickets */
+.sprintboard-droplist li {
+  cursor: pointer;
+  margin: 0px;
+  padding: 0px;
+  font-size: 1.2em;
+  border-radius: 3px 3px 3px 3px;
 }
