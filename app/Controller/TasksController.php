@@ -62,11 +62,10 @@ class TasksController extends AppProjectController {
  */
 	public function index($project = null, $statuses = null) {
 		$project = $this->_projectCheck($project);
-		if (preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
-			$this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
-		} else {
-			$this->set('task_status_filter', 0);
+		if (!preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
+			$statuses = "1,2"; // Default to open/in progress tasks only
 		}
+		$this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
 		$this->set('events', $this->Task->fetchHistory($project['Project']['id'], 5));
 		$this->set('open_milestones', $this->Task->Milestone->getOpenMilestones(true));
 	}

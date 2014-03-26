@@ -108,8 +108,9 @@ $this->Html->scriptBlock("
                             <div class="row-fluid">
                                 <div class="span6">
                                     <ul id="taskStatus" class="nav nav-pills nav-stacked">
-                                        <li class="active"> <?//TODO remove hard-coded status IDs...?>
-                                            <a href="#" status-id="0"><?= $this->DT->t('column.options.statuses.all') ?></a>
+									    <?//TODO remove hard-coded status IDs...?>
+                                        <li class="active">
+                                            <a href="#" status-id="1,2"><?= $this->DT->t('column.options.statuses.active') ?></a>
                                         </li>
                                         <li class="">
                                             <a href="#" status-id="1"><?= $this->DT->t('column.options.statuses.open') ?></a>
@@ -122,6 +123,9 @@ $this->Html->scriptBlock("
                                         </li>
                                         <li class="">
                                             <a href="#" status-id="4"><?= $this->DT->t('column.options.statuses.closed') ?></a>
+                                        </li>
+                                        <li class=""> 
+                                            <a href="#" status-id="0"><?= $this->DT->t('column.options.statuses.all') ?></a>
                                         </li>
                                     </ul>
                                 </div>

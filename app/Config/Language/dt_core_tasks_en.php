@@ -38,6 +38,7 @@ $config['dtcore']['pages']['tasks']['index']['en']['header.text'] = "My Tasks fo
 $config['dtcore']['pages']['tasks']['index']['en']['column.tasks.empty'] = "There are currently no tasks";
 
 $config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.all'] = "All";
+$config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.active'] = "Active";
 $config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.open'] = "Open";
 $config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.progress'] = "In Progress";
 $config['dtcore']['pages']['tasks']['index']['en']['column.options.statuses.resolved'] = "Resolved";
