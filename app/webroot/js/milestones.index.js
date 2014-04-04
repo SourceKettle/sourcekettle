@@ -6,6 +6,8 @@ $(function () {
         cursor: "move",
         connectWith: ".sprintboard-droplist",
 
+        items: "li.draggable",
+
         // Allow dropping on empty lists
         dropOnEmpty: true,
 
@@ -15,14 +17,20 @@ $(function () {
             
         },
 
-        // ...and unrotate when dropped
         stop: function(event, ui){
+            // Unrotate when dropped
             ui.item.css('transform', '');
 
             // Also stop the click event from happening so we don't click through to the task
             $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
+
+            // Ice box: should be project admin only?
+            // Drag to ice box: confirm, then detach from milestone
+            // Drag from ice box to (whichever state it is in): confirm, then attach to milestone
         }
-        }).disableSelection();
+
+    // Stop text selection while dragging!
+    }).disableSelection();
 
 
 });
