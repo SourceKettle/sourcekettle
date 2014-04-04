@@ -48,7 +48,11 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                         ?>
                     </div>
                     <div class="span2">
-                        <?= $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm'), array('alt' => $task['Assignee']['name'])) ?>
+					  <?if(isset($task['Assignee']['id'])){?>
+                        <?= $this->Gravatar->image($task['Assignee']['email'], array(), array('alt' => $task['Assignee']['name'])) ?>
+					  <?} else {?>
+                        <?= $this->Gravatar->image('', array('d' => 'mm'), array('alt' => $task['Assignee']['name'])) ?>
+					  <?}?>
                     </div>
                 </div>
             </div>
