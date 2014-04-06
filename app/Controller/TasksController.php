@@ -442,39 +442,15 @@ class TasksController extends AppProjectController {
 
 		$isAjax = $this->request->is("ajax");
 
-		// check assigned
-		if (!$this->Task->isAssignee()) {
-			if ($isAjax) {
-				$this->set("error", "not_assignee");
-				$this->set("_serialize", array("error"));
-			} else {
-				$this->Flash->error('You can not start work on a task not assigned to you.');
-				$this->redirect(array('project' => $project, 'action' => 'view', $id));
-			}
-
-			return;
-		}
-
-		//check open
-		if (!$this->Task->isOpen()) {
-			if ($isAjax) {
-				$this->set("error", "not_open");
-				$this->set("_serialize", array("error"));
-			} else {
-				$this->Flash->error('You can not start work on a task that is not open.');
-				$this->redirect(array('project' => $project, 'action' => 'view', $id));
-			}
-
-			return;
-		}
-
 		$updated = $this->__updateTaskStatus($project, $id, 2, $isAjax);
 
 		if ($isAjax) {
 			if ($updated) {
 				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
 			} else {
 				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 			$this->set("_serialize", array("error"));
 		} else {
@@ -495,23 +471,11 @@ class TasksController extends AppProjectController {
 
 		$task = $this->Task->open($id);
 
-		// check assigned
-		if (!$this->Task->isAssignee()) {
-			if ($isAjax) {
-				$this->set("error", "not_assignee");
-				$this->set("_serialize", array("error"));
-			} else {
-				$this->Flash->error('You can not stop work on a task not assigned to you.');
-				$this->redirect(array('project' => $project, 'action' => 'view', $id));
-			}
-
-			return;
-		}
-
 		//check inProgress
 		if (!$this->Task->isInProgress()) {
 			if ($isAjax) {
 				$this->set("error", "not_in_progress");
+				$this->set("errorDescription", "You can not stop work on a task that is not in progress.");
 				$this->set("_serialize", array("error"));
 			} else {
 				$this->Flash->error('You can not stop work on a task that is not in progress.');
@@ -525,8 +489,10 @@ class TasksController extends AppProjectController {
 		if ($isAjax) {
 			if ($updated) {
 				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
 			} else {
 				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 			$this->set("_serialize", array("error"));
 		} else {
@@ -586,8 +552,10 @@ class TasksController extends AppProjectController {
 		if ($isAjax) {
 			if ($success) {
 				$this->set ("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
 			} else {
 				$this->set ("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 
 			$this->set ("_serialize", array ("error"));
@@ -618,8 +586,10 @@ class TasksController extends AppProjectController {
 		if ($isAjax) {
 			if ($success) {
 				$this->set ("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
 			} else {
 				$this->set ("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 
 			$this->set ("_serialize", array ("error"));
@@ -661,8 +631,10 @@ class TasksController extends AppProjectController {
 
 		if (!$this->Task->save()) {
 			$this->set ("error", "failed_to_save");
+			$this->set("errorDescription", "An error occurred while removing the task from the milestone");
 		} else {
 			$this->set ("error", "no_error");
+			$this->set("errorDescription", "Task status updated");
 		}
 
 		$this->set ("_serialize", array ("error"));
@@ -681,8 +653,10 @@ class TasksController extends AppProjectController {
 
 		if (!$this->Task->save()) {
 			$this->set ("error", "failed_to_save");
+			$this->set("errorDescription", "An error occurred while adding the task to the milestone");
 		} else {
 			$this->set ("error", "no_error");
+			$this->set("errorDescription", "Task status updated");
 		}
 
 		$this->set ("_serialize", array ("error"));
