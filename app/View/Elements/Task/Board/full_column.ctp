@@ -18,7 +18,7 @@ echo "<ul class='sprintboard-droplist'>\n";
 foreach ($tasks as $task) {
 	$draggable = (empty($task['Task']['assignee_id']) || $task['Task']['assignee_id'] == $user_id);
 	if($draggable){
-		echo "<li class='draggable'>";
+		echo "<li class='draggable' data-taskid='".h($task['Task']['id'])."'>";
 	} else {
 		echo "<li>";
 	}

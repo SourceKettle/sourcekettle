@@ -1,6 +1,35 @@
 $(function () {
 
-    
+   var taskStatusLabels = {
+            open: "Open",
+            in_progress: "In Progress",
+            resolved: "Resolved"
+   };
+
+   var taskStatusLabelTypes = {
+       open: "label-important",
+       in_progress: "label-warning",
+       resolved: "label-success"
+   };
+
+   var transitions = {
+       open: {
+           in_progress: "../../tasks/starttask/",
+           resolved: "../../tasks/resolve/",
+           on_ice: "../../tasks/freeze/"
+       },
+       in_progress: {
+           open: "../../tasks/stoptask/",
+           resolved: "../../tasks/resolve/",
+           on_ice: "../../tasks/freeze/"
+       },
+       resolved: {
+           open: "../../tasks/unresolve/",
+           in_progress: "../../tasks/starttask/",
+           on_ice: "../../tasks/freeze/"
+       }
+   };
+
     // Make all columns and the icebox connected sortable lists
     $( ".sprintboard-droplist" ).sortable({
         cursor: "move",
@@ -11,153 +40,56 @@ $(function () {
         // Allow dropping on empty lists
         dropOnEmpty: true,
 
+        // Nicely animate when returning from invalid drop targets
+        revert: 200,
+
         // Rotate by 2 degrees while being dragged
         start: function(event, ui){
             ui.item.css('transform', 'rotate(2deg)');
-            
         },
 
+        // Unrotate when dropped, also stop the click event from
+        // happening so we don't click through to the task
         stop: function(event, ui){
-            // Unrotate when dropped
             ui.item.css('transform', '');
-
-            // Also stop the click event from happening so we don't click through to the task
             $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
+        },
 
-            // Ice box: should be project admin only?
-            // Drag to ice box: confirm, then detach from milestone
-            // Drag from ice box to (whichever state it is in): confirm, then attach to milestone
+        // When the item is dropped onto a different task list, do an AJAX call to update the status
+        receive: function(event, ui){
+
+            var taskLozenge = ui.item;
+            var taskID      = parseInt(taskLozenge.attr("data-taskid"), 10);
+            var fromStatus  = ui.sender.parent().attr('data-taskstatus');
+            var toStatus    = $(this).parent().attr('data-taskstatus');
+            var statusLabel = taskLozenge.find(".taskstatus");
+
+
+            // Double check that the transition is one we can do (shouldn't get here!)
+            if(!transitions[fromStatus][toStatus]){
+                alert("Something weird happened. It probably shouldn't have. Sorry about that.");
+                $(ui.sender).sortable('cancel');
+                return false;
+            }
+
+            // Do the AJAX postback to update task status
+            var updateURL = transitions[fromStatus][toStatus] + taskID;
+
+            $.post(updateURL, function (data) {
+                if (data.error === "no_error") {
+                    // Update task lozenge's status
+                    statusLabel.html(taskStatusLabels[toStatus]);
+                    statusLabel.removeClass(taskStatusLabelTypes[fromStatus]);
+                    statusLabel.addClass(taskStatusLabelTypes[toStatus]);
+                } else {
+                    alert("Problem: "+data.errorDescription);
+                    $(ui.sender).sortable('cancel');
+                }
+            }, "json");
         }
 
-    // Stop text selection while dragging!
+    // Stop text selection while dragging
     }).disableSelection();
 
 
 });
-
-/*
-    var taskContainers = $(".task-container"),
-        sprintboardColumns = $(".sprintboard-column"),
-        fromColumn = null,
-        taskStatusLabels = {
-            open: "Open",
-            in_progress: "In Progress",
-            resolved: "Resolved"
-        },
-        taskStatusLabelTypes = {
-            open: "label-important",
-            in_progress: "label-warning",
-            resolved: "label-success label-info"
-        };
-
-    function equaliseSprintboardColumns() {
-        var maxHeight = 0;
-
-        // Reset the column heights first.
-        sprintboardColumns.height ("");
-
-        // Then resize them.
-        sprintboardColumns.each(function (index, column) {
-            var height = $(column).height();
-            maxHeight = height > maxHeight ? height : maxHeight;
-        }).height(maxHeight + "px");
-    }*/
-
-
-
-/*
-    taskContainers.bind("dragstart", function (ev) {
-        $(this).css('transform', 'rotate(2deg)');
-
-        var e = ev.originalEvent;
-
-        // The first parameter has to be "Text" or "URL" to work
-        // with IE10.
-        e.dataTransfer.setData("Text", this.id);
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.dropEffect = "move";
-
-        fromColumn = $(this).parent().get(0);
-    });
-
-    taskContainers.bind("dragend", function () {
-        //$(this).css("opacity", "1.0");
-        $(this).css('transform', '');
-    });
-
-    sprintboardColumns.bind("dragover", function (ev) {
-        var e = ev.originalEvent,
-            from_status = $(fromColumn).attr("data-taskstatus"),
-            to_status = $(this).attr("data-taskstatus");
-
-        if (this !== fromColumn && !(from_status === "resolved" && to_status === "in_progress")) {
-            e.preventDefault();
-        }
-    });
-
-    sprintboardColumns.bind("drop", function (ev) {
-        var e = ev.originalEvent,
-            task_id = e.dataTransfer.getData("Text"),
-            task = $("#" + task_id),
-            real_id = parseInt(task.attr("data-taskid"), 10),
-            column = this,
-            transitions = {
-                open: {
-                    in_progress: "../../tasks/starttask/",
-                    resolved: "../../tasks/resolve/",
-                    on_ice: "../../tasks/freeze/"
-                },
-                in_progress: {
-                    open: "../../tasks/stoptask/",
-                    resolved: "../../tasks/resolve/",
-                    on_ice: "../../tasks/freeze/"
-                },
-                resolved: {
-                    open: "../../tasks/unresolve/",
-                    in_progress: "",
-                    on_ice: "../../tasks/freeze/"
-                }
-            },
-            from_status = $(fromColumn).attr("data-taskstatus"),
-            to_status = $(this).attr("data-taskstatus"),
-            oldColumn = fromColumn;
-
-        $.post(transitions[from_status][to_status] + real_id,
-            function (data) {
-                if (data.error === "no_error") {
-                    // Remove any invisible wells
-                    var $column = $(column),
-                        taskStatusLabel = task.find(".taskstatus");
-
-                    $column.find("> .invisiblewell").remove();
-
-                    task.detach();
-                    task.appendTo($column);
-
-                    // Change the task label
-                    if (to_status !== "on_ice") {
-                        taskStatusLabel.html(taskStatusLabels[to_status]);
-                        taskStatusLabel.removeClass(taskStatusLabelTypes[from_status]);
-                        taskStatusLabel.addClass(taskStatusLabelTypes[to_status]);
-                    }
-
-                    equaliseSprintboardColumns();
-                } else if (data.error === "failed_to_save") {
-                    alert("Could not save.");
-                } else if (data.error === "not_assignee") {
-                    alert("Cannot start a task you are not assigned to.");
-                } else if (data.error === "not_open") {
-                    alert("Cannot start this task because it is not open.");
-                } else if (data.error === "not_in_progress") {
-                    alert("Cannot start this task because it is not in progress.");
-                }
-            }, "json");
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        fromColumn = null;
-    });
-
-    equaliseSprintboardColumns();
-});*/
