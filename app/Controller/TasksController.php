@@ -240,7 +240,11 @@ class TasksController extends AppProjectController {
 				if ($_old && !isset($changeUsers[$_old])) {
 					$this->Task->Assignee->id = $_old;
 					$_temp = $this->Task->Assignee->read();
-					$changeUsers[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+					if(count($_temp) > 0){
+						$changeUsers[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+					} else {
+						$changeUsers[$_old] = array('(Unknown or deleted user)', '');
+					}
 				}
 				if ($_new && !isset($changeUsers[$_new])) {
 					$this->Task->Assignee->id = $_new;
