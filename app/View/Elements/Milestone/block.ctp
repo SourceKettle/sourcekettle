@@ -70,19 +70,19 @@ $link_edit = $this->Html->link(
                 <?= $link_edit ?>
                 <p>
                     <small>
+                        <?= ($t == 0) ? __('no tasks in this milestone')  : '' ?>
+                        <?= ($c > 0)  ? __('closed') : ''?>
+                        <?= ($r > 0)  ? $this->Bootstrap->badge($r, 'success').' '.__('resolved') : ''?>
+                        <?= ($i > 0)  ? $this->Bootstrap->badge($r, 'warning').' '.__('in progress') : ''?>
+                        <?= ($o > 0)  ? $this->Bootstrap->badge($r, 'important').' '.__('open') : ''?>
                         <span class="pull-right muted"><?=$milestone['Milestone']['dPoints']?>/<?=$milestone['Milestone']['tPoints']?> points</span>
-                        <?= ($t == 0) ? $this->DT->t('block.progress.notasks.text', array('action'=>'open')) : '' ?>
-                        <?= ($c > 0) ? $this->Bootstrap->badge($c, 'info').$this->DT->t('block.progress.closed.text', array('action'=>'open')) : '' ?>
-                        <?= ($r > 0) ? $this->Bootstrap->badge($r, 'success').$this->DT->t('block.progress.resolved.text', array('action'=>'open')) : '' ?>
-                        <?= ($i > 0) ? $this->Bootstrap->badge($i, 'warning').$this->DT->t('block.progress.inprogress.text', array('action'=>'open')) : '' ?>
-                        <?= ($o > 0) ? $this->Bootstrap->badge($o, 'important').$this->DT->t('block.progress.open.text', array('action'=>'open')) : '' ?>
                     </small>
                 </p>
                 <div class="progress progress-striped">
-                    <div class="bar bar-info" style="width: <?= $percent_c ?>%;"></div>
+                    <div class="bar bar-info"    style="width: <?= $percent_c ?>%;"></div>
                     <div class="bar bar-success" style="width: <?= $percent_r ?>%;"></div>
                     <div class="bar bar-warning" style="width: <?= $percent_i ?>%;"></div>
-                    <div class="bar bar-danger" style="width: <?= $percent_o ?>%;"></div>
+                    <div class="bar bar-danger"  style="width: <?= $percent_o ?>%;"></div>
                 </div>
             </div>
         </div>
