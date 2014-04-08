@@ -31,14 +31,6 @@
             "help_block" => $this->DT->t('form.due.help')
         ));
 
-		// TODO use placeholder text
-		if(isset($this->data['Milestone']['id'])){
-    	    echo $this->Bootstrap->input("is_open", array(
-				"input" => $this->Form->checkbox("is_open"),
-				"label" => "Milestone is open?",
-			));
-		}
-
         echo $this->Bootstrap->button($this->DT->t('form.submit'), array("style" => "primary", "size" => "normal", 'class' => 'controls'));
 
         echo $this->Form->end();
@@ -52,7 +44,7 @@
             <br>
             <p><strong>Step 1)</strong> Pick a target, or list of features/things you would like done by a certain time.</p>
             <br>
-            <p><strong>Step 2)</strong> Stick to that target.</p>
+            <p><strong>Step 2)</strong> Stick to that target; drop less-important features to stay on track</p>
         </div>
     </div>
 </div>

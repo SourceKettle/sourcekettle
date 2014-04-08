@@ -218,6 +218,29 @@ class MilestonesController extends AppProjectController {
 		} else {
 			$this->request->data = $milestone;
 		}
+		$this->set('milestone', $milestone);
+	}
+
+/**
+ * close method
+ *
+ * @param string $id
+ * @return void
+ */
+	public function close($project = null, $id = null) {
+		$project = $this->_projectCheck($project, true);
+		$milestone = $this->Milestone->open($id);
+
+		if ($this->request->is('post') || $this->request->is('put')) {
+			/*$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
+			
+			if ($this->Flash->u($this->Milestone->save($this->request->data))) {
+				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+			}*/
+		} else {
+			$this->request->data = $milestone;
+		}
+		$this->set('milestone', $milestone);
 	}
 
 /**
