@@ -28,7 +28,7 @@ $this->Html->script ("milestones.index", array ('inline' => false));
     </div>
 
 
-    <?= $this->element('Milestone/topbar_view', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
+    <?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
 
     <!-- Milestone board -->
     <div class="span10">  <div class="row">
