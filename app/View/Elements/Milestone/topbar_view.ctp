@@ -19,7 +19,7 @@
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.edit.text', array('action' => 'topbar')),
+                'text' => __('Edit'),
                 'url' => array(
                     'action' => 'edit',
                     'controller' => 'milestones',
@@ -27,7 +27,15 @@
                 ),
             ),
             array(
-                'text' => $this->DT->t('topbar.delete.text', array('action' => 'topbar')),
+                'text' => __('Close'),
+                'url' => array(
+                    'action' => 'close',
+                    'controller' => 'milestones',
+                    $id
+                ),
+            ),
+            array(
+                'text' => __('Delete'),
                 'url' => array(
                     'action' => 'delete',
                     'controller' => 'milestones',
@@ -40,23 +48,13 @@
     'right' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.createtask.text', array('action' => 'topbar')),
+                'text' => __('Create task'),
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'tasks',
 					'?' => array(
 						'milestone' => $id,
 					),
-                ),
-                'props' => array('class' => 'btn-primary'),
-            ),
-        ),
-        array(
-            array(
-                'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),
-                'url' => array(
-                    'action' => 'add',
-                    'controller' => 'milestones',
                 ),
                 'props' => array('class' => 'btn-primary'),
             ),
