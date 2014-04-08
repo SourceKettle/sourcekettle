@@ -45,6 +45,18 @@ $link_remove = $this->Html->link(
         'escape' => false
     )
 );
+$link_close = $this->Html->link(
+    $this->Bootstrap->icon('off'),
+    array(
+        'project' => $project['Project']['name'],
+        'action' => 'close',
+        $milestone['Milestone']['id']
+    ),
+    array(
+        'class' => 'close delete',
+        'escape' => false
+    )
+);
 $link_edit = $this->Html->link(
     $this->Bootstrap->icon('pencil'),
     array(
@@ -67,6 +79,7 @@ $link_edit = $this->Html->link(
             </div>
             <div class="span7">
                 <?= $link_remove ?>
+                <?= $link_close ?>
                 <?= $link_edit ?>
                 <p>
                     <small>
