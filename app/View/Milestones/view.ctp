@@ -15,10 +15,11 @@
  */
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
-$this->Html->script ("milestones.index", array ('inline' => false));
-$this->Html->script ("jquery-ui.min", array ('inline' => false));
-$this->Html->script ("jquery.ui.touch-punch.min", array ('inline' => false));
-$this->Html->script ("milestones.index", array ('inline' => false));
+$this->Html->css("milestones.index", null, array ('inline' => false));
+$this->Html->script("milestones.index", array ('inline' => false));
+$this->Html->script("jquery-ui.min", array ('inline' => false));
+$this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
+$this->Html->script("milestones.index", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -74,7 +75,7 @@ $this->Html->script ("milestones.index", array ('inline' => false));
 	<div class="row-fluid span12">
 
         <div class="span12">
-            <div class="well col" data-taskstatus="on_ice">
+            <div class="well col sprintboard-icebox" data-taskstatus="on_ice">
                 <h2><?= $this->DT->t('column.icebox.title') ?></h2>
                 <hr />
                 <?= $this->element('Task/Board/icebox',

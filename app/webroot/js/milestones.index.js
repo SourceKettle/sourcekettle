@@ -46,12 +46,14 @@ $(function () {
         // Rotate by 2 degrees while being dragged
         start: function(event, ui){
             ui.item.css('transform', 'rotate(2deg)');
+			$('.sprintboard-column,.sprintboard-icebox').addClass('highlight-droptarget');
         },
 
         // Unrotate when dropped, also stop the click event from
         // happening so we don't click through to the task
         stop: function(event, ui){
             ui.item.css('transform', '');
+			$('.sprintboard-column,.sprintboard-icebox').removeClass('highlight-droptarget');
             $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
         },
 
