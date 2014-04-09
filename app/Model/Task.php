@@ -184,10 +184,8 @@ class Task extends AppModel {
 	public function afterFind($results, $primary = false) {
 		parent::afterFind($results, $primary);
 
-		// TODO this is a bit hacky and nicked from Time model, should be a library function?
 		foreach ($results as $key => $val) {
 			if (isset($val['Task']['time_estimate'])) {
-				//$split = $this->splitMins($val['Task']['time_estimate']);
 				$split = TimeString::renderTime($val['Task']['time_estimate']);
 				$results[$key]['Task']['time_estimate'] = $split['s'];
 			}
@@ -264,26 +262,6 @@ class Task extends AppModel {
 			return true;
 		}
 
-		/*
-		$string = $this->data['Task']['time_estimate'];
-
-		if (is_int($string)) {
-			return true;
-		}
-
-		preg_match("#(?P<weeks>[0-9]+)\s*w(eeks?)?#", $string, $weeks);
-		preg_match("#(?P<days>[0-9]+)\s*d(ays?)?#", $string, $days);
-		preg_match("#(?P<hours>[0-9]+)\s*h(rs?|ours?)?#", $string, $hours);
-		preg_match("#(?P<mins>[0-9]+)\s*m(ins?)?#", $string, $mins);
-
-		$time = (int)0;
-		$time += ((isset($weeks['weeks'])) ? 7 * 24 * 60 * (int)$weeks['weeks'] : 0);
-		$time += ((isset($days['days'])) ? 24 * 60 * (int)$days['days'] : 0);
-		$time += ((isset($hours['hours'])) ? 60 * (int)$hours['hours'] : 0);
-		$time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
-
-		$this->data['Task']['time_estimate'] = $time;
-		*/
 		if(is_int($this->data['Task']['time_estimate'])){
 			return true;
 		}
@@ -299,26 +277,6 @@ class Task extends AppModel {
  * @return bool True if the save was successful.
  */
 	public function beforeSave($options = array()) {
-		// Parse time estimate string back into minutes
-		// TODO hacky
-		/*if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
-
-			$string = $this->data['Task']['time_estimate'];
-
-			preg_match("#(?P<weeks>[0-9]+)\s*w(eeks?)?#", $string, $weeks);
-			preg_match("#(?P<days>[0-9]+)\s*d(ays?)?#", $string, $days);
-			preg_match("#(?P<hours>[0-9]+)\s*h(rs?|ours?)?#", $string, $hours);
-			preg_match("#(?P<mins>[0-9]+)\s*m(ins?)?#", $string, $mins);
-
-			$time = (int)0;
-			$time += ((isset($weeks['weeks'])) ? 7 * 24 * 60 * (int)$weeks['weeks'] : 0);
-			$time += ((isset($days['days'])) ? 24 * 60 * (int)$days['days'] : 0);
-			$time += ((isset($hours['hours'])) ? 60 * (int)$hours['hours'] : 0);
-			$time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
-
-			$this->data['Task']['time_estimate'] = $time;
-
-		}*/
 
 		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
 			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
@@ -360,49 +318,6 @@ class Task extends AppModel {
 		return $this->field('task_status_id') == 2;
 	}
 
-	public function splitMins($in) {
-		// TODO make this a library function
-		if (!is_numeric($in)) {
-			throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
-		}
-
-		$weeks = 0;
-		$days = 0;
-		$hours = 0;
-		$mins = (int)$in;
-
-		while ($mins >= 60) {
-			$hours += 1;
-			$mins -= 60;
-		}
-
-		while ($hours >= 24) {
-			$days += 1;
-			$hours -= 24;
-		}
-
-		while ($days >= 7) {
-			$weeks += 1;
-			$days  -= 7;
-		}
-
-		$output = array(
-			'w' => $weeks,
-			'd' => $days,
-			'h' => $hours,
-			'm' => $mins,
-			't' => (int)$in, //legacy TODO: remove
-			's' => "${hours}h ${mins}m",
-		);
-
-		if ($weeks > 0) {
-			$output['s'] = "${weeks}w ${days}d ${hours}h ${mins}m";
-		} elseif ($days > 0) {
-			$output['s'] = "${days}d ${hours}h ${mins}m";
-		}
-
-		return $output;
-	}
 /**
  * TODO: Remove
  */

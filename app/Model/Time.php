@@ -16,6 +16,7 @@
 
 App::uses('AppModel', 'Model');
 App::uses('InvalidArgumentException', 'Exception');
+App::uses('TimeString', 'Time');
 
 class Time extends AppModel {
 
@@ -71,6 +72,7 @@ class Time extends AppModel {
 			'rule' => array('numeric'),
 			'message' => 'A valid user id was not entered',
 		),
+		// TODO why min of 3 days? Seems reasonable but hard coded...
 		'mins' => array(
 			'maximum' => array(
 				'rule' => array('comparison', '<', 4320),
@@ -113,7 +115,7 @@ class Time extends AppModel {
 	public function afterFind($results, $primary = false) {
 		foreach ($results as $key => $val) {
 			if (isset($val['Time']['mins'])) {
-				$results[$key]['Time']['minutes'] = $this->splitMins($val['Time']['mins']);
+				$results[$key]['Time']['minutes'] = TimeString::renderTime($val['Time']['mins']);
 			}
 		}
 		return $results;
@@ -129,21 +131,11 @@ class Time extends AppModel {
 			return true;
 		}
 
-		$string = $this->data['Time']['mins'];
-
-		if (is_int($string)) {
+		if(is_int($this->data['Time']['mins'])){
 			return true;
 		}
 
-		preg_match("#(?P<hours>[0-9]+)\s?h(rs?|ours?)?#", $string, $hours);
-		preg_match("#(?P<mins>[0-9]+)\s?m(ins?)?#", $string, $mins);
-
-		$time = (int)0;
-		$time += ((isset($hours['hours'])) ? 60 * (int)$hours['hours'] : 0);
-		$time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
-
-		$this->data['Time']['mins'] = $time;
-
+		$this->data['Time']['mins'] = TimeString::parseTime($this->data['Time']['mins']);
 		return true;
 	}
 
@@ -210,7 +202,7 @@ class Time extends AppModel {
 		$totalLoggedTime = $totalLoggedTime[0][0]['SUM(`Time`.`mins`)'];
 
 		try{
-			$totalLoggedTime = $this->splitMins($totalLoggedTime);
+			$totalLoggedTime = TimeString::renderTime($totalLoggedTime);
 		} catch (InvalidArgumentException $e) {
 		}
 
@@ -243,7 +235,7 @@ class Time extends AppModel {
 		));
 
 		foreach ($userTimes as $key => $value) {
-			$userTimes[$key]['Time']['time'] = $this->splitMins($value[0]["SUM(`Time`.`mins`)"]);
+			$userTimes[$key]['Time']['time'] = TimeString::renderTime($value[0]["SUM(`Time`.`mins`)"]);
 		}
 
 		return $userTimes;
@@ -273,7 +265,7 @@ class Time extends AppModel {
 		if (!$this->exists()) {
 			return null;
 		} else {
-			$mins = $this->splitMins($this->field('mins'));
+			$mins = TimeString::renderTime($this->field('mins'));
 			return $mins['s'];
 		}
 	}
@@ -307,48 +299,6 @@ class Time extends AppModel {
  */
 	public function setMinAllowedYear($minYear) {
 		$this->__minimumAllowedYear = $minYear;
-	}
-
-/**
- * splitMins function.
- * Take a number of minutes and convert it to D-H-M
- *  TODO make this a library function
- *
- * @param mixed $in the number of minutes
- * @throws InvalidArgumentException
- */
-	public function splitMins($in) {
-		if (!is_numeric($in)) {
-			throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
-		}
-
-		$days = 0;
-		$hours = 0;
-		$mins = (int)$in;
-
-		while ($mins >= 60) {
-			$hours += 1;
-			$mins -= 60;
-		}
-
-		while ($hours >= 24) {
-			$days += 1;
-			$hours -= 24;
-		}
-
-		$output = array(
-			'd' => $days,
-			'h' => $hours,
-			'm' => $mins,
-			't' => (int)$in, //legacy TODO: remove
-			's' => "${hours}h ${mins}m",
-		);
-
-		if ($days > 0) {
-			$output['s'] = "${days}d ${hours}h ${mins}m";
-		}
-
-		return $output;
 	}
 
 /**
@@ -438,10 +388,10 @@ class Time extends AppModel {
 
 			// Change the total to a useful format
 			foreach ($weekEvents[$day]['totalTimes'] as $a => $b) {
-				$b = $this->splitMins($b);
+				$b = TimeString::renderTime($b);
 				$weekEvents[$day]['totalTimes'][$a] = $b['h'] + round($b['m'] / 60, 1);
 			}
-			$totalTime = $this->splitMins($weekEvents[$day]['totalTime']);
+			$totalTime = TimeString::renderTime($weekEvents[$day]['totalTime']);
 			$weekEvents[$day]['totalTime'] = $totalTime['h'] + round($totalTime['m'] / 60, 1);
 
 			$weekEvents[$this->__currentDate->format('D')] = $weekEvents[$day];

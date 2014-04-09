@@ -13,6 +13,7 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 App::uses('Time', 'Model');
+App::uses('TimeString', 'Time');
 
 class TimeTestCase extends CakeTestCase {
 
@@ -90,20 +91,20 @@ class TimeTestCase extends CakeTestCase {
     }
 
     /**
-     * test Time->splitMins function.
+     * test TimeString->renderTime function.
      * Tests that mins are correctly split into hours and mins
      *
      * @access public
      * @return void
      */
-    public function testSplitMins() {
+    public function testParseTime() {
         $expectedResult = array(
             'h' => '1',
             'm' => '0',
             's' => '1h 0m',
             't' => '60'
         );
-        $this->assertEquals($this->Time->splitMins(60), $expectedResult);
+        $this->assertEquals(TimeString::renderTime(60), $expectedResult);
 
         $expectedResult = array(
             'h' => '0',
@@ -111,7 +112,7 @@ class TimeTestCase extends CakeTestCase {
             's' => '0h 59m',
             't' => '59'
         );
-        $this->assertEquals($this->Time->splitMins(59), $expectedResult);
+        $this->assertEquals(TimeString::renderTime(59), $expectedResult);
 
         $expectedResult = array(
             'h' => '1',
@@ -119,7 +120,7 @@ class TimeTestCase extends CakeTestCase {
             's' => '1h 1m',
             't' => '61'
         );
-        $this->assertEquals($this->Time->splitMins(61), $expectedResult);
+        $this->assertEquals(iTimeString::renderTime(61), $expectedResult);
 
         $expectedResult = array(
             'h' => '1',
@@ -127,7 +128,7 @@ class TimeTestCase extends CakeTestCase {
             's' => '1h 30m',
             't' => '90'
         );
-        $this->assertEquals($this->Time->splitMins(90), $expectedResult);
+        $this->assertEquals(TimeString::renderTime(90), $expectedResult);
     }
 
     /**

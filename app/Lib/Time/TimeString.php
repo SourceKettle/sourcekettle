@@ -31,12 +31,15 @@ class TimeString{
 			$days  -= 7;
 		}
 
+		// Output: array of individual fields for the parsed bits,
+		// t is the original timestamp,
+		// s is the full string
 		$output = array(
 			'w' => $weeks,
 			'd' => $days,
 			'h' => $hours,
 			'm' => $mins,
-			't' => (int)$minutes, //legacy TODO: remove
+			't' => (int)$minutes,
 			's' => "${hours}h ${mins}m",
 		);
 
@@ -53,17 +56,26 @@ class TimeString{
 	// Given a string representing a time interval,
 	// parse it and return a number of minutes.
 	function parseTime($timeString){
-			preg_match("#(?P<weeks>[0-9]+)\s*w(eeks?)?#", $timeString, $weeks);
-			preg_match("#(?P<days>[0-9]+)\s*d(ays?)?#", $timeString, $days);
-			preg_match("#(?P<hours>[0-9]+)\s*h(rs?|ours?)?#", $timeString, $hours);
-			preg_match("#(?P<mins>[0-9]+)\s*m(ins?)?#", $timeString, $mins);
 
-			$time = (int)0;
-			$time += ((isset($weeks['weeks'])) ? 7 * 24 * 60 * (int)$weeks['weeks'] : 0);
-			$time += ((isset($days['days']))   ? 24 * 60 * (int)$days['days']       : 0);
-			$time += ((isset($hours['hours'])) ? 60 * (int)$hours['hours']          : 0);
-			$time += ((isset($mins['mins']))   ? (int)$mins['mins']                 : 0);
-			return $time;
+		// Easy case - just a number of minutes :-)
+		if(is_numeric($timeString)){
+			return (int)$timeString;
+		}
+
+		// Pick out bits of timey-wimey looking things.
+		// Stick to minutes, hours, days and weeks (all known lengths).
+		// Months are a bit variable, so let's pretend they don't exist.
+		preg_match("#(?P<weeks>[0-9]+)\s*w(eeks?)?#", $timeString, $weeks);
+		preg_match("#(?P<days>[0-9]+)\s*d(ays?)?#", $timeString, $days);
+		preg_match("#(?P<hours>[0-9]+)\s*h(rs?|ours?)?#", $timeString, $hours);
+		preg_match("#(?P<mins>[0-9]+)\s*m(ins?)?#", $timeString, $mins);
+
+		$time = (int)0;
+		$time += ((isset($weeks['weeks'])) ? 7 * 24 * 60 * (int)$weeks['weeks'] : 0);
+		$time += ((isset($days['days']))   ? 24 * 60 * (int)$days['days']       : 0);
+		$time += ((isset($hours['hours'])) ? 60 * (int)$hours['hours']          : 0);
+		$time += ((isset($mins['mins']))   ? (int)$mins['mins']                 : 0);
+		return $time;
 	}
 
 }
