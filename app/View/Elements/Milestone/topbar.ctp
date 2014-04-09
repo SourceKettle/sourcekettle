@@ -59,6 +59,17 @@ if($this->request['action'] == 'view' || $this->request['action'] == 'edit'){
     	);
 	}
 
+	if(!$milestone['Milestone']['is_open']) {
+		$left[1] = array(
+           'text' => __('Re-Open'),
+           'url' => array(
+               'action' => 'reopen',
+               'controller' => 'milestones',
+               $id
+           ),
+    	);
+	}
+
 	$right = array(
 		array(
 			'text' => __('Create task'),

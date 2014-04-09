@@ -57,6 +57,18 @@ $link_close = $this->Html->link(
         'escape' => false
     )
 );
+$link_reopen = $this->Html->link(
+    $this->Bootstrap->icon('repeat'),
+    array(
+        'project' => $project['Project']['name'],
+        'action' => 'reopen',
+        $milestone['Milestone']['id']
+    ),
+    array(
+        'class' => 'close delete',
+        'escape' => false
+    )
+);
 $link_edit = $this->Html->link(
     $this->Bootstrap->icon('pencil'),
     array(
@@ -79,7 +91,7 @@ $link_edit = $this->Html->link(
             </div>
             <div class="span7">
                 <?= $link_remove ?>
-                <?= $link_close ?>
+                <?= $milestone['Milestone']['is_open']? $link_close : $link_reopen?>
                 <?= $link_edit ?>
                 <p>
                     <small>

@@ -20,7 +20,7 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
 
 ?>
 
-<?= $this->Bootstrap->page_header("Close milestone") ?>
+<?= $this->Bootstrap->page_header("Re-open milestone") ?>
 
 <div class="row">
     <div class="span2">
@@ -30,28 +30,11 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
     <div class="row">
         <div class="well span8 offset1">
 
-			<h4>Are you sure you want to close '<?=h($name)?>'?</h4>
+			<h4>Are you sure you want to re-open '<?=h($name)?>'?</h4>
         	<?=$this->Form->create('Milestone', array('class' => 'well form-horizontal', 'type' => 'post'))?>
 
-			<?if(count($milestone['Tasks']['open']) > 0 || count($milestone['Tasks']['in_progress']) > 0 || count($milestone['Tasks']['dropped']) > 0){?>
-				<p><strong>Caution:</strong> this milestone has unfinished/dropped tasks!</p>
-				<p>Which milestone (if any) should they be re-assigned to?</p>
-                <?/*=$this->Bootstrap->button_dropdown(
-					'(no milestone)',
-					array(
-						'name' => 'new_milestone',
-						'links' => $other_milestones,
-					)
-				)*/?>
-				<?=$this->Form->input(
-					'new_milestone',
-					array('options' => $other_milestones, 'default' => '(no milestone)', 'label' => false)
-				)?>
-			<?} else {?>
-				<p>Looks like all tasks are finished! Great work!</p>
-			<?}?>
         <?=$this->Bootstrap->button(
-			"I'm sure. Close that milestone!",
+			"I'm sure. Re-open it at once!",
 			array("style" => "primary", "size" => "large", 'class' => 'deleteButton span7')
 		);?>
 

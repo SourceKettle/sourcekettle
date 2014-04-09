@@ -231,16 +231,89 @@ class MilestonesController extends AppProjectController {
 		$project = $this->_projectCheck($project, true);
 		$milestone = $this->Milestone->open($id);
 
+		if(!$milestone['Milestone']['is_open']){
+			throw new NotFoundException(__("Cannot close milestone - it is already closed!"));
+		}
+
 		if ($this->request->is('post') || $this->request->is('put')) {
-			/*$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
-			
-			if ($this->Flash->u($this->Milestone->save($this->request->data))) {
+			$new_milestone = $this->request->data['Milestone']['new_milestone'];
+
+			// Close milestone first
+			$milestone = $this->Milestone->open($id);
+			$milestone['Milestone']['is_open'] = 0;
+
+			// Now update all related tasks to attach them to the new milestone (or no milestone)
+			$tasks = array('Task' => array());
+			foreach($milestone['Task'] as $task){
+				// TODO hard coded status IDs!
+				// Find tasks that are not resolved or closed, set status to open, and update milestone id
+				if(!in_array($task['task_status_id'], array(3,4))){
+					$task['milestone_id'] = $new_milestone;
+					$tasks['Task'][] = $task;
+				}
+			}
+
+			// Manual transactions used here for good reason:
+			// saving all related stuff fails, as we're changing the milestone_id
+			// i.e. making it no longer related. So, let's do it this way.
+			$dataSource = $this->Milestone->getDataSource();
+			$dataSource->begin();
+			if ($this->Flash->u($this->Milestone->save($milestone))) {
+				$all_ok = $this->Milestone->Task->saveMany($tasks['Task']);
+				if($all_ok){
+					$dataSource->commit();
+					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				} else {
+					$this->Flash->u(false);
+				}
+			}
+
+			// Failed, roll back
+			$dataSource->rollback();
+
+		} else {
+			$this->request->data = $milestone;
+		}
+
+		// For the form, build a list of other open milestones we can attach tasks to
+		$other_milestones = $this->Milestone->getOpenMilestones(true);
+		$other_milestones[0] = '(no milestone)';
+		unset($other_milestones[$id]);
+		ksort($other_milestones);
+
+		$this->set('other_milestones', $other_milestones);
+		$this->set('milestone', $milestone);
+		$this->set('name', $milestone['Milestone']['subject']);
+	}
+
+/**
+ * reopen method
+ *
+ * @param string $id
+ * @return void
+ */
+	public function reopen($project = null, $id = null) {
+		$project = $this->_projectCheck($project, true);
+		$milestone = $this->Milestone->open($id);
+
+		if($milestone['Milestone']['is_open']){
+			throw new NotFoundException(__("Cannot re-open milestone - it is already open!"));
+		}
+
+		if ($this->request->is('post') || $this->request->is('put')) {
+
+			$milestone = $this->Milestone->open($id);
+			$milestone['Milestone']['is_open'] = 1;
+
+			if ($this->Flash->u($this->Milestone->save($milestone))) {
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
-			}*/
+			}
+
 		} else {
 			$this->request->data = $milestone;
 		}
 		$this->set('milestone', $milestone);
+		$this->set('name', $milestone['Milestone']['subject']);
 	}
 
 /**
