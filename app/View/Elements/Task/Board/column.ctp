@@ -14,7 +14,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo "<ul class='sprintboard-droplist'>\n";
+if(!isset($classes)){
+	$classes = '';
+} else{
+	$classes = " $classes";
+}
+echo "<ul class='well col sprintboard-droplist span$span$classes' data-taskstatus='$status'>\n";
+echo "<h2>$title</h2>\n";
+echo "<hr />\n";
 foreach ($tasks as $task) {
 	$draggable = (empty($task['Task']['assignee_id']) || $task['Task']['assignee_id'] == $user_id);
 	if($draggable){

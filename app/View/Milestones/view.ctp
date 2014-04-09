@@ -37,52 +37,25 @@ $this->Html->script("milestones.index", array ('inline' => false));
     <!-- Primary columns -->
 	<div class="row-fluid span12">
 
-        <div class="span4">
-            <div class="well col sprintboard-column" data-taskstatus="open">
-                <h2><?= $this->DT->t('column.backlog.title') ?></h2>
-                <hr />
-                <?= $this->element('Task/Board/column',
-                    array('tasks' => $backlog)
-                ) ?>
-                </ul>
-            </div>
-        </div>
+        <?= $this->element('Task/Board/column',
+            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4')
+        ) ?>
 
-        <div class="span4">
-            <div class="well col sprintboard-column" data-taskstatus="in_progress">
-                <h2><?= $this->DT->t('column.inprogress.title') ?></h2>
-                <hr />
-                <?= $this->element('Task/Board/column',
-                    array('tasks' => $inProgress)
-                ) ?>
-            </div>
-        </div>
+        <?= $this->element('Task/Board/column',
+            array('tasks' => $inProgress, 'status' => 'in_progress', 'title' => __('In Progress'), 'span' => '4')
+        ) ?>
+        <?= $this->element('Task/Board/column',
+            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4')
+        ) ?>
 
-        <div class="span4">
-            <div class="well col sprintboard-column" data-taskstatus="resolved">
-                <h2><?= $this->DT->t('column.completed.title') ?></h2>
-                <hr />
-                <?= $this->element('Task/Board/column',
-                  array('tasks' => $completed)
-                ) ?>
-            </div>
-        </div>
-	
 	<!-- End primary columns -->
 	</div>
 
     <!-- Icebox row -->
 	<div class="row-fluid span12">
-
-        <div class="span12">
-            <div class="well col sprintboard-icebox" data-taskstatus="on_ice">
-                <h2><?= $this->DT->t('column.icebox.title') ?></h2>
-                <hr />
-                <?= $this->element('Task/Board/icebox',
-                  array('tasks' => $iceBox)
-                ) ?>
-            </div>
-        </div>
+        <?= $this->element('Task/Board/column',
+            array('tasks' => $iceBox, 'status' => 'on_ice', 'title' => __('Ice Box'), 'span' => '12', 'classes' => 'sprintboard-icebox')
+        ) ?>
 
 	<!-- End icebox -->
 	</div>

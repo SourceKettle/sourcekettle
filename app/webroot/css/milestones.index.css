@@ -17,16 +17,8 @@ hr {
     margin-bottom: 5px;
 }
 
-.progress {
-    margin-bottom: 5px;
-}
-
-.zero {
-    padding-left: 5px;
-}
-
-.close {
-    padding-left: 10px !important;
+.sprintboard-icebox{
+	margin-top: 10px;
 }
 
 .highlight-droptarget {
