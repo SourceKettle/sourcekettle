@@ -38,14 +38,14 @@ $this->Html->script("milestones.index", array ('inline' => false));
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4')
+            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'classes' => 'sprintboard-column')
         ) ?>
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $inProgress, 'status' => 'in_progress', 'title' => __('In Progress'), 'span' => '4')
+            array('tasks' => $inProgress, 'status' => 'in_progress', 'title' => __('In Progress'), 'span' => '4', 'classes' => 'sprintboard-column')
         ) ?>
         <?= $this->element('Task/Board/column',
-            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4')
+            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'classes' => 'sprintboard-column')
         ) ?>
 
 	<!-- End primary columns -->

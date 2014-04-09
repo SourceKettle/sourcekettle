@@ -1,3 +1,17 @@
+function equaliseColumns() {
+        var maxHeight = 1;
+
+        // Reset the column heights first.
+        $('.sprintboard-column').height ("");
+
+        // Then resize them.
+        $('.sprintboard-column').each(function (index, column) {
+            var height = $(column).height();
+            maxHeight = height > maxHeight ? height : maxHeight;
+        }).height(maxHeight + "px");
+    }
+
+
 $(function () {
 
    var taskStatusLabels = {
@@ -30,6 +44,8 @@ $(function () {
        }
    };
 
+    equaliseColumns();
+
     // Make all columns and the icebox connected sortable lists
     $( ".sprintboard-droplist" ).sortable({
         cursor: "move",
@@ -55,6 +71,7 @@ $(function () {
             ui.item.css('transform', '');
 			$('.sprintboard-droplist').removeClass('highlight-droptarget');
             $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
+            equaliseColumns();
         },
 
         // When the item is dropped onto a different task list, do an AJAX call to update the status
@@ -88,6 +105,7 @@ $(function () {
                     $(ui.sender).sortable('cancel');
                 }
             }, "json");
+
         }
 
     // Stop text selection while dragging

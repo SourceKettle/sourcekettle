@@ -17,7 +17,10 @@ hr {
     margin-bottom: 5px;
 }
 
-.sprintboard-icebox{
+.sprintboard-column {
+	min-height: 300px !important; /* A bit of a hack :-( */
+}
+.sprintboard-icebox {
 	margin-top: 10px;
 }
 
