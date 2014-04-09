@@ -14,6 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
+App::uses('TimeString', 'Time');
 
 class Task extends AppModel {
 
@@ -186,7 +187,8 @@ class Task extends AppModel {
 		// TODO this is a bit hacky and nicked from Time model, should be a library function?
 		foreach ($results as $key => $val) {
 			if (isset($val['Task']['time_estimate'])) {
-				$split = $this->splitMins($val['Task']['time_estimate']);
+				//$split = $this->splitMins($val['Task']['time_estimate']);
+				$split = TimeString::renderTime($val['Task']['time_estimate']);
 				$results[$key]['Task']['time_estimate'] = $split['s'];
 			}
 		}
@@ -262,6 +264,7 @@ class Task extends AppModel {
 			return true;
 		}
 
+		/*
 		$string = $this->data['Task']['time_estimate'];
 
 		if (is_int($string)) {
@@ -280,7 +283,12 @@ class Task extends AppModel {
 		$time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
 
 		$this->data['Task']['time_estimate'] = $time;
+		*/
+		if(is_int($this->data['Task']['time_estimate'])){
+			return true;
+		}
 
+		$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		return true;
 	}
 /**
@@ -293,7 +301,7 @@ class Task extends AppModel {
 	public function beforeSave($options = array()) {
 		// Parse time estimate string back into minutes
 		// TODO hacky
-		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
+		/*if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
 
 			$string = $this->data['Task']['time_estimate'];
 
@@ -310,6 +318,10 @@ class Task extends AppModel {
 
 			$this->data['Task']['time_estimate'] = $time;
 
+		}*/
+
+		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
+			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		}
 
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
