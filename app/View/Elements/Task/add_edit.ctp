@@ -93,10 +93,11 @@
 			"label" => false,
 		));
 
-        echo $this->Bootstrap->button(__('Submit'), array("style" => "primary", 'class' => 'controls'));
+        echo $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls'));
         ?>
     </div>
     <div class="span2 sidebarRight">
+        <?= $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls span12'));?>
         <h5><?= __('Issue type') ?></h5>
         <?php
 
