@@ -70,19 +70,23 @@ if($this->request['action'] == 'view' || $this->request['action'] == 'edit'){
     	);
 	}
 
-	$right = array(
-		array(
-			'text' => __('Create task'),
-			'url' => array(
-				'action' => 'add',
-				'controller' => 'tasks',
-				'?' => array(
-					'milestone' => $id,
+	if($this->request['action'] == 'edit') {
+		$right = array();
+	} else {
+		$right = array(
+			array(
+				'text' => __('Create task'),
+				'url' => array(
+					'action' => 'add',
+					'controller' => 'tasks',
+					'?' => array(
+						'milestone' => $id,
+					),
 				),
-			),
-			'props' => array('class' => 'btn-primary'),
-		 ),
-	);
+				'props' => array('class' => 'btn-primary'),
+			 ),
+		);
+	}
 
 // No specific milestone (index): filter open/closed milestones
 } else {
