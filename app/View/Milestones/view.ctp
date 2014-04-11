@@ -63,10 +63,5 @@ $this->Html->script("milestones.index", array ('inline' => false));
     <!-- End milestone board -->
 	</div> </div>
 
-
-
-
-
-    </div>
 </div>
 
