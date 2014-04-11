@@ -4,13 +4,13 @@
         echo $this->Form->create('Milestone', array('class' => 'well form-horizontal'));
 
         echo $this->Bootstrap->input("subject", array(
-            "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => $this->DT->t('form.subject.placeholder'))),
-            "label" => $this->DT->t('form.subject.label'),
+            "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => __("e.g. Sprint 1"))),
+            "label" => __("Short name"),
         ));
 
         echo $this->Bootstrap->input("description", array(
-            "input" => $this->Form->textarea("description", array("placeholder" => $this->DT->t('form.description.placeholder'), 'class' => 'span12')),
-            "label" => $this->DT->t('form.description.label')
+            "input" => $this->Form->textarea("description", array("placeholder" => __("Overall goals of the milestone"), 'class' => 'span12')),
+            "label" => __("Description")
         ));
 
         echo "<br>";
@@ -27,11 +27,11 @@
 				"value" => $due_date,
                 "data-date-format" => "yyyy-mm-dd")
             ),
-            "label" => $this->DT->t('form.due.label'),
-            "help_block" => $this->DT->t('form.due.help')
+            "label" => __("Completion target"),
+            "help_block" => __("When the milestone should be complete")
         ));
 
-        echo $this->Bootstrap->button($this->DT->t('form.submit'), array("style" => "primary", "size" => "normal", 'class' => 'controls'));
+        echo $this->Bootstrap->button(__("Submit"), array("style" => "primary", "size" => "normal", 'class' => 'controls'));
 
         echo $this->Form->end();
         ?>
