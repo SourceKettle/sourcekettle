@@ -20,7 +20,7 @@
     <div class="span10">
         <?php
         echo $this->Bootstrap->input("subject", array(
-            "input" => $this->Form->text("subject", array("class" => "span9", "placeholder" => __('Quick, yet informative, description'), "maxlength" => 50)),
+            "input" => $this->Form->text("subject", array("class" => "span9", "placeholder" => __('Quick, yet informative, description'), "maxlength" => 50, "autofocus" => "")),
             "label" => __('Subject'),
             "help_inline" => __("50 characters max")
         ));
