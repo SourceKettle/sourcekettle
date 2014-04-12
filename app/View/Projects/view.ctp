@@ -40,15 +40,18 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                 <?}?>
                 <div class="well">
                     <div class="row-fluid overview">
+
+
+
                         <div class="span4">
-                            <h3><?= $this->DT->t('summary.issues.title') ?></h3>
+                            <h3><?= __("Tasks") ?></h3>
                             <hr />
                             <div class="row-fluid">
                                 <div class="span6">
                                     <ul class="unstyled">
                                         <li class="open-tasks">
                                           <?= $this->Html->link(
-                                           "$numberOfOpenTasks - ".$this->DT->t('summary.issues.open'),
+                                           "$numberOfOpenTasks - ".__("open tasks"),
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
@@ -59,7 +62,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
 
                                         <li class="closed-tasks">
                                           <?= $this->Html->link(
-                                            "$numberOfClosedTasks - ".$this->DT->t('summary.issues.closed'),
+                                            "$numberOfClosedTasks - ".__("closed tasks"),
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
@@ -70,7 +73,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
 
                                         <li class="total-tasks">
                                           <?=$this->Html->link(
-                                            "$numberOfTasks - ".$this->DT->t('summary.issues.total'),
+                                            "$numberOfTasks - ".__("total tasks"),
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
@@ -78,23 +81,19 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                             ))?>
                                         </li>
 
-                                        <li><?= h($percentOfTasks) ?>% <?= $this->DT->t('summary.issues.percent') ?></li>
+                                        <li><?= h($percentOfTasks) ?>% <?= __("complete") ?></li>
                                     </ul>
-                                    <?= $this->Html->link(
-                                      'Create a task',
-                                      array(
-                                        'project'    => $project['Project']['name'],
-                                        'controller' => 'tasks',
-                                        'action'     => 'add'
-                                    ))?>
                                 </div>
                                 <div class="span6">
                                     <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array($numberOfOpenTasks, $numberOfClosedTasks)); ?>
                                 </div>
                             </div>
                         </div>
+
+
+
                         <div class="span4">
-                            <h3>Next Milestone</h3>
+                            <h3><?=__("Next Milestone")?></h3>
                             <hr />
                             <ul class="unstyled">
                                 <? if ($milestone) : ?>
@@ -110,22 +109,55 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                 <li>Due: <?= h($milestone['Milestone']['due']) ?></li>
                                 <?= $this->Bootstrap->progress(array("width" => (int) $milestone['Milestone']['percent'], "striped" => true)) ?>
                                 <? endif; ?>
-                                <li><?= $this->Html->link('Create a milestone', array('project'=>$project['Project']['name'],'controller'=>'milestones','action'=>'add')) ?></li>
                             </ul>
                         </div>
+
+
                         <div class="span4">
-                            <h3>Quick Stats</h3>
+                            <h3><?= __("Quick Stats")?></h3>
                             <hr />
                             <ul class="unstyled">
-                                <li><strong><?= $this->Html->link($numCollab . " " . Inflector::pluralize('user', $numCollab), array('controller' => 'collaborators', 'action' => 'all', 'project' => $project['Project']['name']))?></strong> are working on this project.</li>
-                                <li>Last activity was <strong><?= $this->Time->timeAgoInWords($project['Project']['modified']) ?></strong>.</li>
+                                <li><strong><?= $this->Html->link($numCollab . " " . Inflector::pluralize(__('user'), $numCollab), array('controller' => 'collaborators', 'action' => 'all', 'project' => $project['Project']['name']))?></strong> <?=__("are working on this project")?>.</li>
+                                <li><?= __("Last activity was")?> <strong><?= $this->Time->timeAgoInWords($project['Project']['modified']) ?></strong>.</li>
                             </ul>
                         </div>
+	
+					</div>
+
+
+					<div class="row-fluid">
+						<div class="span4">
+                        <?= $this->Html->link(
+                          __('Create a task'),
+                          array(
+                            'project'    => $project['Project']['name'],
+                            'controller' => 'tasks',
+                            'action'     => 'add'
+                        ))?>
+						</div>
+						<div class="span4">
+                        <?= $this->Html->link(
+                          __('Create a milestone'),
+                          array(
+                            'project'    => $project['Project']['name'],
+                            'controller' => 'milestones',
+                            'action'     => 'add'
+                        ))?>
+						</div>
+						<div class="span4">
+                        <?= $this->Html->link(
+                          __('Log time'),
+                          array(
+                            'project'    => $project['Project']['name'],
+                            'controller' => 'times',
+                            'action'     => 'add'
+                        ))?>
+						</div>
                     </div>
                 </div>
             </div>
             <div class="span10" style="text-align:center">
-                <h3>Recent events for the project</h3>
+                <h3><?=__("Recent events for the project")?></h3>
             </div>
             <div class="span10">
                 <?= $this->element('history_ajax') ?>
