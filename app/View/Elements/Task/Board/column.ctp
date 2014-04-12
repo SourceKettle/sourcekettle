@@ -19,6 +19,9 @@ if(!isset($classes)){
 } else{
 	$classes = " $classes";
 }
+if(!isset($task_span)){
+	$task_span = False;
+}
 echo "<ul class='well col sprintboard-droplist span$span$classes' data-taskstatus='$status'>\n";
 echo "<h2>$title</h2>\n";
 echo "<hr />\n";
@@ -29,6 +32,6 @@ foreach ($tasks as $task) {
 	} else {
 		echo "<li>";
 	}
-    echo $this->element('Task/element_1', array('task' => $task, 'draggable' => true))."</li>\n";
+    echo $this->element('Task/element_1', array('task' => $task, 'draggable' => true, 'span' => $task_span))."</li>\n";
 }
 echo "</ul>\n";

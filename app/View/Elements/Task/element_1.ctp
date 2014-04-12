@@ -16,10 +16,16 @@
 if (!isset($draggable)){
     $draggable = false;
 }
+
+if(isset($span) && $span){
+	$span=" span$span";
+} else {
+	$span="";
+}
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
 ?>
 <div id="task_<?= $task['Task']['id'] ?>" 
-  class="task-container"
+  class="task-container<?=$span?>"
   <?
   // If it's a draggable item in the milestone board, do NOT make the whole thing a click target...
   if(!$draggable){?>
