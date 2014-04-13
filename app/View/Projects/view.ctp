@@ -93,7 +93,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
 
 
                         <div class="span4">
-                            <h3><?=__("Next Milestone")?></h3>
+							<h3><?=__("Next Milestone")?></h3>
                             <hr />
                             <ul class="unstyled">
                                 <? if ($milestone) : ?>
@@ -127,6 +127,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
 
 					<div class="row-fluid">
 						<div class="span4">
+						<?=$this->Bootstrap->icon('file')?>
                         <?= $this->Html->link(
                           __('Create a task'),
                           array(
@@ -136,6 +137,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                         ))?>
 						</div>
 						<div class="span4">
+						<?=$this->Bootstrap->icon('road')?>
                         <?= $this->Html->link(
                           __('Create a milestone'),
                           array(
@@ -145,6 +147,7 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                         ))?>
 						</div>
 						<div class="span4">
+						<?=$this->Bootstrap->icon('book')?>
                         <?= $this->Html->link(
                           __('Log time'),
                           array(
