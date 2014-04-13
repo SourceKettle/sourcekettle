@@ -37,18 +37,7 @@
             ),
         ),
     ),
-    'right' => array(
-        array(
-            array(
-                'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),
-                'url' => array(
-                    'action' => 'add',
-                    'controller' => 'times',
-                ),
-                'props' => array('class' => 'btn-primary'),
-            ),
-        ),
-    ),
+    'right' => array(),
 );
 
 echo $this->element('Topbar/button', array('options' => $options, 'pl' => $pl));
