@@ -476,7 +476,7 @@ class TasksController extends AppProjectController {
 		$task = $this->Task->open($id);
 
 		//check inProgress
-		if (!$this->Task->isInProgress()) {
+		/*if (!$this->Task->isInProgress()) {
 			if ($isAjax) {
 				$this->set("error", "not_in_progress");
 				$this->set("errorDescription", "You can not stop work on a task that is not in progress.");
@@ -487,7 +487,7 @@ class TasksController extends AppProjectController {
 			}
 
 			return;
-		}
+		}*/
 
 		$updated = $this->__updateTaskStatus($project, $id, 1, $isAjax);
 		if ($isAjax) {
@@ -627,14 +627,15 @@ class TasksController extends AppProjectController {
 	public function freeze($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
+		// TODO hard coded status IDs
 		$success = $this->__updateTaskStatus($project, $id, 5, $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
-				$this->set ("error", "no_error");
+				$this->set("error", "no_error");
 				$this->set("errorDescription", "Task status updated");
 			} else {
-				$this->set ("error", "failed_to_save");
+				$this->set("error", "failed_to_save");
 				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 

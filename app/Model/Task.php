@@ -33,6 +33,7 @@ class Task extends AppModel {
 
 /**
  * Validation rules
+ * TODO hard-coded IDs
  */
 	public $validate = array(
 		'project_id' => array(
@@ -71,7 +72,7 @@ class Task extends AppModel {
 				'rule' => array('notempty'),
 			),
 			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,'1','2','3','4')),
+				'rule' => array('inlist', array(1,2,3,4,5,'1','2','3','4','5')),
 				'message' => 'Select a task status',
 			),
 		),
@@ -339,6 +340,7 @@ class Task extends AppModel {
 	}
 
 	public function fetchLoggableTasks() {
+		// TODO hard coded status IDs
 		$myTasks = $this->find(
 			'list',
 			array(

@@ -53,6 +53,11 @@ $(function () {
         // Rotate by 2 degrees while being dragged
         start: function(event, ui){
             ui.item.css('transform', 'rotate(2deg)');
+			// Set the lozenge width to the sprintboard column width
+			// Avoids dragging a massive lozenge from the icebox
+			ui.item.width($($('.sprintboard-droplist')[0]).width());
+
+			// Glowy edges on all valid drop targets
 			$('.sprintboard-droplist').addClass('highlight-droptarget');
         },
 
@@ -89,7 +94,9 @@ $(function () {
                 if (data.error === "no_error") {
                     // Update task lozenge's status
                     statusLabel.html(taskStatusLabels[toStatus]);
+                    statusLabel.removeClass('label');
                     statusLabel.removeClass(taskStatusLabelTypes[fromStatus]);
+                    statusLabel.addClass('label');
                     statusLabel.addClass(taskStatusLabelTypes[toStatus]);
                 } else {
                     alert("Problem: "+data.errorDescription);

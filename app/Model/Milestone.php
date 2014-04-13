@@ -202,6 +202,16 @@ class Milestone extends AppModel {
 	}
 
 /**
+ * droppedTasksForMilestone function.
+ * Return the dropped tasks for a given milestone
+ *
+ * @param mixed $id the id of the milestone
+ */
+	public function droppedTasksForMilestone($id = null) {
+		// TODO hard-coded IDs!
+		return $this->tasksOfStatusForMilestone($id, 5);
+	}
+/**
  * tasksOfStatusForMilestone function.
  * Return the tasks for a given milestone
  *

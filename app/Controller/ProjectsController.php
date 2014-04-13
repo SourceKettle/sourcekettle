@@ -102,9 +102,25 @@ class ProjectsController extends AppProjectController {
 	public function view($name = null) {
 		$project = $this->_projectCheck($name);
 
-		$numberOfOpenTasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id <' => 4, 'Task.project_id' => $project['Project']['id'])));
-		$numberOfClosedTasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 4, 'Task.project_id' => $project['Project']['id'])));
-		$numberOfTasks = $numberOfClosedTasks + $numberOfOpenTasks;
+		$numberOfOpenTasks = $this->Project->Task->find('count', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('open', 'in_progress')
+			)
+		));
+		$numberOfClosedTasks = $this->Project->Task->find('count', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('resolved', 'closed')
+			)
+		));
+		$numberOfDroppedTasks = $this->Project->Task->find('count', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('dropped')
+			)
+		));
+		$numberOfTasks = $numberOfClosedTasks + $numberOfOpenTasks + $numberOfDroppedTasks;
 
 		$percentOfTasks = 0;
 		if ($numberOfTasks > 0) {

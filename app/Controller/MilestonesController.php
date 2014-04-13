@@ -147,7 +147,7 @@ class MilestonesController extends AppProjectController {
 		$inProgress = $this->Milestone->inProgressTasksForMilestone($id);
 		$completed = $this->Milestone->closedOrResolvedTasksForMilestone($id);
 
-		$iceBox = $this->Milestone->Task->find('all', array(
+		/*$iceBox = $this->Milestone->Task->find('all', array(
 			'conditions' => array(
 				'Task.project_id' => $project['Project']['id'],
 				'OR' => array(
@@ -155,7 +155,8 @@ class MilestonesController extends AppProjectController {
 					array('milestone_id' => 0)
 				),
 			)
-		));
+		));*/
+		$iceBox= $this->Milestone->droppedTasksForMilestone($id);
 
 		// Sort function for tasks
 		$cmp = function($a, $b) {
