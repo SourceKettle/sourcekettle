@@ -66,7 +66,8 @@ class AppSchema extends CakeSchema {
 						array('name' => 'open'),
 						array('name' => 'in progress'),
 						array('name' => 'resolved'),
-						array('name' => 'closed')
+						array('name' => 'closed'),
+						array('name' => 'dropped')
 					));
 					break;
 

@@ -624,46 +624,38 @@ class TasksController extends AppProjectController {
  * @param mixed $taskId (default: null)
  * @throws MethodNotAllowedException
  */
-	public function freeze ($project = null, $taskId = null) {
-		if (!$this->request->is("ajax")) {
-			throw new MethodNotAllowedException();
-		}
+	public function freeze($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
 
-		$project = $this->_projectCheck($project, true);
-		$this->Task->open ($taskId);
-		$this->Task->set ("milestone_id", 0);
+		$success = $this->__updateTaskStatus($project, $id, 5, $isAjax);
 
-		if (!$this->Task->save()) {
-			$this->set ("error", "failed_to_save");
-			$this->set("errorDescription", "An error occurred while removing the task from the milestone");
+		if ($isAjax) {
+			if ($success) {
+				$this->set ("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
+			} else {
+				$this->set ("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
 		} else {
-			$this->set ("error", "no_error");
-			$this->set("errorDescription", "Task status updated");
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
 		}
-
-		$this->set ("_serialize", array ("error"));
-	}
-
-	public function thaw ($project = null, $taskId = null ) {
-		if (!$this->request->is("ajax")) {
-			throw new MethodNotAllowedException();
-		}
-
-		$milestone = $this->request->data['milestone'];
-
-		$project = $this->_projectCheck($project, true);
-		$this->Task->open ($taskId);
-		$this->Task->set ("milestone_id", $milestone);
-
-		if (!$this->Task->save()) {
-			$this->set ("error", "failed_to_save");
-			$this->set("errorDescription", "An error occurred while adding the task to the milestone");
-		} else {
-			$this->set ("error", "no_error");
-			$this->set("errorDescription", "Task status updated");
-		}
-
-		$this->set ("_serialize", array ("error"));
 	}
 
 /**

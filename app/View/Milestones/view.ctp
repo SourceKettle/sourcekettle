@@ -54,7 +54,7 @@ $this->Html->script("milestones.index", array ('inline' => false));
     <!-- Icebox row -->
 	<div class="row-fluid span12">
         <?= $this->element('Task/Board/column',
-            array('tasks' => $iceBox, 'status' => 'on_ice', 'title' => __('Ice Box'), 'span' => '12', 'classes' => 'sprintboard-icebox')
+            array('tasks' => $iceBox, 'status' => 'dropped', 'title' => __('Ice Box'), 'span' => '12', 'classes' => 'sprintboard-icebox')
         ) ?>
 
 	<!-- End icebox -->

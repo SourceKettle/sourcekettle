@@ -17,31 +17,22 @@ $(function () {
    var taskStatusLabels = {
             open: "Open",
             in_progress: "In Progress",
-            resolved: "Resolved"
+            resolved: "Resolved",
+			dropped: "Dropped"
    };
 
    var taskStatusLabelTypes = {
        open: "label-important",
        in_progress: "label-warning",
-       resolved: "label-success"
+       resolved: "label-success",
+       dropped: "label"
    };
 
    var transitions = {
-       open: {
-           in_progress: "../../tasks/starttask/",
-           resolved: "../../tasks/resolve/",
-           on_ice: "../../tasks/freeze/"
-       },
-       in_progress: {
-           open: "../../tasks/stoptask/",
-           resolved: "../../tasks/resolve/",
-           on_ice: "../../tasks/freeze/"
-       },
-       resolved: {
-           open: "../../tasks/unresolve/",
-           in_progress: "../../tasks/starttask/",
-           on_ice: "../../tasks/freeze/"
-       }
+       open: "../../tasks/stoptask/",
+       in_progress: "../../tasks/starttask/",
+       resolved: "../../tasks/resolve/",
+       dropped: "../../tasks/freeze/"
    };
 
     equaliseColumns();
@@ -85,14 +76,14 @@ $(function () {
 
 
             // Double check that the transition is one we can do (shouldn't get here!)
-            if(!transitions[fromStatus][toStatus]){
+            if(!transitions[toStatus]){
                 alert("Something weird happened. It probably shouldn't have. Sorry about that.");
                 $(ui.sender).sortable('cancel');
                 return false;
             }
 
             // Do the AJAX postback to update task status
-            var updateURL = transitions[fromStatus][toStatus] + taskID;
+            var updateURL = transitions[toStatus] + taskID;
 
             $.post(updateURL, function (data) {
                 if (data.error === "no_error") {
