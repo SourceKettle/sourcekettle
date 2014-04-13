@@ -57,8 +57,9 @@
             'Add' => array(
                 'icon' => 'file',
                 'url' => array(
-                    'action' => 'admin_add',
+                    'action' => 'add',
                     'controller' => 'projects',
+					'admin' => false,
                 ),
             ),
         ),
