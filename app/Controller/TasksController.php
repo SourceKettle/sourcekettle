@@ -51,7 +51,8 @@ class TasksController extends AppProjectController {
 			"starttask",
 			"stoptask",
 			"resolve",
-			"unresolve"
+			"unresolve",
+			"freeze"
 		);
 	}
 
