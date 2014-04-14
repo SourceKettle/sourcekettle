@@ -56,18 +56,40 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
                                              'action'     => 'all',
-                                             '1,2,3' // Task status IDs
+                                             '1' // Task status IDs
+                                           ))?>
+                                        </li>
+
+                                        <li class="in-progress-tasks">
+                                          <?= $this->Html->link(
+                                           "$numberOfInProgressTasks - ".__("tasks in progress"),
+                                           array(
+                                             'project'    => $project['Project']['name'],
+                                             'controller' => 'tasks',
+                                             'action'     => 'all',
+                                             '2' // Task status IDs
                                            ))?>
                                         </li>
 
                                         <li class="closed-tasks">
                                           <?= $this->Html->link(
-                                            "$numberOfClosedTasks - ".__("closed tasks"),
+                                            "$numberOfClosedTasks - ".__("finished tasks"),
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
                                              'action'     => 'all',
-                                             '4' // Task status IDs
+                                             '3,4' // Task status IDs
+                                          ))?>
+                                        </li>
+
+                                        <li class="dropped-tasks">
+                                          <?= $this->Html->link(
+                                            "$numberOfDroppedTasks - ".__("dropped tasks"),
+                                           array(
+                                             'project'    => $project['Project']['name'],
+                                             'controller' => 'tasks',
+                                             'action'     => 'all',
+                                             '5' // Task status IDs
                                           ))?>
                                         </li>
 
@@ -85,7 +107,12 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                                     </ul>
                                 </div>
                                 <div class="span6">
-                                    <? echo $this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(array($numberOfOpenTasks, $numberOfClosedTasks)); ?>
+                                    <?=$this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(
+										array(
+											$numberOfOpenTasks, $numberOfInProgressTasks,
+											$numberOfClosedTasks, $numberOfDroppedTasks
+										)
+									); ?>
                                 </div>
                             </div>
                         </div>

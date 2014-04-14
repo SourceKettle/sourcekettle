@@ -92,9 +92,10 @@ class Milestone extends AppModel {
 				$i = $results[$a]['Tasks']['in_progress'] = $this->inProgressTasksForMilestone($result['Milestone']['id']);
 				$r = $results[$a]['Tasks']['resolved'] = $this->resolvedTasksForMilestone($result['Milestone']['id']);
 				$c = $results[$a]['Tasks']['completed'] = $this->closedTasksForMilestone($result['Milestone']['id']);
+				$d = $results[$a]['Tasks']['dropped'] = $this->droppedTasksForMilestone($result['Milestone']['id']);
 
 				if ((count($o) + count($i) + count($r) + count($c)) > 0) {
-					$results[$a]['Milestone']['percent'] = count($c) / (count($o) + count($i) + count($r) + count($c)) * 100;
+					$results[$a]['Milestone']['percent'] = (count($r) + count($c)) / (count($o) + count($i) + count($r) + count($c)) * 100;
 				} else {
 					$results[$a]['Milestone']['percent'] = 0;
 				}
