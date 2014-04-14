@@ -569,6 +569,93 @@ class UsersController extends AppController {
 		}
 	}
 
+	public function admin_promote($userId) {
+		// Check we're logged in as an admin
+		// TODO - pretty sure by this point we've already checked, but I'm in a paranoid mood
+		$this->User->id = $this->Auth->user('id');
+		$currentUserData = $this->User->read();
+
+		if (!$currentUserData['User']['is_admin']) {
+			$this->redirect('/');
+		}
+
+		// Check user ID is numeric...
+		$userId = trim($userId);
+		if (!is_numeric($userId)) {
+			$this->Session->setFlash(__('Could not promote user - bad user ID was given'), 'error', array(), '');
+			$this->redirect(array('action' => 'admin_index'));
+		}
+
+		if ($this->request->is('post')) {
+			$this->User->id = $userId;
+			$targetUserData = $this->User->read();
+
+			// Now promote the user
+			$targetUserData['User']['is_admin'] = 1;
+
+			if ($this->User->save($targetUserData, array('fieldList' => array('is_admin')))) {
+				$this->Session->setFlash(__('Account promoted to system admin'), 'default', array(), 'success');
+				$this->log("[UsersController.promote] user[" . $this->Auth->user('id') . "] promoted to sysadmin", 'devtrack');
+				$this->redirect(array('action' => 'admin_index'));
+			}
+
+			// TODO check what projects made this fail
+			$this->Session->setFlash(__('Account was not promoted'), 'default', array(), 'error');
+			$this->redirect(array('action' => 'admin_index'));
+
+		} else {
+			// We only respond to POSTs, otherwise bounce to index page
+			$this->redirect(array('action' => 'admin_index'));
+		}
+	}
+
+	public function admin_demote($userId) {
+		// Check we're logged in as an admin
+		// TODO - pretty sure by this point we've already checked, but I'm in a paranoid mood
+		$this->User->id = $this->Auth->user('id');
+		$currentUserData = $this->User->read();
+
+		if (!$currentUserData['User']['is_admin']) {
+			$this->redirect('/');
+		}
+
+		// Safety net: do not allow a sysadmin to demote themself!
+		if ($currentUserData['User']['id'] == $userId) {
+			$this->Session->setFlash(__('Cannot demote yourself! Ask another admin to do it'), 'error', array(), '');
+			$this->redirect(array('action' => 'admin_index'));
+		}
+
+		// Check user ID is numeric...
+		$userId = trim($userId);
+		if (!is_numeric($userId)) {
+			$this->Session->setFlash(__('Could not demote user - bad user ID was given'), 'error', array(), '');
+			$this->redirect(array('action' => 'admin_index'));
+		}
+
+		if ($this->request->is('post')) {
+			$this->User->id = $userId;
+			$targetUserData = $this->User->read();
+
+
+			// Now demote the user
+			$targetUserData['User']['is_admin'] = 0;
+
+			if ($this->User->save($targetUserData, array('fieldList' => array('is_admin')))) {
+				$this->Session->setFlash(__('Account demoted to normal user'), 'default', array(), 'success');
+				$this->log("[UsersController.demote] user[" . $this->Auth->user('id') . "] demoted to sysadmin", 'devtrack');
+				$this->redirect(array('action' => 'admin_index'));
+			}
+
+			// TODO check what projects made this fail
+			$this->Session->setFlash(__('Account was not demoted'), 'default', array(), 'error');
+			$this->redirect(array('action' => 'admin_index'));
+
+		} else {
+			// We only respond to POSTs, otherwise bounce to index page
+			$this->redirect(array('action' => 'admin_index'));
+		}
+	}
+
 /**
  * Generates a random key of a given length
  * @param type $length The length of the key
