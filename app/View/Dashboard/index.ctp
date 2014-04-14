@@ -21,16 +21,7 @@
 
 
 <div class="row">
-    <div class='span5'>
-      <h3>Recent events</h3>
-        <? if (!empty($history)){
-          ?><div class='alert alert-info'><strong>In progress!</strong> Source code events are not shown here yet.</div><?
-          echo $this->element('history', array('context_global' => true, 'events' => $history));
-        } else {
-          ?><div class='alert alert-info'><strong>No events!</strong> There is no activity related to your account.</div><?
-        }?>
-    </div>
-    <div class="span3">
+    <div class="span6">
       <h3>Assigned tasks</h3>
       <? if (!empty($tasks)){
         foreach ($tasks as $task){
@@ -40,7 +31,7 @@
         ?><div class='alert alert-success'>You have no assigned tasks! Why don't you assign yourself one?</div><?
       }?>
     </div>
-    <div class="span4">
+    <div class="span6">
         <h3>Most recent projects</h3>
         <div class='row'>
           <?
@@ -78,6 +69,18 @@
           echo $this->Element("Project/list", array('projects' => $projects, 'nospan' => true));
         } else {
           echo $this->element('Project/noprojectsalert');
+        }?>
+    </div>
+</div>
+
+<div class='row'>
+    <div class='span10'>
+      <h3>Recent events</h3>
+        <? if (!empty($history)){
+          ?><div class='alert alert-info'><strong>In progress!</strong> Source code events are not shown here yet.</div><?
+          echo $this->element('history', array('context_global' => true, 'events' => $history));
+        } else {
+          ?><div class='alert alert-info'><strong>No events!</strong> There is no activity related to your account.</div><?
         }?>
     </div>
 </div>
