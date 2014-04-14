@@ -102,7 +102,14 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
 								$_edit_icon, $_edit_url,
                                 array('escape'=>false, 'size' => 'mini', 'title' => __('Edit account details'))
                             );
-							if($user['User']['is_admin']){
+
+							// Don't allow admins to demote themselves (enforced in controller)
+							if($user['User']['id'] == $this->get('user_id')){
+                                echo $this->Bootstrap->button(
+									$this->Bootstrap->icon('none'),
+									array('escape'=>false, 'size' => 'mini', 'class' => 'disabled')
+								);
+							} elseif($user['User']['is_admin']){
                             	echo $this->Bootstrap->button_form(
 									$_demote_icon, $_demote_url,
 									array('escape'=>false, 'size' => 'mini', 'title' => __('Demote system admin to normal user')),
