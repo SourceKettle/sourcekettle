@@ -40,7 +40,8 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
                             'id' => 'appendedInputButton',
                             'class' => 'span11',
                             "placeholder" => "john.smith@example.com",
-                            'label' => false
+                            'label' => false,
+							'autocomplete' => 'off'
                         )
                     )
                 );

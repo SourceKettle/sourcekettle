@@ -36,7 +36,8 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                             'id' => 'appendedInputButton',
                             'class' => 'span11',
                             "placeholder" => __("Start typing a project name..."),
-                            'label' => false
+                            'label' => false,
+							'autocomplete' => 'off'
                         ),
                         'url' => array(
                             'controller' => 'projects',

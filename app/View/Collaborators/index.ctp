@@ -120,7 +120,8 @@ $_levels = array(
                             'id' => 'appendedInputButton',
                             'class' => 'span3',
                             "placeholder" => "john.smith@example.com",
-                            'label' => false
+                            'label' => false,
+							"autocomplete" => 'off'
                         )
                     )
                 );
