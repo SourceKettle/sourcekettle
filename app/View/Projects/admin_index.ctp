@@ -76,50 +76,46 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                             </div>
                         </td>
                         <td>
-                        <?= $this->Bootstrap->button(
-							$this->Html->link(
-								$this->Bootstrap->icon('cog'),
+						<div class="btn-group">
+                        <?= $this->Bootstrap->button_link(
+							$this->Bootstrap->icon('cog'),
+							$this->Html->url(
 								array(
-										'project' => $project['Project']['name'],
-										'action' => 'edit',
-										'controller' => 'projects',
-										'admin' => false
-									 ),
-								array(
-									'escape' => false
+									'project' => $project['Project']['name'],
+									'action' => 'edit',
+									'controller' => 'projects',
+									'admin' => false
 								 )
 							),
 							array(
 								'size' => 'mini',
 								'title' => __('Edit project settings'),
+								'escape' => false
 							)
 						)?>
-						&nbsp;
-						<?= $this->Bootstrap->button(
-							$this->Html->link(
-								$this->Bootstrap->icon('user'),
+						<?= $this->Bootstrap->button_link(
+							$this->Bootstrap->icon('user'),
+							$this->Html->url(
 								array(
-										'project' => $project['Project']['name'],
-										'action' => 'collaborators',
-										'controller' => 'projects',
-										'admin' => false
-									 ),
-								array(
-									'escape' => false
+									'project' => $project['Project']['name'],
+									'action' => 'collaborators',
+									'controller' => 'projects',
+									'admin' => false
 								 )
 							),
 							array(
 								'size' => 'mini',
 								'title' => __('Edit project collaborators'),
+								'escape' => false
 							)
 						)?>
-						&nbsp;
                         <?= $this->Bootstrap->button_form(
                             $this->Bootstrap->icon('eject', 'white'),
                             $this->Html->url(array('controller' => 'projects', 'action' => 'admin_delete', $project['Project']['id']), true),
                             array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
                             __("Are you sure you want to delete ") . h($project['Project']['name']) . "?"
                         )?>
+						</div>
                         
                         </td>
                     </tr>
