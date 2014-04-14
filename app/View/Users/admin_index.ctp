@@ -23,10 +23,10 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
     <div class="span10">
         <div class="row-fluid">
             <?php
-                $_up_icon     = $this->Bootstrap->icon('arrow-up');
-                $_down_icon   = $this->Bootstrap->icon('arrow-down');
-                $_delete_icon = $this->Bootstrap->icon('eject', 'white');
-                $_edit_icon   = $this->Bootstrap->icon('pencil');
+                $_promote_icon = $this->Bootstrap->icon('arrow-up');
+                $_demote_icon  = $this->Bootstrap->icon('arrow-down');
+                $_delete_icon  = $this->Bootstrap->icon('eject', 'white');
+                $_edit_icon    = $this->Bootstrap->icon('pencil');
                 echo $this->Form->create('User',
                     array(
                         'class' => 'form-inline input-append'
