@@ -40,6 +40,7 @@ $(function () {
     // Make all columns and the icebox connected sortable lists
     $( ".sprintboard-droplist" ).sortable({
         cursor: "move",
+        cursorAt: {top: 20, left: 20},
         connectWith: ".sprintboard-droplist",
 
         items: "li.draggable",
