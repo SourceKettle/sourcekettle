@@ -96,10 +96,10 @@ $link_edit = $this->Html->link(
                 <p>
                     <small>
                         <?= ($t == 0) ? __('no tasks in this milestone')  : '' ?>
-                        <?= ($c > 0)  ? __('closed') : ''?>
+                        <?= ($c > 0)  ? $this->Bootstrap->badge($c, 'info').' '.__('closed') : ''?>
                         <?= ($r > 0)  ? $this->Bootstrap->badge($r, 'success').' '.__('resolved') : ''?>
-                        <?= ($i > 0)  ? $this->Bootstrap->badge($r, 'warning').' '.__('in progress') : ''?>
-                        <?= ($o > 0)  ? $this->Bootstrap->badge($r, 'important').' '.__('open') : ''?>
+                        <?= ($i > 0)  ? $this->Bootstrap->badge($i, 'warning').' '.__('in progress') : ''?>
+                        <?= ($o > 0)  ? $this->Bootstrap->badge($o, 'important').' '.__('open') : ''?>
                         <span class="pull-right muted"><?=$milestone['Milestone']['dPoints']?>/<?=$milestone['Milestone']['tPoints']?> points</span>
                     </small>
                 </p>
