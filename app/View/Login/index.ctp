@@ -26,7 +26,7 @@
 
             <?php
             echo $this->Bootstrap->input("email", array(
-                "input" => $this->Form->text("email", array('class'=>'span12', 'tabindex'=>'1')),
+                "input" => $this->Form->text("email", array('class'=>'span12', 'tabindex'=>'1', 'autofocus' => '')),
             ));
 
             echo $this->Bootstrap->input("password", array(

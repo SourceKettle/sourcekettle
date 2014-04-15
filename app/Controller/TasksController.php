@@ -51,7 +51,8 @@ class TasksController extends AppProjectController {
 			"starttask",
 			"stoptask",
 			"resolve",
-			"unresolve"
+			"unresolve",
+			"freeze"
 		);
 	}
 
@@ -299,6 +300,13 @@ class TasksController extends AppProjectController {
 
 		$project = $this->_projectCheck($project, true);
 
+		// Milestone pre-selected - parse and store
+		if(!empty($this->request->query['milestone'])){
+			$selected_milestone_id = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
+		} else {
+			$selected_milestone_id = 0;
+		}
+
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
 
@@ -327,7 +335,14 @@ class TasksController extends AppProjectController {
 				}
 			} else if ($this->request->is('post')) {
 				if ($this->Flash->c($this->Task->saveAll($this->request->data))) {
-					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
+
+					// If they pre-selected a milestone, go back to that milestone
+					if($selected_milestone_id){
+						$this->redirect(array('controller' => 'milestones', 'project' => $project['Project']['name'], 'action' => 'view', $selected_milestone_id));
+					// ...otherwise show the task.
+					} else {
+						$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
+					}
 				}
 			}
 		} else {
@@ -337,8 +352,8 @@ class TasksController extends AppProjectController {
 			$this->request->data['Task']['task_type_id'] = 1;
 			$this->request->data['Task']['assignee_id'] = 0;
 
-			if(!empty($this->request->query['milestone'])){
-				$this->request->data['Task']['milestone_id'] = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
+			if($selected_milestone_id){
+				$this->request->data['Task']['milestone_id'] = $selected_milestone_id;
 			} else{
 				$this->request->data['Task']['milestone_id'] = null;
 			}

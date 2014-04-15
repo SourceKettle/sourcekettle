@@ -105,7 +105,13 @@ class ProjectsController extends AppProjectController {
 		$numberOfOpenTasks = $this->Project->Task->find('count', array(
 			'conditions' => array(
 				'Task.project_id' => $project['Project']['id'],
-				'TaskStatus.name' => array('open', 'in_progress')
+				'TaskStatus.name' => array('open')
+			)
+		));
+		$numberOfInProgressTasks = $this->Project->Task->find('count', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('in progress')
 			)
 		));
 		$numberOfClosedTasks = $this->Project->Task->find('count', array(
@@ -120,7 +126,7 @@ class ProjectsController extends AppProjectController {
 				'TaskStatus.name' => array('dropped')
 			)
 		));
-		$numberOfTasks = $numberOfClosedTasks + $numberOfOpenTasks + $numberOfDroppedTasks;
+		$numberOfTasks = $numberOfClosedTasks + $numberOfInProgressTasks + $numberOfOpenTasks + $numberOfDroppedTasks;
 
 		$percentOfTasks = 0;
 		if ($numberOfTasks > 0) {
@@ -137,7 +143,7 @@ class ProjectsController extends AppProjectController {
 
 		$numCollab = count($this->Project->Collaborator->findAllByProjectId($project['Project']['id']));
 
-		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfClosedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab'));
+		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab'));
 		$this->set('historyCount', 8);
 	}
 
@@ -473,16 +479,24 @@ class ProjectsController extends AppProjectController {
 
 		if (isset($this->request->query['query'])
 			&& $this->request->query['query'] != null
-			&& strlen($this->request->query['query']) > 1) {
+			&& strlen($this->request->query['query']) > 0) {
 
-			$query = $this->request->query['query'];
+			$query = strtolower($this->request->query['query']);
+
+			// At 3 characters, start matching anywhere within the name
+			if(strlen($query) > 2){
+				$query = "%$query%";
+			} else {
+				$query = "$query%";
+			}
+
 			$projects = $this->Project->find(
 				"all",
 				array(
 					'conditions' => array(
 						'OR' => array(
-							'Project.name LIKE' => $query . '%',
-							'Project.description LIKE' => $query . '%'
+							'LOWER(Project.name) LIKE' => $query,
+							'LOWER(Project.description) LIKE' => $query
 						),
 					),
 					'fields' => array(

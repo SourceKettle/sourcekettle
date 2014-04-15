@@ -25,7 +25,8 @@ $(function () {
        open: "label-important",
        in_progress: "label-warning",
        resolved: "label-success",
-       dropped: "label"
+       dropped: "",
+       closed: "label-info"
    };
 
    var transitions = {
@@ -40,6 +41,7 @@ $(function () {
     // Make all columns and the icebox connected sortable lists
     $( ".sprintboard-droplist" ).sortable({
         cursor: "move",
+        cursorAt: {top: 20, left: 20},
         connectWith: ".sprintboard-droplist",
 
         items: "li.draggable",
@@ -94,9 +96,11 @@ $(function () {
                 if (data.error === "no_error") {
                     // Update task lozenge's status
                     statusLabel.html(taskStatusLabels[toStatus]);
-                    statusLabel.removeClass('label');
-                    statusLabel.removeClass(taskStatusLabelTypes[fromStatus]);
-                    statusLabel.addClass('label');
+
+                    // Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
+                    statusLabel.removeClass(function(index, css){
+                        return (css.match (/\blabel-\S+/g) || []).join(' ');
+                    });
                     statusLabel.addClass(taskStatusLabelTypes[toStatus]);
                 } else {
                     alert("Problem: "+data.errorDescription);

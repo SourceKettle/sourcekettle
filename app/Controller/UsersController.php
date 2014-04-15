@@ -897,16 +897,24 @@ class UsersController extends AppController {
 
 		if (isset($this->request->query['query'])
 			&& $this->request->query['query'] != null
-			&& strlen($this->request->query['query']) > 2) {
+			&& strlen($this->request->query['query']) > 0) {
 
-			$query = $this->request->query['query'];
+			$query = strtolower($this->request->query['query']);
+
+			// At 3 characters, start matching anywhere within the name
+			if(strlen($query) > 2){
+				$query = "%$query%";
+			} else {
+				$query = "$query%";
+			}
+
 			$users = $this->User->find(
 				"all",
 				array(
 					'conditions' => array(
 						'OR' => array(
-							'User.name	LIKE' => $query . '%',
-							'User.email LIKE' => $query . '%'
+							'LOWER(User.name) LIKE' => $query,
+							'LOWER(User.email) LIKE' => $query
 						)
 					),
 					'fields' => array(
