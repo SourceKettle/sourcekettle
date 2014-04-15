@@ -15,8 +15,9 @@
  */
 
 $this->Html->css('projects.overview', null, array ('inline' => false));
-
+$this->Html->script('projects.overview.js', array('inline' => false));
 ?>
+
 
 <?= $this->DT->pHeader() ?>
 <div class="row">
@@ -26,18 +27,6 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
     <div class="span10">
         <div class="row">
             <div class="span10">
-                <? if (!empty($project['Project']['description'])){?>
-                    <div class='well' id='project_description'>
-                        <? $this->Html->script('projects.overview.js', array('inline' => false)) ?>
-
-                        <? $more_link = '... <span id="view_more_button">' .$this->Html->link('Read More', '#') . '</span>'; ?>
-
-                        <?= $this->Text->truncate($this->Markitup->parse($project['Project']['description']), 100, array('ending' => $more_link, 'exact' => false, 'html' => true)) ?>
-                        <div id='full_description'>
-                            <?= $this->Markitup->parse($project['Project']['description']) ?>
-                        </div>
-                    </div>
-                <?}?>
                 <div class="well">
                     <div class="row-fluid overview">
 
@@ -118,7 +107,6 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                         </div>
 
 
-
                         <div class="span4">
 							<h3><?=__("Next Milestone")?></h3>
                             <hr />
@@ -186,6 +174,22 @@ $this->Html->css('projects.overview', null, array ('inline' => false));
                     </div>
                 </div>
             </div>
+			<div class="span10">
+                <? if (!empty($project['Project']['description'])){?>
+                    <div class='well' id='project_description'>
+						<h4><?=__("Project description")?></h4>
+
+                        <? $more_link = '... <span id="view_more_button">' .$this->Html->link('Read More', '#') . '</span>'; ?>
+
+                        <?= $this->Text->truncate($this->Markitup->parse($project['Project']['description']), 100, array('ending' => $more_link, 'exact' => false, 'html' => true)) ?>
+                        <div id='full_description'>
+							<h4><?=__("Project description")?></h4>
+                            <?= $this->Markitup->parse($project['Project']['description']) ?>
+                        </div>
+                    </div>
+                <?}?>
+			</div>
+
             <div class="span10" style="text-align:center">
                 <h3><?=__("Recent events for the project")?></h3>
             </div>
