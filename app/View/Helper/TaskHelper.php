@@ -59,12 +59,14 @@ class TaskHelper extends AppHelper {
 			2 => 'In Progress',
 			3 => 'Resolved',
 			4 => 'Closed',
+			5 => 'Dropped',
 		);
 		$colour = array(
 			1 => 'success',
 			2 => 'primary',
 			3 => 'info',
 			4 => 'danger',
+			5 => '',
 		);
 		//return $this->Bootstrap->button($text[$id], array('class' => 'btn-mini disabled btn-'.$colour[$id]));
 		return $text[$id];
