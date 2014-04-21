@@ -5,10 +5,11 @@
     <div class="span9">
         <p>
             <strong>
-                <?= $this->Html->link(
-                    $this->Text->truncate(h($commit['subject']), 50, array('exact' => false, 'html' => false)),
+                <?= // NB no h() as truncate() is doing this for us
+					$this->Html->link(
+                    $this->Text->truncate($commit['subject'], 50, array('exact' => false, 'html' => false)),
                     array('project' => $project['Project']['name'], 'action' => 'commit', $commit['hash'])
-                ) ?>
+                )  ?>
             </strong>
             <br>
             <small class="muted">

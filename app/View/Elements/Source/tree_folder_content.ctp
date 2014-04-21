@@ -38,8 +38,9 @@
 					);
 					echo " ";
 
+					// NB no h() as truncate() does it for us
                     $subject = $this->Text->truncate(
-						h($file['updated']['subject']), 100, array('exact' => false, 'html' => false)
+						$file['updated']['subject'], 100, array('exact' => false, 'html' => false)
 					);
 					echo $this->Html->link($subject, array(
 						'controller' => 'source',

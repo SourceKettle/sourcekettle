@@ -292,6 +292,37 @@ class Milestone extends AppModel {
 	}
 
 /**
+ * shiftTasks function
+ * When closing or deleting a milestone, detach a set of its tasks and
+ * assign them to another milestone (or no milestone if the new ID is zero).
+ * NB this should be wrapped in a transaction when closing/deleting a milestone.
+ * 
+ * @param $id Milestone ID to remove tasks from
+ * @param $newId Milestone ID to attach tasks to
+ * @param $allTasks True if all the milestone's tasks should be moved (i.e. delete milestone), false if only non-resolved/closed tasks should be moved (i.e. close milestone)
+ */
+	public function shiftTasks($id = null, $newId = null, $allTasks = false) {
+
+		// Retrieve Milestone; recurse to 2 models so we get TaskStatuses
+		// so we can check the status by name
+		$this->recursive = 2;
+		$milestone = $this->open($id);
+
+		// Now update all related tasks to attach them to the new milestone (or no milestone)
+		$tasks = array();
+		foreach($milestone['Task'] as $task){
+			if($allTasks || !in_array($task['TaskStatus']['name'], array('resolved', 'closed'))){
+				$task['milestone_id'] = $newId;
+				$tasks[] = $task;
+			}
+		}
+
+		// Save all the tasks
+		return $this->Task->saveMany($tasks);
+
+	}
+
+/**
  * TODO: Remove
  */
 	public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {

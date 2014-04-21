@@ -146,19 +146,10 @@ class MilestonesController extends AppProjectController {
 		$backlog = $this->Milestone->openTasksForMilestone($id);
 		$inProgress = $this->Milestone->inProgressTasksForMilestone($id);
 		$completed = $this->Milestone->closedOrResolvedTasksForMilestone($id);
-
-		/*$iceBox = $this->Milestone->Task->find('all', array(
-			'conditions' => array(
-				'Task.project_id' => $project['Project']['id'],
-				'OR' => array(
-					array('milestone_id' => null),
-					array('milestone_id' => 0)
-				),
-			)
-		));*/
 		$iceBox= $this->Milestone->droppedTasksForMilestone($id);
 
 		// Sort function for tasks
+		// TODO wtf? Time comparison for priority IDs?!
 		$cmp = function($a, $b) {
 			if (strtotime($a['Task']['task_priority_id']) == strtotime($b['Task']['task_priority_id'])) return 0;
 			if (strtotime($a['Task']['task_priority_id']) > strtotime($b['Task']['task_priority_id'])) return 1;
@@ -229,48 +220,38 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function close($project = null, $id = null) {
+
 		$project = $this->_projectCheck($project, true);
 		$milestone = $this->Milestone->open($id);
 
-		if(!$milestone['Milestone']['is_open']){
+		if (!$milestone['Milestone']['is_open']) {
 			throw new NotFoundException(__("Cannot close milestone - it is already closed!"));
 		}
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$new_milestone = $this->request->data['Milestone']['new_milestone'];
 
-			// Close milestone first
-			$milestone = $this->Milestone->open($id);
-			$milestone['Milestone']['is_open'] = 0;
-
-			// Now update all related tasks to attach them to the new milestone (or no milestone)
-			$tasks = array('Task' => array());
-			foreach($milestone['Task'] as $task){
-				// TODO hard coded status IDs!
-				// Find tasks that are not resolved or closed, set status to open, and update milestone id
-				if(!in_array($task['task_status_id'], array(3,4))){
-					$task['milestone_id'] = $new_milestone;
-					$tasks['Task'][] = $task;
-				}
-			}
-
 			// Manual transactions used here for good reason:
 			// saving all related stuff fails, as we're changing the milestone_id
 			// i.e. making it no longer related. So, let's do it this way.
 			$dataSource = $this->Milestone->getDataSource();
 			$dataSource->begin();
-			if ($this->Flash->u($this->Milestone->save($milestone))) {
-				$all_ok = $this->Milestone->Task->saveMany($tasks['Task']);
-				if($all_ok){
+			
+			// First attempt to shift the tasks to the new milestone ID
+			if (!$this->Flash->u($this->Milestone->shiftTasks($id, $new_milestone))) {
+				$dataSource->rollback();
+			
+			// Now update the milestone status itself
+			} else {
+				$milestone = $this->Milestone->open($id);
+				$milestone['Milestone']['is_open'] = 0;
+				if (!$this->Flash->u($this->Milestone->save($milestone))) {
+					$dataSource->rollback();
+				} else {
 					$dataSource->commit();
 					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
-				} else {
-					$this->Flash->u(false);
 				}
 			}
-
-			// Failed, roll back
-			$dataSource->rollback();
 
 		} else {
 			$this->request->data = $milestone;
@@ -324,22 +305,44 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function delete($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true, true);
+
+		$project = $this->_projectCheck($project, true);
 		$milestone = $this->Milestone->open($id);
 
-		$this->Flash->setUp();
-
 		if ($this->request->is('post')) {
-			if ($this->Flash->d($this->Milestone->delete())) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+			$new_milestone = $this->request->data['Milestone']['new_milestone'];
+
+			$dataSource = $this->Milestone->getDataSource();
+			$dataSource->begin();
+			
+			// First attempt to shift the tasks to the new milestone ID
+			if (!$this->Flash->u($this->Milestone->shiftTasks($id, $new_milestone, true))) {
+				$dataSource->rollback();
+			
+			// Now delete the milestone.
+			} else {
+				$milestone = $this->Milestone->open($id);
+				if (!$this->Flash->d($this->Milestone->delete())) {
+					$dataSource->rollback();
+				} else {
+					$dataSource->commit();
+					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				}
 			}
+
+		} else {
+			$this->request->data = $milestone;
 		}
-		$this->set('object', array(
-			'name' => $milestone['Milestone']['subject'],
-			'id'	=> $milestone['Milestone']['id']
-		));
-		$this->set('objects', $this->Milestone->preDelete());
-		$this->render('/Elements/Project/delete');
+
+		// For the form, build a list of other open milestones we can attach tasks to
+		$other_milestones = $this->Milestone->getOpenMilestones(true);
+		$other_milestones[0] = '(no milestone)';
+		unset($other_milestones[$id]);
+		ksort($other_milestones);
+
+		$this->set('other_milestones', $other_milestones);
+		$this->set('milestone', $milestone);
+		$this->set('name', $milestone['Milestone']['subject']);
 	}
 
 	/* ************************************************ *
