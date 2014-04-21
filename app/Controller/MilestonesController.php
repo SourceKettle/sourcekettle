@@ -230,16 +230,18 @@ class MilestonesController extends AppProjectController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$new_milestone = $this->request->data['Milestone']['new_milestone'];
 
-			// Close milestone first
+			// Retrieve Milestone; recurse to 2 models so we get TaskStatuses
+			// so we can check the status by name
+			$this->Milestone->recursive = 2;
 			$milestone = $this->Milestone->open($id);
 			$milestone['Milestone']['is_open'] = 0;
+
 
 			// Now update all related tasks to attach them to the new milestone (or no milestone)
 			$tasks = array('Task' => array());
 			foreach($milestone['Task'] as $task){
-				// TODO hard coded status IDs!
 				// Find tasks that are not resolved or closed, set status to open, and update milestone id
-				if(!in_array($task['task_status_id'], array(3,4))){
+				if(!in_array($task['TaskStatus']['name'], array('resolved', 'closed'))){
 					$task['milestone_id'] = $new_milestone;
 					$tasks['Task'][] = $task;
 				}
@@ -330,7 +332,7 @@ class MilestonesController extends AppProjectController {
 			'id'	=> $milestone['Milestone']['id']
 		));
 		$this->set('objects', $this->Milestone->preDelete());
-		$this->render('/Elements/Project/delete');
+		$this->render('View/Milestones/delete');
 	}
 
 	/* ************************************************ *
