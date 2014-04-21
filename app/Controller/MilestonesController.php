@@ -223,47 +223,34 @@ class MilestonesController extends AppProjectController {
 		$project = $this->_projectCheck($project, true);
 		$milestone = $this->Milestone->open($id);
 
-		if(!$milestone['Milestone']['is_open']){
+		if (!$milestone['Milestone']['is_open']) {
 			throw new NotFoundException(__("Cannot close milestone - it is already closed!"));
 		}
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$new_milestone = $this->request->data['Milestone']['new_milestone'];
 
-			// Retrieve Milestone; recurse to 2 models so we get TaskStatuses
-			// so we can check the status by name
-			$this->Milestone->recursive = 2;
-			$milestone = $this->Milestone->open($id);
-			$milestone['Milestone']['is_open'] = 0;
-
-
-			// Now update all related tasks to attach them to the new milestone (or no milestone)
-			$tasks = array('Task' => array());
-			foreach($milestone['Task'] as $task){
-				// Find tasks that are not resolved or closed, set status to open, and update milestone id
-				if(!in_array($task['TaskStatus']['name'], array('resolved', 'closed'))){
-					$task['milestone_id'] = $new_milestone;
-					$tasks['Task'][] = $task;
-				}
-			}
-
 			// Manual transactions used here for good reason:
 			// saving all related stuff fails, as we're changing the milestone_id
 			// i.e. making it no longer related. So, let's do it this way.
 			$dataSource = $this->Milestone->getDataSource();
 			$dataSource->begin();
-			if ($this->Flash->u($this->Milestone->save($milestone))) {
-				$all_ok = $this->Milestone->Task->saveMany($tasks['Task']);
-				if($all_ok){
+			
+			// First attempt to shift the tasks to the new milestone ID
+			if (!$this->Flash->u($this->Milestone->shiftTasks($id, $new_milestone))) {
+				$dataSource->rollback();
+			
+			// Now update the milestone status itself
+			} else {
+				$milestone = $this->Milestone->open($id);
+				$milestone['Milestone']['is_open'] = 0;
+				if (!$this->Flash->u($this->Milestone->save($milestone))) {
+					$dataSource->rollback();
+				} else {
 					$dataSource->commit();
 					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
-				} else {
-					$this->Flash->u(false);
 				}
 			}
-
-			// Failed, roll back
-			$dataSource->rollback();
 
 		} else {
 			$this->request->data = $milestone;
