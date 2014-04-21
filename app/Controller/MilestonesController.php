@@ -220,6 +220,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function close($project = null, $id = null) {
+
 		$project = $this->_projectCheck($project, true);
 		$milestone = $this->Milestone->open($id);
 
@@ -304,22 +305,44 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function delete($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true, true);
+
+		$project = $this->_projectCheck($project, true);
 		$milestone = $this->Milestone->open($id);
 
-		$this->Flash->setUp();
-
 		if ($this->request->is('post')) {
-			if ($this->Flash->d($this->Milestone->delete())) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+			$new_milestone = $this->request->data['Milestone']['new_milestone'];
+
+			$dataSource = $this->Milestone->getDataSource();
+			$dataSource->begin();
+			
+			// First attempt to shift the tasks to the new milestone ID
+			if (!$this->Flash->u($this->Milestone->shiftTasks($id, $new_milestone, true))) {
+				$dataSource->rollback();
+			
+			// Now delete the milestone.
+			} else {
+				$milestone = $this->Milestone->open($id);
+				if (!$this->Flash->d($this->Milestone->delete())) {
+					$dataSource->rollback();
+				} else {
+					$dataSource->commit();
+					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				}
 			}
+
+		} else {
+			$this->request->data = $milestone;
 		}
-		$this->set('object', array(
-			'name' => $milestone['Milestone']['subject'],
-			'id'	=> $milestone['Milestone']['id']
-		));
-		$this->set('objects', $this->Milestone->preDelete());
-		$this->render('View/Milestones/delete');
+
+		// For the form, build a list of other open milestones we can attach tasks to
+		$other_milestones = $this->Milestone->getOpenMilestones(true);
+		$other_milestones[0] = '(no milestone)';
+		unset($other_milestones[$id]);
+		ksort($other_milestones);
+
+		$this->set('other_milestones', $other_milestones);
+		$this->set('milestone', $milestone);
+		$this->set('name', $milestone['Milestone']['subject']);
 	}
 
 	/* ************************************************ *

@@ -27,7 +27,7 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
     <div class="row">
         <div class="well span8 offset1">
 
-			<h4><?=__("Are you sure you want to delete")?> '<?=h($name)?>'?</h4>
+			<h4><?=__("Are you sure you want to delete")?> '<?=h($name)?>'? <?=__("This action is irreversible!")?></h4>
         	<?=$this->Form->create('Milestone', array('class' => 'well form-horizontal', 'type' => 'post'))?>
 
 			<?if(count($milestone['Tasks']['open']) > 0 || count($milestone['Tasks']['in_progress']) > 0 || count($milestone['Tasks']['dropped']) > 0){?>
@@ -38,11 +38,11 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
 					array('options' => $other_milestones, 'default' => '(no milestone)', 'label' => false)
 				)?>
 			<?} else {?>
-				<p><?=__("Looks like all tasks are finished")?>! <?=__("Great work")?>!</p>
+				<p><?=__("There are no tasks associated with this milestone.")?></p>
 			<?}?>
         <?=$this->Bootstrap->button(
 			__("I'm sure. Delete that milestone")."!",
-			array("style" => "primary", "size" => "large", 'class' => 'deleteButton span7')
+			array("style" => "danger", "size" => "large", 'class' => 'deleteButton span7')
 		);?>
 
         <?=$this->Form->end()?>
