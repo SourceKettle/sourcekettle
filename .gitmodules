@@ -9,7 +9,7 @@
 	url = git://github.com/loadsys/twitter-bootstrap-helper.git
 [submodule "app/Plugin/GitCake"]
 	path = app/Plugin/GitCake
-	url = git://github.com/pwhittlesea/GitCake.git
+	url = git://github.com/SourceKettle/GitCake.git
 [submodule "app/Plugin/TwitterBootswatch"]
 	path = app/Plugin/TwitterBootswatch
 	url = git://github.com/pwhittlesea/TwitterBootswatchHelper.git
