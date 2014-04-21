@@ -42,9 +42,10 @@ echo $this->element('Time/modal_add');
     <table class="well table table-condensed table-striped tempo">
         <thead>
             <tr>
-                <th><?= $this->DT->t('tempo.table.task.text') ?></th>
+                <th><?= __('Task') ?></th>
+                <th><?= __('User') ?></th>
                 <?php
-                    foreach ($week as $day => $times) {
+                    foreach ($weekdays as $day => $times) {
                         $today = ($times['today']) ? 'today' : '';
                         echo "<th width='5%' class='tempoHeader $today' rel='tooltip' data-original-title='{$times['date']}'>$day</th>";
                     }
@@ -92,7 +93,7 @@ echo $this->element('Time/modal_add');
                     $columns .= "<td data-date='{$times['date']}' data-taskId='{$taskId}' class='tempoBody $today' data-toggle='$popover'>$total</td>";
                 }
 
-                echo "<tr><td>$eventTitle</td>$columns</tr>";
+                echo "<tr><td>$user</td><td>$eventTitle</td>$columns</tr>";
             }
         ?>
             <tr>

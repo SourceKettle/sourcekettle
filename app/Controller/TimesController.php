@@ -128,18 +128,13 @@ class TimesController extends AppProjectController {
 		}
 		// Validate the week
 		if (($_week = $this->Time->validateWeek($week, $year)) != $week) {
-			$this->redirect(array('project' => $project['Project']['name'], 'year' => $year, 'week' => $_week));
+			$this->redirect(array('project' => $project['Project']['name'], 'year' => $_year, 'week' => $_week));
 		}
 
-		$weekTasks = $this->Time->Project->Task->find('all', array(
-			'conditions'	=> array(
-				'Task.id' => $this->Time->tasksForWeek($year, $week),
-			)
-		));
-		$weekTasks[] = array('Task' => array('id' => 0, 'subject' => 'No associated task'));
+		// Fetch summary details for the week
+		$weekTimes = $this->Time->fetchWeeklySummary($project['Project']['id'], $year, $week);
 
-		$this->set('week', $this->Time->timesForWeek($year, $week));
-		$this->set('weekTasks', $weekTasks);
+		$this->set('weekTimes', $weekTimes);
 
 		$this->set('thisWeek', $week);
 		$this->set('thisYear', $year);
