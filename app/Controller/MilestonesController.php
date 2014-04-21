@@ -146,19 +146,10 @@ class MilestonesController extends AppProjectController {
 		$backlog = $this->Milestone->openTasksForMilestone($id);
 		$inProgress = $this->Milestone->inProgressTasksForMilestone($id);
 		$completed = $this->Milestone->closedOrResolvedTasksForMilestone($id);
-
-		/*$iceBox = $this->Milestone->Task->find('all', array(
-			'conditions' => array(
-				'Task.project_id' => $project['Project']['id'],
-				'OR' => array(
-					array('milestone_id' => null),
-					array('milestone_id' => 0)
-				),
-			)
-		));*/
 		$iceBox= $this->Milestone->droppedTasksForMilestone($id);
 
 		// Sort function for tasks
+		// TODO wtf? Time comparison for priority IDs?!
 		$cmp = function($a, $b) {
 			if (strtotime($a['Task']['task_priority_id']) == strtotime($b['Task']['task_priority_id'])) return 0;
 			if (strtotime($a['Task']['task_priority_id']) > strtotime($b['Task']['task_priority_id'])) return 1;
