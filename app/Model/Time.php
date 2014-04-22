@@ -272,10 +272,10 @@ class Time extends AppModel {
  * @throws InvalidArgumentException
  */
 	public function fetchTotalTimeForProject($projectId = null) {
-		$projectid = ($projectid == null) ? $this->project->id : $projectid;
+		$projectId = ($projectId == null ? $this->Project->id : $projectId);
 
-		if ($projectid == null) {
-			throw new invalidargumentexception("could not fetch times for unknown project");
+		if ($projectId == null) {
+			throw new InvalidArgumentException(__("Could not fetch times for unknown project"));
 		}
 
 		$totalLoggedTime = $this->find('all', array(
