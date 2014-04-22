@@ -135,6 +135,7 @@ class TimesController extends AppProjectController {
 		$weekTimes = $this->Time->fetchWeeklySummary($project['Project']['id'], $year, $week);
 
 		$this->set('weekTimes', $weekTimes);
+		$this->set('project', $project);
 
 		$this->set('thisWeek', $week);
 		$this->set('thisYear', $year);

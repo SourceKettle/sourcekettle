@@ -14,9 +14,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+echo "<pre>"; print_r($weekTimes); echo "</pre>\n";
+
+
 $this->Html->css('time.tempo', null, array ('inline' => false));
 
-$this->Html->scriptBlock("
+/*$this->Html->scriptBlock("
     $('.tempo').tooltip({
         selector: 'th[rel=tooltip]'
     })
@@ -34,7 +37,7 @@ $this->Html->scriptBlock("
             a.modal('show');
         }
     });
-", array('inline' => false));
+", array('inline' => false));*/
 
 echo $this->element('Time/modal_add');
 ?>
@@ -44,17 +47,65 @@ echo $this->element('Time/modal_add');
             <tr>
                 <th><?= __('Task') ?></th>
                 <th><?= __('User') ?></th>
+				<th><?= __('Mon') ?></th>
+				<th><?= __('Tue') ?></th>
+				<th><?= __('Wed') ?></th>
+				<th><?= __('Thu') ?></th>
+				<th><?= __('Fri') ?></th>
+				<th><?= __('Sat') ?></th>
+				<th><?= __('Sun') ?></th>
                 <?php
-                    foreach ($weekdays as $day => $times) {
+                    /*foreach ($weekdays as $day => $times) {
                         $today = ($times['today']) ? 'today' : '';
                         echo "<th width='5%' class='tempoHeader $today' rel='tooltip' data-original-title='{$times['date']}'>$day</th>";
-                    }
+                    }*/
+					/*foreach ($weekTimes as $taskId => $taskDetails){
+					  echo "<th>Task: $taskId</th>";
+					}*/
                 ?>
             </tr>
         </thead>
         <tbody>
         <?php
-            $elements = '';
+			foreach ($weekTimes as $taskId => $taskDetails) {
+				foreach ($taskDetails['users'] as $userId => $userDetails) {
+					echo "<tr>\n";
+					if ($taskId == 0) {
+						echo "<td>(".__("No associated task").")</td>\n";
+					} else {
+						echo "<td><a href='".$this->Html->url(array(
+								'controller' => 'tasks',
+								'action' => 'view',
+								'project' => $project['Project']['name'],
+								$taskId
+							))."'>".
+							h($taskDetails['Task']['subject']).
+						"</a></td>\n";
+					}
+
+
+					echo "<td><a href='".$this->Html->url(array(
+							'controller' => 'users',
+							'action' => 'view',
+							$userId
+						))."'>".
+						h($userDetails['User']['name']).
+					"</a></td>\n";
+
+
+					for ($i = 1; $i <= 7; $i++) {
+						if (array_key_exists($i, $userDetails['days'])) {
+							echo "<td>".h($userDetails['days'][$i])."</td>\n";
+						} else {
+							echo "<td></td>\n";
+						}
+					}
+
+					echo "</tr>\n";
+
+				}
+			}
+            /*$elements = '';
             foreach ($weekTasks as $task) {
                 $eventTitle = $task['Task']['subject'];
 
@@ -94,7 +145,7 @@ echo $this->element('Time/modal_add');
                 }
 
                 echo "<tr><td>$user</td><td>$eventTitle</td>$columns</tr>";
-            }
+            }*/
         ?>
             <tr>
                 <td><strong><?= $this->DT->t('tempo.table.total.text') ?></strong></td>

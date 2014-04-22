@@ -240,6 +240,7 @@ class Time extends AppModel {
 
 			// Build Horrible Array of Doom... start ordered by task
 			if($last_tid != $task['id']){
+				$last_uid = 0;
 				$summary[ $task['id'] ] = array(
 					'Task' => $task,
 					'users' => array()
@@ -255,7 +256,8 @@ class Time extends AppModel {
 			}
 
 			// Yes, this is "fun". But it makes rendering the summary table fairly easy.
-			$summary[ $user['id'] ]['tasks'][ $task['id'] ]['days'][$dow] = $minutes;
+			// TODO make less bollocks.
+			$summary[ $task['id'] ]['users'][ $user['id'] ]['days'][$dow] = $minutes;
 
 			$last_uid = $user['id'];
 			$last_tid = $task['id'];
