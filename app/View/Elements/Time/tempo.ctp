@@ -14,8 +14,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo "<pre>"; print_r($weekTimes); echo "</pre>\n";
-
 
 $this->Html->css('time.tempo', null, array ('inline' => false));
 
@@ -54,45 +52,39 @@ echo $this->element('Time/modal_add');
 				<th><?= __('Fri') ?></th>
 				<th><?= __('Sat') ?></th>
 				<th><?= __('Sun') ?></th>
-                <?php
-                    /*foreach ($weekdays as $day => $times) {
-                        $today = ($times['today']) ? 'today' : '';
-                        echo "<th width='5%' class='tempoHeader $today' rel='tooltip' data-original-title='{$times['date']}'>$day</th>";
-                    }*/
-					/*foreach ($weekTimes as $taskId => $taskDetails){
-					  echo "<th>Task: $taskId</th>";
-					}*/
-                ?>
             </tr>
         </thead>
         <tbody>
         <?php
 			foreach ($weekTimes as $taskId => $taskDetails) {
 				foreach ($taskDetails['users'] as $userId => $userDetails) {
+
 					echo "<tr>\n";
+
 					if ($taskId == 0) {
 						echo "<td>(".__("No associated task").")</td>\n";
+
 					} else {
-						echo "<td><a href='".$this->Html->url(array(
-								'controller' => 'tasks',
-								'action' => 'view',
-								'project' => $project['Project']['name'],
-								$taskId
-							))."'>".
-							h($taskDetails['Task']['subject']).
-						"</a></td>\n";
+						echo "<td>";
+						echo $this->Html->link($taskDetails['Task']['subject'], array(
+                           'controller' => 'tasks',
+	                       'action' => 'view',
+    	                   'project' => $project['Project']['name'],
+        	                $taskId
+                        ));
+						echo "</td>\n";
 					}
 
 
-					echo "<td><a href='".$this->Html->url(array(
-							'controller' => 'users',
-							'action' => 'view',
-							$userId
-						))."'>".
-						h($userDetails['User']['name']).
-					"</a></td>\n";
+					echo "<td>";
+					echo $this->Html->link($userDetails['User']['name'], array(
+						'controller' => 'users',
+						'action' => 'view',
+						$userId
+					));
+					echo "</td>\n";
 
-
+					// 1=Mon, 7=Sun...
 					for ($i = 1; $i <= 7; $i++) {
 						if (array_key_exists($i, $userDetails['days'])) {
 							echo "<td>".h($userDetails['days'][$i])."</td>\n";
@@ -104,59 +96,7 @@ echo $this->element('Time/modal_add');
 					echo "</tr>\n";
 
 				}
-			}
-            /*$elements = '';
-            foreach ($weekTasks as $task) {
-                $eventTitle = $task['Task']['subject'];
-
-                if ($task['Task']['id'] > 0) {
-                    $eventTitle = $this->Html->link(
-                        $eventTitle,
-                        array(
-                            'action' => 'view',
-                            'controller' => 'tasks',
-                            'project' => $project['Project']['name'],
-                            $task['Task']['id']
-                        )
-                    );
-                }
-
-                $columns = '';
-                foreach ($week as $day => $times) {
-                    $taskId = $task['Task']['id'];
-
-                    $popover = "tempo_{$day}_{$taskId}";
-                    $total = '';
-
-                    if (isset($times['times'][$taskId])) {
-                        $elements .= $this->element('Time/tempo_modal',
-                            array(
-                                'id' => $popover,
-                                'times' => $times['times'][$taskId],
-                                'date' => $times['date']
-                            )
-                        );
-                        $total = $times['totalTimes'][$taskId];
-                    }
-
-                    $today = ($times['today']) ? 'today' : '';
-
-                    $columns .= "<td data-date='{$times['date']}' data-taskId='{$taskId}' class='tempoBody $today' data-toggle='$popover'>$total</td>";
-                }
-
-                echo "<tr><td>$user</td><td>$eventTitle</td>$columns</tr>";
-            }*/
-        ?>
-            <tr>
-                <td><strong><?= $this->DT->t('tempo.table.total.text') ?></strong></td>
-            <?php
-                foreach ($week as $day => $times) {
-                    if ($times['totalTime'] == 0) $times['totalTime'] = '';
-                    $today = ($times['today']) ? 'today' : '';
-                    echo "<td class='tempoFooter $today'>{$times['totalTime']}</td>";
-                }
-            ?>
-            </tr>
+			}?>
         </tbody>
     </table>
     <div class="btn-toolbar tempo-toolbar span12">
@@ -191,5 +131,4 @@ echo $this->element('Time/modal_add');
             ?>
         </div>
     </div>
-    <?= $elements ?>
 </div>
