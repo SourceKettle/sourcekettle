@@ -24,6 +24,17 @@ $this->Html->script("times.history", array ('inline' => false));
     <div class="row">
         <?= $this->element('Time/topbar_history') ?>
         <div class="span10">
+			<? if (isset($user)) {
+				echo __("Showing time log for $userName");
+				echo " ";
+				echo $this->Html->link(__("(show all users)"), array(
+					'controller' => 'times',
+					'action' => 'history',
+					'year' => $thisYear,
+					'week' => $thisWeek,
+					'project' => $project['Project']['id']
+				));
+			} ?>
             <div class="row-fluid">
                 <?= $this->element('Time/tempo') ?>
             </div>
