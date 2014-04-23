@@ -138,11 +138,22 @@ class TimesController extends AppProjectController {
 
 		// Optionally filter by user
 		$user = null;
+		$userName = null;
 		if (isset($this->request->query['user'])) {
 			$user = $this->request->query['user'];
 			if (!preg_replace('/^\s*(\d+)\s*$/', '$1', $user)) {
 				$user = null;
+			} else {
+				$userObject = $this->Time->User->find('first', array(
+					'conditions' => array('id' => $user),
+					'fields' => array('User.name')
+				));
+				if ($userObject) {
+					$userName = $userObject['User']['name'];
+				}
 			}
+			$this->set('user', $user);
+			$this->set('userName', $userName);
 		}
 
 		// Start and end dates
@@ -178,8 +189,6 @@ class TimesController extends AppProjectController {
 			$this->set('prevYear', $year);
 		}
 
-		// Deprecated...
-		//$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
 	}
 
 /**
