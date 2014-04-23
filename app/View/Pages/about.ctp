@@ -36,6 +36,8 @@
         <p><?=$this->Html->link('@cakephp', 'https://github.com/cakephp/')?></p>
         <p><?=$this->Html->link('@loadsys', 'https://github.com/loadsys/')?></p>
         <p><?=$this->Html->link('@twitter', 'https://github.com/twitter/')?></p>
+        <p><?=$this->Html->link('jQuery', 'http://jquery.com/')?></p>
+        <p><?=$this->Html->link('DataTables', 'http://datatables.net/')?></p>
     </div>
     <div class="span4" style="text-align:center">
         <h4>The SourceKettle Dev Team</h4>
