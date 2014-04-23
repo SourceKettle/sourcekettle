@@ -114,8 +114,7 @@ echo $this->element('Time/modal_add');
             );
 
             echo "<button class='btn disabled btn-small'>";
-            echo $this->DT->t('tempo.table.week.text');
-            echo "$thisWeek - $thisYear";
+			echo $startDate->format('Y-m-d')." - ".$endDate->format('Y-m-d');
             echo "</button>";
 
             echo $this->Bootstrap->button_link(

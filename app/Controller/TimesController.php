@@ -131,14 +131,22 @@ class TimesController extends AppProjectController {
 			$this->redirect(array('project' => $project['Project']['name'], 'year' => $_year, 'week' => $_week));
 		}
 
+		// Start and end dates
+		$startDate = new DateTime();
+		$startDate->setISODate($year, $week, 1);
+		$endDate = new DateTime();
+		$endDate->setISODate($year, $week, 7);
+
 		// Fetch summary details for the week
 		$weekTimes = $this->Time->fetchWeeklySummary($project['Project']['id'], $year, $week);
 
 		$this->set('weekTimes', $weekTimes);
 		$this->set('project', $project);
 
-		$this->set('thisWeek', $week);
-		$this->set('thisYear', $year);
+		$this->set('thisWeek',  $week);
+		$this->set('thisYear',  $year);
+		$this->set('startDate', $startDate);
+		$this->set('endDate',   $endDate);
 
 		if ($week == $this->Time->lastWeekOfYear($year)) {
 			$this->set('nextWeek', 1);
