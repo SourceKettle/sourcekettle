@@ -13,6 +13,7 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->Html->script("times.history", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader() ?>

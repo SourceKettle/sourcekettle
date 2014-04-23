@@ -143,6 +143,7 @@ class TimesController extends AppProjectController {
 			if (!preg_replace('/^\s*(\d+)\s*$/', '$1', $user)) {
 				$user = null;
 			}
+			$this->set('user', $user);
 		}
 
 		// Start and end dates
@@ -178,8 +179,6 @@ class TimesController extends AppProjectController {
 			$this->set('prevYear', $year);
 		}
 
-		// Deprecated...
-		//$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
 	}
 
 /**

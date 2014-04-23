@@ -16,6 +16,8 @@
 
 
 $this->Html->css('time.tempo', null, array ('inline' => false));
+$this->Html->css('jquery.dataTables', null, array ('inline' => false));
+$this->Html->script('jquery.dataTables.min', array ('inline' => false));
 
 /*$this->Html->scriptBlock("
     $('.tempo').tooltip({
@@ -40,7 +42,7 @@ $this->Html->css('time.tempo', null, array ('inline' => false));
 echo $this->element('Time/modal_add');
 ?>
 <div>
-    <table class="well table table-condensed table-striped tempo">
+    <table id="timesheet" class="well table table-condensed table-striped tempo">
         <thead>
             <tr>
                 <th><?= __('Task') ?></th>
@@ -105,6 +107,8 @@ echo $this->element('Time/modal_add');
 
 				}
 			}?>
+        </tbody>
+        <tfoot>
 
             <tr>
                 <th><?= __('Total') ?></th>
@@ -120,18 +124,24 @@ echo $this->element('Time/modal_add');
 
 				} ?>
             </tr>
-        </tbody>
+        </tfoot>
     </table>
     <div class="btn-toolbar tempo-toolbar span12">
         <div class="btn-group">
             <?php
+			if (isset($user)) {
+				$params = array('user' => $user);
+			} else {
+				$params = array();
+			}
             echo $this->Bootstrap->button_link(
                 $this->Bootstrap->icon('chevron-left'),
                 array(
                     'project' => $project['Project']['name'],
                     'action' => $this->request['action'],
                     'year' => $prevYear,
-                    'week' => $prevWeek
+                    'week' => $prevWeek,
+					'?' => $params
                 ),
                 array('escape'=>false, 'size'=>'small')
             );
@@ -146,7 +156,8 @@ echo $this->element('Time/modal_add');
                     'project' => $project['Project']['name'],
                     'action' => $this->request['action'],
                     'year' => $nextYear,
-                    'week' => $nextWeek
+                    'week' => $nextWeek,
+					'?' => $params
                 ),
                 array('escape'=>false, 'size'=>'small')
             );
