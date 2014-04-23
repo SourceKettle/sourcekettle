@@ -48,7 +48,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</sm
 
           <h4>Milestone overview</h4>
           <p>
-            Once you've created at least one milestone, the project's milestone overview page will become useful - all milestones for the project are listed as lozenges, showing the short name and completion status (Exhibit 1).  There's also some quick edit/delete links (see the icons at the top right of each milestone).
+            Once you've created at least one milestone, the project's milestone overview page will become useful - all milestones for the project are listed as lozenges, showing the short name and completion status (Exhibit 1).  There's also some quick controls to edit/delete/close/re-open the milestone (see the icons at the top right of each milestone).
           </p>
 		</div>
 
@@ -59,24 +59,27 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</sm
                 <div class="row-fluid overview">
 
                   <div class="span5">
-                    <h3><a href="#">User accounts</a></h3>
+                    <h3><a href="#" title="Click to show the milestone board">User accounts</a></h3>
                   </div>
 
                   <div class="span7">
-                    <a href="#" class="close delete"><i class="icon-remove-circle"></i></a>
-                    <a href="#" class="close edit"><i class="icon-pencil"></i></a>
+                    <a id="deleteLink" href="#" class="close delete" title="Click to delete the milestone"><i class="icon-remove-circle"></i></a>
+                    <a id="closeLink" href="#" class="close delete" title="Click to close the milestone (closed milestones will have a re-open control)"><i class="icon-off"></i></a>
+                    <a id="editLink" href="#" class="close edit" title="Click to edit the milestone"><i class="icon-pencil"></i></a>
                     <p>
                       <small>
                         <span class="badge badge-info">1</span> closed
                         <span class="badge badge-success">1</span> resolved
                         <span class="badge badge-warning">1</span> in progress
+                        <span class="badge badge-important">1</span> open
+						<span class="pull-right muted" title="Story point progress">17/23 points</span>
                       </small>
                     </p>
-                    <div class="progress progress-striped">
-                      <div class="bar bar-info" style="width: 33.333333333333%;"></div>
-                      <div class="bar bar-success" style="width: 33.333333333333%;"></div>
-                      <div class="bar bar-warning" style="width: 33.333333333333%;"></div>
-                      <div class="bar bar-danger" style="width: 0%;"></div>
+                    <div id="progressBar" class="progress progress-striped" title="The milestone's progress">
+                      <div class="bar bar-info" style="width: 25%;"></div>
+                      <div class="bar bar-success" style="width: 25%;"></div>
+                      <div class="bar bar-warning" style="width: 25%;"></div>
+                      <div class="bar bar-danger" style="width: 25%;"></div>
                     </div>
                   </div>
                </div>
@@ -97,19 +100,24 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</sm
             <li><strong>Backlog:</strong> All the tasks that nobody has started working on yet</li>
             <li><strong>In Progress:</strong> Everything your team is working on at the moment</li>
             <li><strong>Completed:</strong> Everything that's done and dusted</li>
-            <li><strong>Ice Box:</strong> All the project's tasks that are <em>not</em> attached to a milestone</li>
+            <li><strong>Ice Box:</strong> Planned tasks for the milestone that will <em>not</em> be completed due to time constraints</li>
           </ol>
         </p>
 
         <p>
-          As the milestone progresses, you may find that some tasks take longer than expected.  It is important to stay on track and finish the milestone on time, so you will need to drop some of the lower priority tasks - these will then end up in the icebox, ready to assign to another milestone.
+          As the milestone progresses, you may find that some tasks take longer than expected.  It is important to stay on track and finish the milestone on time, so you will need to drop some of the lower priority tasks - these will then end up in the icebox.
         </p>
 
         <p>
-          On the other hand, it may turn out you burn through the tasks a lot faster than expected! If this happens, you may want to pull some tasks out of the ice box by assigning them to the current milestone.  Hooray for productivity!
+          On the other hand, it may turn out you burn through the tasks a lot faster than expected! If this happens, you may want to pull some tasks out of the ice box.  Hooray for productivity!
         </p>
+
+		<p>
+		  When the milestone is finished, click the <a class="btn btn-small" href="#">Close</a> button. Any tasks for the milestone that are marked as 'resolved' will be automatically marked as 'closed'. <strong>Note:</strong> You should normally only close the milestone once all tasks are finished. If any tasks are <em>not</em> finished, you will be asked what to do: move them to another milestone, or just unlink them from the current milestone.
+		</p>
 
       </div>
     </div>
+    <?= $this->Html->script('help.milestones', array('inline' => false)) ?>
 
 </div>
