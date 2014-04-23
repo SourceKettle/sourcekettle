@@ -256,18 +256,11 @@ class Task extends AppModel {
 	}
 
 /**
- * TODO needs consolidating with beforeSave
  */
 	public function beforeValidate($options = array()) {
-		if (!isset($this->data['Task']['time_estimate'])) {
-			return true;
+		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
+			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		}
-
-		if(is_int($this->data['Task']['time_estimate'])){
-			return true;
-		}
-
-		$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		return true;
 	}
 /**
@@ -279,8 +272,9 @@ class Task extends AppModel {
  */
 	public function beforeSave($options = array()) {
 
-		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
-			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
+		// Parse time estimate if necessary
+		if (!$this->beforeValidate($options)) {
+			return false;
 		}
 
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
@@ -306,6 +300,7 @@ class Task extends AppModel {
  * isOpen function.
  * Returns true if a task is open
  */
+ 	// TODO hard-coded status ID
 	public function isOpen() {
 		return $this->field('task_status_id') == 1;
 	}
@@ -315,6 +310,7 @@ class Task extends AppModel {
  * Returns true if a task is in progress
  * @throws
  */
+ 	// TODO hard-coded status ID
 	public function isInProgress() {
 		return $this->field('task_status_id') == 2;
 	}
