@@ -16,19 +16,19 @@
     'left' => array(
         array(
             array(
-                'text' => __('Timesheets'),
-                'url' => array(
-                    'action' => 'history',
-                    'controller' => 'times',
-                ),
-            ),
-            array(
-                'text' => __('Statistics'),
+                'text' => __('Project summary'),
                 'url' => array(
                     'action' => 'users',
                     'controller' => 'times',
                 ),
             ),
+            array(
+                'text' => __('Timesheets'),
+                'url' => array(
+                    'action' => 'history',
+                    'controller' => 'times',
+                ),
+			),
         ),
     ),
     'right' => array(
