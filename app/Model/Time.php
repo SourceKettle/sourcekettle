@@ -184,7 +184,7 @@ class Time extends AppModel {
 		return $events;
 	}
 
-	public function fetchWeeklySummary($projectId = null, $year = null, $week = null){
+	public function fetchWeeklySummary($projectId = null, $year = null, $week = null, $userId = null){
 		$projectId = ($projectId == null) ? $this->project->id : $projectId;
 
 		if ($projectId == null) {
@@ -205,17 +205,23 @@ class Time extends AppModel {
 		$endDate = new DateTime();
 		$endDate->setISODate($year, $week, 7);
 
+		$conditions = array(
+                'Project.id' => $projectId,
+                'Time.date >=' => $startDate->format('Y-m-d'),
+                'Time.date <=' => $endDate->format('Y-m-d'),
+		);
+
+		if (isset($userId) && $userId != null) {
+			$conditions['Time.user_id'] = $userId;
+		}
+
 		$weekTimes = $this->find('all', array(
             'fields' => array(
                 'Task.id', 'Task.subject',
                 'User.id', 'User.name', 'User.email',
                 'Time.date', 'SUM(Time.mins) as total_mins'
             ),
-            'conditions'    => array(
-                'Project.id' => $projectId,
-                'Time.date >=' => $startDate->format('Y-m-d'),
-                'Time.date <=' => $endDate->format('Y-m-d'),
-            ),
+            'conditions'    => $conditions,
             'group' => array('Task.id', 'User.id', 'Time.date'),
             'order' => array('Task.subject', 'User.name', 'Time.date')
         ));

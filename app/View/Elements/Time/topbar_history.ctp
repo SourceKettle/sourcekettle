@@ -16,14 +16,14 @@
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.history.text', array('action' => 'topbar')),
+                'text' => __('Timesheets'),
                 'url' => array(
                     'action' => 'history',
                     'controller' => 'times',
                 ),
             ),
             array(
-                'text' => $this->DT->t('topbar.users.text', array('action' => 'topbar')),
+                'text' => __('Statistics'),
                 'url' => array(
                     'action' => 'users',
                     'controller' => 'times',
@@ -34,7 +34,7 @@
     'right' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),
+                'text' => __('Log time'),
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'times',
@@ -44,5 +44,11 @@
         ),
     ),
 );
+
+// If we have a start date available, pass a date through to the 'log time' page
+if(isset($startDate)){
+	$options['right'][0][0]['url']['?'] = array('date' => $startDate->format('Y-m-d'));
+}
+
 
 echo $this->element('Topbar/button', array('options' => $options));

@@ -78,9 +78,14 @@ echo $this->element('Time/modal_add');
 
 					echo "<td>";
 					echo $this->Html->link($userDetails['User']['name'], array(
-						'controller' => 'users',
-						'action' => 'view',
-						$userId
+   	                	'project' => $project['Project']['name'],
+						'controller' => 'times',
+						'action' => 'history',
+						$thisYear,
+						$thisWeek,
+						'?' => array(
+							'user' => $userId
+						)
 					));
 					echo "</td>\n";
 
@@ -90,7 +95,7 @@ echo $this->element('Time/modal_add');
 							$timeSpent = TimeString::renderTime($userDetails['days'][$i]);
 							echo "<td>".h($timeSpent['s'])."</td>\n";
 						} else {
-							echo "<td></td>\n";
+							echo "<td>---</td>\n";
 						}
 					}
 
