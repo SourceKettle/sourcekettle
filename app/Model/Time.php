@@ -226,11 +226,16 @@ class Time extends AppModel {
             'order' => array('Task.subject', 'User.name', 'Time.date')
         ));
 
-		$summary = array();
+		$summary = array('totals' => array());
 		$last_uid = 0;
 		$last_tid = -1;
 
-		foreach($weekTimes as $time){
+		$totals = array();
+		for ($i = 1; $i <= 7; $i++) {
+			$summary['totals'][$i] = 0;
+		}
+
+		foreach ($weekTimes as $time) {
 
 			// Make the variables a bit more managable...
 			$minutes = $time[0]['total_mins'];
@@ -264,6 +269,7 @@ class Time extends AppModel {
 			// Yes, this is "fun". But it makes rendering the summary table fairly easy.
 			// TODO make less bollocks.
 			$summary[ $task['id'] ]['users'][ $user['id'] ]['days'][$dow] = $minutes;
+			$summary['totals'][$dow] += $minutes;
 
 			$last_uid = $user['id'];
 			$last_tid = $task['id'];

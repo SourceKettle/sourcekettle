@@ -57,8 +57,10 @@ echo $this->element('Time/modal_add');
         <tbody>
         <?php
 			foreach ($weekTimes as $taskId => $taskDetails) {
+				if ($taskId === 'totals') {
+					continue;
+				}
 				foreach ($taskDetails['users'] as $userId => $userDetails) {
-
 					echo "<tr>\n";
 
 					if ($taskId == 0) {
@@ -103,6 +105,21 @@ echo $this->element('Time/modal_add');
 
 				}
 			}?>
+
+            <tr>
+                <th><?= __('Total') ?></th>
+				<th></th>
+				<? for ($i = 1; $i <= 7; $i++) {
+					if (array_key_exists($i, $weekTimes['totals'])) {
+						$total = TimeString::renderTime($weekTimes['totals'][$i]);
+
+						echo "<th>".$total['s']."</th>\n";
+					} else {
+                		echo "<th>---</th>\n";
+					}
+
+				} ?>
+            </tr>
         </tbody>
     </table>
     <div class="btn-toolbar tempo-toolbar span12">
