@@ -87,7 +87,8 @@ echo $this->element('Time/modal_add');
 					// 1=Mon, 7=Sun...
 					for ($i = 1; $i <= 7; $i++) {
 						if (array_key_exists($i, $userDetails['days'])) {
-							echo "<td>".h($userDetails['days'][$i])."</td>\n";
+							$timeSpent = TimeString::renderTime($userDetails['days'][$i]);
+							echo "<td>".h($timeSpent['s'])."</td>\n";
 						} else {
 							echo "<td></td>\n";
 						}
