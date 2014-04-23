@@ -28,7 +28,7 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
         <div class="well span8 offset1">
 
 			<h4><?=__("Are you sure you want to close")?> '<?=h($name)?>'?</h4>
-        	<?=$this->Form->create('Milestone', array('class' => 'well form-horizontal', 'type' => 'post'))?>
+        	<?=$this->Form->create('Milestone', array('type' => 'post'))?>
 
 			<?if(count($milestone['Tasks']['open']) > 0 || count($milestone['Tasks']['in_progress']) > 0 || count($milestone['Tasks']['dropped']) > 0){?>
 				<p><strong><?=__("Caution")?>:</strong> <?=__("this milestone has unfinished/dropped tasks")?>!</p>
