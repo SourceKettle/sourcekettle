@@ -226,15 +226,17 @@ class Time extends AppModel {
             'order' => array('Task.subject', 'User.name', 'Time.date')
         ));
 
-		$summary = array('totals' => array());
+		$summary = array('totals' => array(), 'tasks' => array(), 'dates' => array());
 		$last_uid = 0;
 		$last_tid = -1;
-
 		$totals = array();
 		for ($i = 1; $i <= 7; $i++) {
 			$summary['totals'][$i] = 0;
-		}
+			$day = clone $startDate;
+			$day->add(new DateInterval('P'.($i-1).'D'));
+			$summary['dates'][$i] = $day;
 
+		}
 		foreach ($weekTimes as $time) {
 
 			// Make the variables a bit more managable...
@@ -252,7 +254,7 @@ class Time extends AppModel {
 			// Build Horrible Array of Doom... start ordered by task
 			if($last_tid != $task['id']){
 				$last_uid = 0;
-				$summary[ $task['id'] ] = array(
+				$summary['tasks'][ $task['id'] ] = array(
 					'Task' => $task,
 					'users' => array()
 				);
@@ -260,7 +262,7 @@ class Time extends AppModel {
 
 			// Now for each task, add a list of users; each user then has a breakdown of tasks by day
 			if($last_uid != $user['id']){
-				$summary[ $task['id'] ]['users'][ $user['id'] ] = array(
+				$summary['tasks'][ $task['id'] ]['users'][ $user['id'] ] = array(
 					'User' => $user,
 					'days' => array()
 				);
@@ -268,7 +270,7 @@ class Time extends AppModel {
 
 			// Yes, this is "fun". But it makes rendering the summary table fairly easy.
 			// TODO make less bollocks.
-			$summary[ $task['id'] ]['users'][ $user['id'] ]['days'][$dow] = $minutes;
+			$summary['tasks'][ $task['id'] ]['users'][ $user['id'] ]['days'][$dow] = $minutes;
 			$summary['totals'][$dow] += $minutes;
 
 			$last_uid = $user['id'];

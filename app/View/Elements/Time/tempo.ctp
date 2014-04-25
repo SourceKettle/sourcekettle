@@ -40,6 +40,7 @@ $this->Html->script('jquery.dataTables.min', array ('inline' => false));
 ", array('inline' => false));*/
 
 echo $this->element('Time/modal_add');
+
 ?>
 <div>
     <table id="timesheet" class="well table table-condensed table-striped tempo">
@@ -47,21 +48,14 @@ echo $this->element('Time/modal_add');
             <tr>
                 <th><?= __('Task') ?></th>
                 <th><?= __('User') ?></th>
-				<th><?= __('Mon') ?></th>
-				<th><?= __('Tue') ?></th>
-				<th><?= __('Wed') ?></th>
-				<th><?= __('Thu') ?></th>
-				<th><?= __('Fri') ?></th>
-				<th><?= __('Sat') ?></th>
-				<th><?= __('Sun') ?></th>
+				<? foreach ($weekTimes['dates'] as $daynum => $date){ ?>
+				<th><?= __($date->format('D M d')) ?></th>
+				<? } ?>
             </tr>
         </thead>
         <tbody>
         <?php
-			foreach ($weekTimes as $taskId => $taskDetails) {
-				if ($taskId === 'totals') {
-					continue;
-				}
+			foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 				foreach ($taskDetails['users'] as $userId => $userDetails) {
 					echo "<tr>\n";
 

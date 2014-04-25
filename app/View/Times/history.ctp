@@ -32,7 +32,7 @@ $this->Html->script("times.history", array ('inline' => false));
 					'action' => 'history',
 					'year' => $thisYear,
 					'week' => $thisWeek,
-					'project' => $project['Project']['id']
+					'project' => $project['Project']['name']
 				));
 			} ?>
             <div class="row-fluid">

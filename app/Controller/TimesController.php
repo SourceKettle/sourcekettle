@@ -189,6 +189,28 @@ class TimesController extends AppProjectController {
 			$this->set('prevYear', $year);
 		}
 
+
+		// Downloadable timesheets
+		if (isset($this->request->query['format'])) {
+			switch (strtolower(trim($this->request->query['format']))) {
+				case 'csv':
+					$this->autoRender = false;
+					$this->layout = 'ajax';
+					$this->render('/Elements/Time/tempo.csv');
+					break;
+				case 'json':	
+					$this->autoRender = false;
+					$this->set('data', $weekTimes);
+					$this->render('/Elements/json');
+
+					break;
+				// Explicitly specified HTML, or unknown format - just render the page as normal
+				case 'html':
+				default:
+					break;
+			}
+		}
+
 	}
 
 /**
