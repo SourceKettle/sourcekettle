@@ -14,6 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+
 $headers = array(__('Task'), __('User'));
 foreach ($weekTimes['dates'] as $daynum => $date){
 	$headers[] = __($date->format('D M d'));
@@ -58,9 +59,6 @@ for ($i = 1; $i <= 7; $i++) {
 
 $body[] = $foot;
 
-// TODO this content-type never seems to work :-(
-header('Content-type: text/csv; charset=utf-8');
-header('Content-Disposition: attachment; filename="timesheet.csv"');
 $stdout = fopen('php://output', 'w');
 foreach ($body as $line) {
 	fputcsv($stdout, $line);

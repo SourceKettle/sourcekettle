@@ -194,8 +194,11 @@ class TimesController extends AppProjectController {
 		if (isset($this->request->query['format'])) {
 			switch (strtolower(trim($this->request->query['format']))) {
 				case 'csv':
-					$this->autoRender = false;
 					$this->layout = 'ajax';
+					$this->response->header(array(
+						'Content-Type' => 'text/csv; charset=utf-8',
+						//'Content-Disposition' =>  'attachment; filename="timesheet.csv"'
+					));
 					$this->render('/Elements/Time/tempo.csv');
 					break;
 				case 'json':	
