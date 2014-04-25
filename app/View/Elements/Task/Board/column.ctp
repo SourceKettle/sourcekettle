@@ -22,7 +22,18 @@ if(!isset($classes)){
 if(!isset($task_span)){
 	$task_span = False;
 }
-echo "<ul class='well col sprintboard-droplist span$span$classes' data-taskstatus='$status'>\n";
+
+$dtStatus = '';
+if(isset($status)){
+	$dtStatus = 'data-taskstatus="'.$status.'"';
+}
+
+$dtPriority = '';
+if(isset($priority)){
+	$dtPriority = 'data-taskpriority="'.$priority.'"';
+}
+
+echo "<ul class='well col sprintboard-droplist span$span$classes' $dtStatus $dtPriority>\n";
 echo "<h2>$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {

@@ -170,6 +170,26 @@ class MilestonesController extends AppProjectController {
 	}
 
 /**
+ * plan method
+ *
+ * @return void
+ */
+	public function plan($project = null, $id = null) {
+		$project = $this->_projectCheck($project);
+		$milestone = $this->Milestone->open($id);
+
+		$mustHave   = $this->Milestone->blockerTasksForMilestone($id);
+		$shouldHave = $this->Milestone->urgentTasksForMilestone($id);
+		$couldHave  = $this->Milestone->majorTasksForMilestone($id);
+		$mightHave  = $this->Milestone->minorTasksForMilestone($id);
+		$wontHave   = $this->Milestone->droppedTasksForMilestone($id);
+
+		$this->set('milestone', $milestone);
+
+		$this->set(compact('mustHave', 'shouldHave', 'couldHave', 'mightHave', 'wontHave'));
+	}
+
+/**
  * add method
  *
  * @return void

@@ -18,13 +18,23 @@ if(isset($name)){
 } else{
 	$pl = '';
 }
+
+$action = $this->request['action'];
 // Viewing/editing a Milestone: give options to change it
-if($this->request['action'] == 'view' || $this->request['action'] == 'edit'){
+if($action == 'view' || $action == 'plan' || $action == 'edit'){
 	$left = array(
        array(
            'text' => __('Edit'),
            'url' => array(
                'action' => 'edit',
+               'controller' => 'milestones',
+               $id
+           ),
+       ),
+       array(
+           'text' => __('Plan'),
+           'url' => array(
+               'action' => 'plan',
                'controller' => 'milestones',
                $id
            ),
@@ -48,7 +58,7 @@ if($this->request['action'] == 'view' || $this->request['action'] == 'edit'){
        ),
 	);
 
-	if($this->request['action'] == 'edit') {
+	if($action == 'edit') {
 		$left[0] = array(
            'text' => __('View'),
            'url' => array(
@@ -70,7 +80,7 @@ if($this->request['action'] == 'view' || $this->request['action'] == 'edit'){
     	);
 	}
 
-	if($this->request['action'] == 'edit') {
+	if($action == 'edit') {
 		$right = array();
 	} else {
 		$right = array(
