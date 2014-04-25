@@ -46,7 +46,7 @@
                 ),
             ),
             'Time' => array(
-                'icon' => 'book',
+                'icon' => 'time',
                 'url' => array(
                     'action' => array('time'),
                     'controller' => 'help',

@@ -24,7 +24,7 @@
                 ),
             ),
             'Time' => array(
-                'icon' => 'book',
+                'icon' => 'time',
                 'url' => array(
                     'action' => array('*'),
                     'controller' => 'times',
