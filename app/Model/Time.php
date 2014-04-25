@@ -233,6 +233,7 @@ class Time extends AppModel {
 		$totals = array();
 		for ($i = 1; $i <= 7; $i++) {
 			$summary['totals'][$i] = 0;
+			$summary['dates'][$i] = $startDate->add(new DateInterval('P'.($i-1).'D'));
 		}
 
 		foreach ($weekTimes as $time) {
