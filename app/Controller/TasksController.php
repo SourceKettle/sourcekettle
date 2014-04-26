@@ -1148,4 +1148,19 @@ class TasksController extends AppProjectController {
 		}
 		$this->set('data',$data);
 	}
+
+
+/**
+ * API call to add a task
+ */
+	public function api_add() {
+		
+	}
+
+/**
+ * API call to update a task
+ */
+	public function api_update() {
+		
+	}
 }
