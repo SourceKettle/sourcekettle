@@ -47,11 +47,11 @@ $this->Html->script("milestones.plan", array ('inline' => false));
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $mustHave, 'priority' => 'blocker', 'title' => __('Must have'), 'span' => '6', 'classes' => 'sprintboard-column')
+            array('tasks' => $mustHave, 'priority' => 'blocker', 'title' => __('Must have'), 'span' => '6', 'classes' => 'sprintboard-column sprintboard-column-top')
         ) ?>	
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $shouldHave, 'priority' => 'urgent', 'title' => __('Should have'), 'span' => '6', 'classes' => 'sprintboard-column')
+            array('tasks' => $shouldHave, 'priority' => 'urgent', 'title' => __('Should have'), 'span' => '6', 'classes' => 'sprintboard-column sprintboard-column-top')
         ) ?>
 
 	<!-- End must-have/should-have -->
@@ -61,11 +61,11 @@ $this->Html->script("milestones.plan", array ('inline' => false));
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $couldHave, 'priority' => 'major', 'title' => __('Could have'), 'span' => '6', 'classes' => 'sprintboard-column')
+            array('tasks' => $couldHave, 'priority' => 'major', 'title' => __('Could have'), 'span' => '6', 'classes' => 'sprintboard-column sprintboard-column-bottom')
         ) ?>	
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $mightHave, 'priority' => 'minor', 'title' => __('Might have'), 'span' => '6', 'classes' => 'sprintboard-column')
+            array('tasks' => $mightHave, 'priority' => 'minor', 'title' => __('Might have'), 'span' => '6', 'classes' => 'sprintboard-column sprintboard-column-bottom')
         ) ?>
 
 	<!-- End could-have/won't-have -->

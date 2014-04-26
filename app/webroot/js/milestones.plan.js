@@ -1,11 +1,14 @@
 function equaliseColumns() {
         var maxHeight = 1;
 
-        // Reset the column heights first.
-        $('.sprintboard-column').height ("");
+        $('.sprintboard-column-top').height ("");
+        $('.sprintboard-column-top').each(function (index, column) {
+            var height = $(column).height();
+            maxHeight = height > maxHeight ? height : maxHeight;
+        }).height(maxHeight + "px");
 
-        // Then resize them.
-        $('.sprintboard-column').each(function (index, column) {
+        $('.sprintboard-column-bottom').height ("");
+        $('.sprintboard-column-bottom').each(function (index, column) {
             var height = $(column).height();
             maxHeight = height > maxHeight ? height : maxHeight;
         }).height(maxHeight + "px");
@@ -16,23 +19,24 @@ $(function () {
 
    var taskPriorityLabels = {
         blocker: "Blocker",
-        urgent: "Ugent",
-        major: "Major",
-        minor: "Minor"
+        urgent:  "Ugent",
+        major:   "Major",
+        minor:   "Minor"
    };
 
    var taskPriorityLabelIcons = {
-        blocker: "",
-        urgent:  "",
-        major:   "",
-        minor:   ""
+        blocker: "ban-circle",
+        urgent:  "exclamation-sign",
+        major:   "upload",
+        minor:   "download"
    };
 
    var transitions = {
-       open: "../../tasks/stoptask/",
-       in_progress: "../../tasks/starttask/",
-       resolved: "../../tasks/resolve/",
-       dropped: "../../tasks/freeze/"
+       blocker:  "../../tasks/setBlocker/",
+       urgent:   "../../tasks/setUrgent/",
+       major:    "../../tasks/setMajor/",
+       minor:    "../../tasks/setMinor/",
+       detached: "../../tasks/detachFromMilestone/"
    };
 
     equaliseColumns();
@@ -56,7 +60,7 @@ $(function () {
             ui.item.css('transform', 'rotate(2deg)');
 			// Set the lozenge width to the sprintboard column width
 			// Avoids dragging a massive lozenge from the icebox
-			ui.item.width($($('.sprintboard-droplist')[0]).width());
+			ui.item.width($($('.sprintboard-droplist')[1]).width());
 
 			// Glowy edges on all valid drop targets
 			$('.sprintboard-droplist').addClass('highlight-droptarget');
@@ -76,31 +80,27 @@ $(function () {
 
             var taskLozenge = ui.item;
             var taskID      = parseInt(taskLozenge.attr("data-taskid"), 10);
-            var fromStatus  = ui.sender.attr('data-taskstatus');
-            var toStatus    = $(this).attr('data-taskstatus');
-            var statusLabel = taskLozenge.find(".taskstatus");
+            var fromPrio    = ui.sender.attr('data-taskpriority');
+            var toPrio      = $(this).attr('data-taskpriority');
+            var prioLabel   = taskLozenge.find(".taskpriority");
 
 
             // Double check that the transition is one we can do (shouldn't get here!)
-            if(!transitions[toStatus]){
+            if(!transitions[toPrio]){
                 alert("Something weird happened. It probably shouldn't have. Sorry about that.");
                 $(ui.sender).sortable('cancel');
                 return false;
             }
 
             // Do the AJAX postback to update task status
-            var updateURL = transitions[toStatus] + taskID;
+            var updateURL = transitions[toPrio] + taskID;
 
             $.post(updateURL, function (data) {
                 if (data.error === "no_error") {
                     // Update task lozenge's status
-                    //statusLabel.html(taskStatusLabels[toStatus]);
+                    var icon = '<i class="icon-'+taskPriorityLabelIcons[toPrio]+' icon-white"> </i>';
+                    prioLabel.html(taskPriorityLabels[toPrio]+' '+icon);
 
-                    // Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
-                    /*statusLabel.removeClass(function(index, css){
-                        return (css.match (/\blabel-\S+/g) || []).join(' ');
-                    });
-                    statusLabel.addClass(taskStatusLabelTypes[toStatus]);*/
                 } else {
                     alert("Problem: "+data.errorDescription);
                     $(ui.sender).sortable('cancel');

@@ -43,7 +43,7 @@ class TaskHelper extends AppHelper {
 			3 => 'exclamation-sign',
 			4 => 'ban-circle',
 		);
-		return $this->Bootstrap->label($text[$id] . ' ' . $this->Bootstrap->icon($content[$id], "white"), "inverse");
+		return $this->Bootstrap->label($text[$id] . ' ' . $this->Bootstrap->icon($content[$id], "white"), "inverse", array('class' => 'taskpriority'));
 	}
 
 /**
