@@ -36,7 +36,7 @@ $(function () {
        urgent:   "../../tasks/setUrgent/",
        major:    "../../tasks/setMajor/",
        minor:    "../../tasks/setMinor/",
-       detached: "../../tasks/detachFromMilestone/"
+       detach:   "../../tasks/detachFromMilestone/"
    };
 
     equaliseColumns();
@@ -84,7 +84,6 @@ $(function () {
             var toPrio      = $(this).attr('data-taskpriority');
             var prioLabel   = taskLozenge.find(".taskpriority");
 
-
             // Double check that the transition is one we can do (shouldn't get here!)
             if(!transitions[toPrio]){
                 alert("Something weird happened. It probably shouldn't have. Sorry about that.");
@@ -97,9 +96,12 @@ $(function () {
 
             $.post(updateURL, function (data) {
                 if (data.error === "no_error") {
+                    
                     // Update task lozenge's status
-                    var icon = '<i class="icon-'+taskPriorityLabelIcons[toPrio]+' icon-white"> </i>';
-                    prioLabel.html(taskPriorityLabels[toPrio]+' '+icon);
+                    if (toPrio != 'detach') {
+                        var icon = '<i class="icon-'+taskPriorityLabelIcons[toPrio]+' icon-white"> </i>';
+                        prioLabel.html(taskPriorityLabels[toPrio]+' '+icon);
+                    }
 
                 } else {
                     alert("Problem: "+data.errorDescription);

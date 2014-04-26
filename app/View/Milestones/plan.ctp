@@ -36,7 +36,7 @@ $this->Html->script("milestones.plan", array ('inline' => false));
     <!-- Unattached row -->
 	<div class="row-fluid span12">
         <?= $this->element('Task/Board/column',
-            array('tasks' => $wontHave, 'status' => 'detach', 'title' => __('Project backlog'), 'span' => '12', 'classes' => 'sprintboard-icebox')
+            array('tasks' => $wontHave, 'priority' => 'detach', 'title' => __('Project backlog'), 'span' => '12', 'classes' => 'sprintboard-icebox')
         ) ?>
 
 	<!-- End project backlog -->
