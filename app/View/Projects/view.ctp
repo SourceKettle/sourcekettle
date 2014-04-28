@@ -100,12 +100,6 @@
                                 <div class="span6">
     								<div class="well" id="piechart">
 								    </div>
-                                    <?/*=$this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(
-										array(
-											$numberOfOpenTasks, $numberOfInProgressTasks,
-											$numberOfClosedTasks, $numberOfDroppedTasks
-										)
-									); */?>
                                 </div>
                             </div>
                         </div>
