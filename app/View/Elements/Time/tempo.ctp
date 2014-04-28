@@ -51,10 +51,12 @@ echo $this->element('Time/modal_add');
 				<? foreach ($weekTimes['dates'] as $daynum => $date){ ?>
 				<th><?= __($date->format('D M d')) ?></th>
 				<? } ?>
+				<th>Total</th>
             </tr>
         </thead>
         <tbody>
         <?php
+			$overallTotal = 0;
 			foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 				foreach ($taskDetails['users'] as $userId => $userDetails) {
 					echo "<tr>\n";
@@ -88,14 +90,19 @@ echo $this->element('Time/modal_add');
 					echo "</td>\n";
 
 					// 1=Mon, 7=Sun...
+					$rowTotal = 0;
 					for ($i = 1; $i <= 7; $i++) {
 						if (array_key_exists($i, $userDetails['days'])) {
+							$rowTotal += $userDetails['days'][$i];
 							$timeSpent = TimeString::renderTime($userDetails['days'][$i]);
 							echo "<td>".h($timeSpent['s'])."</td>\n";
 						} else {
 							echo "<td>---</td>\n";
 						}
 					}
+					$overallTotal += $rowTotal;
+					$timeSpent = TimeString::renderTime($rowTotal);
+					echo "<th>".h($timeSpent['s'])."</th>\n";
 
 					echo "</tr>\n";
 
@@ -116,7 +123,10 @@ echo $this->element('Time/modal_add');
                 		echo "<th>---</th>\n";
 					}
 
-				} ?>
+				} 
+				$overallTotal = TimeString::renderTime($overallTotal);
+				echo "<th>".h($overallTotal['s'])."</th>\n";
+				?>
             </tr>
         </tfoot>
     </table>
