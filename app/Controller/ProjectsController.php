@@ -23,7 +23,7 @@ class ProjectsController extends AppProjectController {
  * Project helpers
  * @var type
  */
-	public $helpers = array('Time', 'GoogleChart.GoogleChart', 'Paginator', 'Markitup');
+	public $helpers = array('Time', 'Paginator', 'Markitup');
 
 	public $uses = array('Project', 'RepoType');
 
