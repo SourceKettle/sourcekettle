@@ -42,6 +42,7 @@ $link_remove = $this->Html->link(
     ),
     array(
         'class' => 'close delete',
+		'title' => __('Delete milestone'),
         'escape' => false
     )
 );
@@ -54,6 +55,7 @@ $link_close = $this->Html->link(
     ),
     array(
         'class' => 'close delete',
+		'title' => __('Close milestone'),
         'escape' => false
     )
 );
@@ -66,6 +68,7 @@ $link_reopen = $this->Html->link(
     ),
     array(
         'class' => 'close delete',
+		'title' => __('Re-open milestone'),
         'escape' => false
     )
 );
@@ -78,6 +81,7 @@ $link_edit = $this->Html->link(
     ),
     array(
         'class' => 'close edit',
+		'title' => __('Edit milestone'),
         'escape' => false
     )
 );
