@@ -40,6 +40,7 @@ $this->Html->script('jquery.dataTables.min', array ('inline' => false));
 ", array('inline' => false));*/
 
 echo $this->element('Time/modal_add');
+
 ?>
 <div>
     <table id="timesheet" class="well table table-condensed table-striped tempo">
@@ -47,21 +48,16 @@ echo $this->element('Time/modal_add');
             <tr>
                 <th><?= __('Task') ?></th>
                 <th><?= __('User') ?></th>
-				<th><?= __('Mon') ?></th>
-				<th><?= __('Tue') ?></th>
-				<th><?= __('Wed') ?></th>
-				<th><?= __('Thu') ?></th>
-				<th><?= __('Fri') ?></th>
-				<th><?= __('Sat') ?></th>
-				<th><?= __('Sun') ?></th>
+				<? foreach ($weekTimes['dates'] as $daynum => $date){ ?>
+				<th><?= __($date->format('D M d')) ?></th>
+				<? } ?>
+				<th>Total</th>
             </tr>
         </thead>
         <tbody>
         <?php
-			foreach ($weekTimes as $taskId => $taskDetails) {
-				if ($taskId === 'totals') {
-					continue;
-				}
+			$overallTotal = 0;
+			foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 				foreach ($taskDetails['users'] as $userId => $userDetails) {
 					echo "<tr>\n";
 
@@ -94,14 +90,19 @@ echo $this->element('Time/modal_add');
 					echo "</td>\n";
 
 					// 1=Mon, 7=Sun...
+					$rowTotal = 0;
 					for ($i = 1; $i <= 7; $i++) {
 						if (array_key_exists($i, $userDetails['days'])) {
+							$rowTotal += $userDetails['days'][$i];
 							$timeSpent = TimeString::renderTime($userDetails['days'][$i]);
 							echo "<td>".h($timeSpent['s'])."</td>\n";
 						} else {
 							echo "<td>---</td>\n";
 						}
 					}
+					$overallTotal += $rowTotal;
+					$timeSpent = TimeString::renderTime($rowTotal);
+					echo "<th>".h($timeSpent['s'])."</th>\n";
 
 					echo "</tr>\n";
 
@@ -122,7 +123,10 @@ echo $this->element('Time/modal_add');
                 		echo "<th>---</th>\n";
 					}
 
-				} ?>
+				} 
+				$overallTotal = TimeString::renderTime($overallTotal);
+				echo "<th>".h($overallTotal['s'])."</th>\n";
+				?>
             </tr>
         </tfoot>
     </table>

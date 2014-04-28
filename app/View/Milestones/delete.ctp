@@ -31,7 +31,7 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
         	<?=$this->Form->create('Milestone', array('type' => 'post'))?>
 
 			<?if(count($milestone['Tasks']['open']) > 0 || count($milestone['Tasks']['in_progress']) > 0 || count($milestone['Tasks']['dropped']) > 0){?>
-				<p><strong><?=__("Caution")?>:</strong> <?=__("this milestone has unfinished/dropped tasks")?>!</p>
+				<p><strong><?=__("Caution")?>:</strong> <?=__("this milestone has attached tasks")?>!</p>
 				<p><?=__("Which milestone (if any) should they be re-assigned to")?>?</p>
 				<?=$this->Form->input(
 					'new_milestone',

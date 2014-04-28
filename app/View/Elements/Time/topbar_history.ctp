@@ -34,12 +34,15 @@
     'right' => array(
         array(
             array(
-                'text' => __('Log time'),
+                'text' => $this->Bootstrap->icon('pencil', 'white').' '.__('Log time'),
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'times',
                 ),
-                'props' => array('class' => 'btn-primary'),
+                'props' => array(
+					'class' => 'btn-primary',
+					'escape' => false
+				),
             ),
         ),
     ),
@@ -50,5 +53,27 @@ if(isset($startDate)){
 	$options['right'][0][0]['url']['?'] = array('date' => $startDate->format('Y-m-d'));
 }
 
+// Timesheet view - add a download link
+if(isset($thisYear) && isset($thisWeek)){
+	array_unshift(
+		$options['right'][0],
+        array(
+            'text' => $this->Bootstrap->icon('download').' '.__('Get CSV'),
+            'url' => array(
+                'controller' => 'times',
+                'action' => 'history',
+				'year' => $thisYear,
+				'week' => $thisWeek,
+				'?' => array(
+					'format' => 'csv'
+				),
+            ),
+			'props' => array(
+				'escape' => false
+			)
+        )
+	);
+
+}
 
 echo $this->element('Topbar/button', array('options' => $options));

@@ -162,7 +162,7 @@ $this->Html->script('projects.overview.js', array('inline' => false));
                         ))?>
 						</div>
 						<div class="span4">
-						<?=$this->Bootstrap->icon('book')?>
+						<?=$this->Bootstrap->icon('time')?>
                         <?= $this->Html->link(
                           __('Log time'),
                           array(
