@@ -11,6 +11,7 @@ class AllModelTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'Model/UserTest.php');
 		$suite->addTestFile($path . 'Model/CollaboratorTest.php');
 		$suite->addTestFile($path . 'Model/SettingTest.php');
+		$suite->addTestFile($path . 'Model/TimeTest.php');
 		return $suite;
 	}
 }

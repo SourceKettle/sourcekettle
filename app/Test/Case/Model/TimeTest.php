@@ -97,16 +97,20 @@ class TimeTestCase extends CakeTestCase {
      * @access public
      * @return void
      */
-    public function testParseTime() {
+    public function testRenderTime() {
         $expectedResult = array(
-            'h' => '1',
-            'm' => '0',
+			'w' => 0,
+			'd' => 0,
+            'h' => 1,
+            'm' => 0,
             's' => '1h 0m',
-            't' => '60'
+            't' => 60
         );
         $this->assertEquals(TimeString::renderTime(60), $expectedResult);
 
         $expectedResult = array(
+			'w' => 0,
+			'd' => 0,
             'h' => '0',
             'm' => '59',
             's' => '0h 59m',
@@ -115,20 +119,32 @@ class TimeTestCase extends CakeTestCase {
         $this->assertEquals(TimeString::renderTime(59), $expectedResult);
 
         $expectedResult = array(
+			'w' => 0,
+			'd' => 0,
             'h' => '1',
             'm' => '1',
             's' => '1h 1m',
             't' => '61'
         );
-        $this->assertEquals(iTimeString::renderTime(61), $expectedResult);
+        $this->assertEquals(TimeString::renderTime(61), $expectedResult);
 
         $expectedResult = array(
+			'w' => 0,
+			'd' => 0,
             'h' => '1',
             'm' => '30',
             's' => '1h 30m',
             't' => '90'
         );
         $this->assertEquals(TimeString::renderTime(90), $expectedResult);
+    }
+
+    public function testParseTime() {
+        $this->assertEquals(TimeString::parseTime('2m'), 2, 'Failed to parse 2m');
+        $this->assertEquals(TimeString::parseTime('2h'), 120, 'Failed to parse 2h');
+        $this->assertEquals(TimeString::parseTime(' 2h '), 120, 'Failed to parse 2h with whitespace');
+        $this->assertEquals(TimeString::parseTime('1w'), 10080, 'Failed to parse 1w');
+        $this->assertEquals(TimeString::parseTime('3d'), 4320, 'Failed to parse 3d');
     }
 
     /**
@@ -149,7 +165,7 @@ class TimeTestCase extends CakeTestCase {
         try {
             $this->Time->validateYear(2008);
             $this->assertTrue(false, "Validate year allowed a year below minimum");
-        } catch (NotFoundException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->assertTrue(true);
         } catch (Exception $e) {
             $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
@@ -163,7 +179,7 @@ class TimeTestCase extends CakeTestCase {
         try {
             $this->Time->validateYear(2011);
             $this->assertTrue(false, "Validate year allowed a year above maximum");
-        } catch (NotFoundException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->assertTrue(true);
         } catch (Exception $e) {
             $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
