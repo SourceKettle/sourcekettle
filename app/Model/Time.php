@@ -72,7 +72,7 @@ class Time extends AppModel {
 			'rule' => array('numeric'),
 			'message' => 'A valid user id was not entered',
 		),
-		// TODO why min of 3 days? Seems reasonable but hard coded...
+		// TODO why max of 3 days? Seems reasonable but hard coded...
 		'mins' => array(
 			'maximum' => array(
 				'rule' => array('comparison', '<', 4320),
@@ -524,6 +524,9 @@ class Time extends AppModel {
 
 		$this->recursive = -1;
 		$time = $this->findById($id);
+		if (!array_key_exists('Time', $time)) {
+			throw new InvalidArgumentException("Could not find time with ID '$id'");
+		}
 		return $time['Time']['minutes']['s'];
 	}
 
