@@ -132,11 +132,7 @@ class UserTestCase extends CakeTestCase {
      * @return void
      */
     public function testIsDevtrackManaged() {
-        $user = array(
-            'User' => array(
-                'password' => 'Lorem ipsum dolor sit amet',
-            )
-        );
+		$user = $this->User->findById(1);
         $isManaged = $this->User->isDevtrackManaged($user);
         $this->assertTrue($isManaged, "returned users should be managed");
     }
@@ -149,11 +145,7 @@ class UserTestCase extends CakeTestCase {
      * @return void
      */
     public function testIsDevtrackManagedNotManaged() {
-        $user = array(
-            'User' => array(
-                'password' => null,
-            )
-        );
+		$user = $this->User->findById(6);
         $isManaged = $this->User->isDevtrackManaged($user);
         $this->assertFalse($isManaged, "returned users should not be managed");
     }
@@ -178,8 +170,21 @@ class UserTestCase extends CakeTestCase {
 
         $user = $this->User->findById(1);
 		$this->assertEquals($user['User']['email'], "festus@spam.example.com", "Incorrect email found after change");
+	}
+
+	public function testFailToChangeEmail() {
+		// Try a non-devtrack-managed user account, should fail
+		$this->User->id = 6;
+		$user = $this->User->read();
+		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found before change");
+
+		$this->User->saveField('email', 'blah@example.com');
+
+        $user = $this->User->findById(6);
+		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found after change");
 		
 	}
+
 	public function testChangeTheme() {
 		$this->User->id = 1;
 		$user = $this->User->read();
@@ -191,6 +196,7 @@ class UserTestCase extends CakeTestCase {
 		$this->assertEquals($user['User']['theme'], "spruce", "Incorrect theme found after change");
 		
 	}
+
 	public function testPromoteToAdmin() {
 		$this->User->id = 1;
 		$user = $this->User->read();
@@ -202,6 +208,7 @@ class UserTestCase extends CakeTestCase {
 		$this->assertEquals($user['User']['is_admin'], true, "Incorrect admin status found after change");
 		
 	}
+
 	public function testDemoteFromAdmin() {
 		$this->User->id = 5;
 		$user = $this->User->read();
@@ -212,6 +219,7 @@ class UserTestCase extends CakeTestCase {
         $user = $this->User->findById(1);
 		$this->assertEquals($user['User']['is_admin'], false, "Incorrect admin status found after change");
 	}
+
 	public function testActivate() {
 		$this->User->id = 6;
 		$user = $this->User->read();
