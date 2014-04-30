@@ -30,6 +30,7 @@ class TimeTestCase extends CakeTestCase {
         'app.project',
         'app.collaborator',
         'app.user',
+		'app.task',
     );
 
     /**
@@ -64,7 +65,10 @@ class TimeTestCase extends CakeTestCase {
      * @access public
      * @return void
      */
-    public function testFixture() {
+    // TODO for some moon-hooveringly bizarre reason, although all the fixtures
+	// end up present and correct, this entire test case will read from the default
+	// database, not the test DB :-/ I still can't work out why, other tests are fine.
+	/*public function testFixture() {
         $this->Time->recursive = -1;
         $fixtures = array(
             array(
@@ -72,8 +76,10 @@ class TimeTestCase extends CakeTestCase {
                     'id' => '1',
                     'project_id' => '1',
                     'user_id' => '1',
-                    'task_id' => null,
+                    'task_id' => '1',
                     'mins' => array(
+                        'w' => '0',
+                        'd' => '0',
                         'h' => '1',
                         'm' => '30',
                         's' => '1h 30m',
@@ -86,9 +92,9 @@ class TimeTestCase extends CakeTestCase {
                 ),
             ),
         );
-        //$fixturesB = $this->Time->find('all');
-        //$this->assertEquals($fixtures, $fixturesB, json_encode($fixturesB)."Arrays were not equal");
-    }
+        $fixturesB = $this->Time->find('all');
+        $this->assertEquals($fixtures, $fixturesB, json_encode($fixturesB)."Arrays were not equal");
+    }*/
 
     /**
      * test TimeString->renderTime function.
@@ -145,6 +151,7 @@ class TimeTestCase extends CakeTestCase {
         $this->assertEquals(TimeString::parseTime(' 2h '), 120, 'Failed to parse 2h with whitespace');
         $this->assertEquals(TimeString::parseTime('1w'), 10080, 'Failed to parse 1w');
         $this->assertEquals(TimeString::parseTime('3d'), 4320, 'Failed to parse 3d');
+        $this->assertEquals(TimeString::parseTime('4w 3d 9h 6m'), 45186, 'Failed to parse 4w 3d 9h 6m');
     }
 
     /**
@@ -185,4 +192,17 @@ class TimeTestCase extends CakeTestCase {
             $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
         }
     }
+
+	// TODO this one doesn't read from test DB either!
+	/*public function testToString() {
+
+		$times = $this->Time->find('list');
+
+		debug(print_r($times, true));
+
+		$this->Time->id = 1;
+		$this->Time->read();
+		debug($this->Time->toString());
+	}*/
+
 }
