@@ -124,6 +124,28 @@ class UserTestCase extends CakeTestCase {
         $this->assertEquals($userA, $userB, "returned users are not equal");
     }
 
+	public function testAddUser() {
+		$data = array(
+			'name' => 'Eve Nchance',
+			'email' => 'eve@example.com',
+			'is_admin' => 'true',
+			'is_active' => 'true',
+			'theme' => 'spacelab',
+			'password' => 'wibble',
+		);
+		$this->User->create($data);
+		$saved = $this->User->save();
+		$id = $this->User->getLastInsertID();
+		debug(get_class($this->User));
+		debug($data);
+		debug($saved);
+		debug($id);
+
+		$retrieved = $this->User->read($id);
+		debug($retrieved);
+		$this->assertTrue($saved, "Save failed");
+	}
+
     /**
      * test User->isDevtrackManaged function.
      * Tests that a user with a password is marked as managed.
@@ -134,7 +156,7 @@ class UserTestCase extends CakeTestCase {
     public function testIsDevtrackManaged() {
 		$user = $this->User->findById(1);
         $isManaged = $this->User->isDevtrackManaged($user);
-        $this->assertTrue($isManaged, "returned users should be managed");
+        $this->assertTrue($isManaged, "Returned users should be managed");
     }
 
     /**
