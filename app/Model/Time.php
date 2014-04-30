@@ -104,8 +104,8 @@ class Time extends AppModel {
 		)
 	);
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
 
 		// Set the current date
 		$this->__currentDate = new DateTime();
