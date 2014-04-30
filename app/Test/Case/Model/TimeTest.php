@@ -65,10 +65,7 @@ class TimeTestCase extends CakeTestCase {
      * @access public
      * @return void
      */
-    // TODO for some moon-hooveringly bizarre reason, although all the fixtures
-	// end up present and correct, this entire test case will read from the default
-	// database, not the test DB :-/ I still can't work out why, other tests are fine.
-	/*public function testFixture() {
+	public function testFixture() {
         $this->Time->recursive = -1;
         $fixtures = array(
             array(
@@ -77,7 +74,8 @@ class TimeTestCase extends CakeTestCase {
                     'project_id' => '1',
                     'user_id' => '1',
                     'task_id' => '1',
-                    'mins' => array(
+					'mins' => '90',
+                    'minutes' => array(
                         'w' => '0',
                         'd' => '0',
                         'h' => '1',
@@ -88,13 +86,38 @@ class TimeTestCase extends CakeTestCase {
                     'description' => 'A description.',
                     'date' => '2012-11-11',
                     'created' => '2012-11-11 10:24:06',
-                    'modified' => '2012-11-11 10:24:06'
+                    'modified' => '2012-11-11 10:24:06',
+					'deleted' => '0',
+					'deleted_date' => null,
+                ),
+            ),
+            array(
+                'Time' => array(
+                    'id' => '2',
+                    'project_id' => '1',
+                    'user_id' => '1',
+                    'task_id' => '2',
+					'mins' => '900',
+                    'minutes' => array(
+                        'w' => '0',
+                        'd' => '0',
+                        'h' => '15',
+                        'm' => '0',
+                        's' => '15h 0m',
+                        't' => '900',
+                    ),
+                    'description' => 'A description of the second <b>task</b>.',
+                    'date' => '2012-11-11',
+                    'created' => '2012-11-11 10:24:06',
+                    'modified' => '2012-11-11 10:24:06',
+					'deleted' => '0',
+					'deleted_date' => null,
                 ),
             ),
         );
         $fixturesB = $this->Time->find('all');
         $this->assertEquals($fixtures, $fixturesB, json_encode($fixturesB)."Arrays were not equal");
-    }*/
+    }
 
     /**
      * test TimeString->renderTime function.
@@ -193,16 +216,10 @@ class TimeTestCase extends CakeTestCase {
         }
     }
 
-	// TODO this one doesn't read from test DB either!
-	/*public function testToString() {
-
-		$times = $this->Time->find('list');
-
-		debug(print_r($times, true));
-
+	public function testToString() {
 		$this->Time->id = 1;
 		$this->Time->read();
-		debug($this->Time->toString());
-	}*/
+		$this->assertEquals('1h 30m', $this->Time->toString(), 'Expected task ID 1 to be 1h 30m');
+	}
 
 }
