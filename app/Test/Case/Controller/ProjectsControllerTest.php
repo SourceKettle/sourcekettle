@@ -31,14 +31,21 @@ class TestProjectsController extends ProjectsController {
  * ProjectsController Test Case
  *
  */
-class ProjectsControllerTestCase extends CakeTestCase {
+class ProjectsControllerTestCase extends ControllerTestCase {
 
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('app.project', 'app.repo_type', 'app.collaborator', 'app.user', 'app.email_confirmation_key', 'app.ssh_key');
+	public $fixtures = array(
+		'app.project', 'app.repo_type',
+		'app.collaborator', 'app.user',
+		'app.task', 'app.milestone',
+		'app.task_type', 'app.task_priority', 'app.task_status', 'app.task_comment', 'app.task_dependency',
+		'app.email_confirmation_key', 'app.ssh_key',
+		'app.setting', 'app.api_key', 'app.lost_password_key',
+	);
 
 /**
  * setUp method
@@ -67,7 +74,18 @@ class ProjectsControllerTestCase extends CakeTestCase {
  *
  * @return void
  */
-	public function testIndex() {
+	public function testIndexGet() {
+		/*$projects = $this->generate('Projects', array(
+			'components' => array(
+				'Session'
+			)
+		));*/
+		/*$projects->Session->expects($this->once())
+				->method('setFlash');*/
+		$this->Projects->Auth = $this->getMock('Auth', array('user'));
+		$this->Projects->Auth->Session = $this->getMock('SessionComponent', array('renew'), array(), '', false);
+		$result = $this->testAction('/projects/view/1');
+		debug($result);
 	}
 /**
  * testView method
