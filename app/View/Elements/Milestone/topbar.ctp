@@ -23,6 +23,14 @@ $action = $this->request['action'];
 // Viewing/editing a Milestone: give options to change it
 if($action == 'view' || $action == 'plan' || $action == 'edit'){
 	$left = array(
+		array(
+           'text' => __('View'),
+           'url' => array(
+               'action' => 'view',
+               'controller' => 'milestones',
+               $id
+           ),
+    	),
        array(
            'text' => __('Edit'),
            'url' => array(
@@ -58,19 +66,8 @@ if($action == 'view' || $action == 'plan' || $action == 'edit'){
        ),
 	);
 
-	if($action == 'edit') {
-		$left[0] = array(
-           'text' => __('View'),
-           'url' => array(
-               'action' => 'view',
-               'controller' => 'milestones',
-               $id
-           ),
-    	);
-	}
-
 	if(!$milestone['Milestone']['is_open']) {
-		$left[1] = array(
+		$left[3] = array(
            'text' => __('Re-Open'),
            'url' => array(
                'action' => 'reopen',
