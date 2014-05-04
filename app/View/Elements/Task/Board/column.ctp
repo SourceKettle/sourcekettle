@@ -25,15 +25,20 @@ if(!isset($task_span)){
 
 $dtStatus = '';
 if(isset($status)){
-	$dtStatus = 'data-taskstatus="'.$status.'"';
+	$dtStatus = 'data-taskstatus="'.h($status).'"';
 }
 
 $dtPriority = '';
 if(isset($priority)){
-	$dtPriority = 'data-taskpriority="'.$priority.'"';
+	$dtPriority = 'data-taskpriority="'.h($priority).'"';
 }
 
-echo "<ul class='well col sprintboard-droplist span$span$classes' $dtStatus $dtPriority>\n";
+$dtMilestone = '';
+if(isset($milestoneID)){
+	$dtMilestone = 'data-milestone="'.h($milestoneID).'"';
+}
+
+echo "<ul class='well col sprintboard-droplist span$span$classes' $dtStatus $dtPriority $dtMilestone>\n";
 echo "<h2>$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {

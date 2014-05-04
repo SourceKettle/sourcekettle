@@ -92,9 +92,9 @@ $(function () {
             }
 
             // Do the AJAX postback to update task status
-            var updateURL = transitions[toPrio] + taskID;
-
-            $.post(updateURL, function (data) {
+            //var updateURL = transitions[toPrio] + '/' + taskID;
+            var updateURL = '/api/tasks/update/'+taskID;
+            $.post(updateURL, {'priority' : toPrio}, function (data) {
                 if (data.error === "no_error") {
                     
                     // Update task lozenge's status

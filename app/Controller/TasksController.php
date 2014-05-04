@@ -44,7 +44,8 @@ class TasksController extends AppProjectController {
 		parent::beforeFilter();
 		$this->Auth->allow(
 			'api_all',
-			'api_view'
+			'api_view',
+			'api_update'
 		);
 
 		$this->Security->unlockedActions = array (
@@ -57,7 +58,8 @@ class TasksController extends AppProjectController {
 			"setUrgent",
 			"setMajor",
 			"setMinor",
-			"detachFromMilestone"
+			"detachFromMilestone",
+			"api_update"
 		);
 	}
 
@@ -67,6 +69,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function index($project = null, $statuses = null) {
+		// TODO hard coded IDs
 		$project = $this->_projectCheck($project);
 		if (!preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
 			$statuses = "1,2"; // Default to open/in progress tasks only
@@ -965,7 +968,7 @@ class TasksController extends AppProjectController {
 		if ($id == null) {
 			$this->response->statusCode(400);
 			$data['error'] = 400;
-			$data['message'] = 'Bad request, no project id specified.';
+			$data['message'] = 'Bad request, no task id specified.';
 		}
 
 		if ($id == 'all') {
@@ -1002,6 +1005,59 @@ class TasksController extends AppProjectController {
 					$task['Task']['priority'] = $task['TaskPriority']['name'];
 
 					$data = $task['Task'];
+				} else {
+					$data['error'] = 401;
+					$data['message'] = 'Task found, but is not public.';
+					$data['id'] = $id;
+				}
+			}
+		}
+
+		$this->set('data',$data);
+		$this->render('/Elements/json');
+	}
+
+	function api_update($id = null) {
+		$this->layout = 'ajax';
+		$data = array();
+
+		if ($id == null) {
+			$this->response->statusCode(400);
+			$data['error'] = 400;
+			$data['message'] = 'Bad request, no task id specified.';
+		}
+
+		if (is_numeric($id)) {
+			$this->Task->id = $id;
+
+			if (!$this->Task->exists()) {
+				$this->response->statusCode(404);
+				$data['error'] = 404;
+				$data['message'] = 'No task found of that ID.';
+				$data['id'] = $id;
+			} else {
+				$task = $this->Task->read();
+
+				$this->Task->Project->id = $task['Task']['project_id'];
+
+				$partOfProject = $this->Task->Project->hasRead($this->Auth->user('id'));
+				$isAdmin = ($this->_apiAuthLevel() == 1);
+
+				if ($isAdmin || $partOfProject) {
+					/*//task_type_id
+					unset($task['Task']['task_type_id']);
+					$task['Task']['type'] = $task['TaskType']['name'];
+					//task_status_id
+					unset($task['Task']['task_status_id']);
+					$task['Task']['status'] = $task['TaskStatus']['name'];
+					//task_priority_id
+					unset($task['Task']['task_priority_id']);
+					$task['Task']['priority'] = $task['TaskPriority']['name'];
+					*/
+					$this->Task->save($this->request->data);
+
+					$data = $task['Task'];
+					$data['error'] = 'no_error';
 				} else {
 					$data['error'] = 401;
 					$data['message'] = 'Task found, but is not public.';
@@ -1150,17 +1206,4 @@ class TasksController extends AppProjectController {
 	}
 
 
-/**
- * API call to add a task
- */
-	public function api_add() {
-		
-	}
-
-/**
- * API call to update a task
- */
-	public function api_update() {
-		
-	}
 }

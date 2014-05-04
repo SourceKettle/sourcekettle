@@ -18,7 +18,7 @@ $this->Html->css('tasks.index', null, array ('inline' => false));
 $this->Html->css("milestones.index", null, array ('inline' => false));
 $this->Html->script("jquery-ui.min", array ('inline' => false));
 $this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
-$this->Html->script("milestones.view", array ('inline' => false));
+$this->Html->script("milestones.droplist", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -41,7 +41,7 @@ $this->Html->script("milestones.view", array ('inline' => false));
         ) ?>
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $inProgress, 'status' => 'in_progress', 'title' => __('In Progress'), 'span' => '4', 'classes' => 'sprintboard-column')
+            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'classes' => 'sprintboard-column')
         ) ?>
         <?= $this->element('Task/Board/column',
             array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'classes' => 'sprintboard-column')

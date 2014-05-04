@@ -331,7 +331,10 @@ class Project extends AppModel {
 					// TODO hard-coded IDs
 					'Task.task_status_id' => array(1, 2, 5), // open/in-progress/dropped
 					'Task.project_id' => $this->id,
-					'Task.milestone_id' => 0,
+					'OR' => array(
+						'Task.milestone_id' => 0,
+						'Task.milestone_id is null',
+					)
 				)
 			)
 		);

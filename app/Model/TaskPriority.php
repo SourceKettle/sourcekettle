@@ -35,4 +35,11 @@ class TaskPriority extends AppModel {
 		)
 	);
 
+	public function nameToID($priority_name) {
+		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($priority_name)))));
+		if(empty($found)){
+			return 0;
+		}
+		return $found['TaskPriority']['id'];
+	}
 }
