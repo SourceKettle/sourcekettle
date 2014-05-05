@@ -188,9 +188,8 @@ class Milestone extends AppModel {
 					'AND' => array(
 						array(
 							'OR' => array(
-								// TODO hard-coded IDs!
-								array('task_status_id ' => 3),
-								array('task_status_id ' => 4)
+								array('TaskStatus.name ' => 'resolved'),
+								array('TaskStatus.name ' => 'closed'),
 							),
 						),
 						'milestone_id =' => $id
