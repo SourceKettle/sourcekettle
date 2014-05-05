@@ -89,7 +89,7 @@ class SshKey extends AppModel {
 
 		// If they just pasted in the key without the type prefix, work it out from the key
 		// NB these strings are [0007]ssh-rsa and [0007]ssh-dss base64-encoded
-		if( !isset($type) || empty($type)) {
+		if( !isset($type) || empty($type) || !in_array($type, array('ssh-rsa', 'ssh-dss'))) {
 			if (substr($key, 0, 15) == 'AAAAB3NzaC1kc3M') {
 				$type = 'ssh-dss';
 			} elseif (substr($key, 0, 15) == 'AAAAB3NzaC1yc2E') {

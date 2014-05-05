@@ -76,7 +76,7 @@ class SshKeyTestCase extends CakeTestCase {
         $this->assertEquals($fixtures, $fixturesB, "Arrays were not equal");
     }
 
-	public function atestMissingUserID() {
+	public function testMissingUserID() {
 		$saved = $this->SshKey->save(array(
 			'comment' => 'some comment',
 			'key' => $this->rsa
@@ -86,13 +86,32 @@ class SshKeyTestCase extends CakeTestCase {
 		
 	}
 
-	public function atestMissingKey() {
+	public function testMissingKey() {
 		$saved = $this->SshKey->save(array(
 			'user_id' => 2,
 			'comment' => 'some comment',
 		));
 		$this->assertFalse($saved, 'Save RSA key succeeded despite missing SSH key');
 		
+	}
+
+	public function testInvalidKey() {
+		$saved = $this->SshKey->save(array(
+			'user_id' => 2,
+			'comment' => 'some comment',
+			'key' => 'moose??!!Wibble__ShoeBags',
+		));
+		$this->assertFalse($saved, 'Save RSA key succeeded despite missing SSH key');
+		
+	}
+
+	public function testInvalidKeyType() {
+		$saved = $this->SshKey->save(array(
+			'user_id' => 2,
+			'comment' => 'some comment',
+			'key' => 'mooseWibbleShoeBags',
+		));
+		$this->assertFalse($saved, 'Save RSA key succeeded despite missing SSH key');
 	}
 
 	public function testAddKeyOnly() {
