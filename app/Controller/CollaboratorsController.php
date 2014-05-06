@@ -23,7 +23,7 @@ class CollaboratorsController extends AppProjectController {
  * Project helpers
  * @var type
  */
-	public $helpers = array('Time', 'GoogleChart.GoogleChart');
+	public $helpers = array('Time');
 
 /**
  * index method

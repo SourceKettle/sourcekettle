@@ -12,6 +12,7 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
+/* NB these colours will be replaced when plotting the pie chart to fit in with the current theme */
 .open-tasks a {
     color: #3266cc;
 }
@@ -46,4 +47,8 @@
 
 #full_description {
   display: none;
+}
+
+div#piechart{
+	min-height: 8em;
 }

@@ -23,8 +23,7 @@ class TimesController extends AppProjectController {
  * helpers for additional rendering support
  */
 	public $helpers = array(
-		'Time',
-		'GoogleChart.GoogleChart'
+		'Time'
 	);
 
 /**

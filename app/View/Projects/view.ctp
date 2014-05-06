@@ -13,10 +13,13 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-$this->Html->css('projects.overview', null, array ('inline' => false));
-$this->Html->script('projects.overview.js', array('inline' => false));
 ?>
+<?=$this->Html->script('jquery.color-2.1.2.min', array('inline' => false))?>
+<?=$this->Html->script('jquery.flot.min', array('inline' => false))?>
+<?=$this->Html->script('jquery.flot.pie.min', array('inline' => false))?>
+<?=$this->Html->css('projects.overview', null, array ('inline' => false));?>
+<?=$this->Html->script('projects.overview', array('inline' => false));?>
+
 
 
 <?= $this->DT->pHeader() ?>
@@ -31,14 +34,13 @@ $this->Html->script('projects.overview.js', array('inline' => false));
                     <div class="row-fluid overview">
 
 
-
                         <div class="span4">
                             <h3><?= __("Tasks") ?></h3>
                             <hr />
                             <div class="row-fluid">
                                 <div class="span6">
-                                    <ul class="unstyled">
-                                        <li class="open-tasks">
+                                    <ul id="taskcounts" class="unstyled">
+                                        <li class="open-tasks" data-numtasks="<?=h($numberOfOpenTasks)?>" data-taskstatus="<?=h(__('Open'))?>">
                                           <?= $this->Html->link(
                                            "$numberOfOpenTasks - ".__("open tasks"),
                                            array(
@@ -49,7 +51,7 @@ $this->Html->script('projects.overview.js', array('inline' => false));
                                            ))?>
                                         </li>
 
-                                        <li class="in-progress-tasks">
+                                        <li class="in-progress-tasks" data-numtasks="<?=h($numberOfInProgressTasks)?>" data-taskstatus="<?=h(__('In progress'))?>">
                                           <?= $this->Html->link(
                                            "$numberOfInProgressTasks - ".__("tasks in progress"),
                                            array(
@@ -60,7 +62,7 @@ $this->Html->script('projects.overview.js', array('inline' => false));
                                            ))?>
                                         </li>
 
-                                        <li class="closed-tasks">
+                                        <li class="closed-tasks" data-numtasks="<?=h($numberOfClosedTasks)?>" data-taskstatus="<?=h(__('Finished'))?>">
                                           <?= $this->Html->link(
                                             "$numberOfClosedTasks - ".__("finished tasks"),
                                            array(
@@ -71,7 +73,7 @@ $this->Html->script('projects.overview.js', array('inline' => false));
                                           ))?>
                                         </li>
 
-                                        <li class="dropped-tasks">
+                                        <li class="dropped-tasks" data-numtasks="<?=h($numberOfDroppedTasks)?>" data-taskstatus="<?=h(__('Dropped'))?>">
                                           <?= $this->Html->link(
                                             "$numberOfDroppedTasks - ".__("dropped tasks"),
                                            array(
@@ -96,12 +98,8 @@ $this->Html->script('projects.overview.js', array('inline' => false));
                                     </ul>
                                 </div>
                                 <div class="span6">
-                                    <?=$this->GoogleChart->create()->setType('pie')->setSize(100, 100)->addData(
-										array(
-											$numberOfOpenTasks, $numberOfInProgressTasks,
-											$numberOfClosedTasks, $numberOfDroppedTasks
-										)
-									); ?>
+    								<div class="well" id="piechart">
+								    </div>
                                 </div>
                             </div>
                         </div>
