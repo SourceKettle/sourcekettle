@@ -61,16 +61,87 @@ class SshKeyTestCase extends CakeTestCase {
     public function testFixture() {
         $this->SshKey->recursive = -1;
         $fixtures = array(
-            array(
-                'SshKey' => array(
-                    'id' => "1",
-                    'user_id' => "1",
-                    'key' => '0b73478cee542c314e014b4e4e7200670b73478cee542c314e014b4e4e720067t',
-                    'comment' => 'Lorem ipsum dolor sit amet',
-                    'created' => '2012-06-01 12:49:40',
-                    'modified' => '2012-06-01 12:49:40'
-                ),
-            ),
+			// This entry is invalid so should not be returned as a key
+	        /*array( 'SshKey' => array(
+	            'id' => '1',
+	            'user_id' => '1',
+	            'key' => '0b73478cee542c314e014b4e4e7200670b73478cee542c314e014b4e4e720067t',
+	            'comment' => 'Completely invalid key',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),*/
+	        array( 'SshKey' => array(
+	            'id' => '2',
+	            'user_id' => '3',
+	            'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA==',
+	            'comment' => 'DSA key, correct, no embedded comment',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
+	        array( 'SshKey' => array(
+	            'id' => '3',
+	            'user_id' => '2',
+	            'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA==',
+	            'comment' => 'DSA key, correct, with embedded comment',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
+	        array( 'SshKey' => array(
+	            'id' => '4',
+	            'user_id' => '2',
+	            'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA==',
+	            'comment' => 'DSA key, no prefix, with embedded comment',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
+	        array( 'SshKey' => array(
+	            'id' => '5',
+	            'user_id' => '2',
+	            'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA==',
+	            'comment' => 'DSA key, no prefix, no embedded comment',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
+	        array( 'SshKey' => array(
+	            'id' => '6',
+	            'user_id' => '2',
+	            'key' => 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGu20Fvn1KUo189Qg2/CVj9hXrrowPj0Fn8f8JgWuV44r4/uv35g2uIXh4xzKM194Gb98U6kZDxk2XktvwpimFdeaWKzJ2l2blB4j2UO8FettLbcCQZcb+LG0BMsfFG2d3gxuqCJlyqRZyHmvareXdkz/iuEXidSro3VsgDP6L91YcNVWlEHnbq/xiYtlOCmXVgixfZh+3zyCoF0sdEJbwz0u3ma+Gdp3drHh7IkfOL/QuYQ63lsJYUn60ptJNRWqBzwp7C+DDYHnZYObyidpzqY/zQOo8bpqQZGtIL7J9prtgRAwkumn7kFnD1wWSZD1XoSXG3vDaEPAtER4gREjR',
+	            'comment' => 'RSA key, correct, no embedded comment',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
+	        array( 'SshKey' => array(
+	            'id' => '7',
+	            'user_id' => '2',
+	            'key' => 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGu20Fvn1KUo189Qg2/CVj9hXrrowPj0Fn8f8JgWuV44r4/uv35g2uIXh4xzKM194Gb98U6kZDxk2XktvwpimFdeaWKzJ2l2blB4j2UO8FettLbcCQZcb+LG0BMsfFG2d3gxuqCJlyqRZyHmvareXdkz/iuEXidSro3VsgDP6L91YcNVWlEHnbq/xiYtlOCmXVgixfZh+3zyCoF0sdEJbwz0u3ma+Gdp3drHh7IkfOL/QuYQ63lsJYUn60ptJNRWqBzwp7C+DDYHnZYObyidpzqY/zQOo8bpqQZGtIL7J9prtgRAwkumn7kFnD1wWSZD1XoSXG3vDaEPAtER4gREjR',
+	            'comment' => 'RSA key, correct, with embedded comment',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
+	        array( 'SshKey' => array(
+	            'id' => '8',
+	            'user_id' => '2',
+	            'key' => 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGu20Fvn1KUo189Qg2/CVj9hXrrowPj0Fn8f8JgWuV44r4/uv35g2uIXh4xzKM194Gb98U6kZDxk2XktvwpimFdeaWKzJ2l2blB4j2UO8FettLbcCQZcb+LG0BMsfFG2d3gxuqCJlyqRZyHmvareXdkz/iuEXidSro3VsgDP6L91YcNVWlEHnbq/xiYtlOCmXVgixfZh+3zyCoF0sdEJbwz0u3ma+Gdp3drHh7IkfOL/QuYQ63lsJYUn60ptJNRWqBzwp7C+DDYHnZYObyidpzqY/zQOo8bpqQZGtIL7J9prtgRAwkumn7kFnD1wWSZD1XoSXG3vDaEPAtER4gREjR',
+	            'comment' => 'RSA key, no prefix, with embedded comment',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
+	        array( 'SshKey' => array(
+	            'id' => '9',
+	            'user_id' => '2',
+	            'key' => 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGu20Fvn1KUo189Qg2/CVj9hXrrowPj0Fn8f8JgWuV44r4/uv35g2uIXh4xzKM194Gb98U6kZDxk2XktvwpimFdeaWKzJ2l2blB4j2UO8FettLbcCQZcb+LG0BMsfFG2d3gxuqCJlyqRZyHmvareXdkz/iuEXidSro3VsgDP6L91YcNVWlEHnbq/xiYtlOCmXVgixfZh+3zyCoF0sdEJbwz0u3ma+Gdp3drHh7IkfOL/QuYQ63lsJYUn60ptJNRWqBzwp7C+DDYHnZYObyidpzqY/zQOo8bpqQZGtIL7J9prtgRAwkumn7kFnD1wWSZD1XoSXG3vDaEPAtER4gREjR',
+	            'comment' => 'RSA key, no prefix, no embedded comment',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
+	        array( 'SshKey' => array(
+	            'id' => '10',
+	            'user_id' => '2',
+	            'key' => 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGu20Fvn1KUo189Qg2/CVj9hXrrowPj0Fn8f8JgWuV44r4/uv35g2uIXh4xzKM194Gb98U6kZDxk2XktvwpimFdeaWKzJ2l2blB4j2UO8FettLbcCQZcb+LG0BMsfFG2d3gxuqCJlyqRZyHmvareXdkz/iuEXidSro3VsgDP6L91YcNVWlEHnbq/xiYtlOCmXVgixfZh+3zyCoF0sdEJbwz0u3ma+Gdp3drHh7IkfOL/QuYQ63lsJYUn60ptJNRWqBzwp7C+DDYHnZYObyidpzqY/zQOo8bpqQZGtIL7J9prtgRAwkumn7kFnD1wWSZD1XoSXG3vDaEPAtER4gREjR',
+	            'comment' => 'foobar@myhost',
+	            'created' => '2012-06-01 12:49:40',
+	            'modified' => '2012-06-01 12:49:40'
+	        )),
         );
         $fixturesB = $this->SshKey->find('all');
         $this->assertEquals($fixtures, $fixturesB, "Arrays were not equal");
@@ -101,7 +172,7 @@ class SshKeyTestCase extends CakeTestCase {
 			'comment' => 'some comment',
 			'key' => 'moose??!!Wibble__ShoeBags',
 		));
-		$this->assertFalse($saved, 'Save RSA key succeeded despite missing SSH key');
+		$this->assertFalse($saved, 'Save RSA key succeeded despite invalid SSH key');
 		
 	}
 
@@ -111,7 +182,7 @@ class SshKeyTestCase extends CakeTestCase {
 			'comment' => 'some comment',
 			'key' => 'mooseWibbleShoeBags',
 		));
-		$this->assertFalse($saved, 'Save RSA key succeeded despite missing SSH key');
+		$this->assertFalse($saved, 'Save RSA key succeeded despite invalid SSH key');
 	}
 
 	public function testAddKeyOnly() {
