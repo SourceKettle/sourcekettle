@@ -1,12 +1,16 @@
 
-// Given a set of drop target columns, equalises their heights
+// Given a column of tasks, equalise the heights of all columns in its row.
 // (keeps the kanban view/planning view nice and tidy when we move things around)
-function equaliseColumns(selector='.sprintboard-column') {
-    var maxHeight = 1;
+function equaliseColumns(column) {
+    var maxHeight = 0;
 
-    $(selector).height ("");
-    $(selector).each(function (index, column) {
-        var height = $(column).height();
+    // This is a bit of a faff, build a jQuery object for 'this column and its siblings'
+    var row = $(column).siblings().toArray().concat(column);
+
+    // Set all heights to "best fit", then calculate max height and resize all columns in the row
+    $(row).height("");
+    $(row).each(function (index, droplist) {
+        var height = $(droplist).height();
         maxHeight = height > maxHeight ? height : maxHeight;
     }).height(maxHeight + "px");
 }
@@ -49,7 +53,7 @@ $(function initTaskDroplists() {
 
     var apiURL = '../../../..//api/tasks/update';
 
-    equaliseColumns();
+    $('.sprintboard-droplist').each(function(index, column){equaliseColumns(column);});
 
     // Make all columns and the icebox connected sortable lists
     $( ".sprintboard-droplist" ).sortable({
@@ -82,7 +86,8 @@ $(function initTaskDroplists() {
             ui.item.css('transform', '');
 			$('.sprintboard-droplist').removeClass('highlight-droptarget');
             $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
-            equaliseColumns();
+            equaliseColumns(event.target);
+            equaliseColumns(ui.item.parent()[0]);
         },
 
         // When the item is dropped onto a different task list, do an AJAX call to update the status
