@@ -30,6 +30,7 @@ class TimeTestCase extends CakeTestCase {
         'app.project',
         'app.collaborator',
         'app.user',
+		'app.task',
     );
 
     /**
@@ -64,7 +65,7 @@ class TimeTestCase extends CakeTestCase {
      * @access public
      * @return void
      */
-    public function testFixture() {
+	public function testFixture() {
         $this->Time->recursive = -1;
         $fixtures = array(
             array(
@@ -72,8 +73,11 @@ class TimeTestCase extends CakeTestCase {
                     'id' => '1',
                     'project_id' => '1',
                     'user_id' => '1',
-                    'task_id' => null,
-                    'mins' => array(
+                    'task_id' => '1',
+					'mins' => '90',
+                    'minutes' => array(
+                        'w' => '0',
+                        'd' => '0',
                         'h' => '1',
                         'm' => '30',
                         's' => '1h 30m',
@@ -82,12 +86,37 @@ class TimeTestCase extends CakeTestCase {
                     'description' => 'A description.',
                     'date' => '2012-11-11',
                     'created' => '2012-11-11 10:24:06',
-                    'modified' => '2012-11-11 10:24:06'
+                    'modified' => '2012-11-11 10:24:06',
+					'deleted' => '0',
+					'deleted_date' => null,
+                ),
+            ),
+            array(
+                'Time' => array(
+                    'id' => '2',
+                    'project_id' => '1',
+                    'user_id' => '1',
+                    'task_id' => '2',
+					'mins' => '900',
+                    'minutes' => array(
+                        'w' => '0',
+                        'd' => '0',
+                        'h' => '15',
+                        'm' => '0',
+                        's' => '15h 0m',
+                        't' => '900',
+                    ),
+                    'description' => 'A description of the second <b>task</b>.',
+                    'date' => '2012-11-11',
+                    'created' => '2012-11-11 10:24:06',
+                    'modified' => '2012-11-11 10:24:06',
+					'deleted' => '0',
+					'deleted_date' => null,
                 ),
             ),
         );
-        //$fixturesB = $this->Time->find('all');
-        //$this->assertEquals($fixtures, $fixturesB, json_encode($fixturesB)."Arrays were not equal");
+        $fixturesB = $this->Time->find('all');
+        $this->assertEquals($fixtures, $fixturesB, json_encode($fixturesB)."Arrays were not equal");
     }
 
     /**
@@ -97,16 +126,20 @@ class TimeTestCase extends CakeTestCase {
      * @access public
      * @return void
      */
-    public function testParseTime() {
+    public function testRenderTime() {
         $expectedResult = array(
-            'h' => '1',
-            'm' => '0',
+			'w' => 0,
+			'd' => 0,
+            'h' => 1,
+            'm' => 0,
             's' => '1h 0m',
-            't' => '60'
+            't' => 60
         );
         $this->assertEquals(TimeString::renderTime(60), $expectedResult);
 
         $expectedResult = array(
+			'w' => 0,
+			'd' => 0,
             'h' => '0',
             'm' => '59',
             's' => '0h 59m',
@@ -115,20 +148,33 @@ class TimeTestCase extends CakeTestCase {
         $this->assertEquals(TimeString::renderTime(59), $expectedResult);
 
         $expectedResult = array(
+			'w' => 0,
+			'd' => 0,
             'h' => '1',
             'm' => '1',
             's' => '1h 1m',
             't' => '61'
         );
-        $this->assertEquals(iTimeString::renderTime(61), $expectedResult);
+        $this->assertEquals(TimeString::renderTime(61), $expectedResult);
 
         $expectedResult = array(
+			'w' => 0,
+			'd' => 0,
             'h' => '1',
             'm' => '30',
             's' => '1h 30m',
             't' => '90'
         );
         $this->assertEquals(TimeString::renderTime(90), $expectedResult);
+    }
+
+    public function testParseTime() {
+        $this->assertEquals(TimeString::parseTime('2m'), 2, 'Failed to parse 2m');
+        $this->assertEquals(TimeString::parseTime('2h'), 120, 'Failed to parse 2h');
+        $this->assertEquals(TimeString::parseTime(' 2h '), 120, 'Failed to parse 2h with whitespace');
+        $this->assertEquals(TimeString::parseTime('1w'), 10080, 'Failed to parse 1w');
+        $this->assertEquals(TimeString::parseTime('3d'), 4320, 'Failed to parse 3d');
+        $this->assertEquals(TimeString::parseTime('4w 3d 9h 6m'), 45186, 'Failed to parse 4w 3d 9h 6m');
     }
 
     /**
@@ -149,7 +195,7 @@ class TimeTestCase extends CakeTestCase {
         try {
             $this->Time->validateYear(2008);
             $this->assertTrue(false, "Validate year allowed a year below minimum");
-        } catch (NotFoundException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->assertTrue(true);
         } catch (Exception $e) {
             $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
@@ -163,10 +209,17 @@ class TimeTestCase extends CakeTestCase {
         try {
             $this->Time->validateYear(2011);
             $this->assertTrue(false, "Validate year allowed a year above maximum");
-        } catch (NotFoundException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->assertTrue(true);
         } catch (Exception $e) {
             $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
         }
     }
+
+	public function testToString() {
+		$this->Time->id = 1;
+		$this->Time->read();
+		$this->assertEquals('1h 30m', $this->Time->toString(), 'Expected task ID 1 to be 1h 30m');
+	}
+
 }

@@ -17,11 +17,13 @@
 
 $headers = array(__('Task'), __('User'));
 foreach ($weekTimes['dates'] as $daynum => $date){
-	$headers[] = __($date->format('D M d'));
+	$headers[] = __($date->format('D M d Y'));
 }
+$headers[] = __('Total');
 
 $body = array($headers);
 
+$overallTotal = 0;
 foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 	foreach ($taskDetails['users'] as $userId => $userDetails) {
 		$line = array();
@@ -36,13 +38,18 @@ foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 		$line[] = $userDetails['User']['name'];
 
 		// 1=Mon, 7=Sun...
+		$rowTotal = 0;
 		for ($i = 1; $i <= 7; $i++) {
 			if (array_key_exists($i, $userDetails['days'])) {
 				$line[] = $userDetails['days'][$i];
+				$rowTotal += $userDetails['days'][$i];
 			} else {
 				$line[] = '';
 			}
 		}
+
+		$line[] = $rowTotal;
+		$overallTotal += $rowTotal;
 
 		$body[] = $line;
 	}
@@ -56,6 +63,7 @@ for ($i = 1; $i <= 7; $i++) {
 		$foot[] = '';
 	}
 }
+$foot[] = $overallTotal;
 
 $body[] = $foot;
 

@@ -17,6 +17,13 @@
     'left' => array(
         array(
             array(
+                'text' => $this->DT->t('topbar.all.text', array('action' => 'topbar')),
+                'url' => array(
+                    'action' => 'all',
+                    'controller' => 'tasks',
+                ),
+            ),
+            array(
                 'text' => $this->DT->t('topbar.index.text', array('action' => 'topbar')),
                 'url' => array(
                     'action' => '.',
@@ -34,13 +41,6 @@
                 'text' => $this->DT->t('topbar.nobody.text', array('action' => 'topbar')),
                 'url' => array(
                     'action' => 'nobody',
-                    'controller' => 'tasks',
-                ),
-            ),
-            array(
-                'text' => $this->DT->t('topbar.all.text', array('action' => 'topbar')),
-                'url' => array(
-                    'action' => 'all',
                     'controller' => 'tasks',
                 ),
             ),

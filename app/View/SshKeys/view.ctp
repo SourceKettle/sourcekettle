@@ -14,7 +14,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
+echo $this->Bootstrap->page_header($this->request->data['User']['name']);
+
+?>
 
 <div class="row">
     <div class="span2">
@@ -35,10 +37,13 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
                         <td colspan="3" style="text-align:center">Nothing here yet! <?= $this->Html->link('Add a key here...', array('controller' => 'sshKeys', 'action' => 'add')) ?></td>
                     </tr>
                 <? endif; ?>
-                <? foreach ($this->request->data['SshKey'] as $key) : ?>
+                <? foreach ($this->request->data['SshKey'] as $key) : 
+					// Remove middle of SSH key for display, showing mostly the end
+					$truncated_key =  $this->Text->truncate(h($key['key']), 15);
+					$truncated_key .= $this->Text->tail(h($key['key']), 25, array('ellipsis' => ''));?>
                     <tr>
                         <td><?= h($key['comment']) ?></td>
-                        <td style='overflow: hidden; max-width: 388px; word-wrap: break-word;'><tt><?= $this->Text->truncate(h($key['key']), 40) ?></tt></td>
+                        <td style='overflow: hidden; max-width: 388px; word-wrap: break-word;'><tt><?=$truncated_key?></tt></td>
                         <td class='span1'><?= $this->Bootstrap->button_form("Delete", $this->Html->url(array('controller' => 'sshKeys', 'action' => 'delete' , $key['id']), true), array('style' => 'danger'), "Are you sure you want to delete the SSH key '" . h($key['comment']) . "'?") ?></td>
                     </tr>
                 <? endforeach; ?>
@@ -61,7 +66,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
                 <dd>Please don't give us your private keys! That's like giving out the PIN for your credit card!</dd>
                 <dt>Public keys look somthing like this</dt>
                 <dd>
-                ssh-rsa A3AAB3j7nxirGz8Z2bddNdMm0UB/uEFZa
+                ssh-rsa AAAAB3NzaC1yc2EZ2bddNdMm0UB/uEFZa
                 tasKgDQrOEvJ9LQjMq2qolTBzROgdg6Mo9DsWZCq4
                 Q48p06JyQLbMx7hKuZkBH0d5jxeTGEGW4utk3E/==
                 <br>

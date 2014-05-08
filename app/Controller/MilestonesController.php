@@ -254,7 +254,12 @@ class MilestonesController extends AppProjectController {
 		}
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$new_milestone = $this->request->data['Milestone']['new_milestone'];
+
+			if (!isset($this->request->data['Milestone']['new_milestone'])) {
+				$new_milestone = 0;
+			} else {
+				$new_milestone = $this->request->data['Milestone']['new_milestone'];
+			}
 
 			// Manual transactions used here for good reason:
 			// saving all related stuff fails, as we're changing the milestone_id
