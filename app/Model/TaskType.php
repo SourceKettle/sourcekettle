@@ -35,4 +35,12 @@ class TaskType extends AppModel {
 		)
 	);
 
+	public function nameToID($type_name) {
+		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($type_name)))));
+		if(empty($found)){
+			return 0;
+		}
+		return $found['TaskType']['id'];
+	}
+
 }
