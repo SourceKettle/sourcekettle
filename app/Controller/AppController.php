@@ -137,26 +137,26 @@ class AppController extends Controller {
 			} else {
 				$ldapConfig = array(
 					'ldap_url'          => $this->devtrack_config['ldap_url'],
-						'ldap_bind_dn'      => $this->devtrack_config['ldap_bind_dn'],
-						'ldap_bind_pw'      => $this->devtrack_config['ldap_bind_pw'],
-						'ldap_base_dn'      => $this->devtrack_config['ldap_base_dn'],
-						'ldap_filter'       => $this->devtrack_config['ldap_filter'],
-						'ldap_to_user'      => array(
-							$this->devtrack_config['ldap_email_field'] => 'email',
-							$this->devtrack_config['ldap_name_field'] => 'name',
-						),
-						// TODO this is an array, we need to make sure we can DB-ify this
-						'all_usernames' => array(
-							'proxyAddresses',
-							'mail',
-						),
+					'ldap_bind_dn'      => $this->devtrack_config['ldap_bind_dn'],
+					'ldap_bind_pw'      => $this->devtrack_config['ldap_bind_pw'],
+					'ldap_base_dn'      => $this->devtrack_config['ldap_base_dn'],
+					'ldap_filter'       => $this->devtrack_config['ldap_filter'],
+					'ldap_to_user'      => array(
+						$this->devtrack_config['ldap_email_field'] => 'email',
+						$this->devtrack_config['ldap_name_field'] => 'name',
+					),
+					// TODO this is an array, we need to make sure we can DB-ify this
+					'all_usernames' => array(
+						'proxyAddresses',
+						'mail',
+					),
 
-						// These are SourceKettle-specific, not server-specific
-						'form_fields'       => array ('username' => 'email', 'password' => 'password'),
-						'defaults'      => array(
-							'is_active' => 1,
-							'is_admin'  => 0,
-						)
+					// These are SourceKettle-specific, not server-specific
+					'form_fields'       => array ('username' => 'email', 'password' => 'password'),
+					'defaults'      => array(
+						'is_active' => 1,
+						'is_admin'  => 0,
+					)
 				);
 
 				// Put the LDAP authentication in before form auth

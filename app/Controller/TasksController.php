@@ -249,7 +249,7 @@ class TasksController extends AppProjectController {
 				if ($_old && !isset($changeUsers[$_old])) {
 					$this->Task->Assignee->id = $_old;
 					$_temp = $this->Task->Assignee->read();
-					if(count($_temp) > 0){
+					if (count($_temp) > 0) {
 						$changeUsers[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
 					} else {
 						$changeUsers[$_old] = array('(Unknown or deleted user)', '');
@@ -258,7 +258,7 @@ class TasksController extends AppProjectController {
 				if ($_new && !isset($changeUsers[$_new])) {
 					$this->Task->Assignee->id = $_new;
 					$_temp = $this->Task->Assignee->read();
-					if(count($_temp) > 0){
+					if (count($_temp) > 0) {
 						$changeUsers[$_new] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
 					} else {
 						$changeUsers[$_new] = array('(Unknown or deleted user)', '');
@@ -309,7 +309,7 @@ class TasksController extends AppProjectController {
 		$project = $this->_projectCheck($project, true);
 
 		// Milestone pre-selected - parse and store
-		if(!empty($this->request->query['milestone'])){
+		if (!empty($this->request->query['milestone'])) {
 			$selected_milestone_id = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
 		} else {
 			$selected_milestone_id = 0;
@@ -345,10 +345,10 @@ class TasksController extends AppProjectController {
 				if ($this->Flash->c($this->Task->saveAll($this->request->data))) {
 
 					// If they pre-selected a milestone, go back to that milestone
-					if($selected_milestone_id){
+					if ($selected_milestone_id) {
 						$this->redirect(array('controller' => 'milestones', 'project' => $project['Project']['name'], 'action' => 'view', $selected_milestone_id));
-					// ...otherwise show the task.
 					} else {
+						// ...otherwise show the task.
 						$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
 					}
 				}
@@ -360,7 +360,7 @@ class TasksController extends AppProjectController {
 			$this->request->data['Task']['task_type_id'] = 1;
 			$this->request->data['Task']['assignee_id'] = 0;
 
-			if($selected_milestone_id){
+			if ($selected_milestone_id) {
 				$this->request->data['Task']['milestone_id'] = $selected_milestone_id;
 			} else{
 				$this->request->data['Task']['milestone_id'] = null;

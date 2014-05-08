@@ -256,9 +256,9 @@ class MilestonesController extends AppProjectController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 
 			if (!isset($this->request->data['Milestone']['new_milestone'])) {
-				$new_milestone = 0;
+				$newMilestone = 0;
 			} else {
-				$new_milestone = $this->request->data['Milestone']['new_milestone'];
+				$newMilestone = $this->request->data['Milestone']['new_milestone'];
 			}
 
 			// Manual transactions used here for good reason:
@@ -266,11 +266,11 @@ class MilestonesController extends AppProjectController {
 			// i.e. making it no longer related. So, let's do it this way.
 			$dataSource = $this->Milestone->getDataSource();
 			$dataSource->begin();
-			
+
 			// First attempt to shift the tasks to the new milestone ID
-			if (!$this->Flash->u($this->Milestone->shiftTasks($id, $new_milestone))) {
+			if (!$this->Flash->u($this->Milestone->shiftTasks($id, $newMilestone))) {
 				$dataSource->rollback();
-			
+
 			// Now update the milestone status itself
 			} else {
 				$milestone = $this->Milestone->open($id);
@@ -288,12 +288,12 @@ class MilestonesController extends AppProjectController {
 		}
 
 		// For the form, build a list of other open milestones we can attach tasks to
-		$other_milestones = $this->Milestone->getOpenMilestones(true);
-		$other_milestones[0] = '(no milestone)';
-		unset($other_milestones[$id]);
-		ksort($other_milestones);
+		$otherMilestones = $this->Milestone->getOpenMilestones(true);
+		$otherMilestones[0] = '(no milestone)';
+		unset($otherMilestones[$id]);
+		ksort($otherMilestones);
 
-		$this->set('other_milestones', $other_milestones);
+		$this->set('other_milestones', $otherMilestones);
 		$this->set('milestone', $milestone);
 		$this->set('name', $milestone['Milestone']['subject']);
 	}
@@ -340,15 +340,15 @@ class MilestonesController extends AppProjectController {
 		$milestone = $this->Milestone->open($id);
 
 		if ($this->request->is('post')) {
-			$new_milestone = $this->request->data['Milestone']['new_milestone'];
+			$newMilestone = $this->request->data['Milestone']['new_milestone'];
 
 			$dataSource = $this->Milestone->getDataSource();
 			$dataSource->begin();
-			
+
 			// First attempt to shift the tasks to the new milestone ID
-			if (!$this->Flash->u($this->Milestone->shiftTasks($id, $new_milestone, true))) {
+			if (!$this->Flash->u($this->Milestone->shiftTasks($id, $newMilestone, true))) {
 				$dataSource->rollback();
-			
+
 			// Now delete the milestone.
 			} else {
 				$milestone = $this->Milestone->open($id);
@@ -365,12 +365,12 @@ class MilestonesController extends AppProjectController {
 		}
 
 		// For the form, build a list of other open milestones we can attach tasks to
-		$other_milestones = $this->Milestone->getOpenMilestones(true);
-		$other_milestones[0] = '(no milestone)';
-		unset($other_milestones[$id]);
-		ksort($other_milestones);
+		$otherMilestones = $this->Milestone->getOpenMilestones(true);
+		$otherMilestones[0] = '(no milestone)';
+		unset($otherMilestones[$id]);
+		ksort($otherMilestones);
 
-		$this->set('other_milestones', $other_milestones);
+		$this->set('other_milestones', $otherMilestones);
 		$this->set('milestone', $milestone);
 		$this->set('name', $milestone['Milestone']['subject']);
 	}
