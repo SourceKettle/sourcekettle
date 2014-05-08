@@ -49,7 +49,7 @@ class UserFixture extends CakeTestFixture {
             'id' => 5,
             'name' => 'Mr Admin',
             'email' => 'mr.admin@example.com',
-            'password' => '',
+            'password' => '', // e.g. LDAP account
             'is_admin' => 1,
             'is_active' => 1,
             'created' => '2012-06-01 12:50:08',
@@ -59,7 +59,7 @@ class UserFixture extends CakeTestFixture {
             'id' => 6,
             'name' => 'Sir Not-Appearing-In-This-Film',
             'email' => 'snaitf@example.com',
-            'password' => '',
+            'password' => '', // e.g. LDAP account
             'is_admin' => 0,
             'is_active' => 0,
             'created' => '2012-06-01 12:50:08',
