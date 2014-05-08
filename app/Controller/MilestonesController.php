@@ -15,10 +15,13 @@
  */
 
 App::uses('AppProjectController', 'Controller');
+//App::uses('Project', 'Model');
 
 class MilestonesController extends AppProjectController {
 
 	public $helpers = array('Task');
+
+	public $uses = array('Milestone', 'Project');
 
 /**
  * beforeFilter function.
@@ -167,6 +170,28 @@ class MilestonesController extends AppProjectController {
 		$this->set('inProgress_empty', $max - count($inProgress));
 		$this->set('completed_empty', $max - count($completed));
 		$this->set(compact('backlog', 'inProgress', 'completed', 'iceBox'));
+	}
+
+/**
+ * plan method
+ *
+ * @return void
+ */
+	public function plan($project = null, $id = null) {
+		$project = $this->_projectCheck($project);
+		$milestone = $this->Milestone->open($id);
+
+		$mustHave   = $this->Milestone->blockerTasksForMilestone($id);
+		$shouldHave = $this->Milestone->urgentTasksForMilestone($id);
+		$couldHave  = $this->Milestone->majorTasksForMilestone($id);
+		$mightHave  = $this->Milestone->minorTasksForMilestone($id);
+
+		$this->Project->id = $project['Project']['id'];
+		$wontHave   = $this->Project->getProjectBacklog();
+
+		$this->set('milestone', $milestone);
+
+		$this->set(compact('mustHave', 'shouldHave', 'couldHave', 'mightHave', 'wontHave'));
 	}
 
 /**

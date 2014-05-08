@@ -83,5 +83,7 @@ $config['dtcore']['pages']['milestones']['edit']['en']['form.due.label'] = "Comp
 $config['dtcore']['pages']['milestones']['edit']['en']['form.due.help'] = "When the milestone should be complete.";
 $config['dtcore']['pages']['milestones']['edit']['en']['form.submit'] = "Submit";
 
+//APP/Milestones/plan
+$config['dtcore']['pages']['milestones']['plan']['en']['header.text'] = "Milestone task planner";
 //APP/Milestones/close
 $config['dtcore']['pages']['milestones']['close']['en']['header.text'] = "Close Milestone";

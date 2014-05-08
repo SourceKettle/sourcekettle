@@ -266,6 +266,21 @@ class Task extends AppModel {
 		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
 			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		}
+
+
+		// If we have priority and status names, replace them with IDs for saving
+		if(isset($this->data['Task']['priority'])){
+			$this->data['Task']['task_priority_id'] = $this->TaskPriority->nameToID($this->data['Task']['priority']);
+			unset($this->data['Task']['priority']);
+		}
+		if(isset($this->data['Task']['status'])){
+			$this->data['Task']['task_status_id'] = $this->TaskStatus->nameToID($this->data['Task']['status']);
+			unset($this->data['Task']['status']);
+		}
+
+		if(!isset($this->data['Task']['milestone_id']) || !$this->data['Task']['milestone_id']){
+			$this->data['Task']['milestone_id'] = 0;
+		}
 		return true;
 	}
 /**

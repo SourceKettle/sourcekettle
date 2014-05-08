@@ -18,13 +18,31 @@ if(isset($name)){
 } else{
 	$pl = '';
 }
+
+$action = $this->request['action'];
 // Viewing/editing a Milestone: give options to change it
-if($this->request['action'] == 'view' || $this->request['action'] == 'edit'){
+if($action == 'view' || $action == 'plan' || $action == 'edit'){
 	$left = array(
+		array(
+           'text' => __('View'),
+           'url' => array(
+               'action' => 'view',
+               'controller' => 'milestones',
+               $id
+           ),
+    	),
        array(
            'text' => __('Edit'),
            'url' => array(
                'action' => 'edit',
+               'controller' => 'milestones',
+               $id
+           ),
+       ),
+       array(
+           'text' => __('Plan'),
+           'url' => array(
+               'action' => 'plan',
                'controller' => 'milestones',
                $id
            ),
@@ -48,19 +66,8 @@ if($this->request['action'] == 'view' || $this->request['action'] == 'edit'){
        ),
 	);
 
-	if($this->request['action'] == 'edit') {
-		$left[0] = array(
-           'text' => __('View'),
-           'url' => array(
-               'action' => 'view',
-               'controller' => 'milestones',
-               $id
-           ),
-    	);
-	}
-
 	if(!$milestone['Milestone']['is_open']) {
-		$left[1] = array(
+		$left[3] = array(
            'text' => __('Re-Open'),
            'url' => array(
                'action' => 'reopen',
@@ -70,7 +77,7 @@ if($this->request['action'] == 'view' || $this->request['action'] == 'edit'){
     	);
 	}
 
-	if($this->request['action'] == 'edit') {
+	if($action == 'edit') {
 		$right = array();
 	} else {
 		$right = array(

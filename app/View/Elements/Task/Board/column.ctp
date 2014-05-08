@@ -14,16 +14,38 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if(!isset($classes)){
+if (!isset($classes)) {
 	$classes = '';
-} else{
+} else {
 	$classes = " $classes";
 }
-if(!isset($task_span)){
+if (!isset($task_span)) {
 	$task_span = False;
 }
-echo "<ul class='well col sprintboard-droplist span$span$classes' data-taskstatus='$status'>\n";
-echo "<h2>$title</h2>\n";
+
+$dtStatus = '';
+if (isset($status)) {
+	$dtStatus = 'data-taskstatus="'.h($status).'"';
+}
+
+$dtPriority = '';
+if (isset($priority)) {
+	$dtPriority = 'data-taskpriority="'.h($priority).'"';
+}
+
+$dtMilestone = '';
+if (isset($milestoneID)) {
+	$dtMilestone = 'data-milestone="'.h($milestoneID).'"';
+}
+
+if (isset($tooltip)) {
+	$tooltip = " title=\"$tooltip\"";
+} else {
+	$tooltip = "";
+}
+
+echo "<ul class='well col sprintboard-droplist span$span$classes' $dtStatus $dtPriority $dtMilestone>\n";
+echo "<h2$tooltip>$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {
 	$draggable = (empty($task['Task']['assignee_id']) || $task['Task']['assignee_id'] == $user_id);

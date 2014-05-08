@@ -44,7 +44,8 @@ class TasksController extends AppProjectController {
 		parent::beforeFilter();
 		$this->Auth->allow(
 			'api_all',
-			'api_view'
+			'api_view',
+			'api_update'
 		);
 
 		$this->Security->unlockedActions = array (
@@ -52,7 +53,13 @@ class TasksController extends AppProjectController {
 			"stoptask",
 			"resolve",
 			"unresolve",
-			"freeze"
+			"freeze",
+			"setBlocker",
+			"setUrgent",
+			"setMajor",
+			"setMinor",
+			"detachFromMilestone",
+			"api_update"
 		);
 	}
 
@@ -62,6 +69,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function index($project = null, $statuses = null) {
+		// TODO hard coded IDs
 		$project = $this->_projectCheck($project);
 		if (!preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
 			$statuses = "1,2"; // Default to open/in progress tasks only
@@ -690,7 +698,244 @@ class TasksController extends AppProjectController {
 		$project = $this->_projectCheck($project, true);
 		$task = $this->Task->open($id);
 
+		// TODO hard-coded IDs
 		$this->Task->set('task_status_id', $status);
+		$result = $this->Task->save();
+		if ($isAjax) {
+			return $result;
+		} else {
+			return $this->Flash->U($result);
+		}
+	}
+
+/**
+ * set-blocker function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function setBlocker($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskPriority($project, $id, 4, $isAjax);
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task priority updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task priority");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+/**
+ * set-urgent function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function setUrgent($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskPriority($project, $id, 3, $isAjax);
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task priority updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task priority");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+/**
+ * set-major function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function setMajor($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskPriority($project, $id, 2, $isAjax);
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task priority updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task priority");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+/**
+ * set-minor function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function setMinor($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskPriority($project, $id, 1, $isAjax);
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task priority updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task priority");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+
+/**
+ * detach-from-milestone function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function detachFromMilestone($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		$project = $this->_projectCheck($project, true);
+		$task = $this->Task->open($id);
+
+		$this->Task->set('milestone_id', 0);
+		$success = $this->Task->save();
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task detached from milestone");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while detaching the task from the milestone");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+/**
+ * __updateTaskPriority function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $id (default: null)
+ * @return void
+ */
+	private function __updateTaskPriority($project = null, $id = null, $priority = null, $isAjax = false) {
+		$project = $this->_projectCheck($project, true);
+		$task = $this->Task->open($id);
+
+		// TODO hard-coded IDs
+		$this->Task->set('task_priority_id', $priority);
 		$result = $this->Task->save();
 		if ($isAjax) {
 			return $result;
@@ -723,7 +968,7 @@ class TasksController extends AppProjectController {
 		if ($id == null) {
 			$this->response->statusCode(400);
 			$data['error'] = 400;
-			$data['message'] = 'Bad request, no project id specified.';
+			$data['message'] = 'Bad request, no task id specified.';
 		}
 
 		if ($id == 'all') {
@@ -760,6 +1005,59 @@ class TasksController extends AppProjectController {
 					$task['Task']['priority'] = $task['TaskPriority']['name'];
 
 					$data = $task['Task'];
+				} else {
+					$data['error'] = 401;
+					$data['message'] = 'Task found, but is not public.';
+					$data['id'] = $id;
+				}
+			}
+		}
+
+		$this->set('data',$data);
+		$this->render('/Elements/json');
+	}
+
+	function api_update($id = null) {
+		$this->layout = 'ajax';
+		$data = array();
+
+		if ($id == null) {
+			$this->response->statusCode(400);
+			$data['error'] = 400;
+			$data['message'] = 'Bad request, no task id specified.';
+		}
+
+		if (is_numeric($id)) {
+			$this->Task->id = $id;
+
+			if (!$this->Task->exists()) {
+				$this->response->statusCode(404);
+				$data['error'] = 404;
+				$data['message'] = 'No task found of that ID.';
+				$data['id'] = $id;
+			} else {
+				$task = $this->Task->read();
+
+				$this->Task->Project->id = $task['Task']['project_id'];
+
+				$partOfProject = $this->Task->Project->hasRead($this->Auth->user('id'));
+				$isAdmin = ($this->_apiAuthLevel() == 1);
+
+				if ($isAdmin || $partOfProject) {
+					/*//task_type_id
+					unset($task['Task']['task_type_id']);
+					$task['Task']['type'] = $task['TaskType']['name'];
+					//task_status_id
+					unset($task['Task']['task_status_id']);
+					$task['Task']['status'] = $task['TaskStatus']['name'];
+					//task_priority_id
+					unset($task['Task']['task_priority_id']);
+					$task['Task']['priority'] = $task['TaskPriority']['name'];
+					*/
+					$this->Task->save($this->request->data);
+
+					$data = $task['Task'];
+					$data['error'] = 'no_error';
 				} else {
 					$data['error'] = 401;
 					$data['message'] = 'Task found, but is not public.';
@@ -906,4 +1204,6 @@ class TasksController extends AppProjectController {
 		}
 		$this->set('data',$data);
 	}
+
+
 }

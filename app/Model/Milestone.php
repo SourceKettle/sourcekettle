@@ -211,6 +211,7 @@ class Milestone extends AppModel {
 		// TODO hard-coded IDs!
 		return $this->tasksOfStatusForMilestone($id, 5);
 	}
+
 /**
  * tasksOfStatusForMilestone function.
  * Return the tasks for a given milestone
@@ -230,6 +231,49 @@ class Milestone extends AppModel {
 				'field' => array('milestone_id'),
 				'conditions' => array(
 					'task_status_id ' => $status,
+					'milestone_id =' => $id
+				),
+				'order' => 'task_priority_id DESC'
+			)
+		);
+		return $tasks;
+	}
+
+	public function blockerTasksForMilestone($id = null){
+		// TODO hard-coded priority ID!
+		return $this->tasksOfPriorityForMilestone($id, 4);
+	}
+	public function urgentTasksForMilestone($id = null){
+		// TODO hard-coded priority ID!
+		return $this->tasksOfPriorityForMilestone($id, 3);
+	}
+	public function majorTasksForMilestone($id = null){
+		// TODO hard-coded priority ID!
+		return $this->tasksOfPriorityForMilestone($id, 2);
+	}
+	public function minorTasksForMilestone($id = null){
+		// TODO hard-coded priority ID!
+		return $this->tasksOfPriorityForMilestone($id, 1);
+	}
+/**
+ * tasksOfPriorityForMilestone function.
+ * Return the tasks for a given milestone
+ *
+ * @param mixed $id the id of the milestone
+ * @param mixed $status the status
+ */
+	public function tasksOfPriorityForMilestone($id = null, $priority = 1) {
+		// TODO hard coded default status ID!
+		$this->id = $id;
+
+		if (!$this->exists()) return null;
+
+		$tasks = $this->Task->find(
+			'all',
+			array(
+				'field' => array('milestone_id'),
+				'conditions' => array(
+					'task_priority_id ' => $priority,
 					'milestone_id =' => $id
 				),
 				'order' => 'task_priority_id DESC'
