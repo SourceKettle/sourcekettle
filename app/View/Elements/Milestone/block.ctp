@@ -81,6 +81,18 @@ $link_edit = $this->Html->link(
         'escape' => false
     )
 );
+$link_plan= $this->Html->link(
+    $this->Bootstrap->icon('list-alt'),
+    array(
+        'project' => $project['Project']['name'],
+        'action' => 'plan',
+        $milestone['Milestone']['id']
+    ),
+    array(
+        'class' => 'close edit',
+        'escape' => false
+    )
+);
 ?>
 <div class="row-fluid">
     <div class="span12">
@@ -92,6 +104,7 @@ $link_edit = $this->Html->link(
             <div class="span7">
                 <?= $link_remove ?>
                 <?= $milestone['Milestone']['is_open']? $link_close : $link_reopen?>
+                <?= $link_plan?>
                 <?= $link_edit ?>
                 <p>
                     <small>

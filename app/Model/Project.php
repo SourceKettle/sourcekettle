@@ -320,4 +320,25 @@ class Project extends AppModel {
 		return array_slice($events, 0, $number);
 	}
 
+/**
+ * Returns a list of open tasks that are not assigned to milestones.
+ */
+	public function getProjectBacklog(){
+		$backlog = $this->Task->find(
+			'all',
+			array(
+				'conditions' => array(
+					// TODO hard-coded IDs
+					'Task.task_status_id' => array(1, 2, 5), // open/in-progress/dropped
+					'Task.project_id' => $this->id,
+					'OR' => array(
+						'Task.milestone_id' => 0,
+						'Task.milestone_id is null',
+					)
+				)
+			)
+		);
+		return $backlog;
+	}
+
 }
