@@ -239,19 +239,19 @@ class Milestone extends AppModel {
 		return $tasks;
 	}
 
-	public function blockerTasksForMilestone($id = null){
+	public function blockerTasksForMilestone($id = null) {
 		// TODO hard-coded priority ID!
 		return $this->tasksOfPriorityForMilestone($id, 4);
 	}
-	public function urgentTasksForMilestone($id = null){
+	public function urgentTasksForMilestone($id = null) {
 		// TODO hard-coded priority ID!
 		return $this->tasksOfPriorityForMilestone($id, 3);
 	}
-	public function majorTasksForMilestone($id = null){
+	public function majorTasksForMilestone($id = null) {
 		// TODO hard-coded priority ID!
 		return $this->tasksOfPriorityForMilestone($id, 2);
 	}
-	public function minorTasksForMilestone($id = null){
+	public function minorTasksForMilestone($id = null) {
 		// TODO hard-coded priority ID!
 		return $this->tasksOfPriorityForMilestone($id, 1);
 	}
@@ -345,6 +345,9 @@ class Milestone extends AppModel {
  * @param $allTasks True if all the milestone's tasks should be moved (i.e. delete milestone), false if only non-resolved/closed tasks should be moved (i.e. close milestone)
  */
 	public function shiftTasks($id = null, $newId = null, $allTasks = false) {
+		if ($id == null) {
+			return false;
+		}
 
 		// Retrieve Milestone; recurse to 2 models so we get TaskStatuses
 		// so we can check the status by name
@@ -353,8 +356,8 @@ class Milestone extends AppModel {
 
 		// Now update all related tasks to attach them to the new milestone (or no milestone)
 		$tasks = array();
-		foreach($milestone['Task'] as $task){
-			if($allTasks || !in_array($task['TaskStatus']['name'], array('resolved', 'closed'))){
+		foreach ($milestone['Task'] as $task) {
+			if ($allTasks || !in_array($task['TaskStatus']['name'], array('resolved', 'closed'))) {
 				$task['milestone_id'] = $newId;
 				$tasks[] = $task;
 			}
@@ -362,7 +365,6 @@ class Milestone extends AppModel {
 
 		// Save all the tasks
 		return $this->Task->saveMany($tasks);
-
 	}
 
 /**

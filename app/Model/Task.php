@@ -269,16 +269,16 @@ class Task extends AppModel {
 
 
 		// If we have priority and status names, replace them with IDs for saving
-		if(isset($this->data['Task']['priority'])){
+		if (isset($this->data['Task']['priority'])) {
 			$this->data['Task']['task_priority_id'] = $this->TaskPriority->nameToID($this->data['Task']['priority']);
 			unset($this->data['Task']['priority']);
 		}
-		if(isset($this->data['Task']['status'])){
+		if (isset($this->data['Task']['status'])) {
 			$this->data['Task']['task_status_id'] = $this->TaskStatus->nameToID($this->data['Task']['status']);
 			unset($this->data['Task']['status']);
 		}
 
-		if(!isset($this->data['Task']['milestone_id']) || !$this->data['Task']['milestone_id']){
+		if (!isset($this->data['Task']['milestone_id']) || !$this->data['Task']['milestone_id']) {
 			$this->data['Task']['milestone_id'] = 0;
 		}
 		return true;
@@ -291,7 +291,6 @@ class Task extends AppModel {
  * @return bool True if the save was successful.
  */
 	public function beforeSave($options = array()) {
-
 		// Parse time estimate if necessary
 		if (!$this->beforeValidate($options)) {
 			return false;
@@ -320,8 +319,8 @@ class Task extends AppModel {
  * isOpen function.
  * Returns true if a task is open
  */
- 	// TODO hard-coded status ID
 	public function isOpen() {
+ 		// TODO hard-coded status ID
 		return $this->field('task_status_id') == 1;
 	}
 
@@ -330,8 +329,8 @@ class Task extends AppModel {
  * Returns true if a task is in progress
  * @throws
  */
- 	// TODO hard-coded status ID
 	public function isInProgress() {
+ 		// TODO hard-coded status ID
 		return $this->field('task_status_id') == 2;
 	}
 

@@ -135,7 +135,7 @@ class Time extends AppModel {
 			return true;
 		}
 
-		if(is_int($this->data['Time']['mins'])){
+		if (is_int($this->data['Time']['mins'])) {
 			return true;
 		}
 
@@ -178,24 +178,25 @@ class Time extends AppModel {
 
 /**
  * @OVERRIDE
+ * @throws
  */
 	public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
 		$events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'time');
 		return $events;
 	}
 
-	public function fetchWeeklySummary($projectId = null, $year = null, $week = null, $userId = null){
+	public function fetchWeeklySummary($projectId = null, $year = null, $week = null, $userId = null) {
 		$projectId = ($projectId == null) ? $this->project->id : $projectId;
 
 		if ($projectId == null) {
 			throw new InvalidArgumentException("Could not fetch times for unknown project");
 		}
 
-		if($year === null){
+		if ($year === null) {
 			$year = date('Y');
 		}
 
-		if($week === null){
+		if ($week === null) {
 			$week = date('W');
 		}
 
@@ -206,9 +207,9 @@ class Time extends AppModel {
 		$endDate->setISODate($year, $week, 7);
 
 		$conditions = array(
-                'Project.id' => $projectId,
-                'Time.date >=' => $startDate->format('Y-m-d'),
-                'Time.date <=' => $endDate->format('Y-m-d'),
+			'Project.id' => $projectId,
+			'Time.date >=' => $startDate->format('Y-m-d'),
+			'Time.date <=' => $endDate->format('Y-m-d'),
 		);
 
 		if (isset($userId) && $userId != null) {
@@ -216,24 +217,24 @@ class Time extends AppModel {
 		}
 
 		$weekTimes = $this->find('all', array(
-            'fields' => array(
-                'Task.id', 'Task.subject',
-                'User.id', 'User.name', 'User.email',
-                'Time.date', 'SUM(Time.mins) as total_mins'
-            ),
-            'conditions'    => $conditions,
-            'group' => array('Task.id', 'User.id', 'Time.date'),
-            'order' => array('Task.subject', 'User.name', 'Time.date')
-        ));
+			'fields' => array(
+				'Task.id', 'Task.subject',
+				'User.id', 'User.name', 'User.email',
+				'Time.date', 'SUM(Time.mins) as total_mins'
+			),
+			'conditions' => $conditions,
+			'group' => array('Task.id', 'User.id', 'Time.date'),
+			'order' => array('Task.subject', 'User.name', 'Time.date')
+		));
 
 		$summary = array('totals' => array(), 'tasks' => array(), 'dates' => array());
-		$last_uid = 0;
-		$last_tid = -1;
+		$lastUid = 0;
+		$lastTid = -1;
 		$totals = array();
 		for ($i = 1; $i <= 7; $i++) {
 			$summary['totals'][$i] = 0;
 			$day = clone $startDate;
-			$day->add(new DateInterval('P'.($i-1).'D'));
+			$day->add(new DateInterval('P' . ($i - 1) . 'D'));
 			$summary['dates'][$i] = $day;
 
 		}
@@ -252,8 +253,8 @@ class Time extends AppModel {
 			$dow = date('N', strtotime($time['date']));
 
 			// Build Horrible Array of Doom... start ordered by task
-			if($last_tid != $task['id']){
-				$last_uid = 0;
+			if ($lastTid != $task['id']) {
+				$lastUid = 0;
 				$summary['tasks'][ $task['id'] ] = array(
 					'Task' => $task,
 					'users' => array()
@@ -261,7 +262,7 @@ class Time extends AppModel {
 			}
 
 			// Now for each task, add a list of users; each user then has a breakdown of tasks by day
-			if($last_uid != $user['id']){
+			if ($lastUid != $user['id']) {
 				$summary['tasks'][ $task['id'] ]['users'][ $user['id'] ] = array(
 					'User' => $user,
 					'days' => array()
@@ -273,8 +274,8 @@ class Time extends AppModel {
 			$summary['tasks'][ $task['id'] ]['users'][ $user['id'] ]['days'][$dow] = $minutes;
 			$summary['totals'][$dow] += $minutes;
 
-			$last_uid = $user['id'];
-			$last_tid = $task['id'];
+			$lastUid = $user['id'];
+			$lastTid = $task['id'];
 		}
 
 		return $summary;
@@ -427,7 +428,7 @@ class Time extends AppModel {
 			),
 			'Time.project_id' => $this->Project->id
 		);
-		if($current_user_only){
+		if ($current_user_only) {
 			$conditions['Time.user_id'] = User::get('id');
 		}
 		$tasksForWeek = $this->find(
@@ -471,7 +472,7 @@ class Time extends AppModel {
 				'Time.date' => $today,
 				'Time.project_id' => $this->Project->id,
 			);
-			if($current_user_only){
+			if ($current_user_only) {
 				$conditions['Time.user_id'] = User::get('id');
 			}
 

@@ -74,8 +74,7 @@ class ProjectHistory extends AppModel {
 		)
 	);
 
-
-	public function logC($model, $rowId, $rowTitle, $row_field, $rowFieldOld, $rowFieldNew, $userId, $userName  ) {
+	public function logC($model, $rowId, $rowTitle, $rowField, $rowFieldOld, $rowFieldNew, $userId, $userName) {
 		if (is_array($rowFieldOld)) {
 			$rowFieldOld = serialize($rowFieldOld);
 		}
@@ -89,7 +88,7 @@ class ProjectHistory extends AppModel {
 				'model' => $model,
 				'row_id' => $rowId,
 				'row_title' => $rowTitle,
-				'row_field' => $row_field,
+				'row_field' => $rowField,
 				'row_field_old' => $rowFieldOld,
 				'row_field_new' => $rowFieldNew,
 				'user_id' => $userId,
