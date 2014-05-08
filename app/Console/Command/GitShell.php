@@ -37,7 +37,7 @@ class GitShell extends AppShell {
 			
 			// Sanity check #1, fail if the user doesn't exist...
 			if(!$git_details){
-				$this->err("Cannot sync keys - git user '$git_user' does not exist - have you set up DevTrack properly?");
+				$this->err("Cannot sync keys - git user '$git_user' does not exist - have you set up SourceKettle properly?");
                 exit(1);
 			}
 
@@ -46,7 +46,7 @@ class GitShell extends AppShell {
 
 			// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
 			if(!is_dir($git_homedir.'/.ssh')){
-				$this->err("Cannot sync keys - $git_homedir/.ssh not found - have you set up DevTrack properly?");
+				$this->err("Cannot sync keys - $git_homedir/.ssh not found - have you set up SourceKettle properly?");
                 exit(1);
 			}
 
