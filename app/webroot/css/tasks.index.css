@@ -34,8 +34,8 @@
 }
 
 .task > .well {
-	padding:10px;
-	min-height: 35px;
+	padding:3px 5px;
+	min-height: 20px;
 	max-height: 75px;
 	background: #d3d3d3; /* TODO: doesn't work properly with Bootswatch themes */
 
