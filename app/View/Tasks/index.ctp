@@ -15,6 +15,7 @@
  */
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
+// TODO move to separate JS file
 $this->Html->scriptBlock("
         var repeat = function(statuses) {
             var details = {};
@@ -40,7 +41,7 @@ $this->Html->scriptBlock("
             );
 
             // Fetch the desired milestone
-            var milestone = $('#milestone').attr('value');
+            var milestone = $('#milestone').get()[0].value; // TODO why doesn't this work? // $('#milestone').attr('value');
             if (milestone != '') {
                 details['milestone'] = milestone;
             }
