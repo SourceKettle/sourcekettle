@@ -40,7 +40,7 @@ $this->Html->script("milestones.droplist", array ('inline' => false));
 				'tasks' => $wontHave,
 				'milestoneID' => 0,
 				'status' => 'dropped',
-				'title' => __('Won\'t have'),
+				'title' => __('Project Backlog'),
 				'tooltip' => __('These tasks will not be completed during this milestone'),
 				'span' => '12',
 				'classes' => 'sprintboard-icebox'
@@ -50,66 +50,66 @@ $this->Html->script("milestones.droplist", array ('inline' => false));
 	<!-- End project backlog -->
 	</div>
 
-
-    <!-- Must-have, should-have -->
-	<div class="row-fluid span12">
-
-        <?= $this->element('Task/Board/column',
-            array(
-				'tasks' => $mustHave,
-				'milestoneID' => $milestone['Milestone']['id'],
-				'priority' => 'blocker',
-				'title' => __('Must have'),
-				'tooltip' => __('The highest priority - these tasks MUST be completed for the milestone to be a success'),
-				'span' => '6',
-				'classes' => 'sprintboard-column sprintboard-column-top'
-			)
-        ) ?>	
-
-        <?= $this->element('Task/Board/column',
-            array(
-				'tasks' => $shouldHave,
-				'milestoneID' => $milestone['Milestone']['id'],
-				'priority' => 'urgent',
-				'title' => __('Should have'),
-				'tooltip' => __('These tasks are not vital to the milestone, but should not be dropped unless time is very short'),
-				'span' => '6',
-				'classes' => 'sprintboard-column sprintboard-column-top'
-			)
-        ) ?>
-
-	<!-- End must-have/should-have -->
-	</div>
-
     <!-- Could-have, might-have -->
 	<div class="row-fluid span12">
-
-        <?= $this->element('Task/Board/column',
-            array(
-				'tasks' => $couldHave,
-				'milestoneID' => $milestone['Milestone']['id'],
-				'priority' => 'major',
-				'title' => __('Could have'),
-				'tooltip' => __('These tasks will be completed if possible, but if time runs out they will be dropped'),
-				'span' => '6',
-				'classes' => 'sprintboard-column sprintboard-column-bottom'
-			)
-        ) ?>	
 
         <?= $this->element('Task/Board/column',
             array(
 				'tasks' => $mightHave,
 				'milestoneID' => $milestone['Milestone']['id'],
 				'priority' => 'minor',
-				'title' => __('Might have'),
+				'title' => __('Minor'),
 				'tooltip' => __('These tasks are not important for the milestone, and can be easily dropped'),
 				'span' => '6',
-				'classes' => 'sprintboard-column sprintboard-column-bottom'
+				'classes' => 'sprintboard-column'
 			)
         ) ?>
+        <?= $this->element('Task/Board/column',
+            array(
+				'tasks' => $couldHave,
+				'milestoneID' => $milestone['Milestone']['id'],
+				'priority' => 'major',
+				'title' => __('Major'),
+				'tooltip' => __('These tasks will be completed if possible, but if time runs out they will be dropped'),
+				'span' => '6',
+				'classes' => 'sprintboard-column'
+			)
+        ) ?>	
+
 
 	<!-- End could-have/might-have -->
 	</div>
+
+    <!-- Must-have, should-have -->
+	<div class="row-fluid span12">
+
+        <?= $this->element('Task/Board/column',
+            array(
+				'tasks' => $shouldHave,
+				'milestoneID' => $milestone['Milestone']['id'],
+				'priority' => 'urgent',
+				'title' => __('Urgent'),
+				'tooltip' => __('These tasks are not vital to the milestone, but should not be dropped unless time is very short'),
+				'span' => '6',
+				'classes' => 'sprintboard-column'
+			)
+        ) ?>
+        <?= $this->element('Task/Board/column',
+            array(
+				'tasks' => $mustHave,
+				'milestoneID' => $milestone['Milestone']['id'],
+				'priority' => 'blocker',
+				'title' => __('Blocker'),
+				'tooltip' => __('The highest priority - these tasks MUST be completed for the milestone to be a success'),
+				'span' => '6',
+				'classes' => 'sprintboard-column'
+			)
+        ) ?>	
+
+
+	<!-- End must-have/should-have -->
+	</div>
+
 
 
     <!-- End milestone board -->
