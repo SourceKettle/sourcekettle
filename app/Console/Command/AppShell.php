@@ -28,11 +28,11 @@ App::uses('Shell', 'Console');
  */
 class AppShell extends Shell {
 	public $uses = array('Settings');
-	public function initialize() {
-		parent::initialize();
-		$this->sourcekettle_config = array_merge(
+	protected function getSourceKettleConfig() {
+		return array_merge(
 			Configure::read('devtrack'),
 			$this->Settings->find('list', array('fields' => array('Settings.name', 'Settings.value')))
 		);
+		
 	}
 }

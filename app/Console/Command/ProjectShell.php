@@ -23,6 +23,7 @@ class ProjectShell extends AppShell {
 		$this->repoTypes = $this->Project->RepoType->find('list');
 
 		$this->repoTypes = array_map('strtolower', $this->repoTypes);
+		$this->sourcekettle_config = $this->getSourcekettleConfig();
 
 		if (isset($this->sourcekettle_config['repo']['default'])) {
 			$d = strtolower($this->sourcekettle_config['repo']['default']);
