@@ -125,25 +125,31 @@ class UserTestCase extends CakeTestCase {
     }
 
 	public function testAddUser() {
-		$data = array(
-			'name' => 'Eve Nchance',
-			'email' => 'eve@example.com',
-			'is_admin' => 'true',
-			'is_active' => 'true',
-			'theme' => 'spacelab',
-			'password' => 'wibble',
-		);
-		$this->User->create($data);
-		$saved = $this->User->save();
-		$id = $this->User->getLastInsertID();
-		debug(get_class($this->User));
-		debug($data);
-		debug($saved);
-		debug($id);
+		$data = array('User' => array(
+				'name'      => 'Eve Nchance',
+				'email'     => 'eve@example.com',
+				'is_admin'  => true,
+				'password'  => 'wibbleSOCKS',
+				'is_active' => 1,
+				'deleted'   => 0,
+				'theme'     => 'spacelab',
+		));
+		$this->User->create();
+		$saved = $this->User->save($data);
+	//	$id = $this->User->getLastInsertID();
 
-		$retrieved = $this->User->read($id);
-		debug($retrieved);
-		$this->assertTrue($saved, "Save failed");
+		// Add the ID and hashed password for comparison
+		$data['User']['id'] = $this->User->getLastInsertID();
+		$data['User']['password'] = Security::hash($data['User']['password'], null, true);
+
+		// Check the create/modify date are sane, then add to array for comparison
+		$this->assertNotNull($saved['User']['created'], "Create date was null");
+		$this->assertNotNull($saved['User']['modified'], "Modify date was null");
+
+		$data['User']['created']  = $saved['User']['created'];
+		$data['User']['modified'] = $saved['User']['modified'];
+
+		$this->assertEqual($saved, $data, "Save failed");
 	}
 
     /**
