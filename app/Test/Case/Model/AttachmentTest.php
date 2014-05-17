@@ -90,6 +90,7 @@ class AttachmentTest extends CakeTestCase {
 		$saved = $this->Attachment->upload($attachment, 'Project', 2, array('callbacks' => false));
 		$this->assertNull($saved);
 
+
 		// Upload with project - should get an object back
 		$this->Attachment->Project->id = 2;
 		$saved = $this->Attachment->upload($attachment, 'Project', 2, array('callbacks' => false));
@@ -111,6 +112,16 @@ class AttachmentTest extends CakeTestCase {
 			'id' => '11'
 			)
 		));
+
+		// Upload without any valid files - should return null
+		$fake = array('Attachment' => array(
+			'fake' => array(
+				'name' => 'fake',
+				'tmp_name' => 'nonexistent_file_gribble',
+			),
+		));
+		$saved = $this->Attachment->upload($fake, 'Project', 2, array('callbacks' => false));
+		$this->assertNull($saved);
 	}
 
 /**
