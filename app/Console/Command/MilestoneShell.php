@@ -59,7 +59,7 @@ class MilestoneShell extends AppShell {
 
 		$this->out("Adding a milestone");
 
-		$project = $this->args[0];
+		$projectName = $this->args[0];
 		$subject = $this->args[1];
 
 		$due = $this->params['due-date'];
@@ -69,25 +69,16 @@ class MilestoneShell extends AppShell {
 			$due = $matches[1];
 		}
 
-		$project = $this->Project->find('first', array(
-			'conditions' => array(
-				'Project.name' => $project
-			)
-		));
+		$project = $this->Project->findByName($projectName);
 
 		if (empty($project)) {
-			$this->error(__("No project called '$name' exists!"));
+			$this->error(__("No project called '$projectName' exists!"));
 		}
 
-		$milestone = $this->Milestone->find('first', array(
-			'conditions' => array(
-				'Milestone.project_id' => $project['Project']['id'],
-				'Milestone.subject' => $subject
-			)
-		));
+		$milestone = $this->Milestone->findByProjectIdAndSubject($project['Project']['id'], $subject);
 
 		if (!empty($milestone)) {
-			$this->error(__("A milestone '$subject' for project '$project' already exists!"));
+			$this->error(__("A milestone '$subject' for project '$projectName' already exists!"));
 		}
 
 		// No existing account, create one
@@ -106,7 +97,7 @@ class MilestoneShell extends AppShell {
 		if (!$ok) {
 			$this->error(__("Failed to create milestone '$subject'!"));
 		} else {
-			$this->out(__("Milestone '$subject' created."));
+			$this->out(__("Milestone '$subject' created with ID ".$ok['Milestone']['id']));
 		}
 	}
 
