@@ -248,7 +248,7 @@ class Attachment extends AppModel {
  * @param mixed $modelId the related model id
  * @return void
  */
-	public function upload($data = null, $model = null, $modelId = null) {
+	public function upload($data = null, $model = null, $modelId = null, $options = array()) {
 		if (!$this->Project->id || !$data) {
 			return null;
 		}
@@ -274,7 +274,7 @@ class Attachment extends AppModel {
 				$_data = array('Attachment' => $row);
 
 				$this->create();
-				$saved = $this->save($_data);
+				$saved = $this->save($_data, $options);
 
 				// Clean up
 				$file->delete();
