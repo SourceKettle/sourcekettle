@@ -8,7 +8,7 @@
  */
 class TaskShell extends AppShell {
 
-	public $uses = array('User', 'Collaborator', 'Task', 'TaskType', 'TaskPriority', 'Project');
+	public $uses = array('User', 'Collaborator', 'Task', 'TaskType', 'TaskStatus', 'TaskPriority', 'Project');
 
 	public $minPasswordLength = 8;
 
@@ -17,6 +17,7 @@ class TaskShell extends AppShell {
 
 		// TODO should be moved to model class?
 		$priorities = $this->TaskPriority->find('list');
+		$statuses = $this->TaskStatus->find('list');
 		$types = $this->TaskType->find('list');
 
 		$due = new DateTime();
@@ -55,9 +56,15 @@ class TaskShell extends AppShell {
 					),
 					'priority' => array(
 						'short' => 'p',
-						'help' => __("The user ID or email address to assign the task to"),
+						'help' => __("The task priority"),
 						'choices' => $priorities,
 						'default' => 'major', // TODO load from config
+					),
+					'status' => array(
+						'short' => 's',
+						'help' => __("The task status"),
+						'choices' => $statuses,
+						'default' => 'open',
 					),
 					'assignee' => array(
 						'short' => 'a',
@@ -72,7 +79,7 @@ class TaskShell extends AppShell {
 						'help' => __("How long the task is expected to take (e.g. 4h20m)"),
 					),
 					'story-points' => array(
-						'short' => 's',
+						'short' => 'r',
 						'help' => __("How many story points the task is worth"),
 					),
 					// TODO dependencies? Maybe a separate function? Do we need it?
@@ -169,7 +176,7 @@ class TaskShell extends AppShell {
 				'deleted'       => 0,
 				'type'          => $this->params['type'],
 				'priority'      => $this->params['priority'],
-				'status'        => 'open',
+				'status'        => $this->params['status'],
 				'owner_id'      => $ownerID,
 			),
 		), array('callbacks' => false));
