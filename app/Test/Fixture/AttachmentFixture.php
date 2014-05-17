@@ -36,7 +36,7 @@ class AttachmentFixture extends CakeTestFixture {
 			'model' => 'Lorem ipsum dolor sit amet',
 			'model_id' => 2,
 			'name' => 'Lorem ipsum dolor sit amet',
-			'mime' => 'Lorem ipsum dolor sit amet',
+			'mime' => 'text/plain',
 			'size' => 'Lorem ipsum dolor sit amet',
 			'md5' => 'Lorem ipsum dolor sit amet',
 			'content' => 'Lorem ipsum dolor sit amet',
