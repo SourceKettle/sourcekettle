@@ -269,6 +269,10 @@ class Task extends AppModel {
 
 
 		// If we have priority and status names, replace them with IDs for saving
+		if (isset($this->data['Task']['type'])) {
+			$this->data['Task']['task_type_id'] = $this->TaskType->nameToID($this->data['Task']['type']);
+			unset($this->data['Task']['type']);
+		}
 		if (isset($this->data['Task']['priority'])) {
 			$this->data['Task']['task_priority_id'] = $this->TaskPriority->nameToID($this->data['Task']['priority']);
 			unset($this->data['Task']['priority']);
