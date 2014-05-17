@@ -23,7 +23,8 @@ $('#piechart').unbind();
 // Generate colours based on the current theme, getting lighter
 // http://www.benknowscode.com/2013/02/graphing-with-flot-controlling-series_9976.html
 // Base it on the colour of a link, as that should look OK against the background.
-var base_colour = $(document.createElement('a')).css('color');
+//var base_colour = $(document.createElement('a')).css('color');
+var base_colour = $($('.nav-list').find(':not(.active)li a')[0]).css('color');
 var len = 7;
 var colours = $.map( data, function ( o, i ) {
    return $.Color(base_colour).lightness(0.6-i/(len*1.2)).toHexString();

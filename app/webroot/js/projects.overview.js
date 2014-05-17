@@ -23,7 +23,9 @@ $(document).ready(function(){
 var data = [];
 var i = 0;
 var len = 4;
-var base_colour = $(document.createElement('a')).css('color');
+//var base_colour = $(document.createElement('a')).css('color');
+// Find a suitable navbar link and use its colour as the base
+var base_colour = $($('.nav-list').find(':not(.active)li a')[0]).css('color');
 $('#taskcounts').find('li').each(function(index){
 	statusname = $(this).attr('data-taskstatus');
 	numtasks   = $(this).attr('data-numtasks');
