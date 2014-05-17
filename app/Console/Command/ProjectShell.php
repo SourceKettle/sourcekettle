@@ -145,12 +145,8 @@ class ProjectShell extends AppShell {
 
 		$name = $this->args[0];
 
-		// Find existing user account
-		$found = $this->Project->find('first', array(
-			'conditions' => array(
-				'Project.name' => $name
-			)
-		));
+		// Find existing project
+		$found = $this->Project->findByName($name);
 
 		// If it exists, error out
 		if (!empty($found)) {
@@ -171,7 +167,10 @@ class ProjectShell extends AppShell {
 		$collaborators = array();
 
 		foreach ($this->params['guests'] as $email) {
-			$user = $this->User->find('first', array('conditions' => array('User.email' => $email)));
+			if (empty($email)) {
+				continue;
+			}
+			$user = $this->User->findByEmail($email);
 			if (!$user) {
 				$this->error("$email is not a recognised user account!");
 			}
@@ -180,7 +179,10 @@ class ProjectShell extends AppShell {
 
 		$users = array();
 		foreach ($this->params['users'] as $email) {
-			$user = $this->User->find('first', array('conditions' => array('User.email' => $email)));
+			if (empty($email)) {
+				continue;
+			}
+			$user = $this->User->findByEmail($email);
 			if (!$user) {
 				$this->error("$email is not a recognised user account!");
 			}
@@ -189,7 +191,10 @@ class ProjectShell extends AppShell {
 
 		$admins = array();
 		foreach ($this->params['admins'] as $email) {
-			$user = $this->User->find('first', array('conditions' => array('User.email' => $email)));
+			if (empty($email)) {
+				continue;
+			}
+			$user = $this->User->findByEmail($email);
 			if (!$user) {
 				$this->error("$email is not a recognised user account!");
 			}
@@ -219,7 +224,9 @@ class ProjectShell extends AppShell {
 			$this->Project->delete();
 			$this->error(__("Failed to create repository for project '$name' :-("));
 		}
-		$this->out(__("Project '$name' created."));
+
+		$project = $this->Project->findByName($name);
+		$this->out(__("Project '$name' created with ID ".$project['Project']['id']));
 		
 	}
 
