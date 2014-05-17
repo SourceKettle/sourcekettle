@@ -18,12 +18,18 @@
     <div class="span12">
         <dl class="dl-horizontal span6">
             <dt><?= $this->DT->t('details.creator') ?>:</dt>
-            <dd>
+            <? if (isset($task['Owner']['id'])) {?>
+	    <dd>
                 <?= $this->Html->link(
                     $task['Owner']['name'],
                     array('controller' => 'users', 'action' => 'view', $task['Owner']['id'])
                 ) ?>
             </dd>
+	    <? } else { ?>
+            <dd class="muted">
+		<?=__("Not set")?>
+            </dd>
+	    <? } ?>
             <dt><?= __("Task type") ?>:</dt>
             <dd><?= $this->Task->type($task['Task']['task_type_id']) ?></dd>
             <dt><?= __("Task priority") ?>:</dt>
