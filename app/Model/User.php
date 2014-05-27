@@ -119,7 +119,8 @@ class User extends AppModel {
 				$wl = array_diff($wl, array('email'));
 			}
 			$this->whitelist = $wl;
-		} else {
+
+		} elseif (isset($this->data[$this->alias]['email'])) {
 
 			// Lowercase the email address for storage (internal accounts only)
 			$this->data[$this->alias]['email'] = strtolower($this->data[$this->alias]['email']);
@@ -166,10 +167,24 @@ class User extends AppModel {
  * If it's been auto-created from e.g. LDAP, the password will be blank.
  */
 	public static function isDevtrackManaged($data) {
-		return (
-			isset($data['User']['password'])
-			&& !empty($data['User']['password'])
-		);
+
+		// Attempt to find an existing user by ID or email
+		$user = ClassRegistry::init('User');
+		if (isset($data['User']['id'])) {
+			$found = $user->findById($data['User']['id']);
+		} elseif (isset($data['User']['email'])) {
+			$found = $user->findByEmail($data['User']['email']);
+
+		}
+		// No existing user found - we must be saving a new one,
+		// so simply check the password field exists
+		if (!isset($found) || count($found) < 1) {
+			return ( isset($data['User']['password']) && !empty($data['User']['password']) );
+		}
+
+		// Check the existing object's password field
+		return ( isset($found['User']['password']) && !empty($found['User']['password']) );
+
 	}
 
 /**

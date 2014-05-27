@@ -344,7 +344,7 @@ class Milestone extends AppModel {
  * @param $newId Milestone ID to attach tasks to
  * @param $allTasks True if all the milestone's tasks should be moved (i.e. delete milestone), false if only non-resolved/closed tasks should be moved (i.e. close milestone)
  */
-	public function shiftTasks($id = null, $newId = null, $allTasks = false) {
+	public function shiftTasks($id = null, $newId = null, $allTasks = false, $options = array()) {
 		if ($id == null) {
 			return false;
 		}
@@ -364,7 +364,7 @@ class Milestone extends AppModel {
 		}
 
 		// Save all the tasks
-		return $this->Task->saveMany($tasks);
+		return $this->Task->saveMany($tasks, $options);
 	}
 
 /**
