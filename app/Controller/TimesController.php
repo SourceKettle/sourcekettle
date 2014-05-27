@@ -188,6 +188,8 @@ class TimesController extends AppProjectController {
 			$this->set('prevYear', $year);
 		}
 
+		// List of tasks we can log time against, for modal add dialog
+		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
 
 		// Downloadable timesheets
 		if (isset($this->request->query['format'])) {
