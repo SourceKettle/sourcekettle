@@ -52,6 +52,7 @@ class TaskTest extends CakeTestCase {
  * @return void
  */
 	public function testIsAssignee() {
+		# TODO fake logged-in user
 	}
 
 /**
@@ -60,6 +61,12 @@ class TaskTest extends CakeTestCase {
  * @return void
  */
 	public function testIsOpen() {
+		$this->Task->id = 1;
+		$this->Task->read();
+		$this->assertEquals(false, $this->Task->isOpen());
+		$this->Task->id = 2;
+		$this->Task->read();
+		$this->assertEquals(true, $this->Task->isOpen());
 	}
 
 /**
@@ -68,6 +75,12 @@ class TaskTest extends CakeTestCase {
  * @return void
  */
 	public function testIsInProgress() {
+		$this->Task->id = 1;
+		$this->Task->read();
+		$this->assertEquals(false, $this->Task->isInProgress());
+		$this->Task->id = 3;
+		$this->Task->read();
+		$this->assertEquals(true, $this->Task->isInProgress());
 	}
 
 /**
@@ -84,6 +97,7 @@ class TaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetTitleForHistory() {
+		$this->assertEquals(null, $this->Task->getTitleForHistory());
 		$this->Task->id = 1;
 		$this->Task->read();
 		$this->assertEquals('#1', $this->Task->getTitleForHistory());

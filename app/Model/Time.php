@@ -297,10 +297,10 @@ class Time extends AppModel {
 
 		$totalLoggedTime = $this->find('all', array(
 			'conditions' => array('Time.project_id' => $projectId),
-			'fields' => array('SUM(Time.mins)')
+			'fields' => array('SUM(Time.mins) AS total_mins')
 		));
 
-		$totalLoggedTime = $totalLoggedTime[0][0]['SUM(`Time`.`mins`)'];
+		$totalLoggedTime = $totalLoggedTime[0][0]['total_mins'];
 
 		try{
 			$totalLoggedTime = TimeString::renderTime($totalLoggedTime);
@@ -331,12 +331,12 @@ class Time extends AppModel {
 				'User.id',
 				'User.name',
 				'User.email',
-				'SUM(Time.mins)'
+				'SUM(Time.mins) AS total_mins'
 			)
 		));
 
 		foreach ($userTimes as $key => $value) {
-			$userTimes[$key]['Time']['time'] = TimeString::renderTime($value[0]["SUM(`Time`.`mins`)"]);
+			$userTimes[$key]['Time']['time'] = TimeString::renderTime($value[0]["total_mins"]);
 		}
 
 		return $userTimes;

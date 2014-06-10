@@ -107,13 +107,59 @@ class TimeTestCase extends CakeTestCase {
                         't' => '900',
                     ),
                     'description' => 'A description of the second <b>task</b>.',
-                    'date' => '2012-11-11',
-                    'created' => '2012-11-11 10:24:06',
-                    'modified' => '2012-11-11 10:24:06',
+                    'date' => '2012-11-12',
+                    'created' => '2012-11-12 10:24:06',
+                    'modified' => '2012-11-12 10:24:06',
 					'deleted' => '0',
 					'deleted_date' => null,
                 ),
             ),
+			array(
+				'Time' => array(
+					'id' => '3',
+					'project_id' => '1',
+					'user_id' => '2',
+					'task_id' => '2',
+					'mins' => '14',
+					'description' => 'A description of the third <b>task</b>.',
+					'date' => '2012-11-13',
+					'created' => '2012-11-13 10:24:06',
+					'modified' => '2012-11-13 10:24:06',
+					'deleted' => '0',
+					'deleted_date' => null,
+					'minutes' => array(
+						'w' => (int) 0,
+						'd' => (int) 0,
+						'h' => (int) 0,
+						'm' => (int) 14,
+						't' => (int) 14,
+						's' => '0h 14m'
+					)
+				)
+			),
+			array(
+				'Time' => array(
+					'id' => '4',
+					'project_id' => '1',
+					'user_id' => '3',
+					'task_id' => '1',
+					'mins' => '19',
+					'description' => 'A description of the fourth <b>task</b>.',
+					'date' => '2012-11-11',
+					'created' => '2012-11-11 10:24:06',
+					'modified' => '2012-11-11 10:24:06',
+					'deleted' => '0',
+					'deleted_date' => null,
+					'minutes' => array(
+						'w' => (int) 0,
+						'd' => (int) 0,
+						'h' => (int) 0,
+						'm' => (int) 19,
+						't' => (int) 19,
+						's' => '0h 19m'
+					)
+				)
+			)
         );
         $fixturesB = $this->Time->find('all');
         $this->assertEquals($fixtures, $fixturesB, json_encode($fixturesB)."Arrays were not equal");
@@ -302,6 +348,7 @@ class TimeTestCase extends CakeTestCase {
 		$dow = $this->Time->dayOfWeek(2011, 52, 6);
 		$this->assertEquals($dow, '2011-12-31', "Incorrect start of week 2011-52/6");
 	}
+
 	public function testStartOfWeek() {
 		$sow = $this->Time->startOfWeek(2011, 1);
 		$this->assertEquals($sow, '2011-01-02', "Incorrect start of week 2011-01");
@@ -311,4 +358,115 @@ class TimeTestCase extends CakeTestCase {
 		$this->assertEquals($sow, '2011-12-25', "Incorrect start of week 2011-52");
 	}
 
+	public function testGetTitleForHistory() {
+		$this->assertNull($this->Time->getTitleForHistory(null), "Got non-null title for null time ID");
+		$this->assertEquals($this->Time->getTitleForHistory(1), "1h 30m", "Got incorrect title for time ID 1");
+		$this->assertEquals($this->Time->getTitleForHistory(2), "15h 0m", "Got incorrect title for time ID 2");
+		$this->assertEquals($this->Time->getTitleForHistory(3), "0h 14m", "Got incorrect title for null time ID 3");
+	}
+
+	public function testFetchTotalTimeForProject() {
+		try{
+			$totalTime = $this->Time->fetchTotalTimeForProject();
+			$this->assertTrue(false, "Successfully fetched total time for null project");
+		} catch (InvalidArgumentException $e) {
+			$this->assertTrue(true);
+        } catch (Exception $e) {
+            $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
+		}
+
+		$totalTime = $this->Time->fetchTotalTimeForProject(1);
+		$this->assertEquals($totalTime, array(
+			'w' => (int) 0,
+			'd' => (int) 0,
+			'h' => (int) 17,
+			'm' => (int) 3,
+			't' => (int) 1023,
+			's' => '17h 3m'
+		), "Incorrect total time found for project ID 1");
+	}
+
+	public function testFetchUserTimesForProject() {
+		try{
+			$userSummary = $this->Time->fetchUserTimesForProject();
+			$this->assertTrue(false, "Successfully fetched times for null project");
+		} catch (InvalidArgumentException $e) {
+			$this->assertTrue(true);
+        } catch (Exception $e) {
+            $this->assertTrue(false, "Wrong exception thrown: ".$e->getMessage());
+		}
+
+		$userSummary = $this->Time->fetchUserTimesForProject(1);
+		$this->assertEquals($userSummary, array(
+			array(
+				0 => array(
+					'total_mins' => '990',
+				),
+				'User' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com'
+				),
+				'Time' => array(
+					'time' => array(
+						'w' => (int) 0,
+						'd' => (int) 0,
+						'h' => (int) 16,
+						'm' => (int) 30,
+						't' => (int) 990,
+						's' => '16h 30m'
+					)
+				),
+			),
+
+		 	array(
+				'User' => array(
+					'id' => '2',
+					'name' => 'Mrs Smith',
+					'email' => 'mrs.smith@example.com'
+				),
+				0 => array(
+					'total_mins' => '14'
+				),
+				'Time' => array(
+					'time' => array(
+						'w' => (int) 0,
+						'd' => (int) 0,
+						'h' => (int) 0,
+						'm' => (int) 14,
+						't' => (int) 14,
+						's' => '0h 14m'
+					)
+				)
+			),
+
+			2 => array(
+				'User' => array(
+					'id' => '3',
+					'name' => 'Mrs Guest',
+					'email' => 'mrs.guest@example.com'
+				),
+				0 => array(
+					'total_mins' => '19'
+				),
+				'Time' => array(
+					'time' => array(
+						'w' => (int) 0,
+						'd' => (int) 0,
+						'h' => (int) 0,
+						'm' => (int) 19,
+						't' => (int) 19,
+						's' => '0h 19m'
+					)
+				)
+			)
+		), "User time summary was not correct");
+	}
+
+	public function testTasksForWeek() {
+		$this->Time->Project->id = 1;
+		$tasks = $this->Time->tasksForWeek(2012, 46, false);
+		$this->assertEqual($tasks, array(1, 2), "Incorrect list of task IDs for week 46");
+		// TODO tasks for current user
+	}
 }
