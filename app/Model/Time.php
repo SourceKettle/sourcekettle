@@ -557,7 +557,7 @@ class Time extends AppModel {
  * @throws InvalidArgumentException
  */
 	public function validateWeek($week = null, $year = null) {
-		if ($week == null) {
+		if ($week === null) {
 			return $this->currentWeek();
 		}
 		if (!is_numeric($week) || $week < 1 || $week > $this->lastWeekOfYear($year)) {
