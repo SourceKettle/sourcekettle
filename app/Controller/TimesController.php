@@ -156,9 +156,9 @@ class TimesController extends AppProjectController {
 		}
 
 		// Start and end dates
-		$startDate = new DateTime();
+		$startDate = new DateTime(null, new DateTimeZone('UTC'));
 		$startDate->setISODate($year, $week, 1);
-		$endDate = new DateTime();
+		$endDate = new DateTime(null, new DateTimeZone('UTC'));
 		$endDate->setISODate($year, $week, 7);
 
 		// Fetch summary details for the week

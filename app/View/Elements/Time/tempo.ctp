@@ -36,6 +36,8 @@ echo $this->element('Time/modal_add');
         </thead>
         <tbody>
         <?php
+			// Sorry :-(
+
 			$overallTotal = 0;
 			$elements = '';
 			foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
@@ -69,19 +71,34 @@ echo $this->element('Time/modal_add');
 					));
 					echo "</td>\n";
 
+					// Loop over the days of the week
 					// 1=Mon, 7=Sun...
 					$rowTotal = 0;
 					for ($i = 1; $i <= 7; $i++) {
+
+						// The date for this day, and day name for display
 						$date = $weekTimes['dates'][$i]->format('Y-m-d');
 						$day = $weekTimes['dates'][$i]->format('D');
+
+						// Popup for viewing times
 		                $popover = "tempo_{$day}_{$taskId}";
-						if (array_key_exists($i, $userDetails['days'])) {
 
+						// times_by_day is a list of Time... cake-y object-like array things
+						if (array_key_exists($i, $userDetails['times_by_day'])) {
+							$timeSpent = 0;
+							foreach ($userDetails['times_by_day'][$i] as $time){
+								$rowTotal += $time['mins'];
+								$timeSpent += $time['mins'];
 
-							$rowTotal += $userDetails['days'][$i];
-							$timeSpent = TimeString::renderTime($userDetails['days'][$i]);
-
-							// Popup for viewing times
+							}
+  	                    	$elements .= $this->element('Time/tempo_modal',
+                        		array(
+                            		'id' => $popover,
+                             		'times' => $userDetails['times_by_day'][$i],
+                        	    	'date'  => $weekTimes['dates'][$i]
+                        		)
+                        	);
+							$timeSpent = TimeString::renderTime($timeSpent);
 							echo "<td class=\"tempoBody\" data-toggle=\"$popover\" data-taskid=\"$taskId\" data-date=\"$date\">".h($timeSpent['s'])."</td>\n";
 						} else {
 							echo "<td class=\"tempoBody\" data-toggle=\"$popover\" data-taskid=\"$taskId\" data-date=\"$date\">---</td>\n";

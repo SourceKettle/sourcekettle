@@ -469,4 +469,87 @@ class TimeTestCase extends CakeTestCase {
 		$this->assertEqual($tasks, array(1, 2), "Incorrect list of task IDs for week 46");
 		// TODO tasks for current user
 	}
+
+	public function testFetchWeeklySummary() {
+		$this->Time->Project->id = 1;
+		$weekTimes = $this->Time->fetchWeeklySummary(1, 2012, 46);
+		$this->assertEqual($weekTimes, array(
+			'totals' => array(
+				1 => 900,
+				2 => 14,
+				3 => 0,
+				4 => 0,
+				5 => 0,
+				6 => 0,
+				7 => 0
+			),
+			'tasks' => array(
+				2 => array(
+					'Task' => array(
+						'id' => '2',
+						'subject' => 'Open Minor Task 2 for milestone 1'
+					),
+					'users' => array(
+						1 => array(
+							'User' => array(
+								'id' => '1',
+								'name' => 'Mr Smith',
+								'email' => 'Mr.Smith@example.com'
+							),
+							'times_by_day' => array(
+								1 => array(
+									0 => array(
+										'id' => 2,
+										'date' => '2012-11-12',
+										'mins' => '900',
+										'minutes' => array(
+											'w' => 0,
+											'd' => 0,
+											'h' => 15,
+											'm' => 0,
+											't' => 900,
+											's' => '15h 0m'
+										),
+									)
+								)
+							)
+						),
+						2 => array(
+							'User' => array(
+								'id' => '2',
+								'name' => 'Mrs Smith',
+								'email' => 'mrs.smith@example.com'
+							),
+							'times_by_day' => array(
+								2 => array(
+									0 => array(
+										'id' => 3,
+										'date' => '2012-11-13',
+										'mins' => '14',
+										'minutes' => array(
+											'w' => 0,
+											'd' => 0,
+											'h' => 0,
+											'm' => 14,
+											't' => 14,
+											's' => '0h 14m'
+										)
+									)
+								)
+							)
+						)
+					),
+				)
+			),
+			'dates' => array(
+				1 => new DateTime('2012-11-12 00:00', new DateTimeZone('UTC')),
+				2 => new DateTime('2012-11-13 00:00', new DateTimeZone('UTC')),
+				3 => new DateTime('2012-11-14 00:00', new DateTimeZone('UTC')),
+				4 => new DateTime('2012-11-15 00:00', new DateTimeZone('UTC')),
+				5 => new DateTime('2012-11-16 00:00', new DateTimeZone('UTC')),
+				6 => new DateTime('2012-11-17 00:00', new DateTimeZone('UTC')),
+				7 => new DateTime('2012-11-18 00:00', new DateTimeZone('UTC')),
+			)
+		));
+	}
 }

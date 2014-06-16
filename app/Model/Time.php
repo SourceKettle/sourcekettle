@@ -108,7 +108,7 @@ class Time extends AppModel {
 		parent::__construct($id, $table, $ds);
 
 		// Set the current date
-		$this->__currentDate = new DateTime();
+		$this->__currentDate = new DateTime(null, new DateTimeZone('UTC'));
 		$this->__maximumAllowedYear = $this->currentYear(1);
 	}
 
@@ -201,10 +201,12 @@ class Time extends AppModel {
 		}
 
 		// Convert to date range
-		$startDate = new DateTime();
+		$startDate = new DateTime(null, new DateTimeZone('UTC'));
 		$startDate->setISODate($year, $week, 1);
-		$endDate = new DateTime();
+		$startDate->setTime(0, 0, 0);
+		$endDate = new DateTime(null, new DateTimeZone('UTC'));
 		$endDate->setISODate($year, $week, 7);
+		$endDate->setTime(0, 0, 0);
 
 		$conditions = array(
 			'Project.id' => $projectId,
@@ -220,17 +222,18 @@ class Time extends AppModel {
 			'fields' => array(
 				'Task.id', 'Task.subject',
 				'User.id', 'User.name', 'User.email',
-				'Time.date', 'SUM(Time.mins) as total_mins'
+				'Time.id', 'Time.date', 'Time.mins' //'SUM(Time.mins) as total_mins'
 			),
 			'conditions' => $conditions,
-			'group' => array('Task.id', 'User.id', 'Time.date'),
 			'order' => array('Task.subject', 'User.name', 'Time.date')
 		));
 
 		$summary = array('totals' => array(), 'tasks' => array(), 'dates' => array());
 		$lastUid = 0;
 		$lastTid = -1;
+		$lastDate = null;
 		$totals = array();
+
 		for ($i = 1; $i <= 7; $i++) {
 			$summary['totals'][$i] = 0;
 			$day = clone $startDate;
@@ -241,16 +244,17 @@ class Time extends AppModel {
 		foreach ($weekTimes as $time) {
 
 			// Make the variables a bit more managable...
-			$minutes = $time[0]['total_mins'];
 			$task = $time['Task'];
 			$user = $time['User'];
 			$time = $time['Time'];
+			$minutes = $time['mins'];
+			$date = strtotime($time['date']);
 
 			// Convert null task ID to 0
 			$task['id'] = isset($task['id']) ? $task['id'] : 0;
 
 			// ISO day of week, 1=Monday 7=Sunday
-			$dow = date('N', strtotime($time['date']));
+			$dow = date('N', $date);
 
 			// Build Horrible Array of Doom... start ordered by task
 			if ($lastTid != $task['id']) {
@@ -260,22 +264,35 @@ class Time extends AppModel {
 					'users' => array()
 				);
 			}
+			$summary_task = $summary['tasks'][ $task['id'] ];
 
 			// Now for each task, add a list of users; each user then has a breakdown of tasks by day
 			if ($lastUid != $user['id']) {
-				$summary['tasks'][ $task['id'] ]['users'][ $user['id'] ] = array(
+				$summary_task['users'][ $user['id'] ] = array(
 					'User' => $user,
-					'days' => array()
+					'times_by_day' => array()
 				);
 			}
+			$summary_user = $summary_task['users'][ $user['id'] ];
 
-			// Yes, this is "fun". But it makes rendering the summary table fairly easy.
-			// TODO make less bollocks.
-			$summary['tasks'][ $task['id'] ]['users'][ $user['id'] ]['days'][$dow] = $minutes;
+			// Add time to the list for that day
+			if (!isset($summary_user['times_by_day'][$dow])) {
+				$summary_user['times_by_day'][$dow] = array();
+			}
+			$summary_user['times_by_day'][$dow][] = $time;
+
+			// Store everything back in the Array of Doom
+			$summary_task['users'][ $user['id'] ] = $summary_user;
+			$summary['tasks'][ $task['id'] ] = $summary_task;
+
+
+			// Keep a convenient 'total minutes for each day' entry for rendering
 			$summary['totals'][$dow] += $minutes;
 
+			// Track where we are in the list
 			$lastUid = $user['id'];
 			$lastTid = $task['id'];
+			$lastDate = $date;
 		}
 
 		return $summary;
@@ -419,6 +436,7 @@ class Time extends AppModel {
  *
  * @param mixed $year the year
  * @param mixed $week the week
+ * TODO unused?
  */
 	public function tasksForWeek($year, $week, $current_user_only = true) {
 		$conditions = array(
@@ -448,6 +466,7 @@ class Time extends AppModel {
  *
  * @param mixed $year the year
  * @param mixed $week the week
+ * TODO unused?
  */
 	public function timesForWeek($year, $week, $current_user_only = true) {
 		$this->recursive = -1;
