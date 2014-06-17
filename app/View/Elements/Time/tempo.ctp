@@ -81,7 +81,7 @@ echo $this->element('Time/modal_add');
 						$day = $weekTimes['dates'][$i]->format('D');
 
 						// Popup for viewing times
-		                $popover = "tempo_{$day}_{$taskId}";
+		                $popover = "tempo_{$day}_{$taskId}_{$userId}";
 
 						// times_by_day is a list of Time... cake-y object-like array things
 						if (array_key_exists($i, $userDetails['times_by_day'])) {
@@ -134,6 +134,8 @@ echo $this->element('Time/modal_add');
             </tr>
         </tfoot>
     </table>
+
+	<?=$elements // Add in elements for each of our drill-down displays?>
 
     <div class="btn-toolbar tempo-toolbar span12">
         <div class="btn-group">
