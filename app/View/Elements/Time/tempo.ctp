@@ -87,8 +87,8 @@ echo $this->element('Time/modal_add');
 						if (array_key_exists($i, $userDetails['times_by_day'])) {
 							$timeSpent = 0;
 							foreach ($userDetails['times_by_day'][$i] as $time){
-								$rowTotal += $time['mins'];
-								$timeSpent += $time['mins'];
+								$rowTotal += $time['Time']['mins'];
+								$timeSpent += $time['Time']['mins'];
 
 							}
   	                    	$elements .= $this->element('Time/tempo_modal',

@@ -498,9 +498,10 @@ class TimeTestCase extends CakeTestCase {
 							),
 							'times_by_day' => array(
 								1 => array(
-									0 => array(
-										'id' => 2,
+									0 => array( 'Time' => array(
+										'id' => '2',
 										'date' => '2012-11-12',
+										'description' => 'A description of the second <b>task</b>.',
 										'mins' => '900',
 										'minutes' => array(
 											'w' => 0,
@@ -510,7 +511,7 @@ class TimeTestCase extends CakeTestCase {
 											't' => 900,
 											's' => '15h 0m'
 										),
-									)
+									))
 								)
 							)
 						),
@@ -522,9 +523,10 @@ class TimeTestCase extends CakeTestCase {
 							),
 							'times_by_day' => array(
 								2 => array(
-									0 => array(
-										'id' => 3,
+									0 => array( 'Time' => array(
+										'id' => '3',
 										'date' => '2012-11-13',
+										'description' => 'A description of the third <b>task</b>.',
 										'mins' => '14',
 										'minutes' => array(
 											'w' => 0,
@@ -534,7 +536,7 @@ class TimeTestCase extends CakeTestCase {
 											't' => 14,
 											's' => '0h 14m'
 										)
-									)
+									))
 								)
 							)
 						)

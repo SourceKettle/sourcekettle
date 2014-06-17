@@ -14,14 +14,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-unset($times['total']);
 ?>
 <div class="modal hide" id="<?= $id ?>">
     <table class="modal-body table table-striped table-modal">
         <thead>
             <tr>
-                <th><?= $this->DT->t('tempo.modal.description.header') ?></th>
-                <th><?= $this->DT->t('tempo.modal.time.header') ?></th>
+                <th><?= __('Description') ?></th>
+                <th><?= __('Time spent') ?></th>
             </tr>
         </thead>
         <tbody>

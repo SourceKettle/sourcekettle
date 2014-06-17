@@ -222,7 +222,7 @@ class Time extends AppModel {
 			'fields' => array(
 				'Task.id', 'Task.subject',
 				'User.id', 'User.name', 'User.email',
-				'Time.id', 'Time.date', 'Time.mins' //'SUM(Time.mins) as total_mins'
+				'Time.id', 'Time.date', 'Time.description', 'Time.mins' //'SUM(Time.mins) as total_mins'
 			),
 			'conditions' => $conditions,
 			'order' => array('Task.subject', 'User.name', 'Time.date')
@@ -279,7 +279,7 @@ class Time extends AppModel {
 			if (!isset($summary_user['times_by_day'][$dow])) {
 				$summary_user['times_by_day'][$dow] = array();
 			}
-			$summary_user['times_by_day'][$dow][] = $time;
+			$summary_user['times_by_day'][$dow][] = array('Time' => $time);
 
 			// Store everything back in the Array of Doom
 			$summary_task['users'][ $user['id'] ] = $summary_user;
