@@ -81,6 +81,9 @@
         Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
+		// This is a (fudgy!) fix to make submodules' links in the source view work. We may want to change this if we ever support HTTPS access to git.
+		Router::connect('/projects/:project.git', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+
 		/*
 		 * Admin link for project names, this sorts out some issues with generating links from the admin pages
 		 */
