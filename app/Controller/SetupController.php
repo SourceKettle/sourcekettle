@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * SetupController for the DevTrack system
+ * SetupController for the SourceKettle system
  * Controller for setup page
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		 DevTrack v 0.1
+ * @copyright	 SourceKettle Development Team 2012
+ * @link			http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -135,7 +135,7 @@ class SetupController extends AppController {
 		}
 
 		// Check GIT
-		$config = Configure::read('devtrack');
+		$config = Configure::read('sourcekettle');
 		if (isset($config['repo']['user']) && !empty($config['repo']['user'])) {
 			$this->set('gitUserSet' , true);
 			$this->set('gitUser', $config['repo']['user']);

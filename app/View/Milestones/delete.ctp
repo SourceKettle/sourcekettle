@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * View class for APP/milestones/edit for the DevTrack system
+ * View class for APP/milestones/edit for the SourceKettle system
  * Allows a user to edit a task for a project
  *
  * Licensed under The MIT License

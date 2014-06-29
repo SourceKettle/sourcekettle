@@ -1,15 +1,15 @@
 <?php
 /**
 *
-* User Unit Tests for the DevTrack system
+* User Unit Tests for the SourceKettle system
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
 *
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/SourceKettle/devtrack
-* @package       DevTrack.Test.Case.Model
-* @since         DevTrack v 1.0
+* @copyright     SourceKettle Development Team 2012
+* @link          http://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.Test.Case.Model
+* @since         SourceKettle v 1.0
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 App::uses('User', 'Model');
@@ -153,28 +153,28 @@ class UserTestCase extends CakeTestCase {
 	}
 
     /**
-     * test User->isDevtrackManaged function.
+     * test User->isSourcekettleManaged function.
      * Tests that a user with a password is marked as managed.
      *
      * @access public
      * @return void
      */
-    public function testIsDevtrackManaged() {
+    public function testIsSourcekettleManaged() {
 		$user = $this->User->findById(1);
-        $isManaged = $this->User->isDevtrackManaged($user);
+        $isManaged = $this->User->isSourcekettleManaged($user);
         $this->assertTrue($isManaged, "Returned users should be managed");
     }
 
     /**
-     * test User->isDevtrackManaged function.
+     * test User->isSourcekettleManaged function.
      * Tests that a user without a password is marked as not managed.
      *
      * @access public
      * @return void
      */
-    public function testIsDevtrackManagedNotManaged() {
+    public function testIsSourcekettleManagedNotManaged() {
 		$user = $this->User->findById(6);
-        $isManaged = $this->User->isDevtrackManaged($user);
+        $isManaged = $this->User->isSourcekettleManaged($user);
         $this->assertFalse($isManaged, "returned users should not be managed");
     }
 
@@ -201,7 +201,7 @@ class UserTestCase extends CakeTestCase {
 	}
 
 	public function testFailToChangeEmail() {
-		// Try a non-devtrack-managed user account, should fail
+		// Try a non-sourcekettle-managed user account, should fail
 		$this->User->id = 6;
 		$user = $this->User->read();
 		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found before change");

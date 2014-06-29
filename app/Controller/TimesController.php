@@ -1,13 +1,13 @@
 <?php
 /**
  *
- * TimesController Controller for the DevTrack system
+ * TimesController Controller for the SourceKettle system
  * Provides the hard-graft control of the time segments
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
+ * @copyright	 SourceKettle Development Team 2012
  * @link			http://github.com/CodeKettle
  * @package		CodeKettle.Controller
  * @since		 CodeKettle v 0.1

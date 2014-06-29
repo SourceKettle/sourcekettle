@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * User model for the DevTrack system
+ * User model for the SourceKettle system
  * Represents a user in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model', 'AuthComponent', 'Controller/Component');
@@ -107,7 +107,7 @@ class User extends AppModel {
 
 	public function beforeSave($options = array()) {
 		// Can't update the email or password field if it's an externally-managed account
-		if (!User::isDevtrackManaged($this->data, @$this->id)) {
+		if (!User::isSourcekettleManaged($this->data, @$this->id)) {
 			$wl = $this->whitelist;
 			if (empty($wl)) {
 				$wl = array_keys($this->schema());
@@ -133,8 +133,8 @@ class User extends AppModel {
 	}
 
 	public function beforeDelete($cascade = true) {
-		// Check that the user account is DevTrack-managed, can't delete otherwise...
-		if (!User::isDevtrackManaged($this->data, @$this->id)) {
+		// Check that the user account is SourceKettle-managed, can't delete otherwise...
+		if (!User::isSourcekettleManaged($this->data, @$this->id)) {
 			return false;
 		}
 
@@ -155,18 +155,18 @@ class User extends AppModel {
 			$users = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $projectId)));
 			if ( $users == 1 ) {
 				$this->Collaborator->Project->delete($projectId);
-				$this->log("[UsersModel.beforeDelete] project[" . $projectId . "] deleted as user[" . $this->id . "] is being deleted", 'devtrack');
+				$this->log("[UsersModel.beforeDelete] project[" . $projectId . "] deleted as user[" . $this->id . "] is being deleted", 'sourcekettle');
 			}
 		}
 		return true;
 	}
 
 /**
- * isDevtrackManaged function.
- * Is the user a DevTrack-managed account, i.e. password is stored in the database?
+ * isSourcekettleManaged function.
+ * Is the user a SourceKettle-managed account, i.e. password is stored in the database?
  * If it's been auto-created from e.g. LDAP, the password will be blank.
  */
-	public static function isDevtrackManaged($data, $id = 0) {
+	public static function isSourcekettleManaged($data, $id = 0) {
 
 		// Attempt to find an existing user by ID or email
 		$user = ClassRegistry::init('User');

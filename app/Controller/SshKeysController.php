@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * SshKeysController Controller for the DevTrack system
+ * SshKeysController Controller for the SourceKettle system
  * Provides the hard-graft control of the ssh keys for users
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		 DevTrack v 0.1
+ * @copyright	 SourceKettle Development Team 2012
+ * @link			http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -31,7 +31,7 @@ class SshKeysController extends AppController {
 			if ($this->Flash->c($this->SshKey->save($this->request->data))) {
 				$this->Setting->syncRequired(); // Update the sync required flag
 
-				$this->log("[UsersController.addkey] sshkey[" . $this->SshKey->getLastInsertID() . "] added to user[" . User::get('id') . "]", 'devtrack');
+				$this->log("[UsersController.addkey] sshkey[" . $this->SshKey->getLastInsertID() . "] added to user[" . User::get('id') . "]", 'sourcekettle');
 				$this->redirect(array('action' => 'view'));
 			}
 		}
@@ -62,7 +62,7 @@ class SshKeysController extends AppController {
 			$comment = $this->SshKey->field('comment');
 			$this->Flash->setUp();
 			if ($this->Flash->d($this->SshKey->delete(), $comment)) {
-				$this->log("[UsersController.deletekey] sshkey[" . $id . "] deleted by user[" . $this->Auth->user('id') . "]", 'devtrack');
+				$this->log("[UsersController.deletekey] sshkey[" . $id . "] deleted by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
 				$this->Setting->syncRequired(); // Update the sync required flag
 			}
 		}

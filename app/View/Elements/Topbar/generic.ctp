@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Generic TopBar Element for the DevTrack system
+ * Generic TopBar Element for the SourceKettle system
  * Provides a navigation bar for the top of pages
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements.Topbar
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements.Topbar
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>

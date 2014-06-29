@@ -1,0 +1,37 @@
+<?php
+/**
+ *
+ * Central configuration file for the SourceKettle system
+ * Provides the central config for the system
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Config
+ * @since         SourceKettle v 0.1
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+
+ // Tool name
+ // value will be string that will be shown across the system in place of 'SourceKettle'
+ $config['sourcekettle']['global']['alias'] = 'SourceKettle';
+
+ // Username for SSH access to git repositories
+ $config['sourcekettle']['repo']['user'] = '__SCM_USER__';
+
+ // Repository folder
+ // set to folder where you would like repositories placed
+ $config['sourcekettle']['repo']['base'] = '__REPO_DIR__';
+
+ // Default repository type for new projects
+ $config['sourcekettle']['repo']['default'] = 'Git';
+
+ // LDAP configuration - disabled by default, turn on here or in the DB
+/* $config['sourcekettle']['ldap_enabled'] = false;
+ $config['sourcekettle']['ldap_url'] = 'ldaps://ldap.example.org';
+ $config['sourcekettle']['ldap_bind_dn'] = '';
+ $config['sourcekettle']['ldap_bind_pw'] = '';
+ $config['sourcekettle']['ldap_base_dn'] = 'ou=User,dc=example,dc=org';
+ $config['sourcekettle']['ldap_filter'] = 'mail=%USERNAME%';*/

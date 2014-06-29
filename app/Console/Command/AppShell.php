@@ -30,7 +30,7 @@ class AppShell extends Shell {
 	public $uses = array('Settings');
 	protected function getSourceKettleConfig() {
 		return array_merge(
-			Configure::read('devtrack'),
+			Configure::read('sourcekettle'),
 			$this->Settings->find('list', array('fields' => array('Settings.name', 'Settings.value')))
 		);
 		

@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Source model for the DevTrack system
+ * Source model for the SourceKettle system
  * Represents a source in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
@@ -127,8 +127,8 @@ class Source extends AppModel {
  * @throws UnsupportedRepositoryType
  */
 	public function getRepositoryLocation() {
-		$devtrackConfig = Configure::read('devtrack');
-		$base = $devtrackConfig['repo']['base'];
+		$sourcekettleConfig = Configure::read('sourcekettle');
+		$base = $sourcekettleConfig['repo']['base'];
 
 		if ($base[strlen($base) - 1] != '/') $base .= '/';
 

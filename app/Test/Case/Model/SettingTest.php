@@ -1,15 +1,15 @@
 <?php
 /**
 *
-* Setting Unit Tests for the DevTrack system
+* Setting Unit Tests for the SourceKettle system
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
 *
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/SourceKettle/devtrack
-* @package       DevTrack.Test.Case.Model
-* @since         DevTrack v 1.0
+* @copyright     SourceKettle Development Team 2012
+* @link          http://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.Test.Case.Model
+* @since         SourceKettle v 1.0
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 App::uses('Setting', 'Model');

@@ -1,17 +1,17 @@
-<h1>Welcome to DevTrack!</h1>
+<h1>Welcome to SourceKettle!</h1>
 
-<h3>What is DevTrack?</h2>
+<h3>What is SourceKettle?</h2>
 <p>
-DevTrack is a multi-user project and source code management tool.  It allows you to create and browse projects and source code repositories, create and assign tasks, log and manage time spent on a project, and more! DevTrack is under active development, so more features are being added over time.
+SourceKettle is a multi-user project and source code management tool.  It allows you to create and browse projects and source code repositories, create and assign tasks, log and manage time spent on a project, and more! SourceKettle is under active development, so more features are being added over time.
 </p>
 
-<h3>How do I use DevTrack?</h2>
+<h3>How do I use SourceKettle?</h2>
 <p>
 The first step is to create an account and log in! <a href='/login'>Click here</a> to get started.
 </p>
 
 <p>
-The system administrator may have configured DevTrack to use your organisation's account system, in which case you won't even need to register - just log in using your usual email address and password.
+The system administrator may have configured SourceKettle to use your organisation's account system, in which case you won't even need to register - just log in using your usual email address and password.
 </p>
 
 <p>

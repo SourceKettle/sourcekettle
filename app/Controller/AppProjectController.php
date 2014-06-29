@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * AppProjectController for the DevTrack system
+ * AppProjectController for the SourceKettle system
  * The application wide controller for sub-components of a Project.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	Modifications: DevTrack Development Team 2012
- * @link		http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		DevTrack v 0.1
+ * @copyright	Modifications: SourceKettle Development Team 2012
+ * @link		http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppController', 'Controller');

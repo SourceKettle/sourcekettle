@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/times/view for the DevTrack system
+ * View class for APP/times/view for the SourceKettle system
  * Allows users to view time allocated to a project
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Times
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Times
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>

@@ -44,7 +44,7 @@ class EmailConfig {
 
 	public $default = array(
 		'transport' => 'Debug',
-		'from' => 'devtrack@localhost.com',
+		'from' => 'sourcekettle@localhost.com',
 		//'charset' => 'utf-8',
 		//'headerCharset' => 'utf-8',
 	);

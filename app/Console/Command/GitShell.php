@@ -29,10 +29,10 @@ class GitShell extends AppShell {
 	    if ($sync_required['Setting']['value'] == 1) {
 
 			// Work out where to put the SSH keys (git user's homedir)
-			$devtrack_config = Configure::read('devtrack');
+			$sourcekettle_config = Configure::read('sourcekettle');
 
 			// Get username from config, and get info from the passwd file (or other entry)
-			$git_user	= $devtrack_config['repo']['user'];
+			$git_user	= $sourcekettle_config['repo']['user'];
 			$git_details = posix_getpwnam($git_user);
 			
 			// Sanity check #1, fail if the user doesn't exist...
@@ -211,8 +211,8 @@ class GitShell extends AppShell {
         ));
 
 		// Get the repository location
-		$devtrack_config = Configure::read('devtrack');
-		$repo_path = $devtrack_config['repo']['base'] . "/$_proj_name.git";
+		$sourcekettle_config = Configure::read('sourcekettle');
+		$repo_path = $sourcekettle_config['repo']['base'] . "/$_proj_name.git";
 
 		// Make sure there's actually a git repository for this project...
 		if (strtolower($rt['RepoType']['name']) != 'git' or !is_dir($repo_path)) {

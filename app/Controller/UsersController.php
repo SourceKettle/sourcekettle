@@ -2,17 +2,17 @@
 
 /**
  *
- * Users Controller for the DevTrack system
+ * Users Controller for the SourceKettle system
  * Provides methods for users to interact with their database object. Contains methods
  * for them to register, update their details and delete their account.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		 DevTrack v 0.1
+ * @copyright	 SourceKettle Development Team 2012
+ * @link			http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppController', 'Controller');
@@ -53,7 +53,7 @@ class UsersController extends AppController {
 						$this->User->create();
 						if ($this->User->save($this->request->data['User'])) {
 							$id = $this->User->getLastInsertID();
-							$this->log("[UsersController.register] user[${id}] created", 'devtrack');
+							$this->log("[UsersController.register] user[${id}] created", 'sourcekettle');
 
 							//Check to see if an SSH key was added and save it
 							if (!empty($this->data['User']['ssh_key'])) {
@@ -67,7 +67,7 @@ class UsersController extends AppController {
 								// Update the sync required flag
 								$this->Setting->syncRequired();
 
-								$this->log("[UsersController.register] sshkey[" . $this->User->SshKey->getLastInsertID() . "] added to user[${id}]", 'devtrack');
+								$this->log("[UsersController.register] sshkey[" . $this->User->SshKey->getLastInsertID() . "] added to user[${id}]", 'sourcekettle');
 							}
 
 							//Now to create the key and send the email
@@ -115,7 +115,7 @@ class UsersController extends AppController {
 				if ($this->User->save($newrecord['User'])) {
 					$this->User->EmailConfirmationKey->delete($record['EmailConfirmationKey']['id'], false); //delete the email confirmation key
 					$this->Session->setFlash(__("<h4 class='alert-heading'>Success</h4>Your account is now activated. You can now login."), 'default', array(), 'success');
-					$this->log("[UsersController.activate] user[" . $newrecord['User']['id'] . "] activated", 'devtrack');
+					$this->log("[UsersController.activate] user[" . $newrecord['User']['id'] . "] activated", 'sourcekettle');
 
 					$this->redirect('/login');
 				} else {
@@ -139,9 +139,9 @@ class UsersController extends AppController {
 
 			// Check the user account is internally managed by SourceKettle
 			if ($user['User']['password'] == null) {
-				$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->devtrack_config['global']['alias'] . " - " .
+				$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->sourcekettle_config['global']['alias'] . " - " .
 					"unfortunately, we can't help you reset your password.	Try talking to " .
-					"<a href='mailto:" . $this->devtrack_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
+					"<a href='mailto:" . $this->sourcekettle_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
 				$this->redirect('/login');
 			}
 
@@ -154,9 +154,9 @@ class UsersController extends AppController {
 					))
 				);
 				if ($this->__sendForgottenPasswordMail($user['User']['id'], $this->User->LostPasswordKey->getLastInsertID())) {
-					$this->log("[UsersController.lost_password] lost password email sent to user[" . $user['User']['id'] . "]", 'devtrack');
+					$this->log("[UsersController.lost_password] lost password email sent to user[" . $user['User']['id'] . "]", 'sourcekettle');
 				} else {
-					$this->log("[UsersController.lost_password] lost password email could NOT be sent to user[" . $user['User']['id'] . "]", 'devtrack');
+					$this->log("[UsersController.lost_password] lost password email could NOT be sent to user[" . $user['User']['id'] . "]", 'sourcekettle');
 					$this->Session->setFlash("There was a problem sending the lost password email", 'default', array(), 'error');
 					$this->render('lost_password');
 					return;
@@ -244,7 +244,7 @@ class UsersController extends AppController {
 			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
 
 			$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
-			$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'devtrack');
+			$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'sourcekettle');
 
 			$this->redirect('/login');
 		} else {
@@ -289,7 +289,7 @@ class UsersController extends AppController {
 		//Find the users projects they are working on
 		$this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
 		$this->request->data = $this->User->read();
-		$this->request->data['User']['is_local'] = User::isDevtrackManaged($this->data);
+		$this->request->data['User']['is_local'] = User::isSourcekettleManaged($this->data);
 		$this->request->data['User']['password'] = null;
 	}
 
@@ -341,7 +341,7 @@ class UsersController extends AppController {
 
 			if ($this->User->save($this->request->data['User'])) {
 				$id = $this->User->getLastInsertID();
-				$this->log("[UsersController.admin_add] user[${id}] created by user[" . $this->Auth->user('id') . "]", 'devtrack');
+				$this->log("[UsersController.admin_add] user[${id}] created by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
 
 				//Now to create the key and send the email
 				$this->User->LostPasswordKey->save(
@@ -352,7 +352,7 @@ class UsersController extends AppController {
 				);
 				$this->__sendAdminCreatedUserMail($id, $this->User->LostPasswordKey->getLastInsertID());
 				$this->Session->setFlash(__('New User added successfully.'), 'default', array(), 'success');
-				$this->log("[UsersController.admin_add] user[" . $id . "] added by user[" . $this->Auth->user('id') . "]", 'devtrack');
+				$this->log("[UsersController.admin_add] user[" . $id . "] added by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
 				$this->redirect(array('action' => 'view', $id));
 			} else {
 				$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
@@ -375,7 +375,7 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) {
 			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-				$this->log("[UsersController.admin_edit] user[" . $this->Auth->user('id') . "] edited details of user[" . $this->User->id . "]", 'devtrack');
+				$this->log("[UsersController.admin_edit] user[" . $this->Auth->user('id') . "] edited details of user[" . $this->User->id . "]", 'sourcekettle');
 			} else {
 				$this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
 			}
@@ -392,7 +392,7 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) {
 			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-				$this->log("[UsersController.details] user[" . $this->User->id . "] edited details", 'devtrack');
+				$this->log("[UsersController.details] user[" . $this->User->id . "] edited details", 'sourcekettle');
 
 				// NB we have to re-read this as we may not have updated the email address
 				// (external accounts will throw it away)
@@ -426,7 +426,7 @@ class UsersController extends AppController {
 
 					if ($this->User->save($this->request->data)) {
 						$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-						$this->log("[UsersController.security] user[" . $this->Auth->user('id') . "] changed password", 'devtrack');
+						$this->log("[UsersController.security] user[" . $this->Auth->user('id') . "] changed password", 'sourcekettle');
 					} else {
 						foreach ($this->User->validationErrors as $field => $errors) {
 							foreach ($errors as $errorMessage) {
@@ -462,7 +462,7 @@ class UsersController extends AppController {
 			if ($this->User->save()) {
 
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-				$this->log("[UsersController.theme] user[" . $this->Auth->user('id') . "] changed theme", 'devtrack');
+				$this->log("[UsersController.theme] user[" . $this->Auth->user('id') . "] changed theme", 'sourcekettle');
 				$this->Session->write('Auth.User.theme', (string)$this->request->data['User']['theme']);
 				$this->redirect(array('action' => 'theme'));
 			} else {
@@ -485,12 +485,12 @@ class UsersController extends AppController {
  * collaborators
  */
 	public function delete() {
-		// Check whether the user account is DevTrack-managed (if not it's an LDAP
+		// Check whether the user account is SourceKettle-managed (if not it's an LDAP
 		// account or similar, so we can't really delete it properly)
 		$this->User->id = $this->Auth->user('id');
 		$this->request->data = $this->User->read();
 		$this->set('external_account', false);
-		if (!User::isDevtrackManaged($this->User->data)) {
+		if (!User::isSourcekettleManaged($this->User->data)) {
 			$this->set('external_account', true);
 			return;
 		}
@@ -501,7 +501,7 @@ class UsersController extends AppController {
 			//Now delete the user
 			if ($this->User->delete($this->Auth->id)) {
 				$this->Session->setFlash(__('Account deleted'), 'default', array(), 'success');
-				$this->log("[UsersController.delete] user[" . $this->Auth->user('id') . "] deleted", 'devtrack');
+				$this->log("[UsersController.delete] user[" . $this->Auth->user('id') . "] deleted", 'sourcekettle');
 
 				//Now log them out of the system
 				$this->Auth->logout();
@@ -547,15 +547,15 @@ class UsersController extends AppController {
 			$targetUserData = $this->User->read();
 
 			$this->set('external_account', false);
-			if (!User::isDevtrackManaged($targetUserData)) {
-				$this->Session->setFlash(__('Account could not be deleted - it is not managed by DevTrack'), 'default', array(), 'error');
+			if (!User::isSourcekettleManaged($targetUserData)) {
+				$this->Session->setFlash(__('Account could not be deleted - it is not managed by SourceKettle'), 'default', array(), 'error');
 				$this->redirect(array('action' => 'admin_index'));
 			}
 
 			//Now delete the user
 			if ($this->User->delete($this->Auth->id)) {
 				$this->Session->setFlash(__('Account deleted'), 'default', array(), 'success');
-				$this->log("[UsersController.delete] user[" . $this->Auth->user('id') . "] deleted", 'devtrack');
+				$this->log("[UsersController.delete] user[" . $this->Auth->user('id') . "] deleted", 'sourcekettle');
 				$this->redirect(array('action' => 'admin_index'));
 			}
 
@@ -595,7 +595,7 @@ class UsersController extends AppController {
 
 			if ($this->User->save($targetUserData, array('fieldList' => array('is_admin')))) {
 				$this->Session->setFlash(__('Account promoted to system admin'), 'default', array(), 'success');
-				$this->log("[UsersController.promote] user[" . $this->Auth->user('id') . "] promoted to sysadmin", 'devtrack');
+				$this->log("[UsersController.promote] user[" . $this->Auth->user('id') . "] promoted to sysadmin", 'sourcekettle');
 				$this->redirect(array('action' => 'admin_index'));
 			}
 
@@ -642,7 +642,7 @@ class UsersController extends AppController {
 
 			if ($this->User->save($targetUserData, array('fieldList' => array('is_admin')))) {
 				$this->Session->setFlash(__('Account demoted to normal user'), 'default', array(), 'success');
-				$this->log("[UsersController.demote] user[" . $this->Auth->user('id') . "] demoted to sysadmin", 'devtrack');
+				$this->log("[UsersController.demote] user[" . $this->Auth->user('id') . "] demoted to sysadmin", 'sourcekettle');
 				$this->redirect(array('action' => 'admin_index'));
 			}
 
@@ -694,9 +694,9 @@ class UsersController extends AppController {
 
 		$this->Email->to		= $User['User']['email'];
 		$this->Email->bcc		= array('secret@example.com');
-		$this->Email->subject	= 'Welcome to DevTrack - Account activation';
+		$this->Email->subject	= 'Welcome to SourceKettle - Account activation';
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'DevTrack Admin <' . $Addr . '>';
+		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
 		$this->Email->template	= 'email_activation';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
@@ -728,15 +728,15 @@ class UsersController extends AppController {
 
 		// Couldn't find the user or the key for some reason, FAILURE.
 		if (!$User || !$Key) {
-			$this->log("[UsersController.__sendForgottenPasswordMail] lost password email could NOT be sent - User is $User ($userId), Key is $Key ($keyId)", 'devtrack');
+			$this->log("[UsersController.__sendForgottenPasswordMail] lost password email could NOT be sent - User is $User ($userId), Key is $Key ($keyId)", 'sourcekettle');
 			return false;
 		}
 
 		$this->Email->to		= $User['User']['email'];
 		//$this->Email->bcc		= array('secret@example.com');
-		$this->Email->subject	= 'DevTrack - Forgotten Password';
+		$this->Email->subject	= 'SourceKettle - Forgotten Password';
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'DevTrack Admin <' . $Addr . '>';
+		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
 		$this->Email->template	= 'email_forgotten_password';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
@@ -746,10 +746,10 @@ class UsersController extends AppController {
 		$this->set('Key', $Key);
 
 		if ($this->Email->send()) {
-			$this->log("[UsersController.__sendForgottenPasswordMail] Lost password key ID $keyId sent to user ID $userId", 'devtrack');
+			$this->log("[UsersController.__sendForgottenPasswordMail] Lost password key ID $keyId sent to user ID $userId", 'sourcekettle');
 			return true;
 		}
-		$this->log("[UsersController.__sendForgottenPasswordMail] lost password email could NOT be sent to user[" . $User['User']['id'] . "]", 'devtrack');
+		$this->log("[UsersController.__sendForgottenPasswordMail] lost password email could NOT be sent to user[" . $User['User']['id'] . "]", 'sourcekettle');
 		return false;
 	}
 
@@ -771,9 +771,9 @@ class UsersController extends AppController {
 
 		$this->Email->to		= $User['User']['email'];
 		//$this->Email->bcc		= array('secret@example.com');
-		$this->Email->subject	= 'Welcome to DevTrack - Suprise!';
+		$this->Email->subject	= 'Welcome to SourceKettle - Suprise!';
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'DevTrack Admin <' . $Addr . '>';
+		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
 		$this->Email->template	= 'email_admin_create';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail

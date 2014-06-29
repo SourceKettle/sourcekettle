@@ -2,17 +2,17 @@
 
 /**
  *
- * ProjectsController Controller for the DevTrack system
+ * ProjectsController Controller for the SourceKettle system
  * Provides the hard-graft control of the projects contained within the system
  * Including CRUD, admin CRUD and API control
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		 DevTrack v 0.1
+ * @copyright	 SourceKettle Development Team 2012
+ * @link			http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppProjectController', 'Controller');
@@ -177,8 +177,8 @@ class ProjectsController extends AppProjectController {
 
 		// Flip keys for values, then look up the ID of the default repo type name
 		$defaultRepo = array_flip($repoTypes);
-		if (isset($this->devtrack_config['repo']['default'])) {
-			$d = $this->devtrack_config['repo']['default'];
+		if (isset($this->sourcekettle_config['repo']['default'])) {
+			$d = $this->sourcekettle_config['repo']['default'];
 		} else {
 			$d = 'None';
 		}
@@ -209,14 +209,14 @@ class ProjectsController extends AppProjectController {
 				// Need to know the repo type so we can skip repo creation if necessary...
 				$repoType = $repoTypes[$requestData['Project']['repo_type']];
 
-				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . User::get('id') . "]", 'devtrack');
-				$this->log("[ProjectController.add] user[" . User::get('id') . "] added to project[" . $this->Project->id . "] automatically as an admin", 'devtrack');
+				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . User::get('id') . "]", 'sourcekettle');
+				$this->log("[ProjectController.add] user[" . User::get('id') . "] added to project[" . $this->Project->id . "] automatically as an admin", 'sourcekettle');
 
 				// Create the actual repository, if required - if it fails, delete the database content
 				if (strtolower($repoType) == 'none') {
-					$this->log("[ProjectController.add] project[" . $this->Project->id . "] does not require a repository", 'devtrack');
+					$this->log("[ProjectController.add] project[" . $this->Project->id . "] does not require a repository", 'sourcekettle');
 				} elseif (!$this->Project->Source->create()) {
-					$this->log("[ProjectController.add] project[" . $this->Project->id . "] repository creation failed - automatically removing project data", 'devtrack');
+					$this->log("[ProjectController.add] project[" . $this->Project->id . "] repository creation failed - automatically removing project data", 'sourcekettle');
 					$this->Project->delete();
 					$this->Flash->c(false);
 				} else {
@@ -258,7 +258,7 @@ class ProjectsController extends AppProjectController {
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Flash->u($this->Project->save($this->request->data))) {
-				$this->log("[ProjectController.edit] user[" . User::get('id') . "] edited project[" . $this->Project->id . "]", 'devtrack');
+				$this->log("[ProjectController.edit] user[" . User::get('id') . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view'));
 			}
 		}

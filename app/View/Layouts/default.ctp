@@ -18,7 +18,7 @@
 <html>
 <head>
     <title>
-        <?= h($devtrack_config['global']['alias']) ?> - <?= h($title_for_layout) ?>
+        <?= h($sourcekettle_config['global']['alias']) ?> - <?= h($title_for_layout) ?>
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
@@ -48,7 +48,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <?= $this->Html->link($devtrack_config['global']['alias'], '/', array('class' => 'brand')); ?>
+                    <?= $this->Html->link($sourcekettle_config['global']['alias'], '/', array('class' => 'brand')); ?>
 
 
                     <ul class="nav pull-right">
@@ -112,7 +112,7 @@
         </div>
         <div id='footer'>
             <hr>
-            <?=$this->Html->link("About SourceKettle $devtrackVersion", '/about');?>
+            <?=$this->Html->link("About SourceKettle $sourcekettleVersion", '/about');?>
             <?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
             <?//=$this->Html->link('SVN help', '/svn_help');?>
         </div>

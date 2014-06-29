@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * HelpController for the DevTrack system
+ * HelpController for the SourceKettle system
  * The controller to allow users to get help
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  * 
- * @copyright	 DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		 DevTrack v 0.1
+ * @copyright	 SourceKettle Development Team 2012
+ * @link			http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 

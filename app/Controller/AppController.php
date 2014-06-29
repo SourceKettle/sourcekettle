@@ -1,21 +1,21 @@
 <?php
 /**
  *
- * AppController for the DevTrack system
+ * AppController for the SourceKettle system
  * The application wide controller.
  *
  * Base system: CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Base system: Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * Modifications: DevTrack Development Team 2012
+ * Modifications: SourceKettle Development Team 2012
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright	Original: Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @copyright	Modifications: DevTrack Development Team 2012
- * @link		http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		DevTrack v 0.1
+ * @copyright	Modifications: SourceKettle Development Team 2012
+ * @link		http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Controller', 'Controller');
@@ -71,8 +71,8 @@ class AppController extends Controller {
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
 		// Load config file in
-		$this->devtrack_config = array_merge(
-			Configure::read('devtrack'),
+		$this->sourcekettle_config = array_merge(
+			Configure::read('sourcekettle'),
 			ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
 		);
 
@@ -82,51 +82,51 @@ class AppController extends Controller {
 		);
 
 		// Is LDAP authentication enabled?
-		if (!isset($this->devtrack_config['ldap_enabled'])) {
-			$this->devtrack_config['ldap_enabled'] = false;
+		if (!isset($this->sourcekettle_config['ldap_enabled'])) {
+			$this->sourcekettle_config['ldap_enabled'] = false;
 		}
 
 		// Default to just form-based authentication
 		$this->Auth->authenticate = array('Form' => $formConfig);
 
-		if ($this->devtrack_config['ldap_enabled']) {
+		if ($this->sourcekettle_config['ldap_enabled']) {
 			$ldapConfErrors = array();
 
 			// Check for existence of all LDAP config fields
-			if (!isset($this->devtrack_config['ldap_url']) || empty($this->devtrack_config['ldap_url'])) {
+			if (!isset($this->sourcekettle_config['ldap_url']) || empty($this->sourcekettle_config['ldap_url'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify an LDAP URL';
 			}
-			if (!isset($this->devtrack_config['ldap_bind_dn'])) {
+			if (!isset($this->sourcekettle_config['ldap_bind_dn'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify a bind DN, or empty string';
 			}
-			if (!isset($this->devtrack_config['ldap_bind_pw'])) {
+			if (!isset($this->sourcekettle_config['ldap_bind_pw'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify a bind password, or empty string';
 			}
-			if (!isset($this->devtrack_config['ldap_base_dn']) || empty($this->devtrack_config['ldap_base_dn'])) {
+			if (!isset($this->sourcekettle_config['ldap_base_dn']) || empty($this->sourcekettle_config['ldap_base_dn'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify an LDAP base DN';
 			}
 
 			// Make sure all-whitespace string is converted to empty string for binding...
-			if (preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_dn'])) {
-				$this->devtrack_config['ldap_bind_dn'] = '';
+			if (preg_match('/^\s*$/', $this->sourcekettle_config['ldap_bind_dn'])) {
+				$this->sourcekettle_config['ldap_bind_dn'] = '';
 			}
-			if (preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_pw'])) {
-				$this->devtrack_config['ldap_bind_pw'] = '';
+			if (preg_match('/^\s*$/', $this->sourcekettle_config['ldap_bind_pw'])) {
+				$this->sourcekettle_config['ldap_bind_pw'] = '';
 			}
 
 			// Default: look them up by the 'mail' field
-			if (!isset($this->devtrack_config['ldap_filter'])) {
-				$this->devtrack_config['ldap_filter'] = '(mail=%USERNAME%)';
+			if (!isset($this->sourcekettle_config['ldap_filter'])) {
+				$this->sourcekettle_config['ldap_filter'] = '(mail=%USERNAME%)';
 			}
 
 			// Default: use the email address the user typed in
-			if (!isset($this->devtrack_config['ldap_email_field'])) {
-				$this->devtrack_config['ldap_email_field'] = '__SUPPLIED__';
+			if (!isset($this->sourcekettle_config['ldap_email_field'])) {
+				$this->sourcekettle_config['ldap_email_field'] = '__SUPPLIED__';
 			}
 
 			// Default: use the given name and surname fields as the name
-			if (!isset($this->devtrack_config['ldap_name_field'])) {
-				$this->devtrack_config['ldap_name_field'] = 'givenName sn';
+			if (!isset($this->sourcekettle_config['ldap_name_field'])) {
+				$this->sourcekettle_config['ldap_name_field'] = 'givenName sn';
 			}
 
 			// Report errors, do not enable LDAP
@@ -136,14 +136,14 @@ class AppController extends Controller {
 				}
 			} else {
 				$ldapConfig = array(
-					'ldap_url'          => $this->devtrack_config['ldap_url'],
-					'ldap_bind_dn'      => $this->devtrack_config['ldap_bind_dn'],
-					'ldap_bind_pw'      => $this->devtrack_config['ldap_bind_pw'],
-					'ldap_base_dn'      => $this->devtrack_config['ldap_base_dn'],
-					'ldap_filter'       => $this->devtrack_config['ldap_filter'],
+					'ldap_url'          => $this->sourcekettle_config['ldap_url'],
+					'ldap_bind_dn'      => $this->sourcekettle_config['ldap_bind_dn'],
+					'ldap_bind_pw'      => $this->sourcekettle_config['ldap_bind_pw'],
+					'ldap_base_dn'      => $this->sourcekettle_config['ldap_base_dn'],
+					'ldap_filter'       => $this->sourcekettle_config['ldap_filter'],
 					'ldap_to_user'      => array(
-						$this->devtrack_config['ldap_email_field'] => 'email',
-						$this->devtrack_config['ldap_name_field'] => 'name',
+						$this->sourcekettle_config['ldap_email_field'] => 'email',
+						$this->sourcekettle_config['ldap_name_field'] => 'name',
 					),
 					// TODO this is an array, we need to make sure we can DB-ify this
 					'all_usernames' => array(
@@ -166,10 +166,10 @@ class AppController extends Controller {
 
 		}
 
-		$this->set('devtrack_config', $this->devtrack_config);
-		$this->set('devtrackVersion', 'v1.2');
+		$this->set('sourcekettle_config', $this->sourcekettle_config);
+		$this->set('sourcekettleVersion', 'v1.2');
 
-		// Set up the devtrack-specific auth model
+		// Set up the sourcekettle-specific auth model
 		$this->Auth->userModel = 'User';
 
 		//Customise the login error
@@ -215,11 +215,11 @@ class AppController extends Controller {
 			$this->set('user_theme', null);
 		}
 
-		// Is the user account devtrack-managed or external e.g. LDAP?
+		// Is the user account sourcekettle-managed or external e.g. LDAP?
 		if (isset($userId)) {
 			$_userModel = ClassRegistry::init('User');
 			$user = $_userModel->findById($userId);
-			$this->set('user_is_devtrack_managed', User::isDevTrackManaged($user));
+			$this->set('user_is_sourcekettle_managed', User::isSourceKettleManaged($user));
 		}
 	}
 
