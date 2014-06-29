@@ -69,14 +69,16 @@ class GitShell extends AppShell {
 			// This is the git-serve command that will be run when git logs in
 			$cmd = $app_path . 'scm-scripts/git-serve.py';
 
-            //$cmd = dirname(__FILE__).'../../../scm-scripts/git-serve.py'
-
 			// Build up a list of SSH keys to write to file
 			// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...
 			$out = '';
 			foreach ($keys as $key) {
 				$sshkey = $key['SshKey']['key'];
 				$userid = $key['User']['id'];
+				if (!isset($userid) || $userid <= 0) {
+					$this->out("Bad key detected! ($sshkey has no userid $userid)");
+					continue;
+				}
 
 				// Sanity check the key
 				if (strlen($sshkey) > 40) {
