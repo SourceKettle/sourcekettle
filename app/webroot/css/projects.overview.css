@@ -12,11 +12,20 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
+/* NB these colours will be replaced when plotting the pie chart to fit in with the current theme */
 .open-tasks a {
     color: #3266cc;
 }
 
 .closed-tasks a {
+    color: #76a4fa;
+}
+
+.in-progress-tasks a {
+    color: #3398cc;
+}
+
+.dropped-tasks a {
     color: #c5d8ff;
 }
 
@@ -38,4 +47,8 @@
 
 #full_description {
   display: none;
+}
+
+div#piechart{
+	min-height: 8em;
 }

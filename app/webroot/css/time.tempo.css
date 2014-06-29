@@ -4,13 +4,11 @@
 
 .tempoHeader {
     text-align: center !important;
-    border: 1px solid #DDD;
     cursor: pointer;
 }
 
 .tempoBody {
     text-align: center !important;
-    border: 1px solid #DDD;
     cursor: pointer;
 }
 
@@ -24,7 +22,6 @@
 
 .tempoFooter {
     text-align: center !important;
-    border: 1px solid #DDD;
     cursor: pointer;
 }
 

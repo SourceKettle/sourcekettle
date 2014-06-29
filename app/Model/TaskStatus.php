@@ -35,4 +35,12 @@ class TaskStatus extends AppModel {
 		)
 	);
 
+	public function nameToID($status_name) {
+		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($status_name)))));
+		if(empty($found)){
+			return 0;
+		}
+		return $found['TaskStatus']['id'];
+	}
 }
+

@@ -13,9 +13,10 @@ if (isset($url)) {
 }
 $this->Html->scriptBlock("
     jQuery(function(){
+	var cache = {};
         $('.typeahead').typeahead({
             items: 5,
-            minLength: 2,
+            minLength: 1,
             source: function (query, process) {
                 $.get('$url', { query: query }, function (data) {
                     process($.parseJSON(data).users);

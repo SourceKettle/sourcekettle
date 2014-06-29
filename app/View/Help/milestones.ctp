@@ -16,6 +16,11 @@
 
 $this->Html->css('time.tempo', null, array ('inline' => false));
 $this->Html->css('pages/help', null, array ('inline' => false));
+$this->Html->css('tasks.index', null, array ('inline' => false));
+$this->Html->css("milestones.index", null, array ('inline' => false));
+$this->Html->script("jquery-ui.min", array ('inline' => false));
+$this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
+$this->Html->script('help.milestones', array('inline' => false));
 
 echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</small>'); ?>
 
@@ -23,8 +28,13 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</sm
 	<div class="span2">
 		<?= $this->element('Sidebar/help') ?>
 	</div>
+
 	<div class="span10">
-		<div class="well">
+
+
+		<!-- Section 1 -->
+		<div class="row-fluid">
+		<div class="well span12">
           <h3>Milestones</h3>
           <p>
             Milestones divide a project up into short, manageable chunks with a specific goal (they are often referred to as "timeboxes" or "sprints" in agile terminology).  To view the milestones for your project, click the '<a href="#"><i class="icon-road"></i>Milestones</a>' link in the project sidebar.  Now let's see what milestones are all about...
@@ -48,68 +58,213 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</sm
 
           <h4>Milestone overview</h4>
           <p>
-            Once you've created at least one milestone, the project's milestone overview page will become useful - all milestones for the project are listed as lozenges, showing the short name and completion status (Exhibit 1).  There's also some quick edit/delete links (see the icons at the top right of each milestone).
+            Once you've created at least one milestone, the project's milestone overview page will become useful - all milestones for the project are listed as lozenges, showing the short name and completion status (Exhibit 1).  There's also some quick controls to edit/delete/close/re-open the milestone (see the icons at the top right of each milestone).
           </p>
 		</div>
+		</div>
+		<!-- End section 1 -->
 
 
-          <div class="row-fluid span6 offset1">
-            <div class="span9">
-              <div class="well">
-                <div class="row-fluid overview">
 
-                  <div class="span5">
-                    <h3><a href="#">User accounts</a></h3>
-                  </div>
+		<!-- Exhibit 1 -->
+		<div class="row-fluid">
+		<div class="span10 offset1">
 
-                  <div class="span7">
-                    <a href="#" class="close delete"><i class="icon-remove-circle"></i></a>
-                    <a href="#" class="close edit"><i class="icon-pencil"></i></a>
-                    <p>
-                      <small>
-                        <span class="badge badge-info">1</span> closed
-                        <span class="badge badge-success">1</span> resolved
-                        <span class="badge badge-warning">1</span> in progress
-                      </small>
-                    </p>
-                    <div class="progress progress-striped">
-                      <div class="bar bar-info" style="width: 33.333333333333%;"></div>
-                      <div class="bar bar-success" style="width: 33.333333333333%;"></div>
-                      <div class="bar bar-warning" style="width: 33.333333333333%;"></div>
-                      <div class="bar bar-danger" style="width: 0%;"></div>
-                    </div>
-                  </div>
-               </div>
-             </div>
-          </div>
-        </div>
+			<div class="well span12">
 
-        <div class="alert alert-info span7 offset1">
-          Exhibit 1: Milestone lozenge
-        </div>
+              <div class="span5">
+                <h3><a href="#" title="Click to show the milestone board">User accounts</a></h3>
+              </div>
+
+              <div class="span7">
+                <a id="deleteLink" href="#" class="close delete" title="Click to delete the milestone"><i class="icon-remove-circle"></i></a>
+                <a id="closeLink" href="#" class="close delete" title="Click to close the milestone (closed milestones will have a re-open control)"><i class="icon-off"></i></a>
+                <a id="editLink" href="#" class="close edit" title="Click to edit the milestone"><i class="icon-pencil"></i></a>
+                <p>
+                  <small>
+                    <span class="badge badge-info">1</span> closed
+                    <span class="badge badge-success">1</span> resolved
+                    <span class="badge badge-warning">1</span> in progress
+                    <span class="badge badge-important">1</span> open
+					<span class="pull-right muted" title="Story point progress">17/23 points</span>
+                  </small>
+                </p>
+                <div id="progressBar" class="progress progress-striped" title="The milestone's progress">
+                  <div class="bar bar-info" style="width: 25%;"></div>
+                  <div class="bar bar-success" style="width: 25%;"></div>
+                  <div class="bar bar-warning" style="width: 25%;"></div>
+                  <div class="bar bar-danger" style="width: 25%;"></div>
+                </div>
+              </div>
+			</div>
+
+		</div>
+		</div>
+
+		<div class="row-fluid">
+		<div class="span10 offset1">
+
+    		<div class="alert alert-info span12">
+		       Exhibit 1: Milestone lozenge
+		    </div>
+
+		</div>
+		</div>
+		<!-- End exhibit 1 -->
 
 
-      <div class="well span9">
+
+		<!-- Section 2 -->
+		<div class="row-fluid">
+      	<div class="well span12">
+
         <h4>The Milestone board</h4>
         <p>
-          Clicking on a milestone takes you to its milestone board display (also known as a "Kanban chart").  This is a visual overview of the status of all the milestone's tasks:
+          Clicking on a milestone takes you to its milestone board display (also known as a "Kanban chart" - Exhibit 2).  This is a visual overview of the status of all the milestone's tasks:
           <ol>
             <li><strong>Backlog:</strong> All the tasks that nobody has started working on yet</li>
             <li><strong>In Progress:</strong> Everything your team is working on at the moment</li>
             <li><strong>Completed:</strong> Everything that's done and dusted</li>
-            <li><strong>Ice Box:</strong> All the project's tasks that are <em>not</em> attached to a milestone</li>
+            <li><strong>Ice Box:</strong> Planned tasks for the milestone that will <em>not</em> be completed due to time constraints</li>
           </ol>
         </p>
 
+		</div>
+		</div>
+		<!-- End section 2 -->
+
+
+		<!-- Start exhibit 2 -->
+		<div class="row-fluid">
+		<div class="span10 offset1">
+
+			<!-- Backlog column with one task -->
+			<ul class="well col sprintboard-droplist span4 sprintboard-column ui-sortable">
+				<h4>Backlog</h4>
+				<hr>
+
+				<li class='draggable'><div class="task-container">
+					<div class="task"><div class="well type_bar_enhancement">
+
+						<div class="row-fluid">
+						<div class="span10">
+							<p><a href="#" title="Click to go to the task"><strong>#2</strong> - A task</a></p>
+							<span class="label label-inverse" title="Severity">Major <i class="icon-upload icon-white"></i></span> <span class="label label-important taskstatus" title="Status (changes when dragged between columns)">Open</span>
+						</div>
+
+						<div class="span2">
+							<img src="https://secure.gravatar.com/avatar/placeholder.jpg?d=mm" alt="Not assigned" title="Nobody is assigned to the task" height="80" width="80"/>
+						</div>
+						</div>
+
+					</div></div>
+				</div></li>
+			</ul>
+
+			<!-- In progress column with one task -->
+			<ul class="well col sprintboard-droplist span4 sprintboard-column ui-sortable">
+				<h4>In progress</h4>
+				<hr>
+				<li class='draggable'><div class="task-container">
+					<div class="task"><div class="well type_bar_bug">
+
+						<div class="row-fluid">
+						<div class="span10">
+							<p><a href="#" title="Click to go to the task"><strong>#3</strong> - Another task</a></p>
+							<span class="label label-inverse" title="Severity">Urgent <i class="icon-exclamation-sign icon-white"></i></span> <span class="label label-warning taskstatus" title="Status (changes when dragged between columns)">In progress</span>
+						</div>
+
+						<div class="span2">
+							<img src="https://secure.gravatar.com/avatar/placeholder.jpg" alt="Diana Developer" title="Gravatar of the assigned developer" height="80" width="80"/>
+						</div>
+						</div>
+
+					</div></div>
+				</div></li>
+			</ul>
+
+			<!-- Completed column with one task -->
+			<ul class="well col sprintboard-droplist span4 sprintboard-column ui-sortable">
+				<h4>Completed</h4>
+				<hr>
+				<li class='draggable'><div class="task-container">
+					<div class="task"><div class="well type_bar_bug">
+
+						<div class="row-fluid">
+						<div class="span10">
+							<p><a href="#" title="Click to go to the task"><strong>#3</strong> - Finished task</a></p>
+							<span class="label label-inverse" title="Severity">Blocker <i class="icon-ban-circle icon-white"></i></span> <span class="label label-success taskstatus" title="Status (changes when dragged between columns)">Resolved</span>
+						</div>
+
+						<div class="span2">
+							<img src="https://secure.gravatar.com/avatar/placeholder.jpg" alt="Diana Developer" title="Gravatar of the assigned developer" height="80" width="80"/>
+						</div>
+						</div>
+
+					</div></div>
+				</div></li>
+			</ul>
+		</div>
+		</div>
+
+		<!-- Icebox with one task -->
+		<div class="row-fluid">
+		<div class="span10 offset1">
+			<ul class="well col sprintboard-droplist sprintboard-icebox span12 sprintboard-column ui-sortable">
+				<h4>Icebox</h4>
+				<hr>
+				<li class='draggable'><div class="task-container">
+					<div class="task"><div class="well type_bar_bug">
+
+						<div class="row-fluid">
+						<div class="span10">
+							<p><a href="#" title="Click to go to the task"><strong>#3</strong> - Won't do this</a></p>
+							<span class="label label-inverse" title="Severity">Minor <i class="icon-download icon-white"></i></span> <span class="label taskstatus" title="Status (changes when dragged between columns)">Dropped</span>
+						</div>
+
+						<div class="span2">
+							<img src="https://secure.gravatar.com/avatar/placeholder.jpg?d=mm" alt="Not assigned" title="Nobody is assigned to the task" height="80" width="80"/>
+						</div>
+						</div>
+
+					</div></div>
+				</div></li>
+			</ul>
+
+		</div>
+		</div>
+
+		<div class="row-fluid">
+		<div class="span10 offset1">
+
+    		<div class="alert alert-info span12">
+		       Exhibit 2: Milestone board
+		    </div>
+
+		</div>
+		</div>
+		<!-- End exhibit 2 -->
+
+		<!-- Section 3 -->
+		<div class="row-fluid">
+		<div class="well span12">
+
         <p>
-          As the milestone progresses, you may find that some tasks take longer than expected.  It is important to stay on track and finish the milestone on time, so you will need to drop some of the lower priority tasks - these will then end up in the icebox, ready to assign to another milestone.
+          As the milestone progresses, you may find that some tasks take longer than expected.  It is important to stay on track and finish the milestone on time, so you will need to drop some of the lower priority tasks - these will then end up in the icebox.
         </p>
 
         <p>
-          On the other hand, it may turn out you burn through the tasks a lot faster than expected! If this happens, you may want to pull some tasks out of the ice box by assigning them to the current milestone.  Hooray for productivity!
+          On the other hand, it may turn out you burn through the tasks a lot faster than expected! If this happens, you may want to pull some tasks out of the ice box.  Hooray for productivity!
         </p>
 
-      </div>
-    </div>
+		<p>
+		  When the milestone is finished, click the <a class="btn btn-small" href="#">Close</a> button. Any tasks for the milestone that are marked as 'resolved' will be automatically marked as 'closed'. <strong>Note:</strong> You should normally only close the milestone once all tasks are finished. If any tasks are <em>not</em> finished, you will be asked what to do: move them to another milestone, or just unlink them from the current milestone.
+		</p>
 
+
+		</div>
+		</div>
+		<!-- End section 3 -->
+
+	</div>
 </div>

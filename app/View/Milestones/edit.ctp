@@ -17,7 +17,6 @@ $this->Html->script('bootstrap-datepicker', array('block' => 'scriptBottom'));
 $this->Html->scriptBlock("$('.dp1').datepicker()", array('inline' => false));
 $this->Html->css('datepicker', null, array ('inline' => false));
 $this->Html->css('milestones.index', null, array ('inline' => false));
-
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -27,7 +26,7 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Milestone/topbar_edit', array('id' => $this->request->data['Milestone']['id'])) ?>
+            <?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $this->request->data['Milestone']['id'])) ?>
             <div class="span10">
 
                 <?= $this->element('Milestone/add_edit') ?>

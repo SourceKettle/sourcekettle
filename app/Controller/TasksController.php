@@ -44,14 +44,22 @@ class TasksController extends AppProjectController {
 		parent::beforeFilter();
 		$this->Auth->allow(
 			'api_all',
-			'api_view'
+			'api_view',
+			'api_update'
 		);
 
 		$this->Security->unlockedActions = array (
 			"starttask",
 			"stoptask",
 			"resolve",
-			"unresolve"
+			"unresolve",
+			"freeze",
+			"setBlocker",
+			"setUrgent",
+			"setMajor",
+			"setMinor",
+			"detachFromMilestone",
+			"api_update"
 		);
 	}
 
@@ -61,12 +69,12 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function index($project = null, $statuses = null) {
+		// TODO hard coded IDs
 		$project = $this->_projectCheck($project);
-		if (preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
-			$this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
-		} else {
-			$this->set('task_status_filter', 0);
+		if (!preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
+			$statuses = "1,2"; // Default to open/in progress tasks only
 		}
+		$this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
 		$this->set('events', $this->Task->fetchHistory($project['Project']['id'], 5));
 		$this->set('open_milestones', $this->Task->Milestone->getOpenMilestones(true));
 	}
@@ -189,19 +197,18 @@ class TasksController extends AppProjectController {
 		// If a User has assigned someone
 		if ($this->request->is('post') && isset($this->request->data['TaskAssignee']) && isset($this->request->data['TaskAssignee']['assignee'])) {
 
-			$_email = $this->Useful->extractEmail($this->request->data['TaskAssignee']['assignee']);
-			unset($this->request->data['TaskAssignee']);
-
-			if ($user = $this->Task->Assignee->findByEmail($_email)) {
-				if ($this->Task->Project->hasWrite($user['Assignee']['id'])) {
-					$this->Task->set('assignee_id', $user['Assignee']['id']);
-					$this->Flash->u($this->Task->save());
-				} else {
-					$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
-				}
+			$assigneeId = $this->request->data['TaskAssignee']['assignee'];
+			if ($assigneeId == 0) {
+				$this->Task->set('assignee_id', $assigneeId);
+				$this->Flash->u($this->Task->save());
+			} elseif ($this->Task->Project->hasWrite($assigneeId)) {
+				$this->Task->set('assignee_id', $assigneeId);
+				$this->Flash->u($this->Task->save());
 			} else {
-				$this->Flash->error('The assignee could not be updated. Please, try again.');
+				$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
 			}
+
+			unset($this->request->data['TaskAssignee']);
 
 			$this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
 			return;
@@ -242,12 +249,20 @@ class TasksController extends AppProjectController {
 				if ($_old && !isset($changeUsers[$_old])) {
 					$this->Task->Assignee->id = $_old;
 					$_temp = $this->Task->Assignee->read();
-					$changeUsers[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+					if (count($_temp) > 0) {
+						$changeUsers[$_old] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+					} else {
+						$changeUsers[$_old] = array('(Unknown or deleted user)', '');
+					}
 				}
 				if ($_new && !isset($changeUsers[$_new])) {
 					$this->Task->Assignee->id = $_new;
 					$_temp = $this->Task->Assignee->read();
-					$changeUsers[$_new] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+					if (count($_temp) > 0) {
+						$changeUsers[$_new] = array($_temp['Assignee']['name'], $_temp['Assignee']['email']);
+					} else {
+						$changeUsers[$_new] = array('(Unknown or deleted user)', '');
+					}
 				}
 			}
 		}
@@ -277,7 +292,10 @@ class TasksController extends AppProjectController {
 		);
 		$this->set('times', $times);
 		$this->set('tasks', $this->Task->fetchLoggableTasks());
-		$this->set('collaborators', $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']));
+		$collabs = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$collabs[0] = "None";
+		ksort($collabs);
+		$this->set('collaborators', $collabs);
 	}
 
 /**
@@ -286,7 +304,16 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function add($project = null) {
+
+
 		$project = $this->_projectCheck($project, true);
+
+		// Milestone pre-selected - parse and store
+		if (!empty($this->request->query['milestone'])) {
+			$selected_milestone_id = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
+		} else {
+			$selected_milestone_id = 0;
+		}
 
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
@@ -298,7 +325,6 @@ class TasksController extends AppProjectController {
 			if (isset($this->request->data['Task']['milestone_id']) && $this->request->data['Task']['milestone_id'] == 0) {
 				$this->request->data['Task']['milestone_id'] = null;
 			}
-
 			if (isset($this->request->data['Task']['task_type_id']) && $this->request->data['Task']['task_type_id'] == 0) {
 				$this->request->data['Task']['task_type_id'] = 3;
 			}
@@ -317,8 +343,27 @@ class TasksController extends AppProjectController {
 				}
 			} else if ($this->request->is('post')) {
 				if ($this->Flash->c($this->Task->saveAll($this->request->data))) {
-					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
+
+					// If they pre-selected a milestone, go back to that milestone
+					if ($selected_milestone_id) {
+						$this->redirect(array('controller' => 'milestones', 'project' => $project['Project']['name'], 'action' => 'view', $selected_milestone_id));
+					} else {
+						// ...otherwise show the task.
+						$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
+					}
 				}
+			}
+		} else {
+			// GET request: set default priority, type and assignment
+			// TODO define the defaults somewhere useful?
+			$this->request->data['Task']['task_priority_id'] = 2;
+			$this->request->data['Task']['task_type_id'] = 1;
+			$this->request->data['Task']['assignee_id'] = 0;
+
+			if ($selected_milestone_id) {
+				$this->request->data['Task']['milestone_id'] = $selected_milestone_id;
+			} else{
+				$this->request->data['Task']['milestone_id'] = null;
 			}
 		}
 
@@ -343,6 +388,8 @@ class TasksController extends AppProjectController {
 		));
 
 		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$assignees[0] = "None";
+		ksort($assignees);
 
 		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 	}
@@ -388,6 +435,9 @@ class TasksController extends AppProjectController {
 			));
 
 			$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+			$assignees[0] = "None";
+			ksort($assignees);
+
 			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
 	}
@@ -423,39 +473,15 @@ class TasksController extends AppProjectController {
 
 		$isAjax = $this->request->is("ajax");
 
-		// check assigned
-		if (!$this->Task->isAssignee()) {
-			if ($isAjax) {
-				$this->set("error", "not_assignee");
-				$this->set("_serialize", array("error"));
-			} else {
-				$this->Flash->error('You can not start work on a task not assigned to you.');
-				$this->redirect(array('project' => $project, 'action' => 'view', $id));
-			}
-
-			return;
-		}
-
-		//check open
-		if (!$this->Task->isOpen()) {
-			if ($isAjax) {
-				$this->set("error", "not_open");
-				$this->set("_serialize", array("error"));
-			} else {
-				$this->Flash->error('You can not start work on a task that is not open.');
-				$this->redirect(array('project' => $project, 'action' => 'view', $id));
-			}
-
-			return;
-		}
-
 		$updated = $this->__updateTaskStatus($project, $id, 2, $isAjax);
 
 		if ($isAjax) {
 			if ($updated) {
 				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
 			} else {
 				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 			$this->set("_serialize", array("error"));
 		} else {
@@ -476,23 +502,11 @@ class TasksController extends AppProjectController {
 
 		$task = $this->Task->open($id);
 
-		// check assigned
-		if (!$this->Task->isAssignee()) {
-			if ($isAjax) {
-				$this->set("error", "not_assignee");
-				$this->set("_serialize", array("error"));
-			} else {
-				$this->Flash->error('You can not stop work on a task not assigned to you.');
-				$this->redirect(array('project' => $project, 'action' => 'view', $id));
-			}
-
-			return;
-		}
-
 		//check inProgress
-		if (!$this->Task->isInProgress()) {
+		/*if (!$this->Task->isInProgress()) {
 			if ($isAjax) {
 				$this->set("error", "not_in_progress");
+				$this->set("errorDescription", "You can not stop work on a task that is not in progress.");
 				$this->set("_serialize", array("error"));
 			} else {
 				$this->Flash->error('You can not stop work on a task that is not in progress.');
@@ -500,14 +514,16 @@ class TasksController extends AppProjectController {
 			}
 
 			return;
-		}
+		}*/
 
 		$updated = $this->__updateTaskStatus($project, $id, 1, $isAjax);
 		if ($isAjax) {
 			if ($updated) {
 				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
 			} else {
 				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 			$this->set("_serialize", array("error"));
 		} else {
@@ -560,15 +576,17 @@ class TasksController extends AppProjectController {
 		$this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
-	public function resolve($project = null, $id = null){
+	public function resolve($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
 		$success = $this->__updateTaskStatus($project, $id, 3, $isAjax);
 		if ($isAjax) {
 			if ($success) {
 				$this->set ("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
 			} else {
 				$this->set ("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 
 			$this->set ("_serialize", array ("error"));
@@ -591,7 +609,7 @@ class TasksController extends AppProjectController {
 		}
 	}
 
-	public function unresolve($project = null, $id = null){
+	public function unresolve($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
 		$success = $this->__updateTaskStatus($project, $id, 1, $isAjax);
@@ -599,8 +617,10 @@ class TasksController extends AppProjectController {
 		if ($isAjax) {
 			if ($success) {
 				$this->set ("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
 			} else {
 				$this->set ("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
 			}
 
 			$this->set ("_serialize", array ("error"));
@@ -631,42 +651,39 @@ class TasksController extends AppProjectController {
  * @param mixed $taskId (default: null)
  * @throws MethodNotAllowedException
  */
-	public function freeze ($project = null, $taskId = null) {
-		if (!$this->request->is("ajax")) {
-			throw new MethodNotAllowedException();
-		}
+	public function freeze($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
 
-		$project = $this->_projectCheck($project, true);
-		$this->Task->open ($taskId);
-		$this->Task->set ("milestone_id", 0);
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskStatus($project, $id, 5, $isAjax);
 
-		if (!$this->Task->save()) {
-			$this->set ("error", "failed_to_save");
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task status updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task status");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
 		} else {
-			$this->set ("error", "no_error");
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
 		}
-
-		$this->set ("_serialize", array ("error"));
-	}
-
-	public function thaw ($project = null, $taskId = null ) {
-		if (!$this->request->is("ajax")) {
-			throw new MethodNotAllowedException();
-		}
-
-		$milestone = $this->request->data['milestone'];
-
-		$project = $this->_projectCheck($project, true);
-		$this->Task->open ($taskId);
-		$this->Task->set ("milestone_id", $milestone);
-
-		if (!$this->Task->save()) {
-			$this->set ("error", "failed_to_save");
-		} else {
-			$this->set ("error", "no_error");
-		}
-
-		$this->set ("_serialize", array ("error"));
 	}
 
 /**
@@ -681,13 +698,250 @@ class TasksController extends AppProjectController {
 		$project = $this->_projectCheck($project, true);
 		$task = $this->Task->open($id);
 
+		// TODO hard-coded IDs
 		$this->Task->set('task_status_id', $status);
-        $result = $this->Task->save();
-        if ($isAjax) {
-            return $result;
-        } else {
-            return $this->Flash->U($result);
-        }
+		$result = $this->Task->save();
+		if ($isAjax) {
+			return $result;
+		} else {
+			return $this->Flash->U($result);
+		}
+	}
+
+/**
+ * set-blocker function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function setBlocker($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskPriority($project, $id, 4, $isAjax);
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task priority updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task priority");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+/**
+ * set-urgent function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function setUrgent($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskPriority($project, $id, 3, $isAjax);
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task priority updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task priority");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+/**
+ * set-major function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function setMajor($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskPriority($project, $id, 2, $isAjax);
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task priority updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task priority");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+/**
+ * set-minor function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function setMinor($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		// TODO hard coded status IDs
+		$success = $this->__updateTaskPriority($project, $id, 1, $isAjax);
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task priority updated");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while updating the task priority");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+
+/**
+ * detach-from-milestone function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $taskId (default: null)
+ * @throws MethodNotAllowedException
+ */
+	public function detachFromMilestone($project = null, $id = null) {
+		$isAjax = $this->request->is("ajax");
+
+		$project = $this->_projectCheck($project, true);
+		$task = $this->Task->open($id);
+
+		$this->Task->set('milestone_id', 0);
+		$success = $this->Task->save();
+
+		if ($isAjax) {
+			if ($success) {
+				$this->set("error", "no_error");
+				$this->set("errorDescription", "Task detached from milestone");
+			} else {
+				$this->set("error", "failed_to_save");
+				$this->set("errorDescription", "An error occurred while detaching the task from the milestone");
+			}
+
+			$this->set ("_serialize", array ("error", "errorDescription"));
+		} else {
+			// If a User has commented
+			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+				$this->Task->TaskComment->create();
+
+				$this->request->data['TaskComment']['task_id'] = $id;
+				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+				if ($this->Task->TaskComment->save($this->request->data)) {
+					$this->Flash->info('The comment has been added successfully');
+					unset($this->request->data['TaskComment']);
+				} else {
+					$this->Flash->error('The comment could not be saved. Please, try again.');
+				}
+			}
+			$this->redirect(array('project' => $project, 'action' => 'view', $id));
+		}
+	}
+/**
+ * __updateTaskPriority function.
+ *
+ * @access public
+ * @param mixed $project (default: null)
+ * @param mixed $id (default: null)
+ * @return void
+ */
+	private function __updateTaskPriority($project = null, $id = null, $priority = null, $isAjax = false) {
+		$project = $this->_projectCheck($project, true);
+		$task = $this->Task->open($id);
+
+		// TODO hard-coded IDs
+		$this->Task->set('task_priority_id', $priority);
+		$result = $this->Task->save();
+		if ($isAjax) {
+			return $result;
+		} else {
+			return $this->Flash->U($result);
+		}
 	}
 
 	/* ************************************************* *
@@ -714,7 +968,7 @@ class TasksController extends AppProjectController {
 		if ($id == null) {
 			$this->response->statusCode(400);
 			$data['error'] = 400;
-			$data['message'] = 'Bad request, no project id specified.';
+			$data['message'] = 'Bad request, no task id specified.';
 		}
 
 		if ($id == 'all') {
@@ -751,6 +1005,59 @@ class TasksController extends AppProjectController {
 					$task['Task']['priority'] = $task['TaskPriority']['name'];
 
 					$data = $task['Task'];
+				} else {
+					$data['error'] = 401;
+					$data['message'] = 'Task found, but is not public.';
+					$data['id'] = $id;
+				}
+			}
+		}
+
+		$this->set('data',$data);
+		$this->render('/Elements/json');
+	}
+
+	function api_update($id = null) {
+		$this->layout = 'ajax';
+		$data = array();
+
+		if ($id == null) {
+			$this->response->statusCode(400);
+			$data['error'] = 400;
+			$data['message'] = 'Bad request, no task id specified.';
+		}
+
+		if (is_numeric($id)) {
+			$this->Task->id = $id;
+
+			if (!$this->Task->exists()) {
+				$this->response->statusCode(404);
+				$data['error'] = 404;
+				$data['message'] = 'No task found of that ID.';
+				$data['id'] = $id;
+			} else {
+				$task = $this->Task->read();
+
+				$this->Task->Project->id = $task['Task']['project_id'];
+
+				$partOfProject = $this->Task->Project->hasRead($this->Auth->user('id'));
+				$isAdmin = ($this->_apiAuthLevel() == 1);
+
+				if ($isAdmin || $partOfProject) {
+					/*//task_type_id
+					unset($task['Task']['task_type_id']);
+					$task['Task']['type'] = $task['TaskType']['name'];
+					//task_status_id
+					unset($task['Task']['task_status_id']);
+					$task['Task']['status'] = $task['TaskStatus']['name'];
+					//task_priority_id
+					unset($task['Task']['task_priority_id']);
+					$task['Task']['priority'] = $task['TaskPriority']['name'];
+					*/
+					$this->Task->save($this->request->data);
+
+					$data = $task['Task'];
+					$data['error'] = 'no_error';
 				} else {
 					$data['error'] = 401;
 					$data['message'] = 'Task found, but is not public.';
@@ -851,12 +1158,12 @@ class TasksController extends AppProjectController {
 						$conditions['assignee_id'] = $user;
 						break;
 					case 'nobody':
-						$conditions['assignee_id'] = null;
+						$conditions['assignee_id'] = array(null, 0);
 						break;
 					case 'all':
 						break;
 					default:
-						$conditions['assignee_id !='] = $user;
+						$conditions['assignee_id !='] = array($user, 0);
 				}
 			} else {
 				$conditions['assignee_id'] = $user;
@@ -897,4 +1204,6 @@ class TasksController extends AppProjectController {
 		}
 		$this->set('data',$data);
 	}
+
+
 }

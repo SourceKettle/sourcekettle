@@ -42,6 +42,33 @@ $link_remove = $this->Html->link(
     ),
     array(
         'class' => 'close delete',
+		'title' => __('Delete milestone'),
+        'escape' => false
+    )
+);
+$link_close = $this->Html->link(
+    $this->Bootstrap->icon('off'),
+    array(
+        'project' => $project['Project']['name'],
+        'action' => 'close',
+        $milestone['Milestone']['id']
+    ),
+    array(
+        'class' => 'close delete',
+		'title' => __('Close milestone'),
+        'escape' => false
+    )
+);
+$link_reopen = $this->Html->link(
+    $this->Bootstrap->icon('repeat'),
+    array(
+        'project' => $project['Project']['name'],
+        'action' => 'reopen',
+        $milestone['Milestone']['id']
+    ),
+    array(
+        'class' => 'close delete',
+		'title' => __('Re-open milestone'),
         'escape' => false
     )
 );
@@ -50,6 +77,19 @@ $link_edit = $this->Html->link(
     array(
         'project' => $project['Project']['name'],
         'action' => 'edit',
+        $milestone['Milestone']['id']
+    ),
+    array(
+        'class' => 'close edit',
+		'title' => __('Edit milestone'),
+        'escape' => false
+    )
+);
+$link_plan= $this->Html->link(
+    $this->Bootstrap->icon('list-alt'),
+    array(
+        'project' => $project['Project']['name'],
+        'action' => 'plan',
         $milestone['Milestone']['id']
     ),
     array(
@@ -67,22 +107,24 @@ $link_edit = $this->Html->link(
             </div>
             <div class="span7">
                 <?= $link_remove ?>
+                <?= $milestone['Milestone']['is_open']? $link_close : $link_reopen?>
+                <?= $link_plan?>
                 <?= $link_edit ?>
                 <p>
                     <small>
+                        <?= ($t == 0) ? __('no tasks in this milestone')  : '' ?>
+                        <?= ($c > 0)  ? $this->Bootstrap->badge($c, 'info').' '.__('closed') : ''?>
+                        <?= ($r > 0)  ? $this->Bootstrap->badge($r, 'success').' '.__('resolved') : ''?>
+                        <?= ($i > 0)  ? $this->Bootstrap->badge($i, 'warning').' '.__('in progress') : ''?>
+                        <?= ($o > 0)  ? $this->Bootstrap->badge($o, 'important').' '.__('open') : ''?>
                         <span class="pull-right muted"><?=$milestone['Milestone']['dPoints']?>/<?=$milestone['Milestone']['tPoints']?> points</span>
-                        <?= ($t == 0) ? $this->DT->t('block.progress.notasks.text', array('action'=>'open')) : '' ?>
-                        <?= ($c > 0) ? $this->Bootstrap->badge($c, 'info').$this->DT->t('block.progress.closed.text', array('action'=>'open')) : '' ?>
-                        <?= ($r > 0) ? $this->Bootstrap->badge($r, 'success').$this->DT->t('block.progress.resolved.text', array('action'=>'open')) : '' ?>
-                        <?= ($i > 0) ? $this->Bootstrap->badge($i, 'warning').$this->DT->t('block.progress.inprogress.text', array('action'=>'open')) : '' ?>
-                        <?= ($o > 0) ? $this->Bootstrap->badge($o, 'important').$this->DT->t('block.progress.open.text', array('action'=>'open')) : '' ?>
                     </small>
                 </p>
                 <div class="progress progress-striped">
-                    <div class="bar bar-info" style="width: <?= $percent_c ?>%;"></div>
+                    <div class="bar bar-info"    style="width: <?= $percent_c ?>%;"></div>
                     <div class="bar bar-success" style="width: <?= $percent_r ?>%;"></div>
                     <div class="bar bar-warning" style="width: <?= $percent_i ?>%;"></div>
-                    <div class="bar bar-danger" style="width: <?= $percent_o ?>%;"></div>
+                    <div class="bar bar-danger"  style="width: <?= $percent_o ?>%;"></div>
                 </div>
             </div>
         </div>

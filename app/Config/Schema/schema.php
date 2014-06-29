@@ -24,7 +24,13 @@ class AppSchema extends CakeSchema {
 						array('name' => 'feature_time_enabled',       'value' => '1'),
 						array('name' => 'feature_source_enabled',     'value' => '1'),
 						array('name' => 'feature_task_enabled',       'value' => '1'),
-						array('name' => 'feature_attachment_enabled', 'value' => '0')
+						array('name' => 'feature_attachment_enabled', 'value' => '0'),
+						array('name' => 'ldap_enabled',               'value' => '0'),
+						array('name' => 'ldap_url',                   'value' => ''),
+						array('name' => 'ldap_bind_dn',               'value' => ''),
+						array('name' => 'ldap_bind_pw',               'value' => ''),
+						array('name' => 'ldap_base_dn',               'value' => ''),
+						array('name' => 'ldap_filter',                'value' => 'mail=%USERNAME%'),
 					));
 					break;
 
@@ -60,7 +66,8 @@ class AppSchema extends CakeSchema {
 						array('name' => 'open'),
 						array('name' => 'in progress'),
 						array('name' => 'resolved'),
-						array('name' => 'closed')
+						array('name' => 'closed'),
+						array('name' => 'dropped')
 					));
 					break;
 
@@ -249,7 +256,7 @@ class AppSchema extends CakeSchema {
 	public $ssh_keys = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
-		'key' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 512, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'key' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'comment' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),

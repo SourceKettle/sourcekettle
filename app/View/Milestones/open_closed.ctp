@@ -16,6 +16,9 @@
 
 $this->Html->css('milestones.index', null, array ('inline' => false));
 
+// Hacky... 
+$status = preg_replace('/^view_/', '', $this->request['action']);
+
 ?>
 
 <?= $this->DT->pHeader() ?>
@@ -25,11 +28,11 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Milestone/topbar_index') ?>
+            <?= $this->element('Milestone/topbar') ?>
             <div class="span10">
                 <?php
                 if (empty($milestones)) {
-                    echo '<div class="span10" style="text-align:center"><h1>No '.$this->DT->t('header.text').'</h1></div>';
+                    echo '<div class="span10" style="text-align:center"><h1>'.__("No $status milestones").'</h1></div>';
                 } else {
                     foreach ($milestones as $milestone) {
                         echo $this->element('Milestone/block', array('milestone' => $milestone));

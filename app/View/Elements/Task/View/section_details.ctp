@@ -18,17 +18,23 @@
     <div class="span12">
         <dl class="dl-horizontal span6">
             <dt><?= $this->DT->t('details.creator') ?>:</dt>
-            <dd>
+            <? if (isset($task['Owner']['id'])) {?>
+	    <dd>
                 <?= $this->Html->link(
                     $task['Owner']['name'],
                     array('controller' => 'users', 'action' => 'view', $task['Owner']['id'])
                 ) ?>
             </dd>
-            <dt><?= $this->DT->t('details.type') ?>:</dt>
+	    <? } else { ?>
+            <dd class="muted">
+		<?=__("Not set")?>
+            </dd>
+	    <? } ?>
+            <dt><?= __("Task type") ?>:</dt>
             <dd><?= $this->Task->type($task['Task']['task_type_id']) ?></dd>
-            <dt><?= $this->DT->t('details.priority') ?>:</dt>
+            <dt><?= __("Task priority") ?>:</dt>
             <dd><?= $this->Task->priority($task['Task']['task_priority_id']) ?></dd>
-            <dt><?= $this->DT->t('details.milestone') ?>:</dt>
+            <dt><?= __("Fix milestone") ?>:</dt>
             <? if (isset($task['Milestone']['subject'])) { ?>
                 <dd>
                     <?= $this->Html->link(
@@ -37,22 +43,22 @@
                     ) ?>
                 </dd>
             <? } else { ?>
-                <dd class="muted">Not set</dd>
+                <dd class="muted"><?= __("Not set")?></dd>
             <? } ?>
             <dt><?=__('Estimate')?>:</dt>
             <? if (isset($task['Task']['time_estimate'])) { ?>
                 <dd><?=$task['Task']['time_estimate']?></dd>
             <? } else { ?>
-                <dd class="muted">No time estimate</dd>
+                <dd class="muted"><?= __("No time estimate")?></dd>
             <? } ?>
 
             <? if (isset($task['Task']['story_points'])) { ?>
-                <dd><?=$task['Task']['story_points']?> points</dd>
+                <dd><?=$task['Task']['story_points']?> <?= __("points")?></dd>
             <? } else { ?>
-                <dd class="muted">No story point estimate</dd>
+                <dd class="muted"><?= __("No story point estimate")?></dd>
             <? } ?>
 
-            <dt>Depends on:</dt>
+            <dt><?= __("Depends on")?>:</dt>
 
             <dd>
             <?php
@@ -84,7 +90,7 @@
             </dd>
         </dl>
         <dl class="dl-horizontal span6">
-            <dt><?= $this->DT->t('details.assignee') ?>:</dt>
+            <dt><?= __("Assigned to") ?>:</dt>
             <? if (isset($task['Assignee']['name'])) { ?>
                 <dd>
                     <?= $this->Html->link(
@@ -95,14 +101,14 @@
             <? } else { ?>
                 <dd class="muted">Not set</dd>
             <? } ?>
-            <dt><?= $this->DT->t('details.status') ?>:</dt>
+            <dt><?= __("Task status") ?>:</dt>
             <dd><?= $this->Task->status($task['Task']['task_status_id']) ?></dd>
 
-            <dt><?= $this->DT->t('details.created') ?>:</dt>
+            <dt><?= __("Created") ?>:</dt>
             <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>
-            <dt><?= $this->DT->t('details.updated') ?>:</dt>
+            <dt><?= __("Last updated") ?>:</dt>
             <dd><?= $this->Time->timeAgoInWords($task['Task']['modified']) ?></dd>
-            <dt>Depended on by:</dt>
+            <dt><?= __("Depended on by")?>:</dt>
             <dd>
             <?php
             foreach($task['DependedOnBy'] as $dep){

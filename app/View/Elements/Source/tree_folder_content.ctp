@@ -1,9 +1,9 @@
 <div class="span10">
     <table class="well table table-striped">
         <tr>
-            <th><?= $this->Bootstrap->icon(null) ?> name</th>
-            <th>edited</th>
-            <th>message</th>
+            <th><?= $this->Bootstrap->icon(null) ?> <?=__("name")?></th>
+            <th><?=__("edited")?></th>
+            <th><?=__("message")?></th>
         </tr>
 <?php
     foreach ($files as $file) {
@@ -31,7 +31,23 @@
             </td>
             <td>
                 <?php
-                    echo $this->Text->truncate(h($file['updated']['subject']), 100, array('exact' => false, 'html' => false));
+					echo $this->Gravatar->image(
+						$file['updated']['author']['email'],
+						array('size' => 24),
+						array('title' => $file['updated']['author']['name'].' ('.$file['updated']['author']['email'].')')
+					);
+					echo " ";
+
+					// NB no h() as truncate() does it for us
+                    $subject = $this->Text->truncate(
+						$file['updated']['subject'], 100, array('exact' => false, 'html' => false)
+					);
+					echo $this->Html->link($subject, array(
+						'controller' => 'source',
+						'action' => 'commit',
+						'project' => $project['Project']['name'],
+						$file['updated']['hash']
+					));
                 ?>
             </td>
         </tr>

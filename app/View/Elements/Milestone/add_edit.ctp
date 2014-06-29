@@ -4,13 +4,13 @@
         echo $this->Form->create('Milestone', array('class' => 'well form-horizontal'));
 
         echo $this->Bootstrap->input("subject", array(
-            "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => $this->DT->t('form.subject.placeholder'))),
-            "label" => $this->DT->t('form.subject.label'),
+            "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => __("e.g. Sprint 1"))),
+            "label" => __("Short name"),
         ));
 
         echo $this->Bootstrap->input("description", array(
-            "input" => $this->Form->textarea("description", array("placeholder" => $this->DT->t('form.description.placeholder'), 'class' => 'span12')),
-            "label" => $this->DT->t('form.description.label')
+            "input" => $this->Form->textarea("description", array("placeholder" => __("Overall goals of the milestone"), 'class' => 'span12')),
+            "label" => __("Description")
         ));
 
         echo "<br>";
@@ -27,19 +27,11 @@
 				"value" => $due_date,
                 "data-date-format" => "yyyy-mm-dd")
             ),
-            "label" => $this->DT->t('form.due.label'),
-            "help_block" => $this->DT->t('form.due.help')
+            "label" => __("Completion target"),
+            "help_block" => __("When the milestone should be complete")
         ));
 
-		// TODO use placeholder text
-		if(isset($this->data['Milestone']['id'])){
-    	    echo $this->Bootstrap->input("is_open", array(
-				"input" => $this->Form->checkbox("is_open"),
-				"label" => "Milestone is open?",
-			));
-		}
-
-        echo $this->Bootstrap->button($this->DT->t('form.submit'), array("style" => "primary", "size" => "normal", 'class' => 'controls'));
+        echo $this->Bootstrap->button(__("Submit"), array("style" => "primary", "size" => "normal", 'class' => 'controls'));
 
         echo $this->Form->end();
         ?>
@@ -52,7 +44,7 @@
             <br>
             <p><strong>Step 1)</strong> Pick a target, or list of features/things you would like done by a certain time.</p>
             <br>
-            <p><strong>Step 2)</strong> Stick to that target.</p>
+            <p><strong>Step 2)</strong> Stick to that target; drop less-important features to stay on track</p>
         </div>
     </div>
 </div>

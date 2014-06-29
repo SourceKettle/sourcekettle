@@ -14,13 +14,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 // Submit the serialize data on submit click
-$this->Js->get('#UserMyaddForm')->event('submit',
+$this->Js->get('#TimeMyaddForm')->event('submit',
     $this->Js->request(
         array('action' => 'add', 'project' => $project['Project']['name'], 'controller' => 'times'),
         array(
             'update' => '#flashes', // element to update
             // after form submission
-            'data' => $this->Js->get('#UserMyaddForm')->serializeForm(array('isForm' => true, 'inline' => true)),
+            'data' => $this->Js->get('#TimeMyaddForm')->serializeForm(array('isForm' => true, 'inline' => true)),
             'async' => true,
             'dataExpression'=>true,
             'method' => 'POST'
@@ -33,7 +33,7 @@ $this->Js->get('#UserMyaddForm')->event('submit',
         <button type="button" class="close" data-dismiss="modal">x</button>
         <h4>Log time for this Project</h4>
     </div>
-    <?= $this->Form->create('Time', array('id' => 'UserMyaddForm', 'default' => false, 'class' => 'form-horizontal', 'style' => 'margin-bottom: 0px;')) ?>
+    <?= $this->Form->create('Time', array('id' => 'TimeMyaddForm', 'default' => false, 'class' => 'form-horizontal', 'style' => 'margin-bottom: 0px;')) ?>
     <div class="modal-body">
         <?= $this->element('Time/add') ?>
     </div>

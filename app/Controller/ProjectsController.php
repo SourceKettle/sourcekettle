@@ -23,7 +23,7 @@ class ProjectsController extends AppProjectController {
  * Project helpers
  * @var type
  */
-	public $helpers = array('Time', 'GoogleChart.GoogleChart', 'Paginator', 'Markitup');
+	public $helpers = array('Time', 'Paginator', 'Markitup');
 
 	public $uses = array('Project', 'RepoType');
 
@@ -102,9 +102,31 @@ class ProjectsController extends AppProjectController {
 	public function view($name = null) {
 		$project = $this->_projectCheck($name);
 
-		$numberOfOpenTasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id <' => 4, 'Task.project_id' => $project['Project']['id'])));
-		$numberOfClosedTasks = $this->Project->Task->find('count', array('conditions' => array('Task.task_status_id' => 4, 'Task.project_id' => $project['Project']['id'])));
-		$numberOfTasks = $numberOfClosedTasks + $numberOfOpenTasks;
+		$numberOfOpenTasks = $this->Project->Task->find('count', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('open')
+			)
+		));
+		$numberOfInProgressTasks = $this->Project->Task->find('count', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('in progress')
+			)
+		));
+		$numberOfClosedTasks = $this->Project->Task->find('count', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('resolved', 'closed')
+			)
+		));
+		$numberOfDroppedTasks = $this->Project->Task->find('count', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('dropped')
+			)
+		));
+		$numberOfTasks = $numberOfClosedTasks + $numberOfInProgressTasks + $numberOfOpenTasks + $numberOfDroppedTasks;
 
 		$percentOfTasks = 0;
 		if ($numberOfTasks > 0) {
@@ -121,7 +143,7 @@ class ProjectsController extends AppProjectController {
 
 		$numCollab = count($this->Project->Collaborator->findAllByProjectId($project['Project']['id']));
 
-		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfClosedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab'));
+		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab'));
 		$this->set('historyCount', 8);
 	}
 
@@ -133,7 +155,6 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_view($project = null) {
-
 		// Check for valid project name
 		$project = $this->Project->getProject($project);
 		if ( empty($project)) {
@@ -153,6 +174,20 @@ class ProjectsController extends AppProjectController {
  */
 	public function add() {
 		$repoTypes = $this->Project->RepoType->find('list');
+
+		// Flip keys for values, then look up the ID of the default repo type name
+		$defaultRepo = array_flip($repoTypes);
+		if (isset($this->devtrack_config['repo']['default'])) {
+			$d = $this->devtrack_config['repo']['default'];
+		} else {
+			$d = 'None';
+		}
+
+		if (array_key_exists($d, $defaultRepo)) {
+			$defaultRepo = $defaultRepo[$d];
+		} else {
+			$defaultRepo = $defaultRepo['None'];
+		}
 
 		if ($this->request->is('post')) {
 
@@ -194,7 +229,7 @@ class ProjectsController extends AppProjectController {
 			}
 		}
 
-		$this->set(compact('repoTypes'));
+		$this->set(compact('repoTypes', 'defaultRepo'));
 	}
 
 /**
@@ -444,16 +479,24 @@ class ProjectsController extends AppProjectController {
 
 		if (isset($this->request->query['query'])
 			&& $this->request->query['query'] != null
-			&& strlen($this->request->query['query']) > 1) {
+			&& strlen($this->request->query['query']) > 0) {
 
-			$query = $this->request->query['query'];
+			$query = strtolower($this->request->query['query']);
+
+			// At 3 characters, start matching anywhere within the name
+			if(strlen($query) > 2){
+				$query = "%$query%";
+			} else {
+				$query = "$query%";
+			}
+
 			$projects = $this->Project->find(
 				"all",
 				array(
 					'conditions' => array(
 						'OR' => array(
-							'Project.name LIKE' => $query . '%',
-							'Project.description LIKE' => $query . '%'
+							'LOWER(Project.name) LIKE' => $query,
+							'LOWER(Project.description) LIKE' => $query
 						),
 					),
 					'fields' => array(

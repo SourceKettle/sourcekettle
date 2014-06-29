@@ -43,7 +43,7 @@ class TaskHelper extends AppHelper {
 			3 => 'exclamation-sign',
 			4 => 'ban-circle',
 		);
-		return $this->Bootstrap->label($text[$id] . ' ' . $this->Bootstrap->icon($content[$id], "white"), "inverse");
+		return $this->Bootstrap->label($text[$id] . ' ' . $this->Bootstrap->icon($content[$id], "white"), "inverse", array('class' => 'taskpriority'));
 	}
 
 /**
@@ -59,12 +59,14 @@ class TaskHelper extends AppHelper {
 			2 => 'In Progress',
 			3 => 'Resolved',
 			4 => 'Closed',
+			5 => 'Dropped',
 		);
 		$colour = array(
 			1 => 'success',
 			2 => 'primary',
 			3 => 'info',
 			4 => 'danger',
+			5 => '',
 		);
 		//return $this->Bootstrap->button($text[$id], array('class' => 'btn-mini disabled btn-'.$colour[$id]));
 		return $text[$id];
@@ -72,7 +74,7 @@ class TaskHelper extends AppHelper {
 
 /**
  * Get a label to show the status of a task
- * 
+ * TODO hard-coded IDs
  * @access public
  * @param mixed $id
  * @return void
@@ -83,12 +85,14 @@ class TaskHelper extends AppHelper {
 			2 => 'In Progress',
 			3 => 'Resolved',
 			4 => 'Closed',
+			5 => 'Dropped',
 		);
 		$colour = array(
 			1 => 'important',
 			2 => 'warning',
 			3 => 'success',
 			4 => 'info',
+			5 => '',
 		);
 		return $this->Bootstrap->label($text[$id], $colour[$id], array ("class" => "taskstatus"));
 	}

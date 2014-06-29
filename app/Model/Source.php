@@ -167,7 +167,7 @@ class Source extends AppModel {
 
 				foreach ($this->Commit->history($branch, $number, $offset, '') as $a => $commit) {
 					// No more events are available, we've gone past the end...
-					if(!isset($commit) || !$commit){
+					if (!isset($commit) || !$commit) {
 						break;
 					}
 					$commit = $this->Commit->fetch($commit);

@@ -16,9 +16,22 @@
 if (!isset($draggable)){
     $draggable = false;
 }
+
+if(isset($span) && $span){
+	$span=" span$span";
+} else {
+	$span="";
+}
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
 ?>
-<div id="task_<?= $task['Task']['id'] ?>" class="task-container" onclick="location.href='<?= $this->Html->url($url) ?>';" draggable="<? if (empty($task['DependsOn']) || $task['Task']['dependenciesComplete'] && $draggable){ echo 'true'; } else { echo 'false';}?>" data-taskid="<?= $task['Task']['id'] ?>">
+<div id="task_<?= $task['Task']['id'] ?>" 
+  class="task-container<?=$span?>"
+  <?
+  // If it's a draggable item in the milestone board, do NOT make the whole thing a click target...
+  if(!$draggable){?>
+  onclick="location.href='<?= $this->Html->url($url) ?>';"
+  <?}?>
+  data-taskid="<?= $task['Task']['id'] ?>">
     <div class="task">
         <div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
             <div class="row-fluid">
@@ -41,7 +54,11 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                         ?>
                     </div>
                     <div class="span2">
-                        <?= $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm'), array('alt' => $task['Assignee']['name'])) ?>
+					  <?if(isset($task['Assignee']['id'])){?>
+                        <?= $this->Gravatar->image($task['Assignee']['email'], array(), array('alt' => $task['Assignee']['name'])) ?>
+					  <?} else {?>
+                        <?= $this->Gravatar->image('', array('d' => 'mm'), array('alt' => $task['Assignee']['name'])) ?>
+					  <?}?>
                     </div>
                 </div>
             </div>

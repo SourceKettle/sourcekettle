@@ -27,25 +27,25 @@ class SetupController extends AppController {
 		$this->Auth->allow(); //does not require login to use all actions in this controller
 	}
 
-	/**
-	 * The main setup page.
-	 */
+/**
+ * The main setup page.
+ */
 	public function index() {
 		// Find our config base
 		// TODO handle windows case
 
 		// The Application base if we are running only a local configuration.
-		$app_cfg_base = APP . 'Config' . DS;
+		$appConfigBase = APP . 'Config' . DS;
 
 		// The Application base if we have created /etc/sourcekettle.
-		$linux_cfg_base = DS . 'etc' . DS . 'sourcekettle' . DS;
+		$linuxConfigBase = DS . 'etc' . DS . 'sourcekettle' . DS;
 
-		if (file_exists($linux_cfg_base)) {
-			$configdir = $linux_cfg_base;
-			$globalConfigFile = $linux_cfg_base . 'global.php';
+		if (file_exists($linuxConfigBase)) {
+			$configdir = $linuxConfigBase;
+			$globalConfigFile = $linuxConfigBase . 'global.php';
 		} else {
-			$configdir = $app_cfg_base;
-			$globalConfigFile = $app_cfg_base . 'global.php';
+			$configdir = $appConfigBase;
+			$globalConfigFile = $appConfigBase . 'global.php';
 		}
 		$this->set('configdir', $configdir);
 		$this->set('globalConfigFile', $globalConfigFile);
@@ -136,7 +136,7 @@ class SetupController extends AppController {
 
 		// Check GIT
 		$config = Configure::read('devtrack');
-		if (isset($config['repo']['user']) && !empty($config['repo']['user'])){
+		if (isset($config['repo']['user']) && !empty($config['repo']['user'])) {
 			$this->set('gitUserSet' , true);
 			$this->set('gitUser', $config['repo']['user']);
 		} else {
@@ -144,7 +144,7 @@ class SetupController extends AppController {
 			$complete = false;
 		}
 
-		if (isset($config['repo']['base']) && !empty($config['repo']['base'])){
+		if (isset($config['repo']['base']) && !empty($config['repo']['base'])) {
 			$this->set('gitRepoSet' , true);
 			$this->set('gitRepoSetBase', $config['repo']['base']);
 			if (is_writable($config['repo']['base'])) {
@@ -153,7 +153,7 @@ class SetupController extends AppController {
 				$this->set('gitRepoWritable' , false);
 				$complete = false;
 			}
-			if (is_readable($config['repo']['base'])){
+			if (is_readable($config['repo']['base'])) {
 				$this->set('gitRepoReadable' , true);
 			} else {
 				$this->set('gitRepoReadable' , false);

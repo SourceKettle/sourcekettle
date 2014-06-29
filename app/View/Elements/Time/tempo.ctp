@@ -14,116 +14,151 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+
 $this->Html->css('time.tempo', null, array ('inline' => false));
-
-$this->Html->scriptBlock("
-    $('.tempo').tooltip({
-        selector: 'th[rel=tooltip]'
-    })
-    $('.tempoBody').bind('click', function() {
-        var a = $('#' + $(this).attr('data-toggle'));
-
-        $('.dp1').val($(this).attr('data-date'));
-
-        var taskId = $(this).attr('data-taskId');
-        $('option[value='+taskId+']').attr('selected', 'selected');
-
-        if (a.size() === 0) {
-            $('#addTimeModal').modal('show');
-        } else {
-            a.modal('show');
-        }
-    });
-", array('inline' => false));
+$this->Html->css('jquery.dataTables', null, array ('inline' => false));
+$this->Html->script('jquery.dataTables.min', array ('inline' => false));
 
 echo $this->element('Time/modal_add');
+
 ?>
 <div>
-    <table class="well table table-condensed table-striped tempo">
+    <table id="timesheet" class="well table table-condensed table-striped tempo">
         <thead>
             <tr>
-                <th><?= $this->DT->t('tempo.table.task.text') ?></th>
-                <?php
-                    foreach ($week as $day => $times) {
-                        $today = ($times['today']) ? 'today' : '';
-                        echo "<th width='5%' class='tempoHeader $today' rel='tooltip' data-original-title='{$times['date']}'>$day</th>";
-                    }
-                ?>
+                <th><?= __('Task') ?></th>
+                <th><?= __('User') ?></th>
+				<? foreach ($weekTimes['dates'] as $daynum => $date){ ?>
+				<th><?= __($date->format('D M d')) ?></th>
+				<? } ?>
+				<th>Total</th>
             </tr>
         </thead>
         <tbody>
         <?php
-            $elements = '';
-            foreach ($weekTasks as $task) {
-                $eventTitle = $task['Task']['subject'];
+			// Sorry :-(
 
-                if ($task['Task']['id'] > 0) {
-                    $eventTitle = $this->Html->link(
-                        $eventTitle,
-                        array(
-                            'action' => 'view',
-                            'controller' => 'tasks',
-                            'project' => $project['Project']['name'],
-                            $task['Task']['id']
-                        )
-                    );
-                }
+			$overallTotal = 0;
+			$elements = '';
+			foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
+				foreach ($taskDetails['users'] as $userId => $userDetails) {
+					echo "<tr>\n";
+					if ($taskId == 0) {
+						echo "<td>(".__("No associated task").")</td>\n";
 
-                $columns = '';
-                foreach ($week as $day => $times) {
-                    $taskId = $task['Task']['id'];
+					} else {
+						echo "<td>";
+						echo $this->Html->link($taskDetails['Task']['subject'], array(
+                           'controller' => 'tasks',
+	                       'action' => 'view',
+    	                   'project' => $project['Project']['name'],
+        	                $taskId
+                        ));
+						echo "</td>\n";
+					}
 
-                    $popover = "tempo_{$day}_{$taskId}";
-                    $total = '';
 
-                    if (isset($times['times'][$taskId])) {
-                        $elements .= $this->element('Time/tempo_modal',
-                            array(
-                                'id' => $popover,
-                                'times' => $times['times'][$taskId],
-                                'date' => $times['date']
-                            )
-                        );
-                        $total = $times['totalTimes'][$taskId];
-                    }
+					echo "<td>";
+					echo $this->Html->link($userDetails['User']['name'], array(
+   	                	'project' => $project['Project']['name'],
+						'controller' => 'times',
+						'action' => 'history',
+						$thisYear,
+						$thisWeek,
+						'?' => array(
+							'user' => $userId
+						)
+					));
+					echo "</td>\n";
 
-                    $today = ($times['today']) ? 'today' : '';
+					// Loop over the days of the week
+					// 1=Mon, 7=Sun...
+					$rowTotal = 0;
+					for ($i = 1; $i <= 7; $i++) {
 
-                    $columns .= "<td data-date='{$times['date']}' data-taskId='{$taskId}' class='tempoBody $today' data-toggle='$popover'>$total</td>";
-                }
+						// The date for this day, and day name for display
+						$date = $weekTimes['dates'][$i]->format('Y-m-d');
+						$day = $weekTimes['dates'][$i]->format('D');
 
-                echo "<tr><td>$eventTitle</td>$columns</tr>";
-            }
-        ?>
-            <tr>
-                <td><strong><?= $this->DT->t('tempo.table.total.text') ?></strong></td>
-            <?php
-                foreach ($week as $day => $times) {
-                    if ($times['totalTime'] == 0) $times['totalTime'] = '';
-                    $today = ($times['today']) ? 'today' : '';
-                    echo "<td class='tempoFooter $today'>{$times['totalTime']}</td>";
-                }
-            ?>
-            </tr>
+						// Popup for viewing times
+		                $popover = "tempo_{$day}_{$taskId}_{$userId}";
+
+						// times_by_day is a list of Time... cake-y object-like array things
+						if (array_key_exists($i, $userDetails['times_by_day'])) {
+							$timeSpent = 0;
+							foreach ($userDetails['times_by_day'][$i] as $time){
+								$rowTotal += $time['Time']['mins'];
+								$timeSpent += $time['Time']['mins'];
+
+							}
+  	                    	$elements .= $this->element('Time/tempo_modal',
+                        		array(
+                            		'id' => $popover,
+                             		'times' => $userDetails['times_by_day'][$i],
+                        	    	'date'  => $weekTimes['dates'][$i]
+                        		)
+                        	);
+							$timeSpent = TimeString::renderTime($timeSpent);
+							echo "<td class=\"tempoBody\" data-toggle=\"$popover\" data-taskid=\"$taskId\" data-date=\"$date\">".h($timeSpent['s'])."</td>\n";
+						} else {
+							echo "<td class=\"tempoBody\" data-toggle=\"$popover\" data-taskid=\"$taskId\" data-date=\"$date\">---</td>\n";
+						}
+					}
+					$overallTotal += $rowTotal;
+					$timeSpent = TimeString::renderTime($rowTotal);
+					echo "<th>".h($timeSpent['s'])."</th>\n";
+
+					echo "</tr>\n";
+
+				}
+			}?>
         </tbody>
+        <tfoot>
+
+            <tr>
+                <th><?= __('Total') ?></th>
+				<th></th>
+				<? for ($i = 1; $i <= 7; $i++) {
+					if (array_key_exists($i, $weekTimes['totals'])) {
+						$total = TimeString::renderTime($weekTimes['totals'][$i]);
+
+						echo "<th>".$total['s']."</th>\n";
+					} else {
+                		echo "<th>---</th>\n";
+					}
+
+				} 
+				$overallTotal = TimeString::renderTime($overallTotal);
+				echo "<th>".h($overallTotal['s'])."</th>\n";
+				?>
+            </tr>
+        </tfoot>
     </table>
+
+	<?=$elements // Add in elements for each of our drill-down displays?>
+
     <div class="btn-toolbar tempo-toolbar span12">
         <div class="btn-group">
             <?php
+			if (isset($user)) {
+				$params = array('user' => $user);
+			} else {
+				$params = array();
+			}
             echo $this->Bootstrap->button_link(
                 $this->Bootstrap->icon('chevron-left'),
                 array(
                     'project' => $project['Project']['name'],
                     'action' => $this->request['action'],
                     'year' => $prevYear,
-                    'week' => $prevWeek
+                    'week' => $prevWeek,
+					'?' => $params
                 ),
                 array('escape'=>false, 'size'=>'small')
             );
 
             echo "<button class='btn disabled btn-small'>";
-            echo $this->DT->t('tempo.table.week.text');
-            echo "$thisWeek - $thisYear";
+			echo $startDate->format('Y-m-d')." - ".$endDate->format('Y-m-d');
             echo "</button>";
 
             echo $this->Bootstrap->button_link(
@@ -132,12 +167,12 @@ echo $this->element('Time/modal_add');
                     'project' => $project['Project']['name'],
                     'action' => $this->request['action'],
                     'year' => $nextYear,
-                    'week' => $nextWeek
+                    'week' => $nextWeek,
+					'?' => $params
                 ),
                 array('escape'=>false, 'size'=>'small')
             );
             ?>
         </div>
     </div>
-    <?= $elements ?>
 </div>

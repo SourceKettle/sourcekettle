@@ -14,6 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
+App::uses('User', 'Model');
 App::uses('Folder', 'Utility');
 App::uses('UnsupportedRepositoryType', 'Exception');
 
@@ -216,24 +217,32 @@ class Project extends AppModel {
  * @param $user int id of the user to check
  * @return boolean true if write permissions
  */
-	public function hasWrite($user = null, $project = null) {
-		if ( $user == null ) {
-			$user = User::get('id');
+	public function hasWrite($userId = null, $projectId = null) {
+		if ( $userId == null ) {
+			$userId = User::get('id');
 		}
-		if ( $user == null ) {
+		if ( $userId == null ) {
 			return false;
 		}
 
-		if ($this->id) {
-			$project = $this->id;
+		// System admins can write to any project
+		$isAdmin = $this->Collaborator->User->field('is_admin', array('id' => $userId));
+		if ( $isAdmin ) {
+			return true;
 		}
 
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $project), 'fields' => array('access_level')));
+		if ($this->id) {
+			$projectId = $this->id;
+		}
 
+
+		// Check whether user is a project admin
+		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
 		if ( !empty($member) && $member['Collaborator']['access_level'] > 0 ) {
 			return true;
 		}
 
+		// Fail safe, no write privilege
 		return false;
 	}
 
@@ -320,6 +329,27 @@ class Project extends AppModel {
 		// Finally sort all the events
 		usort($events, $cmp);
 		return array_slice($events, 0, $number);
+	}
+
+/**
+ * Returns a list of open tasks that are not assigned to milestones.
+ */
+	public function getProjectBacklog(){
+		$backlog = $this->Task->find(
+			'all',
+			array(
+				'conditions' => array(
+					// TODO hard-coded IDs
+					'Task.task_status_id' => array(1, 2, 5), // open/in-progress/dropped
+					'Task.project_id' => $this->id,
+					'OR' => array(
+						'Task.milestone_id' => 0,
+						'Task.milestone_id is null',
+					)
+				)
+			)
+		);
+		return $backlog;
 	}
 
 }

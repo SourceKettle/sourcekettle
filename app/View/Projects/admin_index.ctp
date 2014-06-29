@@ -35,8 +35,9 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                         'properties' => array(
                             'id' => 'appendedInputButton',
                             'class' => 'span11',
-                            "placeholder" => "Start typing a project name...",
-                            'label' => false
+                            "placeholder" => __("Start typing a project name..."),
+                            'label' => false,
+							'autocomplete' => 'off'
                         ),
                         'url' => array(
                             'controller' => 'projects',
@@ -62,12 +63,12 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                 <? foreach ( $projects as $project ) : ?>
                     <tr>
                         <td>
-                            <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['id']))?>
+                            <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['id'], 'admin' => false))?>
                         </td>
                         <td>
                             <div id='project_description'>
 
-                                <? $more_link = '... <span id="view_more_button">' .$this->Html->link('Read More', '#') . '</span>'; ?>
+                                <? $more_link = '... <span id="view_more_button">' .$this->Html->link(__('Read More'), '#') . '</span>'; ?>
 
                                 <?= $this->Text->truncate(h($project['Project']['description']), 250, array('ending' => $more_link, 'exact' => false, 'html' => false)) ?>
                                 <div id='full_description' style='display: none'>
@@ -76,14 +77,47 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                             </div>
                         </td>
                         <td>
-                        <?php
-                            echo $this->Bootstrap->button_form(
-                                $this->Bootstrap->icon('eject', 'white'),
-                                $this->Html->url(array('controller' => 'projects', 'action' => 'admin_delete', $project['Project']['id']), true),
-                                array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
-                                "Are you sure you want to delete " . h($project['Project']['name']) . "?"
-                            );
-                        ?>
+						<div class="btn-group">
+                        <?= $this->Bootstrap->button_link(
+							$this->Bootstrap->icon('cog'),
+							$this->Html->url(
+								array(
+									'project' => $project['Project']['name'],
+									'action' => 'edit',
+									'controller' => 'projects',
+									'admin' => false
+								 )
+							),
+							array(
+								'size' => 'mini',
+								'title' => __('Edit project settings'),
+								'escape' => false
+							)
+						)?>
+						<?= $this->Bootstrap->button_link(
+							$this->Bootstrap->icon('user'),
+							$this->Html->url(
+								array(
+									'project' => $project['Project']['name'],
+									'action' => 'collaborators',
+									'controller' => 'projects',
+									'admin' => false
+								 )
+							),
+							array(
+								'size' => 'mini',
+								'title' => __('Edit project collaborators'),
+								'escape' => false
+							)
+						)?>
+                        <?= $this->Bootstrap->button_form(
+                            $this->Bootstrap->icon('eject', 'white'),
+                            $this->Html->url(array('controller' => 'projects', 'action' => 'admin_delete', $project['Project']['id']), true),
+                            array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
+                            __("Are you sure you want to delete ") . h($project['Project']['name']) . "?"
+                        )?>
+						</div>
+                        
                         </td>
                     </tr>
                 <? endforeach; ?>

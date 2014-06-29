@@ -31,7 +31,7 @@ class TestSettingsController extends SettingsController {
  * SettingsController Test Case
  *
  */
-class SettingsControllerTestCase extends CakeTestCase {
+class SettingsControllerTest extends ControllerTestCase {
 
 /**
  * Fixtures
@@ -68,6 +68,8 @@ class SettingsControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function testAdminIndex() {
+		$result = $this->testAction('/admin/settings/index');
+		debug($result);
 	}
 /**
  * testAdminView method

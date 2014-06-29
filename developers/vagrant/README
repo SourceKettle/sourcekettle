@@ -1,0 +1,42 @@
+A fairly simple Vagrant dev environment (see http://www.vagrantup.com/ for details)
+
+Roughly speaking, do something like this to start from scratch (install Vagrant/VirtualBox first!):
+
+mkdir ~/projects && cd ~/projects
+git clone git@github.com:SourceKettle/sourcekettle.git
+git checkout develop
+cp sourcekettle/developers/vagrant/{Vagrantfile,provision.sh} .
+mkdir apache-logs
+vagrant up --provision
+
+If all has gone well, you should now (after a wait...) have a disposable VM running Ubuntu 12.04 with SourceKettle running on it,
+accessible to your local machine only.
+
+*** WARNING ***
+If you decide to make this VM accessible to the outside world, or make it a business-critical service or some other
+thing that is Not Right(tm), you are DOING IT WRONG. This is a development environment designed to be THROWN AWAY
+AT ANY TIME FOR ANY REASON. So, err, don't put your laptop in production or anything, you won't get any sympathy.
+
+Accessing the VM:
+
+To log in via ssh, simply type 'vagrant ssh'. The directory containing the Vagrantfile will be mounted at /vagrant.
+To use the web interface, go to http://localhost:4567 (you can change the port forwarding options in the Vagrantfile).
+You should have an admin account, email address 'root@localhost.local' and password 'adminPassword'.
+Generally speaking you shouldn't need to ssh into the VM unless you're improving the vagrant dev environment or something,
+or you need direct access to the MySQL database.
+
+Throwing the VM away:
+
+If you've cocked everything up, got the package manager in a mess, or some other Bad Thing, run:
+
+vagrant destroy
+
+Warning: the SourceKettle code (and anything e.g. logs you've shoved in /vagrant) will remain, but the database will disappear. Try not to care, or script around this.
+
+Then you can vagrant up --provision again to get a fresh, clean build environment.
+
+The provision script gets run when you rebuild the VM. By default it installs dependencies, configures Apache/MySQL and SourceKettle, creates the database, and shoves in some example data to get you started.
+
+At the moment, making PHPUnit work on Ubuntu seems to be either impossible or incredibly flaky, so unit tests will be unhelpfully broken.
+
+Better boxfile with CentOS and pre-installed apache etc. coming soon...

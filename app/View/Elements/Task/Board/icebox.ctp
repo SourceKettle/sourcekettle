@@ -2,7 +2,7 @@
 /**
  *
  * Element for APP/tasks/index for the DevTrack system
- * Shows a empty box for icebox column
+ * Shows a task box for a task
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -13,8 +13,9 @@
  * @since         DevTrack v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-?>
-<div class="task empty">
-    <h3><small><?= $this->DT->t('column.icebox.empty.line1') ?></small></h3>
-    <h4><small><?= $this->DT->t('column.icebox.empty.line2') ?></small></h4>
-</div>
+
+echo "<ul class='sprintboard-droplist'>\n";
+foreach ($tasks as $task) {
+    echo "<li>".$this->element('Task/element_1', array('task' => $task, 'draggable' => true))."</li>\n";
+}
+echo "</ul>\n";

@@ -40,7 +40,7 @@ echo $this->Bootstrap->page_header('Administration <small>add a new sheep to you
             ));
 
             echo $this->Bootstrap->input("Account Active", array(
-                "input" => $this->Form->checkbox("is_active"),
+                "input" => $this->Form->checkbox("is_active", array("checked" => true)),
             ));
 
             echo $this->Bootstrap->button("Create", array("style" => "primary", "size" => "large", 'class' => 'controls'));

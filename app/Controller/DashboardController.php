@@ -34,12 +34,13 @@ class DashboardController extends AppController {
 			'all', array(
 			'conditions' => array('Collaborator.user_id' => User::get('id')),
 			'order' => array('Project.modified DESC'),
-			'limit' => 5
+			'limit' => 3
 			)
 		);
 	}
 
 	private function __getUserTasks() {
+		// TODO hard coded statuses
 		return $this->Task->find('all', array(
 			'conditions' => array(
 				'Task.assignee_id' => User::get('id'),
@@ -47,12 +48,12 @@ class DashboardController extends AppController {
 			),
 			'recursive' => 3,
 			'order' => array('task_priority_id DESC', 'task_status_id ASC'),
-			'limit' => 10
+			'limit' => 7
 		));
 	}
 
 	private function __getProjectsHistory() {
-		return $this->ProjectHistory->fetchHistory(null, 30, 0, User::get('id'));
+		return $this->ProjectHistory->fetchHistory(null, 15, 0, User::get('id'));
 	}
 
 	public function admin_index() {

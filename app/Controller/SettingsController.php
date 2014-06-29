@@ -18,6 +18,12 @@ App::uses('AppController', 'Controller');
 
 class SettingsController extends AppController {
 
+	// Regexes for validating LDAP-related fields
+	private static $_regex = array(
+		'ldap_url' => '/^ldap(s)?:\/\/[.a-zA-Z0-9-]+$/',
+		'ldap_dn'  => '/^[a-zA-Z]+=[a-zA-Z]+(,[a-zA-Z]+=[a-zA-Z]+)*$/',
+	);
+
 /**
  * admin_index method
  *
@@ -35,6 +41,16 @@ class SettingsController extends AppController {
 			'source'		=> $this->Setting->field('value', array('name' => 'feature_source_enabled')),
 			'task'			=> $this->Setting->field('value', array('name' => 'feature_task_enabled')),
 			'attachment'	=> $this->Setting->field('value', array('name' => 'feature_attachment_enabled'))
+		));
+
+		// LDAP authentication settings
+		$this->set('ldap', array(
+			'ldap_enabled'	=> $this->Setting->field('value', array('name' => 'ldap_enabled')),
+			'ldap_url'		=> $this->Setting->field('value', array('name' => 'ldap_url')),
+			'ldap_bind_dn'	=> $this->Setting->field('value', array('name' => 'ldap_bind_dn')),
+			'ldap_bind_pw'	=> $this->Setting->field('value', array('name' => 'ldap_bind_pw')),
+			'ldap_base_dn'	=> $this->Setting->field('value', array('name' => 'ldap_base_dn')),
+			'ldap_filter'	=> $this->Setting->field('value', array('name' => 'ldap_filter'))
 		));
 	}
 
@@ -63,9 +79,83 @@ class SettingsController extends AppController {
  * @access public
  * @param mixed $value (default: null)
  * @return void
+ * @throws
  */
 	public function admin_setRegistration($value = null) {
 		$this->__adminSetField('register_enabled', $value);
+	}
+
+	public function admin_setLDAPEnabled($value = null) {
+		$this->__adminSetField('ldap_enabled', $value);
+	}
+
+	public function admin_setLdapUrl() {
+		// Check form value provided and request is a post request
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		$ok = Validation::custom($this->request->data['Settings']['ldap_url'], self::$_regex['ldap_url']);
+
+		$this->Setting->id = $this->Setting->field('id', array('name' => 'ldap_url'));
+		if ($this->Setting->exists() && $ok) {
+			$this->Setting->set('value', $this->request->data['Settings']['ldap_url']);
+			$this->Setting->save();
+		}
+		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+	}
+
+	public function admin_setLdapBaseDN() {
+		// Check form value provided and request is a post request
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		$ok = Validation::custom($this->request->data['Settings']['ldap_base_dn'], self::$_regex['ldap_dn']);
+		$this->Setting->id = $this->Setting->field('id', array('name' => 'ldap_base_dn'));
+		if ($this->Setting->exists() && $ok) {
+			$this->Setting->set('value', $this->request->data['Settings']['ldap_base_dn']);
+			$this->Setting->save();
+		}
+		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+	}
+
+	public function admin_setLdapBindDN() {
+		// Check form value provided and request is a post request
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		$ok = Validation::custom($this->request->data['Settings']['ldap_bind_dn'], self::$_regex['ldap_dn']);
+		$this->Setting->id = $this->Setting->field('id', array('name' => 'ldap_bind_dn'));
+		if ($this->Setting->exists() && $ok) {
+			$this->Setting->set('value', $this->request->data['Settings']['ldap_bind_dn']);
+			$this->Setting->save();
+		}
+		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+	}
+
+	public function admin_setLdapBindPW() {
+		// Check form value provided and request is a post request
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		$this->Setting->id = $this->Setting->field('id', array('name' => 'ldap_bind_pw'));
+		if ($this->Setting->exists()) {
+			$this->Setting->set('value', $this->request->data['Settings']['ldap_bind_pw']);
+			$this->Setting->save();
+		}
+		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+	}
+
+	public function admin_setLdapFilter() {
+		// Check form value provided and request is a post request
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		$this->Setting->id = $this->Setting->field('id', array('name' => 'ldap_filter'));
+		if ($this->Setting->exists()) {
+			$this->Setting->set('value', $this->request->data['Settings']['ldap_filter']);
+			$this->Setting->save();
+		}
+		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
 	}
 
 /**

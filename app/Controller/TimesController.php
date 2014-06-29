@@ -15,6 +15,7 @@
  */
 
 App::uses('AppProjectController', 'Controller');
+App::uses('TimeString', 'Time');
 
 class TimesController extends AppProjectController {
 
@@ -22,8 +23,7 @@ class TimesController extends AppProjectController {
  * helpers for additional rendering support
  */
 	public $helpers = array(
-		'Time',
-		'GoogleChart.GoogleChart'
+		'Time'
 	);
 
 /**
@@ -62,6 +62,10 @@ class TimesController extends AppProjectController {
 				// Show the user what they put in, its just nice
 				$this->request->data['Time']['mins'] = $origTime;
 			}
+
+		// GET request and they've pre-selected a date
+		} else if (isset($this->request->query['date'])) {
+			$this->request->data['Time']['date'] = $this->request->query['date'];
 		}
 		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
 	}
@@ -128,21 +132,45 @@ class TimesController extends AppProjectController {
 		}
 		// Validate the week
 		if (($_week = $this->Time->validateWeek($week, $year)) != $week) {
-			$this->redirect(array('project' => $project['Project']['name'], 'year' => $year, 'week' => $_week));
+			$this->redirect(array('project' => $project['Project']['name'], 'year' => $_year, 'week' => $_week));
 		}
 
-		$weekTasks = $this->Time->Project->Task->find('all', array(
-			'conditions'	=> array(
-				'Task.id' => $this->Time->tasksForWeek($year, $week),
-			)
-		));
-		$weekTasks[] = array('Task' => array('id' => 0, 'subject' => 'No associated task'));
+		// Optionally filter by user
+		$user = null;
+		$userName = null;
+		if (isset($this->request->query['user'])) {
+			$user = $this->request->query['user'];
+			if (!preg_replace('/^\s*(\d+)\s*$/', '$1', $user)) {
+				$user = null;
+			} else {
+				$userObject = $this->Time->User->find('first', array(
+					'conditions' => array('id' => $user),
+					'fields' => array('User.name')
+				));
+				if ($userObject) {
+					$userName = $userObject['User']['name'];
+				}
+			}
+			$this->set('user', $user);
+			$this->set('userName', $userName);
+		}
 
-		$this->set('week', $this->Time->timesForWeek($year, $week));
-		$this->set('weekTasks', $weekTasks);
+		// Start and end dates
+		$startDate = new DateTime(null, new DateTimeZone('UTC'));
+		$startDate->setISODate($year, $week, 1);
+		$endDate = new DateTime(null, new DateTimeZone('UTC'));
+		$endDate->setISODate($year, $week, 7);
 
-		$this->set('thisWeek', $week);
-		$this->set('thisYear', $year);
+		// Fetch summary details for the week
+		$weekTimes = $this->Time->fetchWeeklySummary($project['Project']['id'], $year, $week, $user);
+
+		$this->set('weekTimes', $weekTimes);
+		$this->set('project', $project);
+
+		$this->set('thisWeek',  $week);
+		$this->set('thisYear',  $year);
+		$this->set('startDate', $startDate);
+		$this->set('endDate',   $endDate);
 
 		if ($week == $this->Time->lastWeekOfYear($year)) {
 			$this->set('nextWeek', 1);
@@ -159,7 +187,34 @@ class TimesController extends AppProjectController {
 			$this->set('prevWeek', $week - 1);
 			$this->set('prevYear', $year);
 		}
+
+		// List of tasks we can log time against, for modal add dialog
 		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
+
+		// Downloadable timesheets
+		if (isset($this->request->query['format'])) {
+			switch (strtolower(trim($this->request->query['format']))) {
+				case 'csv':
+					$this->layout = 'ajax';
+					$this->RequestHandler->respondAs('text/csv');
+					$this->response->header(array(
+						'Content-Disposition' =>  'attachment; filename="timesheet.csv"'
+					));
+					$this->render('/Elements/Time/tempo.csv');
+					break;
+				case 'json':	
+					$this->autoRender = false;
+					$this->set('data', $weekTimes);
+					$this->render('/Elements/json');
+
+					break;
+				// Explicitly specified HTML, or unknown format - just render the page as normal
+				case 'html':
+				default:
+					break;
+			}
+		}
+
 	}
 
 /**

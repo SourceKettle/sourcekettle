@@ -205,6 +205,19 @@ class ProjectTestCase extends CakeTestCase {
     }
 
     /**
+     * test Project->hasWrite function.
+     * Tests that a system admin has write privileges to a project they have not been explicitly made admin for.
+     *
+     * @access public
+     * @return void
+     */
+    public function testHasWriteSysAdmin() {
+        $this->Project->id = 2;
+        $hasWrite = $this->Project->hasWrite(5, null);
+        $this->assertTrue($hasWrite, "user has incorrect privileges");
+    }
+
+    /**
      * test Project->isAdmin function.
      * Tests that an invalid user is not a project admin.
      *

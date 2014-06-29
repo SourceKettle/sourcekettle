@@ -17,14 +17,21 @@ hr {
     margin-bottom: 5px;
 }
 
-.progress {
-    margin-bottom: 5px;
+.sprintboard-column {
+	min-height: 300px !important; /* A bit of a hack :-( */
+}
+.sprintboard-icebox {
+	margin-top: 10px;
 }
 
-.zero {
-    padding-left: 5px;
+.highlight-droptarget {
+	outline: none;
+	border-color: #9ecaed;
+	box-shadow: 0 0 10px #9ecaed;
 }
 
-.close {
-    padding-left: 10px !important;
+.highlight-droptarget.sprintboard-icebox{
+	outline: none;
+	border-color: #cc3333;
+	box-shadow: 0 0 10px #cc3333;
 }

@@ -107,7 +107,7 @@ class User extends AppModel {
 
 	public function beforeSave($options = array()) {
 		// Can't update the email or password field if it's an externally-managed account
-		if (!User::isDevtrackManaged($this->data)) {
+		if (!User::isDevtrackManaged($this->data, @$this->id)) {
 			$wl = $this->whitelist;
 			if (empty($wl)) {
 				$wl = array_keys($this->schema());
@@ -119,20 +119,22 @@ class User extends AppModel {
 				$wl = array_diff($wl, array('email'));
 			}
 			$this->whitelist = $wl;
+
+		} elseif (isset($this->data[$this->alias]['email'])) {
+
+			// Lowercase the email address for storage (internal accounts only)
+			$this->data[$this->alias]['email'] = strtolower($this->data[$this->alias]['email']);
 		}
 
-		// Lowercase the email address for storage
-		$this->data[$this->alias]['email'] = strtolower($this->data[$this->alias]['email']);
-
 		if ( isset($this->data[$this->alias]['password'])) {
-			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
+			$this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password'], null, true);
 		}
 		return true;
 	}
 
 	public function beforeDelete($cascade = true) {
 		// Check that the user account is DevTrack-managed, can't delete otherwise...
-		if (!User::isDevtrackManaged($this->data)) {
+		if (!User::isDevtrackManaged($this->data, @$this->id)) {
 			return false;
 		}
 
@@ -164,11 +166,27 @@ class User extends AppModel {
  * Is the user a DevTrack-managed account, i.e. password is stored in the database?
  * If it's been auto-created from e.g. LDAP, the password will be blank.
  */
-	public static function isDevtrackManaged($data) {
-		return (
-			isset($data['User']['password'])
-			&& !empty($data['User']['password'])
-		);
+	public static function isDevtrackManaged($data, $id = 0) {
+
+		// Attempt to find an existing user by ID or email
+		$user = ClassRegistry::init('User');
+		if (isset($id) && $id > 0) {
+			$found = $user->findById($id);
+		} elseif (isset($data['User']['id'])) {
+			$found = $user->findById($data['User']['id']);
+		} elseif (isset($data['User']['email'])) {
+			$found = $user->findByEmail($data['User']['email']);
+
+		}
+		// No existing user found - we must be saving a new one,
+		// so simply check the password field exists
+		if (!isset($found) || count($found) < 1) {
+			return ( isset($data['User']['password']) && !empty($data['User']['password']) );
+		}
+
+		// Check the existing object's password field
+		return ( isset($found['User']['password']) && !empty($found['User']['password']) );
+
 	}
 
 /**

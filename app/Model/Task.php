@@ -14,6 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
+App::uses('TimeString', 'Time');
 
 class Task extends AppModel {
 
@@ -32,6 +33,7 @@ class Task extends AppModel {
 
 /**
  * Validation rules
+ * TODO hard-coded IDs
  */
 	public $validate = array(
 		'project_id' => array(
@@ -70,7 +72,7 @@ class Task extends AppModel {
 				'rule' => array('notempty'),
 			),
 			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,'1','2','3','4')),
+				'rule' => array('inlist', array(1,2,3,4,5,'1','2','3','4','5')),
 				'message' => 'Select a task status',
 			),
 		),
@@ -183,10 +185,9 @@ class Task extends AppModel {
 	public function afterFind($results, $primary = false) {
 		parent::afterFind($results, $primary);
 
-		// TODO this is a bit hacky and nicked from Time model, should be a library function?
 		foreach ($results as $key => $val) {
 			if (isset($val['Task']['time_estimate'])) {
-				$split = $this->splitMins($val['Task']['time_estimate']);
+				$split = TimeString::renderTime($val['Task']['time_estimate']);
 				$results[$key]['Task']['time_estimate'] = $split['s'];
 			}
 		}
@@ -202,7 +203,6 @@ class Task extends AppModel {
 		}
 		return $results;
 	}
-
 
 	private function __setDependenciesComplete($result) {
 		if (isset($result['DependsOn'])) {
@@ -250,38 +250,41 @@ class Task extends AppModel {
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 
+		// Get the DB table prefix from our database config, for if
+		// we have multiple systems in the same DB or fixtures have a prefix
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$table_prefix = $db->config['prefix'];
+
 		$this->virtualFields = array(
-			'public_id' => "(SELECT COUNT(`{$this->table}`.`id`) FROM `{$this->table}` WHERE `{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)"
+			'public_id' => "(SELECT COUNT(`{$table_prefix}{$this->table}`.`id`) FROM `{$table_prefix}{$this->table}` WHERE `{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)"
 		);
 	}
 
 /**
- * TODO needs consolidating with beforeSave
  */
 	public function beforeValidate($options = array()) {
-		if (!isset($this->data['Task']['time_estimate'])) {
-			return true;
+		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
+			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		}
 
-		$string = $this->data['Task']['time_estimate'];
 
-		if (is_int($string)) {
-			return true;
+		// If we have priority and status names, replace them with IDs for saving
+		if (isset($this->data['Task']['type'])) {
+			$this->data['Task']['task_type_id'] = $this->TaskType->nameToID($this->data['Task']['type']);
+			unset($this->data['Task']['type']);
+		}
+		if (isset($this->data['Task']['priority'])) {
+			$this->data['Task']['task_priority_id'] = $this->TaskPriority->nameToID($this->data['Task']['priority']);
+			unset($this->data['Task']['priority']);
+		}
+		if (isset($this->data['Task']['status'])) {
+			$this->data['Task']['task_status_id'] = $this->TaskStatus->nameToID($this->data['Task']['status']);
+			unset($this->data['Task']['status']);
 		}
 
-		preg_match("#(?P<weeks>[0-9]+)\s*w(eeks?)?#", $string, $weeks);
-		preg_match("#(?P<days>[0-9]+)\s*d(ays?)?#", $string, $days);
-		preg_match("#(?P<hours>[0-9]+)\s*h(rs?|ours?)?#", $string, $hours);
-		preg_match("#(?P<mins>[0-9]+)\s*m(ins?)?#", $string, $mins);
-
-		$time = (int)0;
-		$time += ((isset($weeks['weeks'])) ? 7 * 24 * 60 * (int)$weeks['weeks'] : 0);
-		$time += ((isset($days['days'])) ? 24 * 60 * (int)$days['days'] : 0);
-		$time += ((isset($hours['hours'])) ? 60 * (int)$hours['hours'] : 0);
-		$time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
-
-		$this->data['Task']['time_estimate'] = $time;
-
+		if (!isset($this->data['Task']['milestone_id']) || !$this->data['Task']['milestone_id']) {
+			$this->data['Task']['milestone_id'] = 0;
+		}
 		return true;
 	}
 /**
@@ -292,26 +295,9 @@ class Task extends AppModel {
  * @return bool True if the save was successful.
  */
 	public function beforeSave($options = array()) {
-
-		// Parse time estimate string back into minutes
-		// TODO hacky
-		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
-
-			$string = $this->data['Task']['time_estimate'];
-
-			preg_match("#(?P<weeks>[0-9]+)\s*w(eeks?)?#", $string, $weeks);
-			preg_match("#(?P<days>[0-9]+)\s*d(ays?)?#", $string, $days);
-			preg_match("#(?P<hours>[0-9]+)\s*h(rs?|ours?)?#", $string, $hours);
-			preg_match("#(?P<mins>[0-9]+)\s*m(ins?)?#", $string, $mins);
-
-			$time = (int)0;
-			$time += ((isset($weeks['weeks'])) ? 7 * 24 * 60 * (int)$weeks['weeks'] : 0);
-			$time += ((isset($days['days'])) ? 24 * 60 * (int)$days['days'] : 0);
-			$time += ((isset($hours['hours'])) ? 60 * (int)$hours['hours'] : 0);
-			$time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
-
-			$this->data['Task']['time_estimate'] = $time;
-
+		// Parse time estimate if necessary
+		if (!$this->beforeValidate($options)) {
+			return false;
 		}
 
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
@@ -338,60 +324,20 @@ class Task extends AppModel {
  * Returns true if a task is open
  */
 	public function isOpen() {
+ 		// TODO hard-coded status ID
 		return $this->field('task_status_id') == 1;
 	}
 
 /**
  * isInProgress function.
  * Returns true if a task is in progress
+ * @throws
  */
 	public function isInProgress() {
+ 		// TODO hard-coded status ID
 		return $this->field('task_status_id') == 2;
 	}
 
- 	// TODO make this a library function
-	public function splitMins($in) {
-		if (!is_numeric($in)) {
-			throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
-		}
-
-		$weeks = 0;
-		$days = 0;
-		$hours = 0;
-		$mins = (int)$in;
-
-		while ($mins >= 60) {
-			$hours += 1;
-			$mins -= 60;
-		}
-
-		while ($hours >= 24) {
-			$days += 1;
-			$hours -= 24;
-		}
-
-		while ($days >= 7) {
-			$weeks += 1;
-			$days  -= 7;
-		}
-
-		$output = array(
-			'w' => $weeks,
-			'd' => $days,
-			'h' => $hours,
-			'm' => $mins,
-			't' => (int)$in, //legacy TODO: remove
-			's' => "${hours}h ${mins}m",
-		);
-
-		if ($weeks > 0) {
-			$output['s'] = "${weeks}w ${days}d ${hours}h ${mins}m";
-		} elseif ($days > 0) {
-			$output['s'] = "${days}d ${hours}h ${mins}m";
-		}
-
-		return $output;
-	}
 /**
  * TODO: Remove
  */
@@ -403,7 +349,10 @@ class Task extends AppModel {
 /**
  * TODO: Remove
  */
-	public function getTitleForHistory($id) {
+	public function getTitleForHistory($id = null) {
+		if ($id == null) {
+			$id = $this->id;
+		}
 		$this->id = $id;
 		if (!$this->exists()) {
 			return null;
@@ -413,6 +362,7 @@ class Task extends AppModel {
 	}
 
 	public function fetchLoggableTasks() {
+		// TODO hard coded status IDs
 		$myTasks = $this->find(
 			'list',
 			array(

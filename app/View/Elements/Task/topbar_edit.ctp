@@ -16,13 +16,13 @@
 
 if ($this->request->data['Task']['task_status_id'] != 4) {
      $state = array(
-         'text' => $this->DT->t('bar.close'),
+         'text' => __("Close task"),
          'url' => '#closeModal',
          'props' => array("data-toggle" => "modal", "class" => "btn-success")
      );
  } else {
      $state =  array(
-         'text' => $this->DT->t('bar.open'),
+         'text' => __("Re-open task"),
          'url' => array(
             'action' => 'opentask',
             'controller' => 'tasks',
@@ -37,7 +37,7 @@ if ($this->request->data['Task']['task_status_id'] != 4) {
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('bar.view'),
+                'text' => __("View"),
                 'url' => array(
                     'action' => 'view',
                     'controller' => 'tasks',
@@ -47,18 +47,7 @@ if ($this->request->data['Task']['task_status_id'] != 4) {
             $state,
         ),
     ),
-    'right' => array(
-        array(
-            array(
-                'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),
-                'url' => array(
-                    'action' => 'add',
-                    'controller' => 'tasks',
-                ),
-                'props' => array('class' => 'btn-primary'),
-            ),
-        ),
-    ),
+	'right' => array()
 );
 
 echo $this->element('Topbar/button', array('options' => $options, 'pl' => $pl));

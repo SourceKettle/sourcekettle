@@ -57,8 +57,9 @@
             'Add' => array(
                 'icon' => 'file',
                 'url' => array(
-                    'action' => 'admin_add',
+                    'action' => 'add',
                     'controller' => 'projects',
+					'admin' => false,
                 ),
             ),
         ),
@@ -66,5 +67,12 @@
             'action' => '.',
         ),
     );
+
+	if ( Configure::read('debug') > 0 ) {
+		$options['Administration']['Unit tests'] = array(
+			'icon' => 'fire',
+			'url' => '/test.php' // TODO can we route this properly?
+		);
+	}
 
     echo $this->element('Sidebar/generic', array('options' => $options));

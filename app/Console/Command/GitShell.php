@@ -37,7 +37,7 @@ class GitShell extends AppShell {
 			
 			// Sanity check #1, fail if the user doesn't exist...
 			if(!$git_details){
-				$this->err("Cannot sync keys - git user '$git_user' does not exist - have you set up DevTrack properly?");
+				$this->err("Cannot sync keys - git user '$git_user' does not exist - have you set up SourceKettle properly?");
                 exit(1);
 			}
 
@@ -46,7 +46,7 @@ class GitShell extends AppShell {
 
 			// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
 			if(!is_dir($git_homedir.'/.ssh')){
-				$this->err("Cannot sync keys - $git_homedir/.ssh not found - have you set up DevTrack properly?");
+				$this->err("Cannot sync keys - $git_homedir/.ssh not found - have you set up SourceKettle properly?");
                 exit(1);
 			}
 
@@ -69,14 +69,16 @@ class GitShell extends AppShell {
 			// This is the git-serve command that will be run when git logs in
 			$cmd = $app_path . 'scm-scripts/git-serve.py';
 
-            //$cmd = dirname(__FILE__).'../../../scm-scripts/git-serve.py'
-
 			// Build up a list of SSH keys to write to file
 			// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...
 			$out = '';
 			foreach ($keys as $key) {
 				$sshkey = $key['SshKey']['key'];
 				$userid = $key['User']['id'];
+				if (!isset($userid) || $userid <= 0) {
+					$this->out("Bad key detected! ($sshkey has no userid $userid)");
+					continue;
+				}
 
 				// Sanity check the key
 				if (strlen($sshkey) > 40) {

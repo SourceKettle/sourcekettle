@@ -16,6 +16,7 @@
 
 App::uses('AppModel', 'Model');
 App::uses('InvalidArgumentException', 'Exception');
+App::uses('TimeString', 'Time');
 
 class Time extends AppModel {
 
@@ -71,6 +72,7 @@ class Time extends AppModel {
 			'rule' => array('numeric'),
 			'message' => 'A valid user id was not entered',
 		),
+		// TODO why max of 3 days? Seems reasonable but hard coded...
 		'mins' => array(
 			'maximum' => array(
 				'rule' => array('comparison', '<', 4320),
@@ -93,16 +95,20 @@ class Time extends AppModel {
 			'foreignKey' => 'project_id'
 		),
 		'User' => array(
-			'className' => 'User',
-			'foreignKey' => 'user_id'
+			'classname' => 'User',
+			'foreignkey' => 'user_id'
+		),
+		'Task' => array(
+			'classname' => 'Task',
+			'foreignkey' => 'task_id'
 		)
 	);
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
 
 		// Set the current date
-		$this->__currentDate = new DateTime();
+		$this->__currentDate = new DateTime(null, new DateTimeZone('UTC'));
 		$this->__maximumAllowedYear = $this->currentYear(1);
 	}
 
@@ -113,7 +119,7 @@ class Time extends AppModel {
 	public function afterFind($results, $primary = false) {
 		foreach ($results as $key => $val) {
 			if (isset($val['Time']['mins'])) {
-				$results[$key]['Time']['minutes'] = $this->splitMins($val['Time']['mins']);
+				$results[$key]['Time']['minutes'] = TimeString::renderTime($val['Time']['mins']);
 			}
 		}
 		return $results;
@@ -129,21 +135,11 @@ class Time extends AppModel {
 			return true;
 		}
 
-		$string = $this->data['Time']['mins'];
-
-		if (is_int($string)) {
+		if (is_int($this->data['Time']['mins'])) {
 			return true;
 		}
 
-		preg_match("#(?P<hours>[0-9]+)\s?h(rs?|ours?)?#", $string, $hours);
-		preg_match("#(?P<mins>[0-9]+)\s?m(ins?)?#", $string, $mins);
-
-		$time = (int)0;
-		$time += ((isset($hours['hours'])) ? 60 * (int)$hours['hours'] : 0);
-		$time += ((isset($mins['mins'])) ? (int)$mins['mins'] : 0);
-
-		$this->data['Time']['mins'] = $time;
-
+		$this->data['Time']['mins'] = TimeString::parseTime($this->data['Time']['mins']);
 		return true;
 	}
 
@@ -182,10 +178,124 @@ class Time extends AppModel {
 
 /**
  * @OVERRIDE
+ * @throws
  */
 	public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
 		$events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'time');
 		return $events;
+	}
+
+	public function fetchWeeklySummary($projectId = null, $year = null, $week = null, $userId = null) {
+		$projectId = ($projectId == null) ? $this->project->id : $projectId;
+
+		if ($projectId == null) {
+			throw new InvalidArgumentException("Could not fetch times for unknown project");
+		}
+
+		if ($year === null) {
+			$year = date('Y');
+		}
+
+		if ($week === null) {
+			$week = date('W');
+		}
+
+		// Convert to date range
+		$startDate = new DateTime(null, new DateTimeZone('UTC'));
+		$startDate->setISODate($year, $week, 1);
+		$startDate->setTime(0, 0, 0);
+		$endDate = new DateTime(null, new DateTimeZone('UTC'));
+		$endDate->setISODate($year, $week, 7);
+		$endDate->setTime(0, 0, 0);
+
+		$conditions = array(
+			'Project.id' => $projectId,
+			'Time.date >=' => $startDate->format('Y-m-d'),
+			'Time.date <=' => $endDate->format('Y-m-d'),
+		);
+
+		if (isset($userId) && $userId != null) {
+			$conditions['Time.user_id'] = $userId;
+		}
+
+		$weekTimes = $this->find('all', array(
+			'fields' => array(
+				'Task.id', 'Task.subject',
+				'User.id', 'User.name', 'User.email',
+				'Time.id', 'Time.date', 'Time.description', 'Time.mins' //'SUM(Time.mins) as total_mins'
+			),
+			'conditions' => $conditions,
+			'order' => array('Task.subject', 'User.name', 'Time.date')
+		));
+
+		$summary = array('totals' => array(), 'tasks' => array(), 'dates' => array());
+		$lastUid = 0;
+		$lastTid = -1;
+		$lastDate = null;
+		$totals = array();
+
+		for ($i = 1; $i <= 7; $i++) {
+			$summary['totals'][$i] = 0;
+			$day = clone $startDate;
+			$day->add(new DateInterval('P' . ($i - 1) . 'D'));
+			$summary['dates'][$i] = $day;
+
+		}
+		foreach ($weekTimes as $time) {
+
+			// Make the variables a bit more managable...
+			$task = $time['Task'];
+			$user = $time['User'];
+			$time = $time['Time'];
+			$minutes = $time['mins'];
+			$date = strtotime($time['date']);
+
+			// Convert null task ID to 0
+			$task['id'] = isset($task['id']) ? $task['id'] : 0;
+
+			// ISO day of week, 1=Monday 7=Sunday
+			$dow = date('N', $date);
+
+			// Build Horrible Array of Doom... start ordered by task
+			if ($lastTid != $task['id']) {
+				$lastUid = 0;
+				$summary['tasks'][ $task['id'] ] = array(
+					'Task' => $task,
+					'users' => array()
+				);
+			}
+			$summary_task = $summary['tasks'][ $task['id'] ];
+
+			// Now for each task, add a list of users; each user then has a breakdown of tasks by day
+			if ($lastUid != $user['id']) {
+				$summary_task['users'][ $user['id'] ] = array(
+					'User' => $user,
+					'times_by_day' => array()
+				);
+			}
+			$summary_user = $summary_task['users'][ $user['id'] ];
+
+			// Add time to the list for that day
+			if (!isset($summary_user['times_by_day'][$dow])) {
+				$summary_user['times_by_day'][$dow] = array();
+			}
+			$summary_user['times_by_day'][$dow][] = array('Time' => $time);
+
+			// Store everything back in the Array of Doom
+			$summary_task['users'][ $user['id'] ] = $summary_user;
+			$summary['tasks'][ $task['id'] ] = $summary_task;
+
+
+			// Keep a convenient 'total minutes for each day' entry for rendering
+			$summary['totals'][$dow] += $minutes;
+
+			// Track where we are in the list
+			$lastUid = $user['id'];
+			$lastTid = $task['id'];
+			$lastDate = $date;
+		}
+
+		return $summary;
 	}
 
 /**
@@ -196,21 +306,21 @@ class Time extends AppModel {
  * @throws InvalidArgumentException
  */
 	public function fetchTotalTimeForProject($projectId = null) {
-		$projectId = ($projectId == null) ? $this->Project->id : $projectId;
+		$projectId = ($projectId == null ? $this->Project->id : $projectId);
 
 		if ($projectId == null) {
-			throw new InvalidArgumentException("Could not fetch times for unknown project");
+			throw new InvalidArgumentException(__("Could not fetch times for unknown project"));
 		}
 
 		$totalLoggedTime = $this->find('all', array(
 			'conditions' => array('Time.project_id' => $projectId),
-			'fields' => array('SUM(Time.mins)')
+			'fields' => array('SUM(Time.mins) AS total_mins')
 		));
 
-		$totalLoggedTime = $totalLoggedTime[0][0]['SUM(`Time`.`mins`)'];
+		$totalLoggedTime = $totalLoggedTime[0][0]['total_mins'];
 
 		try{
-			$totalLoggedTime = $this->splitMins($totalLoggedTime);
+			$totalLoggedTime = TimeString::renderTime($totalLoggedTime);
 		} catch (InvalidArgumentException $e) {
 		}
 
@@ -238,12 +348,12 @@ class Time extends AppModel {
 				'User.id',
 				'User.name',
 				'User.email',
-				'SUM(Time.mins)'
+				'SUM(Time.mins) AS total_mins'
 			)
 		));
 
 		foreach ($userTimes as $key => $value) {
-			$userTimes[$key]['Time']['time'] = $this->splitMins($value[0]["SUM(`Time`.`mins`)"]);
+			$userTimes[$key]['Time']['time'] = TimeString::renderTime($value[0]["total_mins"]);
 		}
 
 		return $userTimes;
@@ -273,7 +383,7 @@ class Time extends AppModel {
 		if (!$this->exists()) {
 			return null;
 		} else {
-			$mins = $this->splitMins($this->field('mins'));
+			$mins = TimeString::renderTime($this->field('mins'));
 			return $mins['s'];
 		}
 	}
@@ -310,48 +420,6 @@ class Time extends AppModel {
 	}
 
 /**
- * splitMins function.
- * Take a number of minutes and convert it to D-H-M
- *
- * @param mixed $in the number of minutes
- * @throws InvalidArgumentException
- */
- 	// TODO make this a library function
-	public function splitMins($in) {
-		if (!is_numeric($in)) {
-			throw new InvalidArgumentException("Minutes must be an integer: ${in} given");
-		}
-
-		$days = 0;
-		$hours = 0;
-		$mins = (int)$in;
-
-		while ($mins >= 60) {
-			$hours += 1;
-			$mins -= 60;
-		}
-
-		while ($hours >= 24) {
-			$days += 1;
-			$hours -= 24;
-		}
-
-		$output = array(
-			'd' => $days,
-			'h' => $hours,
-			'm' => $mins,
-			't' => (int)$in, //legacy TODO: remove
-			's' => "${hours}h ${mins}m",
-		);
-
-		if ($days > 0) {
-			$output['s'] = "${days}d ${hours}h ${mins}m";
-		}
-
-		return $output;
-	}
-
-/**
  * startOfWeek function.
  * The start day of a week.
  *
@@ -368,21 +436,25 @@ class Time extends AppModel {
  *
  * @param mixed $year the year
  * @param mixed $week the week
+ * TODO unused?
  */
-	public function tasksForWeek($year, $week) {
+	public function tasksForWeek($year, $week, $current_user_only = true) {
+		$conditions = array(
+			'Time.date BETWEEN ? AND ?' => array(
+				$this->startOfWeek($year, $week),
+				$this->startOfWeek($year, $week + 1)
+			),
+			'Time.project_id' => $this->Project->id
+		);
+		if ($current_user_only) {
+			$conditions['Time.user_id'] = User::get('id');
+		}
 		$tasksForWeek = $this->find(
 			'list',
 			array(
 				'fields' => array('Time.task_id'),
 				'group' => array('Time.task_id'),
-				'conditions' => array(
-					'Time.date BETWEEN ? AND ?' => array(
-						$this->startOfWeek($year, $week),
-						$this->startOfWeek($year, $week + 1)
-					),
-					'Time.project_id' => $this->Project->id,
-					'Time.user_id' => User::get('id')
-				)
+				'conditions' => $conditions
 			)
 		);
 		return array_values($tasksForWeek);
@@ -394,8 +466,9 @@ class Time extends AppModel {
  *
  * @param mixed $year the year
  * @param mixed $week the week
+ * TODO unused?
  */
-	public function timesForWeek($year, $week) {
+	public function timesForWeek($year, $week, $current_user_only = true) {
 		$this->recursive = -1;
 		$weekEvents = array();
 		$dateToday = date('Y-m-d');
@@ -414,13 +487,17 @@ class Time extends AppModel {
 				'totalTime' => 0
 			);
 
+			$conditions = array(
+				'Time.date' => $today,
+				'Time.project_id' => $this->Project->id,
+			);
+			if ($current_user_only) {
+				$conditions['Time.user_id'] = User::get('id');
+			}
+
 			$todaysTimes = $this->find(
 				'all', array(
-				'conditions' => array(
-					'Time.date' => $today,
-					'Time.user_id' => User::get('id'),
-					'Time.project_id' => $this->Project->id,
-				)
+				'conditions' => $conditions
 			));
 
 			foreach ($todaysTimes as $time) {
@@ -438,10 +515,10 @@ class Time extends AppModel {
 
 			// Change the total to a useful format
 			foreach ($weekEvents[$day]['totalTimes'] as $a => $b) {
-				$b = $this->splitMins($b);
+				$b = TimeString::renderTime($b);
 				$weekEvents[$day]['totalTimes'][$a] = $b['h'] + round($b['m'] / 60, 1);
 			}
-			$totalTime = $this->splitMins($weekEvents[$day]['totalTime']);
+			$totalTime = TimeString::renderTime($weekEvents[$day]['totalTime']);
 			$weekEvents[$day]['totalTime'] = $totalTime['h'] + round($totalTime['m'] / 60, 1);
 
 			$weekEvents[$this->__currentDate->format('D')] = $weekEvents[$day];
@@ -467,6 +544,9 @@ class Time extends AppModel {
 
 		$this->recursive = -1;
 		$time = $this->findById($id);
+		if (!array_key_exists('Time', $time)) {
+			throw new InvalidArgumentException("Could not find time with ID '$id'");
+		}
 		return $time['Time']['minutes']['s'];
 	}
 
@@ -496,7 +576,7 @@ class Time extends AppModel {
  * @throws InvalidArgumentException
  */
 	public function validateWeek($week = null, $year = null) {
-		if ($week == null) {
+		if ($week === null) {
 			return $this->currentWeek();
 		}
 		if (!is_numeric($week) || $week < 1 || $week > $this->lastWeekOfYear($year)) {

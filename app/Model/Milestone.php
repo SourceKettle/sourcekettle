@@ -92,9 +92,10 @@ class Milestone extends AppModel {
 				$i = $results[$a]['Tasks']['in_progress'] = $this->inProgressTasksForMilestone($result['Milestone']['id']);
 				$r = $results[$a]['Tasks']['resolved'] = $this->resolvedTasksForMilestone($result['Milestone']['id']);
 				$c = $results[$a]['Tasks']['completed'] = $this->closedTasksForMilestone($result['Milestone']['id']);
+				$d = $results[$a]['Tasks']['dropped'] = $this->droppedTasksForMilestone($result['Milestone']['id']);
 
 				if ((count($o) + count($i) + count($r) + count($c)) > 0) {
-					$results[$a]['Milestone']['percent'] = count($c) / (count($o) + count($i) + count($r) + count($c)) * 100;
+					$results[$a]['Milestone']['percent'] = (count($r) + count($c)) / (count($o) + count($i) + count($r) + count($c)) * 100;
 				} else {
 					$results[$a]['Milestone']['percent'] = 0;
 				}
@@ -187,9 +188,8 @@ class Milestone extends AppModel {
 					'AND' => array(
 						array(
 							'OR' => array(
-								// TODO hard-coded IDs!
-								array('task_status_id ' => 3),
-								array('task_status_id ' => 4)
+								array('TaskStatus.name ' => 'resolved'),
+								array('TaskStatus.name ' => 'closed'),
 							),
 						),
 						'milestone_id =' => $id
@@ -199,6 +199,17 @@ class Milestone extends AppModel {
 			)
 		);
 		return $tasks;
+	}
+
+/**
+ * droppedTasksForMilestone function.
+ * Return the dropped tasks for a given milestone
+ *
+ * @param mixed $id the id of the milestone
+ */
+	public function droppedTasksForMilestone($id = null) {
+		// TODO hard-coded IDs!
+		return $this->tasksOfStatusForMilestone($id, 5);
 	}
 
 /**
@@ -228,6 +239,49 @@ class Milestone extends AppModel {
 		return $tasks;
 	}
 
+	public function blockerTasksForMilestone($id = null) {
+		// TODO hard-coded priority ID!
+		return $this->tasksOfPriorityForMilestone($id, 4);
+	}
+	public function urgentTasksForMilestone($id = null) {
+		// TODO hard-coded priority ID!
+		return $this->tasksOfPriorityForMilestone($id, 3);
+	}
+	public function majorTasksForMilestone($id = null) {
+		// TODO hard-coded priority ID!
+		return $this->tasksOfPriorityForMilestone($id, 2);
+	}
+	public function minorTasksForMilestone($id = null) {
+		// TODO hard-coded priority ID!
+		return $this->tasksOfPriorityForMilestone($id, 1);
+	}
+/**
+ * tasksOfPriorityForMilestone function.
+ * Return the tasks for a given milestone
+ *
+ * @param mixed $id the id of the milestone
+ * @param mixed $status the status
+ */
+	public function tasksOfPriorityForMilestone($id = null, $priority = 1) {
+		// TODO hard coded default status ID!
+		$this->id = $id;
+
+		if (!$this->exists()) return null;
+
+		$tasks = $this->Task->find(
+			'all',
+			array(
+				'field' => array('milestone_id'),
+				'conditions' => array(
+					'task_priority_id ' => $priority,
+					'milestone_id =' => $id
+				),
+				'order' => 'task_priority_id DESC'
+			)
+		);
+		return $tasks;
+	}
+
 /**
  * getOpenMilestones function.
  * Get all the open milestones
@@ -235,8 +289,7 @@ class Milestone extends AppModel {
  * @param bool $assoc true if names needed
  */
 	public function getOpenMilestones($assoc = false) {
-
-		if($assoc){
+		if ($assoc) {
 			$fields = array('id', 'subject');
 		} else {
 			$fields = array('id');
@@ -262,7 +315,7 @@ class Milestone extends AppModel {
  * @param bool $assoc true if names needed
  */
 	public function getClosedMilestones($assoc = false) {
-		if($assoc){
+		if ($assoc) {
 			$fields = array('id', 'subject');
 		} else {
 			$fields = array('id');
@@ -279,6 +332,39 @@ class Milestone extends AppModel {
 				)
 			)
 		);
+	}
+
+/**
+ * shiftTasks function
+ * When closing or deleting a milestone, detach a set of its tasks and
+ * assign them to another milestone (or no milestone if the new ID is zero).
+ * NB this should be wrapped in a transaction when closing/deleting a milestone.
+ * 
+ * @param $id Milestone ID to remove tasks from
+ * @param $newId Milestone ID to attach tasks to
+ * @param $allTasks True if all the milestone's tasks should be moved (i.e. delete milestone), false if only non-resolved/closed tasks should be moved (i.e. close milestone)
+ */
+	public function shiftTasks($id = null, $newId = null, $allTasks = false, $options = array()) {
+		if ($id == null) {
+			return false;
+		}
+
+		// Retrieve Milestone; recurse to 2 models so we get TaskStatuses
+		// so we can check the status by name
+		$this->recursive = 2;
+		$milestone = $this->open($id);
+
+		// Now update all related tasks to attach them to the new milestone (or no milestone)
+		$tasks = array();
+		foreach ($milestone['Task'] as $task) {
+			if ($allTasks || !in_array($task['TaskStatus']['name'], array('resolved', 'closed'))) {
+				$task['milestone_id'] = $newId;
+				$tasks[] = $task;
+			}
+		}
+
+		// Save all the tasks
+		return $this->Task->saveMany($tasks, $options);
 	}
 
 /**

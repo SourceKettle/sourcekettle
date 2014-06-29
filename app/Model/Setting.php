@@ -31,11 +31,12 @@ class Setting extends AppModel {
 				'rule' => array('notempty'),
 			),
 		),
-		'value' => array(
+		// We may need to set e.g. LDAP fields to empty
+		/*'value' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
 			),
-		),
+		),*/
 	);
 
 /**
