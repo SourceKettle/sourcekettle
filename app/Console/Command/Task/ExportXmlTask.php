@@ -32,7 +32,7 @@ class ExportXmlTask extends Shell {
  * @var string
  * @access private
  */
-	private $__rootXMLElement = 'codekettle';
+	private $__rootXMLElement = 'sourcekettle';
 
 /**
  * uses

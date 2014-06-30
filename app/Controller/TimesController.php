@@ -8,9 +8,9 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright	 SourceKettle Development Team 2012
- * @link			http://github.com/CodeKettle
- * @package		CodeKettle.Controller
- * @since		 CodeKettle v 0.1
+ * @link			http://github.com/SourceKettle
+ * @package		SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
