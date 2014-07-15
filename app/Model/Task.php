@@ -282,7 +282,7 @@ class Task extends AppModel {
 			unset($this->data['Task']['status']);
 		}
 
-		if (!isset($this->data['Task']['milestone_id']) || !$this->data['Task']['milestone_id']) {
+		if (isset($this->data['Task']['milestone_id']) && $this->data['Task']['milestone_id'] === null) {
 			$this->data['Task']['milestone_id'] = 0;
 		}
 		return true;
