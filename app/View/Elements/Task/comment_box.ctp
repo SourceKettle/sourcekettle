@@ -24,7 +24,7 @@
     </div>
     <div class="span11">
         <div class="well col comment" id="<?= $comment['TaskComment']['id'] ?>">
-            <?php if ($current_user_is_admin || $current_user_id == $comment['User']['id']): ?>
+            <?php if ($current_user['is_admin'] == 1 || $current_user['id'] == $comment['User']['id']): ?>
             	<button type="button" class="close delete"><?= $this->Bootstrap->icon('remove-circle'); ?></button>
                 <button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
 				<?= $this->Form->create ('TaskCommentDelete', array ('class' => 'hide comment-delete')); ?>

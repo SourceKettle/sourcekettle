@@ -28,7 +28,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']) ?>
             "input" => $this->Form->text("name"),
         ));
 
-        if($user_is_sourcekettle_managed){
+        if(User::isSourcekettleManaged($current_user, $current_user['id'])){
             echo $this->Bootstrap->input("email", array(
                 "input" => $this->Form->text("email"),
             ));

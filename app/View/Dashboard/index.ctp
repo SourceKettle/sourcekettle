@@ -13,9 +13,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-  echo $this->Bootstrap->page_header($this->DT->t('header.text') . " <small>" . $this->DT->t('header.small.text') . " " . h(strtolower($user_name)) . "</small>");
+  echo $this->Bootstrap->page_header($this->DT->t('header.text') . " <small>" . $this->DT->t('header.small.text') . " " . h(strtolower($current_user['name'])) . "</small>");
 
-  //echo $this->element('beta_warning'); // TODO show this for dev versions
+  /*if ($DEBUG) {
+    echo $this->element('beta_warning'); // TODO show this for dev versions
+  }*/
   $this->Html->css('tasks.index', null, array ('inline' => false));
 ?>
 

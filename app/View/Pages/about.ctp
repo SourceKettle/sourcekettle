@@ -57,7 +57,7 @@
     <div class="span12" style="text-align:center">
         <h5><small>and to whoever made us tea, we salute you!</small></h5>
     </div>
-    <?if($user_is_admin):?>
+    <?if($current_user['is_admin'] == 1):?>
     <div class="span12" style="text-align:center; font-size:50%">
           <a href='http://www.youtube.com/watch?v=GIM_2e4CBVs'>Tuba solo</a>.
     </div>

@@ -187,9 +187,11 @@ class AppController extends Controller {
 		$userId = null;
 
 		if ($this->Auth->loggedIn()) {
-			//print_r($this->Auth->user()); exit(0);
 			User::store($this->Auth->user());
 			$userId = User::get('id');
+			$this->set('current_user', $this->Auth->user() );
+		} else {
+			$this->set('current_user', null);
 		}
 			/*$userName = User::get('name');
 			$userEmail = User::get('email');
