@@ -183,11 +183,15 @@ class AppController extends Controller {
 		//Use sha256 as the hashing algorithm for the site as it is the most secure out of the allowed options.
 		Security::setHash('sha256');
 
-		if ($this->Auth->loggedIn()) {
-			User::store($this->Auth->user());
+		// Currently logged-in user ID
+		$userId = null;
 
+		if ($this->Auth->loggedIn()) {
+			//print_r($this->Auth->user()); exit(0);
+			User::store($this->Auth->user());
 			$userId = User::get('id');
-			$userName = User::get('name');
+		}
+			/*$userName = User::get('name');
 			$userEmail = User::get('email');
 			$isAdmin = (User::get('is_admin') == 1);
 			$this->set('user_id', $userId);
@@ -196,7 +200,7 @@ class AppController extends Controller {
 			$this->set('user_is_admin', $isAdmin);
 		} else {
 			$this->set('user_is_admin', false);
-		}
+		}*/
 
 		// if admin pages are being requested
 		if (isset($this->params['admin'])) {
@@ -206,21 +210,25 @@ class AppController extends Controller {
 		}
 		if (isset($this->params['api'])) {
 			// The following line kinda breaks the M->V->C thing
+			// TODO this needs tidying up
 			$this->{$this->modelClass}->_is_api = true;
 		}
 
-		if ($theme = $this->Auth->user('theme')) {
+		// The currently logged-in user ID is very handy to keep around
+		$this->set('current_user_id', $userId);
+
+		/*if ($theme = $this->Auth->user('theme')) {
 			$this->set('user_theme', $theme);
 		} else {
 			$this->set('user_theme', null);
-		}
+		}*/
 
 		// Is the user account sourcekettle-managed or external e.g. LDAP?
-		if (isset($userId)) {
+		/*if (isset($userId)) {
 			$_userModel = ClassRegistry::init('User');
 			$user = $_userModel->findById($userId);
 			$this->set('user_is_sourcekettle_managed', User::isSourceKettleManaged($user));
-		}
+		}*/
 	}
 
 	public function appBlackhole($type) {

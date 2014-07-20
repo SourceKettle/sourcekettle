@@ -48,7 +48,7 @@ echo "<ul class='well col sprintboard-droplist span$span$classes' $dtStatus $dtP
 echo "<h2$tooltip>$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {
-	$draggable = (empty($task['Task']['assignee_id']) || $task['Task']['assignee_id'] == $user_id);
+	$draggable = (empty($task['Task']['assignee_id']) || $task['Task']['assignee_id'] == $current_user_id);
 	if($draggable){
 		echo "<li class='draggable' data-taskid='".h($task['Task']['id'])."'>";
 	} else {

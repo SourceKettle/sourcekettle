@@ -96,12 +96,14 @@ class User extends AppModel {
 	);
 
 	public function afterFind($results, $primary = false) {
+		// TODO this should be tidied
 		if ($this->_is_api) {
 			foreach ($results as $x => $item) {
 				// A list of things that should not be available in the API
 				unset($results[$x]['User']['password']);
 			}
 		}
+
 		return $results;
 	}
 
