@@ -48,12 +48,15 @@ class AppProjectController extends AppController {
  * @return void
  */
 	protected function _projectCheck($name, $needWrite = false, $needAdmin = false) {
+
+		// Slightly fudgy special-case for things that use a Project directly...
 		if ( $this->modelClass == "Project" ) {
 			$model = $this->Project;
 		} else {
 			$model = $this->{$this->modelClass}->Project;
 		}
 
+		// Get the actual project instance, if it exists...
 		$project = $model->getProject($name);
 
 		if (empty($project)) {
@@ -67,18 +70,21 @@ class AppProjectController extends AppController {
 
 		$this->set('previousPage', $this->referer(array('action' => 'index', 'project' => $project['Project']['name']), true));
 
+		// Now check the user's permission level
+		$current_user = $this->viewVars['current_user'];
+
 		// Site admins may have access to any project
-		if ($this->Auth->user('is_admin') == 1) {
+		if ($current_user['is_admin'] == 1) {
 			return $project;
 		}
 
 		// Lock out those who aren't allowed to write
-		if ($needWrite && !$model->hasWrite(User::get('id')) ) {
+		if ($needWrite && !$model->hasWrite($current_user['id']) ) {
 			throw new ForbiddenException(__('You do not have permissions to write to this project'));
 		}
 
 		// Lock out those who aren't admins
-		if ($needAdmin && !$model->isAdmin(User::get('id')) ) {
+		if ($needAdmin && !$model->isAdmin($current_user['id']) ) {
 			throw new ForbiddenException(__('You need to be an admin to access this page'));
 		}
 

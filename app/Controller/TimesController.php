@@ -99,9 +99,10 @@ class TimesController extends AppProjectController {
 		$project = $this->_projectCheck($project, true);
 		$time = $this->Time->open($id, true);
 		$this->set('time', $time);
+		$current_user = $this->viewVars['current_user'];
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$this->request->data['Time']['user_id'] = User::get('id');
+			$this->request->data['Time']['user_id'] = $current_user['id'];
 			$this->request->data['Time']['project_id'] = $project['Project']['id'];
 
 			if ($this->Flash->u($this->Time->save($this->request->data))) {

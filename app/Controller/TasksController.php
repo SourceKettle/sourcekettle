@@ -124,6 +124,7 @@ class TasksController extends AppProjectController {
 	public function view($project = null, $id = null) {
 		$project = $this->_projectCheck($project);
 		$task = $this->Task->open($id);
+		$current_user = $this->viewVars['current_user'];
 
 		// If a User has commented
 		if ($this->request->is('post') && isset($this->request->data['TaskComment'])) {
@@ -131,7 +132,7 @@ class TasksController extends AppProjectController {
 			$this->Task->TaskComment->create();
 
 			$this->request->data['TaskComment']['task_id'] = $id;
-			$this->request->data['TaskComment']['user_id'] = User::get('id');
+			$this->request->data['TaskComment']['user_id'] = $current_user['id'];
 
 			if ($this->Task->TaskComment->save($this->request->data)) {
 				$this->Flash->info('The comment has been added successfully');
@@ -307,6 +308,7 @@ class TasksController extends AppProjectController {
 
 
 		$project = $this->_projectCheck($project, true);
+		$current_user = $this->viewVars['current_user'];
 
 		// Milestone pre-selected - parse and store
 		if (!empty($this->request->query['milestone'])) {
@@ -319,7 +321,7 @@ class TasksController extends AppProjectController {
 			$this->Task->create();
 
 			$this->request->data['Task']['project_id']		= $project['Project']['id'];
-			$this->request->data['Task']['owner_id']		= User::get('id');
+			$this->request->data['Task']['owner_id']		= $current_user['id'];
 			$this->request->data['Task']['task_status_id']	= 1;
 
 			if (isset($this->request->data['Task']['milestone_id']) && $this->request->data['Task']['milestone_id'] == 0) {

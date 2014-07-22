@@ -28,7 +28,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']) ?>
             "input" => $this->Form->text("name"),
         ));
 
-        if(User::isSourcekettleManaged($current_user, $current_user['id'])){
+        if ($current_user['__is_internal']) {
             echo $this->Bootstrap->input("email", array(
                 "input" => $this->Form->text("email"),
             ));

@@ -171,10 +171,11 @@ class Project extends AppModel {
 			throw new NotFoundException("Project could not be found with reference {$key}");
 		}
 
+		// TODO MVC fail
 		// In some cases, User::get('id') isn't set (like GitCommand)
-		if (!$skipPerms && !User::get('is_admin')) {
+		if (!$skipPerms && isset($this->Auth) && !$this->Auth->user('is_admin')) {
 			// Lock out those who are not allowed to read
-			if ( !$this->hasRead(User::get('id'), $project['Project']['id']) ) {
+			if ( !$this->hasRead($this->Auth->user('id'), $project['Project']['id']) ) {
 				throw new ForbiddenException(__('You do not have permissions to access this project.'));
 			}
 		}
@@ -189,8 +190,9 @@ class Project extends AppModel {
  * @return boolean true if read permissions
  */
 	public function hasRead($user = null, $project = null) {
+		// TODO MVC fail
 		if ( $user == null ) {
-			$user = User::get('id');
+			$user = $this->Auth->user('id');
 		}
 		if ( $user == null ) {
 			return false;
@@ -218,6 +220,7 @@ class Project extends AppModel {
  * @return boolean true if write permissions
  */
 	public function hasWrite($userId = null, $projectId = null) {
+		// TODO MVC fail
 		if ( $userId == null ) {
 			$userId = User::get('id');
 		}
@@ -253,6 +256,7 @@ class Project extends AppModel {
  * @return boolean true if admin
  */
 	public function isAdmin($user = null, $project = null) {
+		// TODO MVC fail
 		if ( $user == null ) $user = User::get('id');
 		if ( $user == null ) return false;
 

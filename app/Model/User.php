@@ -96,9 +96,16 @@ class User extends AppModel {
 	);
 
 	public function afterFind($results, $primary = false) {
-		// TODO this should be tidied
-		if ($this->_is_api) {
-			foreach ($results as $x => $item) {
+		foreach ($results as $x => $item) {
+			// Check whether it's an internal account or one managed by e.g. LDAP
+			if (isset($item['User']['password']) && !empty($item['User']['password'])) {
+				$results[$x]['User']['__is_internal'] = true;
+			} else {
+				$results[$x]['User']['__is_internal'] = false;
+			}
+
+			// TODO this should be tidied
+			if ($this->_is_api) {
 				// A list of things that should not be available in the API
 				unset($results[$x]['User']['password']);
 			}

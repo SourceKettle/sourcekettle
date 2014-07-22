@@ -289,7 +289,6 @@ class UsersController extends AppController {
 		//Find the users projects they are working on
 		$this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
 		$this->request->data = $this->User->read();
-		$this->request->data['User']['is_local'] = User::isSourcekettleManaged($this->data);
 		$this->request->data['User']['password'] = null;
 	}
 
@@ -300,6 +299,7 @@ class UsersController extends AppController {
  */
 	public function view($id = null) {
 		$this->User->id = $id;
+		$current_user = $this->viewVars['current_user'];
 
 		if (!$this->User->exists()) {
 			throw new NotFoundException(__('Invalid user'));
@@ -309,9 +309,9 @@ class UsersController extends AppController {
 		$this->User->Collaborator->Project->Collaborator->recursive = 0;
 		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
 		$this->set('user', $this->User->read(null, $id));
-
-		$you	= User::get('id');
-		$them = $this->User->id;
+		
+		$you	= $current_user['id'];
+		$them   = $this->User->id;
 		$joinProjects = array();
 
 		// TODO - Make one query
@@ -490,10 +490,6 @@ class UsersController extends AppController {
 		$this->User->id = $this->Auth->user('id');
 		$this->request->data = $this->User->read();
 		$this->set('external_account', false);
-		if (!User::isSourcekettleManaged($this->User->data)) {
-			$this->set('external_account', true);
-			return;
-		}
 
 		if ($this->request->is('post')) {
 			$this->User->id = $this->Auth->user('id');
@@ -547,7 +543,7 @@ class UsersController extends AppController {
 			$targetUserData = $this->User->read();
 
 			$this->set('external_account', false);
-			if (!User::isSourcekettleManaged($targetUserData)) {
+			if (!$targetUserData['User']['__is_internal'])) {
 				$this->Session->setFlash(__('Account could not be deleted - it is not managed by SourceKettle'), 'default', array(), 'error');
 				$this->redirect(array('action' => 'admin_index'));
 			}

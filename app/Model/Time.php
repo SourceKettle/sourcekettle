@@ -446,6 +446,7 @@ class Time extends AppModel {
 			),
 			'Time.project_id' => $this->Project->id
 		);
+		// TODO move to controller
 		if ($current_user_only) {
 			$conditions['Time.user_id'] = User::get('id');
 		}
@@ -491,6 +492,7 @@ class Time extends AppModel {
 				'Time.date' => $today,
 				'Time.project_id' => $this->Project->id,
 			);
+			// TODO move to controller
 			if ($current_user_only) {
 				$conditions['Time.user_id'] = User::get('id');
 			}

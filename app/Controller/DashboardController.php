@@ -29,10 +29,11 @@ class DashboardController extends AppController {
 
 	private function __getRecentProjects() {
 		$this->Project->Collaborator->recursive = 0;
+		$current_user = $this->viewVars['current_user'];
 
 		return $this->Project->Collaborator->find(
 			'all', array(
-			'conditions' => array('Collaborator.user_id' => User::get('id')),
+			'conditions' => array('Collaborator.user_id' => $current_user['id']),
 			'order' => array('Project.modified DESC'),
 			'limit' => 3
 			)
@@ -40,10 +41,11 @@ class DashboardController extends AppController {
 	}
 
 	private function __getUserTasks() {
+		$current_user = $this->viewVars['current_user'];
 		// TODO hard coded statuses
 		return $this->Task->find('all', array(
 			'conditions' => array(
-				'Task.assignee_id' => User::get('id'),
+				'Task.assignee_id' => $current_user['id'],
 				'Task.task_status_id <>' => '4'
 			),
 			'recursive' => 3,
@@ -53,7 +55,8 @@ class DashboardController extends AppController {
 	}
 
 	private function __getProjectsHistory() {
-		return $this->ProjectHistory->fetchHistory(null, 15, 0, User::get('id'));
+		$current_user = $this->viewVars['current_user'];
+		return $this->ProjectHistory->fetchHistory(null, 15, 0, $current_user['id']);
 	}
 
 	public function admin_index() {

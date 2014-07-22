@@ -55,9 +55,10 @@ class ProjectsController extends AppProjectController {
 	public function index() {
 		$this->Project->Collaborator->recursive = 0;
 
+		$current_user = $this->viewVars['current_user'];
 		$projects = $this->Project->Collaborator->find(
 			'all', array(
-			'conditions' => array('Collaborator.user_id' => User::get('id')),
+			'conditions' => array('Collaborator.user_id' => $current_user['id']),
 			'order' => array('Project.modified DESC')
 			)
 		);
@@ -174,6 +175,7 @@ class ProjectsController extends AppProjectController {
  */
 	public function add() {
 		$repoTypes = $this->Project->RepoType->find('list');
+		$current_user = $this->viewVars['current_user'];
 
 		// Flip keys for values, then look up the ID of the default repo type name
 		$defaultRepo = array_flip($repoTypes);
@@ -194,12 +196,13 @@ class ProjectsController extends AppProjectController {
 			// Create the project object with its data
 			$this->Project->create();
 
+
 			// Lets vet the data coming in
 			$requestData = array(
 				'Project' => $this->request->data['Project'],
 				'Collaborator' => array(
 					array(
-						'user_id' => User::get('id'),
+						'user_id' => $current_user['id'],
 						'access_level' => 2 // Project admin
 					)
 				)
@@ -209,8 +212,9 @@ class ProjectsController extends AppProjectController {
 				// Need to know the repo type so we can skip repo creation if necessary...
 				$repoType = $repoTypes[$requestData['Project']['repo_type']];
 
-				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . User::get('id') . "]", 'sourcekettle');
-				$this->log("[ProjectController.add] user[" . User::get('id') . "] added to project[" . $this->Project->id . "] automatically as an admin", 'sourcekettle');
+
+				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . $current_user['id'] . "]", 'sourcekettle');
+				$this->log("[ProjectController.add] user[" . $current_user['id'] . "] added to project[" . $this->Project->id . "] automatically as an admin", 'sourcekettle');
 
 				// Create the actual repository, if required - if it fails, delete the database content
 				if (strtolower($repoType) == 'none') {
@@ -255,10 +259,12 @@ class ProjectsController extends AppProjectController {
  */
 	public function edit($project = null) {
 		$project = $this->_projectCheck($project, true, true);
+		$current_user = $this->viewVars['current_user'];
+
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Flash->u($this->Project->save($this->request->data))) {
-				$this->log("[ProjectController.edit] user[" . User::get('id') . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
+				$this->log("[ProjectController.edit] user[" . $current_user['id'] . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
 				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view'));
 			}
 		}
