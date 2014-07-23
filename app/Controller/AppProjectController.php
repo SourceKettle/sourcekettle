@@ -34,20 +34,87 @@ class AppProjectController extends AppController {
 		}
 	}
 
+	// Returns a hash of action name => access level required (read, write, admin).
+	// Sets some defaults e.g. view/index/edit/delete, override this method to add any
+	// non-standard actions.
+	protected function _getAuthorizationMapping() {
+		return array(
+			'index'  => 'read',
+			'view'   => 'read',
+			'edit'   => 'write',
+			'delete' => 'write',
+		);
+	}
+
+	// Authorisation function - uses the CakePHP auth system, works out if the current
+	// user has read/write/admin access to the project. Calls _getAuthorizationMapping()
+	// to work out what level is required for the given action.
+	public function isAuthorized($user) {
+
+		// System admins can do whatever they want
+		if (@$user['is_admin'] == 1) {
+			return true;
+		}
+		// No access to admin functions for non-admin users
+		if (preg_match('/^admin_/i', $this->action)) {
+			$this->Auth->authError = __('You do not have site admin access to this '.$this->modelClass);
+			return false;
+		}
+
+		// If we've not explicitly set the authorisation level, user is not authorised
+		$mapping = $this->_getAuthorizationMapping();
+		if (!array_key_exists($this->action, $mapping)) {
+			$this->Auth->authError = __('Authentication level problem while accessing this '.$this->modelClass.', action '.$this->action);
+			return false;
+		}
+
+		$requiredLevel = $mapping[$this->action];
+
+		// Slightly fudgy special-case for things that use a Project directly...
+		if ( $this->modelClass == "Project" ) {
+			$model = $this->Project;
+		} else {
+			$model = $this->{$this->modelClass}->Project;
+		}
+
+		// Get the actual project instance, if it exists...
+		$project = $model->getProject($this->params['project']);
+
+		if (empty($project)) {
+			throw new NotFoundException(__('Invalid project'));
+		}
+
+		$model->id = $project['Project']['id'];
+		
+		$isProjectAdmin = $model->isAdmin($user['id']);
+		$hasWrite = $model->hasWrite($user['id']);
+		$hasRead = $model->hasRead($user['id']);
+
+		switch ($requiredLevel) {
+			case 'read':
+				$this->Auth->authError = __('You do not have read access to this '.$this->modelClass);
+				return $hasRead;
+			case 'write':
+				$this->Auth->authError = __('You do not have write access to this '.$this->modelClass);
+				return $hasWrite;
+			case 'admin':
+				$this->Auth->authError = __('You do not have admin access to this '.$this->modelClass);
+				return $isProjectAdmin;
+		}
+	
+		return false;
+	}
+
 /**
- * _projectCheck
- * Space saver to ensure user can view content
- * Also sets commonly needed variables related to the project
+ * _getProject
+ * Space saver to return the project we're doing things to
  *
  * @access protected
  * @param mixed $name
- * @param bool $needWrite (default: false)
- * @param bool $needAdmin (default: false)
  * @throws NotFoundException
- * @throws ForbiddenException
  * @return void
  */
-	protected function _projectCheck($name, $needWrite = false, $needAdmin = false) {
+	protected function _getProject($name) {
 
 		// Slightly fudgy special-case for things that use a Project directly...
 		if ( $this->modelClass == "Project" ) {
@@ -67,26 +134,6 @@ class AppProjectController extends AppController {
 
 		$this->set('project', $project);
 		$this->set('isAdmin', $model->isAdmin());
-
-		$this->set('previousPage', $this->referer(array('action' => 'index', 'project' => $project['Project']['name']), true));
-
-		// Now check the user's permission level
-		$current_user = $this->viewVars['current_user'];
-
-		// Site admins may have access to any project
-		if ($current_user['is_admin'] == 1) {
-			return $project;
-		}
-
-		// Lock out those who aren't allowed to write
-		if ($needWrite && !$model->hasWrite($current_user['id']) ) {
-			throw new ForbiddenException(__('You do not have permissions to write to this project'));
-		}
-
-		// Lock out those who aren't admins
-		if ($needAdmin && !$model->isAdmin($current_user['id']) ) {
-			throw new ForbiddenException(__('You need to be an admin to access this page'));
-		}
 
 		return $project;
 	}

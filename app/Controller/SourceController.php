@@ -20,6 +20,18 @@ class SourceController extends AppProjectController {
 
 	public $helpers = array('Time', 'Source');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'ajax_diff'  => 'read',
+			'commit'  => 'read',
+			'commits'  => 'read',
+			'gettingStarted'  => 'read',
+			'index'  => 'read',
+			'raw'  => 'read',
+			'tree'  => 'read',
+		);
+	}
 /**
  * __getPath function.
  *
@@ -42,7 +54,7 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	private function __initialiseResources($name, $ref = null) {
-		$project = parent::_projectCheck($name);
+		$project = parent::_getProject($name);
 		$this->Source->init();
 
 		$branches = $this->Source->getBranches();

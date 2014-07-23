@@ -57,10 +57,22 @@ class AppController extends Controller {
 			'loginRedirect' => array(
 				'controller' => 'dashboard',
 				'action' => 'index'
-			)
+			),
+			'authorize' => array('Controller')
 		)
 	);
 
+	// Default authorisation - allow admins, disallow anyone else.
+	// Override this in the other controller objects to taste.
+	public function isAuthorized($user) {
+
+		// Sysadmins can do anything...
+		if (@$user['is_admin'] == 1) {
+			return true;
+		}
+
+		return false;
+	}
 /**
  * Before filter method acts first in the controller
  *

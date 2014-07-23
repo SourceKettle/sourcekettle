@@ -25,6 +25,19 @@ class CollaboratorsController extends AppProjectController {
  */
 	public $helpers = array('Time');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'index'  => 'read',
+			'all'   => 'read',
+			'add'   => 'write',
+			'makeadmin'   => 'admin',
+			'makeuser'   => 'admin',
+			'makeguest'   => 'admin',
+			'delete' => 'write',
+			'api_autocomplete' => 'read',
+		);
+	}
 /**
  * index method
  *
@@ -32,7 +45,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function index ($project = null) {
-		$project = $this->_projectCheck($project, true, true);
+		$project = $this->_getProject($project);
 
 		$collaborators = array();
 		foreach (array(0, 1, 2) as $x) {
@@ -54,7 +67,7 @@ class CollaboratorsController extends AppProjectController {
  * List the collaborators on the project
  */
 	public function all ($project = null) {
-		$project = $this->_projectCheck($project, false, false);
+		$project = $this->_getProject($project);
 
 		$this->Collaborator->recursive = 0;
 
@@ -75,7 +88,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function add($project = null) {
-		$project = $this->_projectCheck($project, true, true);
+		$project = $this->_getProject($project);
 		$this->__add($project, $this->request->data, array('project' => $project['Project']['name'], 'action' => '.'));
 	}
 
@@ -85,7 +98,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function admin_add() {
-		$project = $this->_projectCheck($this->request->data['Project']['id']);
+		$project = $this->_getProject($this->request->data['Project']['id']);
 		$this->__add($project, $this->request->data, array('controller' => 'projects', 'action' => 'admin_view', $project['Project']['id']));
 	}
 
@@ -218,7 +231,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	private function __changePermissionLevel($project = null, $id = null, $newaccesslevel = 0) {
-		$project = $this->_projectCheck($project, true, true);
+		$project = $this->_getProject($project);
 		$collaborator = $this->Collaborator->open($id);
 
 		if ($newaccesslevel <= 1 && $collaborator['Collaborator']['access_level'] > 1) {
@@ -275,7 +288,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function delete($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true, true);
+		$project = $this->_getProject($project);
 		$collaborator = $this->Collaborator->open($id);
 
 		$this->Flash->setUp();

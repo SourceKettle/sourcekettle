@@ -36,13 +36,29 @@ class ProjectsController extends AppProjectController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow(
+			'index',
 			'api_all',
 			'api_view'
 		);
 	}
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'history'  => 'read',
+			'index'  => 'read',
+			'public_projects'  => 'read',
+			'view'   => 'read',
+			'edit'   => 'write',
+			'delete' => 'write',
+			'markupPreview'  => 'read',
+			'api_history' => 'read',
+			'api_autocomplete' => 'read',
+		);
+	}
+
 	public function history($project) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		$this->set('historyCount', 25);
 	}
@@ -101,7 +117,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function view($name = null) {
-		$project = $this->_projectCheck($name);
+		$project = $this->_getProject($name);
 
 		$numberOfOpenTasks = $this->Project->Task->find('count', array(
 			'conditions' => array(
@@ -258,7 +274,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function edit($project = null) {
-		$project = $this->_projectCheck($project, true, true);
+		$project = $this->_getProject($project);
 		$current_user = $this->viewVars['current_user'];
 
 
@@ -278,7 +294,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_edit($project = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Flash->u($this->Project->save($this->request->data))) {
@@ -298,7 +314,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function delete($project = null) {
-		$project = $this->_projectCheck($project, true, true);
+		$project = $this->_getProject($project);
 
 		$this->Flash->setUp();
 
@@ -320,7 +336,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_delete($name = null) {
-		$project = $this->_projectCheck($name);
+		$project = $this->_getProject($name);
 
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
@@ -461,7 +477,7 @@ class ProjectsController extends AppProjectController {
 			$this->set('data',$data);
 			$this->render('/Elements/json');
 		} else {
-			$project = $this->_projectCheck($this->request->params['named']['project']);
+			$project = $this->_getProject($this->request->params['named']['project']);
 			$this->layout = 'ajax';
 
 			if (!is_numeric($number) || $number < 1 || $number > 50) {

@@ -21,6 +21,14 @@ class DashboardController extends AppController {
 
 	public $helpers = array('Time', 'Task');
 
+	// Dashboard - any user can see all actions
+	public function isAuthorized($user) {
+		if (isset($user['id'])) {
+			return true;
+		}
+		return false;
+	}
+
 	public function index() {
 		$this->set('projects', $this->__getRecentProjects());
 		$this->set('tasks', $this->__getUserTasks());

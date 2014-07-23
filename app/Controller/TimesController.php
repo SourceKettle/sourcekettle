@@ -26,6 +26,19 @@ class TimesController extends AppProjectController {
 		'Time'
 	);
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'add'  => 'write',
+			'delete'  => 'write',
+			'edit'  => 'write',
+			'history'  => 'read',
+			'index'   => 'read',
+			'users'   => 'read',
+			'view' => 'read',
+		);
+	}
+
 /**
  * add
  * allows users to log time
@@ -35,7 +48,7 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function add($project) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 
 		if ($this->request->is('ajax')) {
 			$this->autoRender = false;
@@ -79,7 +92,7 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function delete($project, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$time = $this->Time->open($id, true);
 
 		$this->Flash->setUp();
@@ -96,7 +109,7 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function edit($project, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$time = $this->Time->open($id, true);
 		$this->set('time', $time);
 		$current_user = $this->viewVars['current_user'];
@@ -125,7 +138,7 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function history($project = null, $year = null, $week = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		// Validate the Year
 		if (($_year = $this->Time->validateYear($year)) != $year) {
@@ -238,7 +251,7 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function users($project) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		$this->set('total_time', $this->Time->fetchTotalTimeForProject());
 		$this->set('users', $this->Time->fetchUserTimesForProject());
@@ -253,7 +266,7 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function view($project, $id = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$time	= $this->Time->open($id);
 
 		$this->set('time', $time);

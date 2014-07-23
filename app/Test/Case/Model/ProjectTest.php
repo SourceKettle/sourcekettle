@@ -86,36 +86,10 @@ class ProjectTestCase extends CakeTestCase {
      * @access public
      * @return void
      */
-    public function testGetProjectName() {
+    public function testGetProjectByName() {
         $project = $this->Project->getProject('private');
         $this->assertTrue($project != null, "Project is null");
         $this->assertEquals('private', $project['Project']['name'], "wrong project returned");
-    }
-
-    /**
-     * test Project->getProject function.
-     * Tests that a non member can view a public project
-     *
-     * @access public
-     * @return void
-     */
-    public function testGetProjectReadPublicNonMember() {
-        $project = $this->Project->getProject('public');
-        $this->assertTrue($project != null, "Project is null");
-        $this->assertEquals('public', $project['Project']['name'], "wrong project returned");
-    }
-
-    /**
-     * test Project->getProject function.
-     * Tests that a non member cannot view a private project
-     *
-     * @access public
-     * @return void
-     */
-    public function testGetProjectReadPrivateNonMember() {
-        $project = $this->Project->getProject('private');
-		debug($project);
-        $this->assertTrue($project == null, "Project is not null");
     }
 
     /**

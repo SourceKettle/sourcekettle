@@ -28,4 +28,14 @@ class AdminController extends AppController {
 	public function admin_index() {
 	}
 
+	// This is the same as the ode in AppController, but we should make sure
+	// that ONLY sysadmins have access, even if we later change the defaults in AppController.
+	// So, don't call parent function.
+	public function isAuthorized($user) {
+		if (@$user['is_admin'] == 1) {
+			return true;
+		}
+		return false;
+	}
+
 }

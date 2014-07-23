@@ -66,15 +66,6 @@ class ProjectHistoryBehavior extends ModelBehavior {
 		$exception = false;
 		$this->prepare($Model);
 
-		// Lock out those who aren't allowed to write
-		if ( $Model->name == 'Collaborator' && !$Model->findByProjectId($Model->Project->id) ) {
-			$exception = true;
-		}
-
-		if ( !$exception && !$Model->Project->hasWrite($this->Auth->user('id')) ) {
-			throw new ForbiddenException(__('You do not have permissions to write to this project'));
-		}
-
 		$before = $Model->findById($Model->id);
 		$this->_cache[$Model->name][$Model->id] = array();
 

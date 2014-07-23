@@ -28,6 +28,19 @@ class AttachmentsController extends AppProjectController{
 
 	public $helpers = array('Time');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'index'  => 'read',
+			'view'   => 'read',
+			'image'   => 'read',
+			'video'   => 'read',
+			'text'   => 'read',
+			'other'   => 'read',
+			'edit'   => 'write',
+			'delete' => 'write',
+		);
+	}
 /**
  * index function.
  *
@@ -93,7 +106,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function view($project = null, $id = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$attachment = $this->Attachment->open($id);
 
 		// Lets pretend we are serving a real file
@@ -119,7 +132,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function add($project = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 
 		if (!empty($this->data)) {
 			if ($this->Flash->c($this->Attachment->upload($this->data))) {
@@ -137,7 +150,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function delete($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$attachment = $this->Attachment->open($id);
 
 		if (!$this->request->is('post')) {
@@ -158,7 +171,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	private function __attachmentWithRestrictions($project = null, $conditions = array()) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$conditions['Attachment.project_id'] = $project['Project']['id'];
 		$conditions['Attachment.model'] = null;
 		$attachments = $this->Attachment->find(

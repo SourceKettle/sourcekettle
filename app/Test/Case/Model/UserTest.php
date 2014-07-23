@@ -138,7 +138,6 @@ class UserTestCase extends CakeTestCase {
 		));
 		$this->User->create();
 		$saved = $this->User->save($data);
-	//	$id = $this->User->getLastInsertID();
 
 		// Add the ID and hashed password for comparison
 		$data['User']['id'] = $this->User->getLastInsertID();
@@ -153,32 +152,6 @@ class UserTestCase extends CakeTestCase {
 
 		$this->assertEqual($saved, $data, "Save failed");
 	}
-
-    /**
-     * test User->isSourcekettleManaged function.
-     * Tests that a user with a password is marked as managed.
-     *
-     * @access public
-     * @return void
-     */
-    public function testIsSourcekettleManaged() {
-		$user = $this->User->findById(1);
-        $isManaged = $this->User->isSourcekettleManaged($user);
-        $this->assertTrue($isManaged, "Returned users should be managed");
-    }
-
-    /**
-     * test User->isSourcekettleManaged function.
-     * Tests that a user without a password is marked as not managed.
-     *
-     * @access public
-     * @return void
-     */
-    public function testIsSourcekettleManagedNotManaged() {
-		$user = $this->User->findById(6);
-        $isManaged = $this->User->isSourcekettleManaged($user);
-        $this->assertFalse($isManaged, "returned users should not be managed");
-    }
 
 	public function testChangeName() {
 		$this->User->id = 1;
@@ -272,4 +245,11 @@ class UserTestCase extends CakeTestCase {
         $user = $this->User->findById(1);
 		$this->assertEquals($user['User']['is_active'], false, "Incorrect is_active status found after change");
 	}
+
+	public function testDelete() {
+		$this->User->id = 1;
+		$this->User->delete();
+	}
+
+	public function testFailToDelete() {}
 }

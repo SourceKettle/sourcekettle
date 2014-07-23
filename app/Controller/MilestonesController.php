@@ -23,6 +23,23 @@ class MilestonesController extends AppProjectController {
 
 	public $uses = array('Milestone', 'Project');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'index'  => 'read',
+			'open'  => 'read',
+			'closed'  => 'read',
+			'view'   => 'read',
+			'plan'   => 'write',
+			'add'   => 'write',
+			'edit'   => 'write',
+			'close'   => 'write',
+			'reopen'   => 'write',
+			'delete'   => 'write',
+			'api_view'   => 'read',
+			'api_all'   => 'read',
+		);
+	}
 /**
  * beforeFilter function.
  *
@@ -52,7 +69,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function open($project = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		$milestones = array();
 		// Iterate over all milestones
@@ -96,7 +113,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function closed($project = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		$milestones = array();
 		// Iterate over all milestones
@@ -143,7 +160,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function view($project = null, $id = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		$backlog = $this->Milestone->openTasksForMilestone($id);
@@ -178,7 +195,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function plan($project = null, $id = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		$mustHave   = $this->Milestone->blockerTasksForMilestone($id);
@@ -200,7 +217,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function add($project = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 
 		if ($this->request->is('post')) {
 			$this->Milestone->create();
@@ -223,7 +240,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function edit($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
@@ -246,7 +263,7 @@ class MilestonesController extends AppProjectController {
  */
 	public function close($project = null, $id = null) {
 
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		if (!$milestone['Milestone']['is_open']) {
@@ -305,7 +322,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function reopen($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		if($milestone['Milestone']['is_open']){
@@ -336,7 +353,7 @@ class MilestonesController extends AppProjectController {
  */
 	public function delete($project = null, $id = null) {
 
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		if ($this->request->is('post')) {

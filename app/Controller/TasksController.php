@@ -49,17 +49,40 @@ class TasksController extends AppProjectController {
 		);
 
 		$this->Security->unlockedActions = array (
-			"starttask",
-			"stoptask",
-			"resolve",
-			"unresolve",
-			"freeze",
-			"setBlocker",
-			"setUrgent",
-			"setMajor",
-			"setMinor",
-			"detachFromMilestone",
-			"api_update"
+			'starttask',
+			'stoptask',
+			'resolve',
+			'unresolve',
+			'freeze',
+			'setBlocker',
+			'setUrgent',
+			'setMajor',
+			'setMinor',
+			'detachFromMilestone',
+			'api_update'
+		);
+	}
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'index'  => 'read',
+			'others'  => 'read',
+			'nobody'  => 'read',
+			'all'  => 'read',
+			'view'   => 'read',
+			'edit'   => 'write',
+			'starttask' => 'write',
+			'stoptask' => 'write',
+			'resolve' => 'write',
+			'unresolve' => 'write',
+			'freeze' => 'write',
+			'setBlocker' => 'write',
+			'setUrgent' => 'write',
+			'setMajor' => 'write',
+			'setMinor' => 'write',
+			'detachFromMilestone' => 'write',
+			'api_marshalled' => 'read',
+			'api_all' => 'read',
 		);
 	}
 
@@ -70,7 +93,7 @@ class TasksController extends AppProjectController {
  */
 	public function index($project = null, $statuses = null) {
 		// TODO hard coded IDs
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		if (!preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
 			$statuses = "1,2"; // Default to open/in progress tasks only
 		}
@@ -122,7 +145,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function view($project = null, $id = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
 		$current_user = $this->viewVars['current_user'];
 
@@ -307,7 +330,7 @@ class TasksController extends AppProjectController {
 	public function add($project = null) {
 
 
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$current_user = $this->viewVars['current_user'];
 
 		// Milestone pre-selected - parse and store
@@ -403,7 +426,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function edit($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
@@ -443,24 +466,6 @@ class TasksController extends AppProjectController {
 			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
 	}
-
-/**
- * delete method
- *
- * @param string $id
- * @return void
- */
-	// Temporarily commented out - tasks should not be deleted
-	// public function delete($project = null, $id = null) {
-	//	 $project = $this->_projectCheck($project, true);
-	//	 $task = $this->Task->open($id);
-	//
-	//	 if (!$this->request->is('post')) throw new MethodNotAllowedException();
-	//
-	//	 $this->Flash->setUp();
-	//	 $this->Flash->d($this->Task->delete());
-	//	 $this->redirect(array('action' => 'index'));
-	// }
 
 /**
  * starttask function.
@@ -503,20 +508,6 @@ class TasksController extends AppProjectController {
 		$isAjax = $this->request->is("ajax");
 
 		$task = $this->Task->open($id);
-
-		//check inProgress
-		/*if (!$this->Task->isInProgress()) {
-			if ($isAjax) {
-				$this->set("error", "not_in_progress");
-				$this->set("errorDescription", "You can not stop work on a task that is not in progress.");
-				$this->set("_serialize", array("error"));
-			} else {
-				$this->Flash->error('You can not stop work on a task that is not in progress.');
-				$this->redirect(array('project' => $project, 'action' => 'view', $id));
-			}
-
-			return;
-		}*/
 
 		$updated = $this->__updateTaskStatus($project, $id, 1, $isAjax);
 		if ($isAjax) {
@@ -697,7 +688,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	private function __updateTaskStatus($project = null, $id = null, $status = null, $isAjax = false) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
 
 		// TODO hard-coded IDs
@@ -890,7 +881,7 @@ class TasksController extends AppProjectController {
 	public function detachFromMilestone($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
 
 		$this->Task->set('milestone_id', 0);
@@ -933,7 +924,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	private function __updateTaskPriority($project = null, $id = null, $priority = null, $isAjax = false) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
 
 		// TODO hard-coded IDs
@@ -1139,7 +1130,7 @@ class TasksController extends AppProjectController {
 			$this->response->statusCode(400);
 			$data['error'] = 400;
 			$data['message'] = 'Bad request, no project specified.';
-		} else if (is_null($user) || $user < 1 || !($project = $this->_projectCheck($request['project']))) {
+		} else if (is_null($user) || $user < 1 || !($project = $this->_getProject($request['project']))) {
 			$this->response->statusCode(403);
 			$data['error'] = 403;
 			$data['message'] = 'You are not authorised to access this.';
