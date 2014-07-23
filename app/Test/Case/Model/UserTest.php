@@ -210,7 +210,7 @@ class UserTestCase extends CakeTestCase {
 
 		$this->User->saveField('email', 'blah@example.com');
 
-        $user = $this->User->findById(6);
+        	$user = $this->User->findById(6);
 		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found after change");
 		
 	}

@@ -315,8 +315,8 @@ class Task extends AppModel {
  * isAssignee function.
  * Returns true if the current user is assigned to the task
  */
-	public function isAssignee() {
-		return User::get('id') == $this->field('assignee_id');
+	public function isAssignee($userId) {
+		return $userId == $this->field('assignee_id');
 	}
 
 /**
@@ -361,7 +361,7 @@ class Task extends AppModel {
 		}
 	}
 
-	public function fetchLoggableTasks() {
+	public function fetchLoggableTasks($userId) {
 		// TODO hard coded status IDs
 		$myTasks = $this->find(
 			'list',
@@ -369,7 +369,7 @@ class Task extends AppModel {
 				'conditions' => array(
 					'Task.task_status_id <' => 4,
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id' => User::get('id'),
+					'Task.assignee_id' => $userId,
 				)
 			)
 		);
@@ -379,7 +379,7 @@ class Task extends AppModel {
 				'conditions' => array(
 					'Task.task_status_id <' => 4,
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id !=' => User::get('id'),
+					'Task.assignee_id !=' => $userId,
 				)
 			)
 		);

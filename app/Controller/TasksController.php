@@ -292,7 +292,7 @@ class TasksController extends AppProjectController {
 			)
 		);
 		$this->set('times', $times);
-		$this->set('tasks', $this->Task->fetchLoggableTasks());
+		$this->set('tasks', $this->Task->fetchLoggableTasks($this->Auth->user('id')));
 		$collabs = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
 		$collabs[0] = "None";
 		ksort($collabs);

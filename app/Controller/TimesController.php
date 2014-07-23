@@ -67,7 +67,7 @@ class TimesController extends AppProjectController {
 		} else if (isset($this->request->query['date'])) {
 			$this->request->data['Time']['date'] = $this->request->query['date'];
 		}
-		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
+		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks($this->Auth->user('id')));
 	}
 
 /**
@@ -111,7 +111,7 @@ class TimesController extends AppProjectController {
 		} else {
 			$this->request->data = $time;
 			$this->request->data['Time']['mins'] = $this->request->data['Time']['minutes']['s'];
-			$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
+			$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks($this->Auth->user('id')));
 		}
 	}
 
@@ -190,7 +190,7 @@ class TimesController extends AppProjectController {
 		}
 
 		// List of tasks we can log time against, for modal add dialog
-		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks());
+		$this->set('tasks', $this->Time->Project->Task->fetchLoggableTasks($this->Auth->user('id')));
 
 		// Downloadable timesheets
 		if (isset($this->request->query['format'])) {

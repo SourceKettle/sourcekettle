@@ -132,18 +132,30 @@ class User extends AppModel {
 	}
 
 	public function beforeSave($options = array()) {
-		// Can't update the email or password field if it's an externally-managed account
-		if (!User::isSourcekettleManaged($this->data, @$this->id)) {
+		// This is not a brand-new account (we have an ID):
+		// do some checks first to make sure we don't change things we shouldn't
+		if (isset($this->id) && $this->id) {
+
+			// Get the existing whitelist of savable fields
 			$wl = $this->whitelist;
+
 			if (empty($wl)) {
 				$wl = array_keys($this->schema());
 			}
-			$wl = array_diff($wl, array('password'));
 
-			// Only blacklist the email if we're updating an existing account
-			if ($this->id) {
+			// Load the existing data and work out if it's internal or not
+			$current_details = $this->findById($this->id);
+
+			if (!$current_details[$this->alias]['__is_internal']) {
+				// Do not allow the email to be changed as this is not under our control
+				// (e.g. it's a field in LDAP)
 				$wl = array_diff($wl, array('email'));
+
+				// Do not allow password to be updated on externally-managed accounts
+				$wl = array_diff($wl, array('password'));
 			}
+
+
 			$this->whitelist = $wl;
 
 		} elseif (isset($this->data[$this->alias]['email'])) {
@@ -152,6 +164,7 @@ class User extends AppModel {
 			$this->data[$this->alias]['email'] = strtolower($this->data[$this->alias]['email']);
 		}
 
+		// Hash the password before saving
 		if ( isset($this->data[$this->alias]['password'])) {
 			$this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password'], null, true);
 		}
@@ -159,8 +172,10 @@ class User extends AppModel {
 	}
 
 	public function beforeDelete($cascade = true) {
-		// Check that the user account is SourceKettle-managed, can't delete otherwise...
-		if (!User::isSourcekettleManaged($this->data, @$this->id)) {
+		// Load the existing data and work out if it's internal or not
+		$current_details = $this->findById($this->id);
+
+		if (!$current_details[$this->alias]['__is_internal']) {
 			return false;
 		}
 
@@ -188,36 +203,8 @@ class User extends AppModel {
 	}
 
 /**
- * isSourcekettleManaged function.
- * Is the user a SourceKettle-managed account, i.e. password is stored in the database?
- * If it's been auto-created from e.g. LDAP, the password will be blank.
- */
-	public static function isSourcekettleManaged($data, $id = 0) {
-
-		// Attempt to find an existing user by ID or email
-		$user = ClassRegistry::init('User');
-		if (isset($id) && $id > 0) {
-			$found = $user->findById($id);
-		} elseif (isset($data['User']['id'])) {
-			$found = $user->findById($data['User']['id']);
-		} elseif (isset($data['User']['email'])) {
-			$found = $user->findByEmail($data['User']['email']);
-
-		}
-		// No existing user found - we must be saving a new one,
-		// so simply check the password field exists
-		if (!isset($found) || count($found) < 1) {
-			return ( isset($data['User']['password']) && !empty($data['User']['password']) );
-		}
-
-		// Check the existing object's password field
-		return ( isset($found['User']['password']) && !empty($found['User']['password']) );
-
-	}
-
-/**
  * findByEmail function.
- * Find a user by an email address
+ * Find a user by an email address, lowercasing it automatically
  *
  * @param mixed $email the email to search
  * @param mixed $fields (default: null)
