@@ -126,6 +126,9 @@ class SshKey extends AppModel {
 
 		$correct = array();
 		while ($result = array_shift($results)) {
+			if (!isset($result[$this->alias]['key'])) {
+				continue;
+			}
 			$sanitised = $this->__sanitiseKey($result[$this->alias]['key']);
 			if (!$sanitised) {
 				continue;

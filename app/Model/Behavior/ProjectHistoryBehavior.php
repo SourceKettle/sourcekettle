@@ -43,6 +43,11 @@ class ProjectHistoryBehavior extends ModelBehavior {
  */
 	private $_cache = array();
 
+	// We need to know who's changing things, so we'll be told
+	// who's logged in (or fudging things on the command line, or whatever).
+	// Default to a user ID of 0 to represent 'system actions'.
+	private $_log_user = array('id' => 0, 'name' => '(System action)');
+
 /**
  * this-
  *
@@ -52,6 +57,10 @@ class ProjectHistoryBehavior extends ModelBehavior {
 	public function setup(Model $model, $settings = array()) {
 		$this->settings[$model->name] = $settings;
 		$this->model = &$model;
+	}
+
+	public function setUserData($user) {
+		$this->_log_user = $user;
 	}
 
 /**
@@ -95,8 +104,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 					$field,
 					$value,
 					$Model->field($field),
-					$this->Auth->user('id'),
-					$this->Auth->user('name')
+					$this->_log_user['id'],
+					$this->_log_user['name']
 				);
 			}
 		} else {
@@ -108,8 +117,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 				'+',
 				null,
 				null,
-				$this->Auth->user('id'),
-				$this->Auth->user('name')
+				$this->_log_user['id'],
+				$this->_log_user['name']
 			);
 		}
 		return true;
@@ -143,8 +152,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 			'-',
 			null,
 			null,
-			$this->Auth->user('id'),
-			$this->Auth->user('name')
+			$this->_log_user['id'],
+			$this->_log_user['name']
 		);
 		return true;
 	}
