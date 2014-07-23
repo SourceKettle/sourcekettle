@@ -248,8 +248,13 @@ class UserTestCase extends CakeTestCase {
 
 	public function testDelete() {
 		$this->User->id = 1;
-		$this->User->delete();
+		$ok = $this->User->delete();
+		$this->assertTrue($ok, 'Failed to delete user');
 	}
 
-	public function testFailToDelete() {}
+	public function testFailToDelete() {
+		$this->User->id = 6;
+		$ok = $this->User->delete();
+		$this->assertFalse($ok, 'Erroneously deleted external user account');
+	}
 }

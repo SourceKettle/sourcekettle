@@ -142,10 +142,6 @@ class User extends AppModel {
 			// Get the existing whitelist of savable fields
 			$wl = $this->whitelist;
 
-			if (empty($wl)) {
-				$wl = array_keys($this->schema());
-			}
-
 			// Load the existing data and work out if it's internal or not
 			$current_details = $this->findById($this->id);
 
@@ -157,7 +153,6 @@ class User extends AppModel {
 				// Do not allow password to be updated on externally-managed accounts
 				$wl = array_diff($wl, array('password'));
 			}
-
 
 			$this->whitelist = $wl;
 
