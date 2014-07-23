@@ -188,7 +188,6 @@ class AppController extends Controller {
 
 		$this->User = ClassRegistry::init('User');
 		if ($this->Auth->loggedIn()) {
-			$this->User->store($this->Auth->user());
 			$userId = $this->Auth->user('id');
 			$current_user = $this->User->findById($userId);
 			$this->set('current_user', $current_user['User']);

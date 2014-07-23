@@ -147,37 +147,20 @@ class Project extends AppModel {
  * @param $key string id or name of project to fetch
  * @return Project The project found by the given key, null if no project is found
  * @throws NotFoundException
- * @throws ForbiddenException
  */
-	public function getProject($key, $skipPerms = false, $recursive = false) {
+	public function getProject($key) {
 		if ($key == null) { //Sanity check
 			return null;
 		}
 
-		// Convert from true/false to the rather bizarre Cake style 0/-1...
-		if ($recursive) {
-			$recursive = 0;
-		} else {
-			$recursive = -1;
-		}
-
 		$project = null;
 		if (is_numeric($key)) {
-			$project = $this->find('first', array('recursive' => $recursive, 'conditions' => array('Project.id' => $key)));
+			$project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.id' => $key)));
 		} else {
-			$project = $this->find('first', array('recursive' => $recursive, 'conditions' => array('Project.name' => $key)));
+			$project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.name' => $key)));
 		}
 		if (empty($project)) {
 			throw new NotFoundException("Project could not be found with reference {$key}");
-		}
-
-		// TODO MVC fail
-		// In some cases, User::get('id') isn't set (like GitCommand)
-		if (!$skipPerms && isset($this->Auth) && !$this->Auth->user('is_admin')) {
-			// Lock out those who are not allowed to read
-			if ( !$this->hasRead($this->Auth->user('id'), $project['Project']['id']) ) {
-				throw new ForbiddenException(__('You do not have permissions to access this project.'));
-			}
 		}
 
 		return $project;
@@ -189,22 +172,18 @@ class Project extends AppModel {
  * @param $user int id of the user to check
  * @return boolean true if read permissions
  */
-	public function hasRead($user = null, $project = null) {
-		// TODO MVC fail
-		if ( $user == null ) {
-			$user = $this->Auth->user('id');
-		}
-		if ( $user == null ) {
+	public function hasRead($userId = null, $projectId = null) {
+		if ( $userId == null ) {
 			return false;
 		}
 
-		if ($this->id) $project = $this->id;
+		if ($this->id) $projectId = $this->id;
 
-		if ($this->field('public', array('Project.id' => $project))) {
+		if ($this->field('public', array('Project.id' => $projectId))) {
 			return true;
 		}
 
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $project), 'fields' => array('access_level')));
+		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
 
 		if ( !empty($member) && $member['Collaborator']['access_level'] > -1 ) {
 			return true;
@@ -220,10 +199,6 @@ class Project extends AppModel {
  * @return boolean true if write permissions
  */
 	public function hasWrite($userId = null, $projectId = null) {
-		// TODO MVC fail
-		if ( $userId == null ) {
-			$userId = User::get('id');
-		}
 		if ( $userId == null ) {
 			return false;
 		}
@@ -255,15 +230,16 @@ class Project extends AppModel {
  * @param $user int id of the user to check
  * @return boolean true if admin
  */
-	public function isAdmin($user = null, $project = null) {
-		// TODO MVC fail
-		if ( $user == null ) $user = User::get('id');
-		if ( $user == null ) return false;
+	public function isAdmin($userId = null, $projectId = null) {
+		if ( $userId == null ) {
+			return false;
+		}
 
-		if ($this->id) $project = $this->id;
+		if ($this->id) {
+			$projectId = $this->id;
+		}
 
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $user, 'project_id' => $project), 'fields' => array('access_level')));
-
+		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
 		if ( !empty($member) && $member['Collaborator']['access_level'] > 1 ) {
 			return true;
 		}

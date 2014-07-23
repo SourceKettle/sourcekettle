@@ -87,11 +87,12 @@ class UserTestCase extends CakeTestCase {
                 'password' => 'Lorem ipsum dolor sit amet',
                 'is_admin' => false,
                 'is_active' => true,
-				'theme' => 'default',
+		'theme' => 'default',
                 'created' => '2012-06-01 12:50:08',
                 'modified' => '2012-06-01 12:50:08',
-				'deleted' => '0',
-				'deleted_date' => null,
+		'deleted' => '0',
+		'deleted_date' => null,
+		'__is_internal' => true,
             )
         );
         $this->assertEquals($userA, $userB, "returned users are not equal");
@@ -114,11 +115,12 @@ class UserTestCase extends CakeTestCase {
                 'email' => 'Mr.Smith@example.com',
                 'is_admin' => false,
                 'is_active' => true,
-				'theme' => 'default',
+		'theme' => 'default',
                 'created' => '2012-06-01 12:50:08',
                 'modified' => '2012-06-01 12:50:08',
-				'deleted' => '0',
-				'deleted_date' => null,
+		'deleted' => '0',
+		'deleted_date' => null,
+		'__is_internal' => true,
             )
         );
         $this->assertEquals($userA, $userB, "returned users are not equal");

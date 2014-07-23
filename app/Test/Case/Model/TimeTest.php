@@ -463,13 +463,6 @@ class TimeTestCase extends CakeTestCase {
 		), "User time summary was not correct");
 	}
 
-	public function testTasksForWeek() {
-		$this->Time->Project->id = 1;
-		$tasks = $this->Time->tasksForWeek(2012, 46, false);
-		$this->assertEqual($tasks, array(1, 2), "Incorrect list of task IDs for week 46");
-		// TODO tasks for current user
-	}
-
 	public function testFetchWeeklySummary() {
 		$this->Time->Project->id = 1;
 		$weekTimes = $this->Time->fetchWeeklySummary(1, 2012, 46);

@@ -32,11 +32,6 @@ class ProjectTestCase extends CakeTestCase {
     public function setUp() {
         parent::setUp();
         $this->Project = ClassRegistry::init('Project');
-
-        // Set ourselves as user 1
-        User::store(array(
-        	'id' => 1
-        ));
     }
 
     /**
@@ -105,9 +100,6 @@ class ProjectTestCase extends CakeTestCase {
      * @return void
      */
     public function testGetProjectReadPublicNonMember() {
-        User::store(array(
-        	'id' => 2
-        ));
         $project = $this->Project->getProject('public');
         $this->assertTrue($project != null, "Project is null");
         $this->assertEquals('public', $project['Project']['name'], "wrong project returned");
@@ -121,17 +113,9 @@ class ProjectTestCase extends CakeTestCase {
      * @return void
      */
     public function testGetProjectReadPrivateNonMember() {
-        User::store(array(
-        	'id' => 2
-        ));
-        try {
-            $project = $this->Project->getProject('private');
-            $this->assertTrue(false, "getProject did not throw an exception");
-        } catch (ForbiddenException $e) {
-            $this->assertTrue(true, "getProject threw exception {$e->getMessage()}");
-        } catch (Exception $e) {
-            $this->assertTrue(false, "getProject threw wrong exception {$e->getMessage()}");
-        }
+        $project = $this->Project->getProject('private');
+		debug($project);
+        $this->assertTrue($project == null, "Project is not null");
     }
 
     /**
@@ -142,9 +126,6 @@ class ProjectTestCase extends CakeTestCase {
      * @return void
      */
     public function testGetProjectReadInvalidUser() {
-        User::store(array(
-        	'id' => 0
-        ));
         try {
             $project = $this->Project->getProject(1);
             $this->assertTrue(false, "getProject did not throw an exception");
@@ -160,9 +141,6 @@ class ProjectTestCase extends CakeTestCase {
      * @return void
      */
     public function testHasWriteInvalidUser() {
-        User::store(array(
-        	'id' => null
-        ));
         $hasWrite = $this->Project->hasWrite(null, 1);
         $this->assertFalse($hasWrite, "user has incorrect privileges");
     }
@@ -225,9 +203,6 @@ class ProjectTestCase extends CakeTestCase {
      * @return void
      */
     public function testIsAdminInvalidUser() {
-        User::store(array(
-        	'id' => null
-        ));
         $hasWrite = $this->Project->isAdmin(null, 1);
         $this->assertFalse($hasWrite, "user has incorrect privileges");
     }

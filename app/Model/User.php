@@ -96,6 +96,23 @@ class User extends AppModel {
 	);
 
 	public function afterFind($results, $primary = false) {
+
+		// Do we only have the model fields instead of User => array()?
+		// NB from the docs it sounds like this should match up with !$primary, but it doesn't...
+		$fields_only = (!isset($results[0]) || !is_array($results[0]));
+
+		if ($fields_only) {
+			if (isset($results['password']) && !empty($results['password'])) {
+				$results['__is_internal'] = true;
+			}
+			// TODO this should be tidied
+			if ($this->_is_api) {
+				// A list of things that should not be available in the API
+				unset($results['password']);
+			}
+			return $results;
+		}
+
 		foreach ($results as $x => $item) {
 			// Check whether it's an internal account or one managed by e.g. LDAP
 			if (isset($item['User']['password']) && !empty($item['User']['password'])) {
@@ -216,47 +233,4 @@ class User extends AppModel {
 		));
 	}
 
-/**
- * getInstance function.
- * Return the staticly stored user
- */
-	public static function &getInstance($user=null) {
-		static $instance = array();
-		if ($user) {
-			$instance[0] =& $user;
-		}
-		if (!$instance) {
-			trigger_error(__("User not set.", true), E_USER_WARNING);
-			return false;
-		}
-		return $instance[0];
-	}
-
-/**
- * store function.
- * Store the provided data as the current user
- */
-	public static function store($user) {
-		User::getInstance($user);
-	}
-
-/**
- * get function.
- * Get a particular piece of information about the currently
- * logged in user. e.g. User::get('id');
- *
- * @param mixed $path the information to return
- */
-	public static function get($path) {
-		$_user =& User::getInstance();
-		$path = str_replace('.', '/', $path);
-		if (strpos($path, '/') !== 0) {
-			$path = sprintf('/%s', $path);
-		}
-		$value = Set::extract($path, $_user);
-		if (!$value) {
-			return false;
-		}
-		return $value[0];
-	}
 }
