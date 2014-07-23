@@ -95,19 +95,18 @@ class User extends AppModel {
 		)
 	);
 
-	/*public function beforeFind($query) {
-		if (!is_array($query['fields'])) {
-			$query['fields'] = array();
-		}
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
 
-		$query['fields'][] = '';
+		// Get the DB table prefix from our database config, for if
+		// we have multiple systems in the same DB or fixtures have a prefix
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$table_prefix = $db->config['prefix'];
 
-		return $query;
-	}*/
-
-	public $virtualFields = array(
-		'is_internal' => "(User.password IS NOT NULL AND User.password != '')"
-	);
+		$this->virtualFields = array(
+			'is_internal' => "(`".$this->alias."`.password IS NOT NULL AND `".$this->alias."`.password != '')"
+		);
+	}
 
 	public function afterFind($results, $primary = false) {
 		// Do we only have the model fields instead of User => array()?
