@@ -11,7 +11,7 @@ debconf-set-selections <<< "mysql-server mysql-server/root_password_again passwo
 
 # Install dependencies
 apt-get update
-apt-get install -y apache2 php5 mysql-client mysql-server git build-essential python-mysqldb vim php-apc php5-mysql php-pear
+apt-get install -y apache2 php5 mysql-client mysql-server git build-essential python-mysqldb vim php-apc php5-mysql php-pear php5-xdebug
 a2enmod rewrite
 
 pear config-set auto_discover 1
