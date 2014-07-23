@@ -95,16 +95,26 @@ class User extends AppModel {
 		)
 	);
 
-	public function afterFind($results, $primary = false) {
+	/*public function beforeFind($query) {
+		if (!is_array($query['fields'])) {
+			$query['fields'] = array();
+		}
 
+		$query['fields'][] = '';
+
+		return $query;
+	}*/
+
+	public $virtualFields = array(
+		'is_internal' => "(User.password IS NOT NULL AND User.password != '')"
+	);
+
+	public function afterFind($results, $primary = false) {
 		// Do we only have the model fields instead of User => array()?
 		// NB from the docs it sounds like this should match up with !$primary, but it doesn't...
 		$fields_only = (!isset($results[0]) || !is_array($results[0]));
 
 		if ($fields_only) {
-			if (isset($results['password']) && !empty($results['password'])) {
-				$results['__is_internal'] = true;
-			}
 			// TODO this should be tidied
 			if ($this->_is_api) {
 				// A list of things that should not be available in the API
@@ -114,13 +124,6 @@ class User extends AppModel {
 		}
 
 		foreach ($results as $x => $item) {
-			// Check whether it's an internal account or one managed by e.g. LDAP
-			if (isset($item['User']['password']) && !empty($item['User']['password'])) {
-				$results[$x]['User']['__is_internal'] = true;
-			} else {
-				$results[$x]['User']['__is_internal'] = false;
-			}
-
 			// TODO this should be tidied
 			if ($this->_is_api) {
 				// A list of things that should not be available in the API
@@ -146,7 +149,7 @@ class User extends AppModel {
 			// Load the existing data and work out if it's internal or not
 			$current_details = $this->findById($this->id);
 
-			if (!$current_details[$this->alias]['__is_internal']) {
+			if (!$current_details[$this->alias]['is_internal']) {
 				// Do not allow the email to be changed as this is not under our control
 				// (e.g. it's a field in LDAP)
 				$wl = array_diff($wl, array('email'));
@@ -175,7 +178,7 @@ class User extends AppModel {
 		// Load the existing data and work out if it's internal or not
 		$current_details = $this->findById($this->id);
 
-		if (!$current_details[$this->alias]['__is_internal']) {
+		if (!$current_details[$this->alias]['is_internal']) {
 			return false;
 		}
 

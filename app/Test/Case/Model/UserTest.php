@@ -92,7 +92,7 @@ class UserTestCase extends CakeTestCase {
                 'modified' => '2012-06-01 12:50:08',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'__is_internal' => true,
+		'is_internal' => true,
             )
         );
         $this->assertEquals($userA, $userB, "returned users are not equal");
@@ -120,7 +120,7 @@ class UserTestCase extends CakeTestCase {
                 'modified' => '2012-06-01 12:50:08',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'__is_internal' => true,
+		'is_internal' => true,
             )
         );
         $this->assertEquals($userA, $userB, "returned users are not equal");

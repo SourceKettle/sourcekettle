@@ -28,7 +28,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']) ?>
             "input" => $this->Form->text("name"),
         ));
 
-        if ($current_user['__is_internal']) {
+        if ($current_user['is_internal']) {
             echo $this->Bootstrap->input("email", array(
                 "input" => $this->Form->text("email"),
             ));

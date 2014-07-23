@@ -558,7 +558,7 @@ class UsersController extends AppController {
 			$targetUserData = $this->User->read();
 
 			$this->set('external_account', false);
-			if (!$targetUserData['User']['__is_internal']) {
+			if (!$targetUserData['User']['is_internal']) {
 				$this->Session->setFlash(__('Account could not be deleted - it is not managed by SourceKettle'), 'default', array(), 'error');
 				$this->redirect(array('action' => 'admin_index'));
 			}

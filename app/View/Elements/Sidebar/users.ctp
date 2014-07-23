@@ -67,7 +67,7 @@
 
     // If we are logged in with a non-sourcekettle-managed account,
     // do not offer the 'delete account' link or 'change password' link.
-    if ($current_user['__is_internal']) {
+    if ($current_user['is_internal']) {
         unset($options['Your Account']['Delete Account']);
         unset($options['Your Account']['Change Password']);
     }
