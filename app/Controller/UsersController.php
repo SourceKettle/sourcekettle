@@ -43,56 +43,71 @@ class UsersController extends AppController {
  */
 	public function register() {
 		$this->set('title_for_layout', 'Register');
-		//Check if registration is allowed by the user
-		if ($this->Setting->field('value', array('name' => 'register_enabled'))) {
-			//Registration part
-			if ($this->request->is('post')) {
-				//if data was posted therefore a submitted form
-				if ($this->data['User']['password'] == $this->data['User']['password_confirm']) {
-					if ($this->data['User']['password'] != 'password') {
-						$this->User->create();
-						if ($this->User->save($this->request->data['User'])) {
-							$id = $this->User->getLastInsertID();
-							$this->log("[UsersController.register] user[${id}] created", 'sourcekettle');
+		$ok = true;
 
-							//Check to see if an SSH key was added and save it
-							if (!empty($this->data['User']['ssh_key'])) {
-								$this->User->SshKey->create();
-								$data = array('SshKey');
-								$data['SshKey']['user_id'] = $id;
-								$data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
-								$data['SshKey']['comment'] = 'Default key';
-								$this->User->SshKey->save($data);
-
-								// Update the sync required flag
-								$this->Setting->syncRequired();
-
-								$this->log("[UsersController.register] sshkey[" . $this->User->SshKey->getLastInsertID() . "] added to user[${id}]", 'sourcekettle');
-							}
-
-							//Now to create the key and send the email
-							$this->User->EmailConfirmationKey->save(
-								array('EmailConfirmationKey' => array(
-									'user_id' => $id,
-									'key' => $this->__generateKey(20),
-								))
-							);
-							$this->__sendNewUserMail($id);
-							$this->render('email_sent');
-						} else {
-							$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
-						}
-					} else {
-						$this->Session->setFlash(__("<h4 class='alert-heading'>Oh Dear...</h4>I see what you did there. 'password' is not a good password. Be more original!"), 'default', array(), 'error');
-					}
-				} else {
-					$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The passwords do not match. Please try again."), 'default', array(), 'error');
-				}
-			}
-		} else {
-			//Display an error saying that registration is not allowed
+		// Registration is disabled, render a message instead
+		if (!$this->Setting->field('value', array('name' => 'register_enabled'))) {
 			$this->render('registration_disabled');
+			return;
 		}
+
+		// Render form
+		if (!$this->request->is('post')) {
+			$this->render('register');
+			return;
+		}
+
+		// At this point, we've got a form submission, so process it...
+		// Check passwords match
+		if ($this->data['User']['password'] != $this->data['User']['password_confirm']) {
+			$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The passwords do not match. Please try again."), 'default', array(), 'error');
+			$this->render('register');
+			return;
+		}
+
+		// Check for a particularly silly password...
+		if (strtolower($this->data['User']['password']) == 'password') {
+			$this->Session->setFlash(__("<h4 class='alert-heading'>Oh Dear...</h4>I see what you did there. 'password' is not a good password. Be more original!"), 'default', array(), 'error');
+			$this->render('register');
+			return;
+		}
+
+		// Attempt to save the new user account
+		$this->User->create();
+		if (!$this->User->save($this->request->data['User'])) {
+			$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+			$this->render('register');
+			return;
+		}
+
+		$id = $this->User->getLastInsertID();
+		$this->log("[UsersController.register] user[${id}] created", 'sourcekettle');
+
+		// Check to see if an SSH key was added and save it
+		if (!empty($this->data['User']['ssh_key'])) {
+			$this->User->SshKey->create();
+			$data = array('SshKey');
+			$data['SshKey']['user_id'] = $id;
+			$data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
+			$data['SshKey']['comment'] = 'Default key';
+			$this->User->SshKey->save($data);
+
+			// Update the sync required flag
+			$this->Setting->syncRequired();
+
+			$this->log("[UsersController.register] sshkey[" . $this->User->SshKey->getLastInsertID() . "] added to user[${id}]", 'sourcekettle');
+		}
+
+		// Now to create the key and send the email
+		$this->User->EmailConfirmationKey->save(
+			array('EmailConfirmationKey' => array(
+				'user_id' => $id,
+				'key' => $this->__generateKey(20),
+			))
+		);
+
+		$this->__sendNewUserMail($id);
+		$this->render('email_sent');
 	}
 
 /**
@@ -543,7 +558,7 @@ class UsersController extends AppController {
 			$targetUserData = $this->User->read();
 
 			$this->set('external_account', false);
-			if (!$targetUserData['User']['__is_internal'])) {
+			if (!$targetUserData['User']['__is_internal']) {
 				$this->Session->setFlash(__('Account could not be deleted - it is not managed by SourceKettle'), 'default', array(), 'error');
 				$this->redirect(array('action' => 'admin_index'));
 			}
