@@ -245,9 +245,49 @@ class TimeTestCase extends CakeTestCase {
             't' => '90'
         );
         $this->assertEquals(TimeString::renderTime(90), $expectedResult);
+
+        $expectedResult = array(
+			'w' => '0',
+			'd' => '1',
+            'h' => '0',
+            'm' => '0',
+            's' => '1d 0h 0m',
+            't' => '1440'
+        );
+        $this->assertEquals(TimeString::renderTime(1440), $expectedResult);
+
+        $expectedResult = array(
+			'w' => '0',
+			'd' => '1',
+            'h' => '1',
+            'm' => '0',
+            's' => '1d 1h 0m',
+            't' => '1500'
+        );
+        $this->assertEquals(TimeString::renderTime(1500), $expectedResult);
+
+        $expectedResult = array(
+			'w' => '1',
+			'd' => '1',
+            'h' => '1',
+            'm' => '0',
+            's' => '1w 1d 1h 0m',
+            't' => '11580'
+        );
+        $this->assertEquals(TimeString::renderTime(11580), $expectedResult);
+
+		try{
+			TimeString::renderTime("fail");
+			$this->assertTrue(false, "Successfully rendered invalid time");
+		} catch(InvalidArgumentException $e) {
+			$this->assertTrue(true, "Caught correct exception when rendering invalid time");
+		} catch(Exception $e) {
+			$this->assertTrue(false, "Caught incorrect exception when rendering invalid time");
+		}
     }
 
     public function testParseTime() {
+        $this->assertEquals(TimeString::parseTime('2'), 2, 'Failed to parse 2');
         $this->assertEquals(TimeString::parseTime('2m'), 2, 'Failed to parse 2m');
         $this->assertEquals(TimeString::parseTime('2h'), 120, 'Failed to parse 2h');
         $this->assertEquals(TimeString::parseTime(' 2h '), 120, 'Failed to parse 2h with whitespace');
