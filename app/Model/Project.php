@@ -247,14 +247,15 @@ class Project extends AppModel {
 		return false;
 	}
 
+	// Sort function for events
+	// assumes $array{ $array{ 'modified' => 'date' }, ... }
+	private static function __compareEvents($a, $b) {
+		if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
+		if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
+		return -1;
+	}
+
 	public function fetchEventsForProject($number = 8) {
-		// Sort function for events
-		// assumes $array{ $array{ 'modified' => 'date' }, ... }
-		$cmp = function($a, $b) {
-			if (strtotime($a['modified']) == strtotime($b['modified'])) return 0;
-			if (strtotime($a['modified']) < strtotime($b['modified'])) return 1;
-			return -1;
-		};
 
 		$this->recursive = 2;
 		$project = $this->getProject($this->id);
@@ -283,9 +284,9 @@ class Project extends AppModel {
 				$_newEvents = $this->{$x}->fetchHistory($project['Project']['name'], $number, $number * $_x++);
 				if (empty($_newEvents)) break;
 
-				// Mudge the old and the new together and sort
+				// Munge the old and the new together and sort
 				$_modelEvents = array_merge($_modelEvents, $_newEvents);
-				usort($_modelEvents, $cmp);
+				usort($_modelEvents, array("Project", "__compareEvents"));
 
 				// Check that no adjacent events are duplicates
 				$_lEvent = null;
@@ -294,7 +295,9 @@ class Project extends AppModel {
 						$_lEvent['Project']['id'] == $_mEvent['Project']['id'] &&
 						$_lEvent['Actioner']['id'] == $_mEvent['Actioner']['id'] &&
 						$_lEvent['Subject']['id'] == $_mEvent['Subject']['id'] &&
-						$_lEvent['Change']['field'] == $_mEvent['Change']['field']) {
+						$_lEvent['Change']['field'] == $_mEvent['Change']['field'] &&
+						$_lEvent['Change']['field_old'] == $_mEvent['Change']['field_old'] &&
+						$_lEvent['Change']['field_new'] == $_mEvent['Change']['field_new']) {
 						unset($_modelEvents[$a]);
 					}
 					$_lEvent = $_mEvent;
@@ -307,7 +310,7 @@ class Project extends AppModel {
 		}
 
 		// Finally sort all the events
-		usort($events, $cmp);
+		usort($events, array("Project", "__compareEvents"));
 		return array_slice($events, 0, $number);
 	}
 

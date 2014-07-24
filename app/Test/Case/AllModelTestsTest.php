@@ -12,13 +12,11 @@ class AllModelTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'Model/EmailConfirmationKeyTest.php');
 		$suite->addTestFile($path . 'Model/LostPasswordKeyTest.php');
 		$suite->addTestFile($path . 'Model/MilestoneTest.php');
-		//$suite->addTestFile($path . 'Model/ProjectHistoryTest.php'); // No fixtures yet
+		$suite->addTestFile($path . 'Model/ProjectHistoryTest.php');
 		$suite->addTestFile($path . 'Model/ProjectTest.php');
-		//$suite->addTestFile($path . 'Model/RepoTypeTest.php'); // No code in model
 		$suite->addTestFile($path . 'Model/SettingTest.php');
 		$suite->addTestFile($path . 'Model/SourceTest.php');
 		$suite->addTestFile($path . 'Model/SshKeyTest.php');
-		$suite->addTestFile($path . 'Model/TaskCommentTest.php');
 		$suite->addTestFile($path . 'Model/TaskPriorityTest.php');
 		$suite->addTestFile($path . 'Model/TaskStatusTest.php');
 		$suite->addTestFile($path . 'Model/TaskTest.php');

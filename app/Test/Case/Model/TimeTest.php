@@ -26,11 +26,21 @@ class TimeTestCase extends CakeTestCase {
      * @return void
      */
     public $fixtures = array(
-        'app.time',
-        'app.project',
-        'app.collaborator',
-        'app.user',
+		'app.project',
+		'app.project_history',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
 		'app.task',
+		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
+		'app.task_status',
+		'app.task_priority',
+		'app.time',
+		'app.attachment',
+		'app.source',
+		'app.milestone',
     );
 
     /**
@@ -159,7 +169,30 @@ class TimeTestCase extends CakeTestCase {
 						's' => '0h 19m'
 					)
 				)
-			)
+			),
+			array(
+				'Time' => array(
+					'id' => '5',
+					'project_id' => '3',
+					'user_id' => '2',
+					'task_id' => '1',
+					'mins' => '15',
+					'description' => 'A description of the fourth <b>task</b>.',
+					'date' => '2012-11-11',
+					'created' => '2012-11-11 10:24:06',
+					'modified' => '2012-11-11 10:24:06',
+					'deleted' => '0',
+					'deleted_date' => null,
+					'minutes' => array(
+						'w' => (int) 0,
+						'd' => (int) 0,
+						'h' => (int) 0,
+						'm' => (int) 15,
+						't' => (int) 15,
+						's' => '0h 15m'
+					)
+				)
+			),
         );
         $fixturesB = $this->Time->find('all');
         $this->assertEquals($fixtures, $fixturesB, json_encode($fixturesB)."Arrays were not equal");
@@ -365,6 +398,11 @@ class TimeTestCase extends CakeTestCase {
 		$this->assertEquals($this->Time->getTitleForHistory(3), "0h 14m", "Got incorrect title for null time ID 3");
 	}
 
+	public function testFetchHistory() {
+		$history = $this->Time->fetchHistory(1);
+		$this->assertEquals($history, array());
+	}
+
 	public function testFetchTotalTimeForProject() {
 		try{
 			$totalTime = $this->Time->fetchTotalTimeForProject();
@@ -464,7 +502,159 @@ class TimeTestCase extends CakeTestCase {
 		), "User time summary was not correct");
 	}
 
-	public function testFetchWeeklySummary() {
+	public function testCreate() {
+		$saved = $this->Time->save(array(
+			'Time' => array(
+				'project_id' => 2,
+				'user_id' => 3,
+				'mins' => '2h3m',
+				'date' => '2014-07-03',
+			),
+		));
+
+		// Check the create/modify date are sane
+		$this->assertNotNull($saved['Time']['created'], "Create date was null");
+		$this->assertNotNull($saved['Time']['modified'], "Modify date was null");
+		$this->assertEqual($saved['Time']['created'], $saved['Time']['modified']);
+
+		unset($saved['Time']['modified']);
+		unset($saved['Time']['created']);
+
+		$this->assertEqual($saved, array(
+			'Time' => array(
+				'id' => $this->Time->getLastInsertID(),
+				'project_id' => 2,
+				'user_id' => 3,
+				'mins' => '123',
+				'date' => '2014-07-03',
+			)
+		));
+	}
+
+	public function testCreateNoMins() {
+		$saved = $this->Time->save(array(
+			'Time' => array(
+				'project_id' => 2,
+				'user_id' => 3,
+				'date' => '2014-07-03',
+			),
+		));
+
+		// Check the create/modify date are sane
+		$this->assertNotNull($saved['Time']['created'], "Create date was null");
+		$this->assertNotNull($saved['Time']['modified'], "Modify date was null");
+		$this->assertEqual($saved['Time']['created'], $saved['Time']['modified']);
+
+		unset($saved['Time']['modified']);
+		unset($saved['Time']['created']);
+
+		$this->assertEqual($saved, array(
+			'Time' => array(
+				'id' => $this->Time->getLastInsertID(),
+				'project_id' => 2,
+				'user_id' => 3,
+				'date' => '2014-07-03',
+			)
+		));
+	}
+	public function testCreateIntegerMins() {
+		$saved = $this->Time->save(array(
+			'Time' => array(
+				'project_id' => 2,
+				'user_id' => 3,
+				'mins' => 23,
+				'date' => '2014-07-03',
+			),
+		));
+
+		// Check the create/modify date are sane
+		$this->assertNotNull($saved['Time']['created'], "Create date was null");
+		$this->assertNotNull($saved['Time']['modified'], "Modify date was null");
+		$this->assertEqual($saved['Time']['created'], $saved['Time']['modified']);
+
+		unset($saved['Time']['modified']);
+		unset($saved['Time']['created']);
+
+		$this->assertEqual($saved, array(
+			'Time' => array(
+				'id' => $this->Time->getLastInsertID(),
+				'project_id' => 2,
+				'user_id' => 3,
+				'mins' => 23,
+				'date' => '2014-07-03',
+			)
+		));
+	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testFetchWeeklySummaryFail() {
+		$this->Time->Project->id = null;
+		$weekTimes = $this->Time->fetchWeeklySummary(null, 2012, 46);
+	}
+
+	public function testFetchWeeklySummaryUser() {
+		$this->Time->Project->id = 1;
+		$weekTimes = $this->Time->fetchWeeklySummary(1, 2012, 46, 1);
+		$this->assertEqual($weekTimes, array(
+			'totals' => array(
+				1 => 900,
+				2 => 0,
+				3 => 0,
+				4 => 0,
+				5 => 0,
+				6 => 0,
+				7 => 0
+			),
+			'tasks' => array(
+				2 => array(
+					'Task' => array(
+						'id' => '2',
+						'subject' => 'Open Minor Task 2 for milestone 1'
+					),
+					'users' => array(
+						1 => array(
+							'User' => array(
+								'id' => '1',
+								'name' => 'Mr Smith',
+								'email' => 'Mr.Smith@example.com'
+							),
+							'times_by_day' => array(
+								1 => array(
+									0 => array( 'Time' => array(
+										'id' => '2',
+										'date' => '2012-11-12',
+										'description' => 'A description of the second <b>task</b>.',
+										'mins' => '900',
+										'minutes' => array(
+											'w' => 0,
+											'd' => 0,
+											'h' => 15,
+											'm' => 0,
+											't' => 900,
+											's' => '15h 0m'
+										),
+									))
+								)
+							)
+						),
+					),
+				)
+			),
+			'dates' => array(
+				1 => new DateTime('2012-11-12 00:00', new DateTimeZone('UTC')),
+				2 => new DateTime('2012-11-13 00:00', new DateTimeZone('UTC')),
+				3 => new DateTime('2012-11-14 00:00', new DateTimeZone('UTC')),
+				4 => new DateTime('2012-11-15 00:00', new DateTimeZone('UTC')),
+				5 => new DateTime('2012-11-16 00:00', new DateTimeZone('UTC')),
+				6 => new DateTime('2012-11-17 00:00', new DateTimeZone('UTC')),
+				7 => new DateTime('2012-11-18 00:00', new DateTimeZone('UTC')),
+			)
+		));
+	}
+
+	public function testFetchWeeklySummaryProject() {
 		$this->Time->Project->id = 1;
 		$weekTimes = $this->Time->fetchWeeklySummary(1, 2012, 46);
 		$this->assertEqual($weekTimes, array(

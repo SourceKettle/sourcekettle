@@ -256,7 +256,7 @@ class Task extends AppModel {
 		$table_prefix = $db->config['prefix'];
 
 		$this->virtualFields = array(
-			'public_id' => "(SELECT COUNT(`{$table_prefix}{$this->table}`.`id`) FROM `{$table_prefix}{$this->table}` WHERE `{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)"
+			'public_id' => "(SELECT COUNT(`{$table_prefix}{$this->table}`.`id`) FROM `{$table_prefix}{$this->table}` WHERE `{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
 		);
 	}
 
@@ -282,7 +282,7 @@ class Task extends AppModel {
 			unset($this->data['Task']['status']);
 		}
 
-		if (isset($this->data['Task']['milestone_id']) && $this->data['Task']['milestone_id'] === null) {
+		if (array_key_exists('milestone_id', $this->data['Task']) && $this->data['Task']['milestone_id'] === null) {
 			$this->data['Task']['milestone_id'] = 0;
 		}
 		return true;

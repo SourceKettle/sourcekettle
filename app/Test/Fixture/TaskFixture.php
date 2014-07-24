@@ -63,7 +63,7 @@ class TaskFixture extends CakeTestFixture {
 			'task_type_id' => 1,
 			'task_status_id' => 2,
 			'task_priority_id' => 3,
-			'assignee_id' => 0,
+			'assignee_id' => 2,
 			'milestone_id' => 1,
 			'time_estimate' => 145,
 			'story_points' => 0,

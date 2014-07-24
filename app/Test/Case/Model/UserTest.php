@@ -156,6 +156,7 @@ class UserTestCase extends CakeTestCase {
 		// Check the create/modify date are sane, then add to array for comparison
 		$this->assertNotNull($saved['User']['created'], "Create date was null");
 		$this->assertNotNull($saved['User']['modified'], "Modify date was null");
+		$this->assertEqual($saved['User']['created'], $saved['User']['modified']);
 
 		$data['User']['created']  = $saved['User']['created'];
 		$data['User']['modified'] = $saved['User']['modified'];
@@ -257,22 +258,22 @@ class UserTestCase extends CakeTestCase {
 	}
 
 	public function testDelete() {
-		$this->User->id = 1;
+		$this->User->id = 7;
 		$ok = $this->User->delete();
 		$this->assertTrue($ok, 'Failed to delete user');
 
-		$this->User->id = 1;
+		$this->User->id = 7;
 		$user = $this->User->read();
 		$this->assertEquals($user, array(), "User data retrieved after delete");
 	}
 
 	public function testDeleteApi() {
-		$this->User->id = 1;
+		$this->User->id = 7;
 		$this->User->_is_api = true;
 		$ok = $this->User->delete();
 		$this->assertTrue($ok, 'Failed to delete user');
 
-		$this->User->id = 1;
+		$this->User->id = 7;
 		$user = $this->User->read();
 		$this->assertEquals($user, array(), "User data retrieved after delete");
 	}
@@ -284,7 +285,7 @@ class UserTestCase extends CakeTestCase {
 	}
 
 	public function testFailToDeleteOnlyAdmin() {
-		$this->User->id = 5;
+		$this->User->id = 8;
 		$ok = $this->User->delete();
 		$this->assertFalse($ok, 'Erroneously deleted the only admin of a project');
 	}

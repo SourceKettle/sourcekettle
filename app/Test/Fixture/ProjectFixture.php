@@ -41,5 +41,14 @@ class ProjectFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:46:07',
             'modified' => '2012-06-01 12:46:07'
         ),
+        array(
+            'id' => 4,
+            'name' => 'personal_public',
+            'description' => 'Mr Smith\'s personal public project',
+            'public' => 1,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
     );
 }

@@ -88,5 +88,13 @@ class SshKeyFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:49:40',
             'modified' => '2012-06-01 12:49:40'
         ),
+        array(
+            'id' => 11,
+            'user_id' => 2,
+			'key' => '', // No key set (fake a dodgy DB entry)
+            'comment' => 'Should not be retrieved', 
+            'created' => '2012-06-01 12:49:40',
+            'modified' => '2012-06-01 12:49:40'
+        ),
     );
 }

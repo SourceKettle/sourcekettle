@@ -186,7 +186,7 @@ class Time extends AppModel {
 	}
 
 	public function fetchWeeklySummary($projectId = null, $year = null, $week = null, $userId = null) {
-		$projectId = ($projectId == null) ? $this->project->id : $projectId;
+		$projectId = ($projectId == null) ? $this->Project->id : $projectId;
 
 		if ($projectId == null) {
 			throw new InvalidArgumentException("Could not fetch times for unknown project");
