@@ -31,7 +31,7 @@ class UserTestCase extends CakeTestCase {
         'app.task_comment',
         'app.time',
         'app.milestone',
-	'app.attachment',
+		'app.attachment',
         'app.repo_type',
         'app.email_confirmation_key',
         'app.lost_password_key',
@@ -97,12 +97,12 @@ class UserTestCase extends CakeTestCase {
                 'password' => 'Lorem ipsum dolor sit amet',
                 'is_admin' => false,
                 'is_active' => true,
-		'theme' => 'default',
+				'theme' => 'default',
                 'created' => '2012-06-01 12:50:08',
                 'modified' => '2012-06-01 12:50:08',
-		'deleted' => '0',
-		'deleted_date' => null,
-		'is_internal' => true,
+				'deleted' => '0',
+				'deleted_date' => null,
+				'is_internal' => true,
             )
         );
         $this->assertEquals($userA, $userB, "returned users are not equal");
@@ -125,12 +125,12 @@ class UserTestCase extends CakeTestCase {
                 'email' => 'Mr.Smith@example.com',
                 'is_admin' => false,
                 'is_active' => true,
-		'theme' => 'default',
+				'theme' => 'default',
                 'created' => '2012-06-01 12:50:08',
                 'modified' => '2012-06-01 12:50:08',
-		'deleted' => '0',
-		'deleted_date' => null,
-		'is_internal' => true,
+				'deleted' => '0',
+				'deleted_date' => null,
+				'is_internal' => true,
             )
         );
         $this->assertEquals($userA, $userB, "returned users are not equal");
@@ -260,11 +260,32 @@ class UserTestCase extends CakeTestCase {
 		$this->User->id = 1;
 		$ok = $this->User->delete();
 		$this->assertTrue($ok, 'Failed to delete user');
+
+		$this->User->id = 1;
+		$user = $this->User->read();
+		$this->assertEquals($user, array(), "User data retrieved after delete");
 	}
 
-	public function testFailToDelete() {
+	public function testDeleteApi() {
+		$this->User->id = 1;
+		$this->User->_is_api = true;
+		$ok = $this->User->delete();
+		$this->assertTrue($ok, 'Failed to delete user');
+
+		$this->User->id = 1;
+		$user = $this->User->read();
+		$this->assertEquals($user, array(), "User data retrieved after delete");
+	}
+
+	public function testFailToDeleteExternal() {
 		$this->User->id = 6;
 		$ok = $this->User->delete();
 		$this->assertFalse($ok, 'Erroneously deleted external user account');
+	}
+
+	public function testFailToDeleteOnlyAdmin() {
+		$this->User->id = 5;
+		$ok = $this->User->delete();
+		$this->assertFalse($ok, 'Erroneously deleted the only admin of a project');
 	}
 }

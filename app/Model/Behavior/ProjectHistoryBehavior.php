@@ -59,7 +59,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 		$this->model = &$model;
 	}
 
-	public function setUserData($user) {
+	//
+	public function setLogUser($task, $user) {
 		$this->_log_user = $user;
 	}
 

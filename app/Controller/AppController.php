@@ -206,7 +206,7 @@ class AppController extends Controller {
 			// TODO this is a bit of a hacky way to let the project history logger know who did what :-/
 			// Pretty much nicked from http://bakery.cakephp.org/articles/alkemann/2008/10/21/logablebehavior
 			if (sizeof($this->uses) && $this->{$this->modelClass}->Behaviors->attached('ProjectHistory')) {
-				$this->{$this->modelClass}->setUserData($current_user['User']);
+				$this->{$this->modelClass}->setLogUser($current_user['User']);
 			}
 		} else {
 			$this->set('current_user', null);

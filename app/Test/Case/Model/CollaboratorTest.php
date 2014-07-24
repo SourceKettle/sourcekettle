@@ -19,7 +19,12 @@ class CollaboratorTestCase extends CakeTestCase {
     /**
      * fixtures - Populate the database with data of the following models
      */
-    public $fixtures = array('app.collaborator', 'app.project', 'app.user');
+    public $fixtures = array(
+		'app.collaborator',
+		'app.user',
+		'app.project',
+		'app.project_history',
+	);
 
     /**
      * setUp function.
@@ -70,6 +75,41 @@ class CollaboratorTestCase extends CakeTestCase {
         $title = $this->Collaborator->getTitleForHistory(0);
         $this->assertEquals(null, $title, "wrong title returned");
     }
+
+	public function testFetchHistory() {
+		$history = $this->Collaborator->fetchHistory('private', 10);
+		$this->assertEquals($history, array(array(
+			'modified' => '2014-07-23 15:01:12',
+			'Type' => 'Collaborator',
+			'Project' => array(
+				'id' => '1',
+				'name' => 'private'
+			),
+			'Actioner' => array(
+				'id' => '1',
+				'name' => 'Mr Smith',
+				'email' => 'Mr.Smith@example.com',
+				'exists' => true
+			),
+			'Subject' => array(
+				'id' => '1',
+				'title' => 'Mr Smith',
+				'exists' => true
+			),
+			'Change' => array(
+				'field' => 'access_level',
+				'field_old' => '1',
+				'field_new' => '2'
+			),
+			'url' => array(
+				'api' => false,
+				'admin' => false,
+				'controller' => 'users',
+				'action' => 'view',
+				(int) 0 => '1'
+			)
+		)), "Incorrect history data returned");
+	}
 
     /**
      * test Collaborator->collaboratorsForProject function.

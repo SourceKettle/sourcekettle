@@ -15,6 +15,7 @@ class MilestoneTest extends CakeTestCase {
 	public $fixtures = array(
 		'app.milestone',
 		'app.project',
+		'app.project_history',
 		'app.task',
 		'app.task_type',
 		'app.task_status',
@@ -826,18 +827,41 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testFetchHistory() {
-		
+		$history = $this->Milestone->fetchHistory(2);
+		$this->assertEquals($history, array(array(
+			'modified' => '2014-07-23 15:01:12',
+			'Type' => 'Milestone',
+			'Project' => array(
+				'id' => '2',
+				'name' => 'public'
+			),
+			'Actioner' => array(
+				'id' => '2',
+				'name' => 'Mrs Smith',
+				'email' => 'mrs.smith@example.com',
+				'exists' => true
+			),
+			'Subject' => array(
+				'id' => '3',
+				'title' => 'Longer <i>subject</i>',
+				'exists' => true
+			),
+			'Change' => array(
+				'field' => 'is_open',
+				'field_old' => '1',
+				'field_new' => '0'
+			)
+		)), "Incorrect history data returned");
 	}
 
-	// TODO we need a way to fake the currently logged in user before we can test the beforeDelete callback
-	/*public function testDelete() {
+	public function testDelete() {
 		$milestone_pre = $this->Milestone->findById(1);
+		$this->assertNotEquals($milestone_pre, array(), "Empty milestone returned before delete happened");
 
 		$this->Milestone->deleteAll(array('Milestone.id' => 1), false, false);
 		$milestone_post = $this->Milestone->findById(1);
 
-		debug($milestone_pre);
-		debug($milestone_post);
-	}*/
+		$this->assertEquals($milestone_post, array(), "Milestone was not deleted");
+	}
 
 }

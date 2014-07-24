@@ -397,7 +397,7 @@ class TimeTestCase extends CakeTestCase {
 		}
 
 		$userSummary = $this->Time->fetchUserTimesForProject(1);
-		debug($userSummary);
+
 		$this->assertEquals($userSummary, array(
 			array(
 				0 => array(

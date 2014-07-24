@@ -169,6 +169,7 @@ class User extends AppModel {
 	}
 
 	public function beforeDelete($cascade = true) {
+
 		// Load the existing data and work out if it's internal or not
 		$current_details = $this->findById($this->id);
 
@@ -177,14 +178,23 @@ class User extends AppModel {
 		}
 
 		// Check to ensure that this user is not the only admin on multi-collaborator projects
-		$projects = $this->Collaborator->find('list', array('fields' => array('Collaborator.project_id'), 'conditions' => array('Collaborator.user_id' => $this->id)));
+		$projects = $this->Collaborator->find('list', array(
+			'fields' => array('Collaborator.project_id'),
+			'conditions' => array('Collaborator.user_id' => $this->id)));
+
 		foreach ($projects as $row => $projectId) {
-			$admins = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $projectId, 'Collaborator.access_level' => '2', 'Collaborator.user_id <>' => $this->id)));
-			if ( $admins == 0 ) {
-				$users = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $projectId, 'Collaborator.access_level <>' => '2', 'Collaborator.user_id <>' => $this->id)));
-				if ( $users > 0 ) {
-					return false;
-				}
+			$admins = $this->Collaborator->find('count', array('conditions' => array(
+				'Collaborator.project_id' => $projectId,
+				'Collaborator.access_level' => '2',
+				'Collaborator.user_id !=' => $this->id)));
+
+			$users = $this->Collaborator->find('count', array('conditions' => array(
+				'Collaborator.project_id' => $projectId,
+				'Collaborator.access_level !=' => '2',
+				'Collaborator.user_id !=' => $this->id)));
+			// If this user is the only admin and there are other collaborators, do not delete
+			if ( $admins == 0 && $users > 0) {
+				return false;
 			}
 		}
 
