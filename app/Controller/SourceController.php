@@ -59,7 +59,7 @@ class SourceController extends AppProjectController {
 
 		$branches = $this->Source->getBranches();
 		if (empty($branches) && $this->request['action'] != 'gettingStarted') {
-			$this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
+			return $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
 		}
 		$this->set('branches', $branches);
 
@@ -153,7 +153,7 @@ class SourceController extends AppProjectController {
 		$path	= $this->__getPath();
 
 		if ($branch == null) {
-			$this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+			return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
 		}
 
 		$numPerPage = 10;
@@ -215,7 +215,7 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function index($project = null) {
-		$this->redirect(array('action' => 'tree', 'project' => $project));
+		return $this->redirect(array('action' => 'tree', 'project' => $project));
 	}
 
 /**
@@ -261,7 +261,7 @@ class SourceController extends AppProjectController {
 			$path	= $this->__getPath();
 
 			if ($branch == null) {
-				$this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+				return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
 			}
 
 			$blob = $this->Source->Blob->fetch($branch, $path);

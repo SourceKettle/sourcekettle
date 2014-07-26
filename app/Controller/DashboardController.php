@@ -68,7 +68,7 @@ class DashboardController extends AppController {
 	}
 
 	public function admin_index() {
-		$this->redirect(array('controller' => 'dashboard', 'action' => 'index', 'admin' => false)); // redirect to user dashboard until admin dashboard is created
+		return $this->redirect(array('controller' => 'dashboard', 'action' => 'index', 'admin' => false)); // redirect to user dashboard until admin dashboard is created
 	}
 
 }

@@ -34,7 +34,7 @@ class SshKeysController extends AppController {
 				$this->Setting->syncRequired(); // Update the sync required flag
 
 				$this->log("[UsersController.addkey] sshkey[" . $this->SshKey->getLastInsertID() . "] added to user[" . $current_user['id'] . "]", 'sourcekettle');
-				$this->redirect(array('action' => 'view'));
+				return $this->redirect(array('action' => 'view'));
 			}
 		}
 
@@ -69,7 +69,7 @@ class SshKeysController extends AppController {
 				$this->Setting->syncRequired(); // Update the sync required flag
 			}
 		}
-		$this->redirect(array('action' => 'view'));
+		return $this->redirect(array('action' => 'view'));
 	}
 
 /**

@@ -25,7 +25,7 @@ class AppProjectController extends AppController {
 			$this->loadModel('Project');
 			$project = $this->Project->findById($this->request->params['project']);
 			if (isset($project) && !empty($project)) {
-				$this->redirect(array(
+				return $this->redirect(array(
 					'controller'	=> $this->request->params['controller'],
 					'action'		=> $this->request->params['action'],
 					'project'		=> $project['Project']['name']

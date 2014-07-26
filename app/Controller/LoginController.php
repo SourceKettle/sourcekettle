@@ -35,7 +35,7 @@ class LoginController extends AppController{
 	public function index() {
 		// If they're already logged in, bounce them to the homepage
 		if ($this->Auth->loggedIn()) {
-			$this->redirect($this->Auth->redirect());
+			return $this->redirect($this->Auth->redirect());
 		}
 
 		// Only POST requests are authenticated
@@ -64,7 +64,7 @@ class LoginController extends AppController{
 
 		// Authentication successful, everybody is happy! Let's log it to celebrate.
 		$this->log("[LoginController.index] user[" . $user['User']['id'] . "] logged in", 'sourcekettle');
-		$this->redirect($this->Auth->redirect());
+		return $this->redirect($this->Auth->redirect());
 	}
 
 /**
@@ -76,7 +76,7 @@ class LoginController extends AppController{
  */
 	public function logout() {
 		$this->Auth->logout();
-		$this->redirect('/');
+		return $this->redirect('/');
 	}
 
 }

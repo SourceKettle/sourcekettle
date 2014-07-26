@@ -136,7 +136,7 @@ class AttachmentsController extends AppProjectController{
 
 		if (!empty($this->data)) {
 			if ($this->Flash->c($this->Attachment->upload($this->data))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
 			}
 		}
 	}
@@ -159,7 +159,7 @@ class AttachmentsController extends AppProjectController{
 
 		$this->Flash->setUp();
 		$this->Flash->d($this->Attachment->delete());
-		$this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
+		return $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
 	}
 
 /**

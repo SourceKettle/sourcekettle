@@ -70,7 +70,7 @@ class TimesController extends AppProjectController {
 			$this->request->data['Time']['project_id'] = $project['Project']['id'];
 
 			if ($this->Flash->c($this->Time->save($this->request->data))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			} else {
 				// Show the user what they put in, its just nice
 				$this->request->data['Time']['mins'] = $origTime;
@@ -97,7 +97,7 @@ class TimesController extends AppProjectController {
 
 		$this->Flash->setUp();
 		$this->Flash->d($this->Time->delete(), $time['Time']['id']);
-		$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+		return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 	}
 
 /**
@@ -119,7 +119,7 @@ class TimesController extends AppProjectController {
 			$this->request->data['Time']['project_id'] = $project['Project']['id'];
 
 			if ($this->Flash->u($this->Time->save($this->request->data))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 		} else {
 			$this->request->data = $time;
@@ -142,11 +142,11 @@ class TimesController extends AppProjectController {
 
 		// Validate the Year
 		if (($_year = $this->Time->validateYear($year)) != $year) {
-			$this->redirect(array('project' => $project['Project']['name'], 'year' => $_year, 'week' => $week));
+			return $this->redirect(array('project' => $project['Project']['name'], 'year' => $_year, 'week' => $week));
 		}
 		// Validate the week
 		if (($_week = $this->Time->validateWeek($week, $year)) != $week) {
-			$this->redirect(array('project' => $project['Project']['name'], 'year' => $_year, 'week' => $_week));
+			return $this->redirect(array('project' => $project['Project']['name'], 'year' => $_year, 'week' => $_week));
 		}
 
 		// Optionally filter by user
@@ -239,7 +239,7 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function index($project) {
-		$this->redirect(array('project' => $project, 'controller' => 'times', 'action' => 'users'));
+		return $this->redirect(array('project' => $project, 'controller' => 'times', 'action' => 'users'));
 	}
 
 /**

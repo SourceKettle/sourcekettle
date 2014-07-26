@@ -60,7 +60,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function index($project = null) {
-		$this->redirect(array('project' => $project, 'action' => 'open'));
+		return $this->redirect(array('project' => $project, 'action' => 'open'));
 	}
 
 /**
@@ -228,7 +228,7 @@ class MilestonesController extends AppProjectController {
 			$this->request->data['Milestone']['is_open'] = true;
 
 			if ($this->Flash->c($this->Milestone->save($this->request->data))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
 			}
 		}
 	}
@@ -247,7 +247,7 @@ class MilestonesController extends AppProjectController {
 			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
 			if ($this->Flash->u($this->Milestone->save($this->request->data))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 		} else {
 			$this->request->data = $milestone;
@@ -296,7 +296,7 @@ class MilestonesController extends AppProjectController {
 					$dataSource->rollback();
 				} else {
 					$dataSource->commit();
-					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+					return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 				}
 			}
 
@@ -335,7 +335,7 @@ class MilestonesController extends AppProjectController {
 			$milestone['Milestone']['is_open'] = 1;
 
 			if ($this->Flash->u($this->Milestone->save($milestone))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 
 		} else {
@@ -373,7 +373,7 @@ class MilestonesController extends AppProjectController {
 					$dataSource->rollback();
 				} else {
 					$dataSource->commit();
-					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+					return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 				}
 			}
 

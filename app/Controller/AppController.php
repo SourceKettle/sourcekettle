@@ -214,8 +214,8 @@ class AppController extends Controller {
 		// if admin pages are being requested
 		if (isset($this->params['admin'])) {
 			// check the admin is logged in
-			if ( !isset($userId) || empty($userId) ) $this->redirect('/login');
-			if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
+			if ( !isset($userId) || empty($userId) ) return $this->redirect('/login');
+			if ( $this->Auth->user('is_admin') == 0 ) return $this->redirect('/');
 		}
 		if (isset($this->params['api'])) {
 			// The following line kinda breaks the M->V->C thing
@@ -230,7 +230,7 @@ class AppController extends Controller {
 			$this->Flash->errorReason("The request was blackholed due to a CSRF violation. You have either tried to submit this form more than once or submitted the form from another web site");
 
 			if (!$this->request->is('ajax')) {
-				$this->redirect($this->referer());
+				return $this->redirect($this->referer());
 			}
 		}
 	}
