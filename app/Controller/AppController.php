@@ -70,7 +70,6 @@ class AppController extends Controller {
 		if (@$user['is_admin'] == 1) {
 			return true;
 		}
-
 		return false;
 	}
 /**
@@ -79,6 +78,7 @@ class AppController extends Controller {
  * Configures the auth component to use the email column as the user name
  */
 	public function beforeFilter() {
+		//var_dump($this->Auth); exit(0);
 		parent::beforeFilter();
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
@@ -202,7 +202,9 @@ class AppController extends Controller {
 		if ($this->Auth->loggedIn()) {
 			$userId = $this->Auth->user('id');
 			$current_user = $this->User->findById($userId);
+
 			$this->set('current_user', $current_user['User']);
+
 			// TODO this is a bit of a hacky way to let the project history logger know who did what :-/
 			// Pretty much nicked from http://bakery.cakephp.org/articles/alkemann/2008/10/21/logablebehavior
 			if (sizeof($this->uses) && $this->{$this->modelClass}->Behaviors->attached('ProjectHistory')) {

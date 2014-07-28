@@ -45,9 +45,10 @@ class ProjectsController extends AppProjectController {
 	protected function _getAuthorizationMapping() {
 		return array(
 			'history'  => 'read',
-			'index'  => 'read',
-			'public_projects'  => 'read',
+			'index'  => 'login',
+			'public_projects'  => 'login',
 			'view'   => 'read',
+			'add' => 'login',
 			'edit'   => 'write',
 			'delete' => 'write',
 			'markupPreview'  => 'read',

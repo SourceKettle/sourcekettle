@@ -79,7 +79,7 @@ class TaskTest extends CakeTestCase {
 				'name' => 'public',
 				'description' => 'desc',
 				'public' => true,
-				'repo_type' => '1',
+				'repo_type' => '3',
 				'created' => '2012-06-01 12:46:07',
 				'modified' => '2012-06-01 12:46:07'
 			),

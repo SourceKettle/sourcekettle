@@ -39,7 +39,7 @@ class AppProjectController extends AppController {
 	// non-standard actions.
 	protected function _getAuthorizationMapping() {
 		return array(
-			'index'  => 'read',
+			'index'  => 'login',
 			'view'   => 'read',
 			'edit'   => 'write',
 			'delete' => 'write',
@@ -51,16 +51,6 @@ class AppProjectController extends AppController {
 	// to work out what level is required for the given action.
 	public function isAuthorized($user) {
 
-		// System admins can do whatever they want
-		if (@$user['is_admin'] == 1) {
-			return true;
-		}
-		// No access to admin functions for non-admin users
-		if (preg_match('/^admin_/i', $this->action)) {
-			$this->Auth->authError = __('You do not have site admin access to this '.$this->modelClass);
-			return false;
-		}
-
 		// If we've not explicitly set the authorisation level, user is not authorised
 		$mapping = $this->_getAuthorizationMapping();
 		if (!array_key_exists($this->action, $mapping)) {
@@ -69,6 +59,32 @@ class AppProjectController extends AppController {
 		}
 
 		$requiredLevel = $mapping[$this->action];
+
+		// Anyone can access, even when not logged in
+		if ($requiredLevel == 'any') {
+			return true;
+		}
+
+		// If we just need to be logged in, that's easy
+		if ($requiredLevel == 'login') {
+			return (isset($user) && !empty($user));
+		}
+
+		// At this point, we are definitely logged in, and we need to check
+		// more granular access levels.
+
+		// System admins can do whatever they want
+		if (@$user['is_admin'] == 1) {
+			return true;
+		}
+
+		// No access to admin functions for non-admin users
+		if (preg_match('/^admin_/i', $this->action)) {
+			$this->Auth->authError = __('You do not have site admin access to this '.$this->modelClass);
+			return false;
+		}
+
+
 
 		// Slightly fudgy special-case for things that use a Project directly...
 		if ( $this->modelClass == "Project" ) {
@@ -85,7 +101,6 @@ class AppProjectController extends AppController {
 		}
 
 		$model->id = $project['Project']['id'];
-		
 		$isProjectAdmin = $model->isAdmin($user['id']);
 		$hasWrite = $model->hasWrite($user['id']);
 		$hasRead = $model->hasRead($user['id']);

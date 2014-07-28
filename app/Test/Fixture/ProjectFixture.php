@@ -19,7 +19,7 @@ class ProjectFixture extends CakeTestFixture {
             'name' => 'private',
             'description' => 'desc',
             'public' => 0,
-            'repo_type' => 1,
+            'repo_type' => 2,
             'created' => '2012-06-01 12:46:07',
             'modified' => '2012-06-01 12:46:07'
         ),
@@ -28,7 +28,7 @@ class ProjectFixture extends CakeTestFixture {
             'name' => 'public',
             'description' => 'desc',
             'public' => 1,
-            'repo_type' => 1,
+            'repo_type' => 3,
             'created' => '2012-06-01 12:46:07',
             'modified' => '2012-06-01 12:46:07'
         ),
@@ -46,7 +46,7 @@ class ProjectFixture extends CakeTestFixture {
             'name' => 'personal_public',
             'description' => 'Mr Smith\'s personal public project',
             'public' => 1,
-            'repo_type' => 1,
+            'repo_type' => 2,
             'created' => '2012-06-01 12:46:07',
             'modified' => '2012-06-01 12:46:07'
         ),

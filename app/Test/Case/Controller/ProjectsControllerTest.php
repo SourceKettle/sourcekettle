@@ -1,37 +1,13 @@
 <?php
 App::uses('ProjectsController', 'Controller');
+require_once(__DIR__ . DS . 'AppControllerTest.php');
 
-/**
- * TestProjectsController *
- */
-class TestProjectsController extends ProjectsController {
-
-/**
- * Auto render
- *
- * @var boolean
- */
-	public $autoRender = false;
-
-/**
- * Redirect action
- *
- * @param mixed $url
- * @param mixed $status
- * @param boolean $exit
- * @return void
- */
-	public function redirect($url, $status = null, $exit = true) {
-		$this->redirectUrl = $url;
-	}
-
-}
 
 /**
  * ProjectsController Test Case
  *
  */
-class ProjectsControllerTestCase extends ControllerTestCase {
+class ProjectsControllerTestCase extends AppControllerTestCase {
 
 /**
  * Fixtures
@@ -39,6 +15,7 @@ class ProjectsControllerTestCase extends ControllerTestCase {
  * @var array
  */
     public $fixtures = array(
+		'app.setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',
@@ -54,63 +31,289 @@ class ProjectsControllerTestCase extends ControllerTestCase {
 		'app.attachment',
 		'app.source',
 		'app.milestone',
-		'app.setting',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
 	);
 
-/**
- * setUp method
- *
- * @return void
- */
 	public function setUp() {
-		parent::setUp();
-		$this->Projects = new TestProjectsController();
-		$this->Projects->constructClasses();
+		parent::setUp("Projects");
 	}
 
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		unset($this->Projects);
 
-		parent::tearDown();
+	public function testIndexNotLoggedIn() {
+
+		// Cannot see the page when not logged in
+		$this->testAction('/projects', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertEquals($this->vars['projects'], array());
 	}
 
-/**
- * testIndex method
- *
- * @return void
- */
-	public function testIndexGet() {
-		/*$projects = $this->generate('Projects', array(
-			'components' => array(
-				'Session'
-			)
-		));*/
-		/*$projects->Session->expects($this->once())
-				->method('setFlash');*/
-		//$this->Projects->Auth = $this->getMock('Auth', array('user'));
-		//$this->Projects->Auth->Session = $this->getMock('SessionComponent', array('renew'), array(), '', false);
-		$result = $this->testAction('/projects/view/1');
-		debug($result);
+	public function testIndexSystemAdmin() {
+
+		// Log in as a system administrator - we should still only see "my" projects, not everyone's
+		$this->_fakeLogin(5);
+		// Perform the action, and check the user was authorized
+		$ret = $this->testAction('/projects', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertAuthorized();
+
+		// Check the page content looks roughly OK
+		$this->assertContains('<h1>My Projects', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/public\/." class="project-link">public<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/private\/." class="project-link">private<\/a>/', $this->view);
+
+		// Check the project list looks sane and has only the right entries/access levels
+		$this->assertNotNull($this->vars['projects']);
+		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
+
+		// Check each project 
+		foreach ($this->vars['projects'] as $project) {
+
+			// We should be a collaborator
+			if (!isset($project['User']) || $project['User']['id'] != 5) {
+				$this->assertTrue(false, "A project for another collaborator was found");
+			}
+
+			// We should only get these two, and with the correct access levels
+			if ($project['Project']['id'] == 1 && $project['Collaborator']['access_level'] == 2) {
+				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 2 && $project['Collaborator']['access_level'] == 1) {
+				$this->assertTrue(true, "Impossible to fail");
+			} else {
+				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or access level (".$project['Collaborator']['access_level'].") was retrieved");
+			}
+		}
 	}
+
+	public function testIndexProjectGuest() {
+
+		// Log in as a guest on one project
+		$this->_fakeLogin(3);
+
+		$this->testAction('/projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertAuthorized();
+		
+		$this->assertContains('<h1>My Projects', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/private\/." class="project-link">private<\/a>/', $this->view);
+
+		// Check the project list looks sane and has only the right entries/access levels
+		$this->assertNotNull($this->vars['projects']);
+		$this->assertEqual(count($this->vars['projects']), 1, "Incorrect number of projects returned");
+
+		// Check each project 
+		foreach ($this->vars['projects'] as $project) {
+
+			// We should be a collaborator
+			if (!isset($project['User']) || $project['User']['id'] != 3) {
+				$this->assertTrue(false, "A project for another collaborator was found");
+			}
+
+			// We should only get one, and with the correct access level
+			if ($project['Project']['id'] == 1 && $project['Collaborator']['access_level'] == 0) {
+				$this->assertTrue(true, "Impossible to fail");
+			} else {
+				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or access level (".$project['Collaborator']['access_level'].") was retrieved");
+			}
+		}
+	}
+
+	public function testPublicIndexSystemAdmin() {
+
+		// Log in as a system administrator - we should still only see public projects, not everything
+		$this->_fakeLogin(5);
+
+		$this->testAction('/projects/public_projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertAuthorized();
+		$this->assertContains('<h1>Public Projects', $this->view);
+
+		$this->assertRegexp('/<a href=".*\/project\/public\/." class="project-link">public<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/personal_public\/." class="project-link">personal_public<\/a>/', $this->view);
+
+		// Check the project list looks sane and has only the right entries/access levels
+		$this->assertNotNull($this->vars['projects']);
+		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
+
+		// Check each project 
+		foreach ($this->vars['projects'] as $project) {
+
+			// We should only get one, and with the correct access level
+			if ($project['Project']['id'] == 2){
+				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 4){
+				$this->assertTrue(true, "Impossible to fail");
+			} else {
+				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") was retrieved");
+			}
+		}
+	}
+
+	public function testPublicIndexProjectGuest() {
+
+		// Log in as a guest - we should see all public projects, not just our own ones
+		$this->_fakeLogin(3);
+
+		$this->testAction('/projects/public_projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertAuthorized();
+		$this->assertContains('<h1>Public Projects', $this->view);
+
+		$this->assertRegexp('/<a href=".*\/project\/public\/." class="project-link">public<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/personal_public\/." class="project-link">personal_public<\/a>/', $this->view);
+
+		// Check the project list looks sane and has only the right entries/access levels
+		$this->assertNotNull($this->vars['projects']);
+		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
+
+		// Check each project 
+		foreach ($this->vars['projects'] as $project) {
+
+			// We should only get one, and with the correct access level
+			if ($project['Project']['id'] == 2){
+				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 4){
+				$this->assertTrue(true, "Impossible to fail");
+			} else {
+				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") was retrieved");
+			}
+		}
+	}
+
 /**
  * testView method
  *
  * @return void
  */
-	public function testView() {
+	public function testViewSystemAdminOwner() {
+
+		// System admin can see everything
+		$this->_fakeLogin(5);
+
+		$this->testAction('/project/private', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertAuthorized();
+
+		$this->assertContains('<h1>private <small>Project overview</small></h1>', $this->view);
+
+		$this->assertNotNull($this->vars['project']);
+		
+	}
+
+	public function testViewSystemAdminNotOwner() {
+
+		// System admin can see everything
+		$this->_fakeLogin(5);
+
+		$this->testAction('/project/personal', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertAuthorized();
+
+		$this->assertContains('<h1>personal <small>Project overview</small></h1>', $this->view);
+
+		$this->assertNotNull($this->vars['project']);
+		
+	}
+
+	public function testViewUser() {
+
+		$this->_fakeLogin(1);
+
+		$this->testAction('/project/public', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertAuthorized();
+
+		$this->assertContains('<h1>public <small>Project overview</small></h1>', $this->view);
+
+		$this->assertNotNull($this->vars['project']);
+		
+	}
+
+	public function testViewNotUser() {
+
+		$this->_fakeLogin(1);
+
+		$this->testAction('/project/personal', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+		
 	}
 /**
  * testAdd method
  *
  * @return void
  */
-	public function testAdd() {
+	public function testAddProjectFormNotLoggedIn() {
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertNotAuthorized();
 	}
+
+	public function testAddProjectForm() {
+		$this->_fakeLogin(3);
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertContains('<form action="/projects/add"', $this->contents, "Form was not rendered");
+		
+	}
+
+	public function testAddProjectWithNameClash() {
+		$this->_fakeLogin(3);
+		$postData = array(
+			'Project' => array(
+				'name' => 'private',
+				'description' => 'A clashing project name',
+				'repo_type' => 2,
+				'public' => 1,
+			)
+		);
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Project '<strong>private</strong>' could not be created. Please try again.");
+
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertContains('<form action="/projects/add"', $this->contents, "Form was not rendered");
+	}
+
+	public function testAddProject() {
+		$this->_fakeLogin(3);
+		$postData = array(
+			'Project' => array(
+				'name' => 'newproject',
+				'description' => 'A non-clashing project name',
+				'repo_type' => 1,
+				'public' => 1,
+			)
+		);
+
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the new project page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+		$this->assertEquals($url, array(
+			'controller' => 'projects',
+			'action' => 'view',
+			'project' => 'newproject',
+			'named' => array(),
+			'pass' => array('newproject'),
+			'plugin' => null
+		));
+
+	}
+
+
 /**
  * testEdit method
  *
@@ -125,13 +328,43 @@ class ProjectsControllerTestCase extends ControllerTestCase {
  */
 	public function testDelete() {
 	}
-/**
- * testAdminIndex method
- *
- * @return void
- */
-	public function testAdminIndex() {
+
+	public function testAdminIndexSystemAdmin() {
+
+		// Log in as a system administrator - we should still only see "my" projects, not everyone's
+		$this->_fakeLogin(5);
+
+		$this->testAction('/admin/projects', array('return' => 'view', 'method' => 'get'));
+
+		// Check the page content looks roughly OK
+		$this->assertContains('<h1>Administration <small>da vinci code locator</small>', $this->view);
+		$this->assertRegexp('/<a href=".*\/projects\/view\/1">private<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/projects\/view\/2">public<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/projects\/view\/3">personal<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/projects\/view\/4">personal_public<\/a>/', $this->view);
+
+		// Check the project list looks sane and has only the right entries/access levels
+		$this->assertNotNull($this->vars['projects']);
+		$this->assertEqual(count($this->vars['projects']), 4, "Incorrect number of projects returned");
+
+		// Check each project 
+		foreach ($this->vars['projects'] as $project) {
+
+			// We should get all 4 projects with correct repo types
+			if ($project['Project']['id'] == 1 && $project['RepoType']['name'] == 'Git') {
+				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 2 && $project['RepoType']['name'] == 'SVN') {
+				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 3 && $project['RepoType']['name'] == 'None') {
+				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 4 && $project['RepoType']['name'] == 'Git') {
+				$this->assertTrue(true, "Impossible to fail");
+			} else {
+				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or repo type (".$project['RepoType']['name'].") was retrieved");
+			}
+		}
 	}
+
 /**
  * testAdminView method
  *

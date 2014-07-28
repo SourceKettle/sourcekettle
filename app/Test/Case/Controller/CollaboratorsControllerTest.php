@@ -1,5 +1,6 @@
 <?php
 App::uses('CollaboratorsController', 'Controller');
+require_once(__DIR__ . DS . 'AppControllerTest.php');
 
 /**
  * TestCollaboratorsController *
@@ -31,7 +32,7 @@ class TestCollaboratorsController extends CollaboratorsController {
  * CollaboratorsController Test Case
  *
  */
-class CollaboratorsControllerTestCase extends CakeTestCase {
+class CollaboratorsControllerTestCase extends AppControllerTestCase {
 
 /**
  * Fixtures

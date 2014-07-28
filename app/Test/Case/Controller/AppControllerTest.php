@@ -18,33 +18,15 @@ class AppControllerTestCase extends ControllerTestCase {
  *
  * @return void
  */
-    public function setUp() {
+    public function setUp($controllerName) {
         parent::setUp();
         $this->User = ClassRegistry::init('User');
-    }
-
-/**
- * tearDown method
- *
- * @return void
- */
-    public function tearDown() {
-        unset($this->User);
-        parent::tearDown();
-    }
-
-    public function testPlaceholder() {
-        // This just here so we don't get "Failed - no tests found in class AppControllerTest"
-        $this->assertTrue(true);
-    }
-
-    protected function _generateMockWithAuthUserId($contollerName, $userId) {
-        $this->authUserId = $userId;
-        $this->authUser = $this->User->findById($this->authUserId);
-        $this->controller = $this->generate($contollerName, array(
+		$this->authUserId = null;
+		$this->authUser = null;
+        $this->controller = $this->generate($controllerName, array(
             'methods' => array(
                 '_tryRememberMeLogin',
-                '_checkSignUpProgress'
+                '_checkSignUpProgress',
             ),
             'components' => array(
                 'Auth' => array(
@@ -61,19 +43,69 @@ class AppControllerTestCase extends ControllerTestCase {
         $this->controller->Auth
             ->expects($this->any())
             ->method('loggedIn')
-            ->will($this->returnValue(true));
+            ->will($this->returnCallback(array($this, 'authLoggedInCallback')));
 
         $this->controller->Auth
             ->staticExpects($this->any())
             ->method('user')
             ->will($this->returnCallback(array($this, 'authUserCallback')));
+
     }
 
-    public function authUserCallback($param) {
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+    public function tearDown() {
+        unset($this->User);
+        unset($this->controller);
+        parent::tearDown();
+    }
+
+    public function testPlaceholder() {
+        // This just here so we don't get "Failed - no tests found in class AppControllerTest"
+        $this->assertTrue(true);
+    }
+
+    protected function _fakeLogin($userId) {
+        $this->authUserId = $userId;
+        $this->authUser = $this->User->findById($this->authUserId);
+		if (@$this->authUser['User']) {
+			$this->authUser = $this->authUser['User'];
+		}
+    }
+
+    public function authUserCallback($param = null) {
+		if (!isset($this->authUser) || $this->authUser == null || empty($this->authUser)) {
+			return null;
+		}
         if (empty($param)) {
-            return $this->authUser['User'];
+            return $this->authUser;
         } else {
-            return $this->authUser['User'][$param];
+            return $this->authUser[$param];
         }
+    }
+
+    public function authLoggedInCallback() {
+		if (!isset($this->authUser) || $this->authUser == null || empty($this->authUser)) {
+			return false;
+		}
+		return true;
+    }
+
+	// Helper to assert whether the user is authorized for the action that has just been performed
+	public function assertAuthorized() {
+		if (!isset($this->controller) || $this->controller == null) {
+			return $this->assertTrue(false, "Should be authorized but no controller found");
+		}
+		return $this->assertTrue($this->controller->isAuthorized($this->authUser), "Should be authorized");
+    }
+
+	public function assertNotAuthorized() {
+		if (!isset($this->controller) || $this->controller == null) {
+			return $this->assertTrue(false, "Should not be authorized but no controller found");
+		}
+		return $this->assertFalse($this->controller->isAuthorized($this->authUser), "Should not be authorized");
     }
 }
