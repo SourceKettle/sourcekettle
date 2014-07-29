@@ -168,11 +168,9 @@ class Project extends AppModel {
 				throw new InvalidArgumentException("Cannot rename project '".$existingById[$this->alias]['name']."' - repository cannot be moved as the directory already exists");
 			}
 
-			debug("Rename repository ".$folder->path." to $newpath");
 			if (!$folder->move(array('to' => $newpath))) {
 				throw new Exception("A problem occurred when renaming the project repository");
 			}
-			//exit(0);
 		}
 	}
 
