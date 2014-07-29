@@ -7,7 +7,7 @@ App::uses('User', 'Model');
  * AppController Test Case
  * Holds common Fixture IDs and mocks for controllers
  */
-class AppControllerTestCase extends ControllerTestCase {
+class AppControllerTest extends ControllerTestCase {
 
     public $authUserId;
 
@@ -18,8 +18,9 @@ class AppControllerTestCase extends ControllerTestCase {
  *
  * @return void
  */
-    public function setUp($controllerName) {
+    public function setUp($controllerName = null) {
         parent::setUp();
+		if ($controllerName == null) {return;}
         $this->User = ClassRegistry::init('User');
 		$this->authUserId = null;
 		$this->authUser = null;

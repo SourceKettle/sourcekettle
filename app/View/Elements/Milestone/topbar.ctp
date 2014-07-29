@@ -130,7 +130,6 @@ if($action == 'view' || $action == 'plan' || $action == 'edit'){
 
 
 $options = array(
-    'back' => $previousPage,
     'left' => array($left),
     'right' => array($right),
 );

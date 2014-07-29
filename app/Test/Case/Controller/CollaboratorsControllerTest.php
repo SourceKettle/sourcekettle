@@ -2,55 +2,45 @@
 App::uses('CollaboratorsController', 'Controller');
 require_once(__DIR__ . DS . 'AppControllerTest.php');
 
-/**
- * TestCollaboratorsController *
- */
-class TestCollaboratorsController extends CollaboratorsController {
-
-/**
- * Auto render
- *
- * @var boolean
- */
-	public $autoRender = false;
-
-/**
- * Redirect action
- *
- * @param mixed $url
- * @param mixed $status
- * @param boolean $exit
- * @return void
- */
-	public function redirect($url, $status = null, $exit = true) {
-		$this->redirectUrl = $url;
-	}
-
-}
 
 /**
  * CollaboratorsController Test Case
  *
  */
-class CollaboratorsControllerTestCase extends AppControllerTestCase {
+class CollaboratorsControllerTestCase extends AppControllerTest {
 
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('app.collaborator', 'app.project', 'app.repo_type', 'app.user', 'app.email_confirmation_key', 'app.ssh_key', 'app.lost_password_key');
+    public $fixtures = array(
+		'app.setting',
+		'app.project',
+		'app.project_history',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
+		'app.task',
+		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
+		'app.task_status',
+		'app.task_priority',
+		'app.time',
+		'app.attachment',
+		'app.source',
+		'app.milestone',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
+	);
 
-/**
- * setUp method
- *
- * @return void
- */
 	public function setUp() {
-		parent::setUp();
-		$this->Collaborators = new TestCollaboratorsController();
-		$this->Collaborators->constructClasses();
+		parent::setUp("Collaborators");
 	}
+
 
 /**
  * tearDown method

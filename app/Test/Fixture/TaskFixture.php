@@ -140,6 +140,20 @@ class TaskFixture extends CakeTestFixture {
 			'subject' => 'Dropped Minor Task 9 for milestone 1',
 			'description' => 'lorem ipsum dolor sit amet',
 		),
+		array(
+			'id' => 10,
+			'project_id' => 2,
+			'owner_id' => 2,
+			'task_type_id' => 1,
+			'task_status_id' => 2,
+			'task_priority_id' => 2,
+			'assignee_id' => 2,
+			'milestone_id' => 2,
+			'time_estimate' => 160,
+			'story_points' => 14,
+			'subject' => 'In Progress Major Task 1 for milestone 2',
+			'description' => 'lorem ipsum dolor sit amet',
+		),
 	);
 
 }

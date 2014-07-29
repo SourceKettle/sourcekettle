@@ -247,7 +247,7 @@ class MilestonesController extends AppProjectController {
 			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
 			if ($this->Flash->u($this->Milestone->save($this->request->data))) {
-				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $id));
 			}
 		} else {
 			$this->request->data = $milestone;

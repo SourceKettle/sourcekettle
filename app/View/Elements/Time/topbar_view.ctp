@@ -15,7 +15,6 @@
  $pl = $this->DT->t('bar.time').$id;
 
  $options = array(
-    'back' => $previousPage,
     'left' => array(
         array(
             array(

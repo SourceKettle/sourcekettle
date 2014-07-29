@@ -5,7 +5,7 @@ require_once __DIR__ . DS . 'AppControllerTest.php';
  * PagesController Test Case
  *
  */
-class PagesControllerTest extends AppControllerTestCase {
+class PagesControllerTest extends AppControllerTest {
 
 /**
  * Fixtures

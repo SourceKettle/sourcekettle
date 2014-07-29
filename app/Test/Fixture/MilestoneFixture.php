@@ -43,6 +43,26 @@ class MilestoneFixture extends CakeTestFixture {
             'created' => '2012-06-02 20:05:59',
             'modified' => '2012-06-02 20:05:59'
         ),
+        array(
+            'id' => 4,
+			'project_id' => 1,
+            'subject' => 'Longer <i>subject</i>',
+            'description' => 'Short description here',
+			'due' => '2013-05-24',
+			'is_open' => true,
+            'created' => '2012-06-02 20:05:59',
+            'modified' => '2012-06-02 20:05:59'
+        ),
+        array(
+            'id' => 5,
+			'project_id' => 1,
+            'subject' => 'Longer <i>subject</i>',
+            'description' => 'Short description here',
+			'due' => '2013-05-24',
+			'is_open' => false,
+            'created' => '2012-06-02 20:05:59',
+            'modified' => '2012-06-02 20:05:59'
+        ),
     );
 
 }

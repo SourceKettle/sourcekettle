@@ -85,5 +85,15 @@ class UserFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:50:08',
             'modified' => '2012-06-01 12:50:08'
         ),
+        array(
+            'id' => 9,
+            'name' => 'An admin with no projects',
+            'email' => 'admin-no-projects@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 1,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
     );
 }

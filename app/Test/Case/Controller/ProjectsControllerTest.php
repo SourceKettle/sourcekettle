@@ -7,7 +7,7 @@ require_once(__DIR__ . DS . 'AppControllerTest.php');
  * ProjectsController Test Case
  *
  */
-class ProjectsControllerTestCase extends AppControllerTestCase {
+class ProjectsControllerTestCase extends AppControllerTest {
 
 /**
  * Fixtures
@@ -239,6 +239,21 @@ class ProjectsControllerTestCase extends AppControllerTestCase {
 		$this->assertNotAuthorized();
 		
 	}
+
+	public function testViewGuest() {
+
+		$this->_fakeLogin(3);
+
+		$this->testAction('/project/private', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertAuthorized();
+
+		$this->assertContains('<h1>private <small>Project overview</small></h1>', $this->view);
+
+		$this->assertNotNull($this->vars['project']);
+		
+	}
+
 /**
  * testAdd method
  *
@@ -319,15 +334,152 @@ class ProjectsControllerTestCase extends AppControllerTestCase {
  *
  * @return void
  */
-	public function testEdit() {
+	public function testEditNonExistant() {
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/newproject/edit', array('return' => 'view', 'method' => 'post'));
+		} catch (NotFoundException $e) {
+			$this->assertTrue(true, "Correct exception thrown");
+		}
+
+	}
+
+	public function testEditProjectForm() {
+		$this->_fakeLogin(5);
+		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
+		$this->assertContains('<form action="/project/personal/edit"', $this->contents, "Form was not rendered");
+		
+	}
+
+	public function testEditSystemAdminNotOwner() {
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Project' => array(
+				'id' => '3',
+				'name' => 'newproject',
+				'description' => 'Updated description of a project',
+				'repo_type' => '2',
+				'public' => false,
+			)
+		);
+
+		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// Check it saved correctly
+		$saved = $this->controller->Project->findById(3);
+		unset($saved['Project']['created']);
+		unset($saved['Project']['modified']);
+		$this->assertEquals($saved['Project'], $postData['Project'], 'Failed to change project data');
+
+		// We should be redirected to the new project page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		/*$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+		$this->assertEquals($url, array(
+			'controller' => 'projects',
+			'action' => 'view',
+			'project' => 'newproject',
+			'named' => array(),
+			'pass' => array('newproject'),
+			'plugin' => null
+		));*/
+
+	}
+
+	public function testEditProjectAdminOwner() {
+		$this->_fakeLogin(7);
+		$postData = array(
+			'Project' => array(
+				'id' => '3',
+				'name' => 'newproject',
+				'description' => 'Updated description of a project',
+				'repo_type' => '2',
+				'public' => false,
+			)
+		);
+
+		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+
+		// Check it saved correctly
+		$saved = $this->controller->Project->findById(3);
+		unset($saved['Project']['created']);
+		unset($saved['Project']['modified']);
+		$this->assertEquals($saved['Project'], $postData['Project'], 'Failed to change project data');
+
+		// We should be redirected to the new project page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		/*$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+		$this->assertEquals($url, array(
+			'controller' => 'projects',
+			'action' => 'view',
+			'project' => 'newproject',
+			'named' => array(),
+			'pass' => array('newproject'),
+			'plugin' => null
+		));*/
+
+	}
+
+	public function testEditNotProjectAdmin() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'Project' => array(
+				'id' => '3',
+				'name' => 'personal',
+				'description' => 'Updated description of a project',
+				'repo_type' => '2',
+				'public' => false,
+			)
+		);
+		
+		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertNotAuthorized();
+
 	}
 /**
  * testDelete method
  *
  * @return void
  */
-	public function testDelete() {
+	public function testDeleteForm() {
+		$this->_fakeLogin(5);
+		$saved = $this->controller->Project->findById(3);
+		$this->testAction('/project/personal/delete', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertContains('<h1>Are you sure you want to delete?</h1>', $this->view);
 	}
+
+	public function testDeleteSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/project/personal/delete', array('return' => 'view', 'method' => 'post'));
+		$this->assertAuthorized();
+		$saved = $this->controller->Project->findById(3);
+		$this->assertEquals($saved, array(), "Failed to delete");
+	}
+
+	public function testDeleteProjectAdmin() {
+		$this->_fakeLogin(7);
+		$this->testAction('/project/personal/delete', array('return' => 'view', 'method' => 'post'));
+		$saved = $this->controller->Project->findById(3);
+		$this->assertEquals($saved, array(), "Failed to delete");
+	}
+
+	// TODO awaiting better authorization checks
+	/*public function testDeleteNotAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/project/personal/delete', array('return' => 'view', 'method' => 'post'));
+		$this->assertNotAuthorized();
+	}*/
 
 	public function testAdminIndexSystemAdmin() {
 
