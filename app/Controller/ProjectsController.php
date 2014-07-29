@@ -277,9 +277,10 @@ class ProjectsController extends AppProjectController {
 
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Flash->u($this->Project->save($this->request->data))) {
+			$saved = $this->Project->save($this->request->data);
+			if ($this->Flash->u($saved)) {
 				$this->log("[ProjectController.edit] user[" . $current_user['id'] . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
-				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view'));
+				return $this->redirect(array('project' => $saved['Project']['name'], 'action' => 'view'));
 			}
 		}
 		$this->request->data = $project;

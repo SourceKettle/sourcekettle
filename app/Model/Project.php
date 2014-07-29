@@ -123,6 +123,59 @@ class Project extends AppModel {
 		)
 	);
 
+	public function beforeSave($options = array()) {
+
+		// If the name has changed, we need to validate that the new name doesn't already exist,
+		// and if we have a repository it'll need renaming. So, do that.
+
+		// Just the project info
+		$data = $this->data[$this->alias];
+
+		// Existing project in the database with the name given
+		$existingByName = null;
+		if (isset($data['name'])) {
+			$existingByName = $this->findByName($data['name']);
+		}
+
+		// Existing project in the database with this project's ID, i.e. this project's data
+		$existingById = null;
+		if (isset($this->id)) {
+			$existingById = $this->findById($this->id);
+		}
+
+		// True if we are renaming an existing project
+		$renaming = (!empty($existingById) && isset($data['name']) && $data['name'] != $existingById[$this->alias]['name']);
+
+		// Renaming to the same name as existing project - disallow
+		if ($renaming && !empty($existingByName) && $existingByName[$this->alias]['id'] != $this->id) {
+			throw new IllegalArgumentException("Cannot rename project - a project named '".$data['name']."' already exists!");
+		}
+
+		// Existing project has a repository, and is being renamed - also move the repository
+		if ($renaming && $existingById['RepoType']['name'] != 'None' &&$this->Source->getType() != null) {
+			$location = $this->Source->getRepositoryLocation();
+			if ($location == null || !is_dir($location)) {
+				return true;
+			}
+			$folder = new Folder($location);
+			$path = $folder->path;
+			$dirname = dirname($path);
+			$basename = basename($path);
+			$newbasename = preg_replace('/^'.$existingById[$this->alias]['name'].'/', $data['name'], $basename);
+			$newpath = "$dirname/$newbasename";
+
+			if (file_exists($newpath)) {
+				throw new InvalidArgumentException("Cannot rename project '".$existingById[$this->alias]['name']."' - repository cannot be moved as the directory already exists");
+			}
+
+			debug("Rename repository ".$folder->path." to $newpath");
+			if (!$folder->move(array('to' => $newpath))) {
+				throw new Exception("A problem occurred when renaming the project repository");
+			}
+			//exit(0);
+		}
+	}
+
 	public function beforeDelete($cascade = true) {
 		if ($this->Source->getType() != null) {
 			$location = $this->Source->getRepositoryLocation();

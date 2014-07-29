@@ -355,6 +355,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 	public function testEditSystemAdminNotOwner() {
 		$this->_fakeLogin(5);
+
+		// We will attempt to change the project name. This should fail.
 		$postData = array(
 			'Project' => array(
 				'id' => '3',
@@ -379,7 +381,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertNotNull(@$this->headers['Location']);
 
 		// PHP can parse the http:// url and Router can work out where it goes...
-		/*$url = parse_url($this->headers['Location']);
+		$url = parse_url($this->headers['Location']);
 		$url = Router::parse($url['path']);
 		$this->assertEquals($url, array(
 			'controller' => 'projects',
@@ -388,7 +390,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			'named' => array(),
 			'pass' => array('newproject'),
 			'plugin' => null
-		));*/
+		));
 
 	}
 
@@ -417,7 +419,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertNotNull(@$this->headers['Location']);
 
 		// PHP can parse the http:// url and Router can work out where it goes...
-		/*$url = parse_url($this->headers['Location']);
+		$url = parse_url($this->headers['Location']);
 		$url = Router::parse($url['path']);
 		$this->assertEquals($url, array(
 			'controller' => 'projects',
@@ -426,7 +428,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			'named' => array(),
 			'pass' => array('newproject'),
 			'plugin' => null
-		));*/
+		));
 
 	}
 
