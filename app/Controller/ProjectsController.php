@@ -41,8 +41,24 @@ class ProjectsController extends AppProjectController {
 		);
 	}
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'history'  => 'read',
+			'index'  => 'login',
+			'public_projects'  => 'login',
+			'view'   => 'read',
+			'add' => 'login',
+			'edit'   => 'write',
+			'delete' => 'write',
+			'markupPreview'  => 'read',
+			'api_history' => 'read',
+			'api_autocomplete' => 'read',
+		);
+	}
+
 	public function history($project) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		$this->set('historyCount', 25);
 	}
@@ -54,10 +70,9 @@ class ProjectsController extends AppProjectController {
  */
 	public function index() {
 		$this->Project->Collaborator->recursive = 0;
-
 		$projects = $this->Project->Collaborator->find(
 			'all', array(
-			'conditions' => array('Collaborator.user_id' => User::get('id')),
+			'conditions' => array('Collaborator.user_id' => $this->Auth->user('id')),
 			'order' => array('Project.modified DESC')
 			)
 		);
@@ -84,7 +99,7 @@ class ProjectsController extends AppProjectController {
 	public function admin_index() {
 		if ($this->request->is('post') && isset($this->request->data['Project']['name']) && $project = $this->request->data['Project']['name']) {
 			if ($project = $this->Project->findByName($project)) {
-				$this->redirect(array('action' => 'view', $project['Project']['id']));
+				return $this->redirect(array('action' => 'view', $project['Project']['id']));
 			} else {
 				$this->Flash->error('The specified Project does not exist. Please try again.');
 			}
@@ -100,7 +115,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function view($name = null) {
-		$project = $this->_projectCheck($name);
+		$project = $this->_getProject($name);
 
 		$numberOfOpenTasks = $this->Project->Task->find('count', array(
 			'conditions' => array(
@@ -174,6 +189,7 @@ class ProjectsController extends AppProjectController {
  */
 	public function add() {
 		$repoTypes = $this->Project->RepoType->find('list');
+		$current_user = $this->viewVars['current_user'];
 
 		// Flip keys for values, then look up the ID of the default repo type name
 		$defaultRepo = array_flip($repoTypes);
@@ -194,12 +210,13 @@ class ProjectsController extends AppProjectController {
 			// Create the project object with its data
 			$this->Project->create();
 
+
 			// Lets vet the data coming in
 			$requestData = array(
 				'Project' => $this->request->data['Project'],
 				'Collaborator' => array(
 					array(
-						'user_id' => User::get('id'),
+						'user_id' => $current_user['id'],
 						'access_level' => 2 // Project admin
 					)
 				)
@@ -209,8 +226,9 @@ class ProjectsController extends AppProjectController {
 				// Need to know the repo type so we can skip repo creation if necessary...
 				$repoType = $repoTypes[$requestData['Project']['repo_type']];
 
-				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . User::get('id') . "]", 'sourcekettle');
-				$this->log("[ProjectController.add] user[" . User::get('id') . "] added to project[" . $this->Project->id . "] automatically as an admin", 'sourcekettle');
+
+				$this->log("[ProjectController.add] project[" . $this->Project->id . "] added by user[" . $current_user['id'] . "]", 'sourcekettle');
+				$this->log("[ProjectController.add] user[" . $current_user['id'] . "] added to project[" . $this->Project->id . "] automatically as an admin", 'sourcekettle');
 
 				// Create the actual repository, if required - if it fails, delete the database content
 				if (strtolower($repoType) == 'none') {
@@ -223,7 +241,7 @@ class ProjectsController extends AppProjectController {
 					$this->Flash->c(true);
 				}
 
-				$this->redirect(array('project' => $requestData['Project']['name'], 'action' => 'view'));
+				return $this->redirect(array('project' => $requestData['Project']['name'], 'action' => 'view'));
 			} else {
 				$this->Flash->c(false);
 			}
@@ -241,7 +259,7 @@ class ProjectsController extends AppProjectController {
 		if ($this->request->is('post')) {
 			$this->Project->create();
 			if ($this->Flash->c($this->Project->save($this->request->data))) {
-				$this->redirect(array('action' => 'index'));
+				return $this->redirect(array('action' => 'index'));
 			}
 		}
 		$this->set('repoTypes', $this->Project->RepoType->find('list'));
@@ -254,12 +272,15 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function edit($project = null) {
-		$project = $this->_projectCheck($project, true, true);
+		$project = $this->_getProject($project);
+		$current_user = $this->viewVars['current_user'];
+
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Flash->u($this->Project->save($this->request->data))) {
-				$this->log("[ProjectController.edit] user[" . User::get('id') . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view'));
+			$saved = $this->Project->save($this->request->data);
+			if ($this->Flash->u($saved)) {
+				$this->log("[ProjectController.edit] user[" . $current_user['id'] . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
+				return $this->redirect(array('project' => $saved['Project']['name'], 'action' => 'view'));
 			}
 		}
 		$this->request->data = $project;
@@ -272,11 +293,11 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_edit($project = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Flash->u($this->Project->save($this->request->data))) {
-				$this->redirect(array('action' => 'admin_view', $this->Project->id));
+				return $this->redirect(array('action' => 'admin_view', $this->Project->id));
 			}
 		}
 		$this->request->data = $project;
@@ -292,13 +313,13 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function delete($project = null) {
-		$project = $this->_projectCheck($project, true, true);
+		$project = $this->_getProject($project);
 
 		$this->Flash->setUp();
 
 		if ($this->request->is('post')) {
 			if ($this->Flash->d($this->Project->delete(), $project['Project']['name'])) {
-				$this->redirect(array('action' => 'index'));
+				return $this->redirect(array('action' => 'index'));
 			}
 		}
 		$this->set('object', array('name' => $project['Project']['name']));
@@ -314,14 +335,14 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_delete($name = null) {
-		$project = $this->_projectCheck($name);
+		$project = $this->_getProject($name);
 
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
 
 		$this->Flash->d($this->Project->delete(), $project['Project']['name']);
-		$this->redirect(array('action' => 'admin_index'));
+		return $this->redirect(array('action' => 'admin_index'));
 	}
 
 	public function markupPreview() {
@@ -455,7 +476,7 @@ class ProjectsController extends AppProjectController {
 			$this->set('data',$data);
 			$this->render('/Elements/json');
 		} else {
-			$project = $this->_projectCheck($this->request->params['named']['project']);
+			$project = $this->_getProject($this->request->params['named']['project']);
 			$this->layout = 'ajax';
 
 			if (!is_numeric($number) || $number < 1 || $number > 50) {

@@ -22,6 +22,14 @@ class HelpController extends AppController{
  */
 	public $name = 'Help';
 
+	// Dashboard - any user can see all actions
+	public function isAuthorized($user) {
+		if (isset($user['id'])) {
+			return true;
+		}
+		return false;
+	}
+
 	public function index() {
 	}
 

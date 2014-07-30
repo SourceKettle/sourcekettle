@@ -57,5 +57,18 @@ class TimeFixture extends CakeTestFixture {
 			'deleted' => '0',
 			'deleted_date' => null
         ),
+        array(
+            'id' => 5,
+            'project_id' => 3,
+            'user_id' => 2,
+            'task_id' => 1,
+            'mins' => 15,
+            'description' => 'A description of the fourth <b>task</b>.',
+            'date' => '2012-11-11',
+            'created' => '2012-11-11 10:24:06',
+            'modified' => '2012-11-11 10:24:06',
+			'deleted' => '0',
+			'deleted_date' => null
+        ),
     );
 }

@@ -70,7 +70,7 @@ class SettingsController extends AppController {
 			$this->Setting->set('value', $this->request->data['Settings']['sysadmin_email']);
 			$this->Setting->save();
 		}
-		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+		return $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
 	}
 
 /**
@@ -101,7 +101,7 @@ class SettingsController extends AppController {
 			$this->Setting->set('value', $this->request->data['Settings']['ldap_url']);
 			$this->Setting->save();
 		}
-		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+		return $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
 	}
 
 	public function admin_setLdapBaseDN() {
@@ -115,7 +115,7 @@ class SettingsController extends AppController {
 			$this->Setting->set('value', $this->request->data['Settings']['ldap_base_dn']);
 			$this->Setting->save();
 		}
-		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+		return $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
 	}
 
 	public function admin_setLdapBindDN() {
@@ -129,7 +129,7 @@ class SettingsController extends AppController {
 			$this->Setting->set('value', $this->request->data['Settings']['ldap_bind_dn']);
 			$this->Setting->save();
 		}
-		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+		return $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
 	}
 
 	public function admin_setLdapBindPW() {
@@ -142,7 +142,7 @@ class SettingsController extends AppController {
 			$this->Setting->set('value', $this->request->data['Settings']['ldap_bind_pw']);
 			$this->Setting->save();
 		}
-		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+		return $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
 	}
 
 	public function admin_setLdapFilter() {
@@ -155,7 +155,7 @@ class SettingsController extends AppController {
 			$this->Setting->set('value', $this->request->data['Settings']['ldap_filter']);
 			$this->Setting->save();
 		}
-		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+		return $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
 	}
 
 /**
@@ -220,6 +220,6 @@ class SettingsController extends AppController {
 		} else {
 			$this->Flash->error('Cannot set "' . $field . '" to a value other than 1 or 0. Please try again.');
 		}
-		$this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
+		return $this->redirect(array('admin' => true, 'controller' => 'settings', 'action' => 'index'));
 	}
 }

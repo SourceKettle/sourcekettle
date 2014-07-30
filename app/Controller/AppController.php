@@ -57,16 +57,28 @@ class AppController extends Controller {
 			'loginRedirect' => array(
 				'controller' => 'dashboard',
 				'action' => 'index'
-			)
+			),
+			'authorize' => array('Controller')
 		)
 	);
 
+	// Default authorisation - allow admins, disallow anyone else.
+	// Override this in the other controller objects to taste.
+	public function isAuthorized($user) {
+
+		// Sysadmins can do anything...
+		if (@$user['is_admin'] == 1) {
+			return true;
+		}
+		return false;
+	}
 /**
  * Before filter method acts first in the controller
  *
  * Configures the auth component to use the email column as the user name
  */
 	public function beforeFilter() {
+		//var_dump($this->Auth); exit(0);
 		parent::beforeFilter();
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
@@ -183,43 +195,34 @@ class AppController extends Controller {
 		//Use sha256 as the hashing algorithm for the site as it is the most secure out of the allowed options.
 		Security::setHash('sha256');
 
+		// Currently logged-in user ID
+		$userId = null;
+
+		$this->User = ClassRegistry::init('User');
 		if ($this->Auth->loggedIn()) {
-			User::store($this->Auth->user());
+			$userId = $this->Auth->user('id');
+			$current_user = $this->User->findById($userId);
 
-			$userId = User::get('id');
-			$userName = User::get('name');
-			$userEmail = User::get('email');
-			$isAdmin = (User::get('is_admin') == 1);
-			$this->set('user_id', $userId);
-			$this->set('user_name', $userName);
-			$this->set('user_email', $userEmail);
-			$this->set('user_is_admin', $isAdmin);
+			$this->set('current_user', $current_user['User']);
+
+			// TODO this is a bit of a hacky way to let the project history logger know who did what :-/
+			// Pretty much nicked from http://bakery.cakephp.org/articles/alkemann/2008/10/21/logablebehavior
+			if (sizeof($this->uses) && $this->{$this->modelClass}->Behaviors->attached('ProjectHistory')) {
+				$this->{$this->modelClass}->setLogUser($current_user['User']);
+			}
 		} else {
-			$this->set('user_is_admin', false);
+			$this->set('current_user', null);
 		}
-
 		// if admin pages are being requested
 		if (isset($this->params['admin'])) {
 			// check the admin is logged in
-			if ( !isset($userId) || empty($userId) ) $this->redirect('/login');
-			if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
+			if ( !isset($userId) || empty($userId) ) return $this->redirect('/login');
+			if ( $this->Auth->user('is_admin') == 0 ) return $this->redirect('/');
 		}
 		if (isset($this->params['api'])) {
 			// The following line kinda breaks the M->V->C thing
+			// TODO this needs tidying up
 			$this->{$this->modelClass}->_is_api = true;
-		}
-
-		if ($theme = $this->Auth->user('theme')) {
-			$this->set('user_theme', $theme);
-		} else {
-			$this->set('user_theme', null);
-		}
-
-		// Is the user account sourcekettle-managed or external e.g. LDAP?
-		if (isset($userId)) {
-			$_userModel = ClassRegistry::init('User');
-			$user = $_userModel->findById($userId);
-			$this->set('user_is_sourcekettle_managed', User::isSourceKettleManaged($user));
 		}
 	}
 
@@ -229,7 +232,7 @@ class AppController extends Controller {
 			$this->Flash->errorReason("The request was blackholed due to a CSRF violation. You have either tried to submit this form more than once or submitted the form from another web site");
 
 			if (!$this->request->is('ajax')) {
-				$this->redirect($this->referer());
+				return $this->redirect($this->referer());
 			}
 		}
 	}

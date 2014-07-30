@@ -11,8 +11,12 @@ debconf-set-selections <<< "mysql-server mysql-server/root_password_again passwo
 
 # Install dependencies
 apt-get update
-apt-get install -y apache2 php5 mysql-client mysql-server git build-essential python-mysqldb vim php-apc php5-mysql php-pear
+apt-get install -y apache2 php5 mysql-client mysql-server git build-essential python-mysqldb vim php-apc php5-mysql php-pear php5-xdebug
 a2enmod rewrite
+
+pear config-set auto_discover 1
+pear channel-discover pear.phpunit.de
+pear install phpunit/PHPUnit-3.7.35
 
 # Move /var/www to our vagrant directory
 rm -rf /var/www
@@ -58,7 +62,7 @@ EOF
 
 # Run the sourcekettle setup script to create the database, repo dir etc.
 cd /var/www/sourcekettle
-./scm-scripts/sourcekettle-setup.py --db-rootpass=$MYROOTPASS --db-name=skettle --repo-dir=/var/skettle/repositories --scm-user=git --scm-group=gitkettle --www-user=vagrant
+./scm-scripts/sourcekettle-setup.py --db-rootpass=$MYROOTPASS --db-name=skettle --create-test-db --test-db-name=skettle_test --repo-dir=/var/skettle/repositories --scm-user=git --scm-group=gitkettle --www-user=vagrant
 chown -R vagrant:vagrant /var/skettle
 cd /vagrant/sourcekettle/app
 

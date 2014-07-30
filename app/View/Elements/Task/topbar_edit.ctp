@@ -33,7 +33,6 @@ if ($this->request->data['Task']['task_status_id'] != 4) {
  }
 
  $options = array(
-    'back' => $previousPage,
     'left' => array(
         array(
             array(

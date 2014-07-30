@@ -27,7 +27,19 @@ class RepoTypeFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'name' => 'Lorem ipsum dolor sit amet',
+			'name' => 'None',
+			'created' => '2012-06-01 12:46:57',
+			'modified' => '2012-06-01 12:46:57'
+		),
+		array(
+			'id' => 2,
+			'name' => 'Git',
+			'created' => '2012-06-01 12:46:57',
+			'modified' => '2012-06-01 12:46:57'
+		),
+		array(
+			'id' => 3,
+			'name' => 'SVN',
 			'created' => '2012-06-01 12:46:57',
 			'modified' => '2012-06-01 12:46:57'
 		),

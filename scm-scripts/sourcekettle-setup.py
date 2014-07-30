@@ -43,12 +43,13 @@ os.chdir(abspath(dirname(__file__)+'/../app'))
 # so the user can basically thump return a lot and
 # get a sane setup!
 defaults = {
-    'repo_dir'    : '/var/sourcekettle/repositories',
-    'scm_user'    : 'git',
-    'scm_group'   : 'sourcekettle',
-    'www_user'    : 'www-data',
-    'db_name'     : 'sourcekettle',
-    'adduser_cmd' : 'adduser --system --shell /bin/sh --gecos "sourcekettle scm" --group --disabled-password --home /home/__USER__ --quiet __USER__'
+    'repo_dir'     : '/var/sourcekettle/repositories',
+    'scm_user'     : 'git',
+    'scm_group'    : 'sourcekettle',
+    'www_user'     : 'www-data',
+    'db_name'      : 'sourcekettle',
+    'test_db_name' : 'sourcekettle_test',
+    'adduser_cmd'  : 'adduser --system --shell /bin/sh --gecos "sourcekettle scm" --group --disabled-password --home /home/__USER__ --quiet __USER__'
 }
 
 # We have different defaults on Debian versus RedHat
@@ -102,6 +103,12 @@ parser.add_option('', '--db-host', dest='db_host', default='localhost',
 parser.add_option('', '--db-name', dest='db_name',
                   help='Name of the SourceKettle database (will also be used as the database username for connections)', metavar='NAME')
 
+parser.add_option('', '--create-test-db', dest='create_test_db', action='store_true',
+                  help='Create a testing database (for running unit tests)', metavar='NAME')
+
+parser.add_option('', '--test-db-name', dest='test_db_name',
+                  help='Name of the SourceKettle testing database', metavar='NAME')
+
 parser.add_option('', '--repo-dir', dest='repo_dir',
                   help='Directory to store the SCM (git/svn) repositories', metavar='DIR')
 
@@ -119,6 +126,8 @@ use_defaults    = options.use_defaults
 db_rootpass     = options.db_rootpass
 db_host         = options.db_host
 db_name         = options.db_name
+test_db_name    = options.test_db_name
+create_test_db  = options.create_test_db
 repo_dir        = options.repo_dir
 scm_user        = options.scm_user
 scm_group       = options.scm_group
@@ -226,17 +235,38 @@ while db_name == None:
     if db_name == None or len(db_name.strip()) < 1:
         db_name = defaults['db_name']
 
+if create_test_db:
+    while test_db_name == None:
+
+        if use_defaults:
+            test_db_name = defaults['test_db_name']
+            break
+    
+        print "I need to create a MySQL database for SourceKettle."
+        print "Please enter a database name."
+        test_db_name = raw_input('['+str(defaults['test_db_name'])+']: ')
+    
+        if test_db_name == None or len(test_db_name.strip()) < 1:
+            test_db_name = defaults['test_db_name']
+
 # Sanity checks
-www_user  = www_user.strip()
-scm_user  = scm_user.strip()
-scm_group = scm_group.strip()
-repo_dir  = repo_dir.strip()
-db_name   = db_name.strip()
+www_user     = www_user.strip()
+scm_user     = scm_user.strip()
+scm_group    = scm_group.strip()
+repo_dir     = repo_dir.strip()
+db_name      = db_name.strip()
+if create_test_db:
+    test_db_name = test_db_name.strip()
 
 
 problem = False
 if not re.match(r'^[A-Za-z0-9_]+$', db_name):
     print "ERROR: database name may only contain upper and lowercase ASCII letters, numbers, or underscore."
+    print "Yes, MySQL supports other characters, but please keep it simple."
+    problem = True
+
+if create_test_db and not re.match(r'^[A-Za-z0-9_]+$', test_db_name):
+    print "ERROR: test database name may only contain upper and lowercase ASCII letters, numbers, or underscore."
     print "Yes, MySQL supports other characters, but please keep it simple."
     problem = True
 
@@ -325,6 +355,22 @@ if(data):
     else:
         problem = True
 
+if (create_test_db):
+    c.execute("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = %s", (test_db_name))
+    data = c.fetchone()
+    create_db = True
+    
+    if(data):
+        print "WARNING: MySQL database '"+str(test_db_name)+"' already exists!"
+        print "Are you absolutely sure you want to use it?"
+    
+        ok = raw_input('[y/n]:')
+        if ok.strip().lower() == 'y':
+            print "OK, I won't touch that then..."
+            create_test_db = False
+        else:
+            problem = True
+
 
 if problem:
     bail("Aborting...")
@@ -350,10 +396,14 @@ print "I have also auto-generated a random salt and cipher seed for your applica
 print "NOTE: I have used the system's pseudo-random number generator, it's probably fine unless you're storing highly classified information. If you're worried, change them now."
 
 c.execute("GRANT ALL ON `%s`.* TO `%s`@`%s` IDENTIFIED BY '%s'" % (db_name, db_name, gethostname(), db_pass))
+if create_test_db:
+    c.execute("GRANT ALL ON `%s`.* TO `%s`@`%s` IDENTIFIED BY '%s'" % (test_db_name, db_name, gethostname(), db_pass))
 
 # If the database server is running locally, also grant to localhost
 if db_host.lower() == 'localhost':
     c.execute("GRANT ALL ON `%s`.* TO `%s`@`localhost` IDENTIFIED BY '%s'" % (db_name, db_name, db_pass))
+    if create_test_db:
+        c.execute("GRANT ALL ON `%s`.* TO `%s`@`localhost` IDENTIFIED BY '%s'" % (test_db_name, db_name, db_pass))
 
 
 print "Creating user and group..."
@@ -406,7 +456,10 @@ scm_gid = scm_group_data.gr_gid
 
 print "Creating empty home directory for "+str(scm_user)
 homedir = '/home/'+str(scm_user)
-os.makedirs(homedir+'/.ssh')
+try:
+    os.makedirs(homedir+'/.ssh')
+except:
+    pass
 open(homedir+'/.ssh/authorized_keys', 'w').close()
 
 
@@ -429,8 +482,8 @@ chmod_r(repo_dir, stat.S_IRWXU | stat.S_ISGID)
 
 print "Building SourceKettle config files..."
 
-config_template = './Config/devtrack.php.template'
-config_file     = './Config/devtrack.php'
+config_template = './Config/sourcekettle.php.template'
+config_file     = './Config/sourcekettle.php'
 
 config_tpl = open(config_template, 'r')
 if not config_tpl:
@@ -465,6 +518,7 @@ line = db_tpl.readline()
 while line:
     line = line.replace('__DB_HOST__', db_host)
     line = line.replace('__DB_NAME__', db_name)
+    line = line.replace('__TEST_DB_NAME__', test_db_name)
     line = line.replace('__DB_PASS__', db_pass)
     db.write(line)
     line = db_tpl.readline()
@@ -499,7 +553,6 @@ if create_db:
     c=dbc.cursor()
     c.execute('CREATE DATABASE `%s`' % db_name)
 
-
     print "Creating database schema..."
     schema_cmd = './Console/cake schema create'
 
@@ -514,6 +567,10 @@ if create_db:
     except subprocess.CalledProcessError:
         bail("Failed to load database schema")
 
+if create_test_db:
+    print "Creating SourceKettle test database..."
+    c=dbc.cursor()
+    c.execute('CREATE DATABASE `%s`' % test_db_name)
 
 print "Setup complete!"
 print "Your auto-generated MySQL password is: '%s'" % db_pass

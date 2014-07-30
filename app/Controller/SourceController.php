@@ -20,6 +20,18 @@ class SourceController extends AppProjectController {
 
 	public $helpers = array('Time', 'Source');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'ajax_diff'  => 'read',
+			'commit'  => 'read',
+			'commits'  => 'read',
+			'gettingStarted'  => 'read',
+			'index'  => 'read',
+			'raw'  => 'read',
+			'tree'  => 'read',
+		);
+	}
 /**
  * __getPath function.
  *
@@ -42,12 +54,12 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	private function __initialiseResources($name, $ref = null) {
-		$project = parent::_projectCheck($name);
+		$project = parent::_getProject($name);
 		$this->Source->init();
 
 		$branches = $this->Source->getBranches();
 		if (empty($branches) && $this->request['action'] != 'gettingStarted') {
-			$this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
+			return $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
 		}
 		$this->set('branches', $branches);
 
@@ -141,7 +153,7 @@ class SourceController extends AppProjectController {
 		$path	= $this->__getPath();
 
 		if ($branch == null) {
-			$this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+			return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
 		}
 
 		$numPerPage = 10;
@@ -203,7 +215,7 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function index($project = null) {
-		$this->redirect(array('action' => 'tree', 'project' => $project));
+		return $this->redirect(array('action' => 'tree', 'project' => $project));
 	}
 
 /**
@@ -249,7 +261,7 @@ class SourceController extends AppProjectController {
 			$path	= $this->__getPath();
 
 			if ($branch == null) {
-				$this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+				return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
 			}
 
 			$blob = $this->Source->Blob->fetch($branch, $path);

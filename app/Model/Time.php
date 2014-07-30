@@ -186,7 +186,7 @@ class Time extends AppModel {
 	}
 
 	public function fetchWeeklySummary($projectId = null, $year = null, $week = null, $userId = null) {
-		$projectId = ($projectId == null) ? $this->project->id : $projectId;
+		$projectId = ($projectId == null) ? $this->Project->id : $projectId;
 
 		if ($projectId == null) {
 			throw new InvalidArgumentException("Could not fetch times for unknown project");
@@ -428,105 +428,6 @@ class Time extends AppModel {
  */
 	public function startOfWeek($year, $week) {
 		return $this->dayOfWeek($year, $week, 0);
-	}
-
-/**
- * tasksForWeek function.
- * Return a list of tasks worked on this week
- *
- * @param mixed $year the year
- * @param mixed $week the week
- * TODO unused?
- */
-	public function tasksForWeek($year, $week, $current_user_only = true) {
-		$conditions = array(
-			'Time.date BETWEEN ? AND ?' => array(
-				$this->startOfWeek($year, $week),
-				$this->startOfWeek($year, $week + 1)
-			),
-			'Time.project_id' => $this->Project->id
-		);
-		if ($current_user_only) {
-			$conditions['Time.user_id'] = User::get('id');
-		}
-		$tasksForWeek = $this->find(
-			'list',
-			array(
-				'fields' => array('Time.task_id'),
-				'group' => array('Time.task_id'),
-				'conditions' => $conditions
-			)
-		);
-		return array_values($tasksForWeek);
-	}
-
-/**
- * timesForWeek function.
- * Fetch the time logged in a week
- *
- * @param mixed $year the year
- * @param mixed $week the week
- * TODO unused?
- */
-	public function timesForWeek($year, $week, $current_user_only = true) {
-		$this->recursive = -1;
-		$weekEvents = array();
-		$dateToday = date('Y-m-d');
-
-		// Iterate over our week
-		for ($day = 1; $day <= 7; $day++) {
-
-			// Real date for the day
-			$today = $this->dayOfWeek($year, $week, $day);
-
-			$weekEvents[$day] = array(
-				'date' => $today,
-				'times' => array(),
-				'today' => ($today == $dateToday) ? true : false,
-				'totalTimes' => array(),
-				'totalTime' => 0
-			);
-
-			$conditions = array(
-				'Time.date' => $today,
-				'Time.project_id' => $this->Project->id,
-			);
-			if ($current_user_only) {
-				$conditions['Time.user_id'] = User::get('id');
-			}
-
-			$todaysTimes = $this->find(
-				'all', array(
-				'conditions' => $conditions
-			));
-
-			foreach ($todaysTimes as $time) {
-				if (!$time['Time']['task_id']) {
-					$time['Time']['task_id'] = 0;
-				}
-				if (!isset($weekEvents[$day]['times'][$time['Time']['task_id']])) {
-					$weekEvents[$day]['times'][$time['Time']['task_id']] = array();
-					$weekEvents[$day]['totalTimes'][$time['Time']['task_id']] = 0;
-				}
-				$weekEvents[$day]['times'][$time['Time']['task_id']][] = $time;
-				$weekEvents[$day]['totalTimes'][$time['Time']['task_id']] += $time['Time']['mins'];
-				$weekEvents[$day]['totalTime'] += $time['Time']['mins'];
-			}
-
-			// Change the total to a useful format
-			foreach ($weekEvents[$day]['totalTimes'] as $a => $b) {
-				$b = TimeString::renderTime($b);
-				$weekEvents[$day]['totalTimes'][$a] = $b['h'] + round($b['m'] / 60, 1);
-			}
-			$totalTime = TimeString::renderTime($weekEvents[$day]['totalTime']);
-			$weekEvents[$day]['totalTime'] = $totalTime['h'] + round($totalTime['m'] / 60, 1);
-
-			$weekEvents[$this->__currentDate->format('D')] = $weekEvents[$day];
-
-			unset($weekEvents[$day]);
-		}
-
-		return $weekEvents;
 	}
 
 /**

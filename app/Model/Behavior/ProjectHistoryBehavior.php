@@ -43,6 +43,11 @@ class ProjectHistoryBehavior extends ModelBehavior {
  */
 	private $_cache = array();
 
+	// We need to know who's changing things, so we'll be told
+	// who's logged in (or fudging things on the command line, or whatever).
+	// Default to a user ID of 0 to represent 'system actions'.
+	private $_log_user = array('id' => 0, 'name' => '(System action)');
+
 /**
  * this-
  *
@@ -52,6 +57,11 @@ class ProjectHistoryBehavior extends ModelBehavior {
 	public function setup(Model $model, $settings = array()) {
 		$this->settings[$model->name] = $settings;
 		$this->model = &$model;
+	}
+
+	//
+	public function setLogUser($task, $user) {
+		$this->_log_user = $user;
 	}
 
 /**
@@ -65,15 +75,6 @@ class ProjectHistoryBehavior extends ModelBehavior {
 	public function beforeSave(Model $Model) {
 		$exception = false;
 		$this->prepare($Model);
-
-		// Lock out those who aren't allowed to write
-		if ( $Model->name == 'Collaborator' && !$Model->findByProjectId($Model->Project->id) ) {
-			$exception = true;
-		}
-
-		if ( !$exception && !$Model->Project->hasWrite(User::get('id')) ) {
-			throw new ForbiddenException(__('You do not have permissions to write to this project'));
-		}
 
 		$before = $Model->findById($Model->id);
 		$this->_cache[$Model->name][$Model->id] = array();
@@ -104,8 +105,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 					$field,
 					$value,
 					$Model->field($field),
-					User::get('id'),
-					User::get('name')
+					$this->_log_user['id'],
+					$this->_log_user['name']
 				);
 			}
 		} else {
@@ -117,8 +118,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 				'+',
 				null,
 				null,
-				User::get('id'),
-				User::get('name')
+				$this->_log_user['id'],
+				$this->_log_user['name']
 			);
 		}
 		return true;
@@ -152,8 +153,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 			'-',
 			null,
 			null,
-			User::get('id'),
-			User::get('name')
+			$this->_log_user['id'],
+			$this->_log_user['name']
 		);
 		return true;
 	}

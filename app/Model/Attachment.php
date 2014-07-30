@@ -267,10 +267,6 @@ class Attachment extends AppModel {
 				$row['model'] = $model;
 				$row['model_id'] = $modelId;
 
-				if (!in_array($row['mime'], array_merge($this->mimeAudio, $this->mimeOthers, $this->mimeImage, $this->mimeText, $this->mimeVideo))) {
-					return false;
-				}
-
 				$_data = array('Attachment' => $row);
 
 				$this->create();

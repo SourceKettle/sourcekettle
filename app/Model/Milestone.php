@@ -119,9 +119,6 @@ class Milestone extends AppModel {
 		}
 		$this->Task->deleteAll(array('milestone_id' => $this->id), false);
 
-		if ($this->Task->findByMilestoneId($this->id)) {
-			return false;
-		}
 		return true;
 	}
 

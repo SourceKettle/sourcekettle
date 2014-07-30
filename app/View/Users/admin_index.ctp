@@ -105,7 +105,7 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
                             );
 
 							// Don't allow admins to demote themselves (enforced in controller)
-							if($user['User']['id'] == $this->get('user_id')){
+							if($user['User']['id'] == $user_id){
                                 echo $this->Bootstrap->button(
 									$this->Bootstrap->icon('none'),
 									array('escape'=>false, 'size' => 'mini', 'class' => 'disabled')

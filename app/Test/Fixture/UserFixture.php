@@ -49,7 +49,7 @@ class UserFixture extends CakeTestFixture {
             'id' => 5,
             'name' => 'Mr Admin',
             'email' => 'mr.admin@example.com',
-            'password' => '', // e.g. LDAP account
+            'password' => 'Lorem ipsum dolor sit amet',
             'is_admin' => 1,
             'is_active' => 1,
             'created' => '2012-06-01 12:50:08',
@@ -62,6 +62,36 @@ class UserFixture extends CakeTestFixture {
             'password' => '', // e.g. LDAP account
             'is_admin' => 0,
             'is_active' => 0,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 7,
+            'name' => 'A Deletable User',
+            'email' => 'deletable@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 8,
+            'name' => 'An only-admin',
+            'email' => 'only-admin@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 9,
+            'name' => 'An admin with no projects',
+            'email' => 'admin-no-projects@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 1,
+            'is_active' => 1,
             'created' => '2012-06-01 12:50:08',
             'modified' => '2012-06-01 12:50:08'
         ),

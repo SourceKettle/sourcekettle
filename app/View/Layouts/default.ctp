@@ -24,7 +24,7 @@
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
     <?= $this->Html->charset('UTF-8') . "\n" ?>
     <?= $this->Html->css('bootstrap.min') ?>
-    <?= ($user_theme != 'default') ? $this->TwitterBootswatch->cssForTheme($user_theme) : '' ?>
+    <?= ($current_user['theme'] != 'default') ? $this->TwitterBootswatch->cssForTheme($current_user['theme']) : '' ?>
     <?= $this->Html->css('layout'); ?>
     <?= $this->Html->css('bootstrap-responsive.min') ?>
     <?= $this->fetch ('css') ?>
@@ -52,14 +52,14 @@
 
 
                     <ul class="nav pull-right">
-                    <? if(isset($user_name)){ ?>
+                    <? if(isset($current_user)){ ?>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <?= $this->Gravatar->image(
-                                    $user_email,
+                                    $current_user['email'],
                                     array('size' => 20),
-                                    array('alt' => $user_name)
-                                ) ?> <?= h($user_name) ?>
+                                    array('alt' => $current_user['name'])
+                                ) ?> <?= h($current_user['name']) ?>
                                 <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users', 'action' => 'index')) ?></li>
@@ -81,7 +81,7 @@
                                 'projects' => __('Projects'),
                                 'help' => __('Help'),
                             );
-                            if($user_is_admin){
+                            if($current_user && $current_user['is_admin'] == 1){
                                 $navItems['admin'] = __('Administration');
                             }
 

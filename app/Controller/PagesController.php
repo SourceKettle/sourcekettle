@@ -28,10 +28,9 @@ class PagesController extends AppController {
 
 	public function display() {
 		$path = func_get_args();
-
 		$count = count($path);
 		if (!$count) {
-			$this->redirect('/');
+			return $this->redirect('/');
 		}
 		$page = $subpage = $title_for_layout = null;
 
@@ -50,7 +49,7 @@ class PagesController extends AppController {
 
 	public function home() {
 		if ($this->Auth->loggedIn()) {
-			$this->redirect('/dashboard');
+			return $this->redirect('/dashboard');
 		}
 	}
 }

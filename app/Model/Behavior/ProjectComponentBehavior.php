@@ -34,7 +34,7 @@ class ProjectComponentBehavior extends ModelBehavior {
  * @throws NotFoundException
  * @throws ForbiddenException
  */
-	public function open(Model $Model, $id = null, $ownerRequired = false) {
+	public function open(Model $Model, $id = null) {
 		if ($id == null) {
 			if ($Model->id == null) {
 				throw new NotFoundException(__('Invalid ' . $Model->name));
@@ -56,15 +56,6 @@ class ProjectComponentBehavior extends ModelBehavior {
 
 		if ($Model->Project->id && ($object[$Model->name]['project_id'] != $Model->Project->id)) {
 			throw new NotFoundException(__('Invalid ' . $Model->name));
-		}
-
-		if ($ownerRequired) {
-			$isNotOwner = ($object[$Model->name]['user_id'] != User::get('id'));
-			$isNotAdmin = !$Model->Project->isAdmin();
-
-			if ($isNotOwner && $isNotAdmin) {
-				throw new ForbiddenException(__('Ownership required'));
-			}
 		}
 
 		return $object;

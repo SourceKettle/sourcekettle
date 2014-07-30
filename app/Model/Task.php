@@ -256,7 +256,7 @@ class Task extends AppModel {
 		$table_prefix = $db->config['prefix'];
 
 		$this->virtualFields = array(
-			'public_id' => "(SELECT COUNT(`{$table_prefix}{$this->table}`.`id`) FROM `{$table_prefix}{$this->table}` WHERE `{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)"
+			'public_id' => "(SELECT COUNT(`{$table_prefix}{$this->table}`.`id`) FROM `{$table_prefix}{$this->table}` WHERE `{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
 		);
 	}
 
@@ -282,7 +282,7 @@ class Task extends AppModel {
 			unset($this->data['Task']['status']);
 		}
 
-		if (isset($this->data['Task']['milestone_id']) && $this->data['Task']['milestone_id'] === null) {
+		if (array_key_exists('milestone_id', $this->data['Task']) && $this->data['Task']['milestone_id'] === null) {
 			$this->data['Task']['milestone_id'] = 0;
 		}
 		return true;
@@ -315,8 +315,8 @@ class Task extends AppModel {
  * isAssignee function.
  * Returns true if the current user is assigned to the task
  */
-	public function isAssignee() {
-		return User::get('id') == $this->field('assignee_id');
+	public function isAssignee($userId) {
+		return $userId == $this->field('assignee_id');
 	}
 
 /**
@@ -361,7 +361,7 @@ class Task extends AppModel {
 		}
 	}
 
-	public function fetchLoggableTasks() {
+	public function fetchLoggableTasks($userId) {
 		// TODO hard coded status IDs
 		$myTasks = $this->find(
 			'list',
@@ -369,7 +369,7 @@ class Task extends AppModel {
 				'conditions' => array(
 					'Task.task_status_id <' => 4,
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id' => User::get('id'),
+					'Task.assignee_id' => $userId,
 				)
 			)
 		);
@@ -379,7 +379,7 @@ class Task extends AppModel {
 				'conditions' => array(
 					'Task.task_status_id <' => 4,
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id !=' => User::get('id'),
+					'Task.assignee_id !=' => $userId,
 				)
 			)
 		);
