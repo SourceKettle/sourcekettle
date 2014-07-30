@@ -46,7 +46,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Cannot see the page when not logged in
 		$this->testAction('/projects', array('method' => 'get', 'return' => 'vars'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertEquals($this->vars['projects'], array());
 	}
 
@@ -56,7 +55,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(5);
 		// Perform the action, and check the user was authorized
 		$ret = $this->testAction('/projects', array('method' => 'get', 'return' => 'view'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
@@ -93,7 +91,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(3);
 
 		$this->testAction('/projects', array('return' => 'view', 'method' => 'get'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertAuthorized();
 		
 		$this->assertContains('<h1>My Projects', $this->view);
@@ -126,7 +123,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(5);
 
 		$this->testAction('/projects/public_projects', array('return' => 'view', 'method' => 'get'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertAuthorized();
 		$this->assertContains('<h1>Public Projects', $this->view);
 
@@ -157,7 +153,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(3);
 
 		$this->testAction('/projects/public_projects', array('return' => 'view', 'method' => 'get'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertAuthorized();
 		$this->assertContains('<h1>Public Projects', $this->view);
 
@@ -193,7 +188,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(5);
 
 		$this->testAction('/project/private', array('return' => 'view', 'method' => 'get'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertAuthorized();
 
 		$this->assertContains('<h1>private <small>Project overview</small></h1>', $this->view);
@@ -208,7 +202,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(5);
 
 		$this->testAction('/project/personal', array('return' => 'view', 'method' => 'get'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertAuthorized();
 
 		$this->assertContains('<h1>personal <small>Project overview</small></h1>', $this->view);
@@ -222,7 +215,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(1);
 
 		$this->testAction('/project/public', array('return' => 'view', 'method' => 'get'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertAuthorized();
 
 		$this->assertContains('<h1>public <small>Project overview</small></h1>', $this->view);
@@ -245,7 +237,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(3);
 
 		$this->testAction('/project/private', array('return' => 'view', 'method' => 'get'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertAuthorized();
 
 		$this->assertContains('<h1>private <small>Project overview</small></h1>', $this->view);
@@ -261,7 +252,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
  */
 	public function testAddProjectFormNotLoggedIn() {
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertNotAuthorized();
 	}
 
@@ -269,7 +259,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertContains('<form action="/projects/add"', $this->contents, "Form was not rendered");
 		
 	}
@@ -292,7 +281,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertContains('<form action="/projects/add"', $this->contents, "Form was not rendered");
 	}
 
@@ -348,7 +336,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(5);
 		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertNotContains('class="cake-error"', $this->contents, "A cake error occurred");
 		$this->assertContains('<form action="/project/personal/edit"', $this->contents, "Form was not rendered");
 		
 	}

@@ -1,11 +1,12 @@
 <?php
 App::uses('TimesController', 'Controller');
+require_once(__DIR__ . DS . 'AppControllerTest.php');
 
 /**
  * TimesController Test Case
  *
  */
-class TimesControllerTestCase extends CakeTestCase {
+class TimesControllerTestCase extends AppControllerTest {
 
     public $fixtures = array(
 		'app.setting',
