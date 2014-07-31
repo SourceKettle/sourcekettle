@@ -111,8 +111,7 @@ class Milestone extends AppModel {
  * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
  */
 	public function beforeDelete($cascade = false) {
-		// TODO hard-coded IDs!
-		foreach ($this->Task->find('all', array('conditions' => array('milestone_id' => $this->id, 'task_status_id <' => 3))) as $task) {
+		foreach ($this->Task->find('all', array('conditions' => array('milestone_id' => $this->id, 'TaskStatus.name =' => array('open', 'in progress')))) as $task) {
 			$this->Task->id = $task['Task']['id'];
 			$this->Task->set('milestone_id', null);
 			$this->Task->save();
@@ -129,8 +128,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function openTasksForMilestone($id = null) {
-		// TODO hard-coded IDs!
-		return $this->tasksOfStatusForMilestone($id, 1);
+		return $this->tasksOfStatusForMilestone($id, 'open');
 	}
 
 /**
@@ -140,8 +138,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function inProgressTasksForMilestone($id = null) {
-		// TODO hard-coded IDs!
-		return $this->tasksOfStatusForMilestone($id, 2);
+		return $this->tasksOfStatusForMilestone($id, 'in progress');
 	}
 
 /**
@@ -151,8 +148,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function resolvedTasksForMilestone($id = null) {
-		// TODO hard-coded IDs!
-		return $this->tasksOfStatusForMilestone($id, 3);
+		return $this->tasksOfStatusForMilestone($id, 'resolved');
 	}
 
 /**
@@ -162,8 +158,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function closedTasksForMilestone($id = null) {
-		// TODO hard-coded IDs!
-		return $this->tasksOfStatusForMilestone($id, 4);
+		return $this->tasksOfStatusForMilestone($id, 'closed');
 	}
 
 /**
@@ -205,8 +200,7 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  */
 	public function droppedTasksForMilestone($id = null) {
-		// TODO hard-coded IDs!
-		return $this->tasksOfStatusForMilestone($id, 5);
+		return $this->tasksOfStatusForMilestone($id, 'dropped');
 	}
 
 /**
@@ -216,9 +210,10 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  * @param mixed $status the status
  */
-	public function tasksOfStatusForMilestone($id = null, $status = 1) {
-		// TODO hard coded default status ID!
+	public function tasksOfStatusForMilestone($id = null, $status = 'open') {
 		$this->id = $id;
+
+		$statusId = $this->Task->TaskStatus->nameToId($status);
 
 		if (!$this->exists()) return null;
 
@@ -227,30 +222,26 @@ class Milestone extends AppModel {
 			array(
 				'field' => array('milestone_id'),
 				'conditions' => array(
-					'task_status_id ' => $status,
+					'task_status_id =' => $statusId,
 					'milestone_id =' => $id
 				),
-				'order' => 'task_priority_id DESC'
+				'order' => 'task_priority_id DESC',
 			)
 		);
 		return $tasks;
 	}
 
 	public function blockerTasksForMilestone($id = null) {
-		// TODO hard-coded priority ID!
-		return $this->tasksOfPriorityForMilestone($id, 4);
+		return $this->tasksOfPriorityForMilestone($id, 'blocker');
 	}
 	public function urgentTasksForMilestone($id = null) {
-		// TODO hard-coded priority ID!
-		return $this->tasksOfPriorityForMilestone($id, 3);
+		return $this->tasksOfPriorityForMilestone($id, 'urgent');
 	}
 	public function majorTasksForMilestone($id = null) {
-		// TODO hard-coded priority ID!
-		return $this->tasksOfPriorityForMilestone($id, 2);
+		return $this->tasksOfPriorityForMilestone($id, 'major');
 	}
 	public function minorTasksForMilestone($id = null) {
-		// TODO hard-coded priority ID!
-		return $this->tasksOfPriorityForMilestone($id, 1);
+		return $this->tasksOfPriorityForMilestone($id, 'minor');
 	}
 /**
  * tasksOfPriorityForMilestone function.
@@ -259,9 +250,10 @@ class Milestone extends AppModel {
  * @param mixed $id the id of the milestone
  * @param mixed $status the status
  */
-	public function tasksOfPriorityForMilestone($id = null, $priority = 1) {
-		// TODO hard coded default status ID!
+	public function tasksOfPriorityForMilestone($id = null, $priority = 'minor') {
 		$this->id = $id;
+
+		$priorityId = $this->Task->TaskPriority->nameToId($priority);
 
 		if (!$this->exists()) return null;
 
@@ -270,7 +262,7 @@ class Milestone extends AppModel {
 			array(
 				'field' => array('milestone_id'),
 				'conditions' => array(
-					'task_priority_id ' => $priority,
+					'task_priority_id =' => $priorityId,
 					'milestone_id =' => $id
 				),
 				'order' => 'task_priority_id DESC'
