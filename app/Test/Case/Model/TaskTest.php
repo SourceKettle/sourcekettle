@@ -140,7 +140,7 @@ class TaskTest extends CakeTestCase {
 				'modified' => '2012-09-02 20:05:59',
 				'deleted' => '0',
 				'deleted_date' => null,
-				'percent' => 100
+				'percent' => 50,
 			),
 			'TaskComment' => array(),
 			'Time' => array(
@@ -430,8 +430,9 @@ class TaskTest extends CakeTestCase {
 		$this->assertEquals($tasks, array(
 			0 => 'No Assigned Task',
 			'Your Tasks' => array(
-				1 => 'Resolved Major Task 1 for milestone 2',
-				4 => 'In progress Urgent Task 4 for milestone 1'
+				1  => 'Resolved Major Task 1 for milestone 2',
+				4  => 'In progress Urgent Task 4 for milestone 1',
+				10 => 'In Progress Major Task 1 for milestone 2',
 			),
 			'Others Tasks' => array(
 				2 => 'Open Minor Task 2 for milestone 1',
