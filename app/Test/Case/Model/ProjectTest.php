@@ -378,10 +378,11 @@ class ProjectTestCase extends CakeTestCase {
 
 
 	public function testDelete() {
-		$this->Project->id = 1;
+		// TODO check deletion of a project with a repository
+		$this->Project->id = 3;
 		$ok = $this->Project->delete();
 		$this->assertTrue($ok, "Failed to delete project");
-		$project_data = $this->Project->find('first', array('conditions' => array('Project.id' => 1)));
+		$project_data = $this->Project->find('first', array('conditions' => array('Project.id' => 3)));
 		$this->assertEqual($project_data, array(), "Project data retrieved after deletion");
 	}
 

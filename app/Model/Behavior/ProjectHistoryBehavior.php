@@ -134,6 +134,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
  * @return void
  */
 	public function beforeDelete(Model $Model, $cascade = true) {
+
 		$this->prepare($Model);
 		$this->_cache[$Model->name][$Model->id] = $this->getTitleForHistory($Model);
 		return true;

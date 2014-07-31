@@ -175,7 +175,7 @@ class Project extends AppModel {
 	}
 
 	public function beforeDelete($cascade = true) {
-		if ($this->Source->getType() != null) {
+		if ($this->Source->getType() != null ) {
 			$location = $this->Source->getRepositoryLocation();
 			if ($location == null || !is_dir($location)) {
 				return true;

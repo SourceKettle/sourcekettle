@@ -78,7 +78,6 @@ class CollaboratorTestCase extends CakeTestCase {
 
 	public function testFetchHistory() {
 		$history = $this->Collaborator->fetchHistory('private', 10);
-		debug($history);
 		$this->assertEquals($history, array(
 			array(
 				'modified' => '2014-07-23 15:02:12',
