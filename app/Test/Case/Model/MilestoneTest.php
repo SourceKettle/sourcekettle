@@ -63,7 +63,7 @@ class MilestoneTest extends CakeTestCase {
 		'modified' => '2012-06-02 20:05:59',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'percent' => (float) 33.333333333333
+		'percent' => 33.333333333333
 		), $milestone['Milestone']);
 
 		$milestone = $this->Milestone->open(2);
@@ -78,7 +78,7 @@ class MilestoneTest extends CakeTestCase {
 		'modified' => '2012-09-02 20:05:59',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'percent' => (int) 100
+		'percent' => 50
 		), $milestone['Milestone']);
 
 		$milestone = $this->Milestone->open(3);
@@ -93,7 +93,7 @@ class MilestoneTest extends CakeTestCase {
 		'modified' => '2012-06-02 20:05:59',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'percent' => (int) 0
+		'percent' => 0
 		), $milestone['Milestone']);
 	}
 	

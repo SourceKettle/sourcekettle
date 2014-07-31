@@ -20,7 +20,7 @@ class TaskStatusFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 2,
-			'name' => 'in_progress',
+			'name' => 'in progress',
 			'created' => '2014-07-21 07:09:13',
 			'modified' => '2014-07-21 07:09:13',
 		),

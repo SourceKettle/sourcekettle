@@ -335,7 +335,7 @@ class Task extends AppModel {
  */
 	public function isInProgress() {
 		$this->TaskStatus->id = $this->field('task_status_id');
-		return $this->TaskStatus->field('name') == 'in_progress';
+		return $this->TaskStatus->field('name') == 'in progress';
 	}
 
 /**
