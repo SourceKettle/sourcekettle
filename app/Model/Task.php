@@ -324,8 +324,8 @@ class Task extends AppModel {
  * Returns true if a task is open
  */
 	public function isOpen() {
- 		// TODO hard-coded status ID
-		return $this->field('task_status_id') == 1;
+		$this->TaskStatus->id = $this->field('task_status_id');
+		return $this->TaskStatus->field('name') == 'open';
 	}
 
 /**
@@ -334,8 +334,8 @@ class Task extends AppModel {
  * @throws
  */
 	public function isInProgress() {
- 		// TODO hard-coded status ID
-		return $this->field('task_status_id') == 2;
+		$this->TaskStatus->id = $this->field('task_status_id');
+		return $this->TaskStatus->field('name') == 'in_progress';
 	}
 
 /**
@@ -362,25 +362,27 @@ class Task extends AppModel {
 	}
 
 	public function fetchLoggableTasks($userId) {
-		// TODO hard coded status IDs
+		// TODO hard coded status IDs DONE
 		$myTasks = $this->find(
 			'list',
 			array(
 				'conditions' => array(
-					'Task.task_status_id <' => 4,
+					'TaskStatus.name !=' => array('closed', 'dropped'),
 					'Task.project_id' => $this->Project->id,
 					'Task.assignee_id' => $userId,
-				)
+				),
+				'recursive' => 1,
 			)
 		);
 		$othersTasks = $this->find(
 			'list',
 			array(
 				'conditions' => array(
-					'Task.task_status_id <' => 4,
+					'TaskStatus.name !=' => array('closed', 'dropped'),
 					'Task.project_id' => $this->Project->id,
 					'Task.assignee_id !=' => $userId,
-				)
+				),
+				'recursive' => 1,
 			)
 		);
 		return array(
