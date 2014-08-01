@@ -14,7 +14,7 @@
  */
  $pl = $this->DT->t('bar.task').$id;
 
-if ($this->request->data['Task']['task_status_id'] != 4) {
+if ($this->request->data['TaskStatus']['name'] != 'closed') {
      $state = array(
          'text' => __("Close task"),
          'url' => '#closeModal',

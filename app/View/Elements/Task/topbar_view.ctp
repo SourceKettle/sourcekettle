@@ -15,7 +15,7 @@
  $pl = $this->DT->t('bar.task').$id;
 
 if ($task['Task']['assignee_id'] != null) {
-    if ($task['Task']['task_status_id'] == 1) {
+    if ($task['TaskStatus']['name'] == 'open') {
         $progress = array(
             'text' => 'Start progress',
             'url' => array(
@@ -24,7 +24,7 @@ if ($task['Task']['assignee_id'] != null) {
                 $id
             ),
         );
-    } else if ($task['Task']['task_status_id'] == 2) {
+    } else if ($task['TaskStatus']['name'] == 'in progress') {
         $progress = array(
             'text' => 'Stop progress',
             'url' => array(
@@ -39,7 +39,7 @@ if ($task['Task']['assignee_id'] != null) {
 } else {
     $progress = false;
 }
-if ($task['Task']['task_status_id'] != 4) {
+if ($task['TaskStatus']['name'] != 'closed') {
      $state = array(
          'text' => $this->DT->t('bar.close'),
          'url' => '#closeModal',
@@ -58,13 +58,13 @@ if ($task['Task']['task_status_id'] != 4) {
      );
  }
 
- if ($task['Task']['task_status_id'] <= 2) {
+ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     $resolve = array(
         'text' => $this->DT->t('bar.resolve'),
         'url' => '#resolveModal',
         'props' => array('data-toggle' => 'modal')
     );
-} else if ($task['Task']['task_status_id'] == 3){
+} else if ($task['TaskStatus']['name'] == 'resolved'){
     $resolve = array(
         'text' => $this->DT->t('bar.unresolve'),
         'url' => '#unresolveModal',

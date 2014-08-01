@@ -12,7 +12,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$closed = ($task['Task']['task_status_id'] == 4);
+$closed = ($task['TaskStatus']['name'] == 'closed');
 
 if (!$closed){
     $this->Html->scriptBlock("

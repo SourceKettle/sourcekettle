@@ -101,6 +101,7 @@
         <h5><?= __('Issue type') ?></h5>
         <?php
 
+		// TODO set default type based on config
         if (!isset($this->request->data['Task']['task_type_id'])) $this->request->data['Task']['task_type_id'] = 1;
         
         echo $this->Bootstrap->radio("task_type_id", array(

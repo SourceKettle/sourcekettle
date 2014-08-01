@@ -362,7 +362,6 @@ class Task extends AppModel {
 	}
 
 	public function fetchLoggableTasks($userId) {
-		// TODO hard coded status IDs DONE
 		$myTasks = $this->find(
 			'list',
 			array(
