@@ -147,7 +147,7 @@ echo $this->element('Task/modal_assign');
 
                     <div class="span1">
                         <?= $this->Html->link(
-                            $this->Gravatar->image($user_email, array('d' => 'mm')),
+                            $this->Gravatar->image($current_user['email'], array('d' => 'mm')),
                             array('controller' => 'users', 'action' => 'view', $current_user['id']),
                             array('escape' => false, 'class' => 'thumbnail')
                         ) ?>

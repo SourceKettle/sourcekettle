@@ -16,6 +16,6 @@
 
 echo "<ul class='sprintboard-droplist'>\n";
 foreach ($tasks as $task) {
-    echo "<li>".$this->element('Task/element_1', array('task' => $task, 'draggable' => true))."</li>\n";
+    echo "<li>".$this->element('Task/lozenge', array('task' => $task, 'draggable' => true))."</li>\n";
 }
 echo "</ul>\n";

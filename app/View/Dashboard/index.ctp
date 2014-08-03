@@ -27,7 +27,7 @@
       <h3>Assigned tasks</h3>
       <? if (!empty($tasks)){
         foreach ($tasks as $task){
-          echo $this->element('Task/element_1', array('task' => $task));
+          echo $this->element('Task/lozenge', array('task' => $task));
         }
       } else {
         ?><div class='alert alert-success'>You have no assigned tasks! Why don't you assign yourself one?</div><?

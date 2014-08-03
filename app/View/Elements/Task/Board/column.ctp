@@ -54,6 +54,6 @@ foreach ($tasks as $task) {
 	} else {
 		echo "<li>";
 	}
-    echo $this->element('Task/element_1', array('task' => $task, 'draggable' => true, 'span' => $task_span))."</li>\n";
+    echo $this->element('Task/lozenge', array('task' => $task, 'draggable' => true, 'span' => $task_span))."</li>\n";
 }
 echo "</ul>\n";
