@@ -33,7 +33,6 @@ class Task extends AppModel {
 
 /**
  * Validation rules
- * TODO hard-coded IDs
  */
 	public $validate = array(
 		'project_id' => array(
@@ -59,10 +58,6 @@ class Task extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,5,6,7,8,'1','2','3','4','5','6','7','8')),
-				'message' => 'Select a task type',
-			),
 		),
 		'task_status_id' => array(
 			'numeric' => array(
@@ -71,10 +66,6 @@ class Task extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,5,'1','2','3','4','5')),
-				'message' => 'Select a task status',
-			),
 		),
 		'task_priority_id' => array(
 			'numeric' => array(
@@ -82,10 +73,6 @@ class Task extends AppModel {
 			),
 			'notempty' => array(
 				'rule' => array('notempty'),
-			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,'1','2','3','4')),
-				'message' => 'Select a task priority',
 			),
 		),
 		'time_estimate' => array(

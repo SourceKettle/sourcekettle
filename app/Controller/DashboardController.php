@@ -50,11 +50,10 @@ class DashboardController extends AppController {
 
 	private function __getUserTasks() {
 		$current_user = $this->viewVars['current_user'];
-		// TODO hard coded statuses
 		return $this->Task->find('all', array(
 			'conditions' => array(
 				'Task.assignee_id' => $current_user['id'],
-				'Task.task_status_id <>' => '4'
+				'TaskStatus.name <>' => 'closed'
 			),
 			'recursive' => 3,
 			'order' => array('task_priority_id DESC', 'task_status_id ASC'),
