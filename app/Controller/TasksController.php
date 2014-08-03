@@ -25,7 +25,16 @@ class TasksController extends AppProjectController {
  */
 	public $helpers = array('Time', 'Task');
 
-	public $uses = array('Task', 'Project');
+	public $uses = array(
+		'Project',
+		'Task',
+		'TaskStatus',
+		'TaskType', 
+		'TaskPriority',
+		'User',
+		'Milestone',
+		'Collaborator',
+	);
 
 /**
  * Components
@@ -91,51 +100,78 @@ class TasksController extends AppProjectController {
  *
  * @return void
  */
-	public function index($project = null, $statuses = null) {
-		// TODO hard coded IDs
+	public function index($project = null) {
 		$project = $this->_getProject($project);
-		if (!preg_match('/^\s*\d+(\s*,\s*\d+)*\s*$/', $statuses)) {
-			$statuses = "1,2"; // Default to open/in progress tasks only
+
+		// Convert to arrays
+		$statuses   = preg_split('/\s*,\s*/', trim(@$this->request->query['statuses']));
+		$priorities = preg_split('/\s*,\s*/', trim(@$this->request->query['priorities']));
+		$types      = preg_split('/\s*,\s*/', trim(@$this->request->query['types']));
+		$assignees  = preg_split('/\s*,\s*/', trim(@$this->request->query['assignees']));
+		$creators   = preg_split('/\s*,\s*/', trim(@$this->request->query['creators']));
+		$milestones = preg_split('/\s*,\s*/', trim(@$this->request->query['milestones']));
+
+
+		// Filter out invalid entries
+		$statuses   = $this->TaskStatus->filterValid($statuses);
+		$priorities = $this->TaskPriority->filterValid($priorities);
+		$types      = $this->TaskType->filterValid($types);
+		$assignees  = $this->User->filterValid($assignees);
+		$creators   = $this->User->filterValid($creators);
+		$milestones = $this->Milestone->filterValid($milestones);
+
+		// Set defaults when no filtering is specified
+		if (empty($statuses) && empty($priorities) && empty($types) && empty($assignees) && empty($creators) && empty($milestones)) {
+			$statuses = $this->TaskStatus->find('list', array(
+				'conditions' => array('name' => array('open', 'in progress'))
+			));
 		}
-		$this->set('task_status_filter', preg_replace('/[^\d,]/', '', $statuses));
-		$this->set('events', $this->Task->fetchHistory($project['Project']['id'], 5));
-		$this->set('open_milestones', $this->Task->Milestone->getOpenMilestones(true));
-	}
 
-/**
- * others function.
- *
- * @access public
- * @param mixed $project (default: null)
- * @return void
- */
-	public function others($project = null, $statuses = null) {
-		$this->index($project, $statuses);
-		$this->render('index');
-	}
+		$conditions = array('Project.id' => $project['Project']['id']);
 
-/**
- * View tasks assigned to nobody
- *
- * @access public
- * @param mixed $project (default: null)
- * @return void
- */
-	public function nobody($project = null, $statuses = null) {
-		$this->index($project, $statuses);
-		$this->render('index');
-	}
+		if (!empty($statuses)) {
+			$conditions['TaskStatus.id'] = array_keys($statuses);
+		}
+		if (!empty($priorities)) {
+			$conditions['TaskPriority.id'] = array_keys($priorities);
+		}
+		if (!empty($types)) {
+			$conditions['TaskType.id'] = array_keys($types);
+		}
+		if (!empty($assignees)) {
+			$conditions['Assignee.id'] = array_keys($assignees);
+		}
+		if (!empty($creators)) {
+			$conditions['Owner.id']   = array_keys($creators);
+		}
+		if (!empty($milestones)) {
+			$conditions['Milestone.id'] = array_keys($milestones);
+		}
 
-/**
- * View all tasks
- *
- * @access public
- * @param mixed $project (default: null)
- * @return void
- */
-	public function all($project = null, $statuses = null) {
-		$this->index($project, $statuses);
-		$this->render('index');
+		// Load task list based on the filtering rules
+		$tasks = $this->Task->find('all', array(
+			'conditions' => $conditions,
+		));
+		$this->set('tasks', $tasks);
+
+		// For the filters: lists of available statuses, priorities etc.
+		$this->set('milestones', array(
+			'open'   => $this->Project->Milestone->getOpenMilestones(true),
+			'closed' => $this->Project->Milestone->getClosedMilestones(true),
+		));
+
+		$this->set('selected_statuses',   $statuses);
+		$this->set('selected_priorities', $priorities);
+		$this->set('selected_types',      $types);
+		$this->set('selected_assignees',  $assignees);
+		$this->set('selected_creators',   $creators);
+		$this->set('selected_milestones', $milestones);
+
+		$this->set('statuses', $this->TaskStatus->find('list', array()));
+		$this->set('priorities', $this->TaskPriority->find('list', array()));
+		$this->set('types', $this->TaskType->find('list', array()));
+		$this->set('collaborators', $this->Project->listCollaborators());
+
 	}
 
 /**

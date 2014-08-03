@@ -368,7 +368,7 @@ class Project extends AppModel {
 /**
  * Returns a list of open tasks that are not assigned to milestones.
  */
-	public function getProjectBacklog(){
+	public function getProjectBacklog() {
 		$backlog = $this->Task->find(
 			'all',
 			array(
@@ -383,6 +383,20 @@ class Project extends AppModel {
 			)
 		);
 		return $backlog;
+	}
+
+	public function listCollaborators() {
+		$collabs = $this->Collaborator->find('list',
+			array(
+				'conditions' => array('project_id' => $this->id),
+				'fields' => array('user_id'),
+			)
+		);
+		return $this->Collaborator->User->find('list',
+			array(
+				'conditions' => array('id' => array_keys($collabs)),
+			)
+		);
 	}
 
 }

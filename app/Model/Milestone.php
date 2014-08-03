@@ -28,7 +28,10 @@ class Milestone extends AppModel {
 	public $actsAs = array(
 		'ProjectComponent',
 		'ProjectHistory',
-		'ProjectDeletable'
+		'ProjectDeletable',
+		'FilterValid' => array(
+			'nameField' => 'subject',
+		),
 	);
 
 /**

@@ -34,6 +34,11 @@ class TaskType extends AppModel {
 			'dependent' => false,
 		)
 	);
+	public $actsAs = array(
+		'FilterValid' => array(
+			'nameField' => 'name',
+		),
+	);
 
 	public function nameToID($type_name) {
 		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($type_name)))));

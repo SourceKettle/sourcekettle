@@ -35,6 +35,12 @@ class TaskStatus extends AppModel {
 		)
 	);
 
+	public $actsAs = array(
+		'FilterValid' => array(
+			'nameField' => 'name',
+		),
+	);
+
 	public function nameToID($status_name) {
 		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($status_name)))));
 		if(empty($found)){

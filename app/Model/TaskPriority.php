@@ -34,6 +34,11 @@ class TaskPriority extends AppModel {
 			'dependent' => false,
 		)
 	);
+	public $actsAs = array(
+		'FilterValid' => array(
+			'nameField' => 'name',
+		),
+	);
 
 	public function nameToID($priority_name) {
 		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($priority_name)))));
