@@ -31,12 +31,7 @@ class Setting extends AppModel {
 				'rule' => array('notempty'),
 			),
 		),
-		// We may need to set e.g. LDAP fields to empty
-		/*'value' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-			),
-		),*/
+		// NB values may be empty.
 	);
 
 /**
@@ -48,5 +43,22 @@ class Setting extends AppModel {
 		$this->id = $setting['Setting']['id'];
 		$this->set('value', '1');
 		$this->save();
+	}
+
+/**
+ * Merges any settings from our config files with settings from the database,
+ * which take priority.
+ */
+	public function loadConfigSettings() {
+		$settings = Configure::read('sourcekettle');
+		foreach ($this->find('list', array('fields' => array('Setting.name', 'Setting.value')))  as $name => $value) {
+			if (preg_match('/^([^\.]+)\.(.+)$/', $name, $matches)) {
+				$settings[$matches[1]] = @$settings[$matches[1]] ?: array();
+				$settings[$matches[1]][$matches[2]] = $value;
+			} else {
+				$settings[$name] = $value;
+			}
+		}
+		return $settings;
 	}
 }

@@ -83,10 +83,7 @@ class AppController extends Controller {
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
 		// Load config file in
-		$this->sourcekettle_config = array_merge(
-			Configure::read('sourcekettle'),
-			ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
-		);
+		$this->sourcekettle_config = ClassRegistry::init('Setting')->loadConfigSettings();
 
 		// Default form authentication
 		$formConfig = array(
