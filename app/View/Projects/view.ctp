@@ -46,8 +46,8 @@
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
-                                             'action'     => 'all',
-                                             '1' // Task status IDs
+                                             'action'     => 'index',
+                                             '?' => array('statuses' => 'open'),
                                            ))?>
                                         </li>
 
@@ -57,8 +57,8 @@
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
-                                             'action'     => 'all',
-                                             '2' // Task status IDs
+                                             'action'     => 'index',
+                                             '?' => array('statuses' => 'in progress'),
                                            ))?>
                                         </li>
 
@@ -68,8 +68,8 @@
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
-                                             'action'     => 'all',
-                                             '3,4' // Task status IDs
+                                             'action'     => 'index',
+                                             '?' => array('statuses' => 'closed,resolved'),
                                           ))?>
                                         </li>
 
@@ -79,8 +79,8 @@
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
-                                             'action'     => 'all',
-                                             '5' // Task status IDs
+                                             'action'     => 'index',
+                                             '?' => array('statuses' => 'dropped'),
                                           ))?>
                                         </li>
 
@@ -90,7 +90,7 @@
                                            array(
                                              'project'    => $project['Project']['name'],
                                              'controller' => 'tasks',
-                                             'action'     => 'all'
+                                             'action'     => 'index'
                                             ))?>
                                         </li>
 
