@@ -63,6 +63,7 @@
 
         Router::connect('/project/:project/time/:action/:year/:week/*', array('controller' => 'times'), array('pass' => array('project', 'year', 'week'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/time/:action/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/project/:project/time/userlog/:user/*', array('controller' => 'times', 'action' => 'userlog'), array('pass' => array('project', 'user'), 'project' => '[0-9a-zA-Z_-]+', 'user' => '[0-9]+'));
         Router::connect('/project/:project/time/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
         Router::connect('/project/:project/source/:action/:branch/*', array('controller' => 'source', 'action' => 'tree'), array('pass' => array('project', 'branch'), 'project' => '[0-9a-zA-Z_-]+'));

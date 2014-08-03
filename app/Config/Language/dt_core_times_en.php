@@ -73,3 +73,4 @@ $config['dtcore']['pages']['times']['view']['en']['info.time.task'] = "Attached 
 
 // APP Time/add
 $config['dtcore']['pages']['times']['add']['en']['header.text'] = "record your effort";
+$config['dtcore']['pages']['times']['userlog']['en']['header.text'] = "Where was my time spent?";

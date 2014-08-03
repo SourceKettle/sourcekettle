@@ -258,6 +258,19 @@ class TimesController extends AppProjectController {
 	}
 
 /**
+ * userlog
+ * Show a log for a specific user showing which tasks they have worked on and for how long
+ */
+	public function userlog($project, $user_id = null) {
+		$project = $this->_getProject($project);
+		$this->set('times', $this->Time->find('all', array(
+			'conditions' => array('user_id' => $user_id, 'Project.id' => $project['Project']['id']),
+			'fields' => array('Task.id', 'Task.subject', 'User.id', 'User.name', 'SUM(Time.mins) AS total_mins'),
+			'group' => array('Time.task_id'),
+		)));
+	}
+
+/**
  * view function.
  *
  * @access public
