@@ -35,6 +35,11 @@ class ProjectTestCase extends CakeTestCase {
 		'app.attachment',
 		'app.source',
 		'app.milestone',
+		'app.setting',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
 	);
 
     /**
@@ -490,7 +495,131 @@ class ProjectTestCase extends CakeTestCase {
 		$this->Project->read();
 		$events = $this->Project->fetchEventsForProject();
 		$this->assertEquals($events, array(
-			array(
+			0 => array(
+				'modified' => '2014-07-31 18:45:27',
+				'Type' => 'Source',
+				'Project' => array(
+					'id' => '1',
+					'name' => 'private'
+				),
+				'Actioner' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com',
+					'exists' => true
+				),
+				'Subject' => array(
+					'id' => '25b7355ef40ec350de1fdfefd332170e9740155f',
+					'title' => 'second checkin',
+					'exists' => true
+				),
+				'Change' => array(
+					'field' => '+',
+					'field_old' => null,
+					'field_new' => null
+				),
+				'url' => array(
+					'api' => false,
+					'project' => 'private',
+					'controller' => 'source',
+					'action' => 'commit',
+					0 => '25b7355ef40ec350de1fdfefd332170e9740155f'
+				)
+			),
+			1 => array(
+				'modified' => '2014-07-31 18:45:27',
+				'Type' => 'Source',
+				'Project' => array(
+					'id' => '1',
+					'name' => 'private'
+				),
+				'Actioner' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com',
+					'exists' => true
+				),
+				'Subject' => array(
+					'id' => '783d699c9acd8dbb9a8ba441038ab3d9440a6ead',
+					'title' => 'third checkin ermagerd',
+					'exists' => true
+				),
+				'Change' => array(
+					'field' => '+',
+					'field_old' => null,
+					'field_new' => null
+				),
+				'url' => array(
+					'api' => false,
+					'project' => 'private',
+					'controller' => 'source',
+					'action' => 'commit',
+					0 => '783d699c9acd8dbb9a8ba441038ab3d9440a6ead'
+				)
+			),
+			2 => array(
+				'modified' => '2014-07-31 18:45:27',
+				'Type' => 'Source',
+				'Project' => array(
+					'id' => '1',
+					'name' => 'private'
+				),
+				'Actioner' => array(
+					'id' => '2',
+					'name' => 'Mrs Smith',
+					'email' => 'Mrs.Smith@example.com',
+					'exists' => true
+				),
+				'Subject' => array(
+					'id' => '7fafe8bdeb1b29964959aafe0133aa2123be6d84',
+					'title' => 'stop overengineering',
+					'exists' => true
+				),
+				'Change' => array(
+					'field' => '+',
+					'field_old' => null,
+					'field_new' => null
+				),
+				'url' => array(
+					'api' => false,
+					'project' => 'private',
+					'controller' => 'source',
+					'action' => 'commit',
+					0 => '7fafe8bdeb1b29964959aafe0133aa2123be6d84'
+				)
+			),
+			3 => array(
+				'modified' => '2014-07-31 18:45:26',
+				'Type' => 'Source',
+				'Project' => array(
+					'id' => '1',
+					'name' => 'private'
+				),
+				'Actioner' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com',
+					'exists' => true
+				),
+				'Subject' => array(
+					'id' => '6df76712905c60dc439f1edee8b593b835782036',
+					'title' => 'first ever checkin',
+					'exists' => true
+				),
+				'Change' => array(
+					'field' => '+',
+					'field_old' => null,
+					'field_new' => null
+				),
+				'url' => array(
+					'api' => false,
+					'project' => 'private',
+					'controller' => 'source',
+					'action' => 'commit',
+					0 => '6df76712905c60dc439f1edee8b593b835782036'
+				)
+			),
+			4 => array(
 				'modified' => '2014-07-23 15:02:12',
 				'Type' => 'Collaborator',
 				'Project' => array(
@@ -521,7 +650,7 @@ class ProjectTestCase extends CakeTestCase {
 					0 => '5'
 				)
 			),
-			array(
+			5 => array(
 				'modified' => '2014-07-23 15:01:12',
 				'Type' => 'Collaborator',
 				'Project' => array(
@@ -551,7 +680,7 @@ class ProjectTestCase extends CakeTestCase {
 					'action' => 'view',
 					0 => '5'
 				)
-			),
+			)
 		), "Incorrect project events returned");
 	}
 }

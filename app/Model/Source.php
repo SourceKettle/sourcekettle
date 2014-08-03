@@ -127,7 +127,7 @@ class Source extends AppModel {
  * @throws UnsupportedRepositoryType
  */
 	public function getRepositoryLocation() {
-		$sourcekettleConfig = Configure::read('sourcekettle');
+		$sourcekettleConfig = ClassRegistry::init('Setting')->loadConfigSettings();
 		$base = $sourcekettleConfig['repo']['base'];
 
 		if ($base[strlen($base) - 1] != '/') $base .= '/';

@@ -70,7 +70,7 @@ class SettingTestCase extends CakeTestCase {
                 'modified' => '2012-06-02 20:05:59'
             ),
         );
-        $this->assertEquals($beforeA, $beforeB, "before settings arnt equal");
+        $this->assertEquals($beforeA, $beforeB, "before settings are not equal");
 
         $this->Setting->syncRequired();
 
@@ -84,6 +84,16 @@ class SettingTestCase extends CakeTestCase {
                 'modified' => '2012-06-02 20:05:59'
             ),
         );
-        $this->assertEquals($beforeA, $beforeB, "after settings arnt equal");
+        $this->assertEquals($beforeA, $beforeB, "after settings are not equal");
     }
+
+	public function testRepoDir() {
+		$settings = $this->Setting->find('all');
+		debug($settings);
+		$sourcekettle_config = array_merge(
+			Configure::read('sourcekettle'),
+			ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
+		);
+		debug($sourcekettle_config);
+	}
 }
