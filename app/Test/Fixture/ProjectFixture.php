@@ -55,11 +55,11 @@ class ProjectFixture extends CakeTestFixture {
 
 	// Constructor puts our repository data into the repository directory
 	// This directory should match up with the Settings fixture data
-	public function __construct() {
+	public function insert($db) {
 
+		$this->__removeTestRepositories();
 		$repoDir = realpath(__DIR__).'/repositories';
 		$dataDir = realpath(__DIR__).'/repo_data';
-		
 
 		// NB if more repo types are added in future, this should be updated...
 		foreach (array('git') as $repoType) {
@@ -73,11 +73,10 @@ class ProjectFixture extends CakeTestFixture {
 				$repoFolder->copy("$repoDir/$repo");
 			}
 		}
-		parent::__construct();
+		return parent::insert($db);
 	}
 
-	// Destructor cleans out our test repo data
-	public function __destruct() {
+	private function __removeTestRepositories() {
 		$repoDir = realpath(__DIR__).'/repositories';
 		$repoTopFolder = new Folder($repoDir);
 		$subdirs = $repoTopFolder->read();
@@ -85,5 +84,11 @@ class ProjectFixture extends CakeTestFixture {
 			$repoFolder = new Folder("$repoDir/$repo");
 			$repoFolder->delete();
 		}
+	}
+
+	// Clean up our test repo data when all tests are done
+	public function drop($db) {
+		$this->__removeTestRepositories();
+		return parent::drop($db);
 	}
 }

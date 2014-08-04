@@ -173,7 +173,13 @@ class Source extends AppModel {
 					$commit = $this->Commit->fetch($commit);
 
 					$newEvent = array();
-					$newEvent['modified'] = date('Y-m-d H:i:s', strtotime($commit['date']));
+
+					// TODO We are effectively losing the timezone here,
+					// if possible we should store all dates as DateTimes
+					// so local timezones don't screw things up
+					$dt = new DateTime($commit['date'], new DateTimeZone('UTC'));
+					$newEvent['modified'] = $dt->format('Y-m-d H:i:s');
+
 					$newEvent['Type'] = 'Source';
 
 					// Gather project details

@@ -128,22 +128,20 @@ class Project extends AppModel {
 		// Do not allow "easy" changing of the project name. We will provide a separate function
 		// to do this as the repository will need to be moved. This should be admin-only in the controller.
 
-
 		if (isset($this->data[$this->alias]['name']) && isset($this->id)) {
 			unset($this->data[$this->alias]['name']);
 		}
 	}
 
 	public function rename($nameOrId, $newName) {
-
 		$project = $this->findByNameOrId($nameOrId, $nameOrId);
-
 		if (!isset($project) || empty($project)) {
 			throw new NotFoundException("Failed to find a project with name or id '$nameOrId'");
 		}
 
 		// Get the project ID so there's no doubt which project we're talking about...
-		$projectId = $project[$this->alias]['id'];
+		$this->id = $project[$this->alias]['id'];
+
 		// Check it's not a no-op...!
 		if ($project[$this->alias]['name'] == $newName) {
 			return true;
@@ -151,50 +149,62 @@ class Project extends AppModel {
 
 		// See if there's an existing project with the new name
 		$existing = $this->findByName($newName);
-		if (!isset($existing) && !empty($existing)) {
+		if (isset($existing) && !empty($existing)) {
 			throw new InvalidArgumentException("Cannot rename project - another project called '$newName' already exists");
 		}
-		// Existing project has a repository, and is being renamed - also move the repository
-		if ($project['RepoType']['name'] != 'None' && $this->Source->getType() != null) {
-			$location = $this->Source->getRepositoryLocation();
-			if ($location == null || !is_dir($location)) {
-				return true;
-			}
-			$folder = new Folder($location);
-			$path = $folder->path;
-			$dirname = dirname($path);
-			$basename = basename($path);
-			$newbasename = preg_replace('/^'.$project[$this->alias]['name'].'/', $newName, $basename);
-			$newpath = "$dirname/$newbasename";
 
-			if (file_exists($newpath)) {
-				throw new InvalidArgumentException("Cannot rename project '".$existingById[$this->alias]['name']."' - repository cannot be moved as the directory already exists");
-			}
-
-			if (!$folder->move(array('to' => $newpath))) {
-				throw new Exception("A problem occurred when renaming the project repository");
-			}
+		// No repository to move - just rename the project
+		// NB we must disable callbacks when saving to stop our beforeSave method from filtering out the name
+		if ($project['RepoType']['name'] == 'None' || $this->Source->getType() == null) {
+			return ($this->save(array('name' => $newName), array('callbacks' => false)) != null);
 		}
 
-		return true;
+		// Repository has no location, this is bizarre but don't fret too much...
+		$location = $this->Source->getRepositoryLocation();
+		if ($location == null || !is_dir($location)) {
+			return ($this->save(array('name' => $newName), array('callbacks' => false)) != null);
+		}
+
+		// Generate a new repository location
+		$folder = new Folder($location);
+		$path = $folder->path;
+		$dirname = dirname($path);
+		$basename = basename($path);
+		$newbasename = preg_replace('/^'.$project[$this->alias]['name'].'/', $newName, $basename);
+		$newpath = "$dirname/$newbasename";
+
+		// Make sure there isn't something else already in the new location
+		if (file_exists($newpath)) {
+			throw new InvalidArgumentException("Cannot rename project '".$project[$this->alias]['name']."' - repository cannot be moved as the directory already exists");
+		}
+
+		// Move the repo
+		if (!$folder->move(array('to' => $newpath))) {
+			throw new Exception("A problem occurred when renaming the project repository");
+		}
+
+		return ($this->save(array('name' => $newName), array('callbacks' => false)) != null);
 	}
 
 	public function beforeDelete($cascade = true) {
-		if ($this->Source->getType() != null ) {
-			$location = $this->Source->getRepositoryLocation();
-			if ($location == null || !is_dir($location)) {
-				return true;
-			}
-			$folder = new Folder($location);
-			if ($folder->delete()) {
-				// Successfully deleted project and its nested folders
-				return true;
-			} else {
-				return false;
-			}
-		} else {
+
+		// Ensure the source knows about us... fun times.
+		$this->Source->Project->id = $this->id;
+
+		// No repository, all good
+		if ($this->Source->getType() == null ) {
 			return true;
 		}
+
+		// Repository directory does not exist, weird but OK
+		$location = $this->Source->getRepositoryLocation();
+		if ($location == null || !is_dir($location)) {
+			return true;
+		}
+
+		// We have a repo, delete it
+		$folder = new Folder($location);
+		return $folder->delete();
 	}
 
 /**
@@ -390,13 +400,18 @@ class Project extends AppModel {
 		return $backlog;
 	}
 
-	public function listCollaborators() {
+	public function listCollaborators($projectId = null) {
+		if ($projectId == null) {
+			$projectId = $this->id;
+		}
+
 		$collabs = $this->Collaborator->find('list',
 			array(
-				'conditions' => array('project_id' => $this->id),
+				'conditions' => array('project_id' => $projectId),
 				'fields' => array('user_id'),
 			)
 		);
+
 		return $this->Collaborator->User->find('list',
 			array(
 				'conditions' => array('id' => array_keys($collabs)),

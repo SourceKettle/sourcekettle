@@ -64,7 +64,6 @@ class ProjectTestCase extends CakeTestCase {
      */
     public function tearDown() {
         unset($this->Project);
-
         parent::tearDown();
     }
 
@@ -383,12 +382,56 @@ class ProjectTestCase extends CakeTestCase {
 
 
 	public function testDelete() {
-		// TODO check deletion of a project with a repository
 		$this->Project->id = 3;
 		$ok = $this->Project->delete();
 		$this->assertTrue($ok, "Failed to delete project");
-		$project_data = $this->Project->find('first', array('conditions' => array('Project.id' => 3)));
+		$project_data = $this->Project->findById(3);
 		$this->assertEqual($project_data, array(), "Project data retrieved after deletion");
+	}
+
+	public function testDeleteWithGitRepository() {
+		$this->Project->id = 1;
+
+		// Check that the git repo exists
+		$repoLocation = $this->Project->Source->getRepositoryLocation();
+		$repo = new Folder($repoLocation);
+		$this->assertEquals($repo->cd($repoLocation), $repoLocation);
+
+		// Delete project, should also delete the repo
+		$ok = $this->Project->delete();
+		$this->assertTrue($ok, "Failed to delete project");
+
+		// Ensure the repo is now gone along with the project
+		$this->assertFalse($repo->cd($repoLocation));
+		$project_data = $this->Project->findById(1);
+		$this->assertEqual($project_data, array(), "Project data retrieved after deletion");
+	}
+
+	public function testDeleteWithMissingGitRepository() {
+		$this->Project->id = 1;
+
+		// Check that the git repo exists
+		$repoLocation = $this->Project->Source->getRepositoryLocation();
+		$repo = new Folder($repoLocation);
+		$this->assertEquals($repo->cd($repoLocation), $repoLocation);
+		$this->assertEquals($repo->delete(), true);
+
+		// Delete project, should also delete the repo
+		$ok = $this->Project->delete();
+		$this->assertTrue($ok, "Failed to delete project");
+
+		// Ensure the repo is now gone along with the project
+		$this->assertFalse($repo->cd($repoLocation));
+		$project_data = $this->Project->findById(1);
+		$this->assertEqual($project_data, array(), "Project data retrieved after deletion");
+	}
+
+	public function testFailToChangeName() {
+		$before = $this->Project->findById(1);
+		$saved = $this->Project->save(array('name' => 'shoes'));
+		$this->assertNotContains('name', $saved['Project']);
+		$after = $this->Project->findById(1);
+		$this->assertEquals($before, $after);
 	}
 
 	public function testGetProjectBacklog() {
@@ -684,11 +727,117 @@ class ProjectTestCase extends CakeTestCase {
 		), "Incorrect project events returned");
 	}
 
+	public function testRenameUnknownProject() {
+		try{
+			$this->Project->rename(99, 'not_at_all_public');
+		} catch (NotFoundException $e) {
+			$this->assertTrue(true);
+		} catch (Exception $e) {
+			$this->assertFalse(true, "Wrong exception was thrown when renaming unknown project");
+		}
+	}
+
+	public function testRenameNoOp() {
+		$before = $this->Project->findById(2);
+		$this->assertTrue($this->Project->rename(2, 'public'));
+		$after = $this->Project->findById(2);
+		$this->assertEquals($before, $after);
+	}
+
+	public function testRenameDestinationExists() {
+		$before = $this->Project->findById(1);
+		try {
+			$this->Project->rename(1, 'public');
+		} catch(InvalidArgumentException $e) {
+			$this->assertTrue(true);
+		} catch (Exception $e) {
+			$this->assertFalse(true, "Wrong exception was thrown when renaming project over another one");
+		}
+
+		$after = $this->Project->findById(1);
+		$this->assertEquals($before, $after);
+	}
+
 	public function testRenameByIdNoRepository() {
-		$ok = $this->Project->rename(2, 'not_at_all_public');
+		$before = $this->Project->findById(2);
+		$this->assertTrue($this->Project->rename(2, 'not_at_all_public'));
+		$after = $this->Project->findById(2);
+		$before['Project']['name'] = 'not_at_all_public';
+		unset($before['Project']['modified']);
+		unset($after['Project']['modified']);
+		$this->assertEquals($before, $after);
 	}
 
 	public function testRenameByIdGitRepository() {
-		$ok = $this->Project->rename(1, 'not_at_all_private');
+		$before = $this->Project->findById(1);
+		$this->assertTrue($this->Project->rename(1, 'not_at_all_private'));
+		$after = $this->Project->findById(1);
+		$before['Project']['name'] = 'not_at_all_private';
+		unset($before['Project']['modified']);
+		unset($after['Project']['modified']);
+		$this->assertEquals($before, $after);
+	}
+
+	public function testRenameByNameNoRepository() {
+		$before = $this->Project->findById(2);
+		$this->assertTrue($this->Project->rename("public", 'not_at_all_public'));
+		$after = $this->Project->findById(2);
+		$before['Project']['name'] = 'not_at_all_public';
+		unset($before['Project']['modified']);
+		unset($after['Project']['modified']);
+		$this->assertEquals($before, $after);
+	}
+
+	public function testRenameByNameGitRepository() {
+		$before = $this->Project->findById(1);
+		$this->assertTrue($this->Project->rename("private", 'not_at_all_private'));
+		$after = $this->Project->findById(1);
+		$before['Project']['name'] = 'not_at_all_private';
+		unset($before['Project']['modified']);
+		unset($after['Project']['modified']);
+		$this->assertEquals($before, $after);
+	}
+
+	// Rename, but fail because a git repository exists in the new location
+	public function testRenameWithClashingGitRepository() {
+		$sourcekettleConfig = ClassRegistry::init('Setting')->loadConfigSettings();
+		$base = $sourcekettleConfig['repo']['base'];
+		mkdir("$base/not_at_all_private.git");
+		$before = $this->Project->findById(1);
+		try{
+			$this->assertFalse($this->Project->rename("private", 'not_at_all_private'));
+		} catch (InvalidArgumentException $e) {
+			$this->assertTrue(true, "Caught expected exception");
+		} catch (Exception $e) {
+			$this->assertTrue(false, "Caught unexpected exception");
+		}
+		$after = $this->Project->findById(1);
+		$this->assertEquals($before, $after);
+	}
+
+	// Rename a project which claims to have a git repo, but doesn't for some reason
+	public function testRenameWithPhantomGitRepository() {
+		$before = $this->Project->findById(1);
+		$repo = $this->Project->Source->getRepositoryLocation();
+		debug("Repo: $repo");
+		$f = new Folder($repo);
+		$f->delete();
+		$this->assertTrue($this->Project->rename("private", 'not_at_all_private'));
+		$after = $this->Project->findById(1);
+		$before['Project']['name'] = 'not_at_all_private';
+		unset($before['Project']['modified']);
+		unset($after['Project']['modified']);
+		$this->assertEquals($before, $after);
+	}
+
+	public function testListCollaborators() {
+		$this->Project->id = 1;
+		$collabs = $this->Project->listCollaborators();
+		$this->assertEquals($collabs, array(
+			1 => 'Mr Smith',
+			3 => 'Mrs Guest',
+			4 => 'Mr User',
+			5 => 'Mr Admin',
+		));
 	}
 }
