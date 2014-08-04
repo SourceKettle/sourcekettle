@@ -316,6 +316,38 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 	}
 
+	public function testAddGitProject() {
+		$this->_fakeLogin(3);
+		$postData = array(
+			'Project' => array(
+				'name' => 'newproject_withgit',
+				'description' => 'A non-clashing git project name',
+				'repo_type' => 2,
+				'public' => 1,
+			)
+		);
+
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the new project page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+		$this->assertEquals($url, array(
+			'controller' => 'projects',
+			'action' => 'view',
+			'project' => 'newproject_withgit',
+			'named' => array(),
+			'pass' => array('newproject_withgit'),
+			'plugin' => null
+		));
+
+	}
+
 
 /**
  * testEdit method
@@ -359,6 +391,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check it saved correctly
 		$saved = $this->controller->Project->findById(3);
+		$postData['Project']['name'] = 'personal';
 		unset($saved['Project']['created']);
 		unset($saved['Project']['modified']);
 		$this->assertEquals($saved['Project'], $postData['Project'], 'Failed to change project data');
@@ -373,9 +406,9 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertEquals($url, array(
 			'controller' => 'projects',
 			'action' => 'view',
-			'project' => 'newproject',
+			'project' => '3',
 			'named' => array(),
-			'pass' => array('newproject'),
+			'pass' => array('3'),
 			'plugin' => null
 		));
 
@@ -397,6 +430,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check it saved correctly
 		$saved = $this->controller->Project->findById(3);
+		$postData['Project']['name'] = 'personal';
 		unset($saved['Project']['created']);
 		unset($saved['Project']['modified']);
 		$this->assertEquals($saved['Project'], $postData['Project'], 'Failed to change project data');
@@ -411,9 +445,9 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertEquals($url, array(
 			'controller' => 'projects',
 			'action' => 'view',
-			'project' => 'newproject',
+			'project' => '3',
 			'named' => array(),
-			'pass' => array('newproject'),
+			'pass' => array('3'),
 			'plugin' => null
 		));
 
@@ -494,11 +528,11 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			// We should get all 4 projects with correct repo types
 			if ($project['Project']['id'] == 1 && $project['RepoType']['name'] == 'Git') {
 				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 2 && $project['RepoType']['name'] == 'SVN') {
+			} elseif ($project['Project']['id'] == 2 && $project['RepoType']['name'] == 'None') {
 				$this->assertTrue(true, "Impossible to fail");
 			} elseif ($project['Project']['id'] == 3 && $project['RepoType']['name'] == 'None') {
 				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 4 && $project['RepoType']['name'] == 'Git') {
+			} elseif ($project['Project']['id'] == 4 && $project['RepoType']['name'] == 'None') {
 				$this->assertTrue(true, "Impossible to fail");
 			} else {
 				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or repo type (".$project['RepoType']['name'].") was retrieved");

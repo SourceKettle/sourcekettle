@@ -63,7 +63,7 @@ class MilestoneTest extends CakeTestCase {
 		'modified' => '2012-06-02 20:05:59',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'percent' => 33.333333333333
+		'percent' => 33.333333333333,
 		), $milestone['Milestone']);
 
 		$milestone = $this->Milestone->open(2);
@@ -126,7 +126,7 @@ class MilestoneTest extends CakeTestCase {
 			'deleted' => '0',
 			'deleted_date' => null,
 			'public_id' => '5',
-			'dependenciesComplete' => false
+			'dependenciesComplete' => true
 			), $openTasks[0]['Task']);
 		$this->assertEqual(array(
 			'id' => '2',
@@ -455,7 +455,7 @@ class MilestoneTest extends CakeTestCase {
 			'deleted' => '0',
 			'deleted_date' => null,
 			'public_id' => '5',
-			'dependenciesComplete' => false
+			'dependenciesComplete' => true
 			), $urgentTasks[1]['Task']);
 	}
 
