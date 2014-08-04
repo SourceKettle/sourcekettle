@@ -125,34 +125,37 @@ class Project extends AppModel {
 
 	public function beforeSave($options = array()) {
 
-		// If the name has changed, we need to validate that the new name doesn't already exist,
-		// and if we have a repository it'll need renaming. So, do that.
+		// Do not allow "easy" changing of the project name. We will provide a separate function
+		// to do this as the repository will need to be moved. This should be admin-only in the controller.
 
-		// Just the project info
-		$data = $this->data[$this->alias];
 
-		// Existing project in the database with the name given
-		$existingByName = null;
-		if (isset($data['name'])) {
-			$existingByName = $this->findByName($data['name']);
+		if (isset($this->data[$this->alias]['name']) && isset($this->id)) {
+			unset($this->data[$this->alias]['name']);
+		}
+	}
+
+	public function rename($nameOrId, $newName) {
+
+		$project = $this->findByNameOrId($nameOrId, $nameOrId);
+
+		if (!isset($project) || empty($project)) {
+			throw new NotFoundException("Failed to find a project with name or id '$nameOrId'");
 		}
 
-		// Existing project in the database with this project's ID, i.e. this project's data
-		$existingById = null;
-		if (isset($this->id)) {
-			$existingById = $this->findById($this->id);
+		// Get the project ID so there's no doubt which project we're talking about...
+		$projectId = $project[$this->alias]['id'];
+		// Check it's not a no-op...!
+		if ($project[$this->alias]['name'] == $newName) {
+			return true;
 		}
 
-		// True if we are renaming an existing project
-		$renaming = (!empty($existingById) && isset($data['name']) && $data['name'] != $existingById[$this->alias]['name']);
-
-		// Renaming to the same name as existing project - disallow
-		if ($renaming && !empty($existingByName) && $existingByName[$this->alias]['id'] != $this->id) {
-			throw new IllegalArgumentException("Cannot rename project - a project named '".$data['name']."' already exists!");
+		// See if there's an existing project with the new name
+		$existing = $this->findByName($newName);
+		if (!isset($existing) && !empty($existing)) {
+			throw new InvalidArgumentException("Cannot rename project - another project called '$newName' already exists");
 		}
-
 		// Existing project has a repository, and is being renamed - also move the repository
-		if ($renaming && $existingById['RepoType']['name'] != 'None' &&$this->Source->getType() != null) {
+		if ($project['RepoType']['name'] != 'None' && $this->Source->getType() != null) {
 			$location = $this->Source->getRepositoryLocation();
 			if ($location == null || !is_dir($location)) {
 				return true;
@@ -161,7 +164,7 @@ class Project extends AppModel {
 			$path = $folder->path;
 			$dirname = dirname($path);
 			$basename = basename($path);
-			$newbasename = preg_replace('/^'.$existingById[$this->alias]['name'].'/', $data['name'], $basename);
+			$newbasename = preg_replace('/^'.$project[$this->alias]['name'].'/', $newName, $basename);
 			$newpath = "$dirname/$newbasename";
 
 			if (file_exists($newpath)) {
@@ -172,6 +175,8 @@ class Project extends AppModel {
 				throw new Exception("A problem occurred when renaming the project repository");
 			}
 		}
+
+		return true;
 	}
 
 	public function beforeDelete($cascade = true) {
