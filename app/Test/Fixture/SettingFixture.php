@@ -18,7 +18,7 @@ class SettingFixture extends CakeTestFixture {
 		$this->records[] = array(
 			'id' => 2,
 			'name' => 'repo.base',
-			'value' => realpath(__DIR__).'/repositories/git',
+			'value' => realpath(__DIR__).'/repositories',
 			'created' => '2012-06-02 20:05:59',
 			'modified' => '2012-06-02 20:05:59'
 		);

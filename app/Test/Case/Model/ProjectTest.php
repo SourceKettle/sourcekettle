@@ -421,7 +421,7 @@ class ProjectTestCase extends CakeTestCase {
 				'name' => 'public',
 				'description' => 'desc',
 				'public' => true,
-				'repo_type' => '3',
+				'repo_type' => '1',
 				'created' => '2012-06-01 12:46:07',
 				'modified' => '2012-06-01 12:46:07'
 			),
@@ -682,5 +682,13 @@ class ProjectTestCase extends CakeTestCase {
 				)
 			)
 		), "Incorrect project events returned");
+	}
+
+	public function testRenameByIdNoRepository() {
+		$ok = $this->Project->rename(2, 'not_at_all_public');
+	}
+
+	public function testRenameByIdGitRepository() {
+		$ok = $this->Project->rename(1, 'not_at_all_private');
 	}
 }

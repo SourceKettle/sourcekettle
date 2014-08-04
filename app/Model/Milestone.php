@@ -91,11 +91,11 @@ class Milestone extends AppModel {
 		foreach ($results as $a => $result) {
 			if (isset($result['Milestone']) && isset($result['Milestone']['id'])) {
 				$this->Task->recursive = -1;
-				$o = $results[$a]['Tasks']['open'] = $this->openTasksForMilestone($result['Milestone']['id']);
+				$o = $results[$a]['Tasks']['open']        = $this->openTasksForMilestone($result['Milestone']['id']);
 				$i = $results[$a]['Tasks']['in_progress'] = $this->inProgressTasksForMilestone($result['Milestone']['id']);
-				$r = $results[$a]['Tasks']['resolved'] = $this->resolvedTasksForMilestone($result['Milestone']['id']);
-				$c = $results[$a]['Tasks']['completed'] = $this->closedTasksForMilestone($result['Milestone']['id']);
-				$d = $results[$a]['Tasks']['dropped'] = $this->droppedTasksForMilestone($result['Milestone']['id']);
+				$r = $results[$a]['Tasks']['resolved']    = $this->resolvedTasksForMilestone($result['Milestone']['id']);
+				$c = $results[$a]['Tasks']['completed']   = $this->closedTasksForMilestone($result['Milestone']['id']);
+				$d = $results[$a]['Tasks']['dropped']     = $this->droppedTasksForMilestone($result['Milestone']['id']);
 
 				if ((count($o) + count($i) + count($r) + count($c)) > 0) {
 					$results[$a]['Milestone']['percent'] = (count($r) + count($c)) / (count($o) + count($i) + count($r) + count($c)) * 100;
