@@ -148,7 +148,7 @@ class AppProjectController extends AppController {
 		$model->id = $project['Project']['id'];
 
 		$this->set('project', $project);
-		$this->set('isAdmin', $model->isAdmin());
+		$this->set('isAdmin', $model->isAdmin($this->Auth->user('id')));
 
 		return $project;
 	}
