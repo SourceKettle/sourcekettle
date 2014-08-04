@@ -127,8 +127,7 @@ class Project extends AppModel {
 
 		// Do not allow "easy" changing of the project name. We will provide a separate function
 		// to do this as the repository will need to be moved. This should be admin-only in the controller.
-
-		if (isset($this->data[$this->alias]['name']) && isset($this->id)) {
+		if (isset($this->data[$this->alias]['name']) && isset($this->id) && $this->id != null) {
 			unset($this->data[$this->alias]['name']);
 		}
 	}
