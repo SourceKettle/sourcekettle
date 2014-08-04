@@ -516,7 +516,7 @@ class TasksController extends AppProjectController {
 
 		$isAjax = $this->request->is("ajax");
 
-		$updated = $this->__updateTaskStatus($project, $id, 2, $isAjax);
+		$updated = $this->__updateTaskStatus($project, $id, 'in progress', $isAjax);
 
 		if ($isAjax) {
 			if ($updated) {
@@ -545,7 +545,7 @@ class TasksController extends AppProjectController {
 
 		$task = $this->Task->open($id);
 
-		$updated = $this->__updateTaskStatus($project, $id, 1, $isAjax);
+		$updated = $this->__updateTaskStatus($project, $id, 'open', $isAjax);
 		if ($isAjax) {
 			if ($updated) {
 				$this->set("error", "no_error");
@@ -571,7 +571,7 @@ class TasksController extends AppProjectController {
 	public function opentask($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 1, $isAjax);
+		$success = $this->__updateTaskStatus($project, $id, 'open', $isAjax);
 		return $this->redirect(array('project' => $project, 'action' => 'view', $id));
 	}
 
@@ -586,7 +586,7 @@ class TasksController extends AppProjectController {
 	public function closetask($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 4, $isAjax);
+		$success = $this->__updateTaskStatus($project, $id, 'closed', $isAjax);
 
 		// If a User has commented
 		if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
@@ -608,7 +608,7 @@ class TasksController extends AppProjectController {
 	public function resolve($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 3, $isAjax);
+		$success = $this->__updateTaskStatus($project, $id, 'resolved', $isAjax);
 		if ($isAjax) {
 			if ($success) {
 				$this->set ("error", "no_error");
@@ -641,7 +641,7 @@ class TasksController extends AppProjectController {
 	public function unresolve($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 1, $isAjax);
+		$success = $this->__updateTaskStatus($project, $id, 'open', $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
@@ -683,8 +683,7 @@ class TasksController extends AppProjectController {
 	public function freeze($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		// TODO hard coded status IDs
-		$success = $this->__updateTaskStatus($project, $id, 5, $isAjax);
+		$success = $this->__updateTaskStatus($project, $id, 'dropped', $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
@@ -727,7 +726,8 @@ class TasksController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
 
-		// TODO hard-coded IDs
+		$status = $this->TaskStatus->nameToId($status);
+
 		$this->Task->set('task_status_id', $status);
 		$result = $this->Task->save();
 		if ($isAjax) {
@@ -748,8 +748,7 @@ class TasksController extends AppProjectController {
 	public function setBlocker($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		// TODO hard coded status IDs
-		$success = $this->__updateTaskPriority($project, $id, 4, $isAjax);
+		$success = $this->__updateTaskPriority($project, $id, 'blocker', $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
@@ -790,8 +789,7 @@ class TasksController extends AppProjectController {
 	public function setUrgent($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		// TODO hard coded status IDs
-		$success = $this->__updateTaskPriority($project, $id, 3, $isAjax);
+		$success = $this->__updateTaskPriority($project, $id, 'urgent', $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
@@ -832,8 +830,7 @@ class TasksController extends AppProjectController {
 	public function setMajor($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		// TODO hard coded status IDs
-		$success = $this->__updateTaskPriority($project, $id, 2, $isAjax);
+		$success = $this->__updateTaskPriority($project, $id, 'major', $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
@@ -874,8 +871,7 @@ class TasksController extends AppProjectController {
 	public function setMinor($project = null, $id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		// TODO hard coded status IDs
-		$success = $this->__updateTaskPriority($project, $id, 1, $isAjax);
+		$success = $this->__updateTaskPriority($project, $id, 'minor', $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
@@ -963,7 +959,7 @@ class TasksController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
 
-		// TODO hard-coded IDs
+		$priority = $this->TaskPriority->nameToId($priority);
 		$this->Task->set('task_priority_id', $priority);
 		$result = $this->Task->save();
 		if ($isAjax) {

@@ -55,8 +55,7 @@ echo $this->Bootstrap->page_header('Administration <small>single out the straggl
                     <dt>Last modified</dt><dd><?= $this->Time->timeAgoInWords($this->request->data['User']['modified']) ?></dd>
 
                     <dt>Ssh Keys</dt><dd><?= count($this->request->data['SshKey']) ?></dd>
-
-                    <dt>Local Account</dt><dd><?= $this->request->data['User']['is_local'] ? 'Yes' : 'No' ?></dd>
+                    <dt>Internal Account</dt><dd><?= $this->request->data['User']['is_internal'] ? 'Yes' : 'No' ?></dd>
 
                 </dl>
             </div>
