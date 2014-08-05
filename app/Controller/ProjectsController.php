@@ -317,7 +317,13 @@ class ProjectsController extends AppProjectController {
  */
 	public function add_repo($project = null) {
 		$project = $this->_getProject($project);
-		$this->set('repoTypes', $this->Project->RepoType->find('list'));
+
+		$repoTypes = $this->Project->RepoType->find('list');
+		$this->set('repoTypes', $repoTypes);
+
+		if ($repoTypes[$project['Project']['repo_type']] != 'None') {
+			throw new NotFoundException("This project already has a repository. If you need to change this, contact your system administrator.");
+		}
 		$current_user = $this->Auth->user();
 
 
