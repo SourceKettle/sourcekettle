@@ -4,7 +4,7 @@
         echo $this->Form->create('Milestone', array('class' => 'well form-horizontal'));
 
         echo $this->Bootstrap->input("subject", array(
-            "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => __("e.g. Sprint 1"))),
+            "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => __("e.g. Sprint 1"), "autofocus" => "")),
             "label" => __("Short name"),
         ));
 
