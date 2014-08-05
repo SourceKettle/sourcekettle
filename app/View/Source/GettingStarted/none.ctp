@@ -29,7 +29,11 @@ echo $this->Bootstrap->page_header($pname . $smallText);
                 <div class="hero-unit span9">
                   <h1>Nothing to see here</h1>
                   <p>Unfortunately this project was created repository-less and as such, there is no source to view.</p>
+				  <? if ($isAdmin) {?>
+                  <p>If you would like this to change, you can <?=$this->Html->link('add a repository here', array('controller' => 'projects', 'action' => 'add_repo', 'project' => $project['Project']['name']))?>.</p>
+				  <? } else { ?>
                   <p>If you would like this to change, please contact an Administrator for this project.</p>
+				  <? } ?>
                 </div>
         </div>
     </div>

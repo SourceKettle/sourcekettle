@@ -50,6 +50,7 @@ class ProjectsController extends AppProjectController {
 			'view'   => 'read',
 			'add' => 'login',
 			'edit'   => 'write',
+			'add_repo'   => 'admin',
 			'delete' => 'write',
 			'markupPreview'  => 'read',
 			'api_history' => 'read',
@@ -273,13 +274,59 @@ class ProjectsController extends AppProjectController {
  */
 	public function edit($project = null) {
 		$project = $this->_getProject($project);
-		$current_user = $this->viewVars['current_user'];
-
+		$repoNone = $this->RepoType->nameToId('None');
+		$this->set('noRepo',  ($project['Project']['repo_type'] == $repoNone));
+		$current_user = $this->Auth->user();
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$saved = $this->Project->save($this->request->data);
 			if ($this->Flash->u($saved)) {
 				$this->log("[ProjectController.edit] user[" . $current_user['id'] . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
+				return $this->redirect(array('project' => $this->Project->id, 'action' => 'view'));
+			}
+		}
+		$this->request->data = $project;
+	}
+
+/**
+ * admin_rename method
+ * Allows site administrators to rename a project and its repository. Not to be used lightly.
+ *
+ * @param string $id
+ * @return void
+ */
+	public function admin_rename($project = null) {
+		$project = $this->_getProject($project);
+		$current_user = $this->Auth->user();
+
+		if ($this->request->is('post') || $this->request->is('put')) {
+			$saved = $this->Project->save($this->request->data);
+			if ($this->Flash->u($saved)) {
+				$this->log("[ProjectController.rename] user[" . $current_user['id'] . "] renamed project[" . $this->Project->id . "]", 'sourcekettle');
+				return $this->redirect(array('project' => $this->Project->id, 'action' => 'view'));
+			}
+		}
+		$this->request->data = $project;
+	}
+/**
+ * add_repo method
+ * Used to create a repository for a project that was created without one.
+ *
+ * @param string $id
+ * @return void
+ */
+	public function add_repo($project = null) {
+		$project = $this->_getProject($project);
+		$this->set('repoTypes', $this->Project->RepoType->find('list'));
+		$current_user = $this->Auth->user();
+
+
+		if ($this->request->is('post') || $this->request->is('put')) {
+			// TODO transactions for great justice, this is just lazy
+			$saved = $this->Project->save($this->request->data);
+			$this->Project->Source->create();
+			if ($this->Flash->u($saved)) {
+				$this->log("[ProjectController.add_repo] user[" . $current_user['id'] . "] added a repository to project[" . $this->Project->id . "]", 'sourcekettle');
 				return $this->redirect(array('project' => $this->Project->id, 'action' => 'view'));
 			}
 		}

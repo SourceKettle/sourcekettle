@@ -120,9 +120,9 @@ class CollaboratorsController extends AppProjectController {
 
 		// Check for existant user
 		$this->Collaborator->User->recursive = -1;
+		// TODO don't attempt to regex for email addresses, we should pass in an ID or an exact email address instead
 		$_email = $this->Useful->extractEmail($data['Collaborator']['name']);
 		$user = $this->Collaborator->User->findByEmail($_email, array('User.id', 'User.name'));
-
 		if (empty($user)) {
 			$this->Flash->error('The user specified does not exist. Please, try again.');
 			return $this->redirect($redirect);

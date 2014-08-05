@@ -27,24 +27,22 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
             <div class="span7">
                 <div class="well">
                     <h3>Project description</h3>
-                    <?php echo $this->Form->create('Project', array('class' => 'form-inline')); ?>
-                    <?php
-					echo $this->Bootstrap->input("description", array( 
+                    <?=$this->Form->create('Project', array('class' => 'form-inline')); ?>
+					<?=$this->Bootstrap->input("description", array( 
 						"input" => $this->Markitup->editor("description", array(
 							"class" => "span7",
 							"label" => false,
 						)),
 						"label" => false,
-					));
-                    ?>
+					));?>
+
                     <h3>Is the project public?</h3>
 
                     <p><?= $this->Form->checkbox("public") ?> Yes, I would like to allow other SourceKettle users to browse my project</p>
 
-                    <?php
-                    echo $this->Bootstrap->button("Submit", array("style" => "primary", 'class' => 'controls'));
+                    <?=$this->Bootstrap->button("Submit", array("style" => "primary", 'class' => 'controls'));?>
 
-                    echo $this->Form->end(); ?>
+                    <?=$this->Form->end();?>
                 </div>
             </div>
             <div class="span5">
@@ -53,6 +51,12 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
                     <p>Please note, this action is <strong>not</strong> reversible. This will also delete any material associated with this project (e.g. Wikis).</p>
                     <?= $this->Bootstrap->button_link("Delete this project", array("controller" => "projects", "action" => "delete", "project" => $project['Project']['name']), array("style" => "danger")) ?>
                 </div>
+				<? if ($noRepo) {?>
+				<div class="well">
+					<h3>Project is repository-less!</h3>
+					Need to add a repository? <?=$this->Html->link('Go here!', array('controller' => 'projects', 'action' => 'add_repo', 'project' => $project['Project']['name']))?>
+				</div>
+				<? } ?>
             </div>
         </div>
     </div>
