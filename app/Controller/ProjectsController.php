@@ -116,7 +116,12 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function view($name = null) {
+
 		$project = $this->_getProject($name);
+
+		if (is_numeric($name)) {
+			return $this->redirect(array('action' => 'view', 'project' => $project['Project']['name']));
+		}
 
 		$numberOfOpenTasks = $this->Project->Task->find('count', array(
 			'conditions' => array(
