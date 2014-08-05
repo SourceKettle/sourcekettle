@@ -78,8 +78,16 @@ class AppController extends Controller {
  * Configures the auth component to use the email column as the user name
  */
 	public function beforeFilter() {
-		//var_dump($this->Auth); exit(0);
+
 		parent::beforeFilter();
+
+		// There are various database models that are simple lists - we will simply load them here
+		// so they can be used as lookups.
+		$this->set('task_priorities', ClassRegistry::init('TaskPriority')->getLookupTable());
+		$this->set('task_statuses',   ClassRegistry::init('TaskStatus')->getLookupTable());
+		$this->set('task_types',      ClassRegistry::init('TaskType')->getLookupTable());
+
+		//var_dump($this->Auth); exit(0);
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
 		// Load config file in

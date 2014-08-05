@@ -18,6 +18,7 @@ $this->Html->css('tasks.view', null, array ('inline' => false));
 
 
 // The following JS will change a comment box into an input box
+// TODO move to separate JS file
 $this->Html->scriptBlock("
     $('.comment').find(':button.edit').bind('click', function() {
 		$('.comment form').hide();

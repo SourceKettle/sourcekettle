@@ -32,6 +32,7 @@ class AppProjectController extends AppController {
 				));
 			}
 		}
+
 	}
 
 	// Returns a hash of action name => access level required (read, write, admin).

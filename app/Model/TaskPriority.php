@@ -47,4 +47,13 @@ class TaskPriority extends AppModel {
 		}
 		return $found['TaskPriority']['id'];
 	}
+
+	public function getLookupTable() {
+		$tp = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'level', 'icon', 'class')));
+		$table = array();
+		foreach ($tp as $p) {
+			$table[ $p['TaskPriority']['id'] ] = $p['TaskPriority'];
+		}
+		return $table;
+	}
 }

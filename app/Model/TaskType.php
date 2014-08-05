@@ -48,4 +48,13 @@ class TaskType extends AppModel {
 		return $found['TaskType']['id'];
 	}
 
+	public function getLookupTable() {
+		$tt = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'icon', 'class')));
+		$table = array();
+		foreach ($tt as $t) {
+			$table[ $t['TaskType']['id'] ] = $t['TaskType'];
+		}
+		return $table;
+	}
+
 }

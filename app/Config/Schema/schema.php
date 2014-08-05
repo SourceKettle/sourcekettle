@@ -48,14 +48,14 @@ class AppSchema extends CakeSchema {
 					$type = ClassRegistry::init('TaskType');
 					$type->create();
 					$type->saveMany( array(
-						array('name' => 'bug'),
-						array('name' => 'duplicate'),
-						array('name' => 'enhancement'),
-						array('name' => 'invalid'),
-						array('name' => 'question'),
-						array('name' => 'wontfix'),
-						array('name' => 'documentation'),
-						array('name' => 'meeting')
+						array('name' => 'bug',           'label' => 'Bug',           'icon' => '', 'class' => 'important'),
+						array('name' => 'duplicate',     'label' => 'Duplicate',     'icon' => '', 'class' => 'warning'),
+						array('name' => 'enhancement',   'label' => 'Enhancement',   'icon' => '', 'class' => 'success'),
+						array('name' => 'invalid',       'label' => 'Invalid',       'icon' => '', 'class' => ''),
+						array('name' => 'question',      'label' => 'Question',      'icon' => '', 'class' => 'info'),
+						array('name' => 'wontfix',       'label' => 'Won\'t Fix',    'icon' => '', 'class' => 'inverse'),
+						array('name' => 'documentation', 'label' => 'Documentation', 'icon' => '', 'class' => 'info'),
+						array('name' => 'meeting',       'label' => 'Meeting',       'icon' => '', 'class' => 'info')
 					));
 					break;
 
@@ -63,11 +63,11 @@ class AppSchema extends CakeSchema {
 					$status = ClassRegistry::init('TaskStatus');
 					$status->create();
 					$status->saveMany( array(
-						array('name' => 'open'),
-						array('name' => 'in progress'),
-						array('name' => 'resolved'),
-						array('name' => 'closed'),
-						array('name' => 'dropped')
+						array('name' => 'open',        'label' => 'Open',        'icon' => '', 'class' => 'important'),
+						array('name' => 'in progress', 'label' => 'In Progress', 'icon' => '', 'class' => 'warning'),
+						array('name' => 'resolved',    'label' => 'Resolved',    'icon' => '', 'class' => 'success'),
+						array('name' => 'closed',      'label' => 'Closed',      'icon' => '', 'class' => 'info'),
+						array('name' => 'dropped',     'label' => 'Dropped',     'icon' => '', 'class' => '')
 					));
 					break;
 
@@ -75,10 +75,10 @@ class AppSchema extends CakeSchema {
 					$prio = ClassRegistry::init('TaskPriority');
 					$prio->create();
 					$prio->saveMany( array(
-						array('name' => 'minor'),
-						array('name' => 'major'),
-						array('name' => 'urgent'),
-						array('name' => 'blocker')
+						array('name' => 'minor',   'level' => 1, 'label' => 'Minor',   'icon' => 'download',         'class' => ''),
+						array('name' => 'major',   'level' => 2, 'label' => 'Major',   'icon' => 'upload',           'class' => ''),
+						array('name' => 'urgent',  'level' => 3, 'label' => 'Urgent',  'icon' => 'exclamation-sign', 'class' => ''),
+						array('name' => 'blocker', 'level' => 4, 'label' => 'Blocker', 'icon' => 'ban-circle',       'class' => '')
 					));
 					break;
 
@@ -300,6 +300,10 @@ class AppSchema extends CakeSchema {
 	public $task_priorities = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'label' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'level' => array('type' => 'integer', 'null' => false, 'default' => 0, 'length' => 10, 'key' => 'index'),
+		'icon' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
@@ -311,6 +315,9 @@ class AppSchema extends CakeSchema {
 	public $task_statuses = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'label' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'icon' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
@@ -322,6 +329,9 @@ class AppSchema extends CakeSchema {
 	public $task_types = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'label' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'icon' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
