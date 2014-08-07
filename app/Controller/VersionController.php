@@ -26,7 +26,7 @@ class VersionController extends AppController {
 	}
 
 /**
- * Register a user via an API call
+ * Get the API version via an API call - no login required
  */
 	public function api_index() {
 		$this->set('data', array(

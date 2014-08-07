@@ -48,10 +48,10 @@ class MilestonesController extends AppProjectController {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow(
+		/*$this->Auth->allow(
 			'api_all',
 			'api_view'
-		);
+		);*/
 	}
 
 /**

@@ -35,10 +35,10 @@ class ProjectsController extends AppProjectController {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow(
+		/*$this->Auth->allow(
 			'api_all',
 			'api_view'
-		);
+		);*/
 	}
 
 	// Which actions need which authorization levels (read-access, write-access, admin-access)

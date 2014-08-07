@@ -31,10 +31,10 @@ class UsersController extends AppController {
 			'register',
 			'activate',
 			'lost_password',
-			'reset_password',
+			'reset_password'/*,
 			'api_all',
 			'api_view',
-			'api_register'
+			'api_register'*/
 		);
 	}
 
