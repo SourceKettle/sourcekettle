@@ -52,6 +52,7 @@ class Source extends AppModel {
  */
 	public function getType() {
 		$types = array(
+			0 => 0,
 			1 => 0,
 			2 => RepoTypes::GIT,
 			3 => RepoTypes::SVN
