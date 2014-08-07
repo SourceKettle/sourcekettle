@@ -53,6 +53,13 @@ class TaskTest extends CakeTestCase {
 
 	public function testFindTaskWithDependencies() {
 		$details = $this->Task->findById(2);
+		// Ignore the modified/created dates on TaskStatus et al, we don't care...
+		unset($details['TaskStatus']['created']);
+		unset($details['TaskStatus']['modified']);
+		unset($details['TaskPriority']['created']);
+		unset($details['TaskPriority']['modified']);
+		unset($details['TaskType']['created']);
+		unset($details['TaskType']['modified']);
 		$this->assertEquals($details, array(
 			'Task' => array(
 				'id' => '2',
@@ -100,20 +107,24 @@ class TaskTest extends CakeTestCase {
 			'TaskType' => array(
 				'id' => '1',
 				'name' => 'bug',
-				'created' => '2014-07-21 07:09:13',
-				'modified' => '2014-07-21 07:09:13'
+				'label' => 'Bug',
+				'icon' => '',
+				'class' => 'important',
 			),
 			'TaskStatus' => array(
 				'id' => '1',
 				'name' => 'open',
-				'created' => '2014-07-21 07:09:13',
-				'modified' => '2014-07-21 07:09:13'
+				'label' => 'Open',
+				'icon' => '',
+				'class' => 'important',
 			),
 			'TaskPriority' => array(
 				'id' => '1',
 				'name' => 'minor',
-				'created' => '2014-07-21 07:09:13',
-				'modified' => '2014-07-21 07:09:13'
+				'level' => '1',
+				'label' => 'Minor',
+				'icon' => 'download',
+				'class' => '',
 			),
 			'Assignee' => array(
 				'password' => null,

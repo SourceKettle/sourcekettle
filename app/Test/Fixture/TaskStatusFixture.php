@@ -10,8 +10,8 @@ class TaskStatusFixture extends CakeTestFixture {
  *
  * @var array
  */
-	public $import = array('model' => 'TaskStatus');
-	public $records = array(
+	public $import = array('model' => 'TaskStatus', 'records' => true);
+	/*public $records = array(
 		array(
 			'id' => 1,
 			'name' => 'open',
@@ -42,6 +42,6 @@ class TaskStatusFixture extends CakeTestFixture {
 			'created' => '2014-07-21 07:09:13',
 			'modified' => '2014-07-21 07:09:13',
 		),
-	);
+	);*/
 
 }

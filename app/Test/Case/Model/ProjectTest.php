@@ -438,6 +438,18 @@ class ProjectTestCase extends CakeTestCase {
 		$this->Project->id = 2;
 		$this->Project->read();
 		$backlog = $this->Project->getProjectBacklog();
+
+		// Ignore the modified/created dates on TaskStatus et al, we don't care...
+		foreach ($backlog as $i => $b) {
+			unset($b['TaskStatus']['created']);
+			unset($b['TaskStatus']['modified']);
+			unset($b['TaskPriority']['created']);
+			unset($b['TaskPriority']['modified']);
+			unset($b['TaskType']['created']);
+			unset($b['TaskType']['modified']);
+			$backlog[$i] = $b;
+		}
+
 		$this->assertEquals($backlog, array(array(
 			'Task' => array(
 				'id' => '3',
@@ -485,20 +497,24 @@ class ProjectTestCase extends CakeTestCase {
 			'TaskType' => array(
 				'id' => '1',
 				'name' => 'bug',
-				'created' => '2014-07-21 07:09:13',
-				'modified' => '2014-07-21 07:09:13'
+				'label' => 'Bug',
+				'icon' => '',
+				'class' => 'important',
 			),
 			'TaskStatus' => array(
 				'id' => '2',
 				'name' => 'in progress',
-				'created' => '2014-07-21 07:09:13',
-				'modified' => '2014-07-21 07:09:13'
+				'label' => 'In Progress',
+				'icon' => '',
+				'class' => 'warning',
 			),
 			'TaskPriority' => array(
 				'id' => '3',
 				'name' => 'urgent',
-				'created' => '2014-07-21 07:09:13',
-				'modified' => '2014-07-21 07:09:13'
+				'label' => 'Urgent',
+				'level' => 3,
+				'icon' => 'exclamation-sign',
+				'class' => '',
 			),
 			'Assignee' => array(
 				'password' => null,

@@ -10,8 +10,8 @@ class TaskTypeFixture extends CakeTestFixture {
  *
  * @var array
  */
-	public $import = array('model' => 'TaskType');
-	public $records = array(
+	public $import = array('model' => 'TaskType', 'records' => true);
+	/*public $records = array(
 		array(
 			'id' => 1,
 			'name' => 'bug',
@@ -60,5 +60,5 @@ class TaskTypeFixture extends CakeTestFixture {
 			'created' => '2014-07-21 07:09:13',
 			'modified' => '2014-07-21 07:09:13',
 		),
-	);
+	);*/
 }
