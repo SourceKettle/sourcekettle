@@ -63,7 +63,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                 <? foreach ( $projects as $project ) : ?>
                     <tr>
                         <td>
-                            <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['id'], 'admin' => false))?>
+                            <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['name'], 'admin' => false))?>
                         </td>
                         <td>
                             <div id='project_description'>
@@ -107,6 +107,22 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
 							array(
 								'size' => 'mini',
 								'title' => __('Edit project collaborators'),
+								'escape' => false
+							)
+						)?>
+						<?= $this->Bootstrap->button_link(
+							$this->Bootstrap->icon('random'),
+							$this->Html->url(
+								array(
+									'project' => $project['Project']['name'],
+									'action' => 'rename',
+									'controller' => 'projects',
+									'admin' => true
+								 )
+							),
+							array(
+								'size' => 'mini',
+								'title' => __('Rename project'),
 								'escape' => false
 							)
 						)?>

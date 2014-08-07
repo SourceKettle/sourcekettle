@@ -305,10 +305,10 @@ class ProjectsController extends AppProjectController {
 		$current_user = $this->Auth->user();
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$saved = $this->Project->save($this->request->data);
+			$saved = $this->Project->rename($this->Project->id, $this->request->data['Project']['name']);
 			if ($this->Flash->u($saved)) {
 				$this->log("[ProjectController.rename] user[" . $current_user['id'] . "] renamed project[" . $this->Project->id . "]", 'sourcekettle');
-				return $this->redirect(array('project' => $this->Project->id, 'action' => 'view'));
+				return $this->redirect(array('project' => $this->Project->id, 'action' => 'view', 'admin' => false));
 			}
 		}
 		$this->request->data = $project;
