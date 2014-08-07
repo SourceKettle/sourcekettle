@@ -388,11 +388,9 @@ class UsersController extends AppController {
 		}
 
 		if ($this->request->is('post')) {
-			if ($this->User->save($this->request->data)) {
-				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
+			if ($this->Flash->u($this->User->save($this->request->data))) {
 				$this->log("[UsersController.admin_edit] user[" . $this->Auth->user('id') . "] edited details of user[" . $this->User->id . "]", 'sourcekettle');
-			} else {
-				$this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
+				return $this->redirect(array('action' => 'index'));
 			}
 		}
 		return $this->redirect(array('controller' => 'users', 'action' => 'admin_view', $this->User->id));
