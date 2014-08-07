@@ -513,10 +513,10 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the page content looks roughly OK
 		$this->assertContains('<h1>Administration <small>da vinci code locator</small>', $this->view);
-		$this->assertRegexp('/<a href=".*\/projects\/view\/private">private<\/a>/', $this->view);
-		$this->assertRegexp('/<a href=".*\/projects\/view\/public">public<\/a>/', $this->view);
-		$this->assertRegexp('/<a href=".*\/projects\/view\/personal">personal<\/a>/', $this->view);
-		$this->assertRegexp('/<a href=".*\/projects\/view\/personal_public">personal_public<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/private\/view">private<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/public\/view">public<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/personal\/view">personal<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/personal_public\/view">personal_public<\/a>/', $this->view);
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
