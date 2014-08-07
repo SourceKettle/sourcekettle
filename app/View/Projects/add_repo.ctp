@@ -26,7 +26,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
             <div class="span7">
                 <div class="well">
                     <h3>Add a version control repository to your project</h3>
-                    <?=$this->Form->create('Project', array('class' => 'form-inline')); ?>
+                    <?=$this->Form->create('Project', array('class' => 'form-horizontal')); ?>
 
 			        <?=$this->Bootstrap->radio("repo_type", array(
 			            "options" => $repoTypes,
