@@ -243,6 +243,10 @@ class SourceController extends AppProjectController {
 			throw new NotFoundException(__('Invalid Location'));
 		}
 
+		$finfo = new finfo(FILEINFO_MIME);
+		$mime = $finfo->buffer($blob['content']);
+
+		$this->set('mimeType', $mime);
 		$this->set('sourceFile', $blob['content']);
 	}
 
