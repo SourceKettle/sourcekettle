@@ -1,4 +1,5 @@
 <?php
+
     $fileContent = preg_split("/\015\012|\015|\012/", $tree['content']);
     $size = sizeof($fileContent);
 ?>
@@ -23,6 +24,12 @@
                 </div>
             </div>
         </div>
+
+		<? // TODO this is a quick and dirty hack to make sure we only display
+		   // text-y things and image-y things. Long term something like
+		   // http://viewerjs.org/ would be a lot nicer!
+		if (preg_match('/^text\//', $tree['mimeType'])) {?>
+
         <pre class="prettyprint"><code><?php
             $wordWidth = strlen((string) $size);
             $i = 1;
@@ -36,5 +43,15 @@
                 echo '<span class="nocode"> '.$i++.$space.'</span> '.htmlentities($line)."\n";
             }
         ?></code></pre>
+
+		<?} elseif (preg_match('/^image\//', $tree['mimeType'])) {?>
+
+		<img alt='An image' src='<?=$this->Source->fetchRawUrl($project['Project']['name'], $branch, $path)?>'/>
+
+		<?} else {?>
+
+		(can't render file, take a look at the <a href='<?=$this->Source->fetchRawUrl($project['Project']['name'], $branch, $path)?>'>raw view</a> instead!)
+
+		<? } ?>
     </div>
 </div>

@@ -274,6 +274,13 @@ class SourceController extends AppProjectController {
 				throw new NotFoundException(__('Invalid Location'));
 			}
 
+			// TODO this should probably go in the GitCake plugin
+			if ($blob['type'] == 'blob') {
+				$finfo = new finfo(FILEINFO_MIME);
+				$blob['mimeType'] = $finfo->buffer($blob['content']);
+			}
+
+
 			$this->set('tree', $blob);
 			$this->set("path", $path);
 			$this->set("branch", $branch);
