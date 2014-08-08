@@ -51,14 +51,21 @@ $(function initTaskDroplists() {
         minor:   "download"
    };
 
-    var apiURL = '../../../..//api/tasks/update';
+    var apiURL = '../../../../api/tasks/update';
 
     $('.sprintboard-droplist').each(function(index, column){equaliseColumns(column);});
 
     // Make all columns and the icebox connected sortable lists
+	w = $($('.sprintboard-droplist')[1]).width();
+
     $( ".sprintboard-droplist" ).sortable({
         cursor: "move",
-        cursorAt: {top: 20, left: 20},
+
+        //cursorAt: {left: 20, top: 20},
+		cursorAt: {
+			left: Math.floor(w / 2),
+		},
+
         connectWith: ".sprintboard-droplist",
 
         items: "li.draggable",
@@ -71,10 +78,13 @@ $(function initTaskDroplists() {
 
         // Rotate by 2 degrees while being dragged
         start: function(event, ui){
-            ui.item.css('transform', 'rotate(2deg)');
+
 			// Set the lozenge width to the sprintboard column width
 			// Avoids dragging a massive lozenge from the icebox
-			ui.item.width($($('.sprintboard-droplist')[1]).width());
+			ui.item.width(w);
+
+			// Rotate, because it looks nifty
+            ui.item.css('transform', 'rotate(2deg)');
 
 			// Glowy edges on all valid drop targets
 			$('.sprintboard-droplist').addClass('highlight-droptarget');
