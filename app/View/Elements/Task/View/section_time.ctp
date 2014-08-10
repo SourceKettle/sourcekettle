@@ -25,11 +25,11 @@ if (!$closed){
 }
 ?>
 <h3>
-    <?= $this->DT->t('time.title') ?>
+    <?= __("Allocated time") ?>
     <? if (!$closed){
-    echo $this->Bootstrap->button_link($this->DT->t('time.button'), '#addTimeModal', array('size' => 'mini', 'data-toggle' => 'modal', 'class' => 'timeButton'));
+    echo $this->Bootstrap->button_link(__("Log time"), '#addTimeModal', array('size' => 'mini', 'data-toggle' => 'modal', 'class' => 'timeButton'));
     } else {
-        echo $this->Bootstrap->button_link($this->DT->t('time.button'), '#addTimeModal', array('size' => 'mini', 'data-toggle' => 'modal', 'class' => 'timeButton', 'disabled'));
+        echo $this->Bootstrap->button_link(__("Log time"), '#addTimeModal', array('size' => 'mini', 'data-toggle' => 'modal', 'class' => 'timeButton', 'disabled'));
     }?>
 </h3>
 <div>

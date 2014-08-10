@@ -23,6 +23,11 @@ if(isset($span) && $span){
 	$span="";
 }
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
+	if($draggable){
+		echo "<li class='draggable' data-taskid='".h($task['Task']['id'])."'>";
+	} else {
+		echo "<li>";
+	}
 ?>
 <div id="task_<?= $task['Task']['id'] ?>" 
   class="task-container<?=$span?>"
@@ -65,3 +70,4 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
         </div>
     </div>
 </div>
+</li>

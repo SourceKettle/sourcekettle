@@ -500,6 +500,7 @@ class UsersController extends AppController {
 	public function delete() {
 		// Check whether the user account is SourceKettle-managed (if not it's an LDAP
 		// account or similar, so we can't really delete it properly)
+		// TODO this is totally wrong and broken!
 		$this->User->id = $this->Auth->user('id');
 		$this->request->data = $this->User->read();
 		$this->set('external_account', false);

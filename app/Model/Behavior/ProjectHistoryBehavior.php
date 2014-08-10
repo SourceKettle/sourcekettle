@@ -97,14 +97,18 @@ class ProjectHistoryBehavior extends ModelBehavior {
 	public function afterSave(Model $Model, $created = false) {
 		if (!$created) {
 			// Some fields have been updated
-			foreach ($this->_cache[$Model->name][$Model->id] as $field => $value) {
+			foreach ($this->_cache[$Model->name][$Model->id] as $field => $old) {
+				$new = $Model->field($field);
+				if ($old == $new) {
+					continue;
+				}
 				$Model->Project->ProjectHistory->logC(
 					strtolower($Model->name),
 					$Model->id,
 					$this->getTitleForHistory($Model),
 					$field,
-					$value,
-					$Model->field($field),
+					$old,
+					$new,
 					$this->_log_user['id'],
 					$this->_log_user['name']
 				);

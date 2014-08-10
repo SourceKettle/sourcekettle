@@ -63,7 +63,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                 <? foreach ( $projects as $project ) : ?>
                     <tr>
                         <td>
-                            <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['name'], 'admin' => false))?>
+                            <?= $this->Html->link($project['Project']['name'], array('controller' => 'projects', 'action' => 'view', 'project' => $project['Project']['name'], 'admin' => false))?>
                         </td>
                         <td>
                             <div id='project_description'>
@@ -128,7 +128,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
 						)?>
                         <?= $this->Bootstrap->button_form(
                             $this->Bootstrap->icon('eject', 'white'),
-                            $this->Html->url(array('controller' => 'projects', 'action' => 'admin_delete', $project['Project']['id']), true),
+                            $this->Html->url(array('controller' => 'projects', 'action' => 'admin_delete', 'project' => $project['Project']['name']), true),
                             array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
                             __("Are you sure you want to delete ") . h($project['Project']['name']) . "?"
                         )?>

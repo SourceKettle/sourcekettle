@@ -89,7 +89,7 @@ echo $this->element('Task/modal_assign');
                                                 array('escape' => false, 'class' => '')
                                             ) ?>
                                         <? else : ?>
-                                            <?= __(" No-one currently assigned") ?>
+                                            <?= __("No-one currently assigned") ?>
                                         <? endif; ?>
                                     </span>
                                 </h5>

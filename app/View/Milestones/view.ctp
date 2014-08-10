@@ -37,14 +37,14 @@ $this->Html->script("milestones.droplist", array ('inline' => false));
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'classes' => 'sprintboard-column')
+            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'classes' => 'sprintboard-column', 'draggable' => $draggable)
         ) ?>
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'classes' => 'sprintboard-column')
+            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'classes' => 'sprintboard-column', 'draggable' => $draggable)
         ) ?>
         <?= $this->element('Task/Board/column',
-            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'classes' => 'sprintboard-column')
+            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'classes' => 'sprintboard-column', 'draggable' => $draggable)
         ) ?>
 
 	<!-- End primary columns -->
@@ -53,7 +53,7 @@ $this->Html->script("milestones.droplist", array ('inline' => false));
     <!-- Icebox row -->
 	<div class="row-fluid span12">
         <?= $this->element('Task/Board/column',
-            array('tasks' => $iceBox, 'status' => 'dropped', 'title' => __('Ice Box'), 'span' => '12', 'classes' => 'sprintboard-icebox')
+            array('tasks' => $iceBox, 'status' => 'dropped', 'title' => __('Ice Box'), 'span' => '12', 'classes' => 'sprintboard-icebox', 'draggable' => $draggable)
         ) ?>
 
 	<!-- End icebox -->

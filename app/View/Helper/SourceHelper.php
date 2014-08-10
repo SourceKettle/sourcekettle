@@ -37,33 +37,33 @@ class SourceHelper extends AppHelper {
 		return '<i class="icon-' . $this->icons[$type] . '"></i>';
 	}
 
-	public function fetchTreeUrl($repo, $branch, $file) {
+	public function fetchTreeUrl($repo, $branch, $file, $full = true) {
 		$url = $this->Html->url(array(
 			'project' => $repo,
 			'branch'	=> $branch,
 			'action'	=> 'tree',
 			'ajax'	=> false,
-		), true);
+		), $full);
 		return "{$url}/{$file}";
 	}
 
-	public function fetchRawUrl($repo, $branch, $file) {
+	public function fetchRawUrl($repo, $branch, $file, $full = true) {
 		$url = $this->Html->url(array(
 			'project' => $repo,
 			'branch'	=> $branch,
 			'action'	=> 'raw',
 			'ajax'	=> false,
-		), true);
+		), $full);
 		return "{$url}/{$file}";
 	}
 
-	public function fetchHistoryUrl($repo, $branch, $file, $page = 1) {
+	public function fetchHistoryUrl($repo, $branch, $file, $page = 1, $full = true) {
 		$url = $this->Html->url(array(
 			'project' => $repo,
 			'branch'	=> $branch,
 			'action'	=> 'commits',
 			'ajax'	=> false,
-		), true);
+		), $full);
 		return "{$url}/{$file}/page:$page";
 	}
 }

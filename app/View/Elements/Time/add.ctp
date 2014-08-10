@@ -30,7 +30,7 @@ echo $this->Bootstrap->input("task_id", array(
 ));
 
 echo $this->Bootstrap->input("mins", array(
-    "input" => $this->Form->text("mins", array("class" => "span{$span}", "placeholder" => "1h 30m", "autofocus" => "true")),
+    "input" => $this->Form->text("mins", array("class" => "span{$span}", "placeholder" => "e.g. 1h 30m", "autofocus" => "true")),
     "label" => __("Time Taken"),
     "help_block" => __("The amount of time youve taken (in the format #h #m)")
 ));

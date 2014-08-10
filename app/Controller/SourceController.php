@@ -269,7 +269,6 @@ class SourceController extends AppProjectController {
 			}
 
 			$blob = $this->Source->Blob->fetch($branch, $path);
-
 			if (!in_array($blob['type'], array('tree', 'blob'))) {
 				throw new NotFoundException(__('Invalid Location'));
 			}
