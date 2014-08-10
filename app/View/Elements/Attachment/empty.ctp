@@ -17,5 +17,5 @@
 $this->Html->css('pages/attachments', null, array ('inline' => false));
 ?>
 <div class="emptyFiles">
-    <h4><?= $this->DT->t('empty.text', array('action'=>'element.empty')) ?></h4>
+    <h4><?= __("No files of this type") ?></h4>
 </div>

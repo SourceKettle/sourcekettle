@@ -43,13 +43,13 @@ $_levels = array(
         <div class="row">
             <div class="span6">
                 <div class="well">
-                    <h3><?= $this->DT->t('users.header') ?></h3>
+                    <h3><?= __("Users on this project") ?></h3>
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th width="60%"><?= $this->DT->t('users.users') ?></th>
-                                <th><?= $this->DT->t('users.role') ?></th>
-                                <th width="25%"><?= $this->DT->t('users.actions') ?></th>
+                                <th width="60%"><?= __("User") ?></th>
+                                <th><?= __("Role") ?></th>
+                                <th width="25%"><?= __("Actions") ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -111,7 +111,7 @@ $_levels = array(
                     )
                 );
 
-                echo '<h3>'. $this->DT->t('add.header') .'</h3>';
+                echo '<h3>'. __("Add a User") .'</h3>';
 
                 echo $this->element('components/user_typeahead_input',
                     array(

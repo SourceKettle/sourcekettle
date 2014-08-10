@@ -17,11 +17,11 @@
 ?>
 <table class="well table table-striped">
     <tr>
-        <th><?= $this->DT->t('table.header.filename', array('action'=>'element.full')) ?></th>
-        <th width="10%"><?= $this->DT->t('table.header.size', array('action'=>'element.full')) ?></th>
-        <th width="20%"><?= $this->DT->t('table.header.created', array('action'=>'element.full')) ?></th>
+        <th><?= __("Filename") ?></th>
+        <th width="10%"><?=__("Size")?></th>
+        <th width="20%"><?= __("Created")?> </th>
         <? if ($isAdmin) : ?>
-            <th width="10%"><?= $this->DT->t('table.header.options', array('action'=>'element.full')) ?></th>
+            <th width="10%"><?=__("Options")?></th>
         <? endif; ?>
     </tr>
 <? foreach ($attachments as $attachment) :

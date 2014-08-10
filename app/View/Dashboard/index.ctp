@@ -13,7 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-  echo $this->Bootstrap->page_header($this->DT->t('header.text') . " <small>" . $this->DT->t('header.small.text') . " " . h(strtolower($current_user['name'])) . "</small>");
+  echo $this->Bootstrap->page_header(__("Dashboard") . " <small>" . __("welcome") . " " . h(strtolower($current_user['name'])) . "</small>");
 
   /*if ($DEBUG) {
     echo $this->element('beta_warning'); // TODO show this for dev versions
@@ -41,7 +41,7 @@
                 'left' => array(
                     array(
                         array(
-                            'text' => $this->DT->t('projects.viewall.text'),
+                            'text' => __("View all your projects"),
                             'url' => array(
                                 'action' => '.',
                                 'controller' => 'projects',
@@ -52,7 +52,7 @@
                 'right' => array(
                     array(
                         array(
-                            'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar', 'controller' => 'projects')),
+                            'text' => __("New Project"),
                             'url' => array(
                                 'action' => 'add',
                                 'controller' => 'projects',
