@@ -13,7 +13,6 @@ class AdminControllerTest extends ControllerTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.admin'
 	);
 
 /**

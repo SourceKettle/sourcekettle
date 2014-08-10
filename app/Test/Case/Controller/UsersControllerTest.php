@@ -26,8 +26,6 @@ class UsersControllerTest extends ControllerTestCase {
 		'app.time',
 		'app.task_dependency',
 		'app.source',
-		'app.blob',
-		'app.commit',
 		'app.project_history',
 		'app.attachment',
 		'app.email_confirmation_key',
