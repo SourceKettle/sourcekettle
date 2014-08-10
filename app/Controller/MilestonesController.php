@@ -166,7 +166,7 @@ class MilestonesController extends AppProjectController {
 		$backlog = $this->Milestone->openTasksForMilestone($id);
 		$inProgress = $this->Milestone->inProgressTasksForMilestone($id);
 		$completed = $this->Milestone->closedOrResolvedTasksForMilestone($id);
-		$iceBox= $this->Milestone->droppedTasksForMilestone($id);
+		$iceBox = $this->Milestone->droppedTasksForMilestone($id);
 
 		// Sort function for tasks
 		// TODO wtf? Time comparison for priority IDs?!
@@ -181,8 +181,11 @@ class MilestonesController extends AppProjectController {
 		// Final value is min size of the board
 		$max = max(count($backlog), count($inProgress), count($completed), 3);
 
-		$this->set('milestone', $milestone);
+		// If the user has write access, they can drag and drop tasks
+		$draggable = $this->Milestone->Project->hasWrite($this->Auth->user('id'));
+		$this->set('draggable', $draggable);
 
+		$this->set('milestone', $milestone);
 		$this->set('backlog_empty', $max - count($backlog));
 		$this->set('inProgress_empty', $max - count($inProgress));
 		$this->set('completed_empty', $max - count($completed));
@@ -207,6 +210,10 @@ class MilestonesController extends AppProjectController {
 		$wontHave   = $this->Project->getProjectBacklog();
 
 		$this->set('milestone', $milestone);
+
+		// If the user has write access, they can drag and drop tasks
+		$draggable = $this->Milestone->Project->hasWrite($this->Auth->user('id'));
+		$this->set('draggable', $draggable);
 
 		$this->set(compact('mustHave', 'shouldHave', 'couldHave', 'mightHave', 'wontHave'));
 	}
