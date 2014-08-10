@@ -19,7 +19,7 @@ function equaliseColumns(column) {
 // Initialise the drag and drop task lists on this page
 $(function initTaskDroplists() {
 
-    // Labels for the various statuses - TODO should be i18n-ified
+    // Labels for the various statuses - TODO should be loaded from database
     var taskStatusLabels = {
         open: "Open",
         'in progress': "In Progress",

@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 // Submit the serialize data on submit click
-$this->Js->get('#TimeMyaddForm')->event('submit',
+/*$this->Js->get('#TimeMyaddForm')->event('submit',
     $this->Js->request(
         array('action' => 'add', 'project' => $project['Project']['name'], 'controller' => 'times'),
         array(
@@ -26,12 +26,12 @@ $this->Js->get('#TimeMyaddForm')->event('submit',
             'method' => 'POST'
         )
     )."$('#addTimeModal').modal('hide');"
-);
+);*/
 ?>
 <div class="modal hide" id="addTimeModal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">x</button>
-        <h4>Log time for this Project</h4>
+        <h4><?=__("Log time for this Project")?></h4>
     </div>
     <?= $this->Form->create('Time', array('id' => 'TimeMyaddForm', 'default' => false, 'class' => 'form-horizontal', 'style' => 'margin-bottom: 0px;')) ?>
     <div class="modal-body">
@@ -40,6 +40,12 @@ $this->Js->get('#TimeMyaddForm')->event('submit',
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Close</a>
         <?= $this->Bootstrap->button("Submit", array("style" => "primary")) ?>
+		<?= $this->Js->submit('Log time', array(
+			'update' => '#flashes',
+			'div' => false,
+			'type' => 'json',
+			'async' => false
+		)) ?>
     </div>
     <?= $this->Form->end() ?>
 </div>

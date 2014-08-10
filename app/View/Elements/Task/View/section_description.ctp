@@ -13,7 +13,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h3><?= $this->DT->t('description.title') ?></h3>
+<h3><?= __("Description") ?></h3>
 <div style="word-wrap: break-word;">
     <p><?= $this->Markitup->parse($task['Task']['description']) ?></p>
 </div>
