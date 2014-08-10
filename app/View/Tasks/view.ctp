@@ -73,12 +73,12 @@ echo $this->element('Task/modal_assign');
                                     <?= $this->Bootstrap->icon('pencil') ?>
                                     <small>
                                         <?= h($task['Owner']['name']) ?>
-                                        <?= $this->DT->t('history.create.action') ?>
+                                        <?= __("created this task") ?>
                                         <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
                                     </small>
                                     <span class="pull-right">
                                         <? if (!is_null($task['Assignee']['id'])) : ?>
-                                            <?= $this->DT->t('history.assignee.assigned') ?>
+                                            <?= __("Assigned to:") ?>
                                             <?= $this->Html->link(
                                                 $task['Assignee']['name'],
                                                 array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
@@ -89,7 +89,7 @@ echo $this->element('Task/modal_assign');
                                                 array('escape' => false, 'class' => '')
                                             ) ?>
                                         <? else : ?>
-                                            <?= $this->DT->t('history.assignee.none') ?>
+                                            <?= __(" No-one currently assigned") ?>
                                         <? endif; ?>
                                     </span>
                                 </h5>
@@ -162,12 +162,12 @@ echo $this->element('Task/modal_assign');
 								"input" => $this->Markitup->editor("comment", array(
 									"class" => "span11",
 									"label" => false,
-									"placeholder" => $this->DT->t('history.newcomment.placeholder')
+									"placeholder" => __("Add a new comment to this task...")
 								)),
 								"label" => false,
 							));
 
-                            echo $this->Bootstrap->button($this->DT->t('history.newcomment.submit'), array("style" => "primary", 'class' => 'controls'));
+                            echo $this->Bootstrap->button(__("Comment"), array("style" => "primary", 'class' => 'controls'));
                             echo $this->Form->end();
                             ?>
                         </div>
