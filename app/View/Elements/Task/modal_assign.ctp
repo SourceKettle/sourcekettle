@@ -18,11 +18,10 @@
     <div class="modal-body">
         <button type="button" class="close" data-dismiss="modal">x</button>
         <p>
-            <?= $this->DT->t('modal.assign.body') ?>
-            '<?= $this->DT->t('modal.assign.submit') ?>'
+            <?= __('To assign this task to a user on this project, enter their name in the box below and select "Assign"') ?>
         </p>
         <?php
-            echo $this->Form->create('TaskAssignee', array('class' => 'form-inline'));
+            echo $this->Form->create('TaskAssignee', array('class' => 'form-inline', 'url' => array('controller' => 'tasks', 'action' => 'assign', 'project' => $project['Project']['name'], $task['Task']['id'])));
 			$assignee_id = isset($task['Task']['assignee_id'])? $task['Task']['assignee_id']: 0;
             echo $this->Form->input('assignee', array(
                 'options' => $collaborators,
@@ -36,8 +35,8 @@
         ?>
     </div>
     <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal"><?= $this->DT->t('modal.assign.close') ?></a>
-        <?= $this->Bootstrap->button($this->DT->t('modal.assign.submit'), array("style" => "success")) ?>
+        <a href="#" class="btn" data-dismiss="modal"><?= __('Close') ?></a>
+        <?= $this->Bootstrap->button(__('Assign'), array("style" => "success")) ?>
     </div>
     <?= $this->Form->end() ?>
 </div>

@@ -156,7 +156,7 @@ echo $this->element('Task/modal_assign');
                     <div class="span11">
                         <div class="well col">
                             <?php
-                            echo $this->Form->create('TaskComment', array('class' => 'form'));
+                            echo $this->Form->create('TaskComment', array('class' => 'form', 'url' => array('controller' => 'tasks', 'action' => 'comment', 'project' => $project['Project']['name'], $task['Task']['id'])));
 
 							echo $this->Bootstrap->input("comment", array(
 								"input" => $this->Markitup->editor("comment", array(

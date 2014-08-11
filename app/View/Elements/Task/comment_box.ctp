@@ -14,7 +14,6 @@
  */
 ?>
 <div class="row-fluid">
-
     <div class="span1">
         <?= $this->Html->link(
             $this->Gravatar->image($comment['User']['email'], array('d' => 'mm')),
@@ -27,18 +26,18 @@
             <?php if ($current_user['is_admin'] == 1 || $current_user['id'] == $comment['User']['id']): ?>
             	<button type="button" class="close delete"><?= $this->Bootstrap->icon('remove-circle'); ?></button>
                 <button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
-				<?= $this->Form->create ('TaskCommentDelete', array ('class' => 'hide comment-delete')); ?>
+				<?= $this->Form->create ('TaskCommentDelete', array ('class' => 'hide comment-delete', 'url' => array('controller' => 'tasks', 'action' => 'deleteComment', 'project' => $project['Project']['name'], $comment['TaskComment']['id']))); ?>
 				<?= $this->Form->hidden ('id', array ('value' => $comment['TaskComment']['id'])); ?>
 				<?= $this->Form->end(); ?>
             <?php endif; ?>
-            <h5><?= $this->Bootstrap->icon('comment') ?><small> <?= h($comment['User']['name']) ?> <?= $this->DT->t('history.commented.action') ?> <?= $this->Time->timeAgoInWords($comment['TaskComment']['created']) ?></small></h5>
+            <h5><?= $this->Bootstrap->icon('comment') ?><small> <?= h($comment['User']['name']) ?> <?= __('commented') ?> <?= $this->Time->timeAgoInWords($comment['TaskComment']['created']) ?></small></h5>
             <hr />
             <p><?= $this->Markitup->parse($comment['TaskComment']['comment']) ?></p>
-			<?= $this->Form->create('TaskCommentEdit', array ('class' => 'hide')); ?>
+			<?= $this->Form->create('TaskCommentEdit', array ('class' => 'hide', 'url' => array('controller' => 'tasks', 'action' => 'updateComment', 'project' => $project['Project']['name'], $comment['Task']['id']))); ?>
 			<?= $this->Form->hidden('id', array ('value' => $comment['TaskComment']['id'])); ?>
 			<?= $this->Bootstrap->input("comment", array(
     			"input" => $this->Form->textarea("comment", array("value" => $comment['TaskComment']['comment'], "class" => "span12", "rows" => 5)),"label" => false)); ?>
-			<?= $this->Bootstrap->button($this->DT->t('history.editcomment.submit'), array("style" => "primary", 'class' => 'controls')); ?>
+			<?= $this->Bootstrap->button(__("Update comment"), array("style" => "primary", 'class' => 'controls')); ?>
 			<?= $this->Form->end(); ?>
        </div>
     </div>

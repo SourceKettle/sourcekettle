@@ -51,11 +51,6 @@ class TasksController extends AppProjectController {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow(
-			'api_all',
-			'api_view',
-			'api_update'
-		);
 
 		$this->Security->unlockedActions = array (
 			'starttask',
@@ -74,6 +69,9 @@ class TasksController extends AppProjectController {
 			'nobody'  => 'read',
 			'all'  => 'read',
 			'view'   => 'read',
+			'comment' => 'write',
+			'deleteComment' => 'write',
+			'updateComment' => 'write',
 			'edit'   => 'write',
 			'starttask' => 'write',
 			'stoptask' => 'write',
@@ -82,6 +80,8 @@ class TasksController extends AppProjectController {
 			'freeze' => 'write',
 			'api_marshalled' => 'read',
 			'api_all' => 'read',
+			'api_view' => 'read',
+			'api_update' => 'write',
 		);
 	}
 
@@ -173,96 +173,9 @@ class TasksController extends AppProjectController {
 	public function view($project = null, $id = null) {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
-		$current_user = $this->viewVars['current_user'];
+		$current_user = $this->Auth->user();
 
-		// If a User has commented
-		if ($this->request->is('post') && isset($this->request->data['TaskComment'])) {
 
-			$this->Task->TaskComment->create();
-
-			$this->request->data['TaskComment']['task_id'] = $id;
-			$this->request->data['TaskComment']['user_id'] = $current_user['id'];
-
-			if ($this->Task->TaskComment->save($this->request->data)) {
-				$this->Flash->info('The comment has been added successfully');
-				unset($this->request->data['TaskComment']);
-			} else {
-				$this->Flash->error('The comment could not be saved. Please, try again.');
-			}
-
-			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-			return;
-		}
-
-		// If a user is deleting a comment
-		if ($this->request->is('post') && isset($this->request->data['TaskCommentDelete'])) {
-			try
-			{
-				$this->Task->TaskComment->open($this->request->data['TaskCommentDelete']['id'], $task['Task']['id'], true, true);
-			}
-			catch ( ForbiddenException $e )
-			{
-				$this->Flash->error (__('You don\'t have permission to delete that comment'));
-				return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-				return;
-			}
-
-			if ($this->Task->TaskComment->delete ($this->request->data['TaskCommentDelete']['id'])) {
-				$this->Flash->info ('The comment has been deleted successfully.');
-			} else {
-				$this->Flash->error ('The comment could not be deleted. Please, try again.');
-			}
-
-			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-			return;
-		}
-
-		// If a User has updated a comment
-		if ($this->request->is('post') && isset($this->request->data['TaskCommentEdit'])) {
-			$this->request->data['TaskComment'] = array(
-				'comment' => $this->request->data['TaskCommentEdit']['comment'],
-				'id' => $this->request->data['TaskCommentEdit']['id']
-			);
-			unset($this->request->data['TaskCommentEdit']);
-
-			try {
-				$this->Task->TaskComment->open($this->request->data['TaskComment']['id'], $task['Task']['id'], true, true);
-			} catch (ForbiddenException $e) {
-				$this->Flash->error (__('You don\'t have permission to edit that comment'));
-				return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-				return;
-			}
-
-			if ($this->Task->TaskComment->save($this->request->data)) {
-				$this->Flash->info('The comment has been updated successfully');
-				unset($this->request->data['TaskComment']);
-			} else {
-				$this->Flash->error('The comment could not be updated. Please, try again.');
-			}
-
-			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-			return;
-		}
-
-		// If a User has assigned someone
-		if ($this->request->is('post') && isset($this->request->data['TaskAssignee']) && isset($this->request->data['TaskAssignee']['assignee'])) {
-
-			$assigneeId = $this->request->data['TaskAssignee']['assignee'];
-			if ($assigneeId == 0) {
-				$this->Task->set('assignee_id', $assigneeId);
-				$this->Flash->u($this->Task->save());
-			} elseif ($this->Task->Project->hasWrite($assigneeId)) {
-				$this->Task->set('assignee_id', $assigneeId);
-				$this->Flash->u($this->Task->save());
-			} else {
-				$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
-			}
-
-			unset($this->request->data['TaskAssignee']);
-
-			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
-			return;
-		}
 
 		// Re-read to pick up changes
 		$this->set('task', $this->Task->open($id));
@@ -346,6 +259,135 @@ class TasksController extends AppProjectController {
 		$collabs[0] = "None";
 		ksort($collabs);
 		$this->set('collaborators', $collabs);
+	}
+
+	public function assign($project = null, $id = null) {
+		$project = $this->_getProject($project);
+		$task = $this->Task->open($id);
+
+		if (!$this->request->is('post') || !isset($this->request->data['TaskAssignee']) || !isset($this->request->data['TaskAssignee']['assignee'])) {
+			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+		}
+
+		$assigneeId = $this->request->data['TaskAssignee']['assignee'];
+		if ($assigneeId == 0 || $this->Task->Project->hasWrite($assigneeId)) {
+			$this->Task->set('assignee_id', $assigneeId);
+			$this->Flash->u($this->Task->save());
+		} else {
+			$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
+		}
+	
+		unset($this->request->data['TaskAssignee']);
+	
+		return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+	}
+
+/**
+ * Post a comment for a task
+ */
+	public function comment($project = null, $id = null) {
+		$project = $this->_getProject($project);
+		$task = $this->Task->open($id);
+
+		// No comment posted, redirect to the task
+		if (!$this->request->is('post') || !isset($this->request->data['TaskComment'])) {
+			return $this->redirect(array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+		}
+
+		$this->Task->TaskComment->create();
+
+		$this->request->data['TaskComment']['task_id'] = $id;
+		$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+		// NB do not add a flash message, as they'll see the new task has been added
+		if ($this->Task->TaskComment->save($this->request->data)) {
+			unset($this->request->data['TaskComment']);
+		} else {
+			$this->Flash->error(__('The comment could not be saved. Please try again.'));
+		}
+
+		return $this->redirect(array ('controller' => 'tasks', 'project' => $project['Project']['name'], 'action' => 'view', $id));
+
+	}
+
+/**
+ * Remove a comment from a task
+ */
+	public function deleteComment($project = null, $id = null) {
+
+		$project = $this->_getProject($project);
+		$comment = $this->Task->TaskComment->findById($id);
+
+		if (!$comment) {
+			throw new NotFoundException(__("Cannot find a comment with ID $id"));
+		}
+
+		$taskId = $comment['Task']['id'];
+
+		// Check that we own the comment or we are a project or system admin...
+		if (
+			$comment['User']['id'] != $this->Auth->user('id')
+			&& !$this->Project->hasWrite($this->Auth->user('id'))
+			&& !$this->Auth->user('is_admin')
+		) {
+			$this->Flash->error (__('You don\'t have permission to edit that comment'));
+			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
+		}
+
+
+		if (!$this->request->is('post') || !isset($this->request->data['TaskCommentDelete'])) {
+			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
+		}
+
+
+		if ($this->Task->TaskComment->delete($id)) {
+			$this->Flash->info (__('The comment has been deleted successfully.'));
+		} else {
+			$this->Flash->error (__('The comment could not be deleted. Please try again.'));
+		}
+
+		return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
+	}
+
+/**
+ * Change an existing comment's text
+ */
+	public function updateComment ($project = null, $id = null) {
+
+		$project = $this->_getProject($project);
+		$comment = $this->Task->TaskComment->findById($id);
+
+		if (!$comment) {
+			throw new NotFoundException(__("Cannot find a comment with ID $id"));
+		}
+
+		$taskId = $comment['Task']['id'];
+		
+		// Only the comment owner can edit the comment
+		if ($comment['User']['id'] != $this->Auth->user('id')) {
+			$this->Flash->error (__('You don\'t have permission to edit that comment'));
+			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
+		}
+
+		// Check we have new POST data for the comment...
+		if (!$this->request->is('post') || !isset($this->request->data['TaskCommentEdit'])) {
+			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
+		}
+
+		$this->request->data['TaskComment'] = array(
+			'comment' => $this->request->data['TaskCommentEdit']['comment'],
+			'id' => $this->request->data['TaskCommentEdit']['id']
+		);
+		unset($this->request->data['TaskCommentEdit']);
+
+		if ($this->Task->TaskComment->save($this->request->data)) {
+			$this->Flash->info(__('The comment has been updated successfully'));
+			unset($this->request->data['TaskComment']);
+		} else {
+			$this->Flash->error(__('The comment could not be updated. Please try again.'));
+		}
+
+		return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
 	}
 
 /**
