@@ -68,4 +68,18 @@ class TaskTypeTest extends CakeTestCase {
 	public function testNumberOfItems() {
 		$this->assertEqual(8, $this->TaskType->find('count'), "Wrong number of task types returned (tests need updating?)");
 	}
+
+	public function testGetLookupTable() {
+		$table = $this->TaskType->getLookupTable();
+		$this->assertEqual(array(
+			1 => array('id' => 1, 'name' => 'bug',           'label' => 'Bug',           'icon' => '', 'class' => 'important'),
+			2 => array('id' => 2, 'name' => 'duplicate',     'label' => 'Duplicate',     'icon' => '', 'class' => 'warning'),
+			3 => array('id' => 3, 'name' => 'enhancement',   'label' => 'Enhancement',   'icon' => '', 'class' => 'success'),
+			4 => array('id' => 4, 'name' => 'invalid',       'label' => 'Invalid',       'icon' => '', 'class' => ''),
+			5 => array('id' => 5, 'name' => 'question',      'label' => 'Question',      'icon' => '', 'class' => 'info'),
+			6 => array('id' => 6, 'name' => 'wontfix',       'label' => 'Wontfix',       'icon' => '', 'class' => 'inverse'),
+			7 => array('id' => 7, 'name' => 'documentation', 'label' => 'Documentation', 'icon' => '', 'class' => 'info'),
+			8 => array('id' => 8, 'name' => 'meeting',       'label' => 'Meeting',       'icon' => '', 'class' => 'info'),
+		), $table, "Incorrect lookup table returned (tests need updating?)");
+	}
 }
