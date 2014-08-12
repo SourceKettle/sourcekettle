@@ -100,11 +100,10 @@ class TasksController extends AppProjectController {
 		$assignees  = preg_split('/\s*,\s*/', trim(@$this->request->query['assignees']),  null, PREG_SPLIT_NO_EMPTY);
 		$creators   = preg_split('/\s*,\s*/', trim(@$this->request->query['creators']),   null, PREG_SPLIT_NO_EMPTY);
 		$milestones = preg_split('/\s*,\s*/', trim(@$this->request->query['milestones']), null, PREG_SPLIT_NO_EMPTY);
-debug($priorities);
+
 		// Filter out invalid entries
 		$statuses   = $this->TaskStatus->filterValid($statuses);
 		$priorities = $this->TaskPriority->filterValid($priorities);
-debug($priorities);
 		$types      = $this->TaskType->filterValid($types);
 		$assignees  = $this->User->filterValid($assignees);
 		$creators   = $this->User->filterValid($creators);
