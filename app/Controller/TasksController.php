@@ -93,49 +93,42 @@ class TasksController extends AppProjectController {
 	public function index($project = null) {
 		$project = $this->_getProject($project);
 
-		// Convert to arrays
-		$statuses   = preg_split('/\s*,\s*/', trim(@$this->request->query['statuses']));
-		$priorities = preg_split('/\s*,\s*/', trim(@$this->request->query['priorities']));
-		$types      = preg_split('/\s*,\s*/', trim(@$this->request->query['types']));
-		$assignees  = preg_split('/\s*,\s*/', trim(@$this->request->query['assignees']));
-		$creators   = preg_split('/\s*,\s*/', trim(@$this->request->query['creators']));
-		$milestones = preg_split('/\s*,\s*/', trim(@$this->request->query['milestones']));
-
-
+		// Convert from comma separated to arrays
+		$statuses   = preg_split('/\s*,\s*/', trim(@$this->request->query['statuses']),   null, PREG_SPLIT_NO_EMPTY);
+		$priorities = preg_split('/\s*,\s*/', trim(@$this->request->query['priorities']), null, PREG_SPLIT_NO_EMPTY);
+		$types      = preg_split('/\s*,\s*/', trim(@$this->request->query['types']),      null, PREG_SPLIT_NO_EMPTY);
+		$assignees  = preg_split('/\s*,\s*/', trim(@$this->request->query['assignees']),  null, PREG_SPLIT_NO_EMPTY);
+		$creators   = preg_split('/\s*,\s*/', trim(@$this->request->query['creators']),   null, PREG_SPLIT_NO_EMPTY);
+		$milestones = preg_split('/\s*,\s*/', trim(@$this->request->query['milestones']), null, PREG_SPLIT_NO_EMPTY);
+debug($priorities);
 		// Filter out invalid entries
 		$statuses   = $this->TaskStatus->filterValid($statuses);
 		$priorities = $this->TaskPriority->filterValid($priorities);
+debug($priorities);
 		$types      = $this->TaskType->filterValid($types);
 		$assignees  = $this->User->filterValid($assignees);
 		$creators   = $this->User->filterValid($creators);
 		$milestones = $this->Milestone->filterValid($milestones);
 
-		// Set defaults when no filtering is specified
-		if (empty($statuses) && empty($priorities) && empty($types) && empty($assignees) && empty($creators) && empty($milestones)) {
-			$statuses = $this->TaskStatus->find('list', array(
-				'conditions' => array('name' => array('open', 'in progress'))
-			));
-		}
-
-		$conditions = array('Project.id' => $project['Project']['id']);
+		$conditions = array('Task.project_id' => $project['Project']['id']);
 
 		if (!empty($statuses)) {
-			$conditions['TaskStatus.id'] = array_keys($statuses);
+			$conditions['Task.task_status_id'] = array_keys($statuses);
 		}
 		if (!empty($priorities)) {
-			$conditions['TaskPriority.id'] = array_keys($priorities);
+			$conditions['Task.task_priority_id'] = array_keys($priorities);
 		}
 		if (!empty($types)) {
-			$conditions['TaskType.id'] = array_keys($types);
+			$conditions['Task.task_type_id'] = array_keys($types);
 		}
 		if (!empty($assignees)) {
-			$conditions['Assignee.id'] = array_keys($assignees);
+			$conditions['Task.assignee_id'] = array_keys($assignees);
 		}
 		if (!empty($creators)) {
-			$conditions['Owner.id']   = array_keys($creators);
+			$conditions['Task.owner_id']   = array_keys($creators);
 		}
 		if (!empty($milestones)) {
-			$conditions['Milestone.id'] = array_keys($milestones);
+			$conditions['Task.milestone_id'] = array_keys($milestones);
 		}
 
 		// Load task list based on the filtering rules

@@ -45,68 +45,90 @@ class TasksControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testIndexMineNotLoggedIn() {
+	public function testIndexNotLoggedIn() {
 
 		// Cannot see the page when not logged in
 		$this->testAction('/project/private/tasks', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
-	public function testIndexMine() {
 
-		$this->_fakeLogin(2);
+	private function __testTaskIndex($userId, $url, $expectedTasks) {
+
+		$this->_fakeLogin($userId);
+
 		// Perform the action, and check the user was authorized
-		$ret = $this->testAction('/project/public/tasks', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction($url, array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
-		$this->assertContains('<h1>public <small>My Tasks for the Project</small></h1>', $this->view);
-		$this->assertContains('<strong>Assigned to you</strong>', $this->view);
+		$this->assertContains('<h1>public <small>Things to Do...</small></h1>', $this->view);
+		$this->assertContains('<h2>Task list</h2>', $this->view);
 
+		// Check correct tasks are returned
+		$task_ids = array_map(function($a){return $a['Task']['id'];}, $this->vars['tasks']);
+		$this->assertEquals($expectedTasks, $task_ids, "Incorrect task list returned");
+	
 	}
 
-	public function testOthers() {
-		$this->_fakeLogin(2);
-		// Perform the action, and check the user was authorized
-		$ret = $this->testAction('/project/public/tasks/others', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-
-		// Check the page content looks roughly OK
-		$this->assertContains('<h1>public <small>Others\' Tasks for the Project</small></h1>', $this->view);
-		$this->assertContains('<strong>Assigned to others</strong>', $this->view);
+	public function testIndexDefault() {
+		$this->__testTaskIndex(2, '/project/public/tasks', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 	}
 
-/**
- * testNobody method
- *
- * @return void
- */
-	public function testNobody() {
-		$this->_fakeLogin(2);
-		// Perform the action, and check the user was authorized
-		$ret = $this->testAction('/project/public/tasks/nobody', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-
-		// Check the page content looks roughly OK
-		$this->assertContains('<h1>public <small>Unassigned Tasks for the Project</small></h1>', $this->view);
-		$this->assertContains('<strong>Assigned to nobody</strong>', $this->view);
+	public function testIndexAssignedAll() {
+		$this->__testTaskIndex(2, '/project/public/tasks?assignees=all', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 	}
 
-/**
- * testAll method
- *
- * @return void
- */
-	public function testAll() {
-		$this->_fakeLogin(2);
-		// Perform the action, and check the user was authorized
-		$ret = $this->testAction('/project/public/tasks/all', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
 
-		// Check the page content looks roughly OK
-		$this->assertContains('<h1>public <small>All Tasks for the Project</small></h1>', $this->view);
-		$this->assertContains('<strong>All tasks</strong>', $this->view);
+	public function testIndexAssignedToOne() {
+		$this->__testTaskIndex(2, '/project/public/tasks?assignees=2', array(1, 4, 10));
 	}
+
+	public function testIndexUnassigned() {
+		$this->__testTaskIndex(2, '/project/public/tasks?assignees=0', array(2, 3, 5, 6, 7, 8, 9));
+	}
+
+	public function testPriorityAll() {
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=all', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+	}
+	public function testPriorityMinor() {
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=1', array(2, 9));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=minor', array(2, 9));
+	}
+	public function testIndexPriorityMajor() {
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=2', array(1, 7, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=major', array(1, 7, 10));
+	}
+	public function testIndexPriorityUrgent() {
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=3', array(3, 4, 5));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=urgent', array(3, 4, 5));
+	}
+	public function testIndexPriorityBlocker() {
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=4', array(6, 8));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=blocker', array(6, 8));
+	}
+
+	public function testIndexStatusOpen() {
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=1', array(2, 5));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=open', array(2, 5));
+	}
+	public function testIndexStatusInProgress() {
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=2', array(3, 4, 6, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=in%20progress', array(3, 4, 6, 10));
+	}
+	public function testIndexStatusResolved() {
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=3', array(1, 7));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=resolved', array(1, 7));
+	}
+	public function testIndexStatusClosed() {
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=4', array(8));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=closed', array(8));
+	}
+	public function testIndexStatusDropped() {
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=5', array(9));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=dropped', array(9));
+	}
+
 
 /**
  * testView method

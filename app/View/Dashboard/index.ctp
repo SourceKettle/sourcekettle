@@ -26,9 +26,11 @@
     <div class="span6">
       <h3>Assigned tasks</h3>
       <? if (!empty($tasks)){
+	    echo "<ul class='sprintboard-droplist'>";
         foreach ($tasks as $task){
           echo $this->element('Task/lozenge', array('task' => $task));
         }
+		echo "</ul>";
       } else {
         ?><div class='alert alert-success'>You have no assigned tasks! Why don't you assign yourself one?</div><?
       }?>

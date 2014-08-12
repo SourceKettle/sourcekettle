@@ -15,7 +15,7 @@
  */
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
-echo $this->DT->pHeader();
+echo $this->DT->pHeader(array('text' => 'Things to Do...'));
 ?>
 <div class="row-fluid">
     <div class="span2">

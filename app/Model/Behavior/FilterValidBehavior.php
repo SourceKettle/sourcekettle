@@ -43,29 +43,37 @@ class FilterValidBehavior extends ModelBehavior {
 
 	public function filterValid(Model $model, $values = array()) {
 
+		// Special case - zero for 'return anything with this not set'...
+		$hasZero = in_array('0', $values, true);
+
 		// Build an SQL query to list ID => name or just an ID list if we have no name field
-		$by_id = array_filter($values, 'is_numeric');
-		$by_name = array_filter($values, function($a) {return !is_numeric($a);});
+		$byId = array_filter($values, 'is_numeric');
+		$byName = array_filter($values, function($a) {return !is_numeric($a);});
 
 		// If they've specified 'all', shortcut that to an array of all possibilities
-		if (in_array('all', $by_name)) {
-			return $model->find('list');
+		if (in_array('all', $byName)) {
+			return array_merge(array(0 => 'None'), $model->find('list'));
 		}
 
-		$conditions = array('id' => $by_id);
+		$conditions = array('id' => $byId);
 		$fields = array('id');
-
 		$nameField = @$this->settings[$model->name]['nameField'];
 
 		if(isset($nameField) && !empty($nameField)) {
 			$conditions = array('OR' => array(
 				$conditions,
-				array($nameField => $by_name)
+				array($nameField => $byName)
 			));
 			$fields[] = $nameField;
 		}
 
-		return $model->find('list', array('conditions' => $conditions, 'fields' => $fields));
+		$found = $model->find('list', array('conditions' => $conditions, 'fields' => $fields));
+
+		if ($hasZero) {
+			$found = array_merge(array(0 => 'None'), $found);
+		}
+
+		return $found;
 	}
 
 }
