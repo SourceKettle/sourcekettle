@@ -59,7 +59,6 @@ class SettingsControllerTest extends AppControllerTest {
  */
 	public function testAdminIndex() {
 		$result = $this->testAction('/admin/settings/index');
-		debug($result);
 	}
 /**
  * testAdminView method

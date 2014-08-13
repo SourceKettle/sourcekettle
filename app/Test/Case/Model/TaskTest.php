@@ -60,7 +60,11 @@ class TaskTest extends CakeTestCase {
 		unset($details['TaskPriority']['modified']);
 		unset($details['TaskType']['created']);
 		unset($details['TaskType']['modified']);
-		$this->assertEquals($details, array(
+		foreach ($details['TaskComment'] as $idx => $comment){
+			unset($details['TaskComment'][$idx]['created']);
+			unset($details['TaskComment'][$idx]['modified']);
+		}
+		$this->assertEquals(array(
 			'Task' => array(
 				'id' => '2',
 				'project_id' => '2',
@@ -153,7 +157,6 @@ class TaskTest extends CakeTestCase {
 				'deleted_date' => null,
 				'percent' => 33.333333333333
 			),
-			'TaskComment' => array(),
 			'Time' => array(
 				array(
 					'id' => '2',
@@ -197,6 +200,32 @@ class TaskTest extends CakeTestCase {
 						's' => '0h 14m'
 					)
 				)
+			),
+			'TaskComment' => array(
+				array(
+					'id' => 1,
+					'task_id' => 2,
+					'user_id' => 2,
+					'comment' => 'I like toast',
+					'deleted' => 0,
+					'deleted_date' => null,
+				),
+				array(
+					'id' => 2,
+					'task_id' => 2,
+					'user_id' => 1,
+					'comment' => 'I do not like toast',
+					'deleted' => 0,
+					'deleted_date' => null,
+				),
+				array(
+					'id' => 3,
+					'task_id' => 2,
+					'user_id' => 3,
+					'comment' => 'I have no strong feelings one way or the other about toast',
+					'deleted' => 0,
+					'deleted_date' => null,
+				),
 			),
 			'DependsOn' => array(
 				array(
@@ -253,7 +282,7 @@ class TaskTest extends CakeTestCase {
 				)
 			),
 			'DependedOnBy' => array()
-		), "Incorrect task data returned");
+		), $details, "Incorrect task data returned");
 	}
 
 /**

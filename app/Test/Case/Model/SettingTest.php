@@ -89,11 +89,9 @@ class SettingTestCase extends CakeTestCase {
 
 	public function testRepoDir() {
 		$settings = $this->Setting->find('all');
-		debug($settings);
 		$sourcekettle_config = array_merge(
 			Configure::read('sourcekettle'),
 			ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
 		);
-		debug($sourcekettle_config);
 	}
 }

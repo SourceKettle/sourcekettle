@@ -199,9 +199,7 @@ class User extends AppModel {
 				'Collaborator.access_level !=' => '2',
 				'Collaborator.user_id !=' => $this->id)));
 			// If this user is the only admin and there are other collaborators, do not delete
-			debug("$admins admins and $users users on ".$projectId);
 			if ( $admins == 0 && $users > 0) {
-				debug("will not delete");
 				return false;
 			}
 		}

@@ -835,7 +835,6 @@ class ProjectTestCase extends CakeTestCase {
 	public function testRenameWithPhantomGitRepository() {
 		$before = $this->Project->findById(1);
 		$repo = $this->Project->Source->getRepositoryLocation();
-		debug("Repo: $repo");
 		$f = new Folder($repo);
 		$f->delete();
 		$this->assertTrue($this->Project->rename("private", 'not_at_all_private'));
