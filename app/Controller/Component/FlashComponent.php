@@ -145,7 +145,7 @@ class FlashComponent extends Component {
 		} else {
 			// Otherwise, pull it out of the model's data array as the save failed
 			// TODO is this a massive hack or the Right Thing? I can't tell at the moment.
-			$this->_name = $this->Model->data[$this->name][$this->Model->displayField];
+			$this->_name = @$this->Model->data[$this->name][$this->Model->displayField];
 		}
 	}
 }

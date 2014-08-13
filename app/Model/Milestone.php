@@ -190,7 +190,7 @@ class Milestone extends AppModel {
 						'milestone_id =' => $id
 					)
 				),
-				'order' => 'task_priority_id DESC'
+				'order' => 'TaskPriority.level DESC',
 			)
 		);
 		return $tasks;
@@ -228,7 +228,7 @@ class Milestone extends AppModel {
 					'task_status_id =' => $statusId,
 					'milestone_id =' => $id
 				),
-				'order' => 'task_priority_id DESC',
+				'order' => 'task_priority_id DESC', // TODO should be TaskPriority.level really but atm this does weird recursing things, need to dig it out
 			)
 		);
 		return $tasks;
@@ -268,7 +268,6 @@ class Milestone extends AppModel {
 					'task_priority_id =' => $priorityId,
 					'milestone_id =' => $id
 				),
-				'order' => 'task_priority_id DESC'
 			)
 		);
 		return $tasks;
@@ -337,6 +336,7 @@ class Milestone extends AppModel {
  * @param $allTasks True if all the milestone's tasks should be moved (i.e. delete milestone), false if only non-resolved/closed tasks should be moved (i.e. close milestone)
  */
 	public function shiftTasks($id = null, $newId = null, $allTasks = false, $options = array()) {
+
 		if ($id == null) {
 			return false;
 		}

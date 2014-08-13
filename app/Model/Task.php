@@ -250,10 +250,13 @@ class Task extends AppModel {
 /**
  */
 	public function beforeValidate($options = array()) {
+		if (empty($this->data)) {
+			return true;
+		}
+
 		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
 			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		}
-
 
 		// If we have priority and status names, replace them with IDs for saving
 		if (isset($this->data['Task']['type'])) {
@@ -282,6 +285,7 @@ class Task extends AppModel {
  * @return bool True if the save was successful.
  */
 	public function beforeSave($options = array()) {
+
 		// Parse time estimate if necessary
 		if (!$this->beforeValidate($options)) {
 			return false;

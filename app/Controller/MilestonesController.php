@@ -168,16 +168,6 @@ class MilestonesController extends AppProjectController {
 		$completed = $this->Milestone->closedOrResolvedTasksForMilestone($id);
 		$iceBox = $this->Milestone->droppedTasksForMilestone($id);
 
-		// Sort function for tasks
-		// TODO wtf? Time comparison for priority IDs?!
-		$cmp = function($a, $b) {
-			if (strtotime($a['Task']['task_priority_id']) == strtotime($b['Task']['task_priority_id'])) return 0;
-			if (strtotime($a['Task']['task_priority_id']) > strtotime($b['Task']['task_priority_id'])) return 1;
-			return -1;
-		};
-
-		usort($completed, $cmp);
-
 		// Final value is min size of the board
 		$max = max(count($backlog), count($inProgress), count($completed), 3);
 
@@ -364,7 +354,8 @@ class MilestonesController extends AppProjectController {
 		$milestone = $this->Milestone->open($id);
 
 		if ($this->request->is('post')) {
-			$newMilestone = $this->request->data['Milestone']['new_milestone'];
+
+			$newMilestone = @$this->request->data['Milestone']['new_milestone'];
 
 			$dataSource = $this->Milestone->getDataSource();
 			$dataSource->begin();
