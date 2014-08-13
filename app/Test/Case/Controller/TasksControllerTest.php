@@ -368,6 +368,251 @@ class TasksControllerTest extends AppControllerTest {
 	}
 
 
+	// Assigning tasks
+	public function testAssignTaskNotLoggedIn() {
+		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAssignTaskForm() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+
+		$this->assertEquals($url, array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => 'public',
+			'named' => array(),
+			'pass' => array('public', 1),
+			'plugin' => null
+		));
+	}
+
+	public function testAssignTask() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Assignee' => array(
+				'id' => 1
+			)
+		);
+
+		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the new project page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+
+		$this->assertEquals($url, array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => 'public',
+			'named' => array(),
+			'pass' => array('public', 1),
+			'plugin' => null
+		));
+
+		$task = $this->controller->Task->find('first', array('conditions' => array('id' => 1), 'recursive' => -1));
+		$this->assertEquals(1, $task['Task']['assignee_id']);
+	}
+
+	// Comments
+	public function testCommentNotLoggedIn() {
+		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testCommentGetRedirect() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+
+		$this->assertEquals($url, array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => 'public',
+			'named' => array(),
+			'pass' => array('public', 1),
+			'plugin' => null
+		));
+	}
+
+	public function testComment() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'TaskComment' => array(
+				'comment' => 'Something terrible...'
+			)
+		);
+
+		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the task page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+
+		$this->assertEquals($url, array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => 'public',
+			'named' => array(),
+			'pass' => array('public', 1),
+			'plugin' => null
+		));
+
+		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('task_id' => 1), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
+		$this->assertEquals('Something terrible...', $task['TaskComment']['comment']);
+		$this->assertEquals(1, $task['TaskComment']['task_id']);
+		$this->assertEquals(2, $task['TaskComment']['user_id']);
+	}
+
+	public function testUpdateCommentTaskNotLoggedIn() {
+		$this->testAction('/project/public/tasks/updateComment/2', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUpdateCommentGetRedirect() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/tasks/updateComment/2', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+
+		$this->assertEquals($url, array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => 'public',
+			'named' => array(),
+			'pass' => array('public', 2),
+			'plugin' => null
+		));
+	}
+
+	public function testUpdateComment() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'TaskCommentEdit' => array(
+				'id' => 2,
+				'comment' => 'A further terrible thing...'
+			)
+		);
+
+		$this->testAction('/project/public/tasks/updateComment/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the task page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+
+		$this->assertEquals($url, array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => 'public',
+			'named' => array(),
+			'pass' => array('public', 2),
+			'plugin' => null
+		));
+
+		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('id' => 2), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
+		$this->assertEquals('A further terrible thing...', $task['TaskComment']['comment']);
+		$this->assertEquals(2, $task['TaskComment']['task_id']);
+		$this->assertEquals(1, $task['TaskComment']['user_id']);
+	}
+
+	public function testDeleteCommentNotLoggedIn() {
+		$this->testAction('/project/public/tasks/deleteComment/2', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testDeleteCommentGetRedirect() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/tasks/deleteComment/2', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+
+		$this->assertEquals($url, array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => 'public',
+			'named' => array(),
+			'pass' => array('public', 2),
+			'plugin' => null
+		));
+	}
+
+	public function testDeleteComment() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'TaskCommentDelete' => array(
+				'id' => 2,
+			)
+		);
+
+		$this->testAction('/project/public/tasks/deleteComment/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the task page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+
+		// PHP can parse the http:// url and Router can work out where it goes...
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+
+		$this->assertEquals($url, array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => 'public',
+			'named' => array(),
+			'pass' => array('public', 2),
+			'plugin' => null
+		));
+
+		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('id' => 2), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
+		$this->assertEquals(array(), $task);
+	}
+
+
+
 
 /**
  * testApiView method

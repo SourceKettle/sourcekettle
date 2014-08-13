@@ -21,9 +21,9 @@
             <?= __('To assign this task to a user on this project, enter their name in the box below and select "Assign"') ?>
         </p>
         <?php
-            echo $this->Form->create('TaskAssignee', array('class' => 'form-inline', 'url' => array('controller' => 'tasks', 'action' => 'assign', 'project' => $project['Project']['name'], $task['Task']['id'])));
+            echo $this->Form->create('Assignee', array('class' => 'form-inline', 'url' => array('controller' => 'tasks', 'action' => 'assign', 'project' => $project['Project']['name'], $task['Task']['id'])));
 			$assignee_id = isset($task['Task']['assignee_id'])? $task['Task']['assignee_id']: 0;
-            echo $this->Form->input('assignee', array(
+            echo $this->Form->input('id', array(
                 'options' => $collaborators,
                 'empty' => false,
                 //'selected' => "$user_name [$user_email]",

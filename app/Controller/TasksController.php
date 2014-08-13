@@ -74,6 +74,7 @@ class TasksController extends AppProjectController {
 			'updateComment' => 'write',
 			'edit'   => 'write',
 			'add'   => 'write',
+			'assign'   => 'write',
 			'opentask' => 'write',
 			'closetask' => 'write',
 			'starttask' => 'write',
@@ -260,11 +261,11 @@ class TasksController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($id);
 
-		if (!$this->request->is('post') || !isset($this->request->data['TaskAssignee']) || !isset($this->request->data['TaskAssignee']['assignee'])) {
+		if (!$this->request->is('post') || !isset($this->request->data['Assignee']) || !isset($this->request->data['Assignee']['id'])) {
 			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
 		}
-
-		$assigneeId = $this->request->data['TaskAssignee']['assignee'];
+		
+		$assigneeId = $this->request->data['Assignee']['id'];
 		if ($assigneeId == 0 || $this->Task->Project->hasWrite($assigneeId)) {
 			$this->Task->set('assignee_id', $assigneeId);
 			$this->Flash->u($this->Task->save());
@@ -272,7 +273,7 @@ class TasksController extends AppProjectController {
 			$this->Flash->error('The assignee could not be updated. The selected user is not a collaborator!');
 		}
 	
-		unset($this->request->data['TaskAssignee']);
+		unset($this->request->data['Assignee']);
 	
 		return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
 	}
@@ -368,7 +369,6 @@ class TasksController extends AppProjectController {
 		if (!$this->request->is('post') || !isset($this->request->data['TaskCommentEdit'])) {
 			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
 		}
-
 		$this->request->data['TaskComment'] = array(
 			'comment' => $this->request->data['TaskCommentEdit']['comment'],
 			'id' => $this->request->data['TaskCommentEdit']['id']
