@@ -35,53 +35,81 @@ class PagesControllerTest extends AppControllerTest {
 		'app.lost_password_key',
 	);
 
+	public function setUp() {
+		parent::setUp("Pages");
+	}
 /**
  * testDisplay method
  *
  * @return void
  */
-	public function testDisplayAbout() {
-		$this->testAction('/about', array('return' => 'contents', 'method' => 'get'));
-		$this->assertContains('SourceKettle is built using a variety of open-source software', $this->view);
-
-		$this->_fakeLogin(2);
-		$this->testAction('/pages/about', array('return' => 'contents', 'method' => 'get'));
-		$this->assertContains('SourceKettle is built using a variety of open-source software', $this->view);
-	}
-
-	public function testDisplayHome() {
-		$this->testAction('/pages/home', array('return' => 'view', 'method' => 'get'));
-		$this->assertContains('<a href="/login">Click here</a> to get started.', $this->view);
-
-		$this->_fakeLogin(2);
-		$this->testAction('/pages/home', array('return' => 'view', 'method' => 'get'));
-		$this->assertContains('<a href="/login">Click here</a> to get started.', $this->view);
-	}
-
 	public function testDisplayEmpty() {
 		$this->testAction('/pages', array('return' => 'view', 'method' => 'get'));
-		$this->assertRegexp('/\/$/', $this->headers['Location']);
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+		$this->assertEquals($url, array(
+			'controller' => 'pages',
+			'action' => 'home',
+			'named' => array(),
+			'pass' => array(),
+			'plugin' => null
+		));
 
 		$this->_fakeLogin(2);
 		$this->testAction('/pages', array('return' => 'view', 'method' => 'get'));
-		$this->assertRegexp('/\/$/', $this->headers['Location']);
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+		$this->assertEquals($url, array(
+			'controller' => 'pages',
+			'action' => 'home',
+			'named' => array(),
+			'pass' => array(),
+			'plugin' => null
+		));
 	}
+
+	public function testDisplayPages() {
+		$baseDir = realpath(dirname(dirname(dirname(__DIR__))).'/View/Pages');
+		$baseFolder = new Folder($baseDir);
+		$files = $baseFolder->read(true, false, true);
+		foreach ($files[1] as $file) {
+			if (!preg_match('/([^\/]+)\.ctp$/', $file, $matches)) {
+				continue;
+			}
+			$rendered = $this->testAction('/pages/'.$matches[1], array('return' => 'contents', 'method' => 'get'));
+
+			$real = $this->controller->render($matches[1]);
+			$this->assertEquals($real->__toString(), $rendered);
+		}
+	}
+
 
 /**
  * testHome method
  *
  * @return void
  */
-	public function testHome() {
+	public function testHomeNotLoggedIn() {
 
 		// Logged out - show the home page at /
-		$this->testAction('/', array('return' => 'view', 'method' => 'get'));
-		$this->assertContains('<a href="/login">Click here</a> to get started.', $this->view);
+		$rendered = $this->testAction('/', array('return' => 'view', 'method' => 'get'));
+		$expected = $this->testAction('/pages/home', array('return' => 'view', 'method' => 'get'));
+		$this->assertEquals($expected, $rendered);
+	}
 
+	public function testHomeLoggedIn() {
 		// Logged in - redirect to the dashboard
 		$this->_fakeLogin(2);
 		$this->testAction('/', array('return' => 'result', 'method' => 'get'));
-		$this->assertRegexp('/\/dashboard$/', $this->headers['Location']);
+		$url = parse_url($this->headers['Location']);
+		$url = Router::parse($url['path']);
+		$this->assertEquals($url, array(
+			'controller' => 'dashboard',
+			'action' => 'index',
+			'named' => array(),
+			'pass' => array(),
+			'plugin' => null
+		));
 	}
 
 }
