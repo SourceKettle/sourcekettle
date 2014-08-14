@@ -43,29 +43,22 @@ class PagesControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testDisplayEmpty() {
+	public function testDisplayEmptyNotLoggedIn() {
 		$this->testAction('/pages', array('return' => 'view', 'method' => 'get'));
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'pages',
-			'action' => 'home',
-			'named' => array(),
-			'pass' => array(),
-			'plugin' => null
-		));
+		// We should be redirected to the home page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/', true), $this->headers['Location']);
+	}
 
+	public function testDisplayEmptyLoggedIn() {
 		$this->_fakeLogin(2);
 		$this->testAction('/pages', array('return' => 'view', 'method' => 'get'));
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'pages',
-			'action' => 'home',
-			'named' => array(),
-			'pass' => array(),
-			'plugin' => null
-		));
+
+		// We should be redirected to the home page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/', true), $this->headers['Location']);
 	}
 
 	public function testDisplayPages() {
@@ -101,15 +94,11 @@ class PagesControllerTest extends AppControllerTest {
 		// Logged in - redirect to the dashboard
 		$this->_fakeLogin(2);
 		$this->testAction('/', array('return' => 'result', 'method' => 'get'));
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'dashboard',
-			'action' => 'index',
-			'named' => array(),
-			'pass' => array(),
-			'plugin' => null
-		));
+
+		// We should be redirected to the dashboard
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/dashboard', true), $this->headers['Location']);
 	}
 
 }
