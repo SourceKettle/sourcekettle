@@ -60,7 +60,7 @@ class TimesController extends AppProjectController {
 			if ($this->Time->save($this->request->data)) {
 				echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Time successfully logged.</div>';
 			} else {
-				echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please, try again.</div>';
+				echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please try again.</div>';
 			}
 		} else if ($this->request->is('post')) {
 			$this->Time->create();
@@ -70,7 +70,11 @@ class TimesController extends AppProjectController {
 			$this->request->data['Time']['project_id'] = $project['Project']['id'];
 
 			if ($this->Flash->c($this->Time->save($this->request->data))) {
-				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				if (@$this->request->data['Time']['task_id']){
+					return $this->redirect(array('controller' => 'tasks', 'project' => $project['Project']['name'], 'action' => 'view', $this->request->data['Time']['task_id']));
+				} else {
+					return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				}
 			} else {
 				// Show the user what they put in, its just nice
 				$this->request->data['Time']['mins'] = $origTime;
