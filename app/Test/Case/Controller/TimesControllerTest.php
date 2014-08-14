@@ -55,12 +55,207 @@ class TimesControllerTestCase extends AppControllerTest {
 		$this->testAction('/project/private/time', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
     }
+
 	public function testIndexLoggedIn() {
 		$this->_fakeLogin(1);
 		$this->testAction('/project/private/time', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 
+		// We should be redirected to the times/users page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/time/users', true), $this->headers['Location']);
+
 	}
+
+	public function testUsersNotLoggedIn() {
+		$this->testAction('/project/private/time/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+    }
+
+	public function testUsersLoggedIn() {
+		$this->_fakeLogin(1);
+		$this->testAction('/project/private/time/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		
+		$this->assertEqual(array(
+			array(
+				'User' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com'
+				),
+				0 => array(
+					'total_mins' => '990'
+				),
+				'Time' => array(
+					'time' => array(
+						'w' => 0,
+						'd' => 0,
+						'h' => 16,
+						'm' => 30,
+						't' => 990,
+						's' => '16h 30m'
+					)
+				)
+			),
+			array(
+				'User' => array(
+					'id' => '2',
+					'name' => 'Mrs Smith',
+					'email' => 'mrs.smith@example.com'
+				),
+				0 => array(
+					'total_mins' => '14'
+				),
+				'Time' => array(
+					'time' => array(
+						'w' => 0,
+						'd' => 0,
+						'h' => 0,
+						'm' => 14,
+						't' => 14,
+						's' => '0h 14m'
+					)
+				)
+			),
+			array(
+				'User' => array(
+					'id' => '3',
+					'name' => 'Mrs Guest',
+					'email' => 'mrs.guest@example.com'
+				),
+				0 => array(
+					'total_mins' => '19'
+				),
+				'Time' => array(
+					'time' => array(
+						'w' => 0,
+						'd' => 0,
+						'h' => 0,
+						'm' => 19,
+						't' => 19,
+						's' => '0h 19m'
+					)
+				)
+			)
+		), $this->vars['users']);
+
+		$this->assertEqual(array(
+			'w' => 0,
+			'd' => 0,
+			'h' => 17,
+			'm' => 3,
+			't' => 1023,
+			's' => '17h 3m'
+		), $this->vars['total_time']);
+
+	}
+
+	public function testUserTimesNotLoggedIn() {
+		$this->testAction('/project/private/time/history', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+    }
+
+	public function testUserTimesLoggedIn() {
+		$this->_fakeLogin(1);
+		$this->testAction('/project/private/time/history/2012/46', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+
+		$this->assertEqual(array(
+			1 => 900,
+			2 => 14,
+			3 => 0,
+			4 => 0,
+			5 => 0,
+			6 => 0,
+			7 => 0
+		), $this->vars['weekTimes']['totals']);
+
+		$this->assertEqual(array(
+			2 => array(
+				'Task' => array(
+					'id' => '2',
+					'subject' => 'Open Minor Task 2 for milestone 1'
+				),
+				'users' => array(
+					1 => array(
+						'User' => array(
+							'id' => '1',
+							'name' => 'Mr Smith',
+							'email' => 'Mr.Smith@example.com'
+						),
+						'times_by_day' => array(
+							1 => array(
+								0 => array(
+									'Time' => array(
+										'id' => '2',
+										'date' => '2012-11-12',
+										'description' => 'A description of the second <b>time</b>.',
+										'mins' => '900',
+										'minutes' => array(
+											'w' => 0,
+											'd' => 0,
+											'h' => 15,
+											'm' => 0,
+											't' => 900,
+											's' => '15h 0m'
+										)
+									)
+								)
+							)
+						)
+					),
+					2 => array(
+						'User' => array(
+							'id' => '2',
+							'name' => 'Mrs Smith',
+							'email' => 'mrs.smith@example.com'
+						),
+						'times_by_day' => array(
+							2 => array(
+								0 => array(
+									'Time' => array(
+										'id' => '3',
+										'date' => '2012-11-13',
+										'description' => 'A description of the third <b>time</b>.',
+										'mins' => '14',
+										'minutes' => array(
+											'w' => 0,
+											'd' => 0,
+											'h' => 0,
+											'm' => 14,
+											't' => 14,
+											's' => '0h 14m'
+										)
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		), $this->vars['weekTimes']['tasks']);
+
+
+		// Check that the dates are correct by formatting them consistently
+		$this->assertEqual(array(
+			1 => '2012-11-12T00:00:00+0000',
+			2 => '2012-11-13T00:00:00+0000',
+			3 => '2012-11-14T00:00:00+0000',
+			4 => '2012-11-15T00:00:00+0000',
+			5 => '2012-11-16T00:00:00+0000',
+			6 => '2012-11-17T00:00:00+0000',
+			7 => '2012-11-18T00:00:00+0000',
+		), array_map(function($date) {return $date->format(DateTime::ISO8601);}, $this->vars['weekTimes']['dates']));
+
+		$this->assertEqual(array(
+			0 => 'No Assigned Task',
+			'Your Tasks' => array(),
+			'Others Tasks' => array()
+		), $this->vars['tasks']);
+	}
+
 /**
  * testView method
  *
