@@ -51,7 +51,15 @@ class TimesControllerTestCase extends AppControllerTest {
  *
  * @return void
  */
-	public function testIndex() {
+	public function testIndexNotLoggedIn() {
+		$this->testAction('/project/private/time', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+    }
+	public function testIndexLoggedIn() {
+		$this->_fakeLogin(1);
+		$this->testAction('/project/private/time', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+
 	}
 /**
  * testView method
