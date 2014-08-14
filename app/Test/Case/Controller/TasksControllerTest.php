@@ -99,41 +99,58 @@ class TasksControllerTest extends AppControllerTest {
 	public function testPriorityAll() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=all', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 	}
-	public function testPriorityMinor() {
+	public function testPriorityMinorNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=1', array(2, 9));
+	}
+	public function testPriorityMinorName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=minor', array(2, 9));
 	}
-	public function testIndexPriorityMajor() {
+	public function testIndexPriorityMajorNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=2', array(1, 7, 10));
+	}
+	public function testIndexPriorityMajorName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=major', array(1, 7, 10));
 	}
-	public function testIndexPriorityUrgent() {
+	public function testIndexPriorityUrgentNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=3', array(3, 4, 5));
+	}
+	public function testIndexPriorityUrgentName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=urgent', array(3, 4, 5));
 	}
-	public function testIndexPriorityBlocker() {
+	public function testIndexPriorityBlockerNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=4', array(6, 8));
+	}
+	public function testIndexPriorityBlockerName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=blocker', array(6, 8));
 	}
-
-	public function testIndexStatusOpen() {
+	public function testIndexStatusOpenNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=1', array(2, 5));
+	}
+	public function testIndexStatusOpenName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=open', array(2, 5));
 	}
-	public function testIndexStatusInProgress() {
+	public function testIndexStatusInProgressNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=2', array(3, 4, 6, 10));
+	}
+	public function testIndexStatusInProgressName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=in%20progress', array(3, 4, 6, 10));
 	}
-	public function testIndexStatusResolved() {
+	public function testIndexStatusResolvedNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=3', array(1, 7));
+	}
+	public function testIndexStatusResolvedName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=resolved', array(1, 7));
 	}
-	public function testIndexStatusClosed() {
+	public function testIndexStatusClosedNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=4', array(8));
+	}
+	public function testIndexStatusClosedName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=closed', array(8));
 	}
-	public function testIndexStatusDropped() {
+	public function testIndexStatusDroppedNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=5', array(9));
+	}
+	public function testIndexStatusDroppedName() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=dropped', array(9));
 	}
 
@@ -179,7 +196,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->_fakeLogin(2);
 		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<form action="/project/public/tasks/add"', $this->contents, "Form was not rendered");
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/tasks/add').'"|', $this->view);
 	}
 
 	public function testAddTask() {
@@ -202,22 +219,12 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		$id = $this->controller->Task->getLastInsertID();
+
+		// We should be redirected to the new task
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', $this->controller->Task->getLastInsertID()),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/'.$id, true), $this->headers['Location']);
 	}
 /**
  * testEdit method
@@ -233,7 +240,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->_fakeLogin(2);
 		$this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<form action="/project/public/tasks/edit/1"', $this->contents, "Form was not rendered");
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/tasks/edit/1').'"|', $this->view);
 	}
 
 	public function testEditTask() {
@@ -255,22 +262,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 1),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
 	}
 
 
@@ -279,21 +274,10 @@ class TasksControllerTest extends AppControllerTest {
 		$ret = $this->testAction($url, array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
+		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', $id),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/'.$id, true), $this->headers['Location']);
 
 		$retrieved = $this->controller->Task->findById($id);
 		$this->assertTrue(is_array($retrieved));
@@ -379,21 +363,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
+		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 1),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
 	}
 
 	public function testAssignTask() {
@@ -407,22 +380,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 1),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
 
 		$task = $this->controller->Task->find('first', array('conditions' => array('id' => 1), 'recursive' => -1));
 		$this->assertEquals(1, $task['Task']['assignee_id']);
@@ -439,21 +400,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
+		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 1),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
 	}
 
 	public function testComment() {
@@ -470,19 +420,7 @@ class TasksControllerTest extends AppControllerTest {
 		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 1),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
 
 		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('task_id' => 1), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
 		$this->assertEquals('Something terrible...', $task['TaskComment']['comment']);
@@ -500,21 +438,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/updateComment/2', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
+		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 2),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/2', true), $this->headers['Location']);
 	}
 
 	public function testUpdateComment() {
@@ -532,19 +459,7 @@ class TasksControllerTest extends AppControllerTest {
 		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 2),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/2', true), $this->headers['Location']);
 
 		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('id' => 2), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
 		$this->assertEquals('A further terrible thing...', $task['TaskComment']['comment']);
@@ -562,21 +477,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/deleteComment/2', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
+		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 2),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/2', true), $this->headers['Location']);
 	}
 
 	public function testDeleteComment() {
@@ -593,19 +497,7 @@ class TasksControllerTest extends AppControllerTest {
 		// We should be redirected to the task page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-
-		$this->assertEquals($url, array(
-			'controller' => 'tasks',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', 2),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/public/tasks/view/2', true), $this->headers['Location']);
 
 		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('id' => 2), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
 		$this->assertEquals(array(), $task);

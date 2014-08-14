@@ -259,7 +259,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<form action="/projects/add"', $this->contents, "Form was not rendered");
+		$this->assertRegexp('|<form action=".*'.Router::url('/projects/add').'"|', $this->view);
 		
 	}
 
@@ -281,7 +281,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
-		$this->assertContains('<form action="/projects/add"', $this->contents, "Form was not rendered");
+		$this->assertRegexp('|<form action=".*'.Router::url('/projects/add').'"|', $this->view);
 	}
 
 	public function testAddProject() {
@@ -298,21 +298,10 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the project page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'projects',
-			'action' => 'view',
-			'project' => 'newproject',
-			'named' => array(),
-			'pass' => array('newproject'),
-			'plugin' => null
-		));
+		$this->assertEquals(Router::url('/project/newproject/view', true), $this->headers['Location']);
 
 	}
 
@@ -330,22 +319,10 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the project page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'projects',
-			'action' => 'view',
-			'project' => 'newproject_withgit',
-			'named' => array(),
-			'pass' => array('newproject_withgit'),
-			'plugin' => null
-		));
-
+		$this->assertEquals(Router::url('/project/newproject_withgit/view', true), $this->headers['Location']);
 	}
 
 
@@ -368,7 +345,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(5);
 		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<form action="/project/personal/edit"', $this->contents, "Form was not rendered");
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/personal/edit').'"|', $this->view);
 		
 	}
 
@@ -389,28 +366,17 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
+		// We should be redirected to the project page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/personal', true), $this->headers['Location']);
+
 		// Check it saved correctly
 		$saved = $this->controller->Project->findById(3);
 		$postData['Project']['name'] = 'personal';
 		unset($saved['Project']['created']);
 		unset($saved['Project']['modified']);
 		$this->assertEquals($saved['Project'], $postData['Project'], 'Failed to change project data');
-
-		// We should be redirected to the new project page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'projects',
-			'action' => 'view',
-			'project' => '3',
-			'named' => array(),
-			'pass' => array('3'),
-			'plugin' => null
-		));
 
 	}
 
@@ -428,28 +394,17 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 
+		// We should be redirected to the project page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/personal', true), $this->headers['Location']);
+
 		// Check it saved correctly
 		$saved = $this->controller->Project->findById(3);
 		$postData['Project']['name'] = 'personal';
 		unset($saved['Project']['created']);
 		unset($saved['Project']['modified']);
 		$this->assertEquals($saved['Project'], $postData['Project'], 'Failed to change project data');
-
-		// We should be redirected to the new project page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'projects',
-			'action' => 'view',
-			'project' => '3',
-			'named' => array(),
-			'pass' => array('3'),
-			'plugin' => null
-		));
 
 	}
 
