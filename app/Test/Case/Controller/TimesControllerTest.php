@@ -299,7 +299,7 @@ class TimesControllerTestCase extends AppControllerTest {
 		// We should be redirected to the time index page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/time/index', true), $this->headers['Location']);
+		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
 
 		// Check that the time was saved OK
 		$id = $this->controller->Time->getLastInsertID();

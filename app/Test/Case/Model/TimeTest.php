@@ -665,7 +665,7 @@ class TimeTestCase extends CakeTestCase {
 									0 => array( 'Time' => array(
 										'id' => '2',
 										'date' => '2012-11-12',
-										'description' => 'A description of the second <b>task</b>.',
+										'description' => 'A description of the second <b>time</b>.',
 										'mins' => '900',
 										'minutes' => array(
 											'w' => 0,
@@ -725,7 +725,7 @@ class TimeTestCase extends CakeTestCase {
 									0 => array( 'Time' => array(
 										'id' => '2',
 										'date' => '2012-11-12',
-										'description' => 'A description of the second <b>task</b>.',
+										'description' => 'A description of the second <b>time</b>.',
 										'mins' => '900',
 										'minutes' => array(
 											'w' => 0,
@@ -750,7 +750,7 @@ class TimeTestCase extends CakeTestCase {
 									0 => array( 'Time' => array(
 										'id' => '3',
 										'date' => '2012-11-13',
-										'description' => 'A description of the third <b>task</b>.',
+										'description' => 'A description of the third <b>time</b>.',
 										'mins' => '14',
 										'minutes' => array(
 											'w' => 0,
