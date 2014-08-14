@@ -152,12 +152,12 @@ class TimesControllerTestCase extends AppControllerTest {
 
 	}
 
-	public function testUserTimesNotLoggedIn() {
+	public function testHistoryNotLoggedIn() {
 		$this->testAction('/project/private/time/history', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
     }
 
-	public function testUserTimesLoggedIn() {
+	public function testHistoryLoggedIn() {
 		$this->_fakeLogin(1);
 		$this->testAction('/project/private/time/history/2012/46', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
@@ -236,7 +236,7 @@ class TimesControllerTestCase extends AppControllerTest {
 				)
 			)
 		), $this->vars['weekTimes']['tasks']);
-
+	
 
 		// Check that the dates are correct by formatting them consistently
 		$this->assertEqual(array(
@@ -256,6 +256,7 @@ class TimesControllerTestCase extends AppControllerTest {
 		), $this->vars['tasks']);
 	}
 
+
 /**
  * testView method
  *
@@ -268,7 +269,52 @@ class TimesControllerTestCase extends AppControllerTest {
  *
  * @return void
  */
-	public function testAdd() {
+	public function testAddTimeNotLoggedIn() {
+		$ret = $this->testAction('/project/public/time/add', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddTimeForm() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/time/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/time/add').'"|', $this->view);
+	}
+
+	public function testAddTime() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Time' => array(
+				'project_id' => '2',
+				'task_id' => '1',
+				'mins' => '9',
+		   	 	'description' => 'Did a small amount of work',
+				'date' => '2014-08-11',
+			)
+		);
+
+		$this->testAction('/project/public/time/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the time index page
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/public/time/index', true), $this->headers['Location']);
+
+		// Check that the time was saved OK
+		$id = $this->controller->Time->getLastInsertID();
+		$time = $this->controller->Time->find('first', array('conditions' => array('id' => $id), 'fields' => array('project_id', 'task_id', 'mins', 'description', 'date'), 'recursive' => -1));
+
+		$this->assertEquals(array(
+			'w' => 0,
+			'd' => 0,
+			'h' => 0,
+			'm' => 9,
+			't' => 9,
+			's' => '0h 9m',
+		), $time['Time']['minutes']);
+		unset($time['Time']['minutes']);
+		$this->assertEquals($postData['Time'], $time['Time']);
 	}
 /**
  * testEdit method
