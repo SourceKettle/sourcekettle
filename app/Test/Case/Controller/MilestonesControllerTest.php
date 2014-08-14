@@ -54,17 +54,10 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'open',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public'),
-			'plugin' => null
-		));
+		// We should be redirected to the list of open milestones
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/public/milestones/open', true), $this->headers['Location']);
 	}
 
 /**
@@ -78,8 +71,8 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		$this->assertContains('<h1>public <small>Open Milestones</small></h1>', $this->view);
-		$this->assertContains('<a href="/project/public/milestones/view/1">', $this->view);
-		$this->assertContains('<a href="/project/public/milestones/view/3">', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/public/milestones/view/1').'"|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/public/milestones/view/3').'"|', $this->view);
 
 		$this->assertNotNull($this->vars['milestones']);
 		$this->assertEquals(2, count($this->vars['milestones']));
@@ -122,7 +115,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		$this->assertContains('<h1>public <small>Closed Milestones</small></h1>', $this->view);
-		$this->assertContains('<a href="/project/public/milestones/view/2">', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/public/milestones/view/2').'"|', $this->view);
 
 		$this->assertNotNull($this->vars['milestones']);
 		$this->assertEquals(1, count($this->vars['milestones']));
@@ -262,7 +255,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/add', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 		$this->assertContains('<h1>public <small>New Milestone</small></h1>', $this->view);
-		$this->assertContains('<form action="/project/public/milestones/add"', $this->view);
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/milestones/add').'"|', $this->view);
 	}
 
 	public function testAddProjectUser() {
@@ -278,22 +271,15 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
+		$id = $this->controller->Milestone->getLastInsertId();
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/public/milestones/view/'.$id, true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', '6'),
-			'plugin' => null
-		));
-
+		// Check that it's been created properly
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
+		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
 	public function testAddProjectAdmin() {
@@ -309,21 +295,15 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
+		$id = $this->controller->Milestone->getLastInsertId();
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/view/'.$id, true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'view',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private', '6'),
-			'plugin' => null
-		));
+		// Check that it's been created properly
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
+		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 
 	}
 
@@ -340,22 +320,15 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/personal/milestones/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
+		$id = $this->controller->Milestone->getLastInsertId();
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/personal/milestones/view/'.$id, true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'view',
-			'project' => 'personal',
-			'named' => array(),
-			'pass' => array('personal', '6'),
-			'plugin' => null
-		));
-
+		// Check that it's been created properly
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
+		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
 /**
@@ -380,15 +353,16 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/edit/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 		$this->assertContains('<h1>public <small>Edit a Milestone</small></h1>', $this->view);
-		$this->assertContains('<form action="/project/public/milestones/edit/1"', $this->view);
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/milestones/edit/1').'"|', $this->view);
 	}
 
 	public function testEditProjectUser() {
 		$this->_fakeLogin(1);
 		$postData = array(
 			'Milestone' => array(
-				'subject' => 'A new milestone',
-				'description' => 'A new milestone for the project',
+				'id' => '1',
+				'subject' => 'Changed milestone',
+				'description' => 'This has changed',
 				'due' => '2099-02-03',
 			)
 		);
@@ -396,30 +370,24 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/public/milestones/view/1', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'view',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public', '1'),
-			'plugin' => null
-		));
-
+		// Check that it's been updated
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 1), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
+		unset($milestone['Milestone']['percent']);
+		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
 	public function testEditProjectAdmin() {
 		$this->_fakeLogin(1);
 		$postData = array(
 			'Milestone' => array(
-				'subject' => 'A new milestone',
-				'description' => 'A new milestone for the project',
+				'id' => 4,
+				'subject' => 'Changed milestone',
+				'description' => 'This has changed',
 				'due' => '2099-02-03',
 			)
 		);
@@ -427,30 +395,24 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/edit/4', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/view/4', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'view',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private', '4'),
-			'plugin' => null
-		));
-
+		// Check that it's been updated
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
+		unset($milestone['Milestone']['percent']);
+		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
 	public function testEditSystemAdmin() {
 		$this->_fakeLogin(5);
 		$postData = array(
 			'Milestone' => array(
-				'subject' => 'A new milestone',
-				'description' => 'A new milestone for the project',
+				'id' => '4',
+				'subject' => 'Changed milestone',
+				'description' => 'This has changed',
 				'due' => '2099-02-03',
 			)
 		);
@@ -458,22 +420,15 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/edit/4', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/view/4', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'view',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private', '4'),
-			'plugin' => null
-		));
-
+		// Check that it's been updated
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
+		unset($milestone['Milestone']['percent']);
+		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
 /**
@@ -503,7 +458,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/close/3', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 		$this->assertContains('<h1>Close milestone</h1>', $this->view);
-		$this->assertContains('<form action="/project/public/milestones/close/3"', $this->view);
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/milestones/close/3').'"|', $this->view);
 	}
 
 	public function testCloseProjectUser() {
@@ -512,22 +467,15 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/close/3', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/public/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'public',
-			'named' => array(),
-			'pass' => array('public'),
-			'plugin' => null
-		));
-
+		// Check that it's been closed
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 3), 'recursive' => -1));
+		$this->assertEquals(3, $milestone['Milestone']['id']);
+		$this->assertEquals(false, $milestone['Milestone']['is_open']);
 	}
 
 	public function testCloseProjectAdmin() {
@@ -536,22 +484,15 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/close/4', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private'),
-			'plugin' => null
-		));
-
+		// Check that it's been closed
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'recursive' => -1));
+		$this->assertEquals(4, $milestone['Milestone']['id']);
+		$this->assertEquals(false, $milestone['Milestone']['is_open']);
 	}
 
 	public function testCloseSystemAdmin() {
@@ -560,21 +501,15 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/close/4', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private'),
-			'plugin' => null
-		));
+		// Check that it's been closed
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'recursive' => -1));
+		$this->assertEquals(4, $milestone['Milestone']['id']);
+		$this->assertEquals(false, $milestone['Milestone']['is_open']);
 	}
 
 /**
@@ -611,7 +546,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/reopen/5', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 		$this->assertContains('<h1>Re-open milestone</h1>', $this->view);
-		$this->assertContains('<form action="/project/private/milestones/reopen/5"', $this->view);
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/private/milestones/reopen/5').'"|', $this->view);
 	}
 
 	public function testReopenProjectUser() {
@@ -620,22 +555,12 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/reopen/5', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private'),
-			'plugin' => null
-		));
-
+		// Check that it's been re-opened
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
 		$this->assertEquals($milestone['Milestone']['id'], 5);
 		$this->assertEquals($milestone['Milestone']['is_open'], 1);
@@ -647,22 +572,12 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/reopen/5', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private'),
-			'plugin' => null
-		));
-
+		// Check that it's been re-opened
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
 		$this->assertEquals($milestone['Milestone']['id'], 5);
 		$this->assertEquals($milestone['Milestone']['is_open'], 1);
@@ -674,22 +589,12 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/reopen/5', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private'),
-			'plugin' => null
-		));
-
+		// Check that it's been re-opened
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
 		$this->assertEquals($milestone['Milestone']['id'], 5);
 		$this->assertEquals($milestone['Milestone']['is_open'], 1);
@@ -722,7 +627,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/delete/5', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 		$this->assertContains('<h1>Delete milestone</h1>', $this->view);
-		$this->assertContains('<form action="/project/private/milestones/delete/5"', $this->view);
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/private/milestones/delete/5').'"|', $this->view);
 	}
 
 	public function testDeleteProjectUser() {
@@ -731,22 +636,12 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/delete/5', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private'),
-			'plugin' => null
-		));
-
+		// Check it's been deleted
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
 		$this->assertEquals($milestone, array());
 	}
@@ -757,22 +652,12 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/delete/5', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private'),
-			'plugin' => null
-		));
-
+		// Check it's been deleted
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
 		$this->assertEquals($milestone, array());
 	}
@@ -783,22 +668,12 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/private/milestones/delete/5', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
-		// We should be redirected to the new project page
+		// We should be redirected to the milestone page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
 
-		// PHP can parse the http:// url and Router can work out where it goes...
-		$url = parse_url($this->headers['Location']);
-		$url = Router::parse($url['path']);
-		$this->assertEquals($url, array(
-			'controller' => 'milestones',
-			'action' => 'index',
-			'project' => 'private',
-			'named' => array(),
-			'pass' => array('private'),
-			'plugin' => null
-		));
-
+		// Check it's been deleted
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
 		$this->assertEquals($milestone, array());
 	}
