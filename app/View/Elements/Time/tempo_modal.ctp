@@ -39,7 +39,7 @@
     </table>
     <div class="modal-footer tempo-footer">
         <?=$this->Bootstrap->button_link(
-            $this->DT->t('tempo.modal.add'),
+            __('Log time'),
             "#addTimeModal",
             array(
                 'data-dismiss' => "modal",
@@ -48,6 +48,6 @@
                 "style" => "primary"
             )
         )?>
-        <a href="#" class="btn btn-mini" data-dismiss="modal"><?= $this->DT->t('tempo.modal.close') ?></a>
+        <a href="#" class="btn btn-mini" data-dismiss="modal"><?= __('Close') ?></a>
     </div>
 </div>
