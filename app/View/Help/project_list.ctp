@@ -14,7 +14,23 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header('Help! <small>What do all the project icons mean?</small>'); ?>
+echo $this->Bootstrap->page_header('Help! <small>What do all the project icons mean?</small>');
+$this->Html->script('help', array('inline' => false));
+
+// Example data
+$private = array('Project' => array(
+	'id' => 0,
+	'name' => 'SuperSecr3t',
+	'public' => false,
+	'modified' => new DateTime('2 days ago', new DateTimeZone('UTC')),
+));
+$public = array('Project' => array(
+	'id' => 0,
+	'name' => 'Publ1cProj',
+	'public' => true,
+	'modified' => new DateTime('2 hours ago', new DateTimeZone('UTC')),
+));
+?>
 
 <div class="row">
 	<div class="span2">
@@ -32,28 +48,14 @@ echo $this->Bootstrap->page_header('Help! <small>What do all the project icons m
 
 		</div>
 		<div class="row-fluid">
-			<div class="offset1 span5">
-				<div class="well project-well">
-					<h3 class="project-title">
-						<a href="#" class="project-link">SuperSecr3t</a>
-						<span style="float: right;"><i class="icon-lock"></i></span>
-					</h3>
-					<p class="project-desc">A very secret project that you shouldn't tell anyone about.</p>
-					<p class="project-time">Last Modified: 8 hours, 2 minutes ago</p>
-				</div>
+			<div class="offset1 span5 example">
+				<?=$this->Element('Project/block', array('nospan' => true, 'project' => $private));?>
 				<div class="alert alert-info">
 					<strong>Exhibit 1:</strong> A private project
 				</div>
 			</div>
-			<div class="span5">
-				<div class="well project-well">
-					<h3 class="project-title">
-						<a href="#" class="project-link">Publ1cProj</a>
-						<span style="float: right;"><i class="icon-globe"></i></span>
-					</h3>
-					<p class="project-desc">A public project that will make life better for everyone who gazes upon it.</p>
-					<p class="project-time">Last Modified: 4 hours, 20 minutes ago</p>
-				</div>
+			<div class="span5 example">
+				<?=$this->Element('Project/block', array('nospan' => true, 'project' => $public));?>
 				<div class="alert alert-info">
 					<strong>Exhibit 2:</strong> A public project
 				</div>
