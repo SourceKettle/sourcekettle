@@ -148,10 +148,11 @@ echo $this->Bootstrap->page_header('Help! <small>How do I log time?</small>'); ?
 			<h4>The 'Timesheets' page</h4>
 			<p>Select '<a href="#"><i class="icon-book"></i> Time</a>' from the projects sidebar and then select <button class="btn btn-mini">History</button> from the time menu bar at the top of the page. If you've found your way correctly then you will encounter a view similar to that shown in <strong>exhibit 2</strong>.</p>
 			<p>This view shows all the tasks that have had time logged to them on the week shown, and who logged how much time. To move forward and back weeks, use the controls at the bottom of the page. To see details of the time logged for a user/task on a day, click on the box containing the total hours logged on that day for the task.</p>
+			<p>The <button class="btn btn-mini"><i class="icon-download"></i> Download CSV</button> button lets you get the same data as CSV, for e.g. importing into a spreadsheet.</p>
 			<p><strong>e.g.</strong> To view all the time you logged on monday for your task 'Create a new time tracking interface' you would click on the '1' in exhibit 2.</p>
 			<p>From here you can view more details about the time logged, or even log more time!</p>
 			<div class="alert alert-info" style="margin-bottom:0px;">
-				<strong>Hint:</strong> Click on any box on the 'week' interface to add time to that day/task </strong>
+				<strong>Hint:</strong> Click on any box on the 'Timesheets' interface to add time to that day/task </strong>
 			</div>
 		</div>
 
