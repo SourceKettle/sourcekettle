@@ -201,9 +201,9 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage tasks?</small>'
 
         <h4>Task lozenges</h4>
         <p>
-          Wherever tasks are listed, such as the display board or milestone board, they are displayed as lozenges containing a brief overview of the task (exhibit 3).  At a glance, you can see:
+          Wherever tasks are listed, such as the display board or milestone board, they are displayed as lozenges containing a brief overview of the task.  At a glance, you can see:
           <ul>
-            <li><strong>Task type:</strong> Indicated by the coloured strip on the left edge of the lozenge - matches up with the type colours in exhibit 2</li>
+            <li><strong>Task type:</strong> Indicated by the coloured strip on the left edge of the lozenge</li>
             <li><strong>Task ID and subject:</strong> Displayed as text</li>
             <li><strong>Priority:</strong> A black-and-white indicator with icon</li>
             <li><strong>Status:</strong> A coloured indicator showing the current status</li>
