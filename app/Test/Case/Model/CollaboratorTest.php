@@ -157,7 +157,8 @@ class CollaboratorTestCase extends CakeTestCase {
             1 => "Mr Smith [Mr.Smith@example.com]",
             3 => "Mrs Guest [mrs.guest@example.com]",
             4 => "Mr User [mr.user@example.com]",
-            5 => "Mr Admin [mr.admin@example.com]"
+            5 => "Mr Admin [mr.admin@example.com]",
+            10 => "Another user [another-user@example.com]",
         );
         $this->assertEquals($usersB, $usersA, json_encode($usersA));
     }
