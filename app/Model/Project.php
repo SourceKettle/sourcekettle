@@ -413,9 +413,10 @@ class Project extends AppModel {
 
 		return $this->Collaborator->User->find('list',
 			array(
-				'conditions' => array('id' => array_keys($collabs)),
+				'conditions' => array('id' => array_values($collabs)),
 			)
 		);
+
 	}
 
 }
