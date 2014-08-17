@@ -222,6 +222,29 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertRedirect('/');
 	}
 
+	public function testActivateFailed() {
+
+		// First, enable registration
+		$this->Setting->save(array(
+			'name' => 'register_enabled',
+			'value' => true,
+		));
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("<h4 class='alert-heading'>Error</h4>An error occured, please contact your system administrator."));
+
+		// Activate our non-active account
+		$this->testAction('/activate/ba6f23c5ce588f16647fe32603fb1593', array('method' => 'get', 'return' => 'vars'));
+
+		$this->assertRedirect('/');
+	}
+
 	public function testActivateOK() {
 
 		// First, enable registration
@@ -229,6 +252,7 @@ class UsersControllerTest extends AppControllerTest {
 			'name' => 'register_enabled',
 			'value' => true,
 		));
+
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
@@ -248,7 +272,88 @@ class UsersControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testLostPassword() {
+	public function testLostPasswordForm() {
+		$this->testAction('/lost_password', array('method' => 'get', 'return' => 'vars'));
+		$this->assertRegexp('|<form action=".*'.Router::url('/lost_password').'"|', $this->view);
+	}
+
+	public function testLostPasswordUnknownEmail() {
+		$this->controller->Email
+			->expects($this->never())
+			->method('send');
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("A problem occurred when resetting your password - if the problem persists you should contact <a href='mailto:admin@example.org'>the system administrator</a>.");
+
+		$postData = array('User' => array(
+			'email' => 'somefakeaccount@nowhere.example.org',
+		));
+
+		$this->testAction('/lost_password', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+
+		// Should get sent to the login page with a success message
+		$this->assertRedirect('/login');
+	}
+
+	public function testLostPasswordExternalAccount() {
+		$this->controller->Email
+			->expects($this->never())
+			->method('send');
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("It looks like you're using an account that is not managed by SourceKettle - unfortunately, we can't help you reset your password. Try talking to <a href='mailto:admin@example.org'>the system administrator</a>.");
+
+		$postData = array('User' => array(
+			'email' => 'snaitf@example.com',
+		));
+
+		$this->testAction('/lost_password', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+
+		// Should get sent to the login page with a success message
+		$this->assertRedirect('/login');
+	}
+
+	public function testLostPasswordSendFailed() {
+		$this->controller->Email
+			->expects($this->once())
+			->method('send')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("There was a problem sending the lost password email");
+
+		$postData = array('User' => array(
+			'email' => 'mrs.smith@example.com',
+		));
+
+		$this->testAction('/lost_password', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+
+		// Should get the form again
+		$this->assertRegexp('|<form action=".*'.Router::url('/lost_password').'"|', $this->view);
+
+	}
+
+	public function testLostPasswordSuccess() {
+		$this->controller->Email
+			->expects($this->once())
+			->method('send')
+			->will($this->returnValue(true));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("An email was sent to the given email address. Please use the link to reset your password.");
+
+		$postData = array('User' => array(
+			'email' => 'mrs.smith@example.com',
+		));
+
+		$this->testAction('/lost_password', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+
+		// Should get sent to the login page with a success message
+		$this->assertRedirect('/login');
 	}
 
 /**
@@ -256,7 +361,123 @@ class UsersControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testResetPassword() {
+	public function testResetPasswordNoKey() {
+		$this->testAction('/reset_password', array('method' => 'post', 'return' => 'vars'));
+		$this->assertRedirect('/lost_password');
+	}
+
+	public function testResetPasswordInvalidKey() {
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("The key given was invalid");
+
+		$this->testAction('/reset_password/notarealkeyherefoobar', array('method' => 'post', 'return' => 'vars'));
+		$this->assertRedirect('/lost_password');
+	}
+
+	public function testResetPasswordForm() {
+		$this->testAction('/reset_password/ab169f5ff7fbbcdd7db9bd078', array('method' => 'get', 'return' => 'vars'));
+		$this->assertRegexp('|<form action=".*'.Router::url('/reset_password/ab169f5ff7fbbcdd7db9bd078').'"|', $this->view);
+	}
+
+	public function testResetPasswordPutFail() {
+		$this->testAction('/reset_password', array('method' => 'put', 'return' => 'vars'));
+		$this->assertRedirect('/lost_password');
+	}
+
+	public function testResetPasswordKeyExpired() {
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("The key given has expired");
+
+		$this->testAction('/reset_password/ab169f5ff7fbbcdd7db9bd077', array('method' => 'post', 'return' => 'vars'));
+
+		$this->assertRedirect('/lost_password');
+	}
+
+	public function testResetPasswordNoMatch() {
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Your passwords do not match. Please try again.");
+
+		$postData = array('User' => array(
+			'password' => 'Yatta!Stairs?',
+			'password_confirm' => 'Stairs!Yatta?',
+		));
+
+		$this->testAction('/reset_password/ab169f5ff7fbbcdd7db9bd078', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+
+	}
+
+	public function testResetPasswordShortPassword() {
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("There was a problem resetting your password. Please try again.");
+
+		$postData = array('User' => array(
+			'password' => 'short',
+			'password_confirm' => 'short',
+		));
+
+		$this->testAction('/reset_password/ab169f5ff7fbbcdd7db9bd078', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+
+		$this->assertContains("Your password must be at least 8 characters", $this->view);
+	}
+
+	public function testResetPasswordBadPassword() {
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("<h4 class='alert-heading'>Oh Dear...</h4>I see what you did there. 'password' is not a good password. Be more original!");
+		$postData = array('User' => array(
+			'password' => 'password',
+			'password_confirm' => 'password',
+		));
+
+		$this->testAction('/reset_password/ab169f5ff7fbbcdd7db9bd078', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+	}
+
+	public function testResetFailure() {
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("There was a problem resetting your password. Please try again."));
+
+		$postData = array('User' => array(
+			'password' => 'Yatta!Stairs?',
+			'password_confirm' => 'Yatta!Stairs?',
+		));
+
+		$this->testAction('/reset_password/ab169f5ff7fbbcdd7db9bd078', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+
+	}
+
+	public function testResetPasswordOK() {
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Your password has been reset. You can now login.");
+
+		$postData = array('User' => array(
+			'password' => 'Yatta!Stairs?',
+			'password_confirm' => 'Yatta!Stairs?',
+		));
+
+		$this->testAction('/reset_password/ab169f5ff7fbbcdd7db9bd078', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+
+		$this->assertRedirect('/login');
+
 	}
 
 /**

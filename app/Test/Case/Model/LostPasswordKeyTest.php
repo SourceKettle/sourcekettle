@@ -61,12 +61,17 @@ class LostPasswordKeyTestCase extends CakeTestCase {
                     'id' => "1",
                     'user_id' => "1",
                     'key' => 'ab169f5ff7fbbcdd7db9bd077',
-                    'created' => '2012-11-04 13:16:47',
-                    'modified' => '2012-11-04 13:16:47'
+                ),
+			),
+			array(
+                'LostPasswordKey' => array(
+                    'id' => "2",
+                    'user_id' => "1",
+                    'key' => 'ab169f5ff7fbbcdd7db9bd078',
                 ),
             ),
         );
-        $fixturesB = $this->LostPasswordKey->find('all');
+        $fixturesB = $this->LostPasswordKey->find('all', array('fields' => array('id', 'user_id', 'key')));
         $this->assertEquals($fixtures, $fixturesB, "Arrays were not equal");
     }
 }

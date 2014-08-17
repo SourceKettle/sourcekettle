@@ -848,7 +848,6 @@ class ProjectTestCase extends CakeTestCase {
 	public function testListCollaborators() {
 		$this->Project->id = 1;
 		$collabs = $this->Project->listCollaborators();
-		debug($collabs);
 		$this->assertEquals(array(
 			1 => 'Mr Smith',
 			3 => 'Mrs Guest',
