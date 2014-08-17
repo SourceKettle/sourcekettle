@@ -49,7 +49,7 @@ $_levels = array(
                             <tr>
                                 <th width="60%"><?= __("User") ?></th>
                                 <th><?= __("Role") ?></th>
-                                <th width="25%"><?= __("Actions") ?></th>
+                                <? if ($isAdmin) {?><th width="25%"><?= __("Actions") ?></th><? } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -79,6 +79,7 @@ $_levels = array(
                             <tr>
                                 <td><?= $this->Html->link("$_user_name &lt;$_user_mail&gt;", $_user_url, array('escape' => false)) ?></td>
                                 <td><?= $_access_icon . " " . h($_access_text) ?></td>
+								<? if ($isAdmin) {?>
                                 <td>
                                     <? if ($_promote_url) echo $this->Bootstrap->button_form($_up_icon, $_promote_url, array('escape'=>false, 'size' => 'mini', 'title' => 'Promote user')); else echo $_blank_button; ?>
                                     <? if ($_demote_url) echo $this->Bootstrap->button_form($_down_icon, $_demote_url, array('escape'=>false, 'size' => 'mini', 'title' => 'Demote user')); else echo $_blank_button; ?>
@@ -90,6 +91,7 @@ $_levels = array(
                                     );
                                 ?>
                                 </td>
+								<? } ?>
                             </tr>
                             <?php
                             endforeach;
@@ -100,7 +102,7 @@ $_levels = array(
                 </div>
             </div>
             <div class="span4">
-            <?php
+            <?php if ($isAdmin) {
                 echo $this->Form->create('Collaborator',
                     array(
                         'url' => array(
@@ -128,7 +130,7 @@ $_levels = array(
                 echo $this->Bootstrap->button($this->Bootstrap->icon('plus', 'white'), array('escape' => false, 'style' => 'success'));
 
                 echo $this->Form->end();
-            ?>
+            } ?>
             </div>
         </div>
     </div>

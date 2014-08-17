@@ -109,4 +109,10 @@ class AppControllerTest extends ControllerTestCase {
 		}
 		return $this->assertFalse($this->controller->isAuthorized($this->authUser), "Should not be authorized");
     }
+
+	public function assertRedirect($url) {
+		$this->assertNotNull($this->headers);
+		$this->assertNotNull(@$this->headers['Location']);
+		$this->assertEquals(Router::url($url, true), $this->headers['Location']);
+	}
 }

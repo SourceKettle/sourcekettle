@@ -299,10 +299,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the project page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/newproject/view', true), $this->headers['Location']);
-
+		$this->assertRedirect('/project/newproject/view');
 	}
 
 	public function testAddGitProject() {
@@ -320,9 +317,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the project page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/newproject_withgit/view', true), $this->headers['Location']);
+		$this->assertRedirect('/project/newproject_withgit/view');
 	}
 
 
@@ -367,9 +362,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the project page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/personal', true), $this->headers['Location']);
+		$this->assertRedirect('/project/personal');
 
 		// Check it saved correctly
 		$saved = $this->controller->Project->findById(3);
@@ -395,9 +388,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 
 		// We should be redirected to the project page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/personal', true), $this->headers['Location']);
+		$this->assertRedirect('/project/personal');
 
 		// Check it saved correctly
 		$saved = $this->controller->Project->findById(3);
