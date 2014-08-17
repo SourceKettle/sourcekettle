@@ -11,13 +11,33 @@ class LostPasswordKeyFixture extends CakeTestFixture {
         'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
     );
 
-    public $records = array(
-        array(
+    public $records = array();
+
+	public function __construct() {
+
+		// We need to check that key expiry works, so we will create keys with
+		// recent and expired creation timestamps on startup.
+
+		// TODO hard coded expiration length
+		$dateRecent  = new DateTime('now', new DateTimeZone('UTC'));
+		$dateExpired = clone($dateRecent);
+		$dateExpired->sub(new DateInterval('PT1805S'));
+
+		$this->records[] = array(
             'id' => 1,
             'user_id' => 1,
             'key' => 'ab169f5ff7fbbcdd7db9bd077',
-            'created' => '2012-11-04 13:16:47',
-            'modified' => '2012-11-04 13:16:47'
-        ),
-    );
+            'created' =>  $dateExpired->format('Y-m-d H:i:S'),
+            'modified' => $dateExpired->format('Y-m-d H:i:S'),
+		);
+
+		$this->records[] = array(
+            'id' => 2,
+            'user_id' => 1,
+            'key' => 'ab169f5ff7fbbcdd7db9bd078',
+            'created' =>  $dateRecent->format('Y-m-d H:i:S'),
+            'modified' => $dateRecent->format('Y-m-d H:i:S'),
+		);
+		parent::__construct();
+	}
 }

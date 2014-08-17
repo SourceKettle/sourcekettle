@@ -57,7 +57,7 @@ class FlashComponent extends Component {
 	}
 
 	public function errorReason($reason) {
-		$subject = "<h4 class='alert-heading'>The Request could not be completed</h4>{reason}.";
+		$subject = "<h4 class='alert-heading'>The Request could not be completed:</h4>{reason}.";
 		$search	= array('{reason}');
 		$replace = array($reason);
 		$this->__flashBoolean(str_replace($search, $replace, $subject), false);

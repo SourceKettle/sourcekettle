@@ -21,6 +21,11 @@ class HelpController extends AppController{
  * @var type String
  */
 	public $name = 'Help';
+	public $uses = array(
+		'TaskType',
+		'TaskPriority',
+		'TaskStatus',
+	);
 
 	// Dashboard - any user can see all actions
 	public function isAuthorized($user) {
@@ -52,6 +57,9 @@ class HelpController extends AppController{
 	}
 
 	public function tasks() {
+		$this->set('statuses', $this->TaskStatus->find('list', array()));
+		$this->set('priorities', $this->TaskPriority->find('list', array()));
+		$this->set('types', $this->TaskType->find('list', array()));
 	}
 
 	public function milestones() {

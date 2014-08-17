@@ -55,9 +55,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the list of open milestones
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/milestones/open', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/milestones/open');
 	}
 
 /**
@@ -273,9 +271,7 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		// We should be redirected to the milestone page
 		$id = $this->controller->Milestone->getLastInsertId();
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/milestones/view/'.$id, true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/milestones/view/'.$id);
 
 		// Check that it's been created properly
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
@@ -297,9 +293,7 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		// We should be redirected to the milestone page
 		$id = $this->controller->Milestone->getLastInsertId();
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/view/'.$id, true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/view/'.$id);
 
 		// Check that it's been created properly
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
@@ -322,9 +316,7 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		// We should be redirected to the milestone page
 		$id = $this->controller->Milestone->getLastInsertId();
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/personal/milestones/view/'.$id, true), $this->headers['Location']);
+		$this->assertRedirect('/project/personal/milestones/view/'.$id);
 
 		// Check that it's been created properly
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
@@ -371,9 +363,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/milestones/view/1', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/milestones/view/1');
 
 		// Check that it's been updated
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 1), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
@@ -396,9 +386,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/view/4', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/view/4');
 
 		// Check that it's been updated
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
@@ -421,9 +409,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/view/4', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/view/4');
 
 		// Check that it's been updated
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
@@ -468,9 +454,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/milestones/index');
 
 		// Check that it's been closed
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 3), 'recursive' => -1));
@@ -485,9 +469,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/index');
 
 		// Check that it's been closed
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'recursive' => -1));
@@ -502,9 +484,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/index');
 
 		// Check that it's been closed
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'recursive' => -1));
@@ -556,9 +536,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/index');
 
 		// Check that it's been re-opened
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
@@ -573,9 +551,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/index');
 
 		// Check that it's been re-opened
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
@@ -590,9 +566,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/index');
 
 		// Check that it's been re-opened
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
@@ -637,9 +611,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/index');
 
 		// Check it's been deleted
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
@@ -653,9 +625,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/index');
 
 		// Check it's been deleted
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
@@ -669,9 +639,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the milestone page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/private/milestones/index', true), $this->headers['Location']);
+		$this->assertRedirect('/project/private/milestones/index');
 
 		// Check it's been deleted
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));

@@ -70,7 +70,9 @@
         </div>
 
         <? if (!empty($projects)){
-          echo $this->Element("Project/list", array('projects' => $projects, 'nospan' => true));
+    		foreach ($projects as $project){
+				echo $this->Element('Project/block', array('project' => $project, 'nospan' => true));
+			}
         } else {
           echo $this->element('Project/noprojectsalert');
         }?>

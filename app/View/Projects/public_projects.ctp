@@ -23,7 +23,9 @@ echo $this->Html->css('projects.index', null, array ('inline' => false));
 </div>
 <div class='row'>  
   <? if (!empty($projects)){
-        echo $this->Element("Project/list", array('projects' => $projects));
+    	foreach ($projects as $project){
+			echo $this->Element('Project/block', array('project' => $project));
+		}
       } else {
         echo $this->element('Project/noprojectsalert', array('span' => true));
       }?>

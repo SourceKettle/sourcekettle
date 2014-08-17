@@ -123,7 +123,7 @@ class UsersController extends AppController {
 			if (!empty($record)) {
 				$record['User']['is_active'] = 1;
 
-				//create a new record to stop it rehashing the password
+				// Create a new record to stop it rehashing the password
 				$newrecord['User'] = array();
 				$newrecord['User']['id'] = $record['User']['id'];
 				$newrecord['User']['is_active'] = '1';
@@ -146,101 +146,100 @@ class UsersController extends AppController {
 /**
  * Function to allow for users to reset their passwords. Will generate a key and an email.
  */
-	public function lost_password($key = null) {
-		if ($this->request->is('post')) {
+	public function lost_password() {
 
-			// Generate a random reset key and email it to them
-			$user = $this->User->findByEmail($this->request->data['User']['email']);
-
-			// Check the user account is internally managed by SourceKettle
-			if ($user['User']['password'] == null) {
-				$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->sourcekettle_config['global']['alias'] . " - " .
-					"unfortunately, we can't help you reset your password.	Try talking to " .
-					"<a href='mailto:" . $this->sourcekettle_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
-				return $this->redirect('/login');
-			}
-
-			if (!empty($user)) {
-				//Now to create the key and send the email
-				$this->User->LostPasswordKey->save(
-					array('LostPasswordKey' => array(
-						'user_id' => $user['User']['id'],
-						'key' => $this->__generateKey(25),
-					))
-				);
-				if ($this->__sendForgottenPasswordMail($user['User']['id'], $this->User->LostPasswordKey->getLastInsertID())) {
-					$this->log("[UsersController.lost_password] lost password email sent to user[" . $user['User']['id'] . "]", 'sourcekettle');
-				} else {
-					$this->log("[UsersController.lost_password] lost password email could NOT be sent to user[" . $user['User']['id'] . "]", 'sourcekettle');
-					$this->Session->setFlash("There was a problem sending the lost password email", 'default', array(), 'error');
-					$this->render('lost_password');
-					return;
-				}
-			}
-
-			$this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
-			return $this->redirect('/login');
-
-		} else if ($this->request->is('get')) {
-			// Display the form or act on the link
-			if ($key == null) {
-				// Display the form
-				$this->render('lost_password');
-			} else {
-				// Act on the key
-				$passwordkey = $this->User->LostPasswordKey->findByKey($key);
-				if (empty($passwordkey)) {
-					$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
-					$this->render('lost_password');
-				} else {
-					$this->reset_password($key);
-				}
-			}
-		}
-	}
-
-/**
- * The function to reset a password
- * @param type $key The LostPasswordKey to use
- */
-	public function reset_password($key = null) {
-		// No key given, bomb out
-		if ($key == null) {
-			$this->Session->setFlash("A valid password reset key was not given.", 'default', array(), 'error');
-			return $this->redirect('/');
+		// GET request - render the lost password form
+		if ($this->request->is('get')) {	
+			$this->render('lost_password');
 			return;
 		}
 
-		// Try to find the key in the DB, bomb out if we can't
+		// Filter out non POST or GET requests
+		if (!$this->request->is('post')) {
+			return $this->redirect('/lost_password');
+		}
+
+		// POST request - create a key and email the user
+		$user = $this->User->findByEmail($this->request->data['User']['email']);
+		
+		// Don't know them...
+		if (empty($user)) {
+			$this->Session->setFlash("A problem occurred when resetting your password - if the problem persists you should contact <a href='mailto:".$this->sourcekettle_config['sysadmin_email']."'>the system administrator</a>.", 'default', array(), 'error');
+			return $this->redirect('/login');
+		}
+		// Check the user account is internally managed by SourceKettle
+		if (!@$user['User']['is_internal']) {
+			$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->sourcekettle_config['global']['alias'] . " - " .
+				"unfortunately, we can't help you reset your password. Try talking to " .
+				"<a href='mailto:" . $this->sourcekettle_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
+			return $this->redirect('/login');
+		}
+	
+		// Now to create the key and send the email
+		$this->User->LostPasswordKey->save(
+			array('LostPasswordKey' => array(
+				'user_id' => $user['User']['id'],
+				'key' => $this->__generateKey(25),
+			))
+		);
+	
+		if ($this->__sendForgottenPasswordMail($user['User']['id'], $this->User->LostPasswordKey->getLastInsertID())) {
+			$this->log("[UsersController.lost_password] lost password email sent to user[" . $user['User']['id'] . "]", 'sourcekettle');
+		} else {
+			$this->log("[UsersController.lost_password] lost password email could NOT be sent to user[" . $user['User']['id'] . "]", 'sourcekettle');
+			$this->Session->setFlash("There was a problem sending the lost password email", 'default', array(), 'error');
+			$this->render('lost_password');
+			return;
+		}
+	
+		$this->Session->setFlash("An email was sent to the given email address. Please use the link to reset your password.", 'default', array(), 'success');
+		return $this->redirect('/login');
+
+	}
+
+	public function reset_password($key = null) {
+
+		// No key yet - bounce to the lost_password form
+		if ($key == null) {
+			return $this->redirect('/lost_password');
+		}
+
+		// Invalid key
 		$passwordkey = $this->User->LostPasswordKey->findByKey($key);
 		if (empty($passwordkey)) {
 			$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
-			return $this->redirect('lost_password');
-			return;
+			return $this->redirect('/lost_password');
 		}
-
-		// Bomb out if it's not a POST request
-		// TODO does this need an error message?
-		if (!$this->request->is('post')) {
-			return;
-		}
-
-		// Get unix timestamp of the key for comparison
-		App::uses('CakeTime', 'Utility');
-		$keytime = CakeTime::toUnix($passwordkey['LostPasswordKey']['created']);
 
 		// Bomb out if the key has expired
 		// TODO hard-coded expiry time, should be in config
-		if ($keytime + 1800 < time()) {
+		$keyTime = new DateTime($passwordkey['LostPasswordKey']['created'], new DateTimeZone('UTC'));
+		$expiryTime = new DateTime('now', new DateTimeZone('UTC'));
+		$expiryTime->sub(new DateInterval('PT1800S'));
+
+		if ($keyTime < $expiryTime) {
 			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
 			$this->Session->setFlash("The key given has expired", 'default', array(), 'error');
-			return $this->redirect('lost_password');
+			return $this->redirect('/lost_password');
+		}
+
+		// If we have no new password yet, render the password form
+		if ($this->request->is('get') || !isset($this->request->data['User']['password'])) {
+			$this->render('reset_password');
 			return;
 		}
 
-		// Bomb out if the passwords do not match
-		if ($this->request->data['User']['password'] != $this->request->data['User']['password_confirm']) {
+		// Passwords don't match, re-render password form
+		if (@$this->request->data['User']['password'] != @$this->request->data['User']['password_confirm']) {
 			$this->Session->setFlash("Your passwords do not match. Please try again.", 'default', array(), 'error');
+			$this->render('reset_password');
+			return;
+		}
+
+		// Check for a particularly silly password...
+		if (strtolower($this->data['User']['password']) == 'password') {
+			$this->Session->setFlash(__("<h4 class='alert-heading'>Oh Dear...</h4>I see what you did there. 'password' is not a good password. Be more original!"), 'default', array(), 'error');
+			$this->render('reset_password');
 			return;
 		}
 
@@ -250,21 +249,19 @@ class UsersController extends AppController {
 		// Save the user object with their newly-chosen password
 		$this->User->id = $passwordkey['User']['id'];
 
-		// Add in the email field, as otherwise all we have is the password.
-		// TODO why do we need to do this? The email field gets blanked otherwise - not the name field though
-		$this->request->data['User']['email'] = $this->User->field('email');
-
-		if ($this->User->save($this->request->data)) {
-
-			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
-
-			$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
-			$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'sourcekettle');
-
-			return $this->redirect('/login');
-		} else {
-			$this->Session->setFlash("There was problem resetting your password. Please try again.", 'default', array(), 'error');
+		// Save failed...
+		if (!$this->User->save($this->request->data)) {
+			$this->Session->setFlash("There was a problem resetting your password. Please try again.", 'default', array(), 'error');
+			$this->render("reset_password");
+			return;
 		}
+
+		// Delete the reset key and redirect to login page
+		$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
+		$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
+		$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'sourcekettle');
+
+		return $this->redirect('/login');
 	}
 
 /**
@@ -275,7 +272,7 @@ class UsersController extends AppController {
 			if ($user = $this->User->findByEmail($this->Useful->extractEmail($user))) {
 				return $this->redirect(array('action' => 'view', $user['User']['id']));
 			} else {
-				$this->Flash->error('The specified User does not exist. Please try again.');
+				$this->Flash->error('The specified user does not exist. Please try again.');
 			}
 		}
 		$this->User->recursive = 0;
@@ -743,7 +740,6 @@ class UsersController extends AppController {
 		}
 
 		$this->Email->to		= $User['User']['email'];
-		//$this->Email->bcc		= array('secret@example.com');
 		$this->Email->subject	= 'SourceKettle - Forgotten Password';
 		$this->Email->replyTo	= $Addr;
 		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';

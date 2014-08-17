@@ -294,7 +294,6 @@ class Time extends AppModel {
 			$lastTid = $task['id'];
 			$lastDate = $date;
 		}
-
 		return $summary;
 	}
 

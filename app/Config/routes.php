@@ -89,10 +89,10 @@
         Router::connect('/projects/public_projects/*', array('controller' => 'projects', 'action' => 'public_projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/add', array('controller' => 'projects', 'action' => 'add'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
-        Router::connect('/projects/*', array('controller' => 'projects', 'action' => 'index'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
-
 		// This is a (fudgy!) fix to make submodules' links in the source view work. We may want to change this if we ever support HTTPS access to git.
 		Router::connect('/projects/:project.git', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/projects/*', array('controller' => 'projects', 'action' => 'index'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+
 
 		// Point admin project actions to the right controller
 		// TODO this is a mess, rename is the only sysadmin-only function, I am too dumb to route though
