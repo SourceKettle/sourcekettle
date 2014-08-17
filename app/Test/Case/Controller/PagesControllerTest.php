@@ -61,44 +61,61 @@ class PagesControllerTest extends AppControllerTest {
 		$this->assertEquals(Router::url('/', true), $this->headers['Location']);
 	}
 
-	public function testDisplayPages() {
-		$baseDir = realpath(dirname(dirname(dirname(__DIR__))).'/View/Pages');
-		$baseFolder = new Folder($baseDir);
-		$files = $baseFolder->read(true, false, true);
-		foreach ($files[1] as $file) {
-			if (!preg_match('/([^\/]+)\.ctp$/', $file, $matches)) {
-				continue;
-			}
-			$rendered = $this->testAction('/pages/'.$matches[1], array('return' => 'contents', 'method' => 'get'));
-
-			$real = $this->controller->render($matches[1]);
-			$this->assertEquals($real->__toString(), $rendered);
-		}
-	}
-
 
 /**
  * testHome method
  *
  * @return void
  */
-	public function testHomeNotLoggedIn() {
+	public function testDefaultNotLoggedIn() {
 
 		// Logged out - show the home page at /
 		$rendered = $this->testAction('/', array('return' => 'view', 'method' => 'get'));
-		$expected = $this->testAction('/pages/home', array('return' => 'view', 'method' => 'get'));
-		$this->assertEquals($expected, $rendered);
+		$this->assertContains('SourceKettle uses cookies!', $this->view);
 	}
 
-	public function testHomeLoggedIn() {
+	public function testDefaultLoggedIn() {
 		// Logged in - redirect to the dashboard
 		$this->_fakeLogin(2);
 		$this->testAction('/', array('return' => 'result', 'method' => 'get'));
 
 		// We should be redirected to the dashboard
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/dashboard', true), $this->headers['Location']);
+		$this->assertRedirect('/dashboard');
+	}
+
+	public function testHomeNotLoggedIn() {
+		$rendered = $this->testAction('/pages/home', array('return' => 'view', 'method' => 'get'));
+		$this->assertContains('SourceKettle uses cookies!', $this->view);
+	}
+
+	public function testHomeLoggedIn() {
+		$this->_fakeLogin(2);
+		$this->testAction('/pages/home', array('return' => 'result', 'method' => 'get'));
+		$this->assertContains('SourceKettle uses cookies!', $this->view);
+	}
+
+/**
+ * testAbout method
+ *
+ * @return void
+ */
+
+	public function testAboutNotLoggedIn() {
+		$this->testAction('/about', array('return' => 'result', 'method' => 'get'));
+		$this->assertContains('We &hearts; open-source', $this->view);
+		$this->assertNotContains('Tuba solo', $this->view);
+	}
+	public function testAboutNotSystemAdmin() {
+		$this->_fakeLogin(2);
+		$this->testAction('/about', array('return' => 'result', 'method' => 'get'));
+		$this->assertContains('We &hearts; open-source', $this->view);
+		$this->assertNotContains('Tuba solo', $this->view);
+	}
+	public function testAboutSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/about', array('return' => 'result', 'method' => 'get'));
+		$this->assertContains('We &hearts; open-source', $this->view);
+		$this->assertContains('Tuba solo', $this->view);
 	}
 
 }
