@@ -38,6 +38,7 @@ class AppControllerTest extends ControllerTestCase {
                     '_validateCsrf',
                 ),
                 'Session',
+				'Email',
             )
         ));
 

@@ -19,5 +19,12 @@ class EmailConfirmationKeyFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:33:03',
             'modified' => '2012-06-01 12:33:03'
         ),
+        array(
+            'id' => 2,
+            'user_id' => 11,
+            'key' => 'ba6f23c5ce588f16647fe32603fb1593',
+            'created' => '2012-06-01 12:33:03',
+            'modified' => '2012-06-01 12:33:03'
+        ),
     );
 }
