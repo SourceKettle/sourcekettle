@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * TaskPriority model for the DevTrack system
+ * TaskPriority model for the SourceKettle system
  * Stores the Priorities for Tasks in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  *
  * @property Task $Task
@@ -34,6 +34,11 @@ class TaskPriority extends AppModel {
 			'dependent' => false,
 		)
 	);
+	public $actsAs = array(
+		'FilterValid' => array(
+			'nameField' => 'name',
+		),
+	);
 
 	public function nameToID($priority_name) {
 		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($priority_name)))));
@@ -41,5 +46,14 @@ class TaskPriority extends AppModel {
 			return 0;
 		}
 		return $found['TaskPriority']['id'];
+	}
+
+	public function getLookupTable() {
+		$tp = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'level', 'icon', 'class')));
+		$table = array();
+		foreach ($tp as $p) {
+			$table[ $p['TaskPriority']['id'] ] = $p['TaskPriority'];
+		}
+		return $table;
 	}
 }

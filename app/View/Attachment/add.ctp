@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/attachments/add for the DevTrack system
+ * View class for APP/attachments/add for the SourceKettle system
  * View will allow user to create a new project
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Attachment
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Attachment
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -42,7 +42,7 @@ $hover_conditions = $this->Popover->popover(
                 <div class="row-fluid">
                     <div class="well uploadBox">
             <?= $this->Form->create('Attachment', array('type' => 'file')) ?>
-                <h3><?= $this->DT->t('instruction') ?></h3>
+                <h3><?= __("Select a file to upload") ?></h3>
                 <div class="fileupload fileupload-new" data-provides="fileupload">
                     <div class="input-append">
                         <div class="uneditable-input span4">
@@ -50,11 +50,11 @@ $hover_conditions = $this->Popover->popover(
                             <span class="fileupload-preview" style=""></span>
                         </div>
                         <span class="btn btn-file">
-                            <span class="fileupload-new"><?= $this->DT->t('form.select') ?></span>
-                            <span class="fileupload-exists"><?= $this->DT->t('form.change') ?></span>
+                            <span class="fileupload-new"><?= __("Select file") ?></span>
+                            <span class="fileupload-exists"><?= __("Change") ?></span>
                             <?= $this->Form->input('fileName', array('type' => 'file', 'label' => false, 'div' => false)) ?>
                         </span>
-                        <?= $this->Bootstrap->button($this->DT->t('form.upload'), array("style" => "success", 'class' => 'fileupload-exists')) ?>
+                        <?= $this->Bootstrap->button(__("Upload"), array("style" => "success", 'class' => 'fileupload-exists')) ?>
                     </div>
                 </div>
                 <p>(<?= $hover_conditions ?>)</p>

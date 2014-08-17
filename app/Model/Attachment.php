@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Attachment model for the DevTrack system
+ * Attachment model for the SourceKettle system
  * Stores attachments for a project in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
@@ -266,10 +266,6 @@ class Attachment extends AppModel {
 				$row['project_id'] = $this->Project->id;
 				$row['model'] = $model;
 				$row['model_id'] = $modelId;
-
-				if (!in_array($row['mime'], array_merge($this->mimeAudio, $this->mimeOthers, $this->mimeImage, $this->mimeText, $this->mimeVideo))) {
-					return false;
-				}
 
 				$_data = array('Attachment' => $row);
 

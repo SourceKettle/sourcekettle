@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Element for APP/tasks/index for the DevTrack system
+ * Element for APP/tasks/index for the SourceKettle system
  * Shows a task box for a task
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements.Task
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements.Task
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -48,12 +48,6 @@ echo "<ul class='well col sprintboard-droplist span$span$classes' $dtStatus $dtP
 echo "<h2$tooltip>$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {
-	$draggable = (empty($task['Task']['assignee_id']) || $task['Task']['assignee_id'] == $user_id);
-	if($draggable){
-		echo "<li class='draggable' data-taskid='".h($task['Task']['id'])."'>";
-	} else {
-		echo "<li>";
-	}
-    echo $this->element('Task/element_1', array('task' => $task, 'draggable' => true, 'span' => $task_span))."</li>\n";
+    echo $this->element('Task/lozenge', array('task' => $task, 'draggable' => $draggable, 'span' => $task_span));
 }
 echo "</ul>\n";

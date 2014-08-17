@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * User model for the DevTrack system
+ * User model for the SourceKettle system
  * Represents a user in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model', 'AuthComponent', 'Controller/Component');
@@ -95,29 +95,70 @@ class User extends AppModel {
 		)
 	);
 
+	public $actsAs = array(
+		'FilterValid' => array(
+			'nameField' => 'email',
+		),
+	);
+
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		// Get the DB table prefix from our database config, for if
+		// we have multiple systems in the same DB or fixtures have a prefix
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$table_prefix = $db->config['prefix'];
+
+		$this->virtualFields = array(
+			'is_internal' => "(`".$this->alias."`.password IS NOT NULL AND `".$this->alias."`.password != '')"
+		);
+	}
+
 	public function afterFind($results, $primary = false) {
-		if ($this->_is_api) {
-			foreach ($results as $x => $item) {
+		// Do we only have the model fields instead of User => array()?
+		// NB from the docs it sounds like this should match up with !$primary, but it doesn't...
+		$fields_only = (!isset($results[0]) || !is_array($results[0]));
+
+		if ($fields_only) {
+			// TODO this should be tidied
+			if ($this->_is_api) {
+				// A list of things that should not be available in the API
+				unset($results['password']);
+			}
+			return $results;
+		}
+
+		foreach ($results as $x => $item) {
+			// TODO this should be tidied
+			if ($this->_is_api) {
 				// A list of things that should not be available in the API
 				unset($results[$x]['User']['password']);
 			}
 		}
+
 		return $results;
 	}
 
 	public function beforeSave($options = array()) {
-		// Can't update the email or password field if it's an externally-managed account
-		if (!User::isDevtrackManaged($this->data, @$this->id)) {
-			$wl = $this->whitelist;
-			if (empty($wl)) {
-				$wl = array_keys($this->schema());
-			}
-			$wl = array_diff($wl, array('password'));
+		// This is not a brand-new account (we have an ID):
+		// do some checks first to make sure we don't change things we shouldn't
+		if (isset($this->id) && $this->id) {
 
-			// Only blacklist the email if we're updating an existing account
-			if ($this->id) {
+			// Get the existing whitelist of savable fields
+			$wl = $this->whitelist;
+
+			// Load the existing data and work out if it's internal or not
+			$current_details = $this->findById($this->id);
+
+			if (!$current_details[$this->alias]['is_internal']) {
+				// Do not allow the email to be changed as this is not under our control
+				// (e.g. it's a field in LDAP)
 				$wl = array_diff($wl, array('email'));
+
+				// Do not allow password to be updated on externally-managed accounts
+				$wl = array_diff($wl, array('password'));
 			}
+
 			$this->whitelist = $wl;
 
 		} elseif (isset($this->data[$this->alias]['email'])) {
@@ -126,6 +167,7 @@ class User extends AppModel {
 			$this->data[$this->alias]['email'] = strtolower($this->data[$this->alias]['email']);
 		}
 
+		// Hash the password before saving
 		if ( isset($this->data[$this->alias]['password'])) {
 			$this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password'], null, true);
 		}
@@ -133,20 +175,32 @@ class User extends AppModel {
 	}
 
 	public function beforeDelete($cascade = true) {
-		// Check that the user account is DevTrack-managed, can't delete otherwise...
-		if (!User::isDevtrackManaged($this->data, @$this->id)) {
+
+		// Load the existing data and work out if it's internal or not
+		$current_details = $this->findById($this->id);
+
+		if (!$current_details[$this->alias]['is_internal']) {
 			return false;
 		}
 
 		// Check to ensure that this user is not the only admin on multi-collaborator projects
-		$projects = $this->Collaborator->find('list', array('fields' => array('Collaborator.project_id'), 'conditions' => array('Collaborator.user_id' => $this->id)));
+		$projects = $this->Collaborator->find('list', array(
+			'fields' => array('Collaborator.project_id'),
+			'conditions' => array('Collaborator.user_id' => $this->id)));
+
 		foreach ($projects as $row => $projectId) {
-			$admins = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $projectId, 'Collaborator.access_level' => '2', 'Collaborator.user_id <>' => $this->id)));
-			if ( $admins == 0 ) {
-				$users = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $projectId, 'Collaborator.access_level <>' => '2', 'Collaborator.user_id <>' => $this->id)));
-				if ( $users > 0 ) {
-					return false;
-				}
+			$admins = $this->Collaborator->find('count', array('conditions' => array(
+				'Collaborator.project_id' => $projectId,
+				'Collaborator.access_level' => '2',
+				'Collaborator.user_id !=' => $this->id)));
+
+			$users = $this->Collaborator->find('count', array('conditions' => array(
+				'Collaborator.project_id' => $projectId,
+				'Collaborator.access_level !=' => '2',
+				'Collaborator.user_id !=' => $this->id)));
+			// If this user is the only admin and there are other collaborators, do not delete
+			if ( $admins == 0 && $users > 0) {
+				return false;
 			}
 		}
 
@@ -155,43 +209,15 @@ class User extends AppModel {
 			$users = $this->Collaborator->find('count', array('conditions' => array('Collaborator.project_id' => $projectId)));
 			if ( $users == 1 ) {
 				$this->Collaborator->Project->delete($projectId);
-				$this->log("[UsersModel.beforeDelete] project[" . $projectId . "] deleted as user[" . $this->id . "] is being deleted", 'devtrack');
+				$this->log("[UsersModel.beforeDelete] project[" . $projectId . "] deleted as user[" . $this->id . "] is being deleted", 'sourcekettle');
 			}
 		}
 		return true;
 	}
 
 /**
- * isDevtrackManaged function.
- * Is the user a DevTrack-managed account, i.e. password is stored in the database?
- * If it's been auto-created from e.g. LDAP, the password will be blank.
- */
-	public static function isDevtrackManaged($data, $id = 0) {
-
-		// Attempt to find an existing user by ID or email
-		$user = ClassRegistry::init('User');
-		if (isset($id) && $id > 0) {
-			$found = $user->findById($id);
-		} elseif (isset($data['User']['id'])) {
-			$found = $user->findById($data['User']['id']);
-		} elseif (isset($data['User']['email'])) {
-			$found = $user->findByEmail($data['User']['email']);
-
-		}
-		// No existing user found - we must be saving a new one,
-		// so simply check the password field exists
-		if (!isset($found) || count($found) < 1) {
-			return ( isset($data['User']['password']) && !empty($data['User']['password']) );
-		}
-
-		// Check the existing object's password field
-		return ( isset($found['User']['password']) && !empty($found['User']['password']) );
-
-	}
-
-/**
  * findByEmail function.
- * Find a user by an email address
+ * Find a user by an email address, lowercasing it automatically
  *
  * @param mixed $email the email to search
  * @param mixed $fields (default: null)
@@ -207,47 +233,4 @@ class User extends AppModel {
 		));
 	}
 
-/**
- * getInstance function.
- * Return the staticly stored user
- */
-	public static function &getInstance($user=null) {
-		static $instance = array();
-		if ($user) {
-			$instance[0] =& $user;
-		}
-		if (!$instance) {
-			trigger_error(__("User not set.", true), E_USER_WARNING);
-			return false;
-		}
-		return $instance[0];
-	}
-
-/**
- * store function.
- * Store the provided data as the current user
- */
-	public static function store($user) {
-		User::getInstance($user);
-	}
-
-/**
- * get function.
- * Get a particular piece of information about the currently
- * logged in user. e.g. User::get('id');
- *
- * @param mixed $path the information to return
- */
-	public static function get($path) {
-		$_user =& User::getInstance();
-		$path = str_replace('.', '/', $path);
-		if (strpos($path, '/') !== 0) {
-			$path = sprintf('/%s', $path);
-		}
-		$value = Set::extract($path, $_user);
-		if (!$value) {
-			return false;
-		}
-		return $value[0];
-	}
 }

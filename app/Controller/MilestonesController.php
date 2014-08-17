@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * MilestonesController Controller for the DevTrack system
+ * MilestonesController Controller for the SourceKettle system
  * Provides the hard-graft control of the Milestones for projects
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		 DevTrack v 0.1
+ * @copyright	 SourceKettle Development Team 2012
+ * @link			http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -23,6 +23,23 @@ class MilestonesController extends AppProjectController {
 
 	public $uses = array('Milestone', 'Project');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'index'  => 'read',
+			'open'  => 'read',
+			'closed'  => 'read',
+			'view'   => 'read',
+			'plan'   => 'write',
+			'add'   => 'write',
+			'edit'   => 'write',
+			'close'   => 'write',
+			'reopen'   => 'write',
+			'delete'   => 'write',
+			'api_view'   => 'read',
+			'api_all'   => 'read',
+		);
+	}
 /**
  * beforeFilter function.
  *
@@ -31,10 +48,10 @@ class MilestonesController extends AppProjectController {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow(
+		/*$this->Auth->allow(
 			'api_all',
 			'api_view'
-		);
+		);*/
 	}
 
 /**
@@ -43,7 +60,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function index($project = null) {
-		$this->redirect(array('project' => $project, 'action' => 'open'));
+		return $this->redirect(array('project' => $project, 'action' => 'open'));
 	}
 
 /**
@@ -52,7 +69,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function open($project = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		$milestones = array();
 		// Iterate over all milestones
@@ -96,7 +113,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function closed($project = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 
 		$milestones = array();
 		// Iterate over all milestones
@@ -143,29 +160,22 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function view($project = null, $id = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		$backlog = $this->Milestone->openTasksForMilestone($id);
 		$inProgress = $this->Milestone->inProgressTasksForMilestone($id);
 		$completed = $this->Milestone->closedOrResolvedTasksForMilestone($id);
-		$iceBox= $this->Milestone->droppedTasksForMilestone($id);
-
-		// Sort function for tasks
-		// TODO wtf? Time comparison for priority IDs?!
-		$cmp = function($a, $b) {
-			if (strtotime($a['Task']['task_priority_id']) == strtotime($b['Task']['task_priority_id'])) return 0;
-			if (strtotime($a['Task']['task_priority_id']) > strtotime($b['Task']['task_priority_id'])) return 1;
-			return -1;
-		};
-
-		usort($completed, $cmp);
+		$iceBox = $this->Milestone->droppedTasksForMilestone($id);
 
 		// Final value is min size of the board
 		$max = max(count($backlog), count($inProgress), count($completed), 3);
 
-		$this->set('milestone', $milestone);
+		// If the user has write access, they can drag and drop tasks
+		$draggable = $this->Milestone->Project->hasWrite($this->Auth->user('id'));
+		$this->set('draggable', $draggable);
 
+		$this->set('milestone', $milestone);
 		$this->set('backlog_empty', $max - count($backlog));
 		$this->set('inProgress_empty', $max - count($inProgress));
 		$this->set('completed_empty', $max - count($completed));
@@ -178,7 +188,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function plan($project = null, $id = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		$mustHave   = $this->Milestone->blockerTasksForMilestone($id);
@@ -191,6 +201,10 @@ class MilestonesController extends AppProjectController {
 
 		$this->set('milestone', $milestone);
 
+		// If the user has write access, they can drag and drop tasks
+		$draggable = $this->Milestone->Project->hasWrite($this->Auth->user('id'));
+		$this->set('draggable', $draggable);
+
 		$this->set(compact('mustHave', 'shouldHave', 'couldHave', 'mightHave', 'wontHave'));
 	}
 
@@ -200,7 +214,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function add($project = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 
 		if ($this->request->is('post')) {
 			$this->Milestone->create();
@@ -211,7 +225,7 @@ class MilestonesController extends AppProjectController {
 			$this->request->data['Milestone']['is_open'] = true;
 
 			if ($this->Flash->c($this->Milestone->save($this->request->data))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
 			}
 		}
 	}
@@ -223,14 +237,14 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function edit($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
 
 			if ($this->Flash->u($this->Milestone->save($this->request->data))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $id));
 			}
 		} else {
 			$this->request->data = $milestone;
@@ -246,7 +260,7 @@ class MilestonesController extends AppProjectController {
  */
 	public function close($project = null, $id = null) {
 
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		if (!$milestone['Milestone']['is_open']) {
@@ -279,7 +293,7 @@ class MilestonesController extends AppProjectController {
 					$dataSource->rollback();
 				} else {
 					$dataSource->commit();
-					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+					return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 				}
 			}
 
@@ -305,7 +319,7 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function reopen($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		if($milestone['Milestone']['is_open']){
@@ -318,7 +332,7 @@ class MilestonesController extends AppProjectController {
 			$milestone['Milestone']['is_open'] = 1;
 
 			if ($this->Flash->u($this->Milestone->save($milestone))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 
 		} else {
@@ -336,11 +350,12 @@ class MilestonesController extends AppProjectController {
  */
 	public function delete($project = null, $id = null) {
 
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
 		if ($this->request->is('post')) {
-			$newMilestone = $this->request->data['Milestone']['new_milestone'];
+
+			$newMilestone = @$this->request->data['Milestone']['new_milestone'];
 
 			$dataSource = $this->Milestone->getDataSource();
 			$dataSource->begin();
@@ -356,7 +371,7 @@ class MilestonesController extends AppProjectController {
 					$dataSource->rollback();
 				} else {
 					$dataSource->commit();
-					$this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
+					return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 				}
 			}
 

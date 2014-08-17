@@ -1,15 +1,15 @@
 <?php
 /**
 *
-* User Unit Tests for the DevTrack system
+* User Unit Tests for the SourceKettle system
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
 *
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/SourceKettle/devtrack
-* @package       DevTrack.Test.Case.Model
-* @since         DevTrack v 1.0
+* @copyright     SourceKettle Development Team 2012
+* @link          http://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.Test.Case.Model
+* @since         SourceKettle v 1.0
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 App::uses('User', 'Model');
@@ -22,6 +22,16 @@ class UserTestCase extends CakeTestCase {
     public $fixtures = array('app.user',
         'app.collaborator',
         'app.project',
+        'app.project_history',
+        'app.task',
+        'app.task_type',
+        'app.task_status',
+        'app.task_priority',
+        'app.task_dependency',
+        'app.task_comment',
+        'app.time',
+        'app.milestone',
+		'app.attachment',
         'app.repo_type',
         'app.email_confirmation_key',
         'app.lost_password_key',
@@ -92,6 +102,7 @@ class UserTestCase extends CakeTestCase {
                 'modified' => '2012-06-01 12:50:08',
 				'deleted' => '0',
 				'deleted_date' => null,
+				'is_internal' => true,
             )
         );
         $this->assertEquals($userA, $userB, "returned users are not equal");
@@ -119,6 +130,7 @@ class UserTestCase extends CakeTestCase {
                 'modified' => '2012-06-01 12:50:08',
 				'deleted' => '0',
 				'deleted_date' => null,
+				'is_internal' => true,
             )
         );
         $this->assertEquals($userA, $userB, "returned users are not equal");
@@ -136,7 +148,6 @@ class UserTestCase extends CakeTestCase {
 		));
 		$this->User->create();
 		$saved = $this->User->save($data);
-	//	$id = $this->User->getLastInsertID();
 
 		// Add the ID and hashed password for comparison
 		$data['User']['id'] = $this->User->getLastInsertID();
@@ -145,38 +156,13 @@ class UserTestCase extends CakeTestCase {
 		// Check the create/modify date are sane, then add to array for comparison
 		$this->assertNotNull($saved['User']['created'], "Create date was null");
 		$this->assertNotNull($saved['User']['modified'], "Modify date was null");
+		$this->assertEqual($saved['User']['created'], $saved['User']['modified']);
 
 		$data['User']['created']  = $saved['User']['created'];
 		$data['User']['modified'] = $saved['User']['modified'];
 
 		$this->assertEqual($saved, $data, "Save failed");
 	}
-
-    /**
-     * test User->isDevtrackManaged function.
-     * Tests that a user with a password is marked as managed.
-     *
-     * @access public
-     * @return void
-     */
-    public function testIsDevtrackManaged() {
-		$user = $this->User->findById(1);
-        $isManaged = $this->User->isDevtrackManaged($user);
-        $this->assertTrue($isManaged, "Returned users should be managed");
-    }
-
-    /**
-     * test User->isDevtrackManaged function.
-     * Tests that a user without a password is marked as not managed.
-     *
-     * @access public
-     * @return void
-     */
-    public function testIsDevtrackManagedNotManaged() {
-		$user = $this->User->findById(6);
-        $isManaged = $this->User->isDevtrackManaged($user);
-        $this->assertFalse($isManaged, "returned users should not be managed");
-    }
 
 	public function testChangeName() {
 		$this->User->id = 1;
@@ -201,14 +187,14 @@ class UserTestCase extends CakeTestCase {
 	}
 
 	public function testFailToChangeEmail() {
-		// Try a non-devtrack-managed user account, should fail
+		// Try a non-sourcekettle-managed user account, should fail
 		$this->User->id = 6;
 		$user = $this->User->read();
 		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found before change");
 
 		$this->User->saveField('email', 'blah@example.com');
 
-        $user = $this->User->findById(6);
+        	$user = $this->User->findById(6);
 		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found after change");
 		
 	}
@@ -269,5 +255,38 @@ class UserTestCase extends CakeTestCase {
 
         $user = $this->User->findById(1);
 		$this->assertEquals($user['User']['is_active'], false, "Incorrect is_active status found after change");
+	}
+
+	public function testDelete() {
+		$this->User->id = 7;
+		$ok = $this->User->delete();
+		$this->assertTrue($ok, 'Failed to delete user');
+
+		$this->User->id = 7;
+		$user = $this->User->read();
+		$this->assertEquals($user, array(), "User data retrieved after delete");
+	}
+
+	public function testDeleteApi() {
+		$this->User->id = 7;
+		$this->User->_is_api = true;
+		$ok = $this->User->delete();
+		$this->assertTrue($ok, 'Failed to delete user');
+
+		$this->User->id = 7;
+		$user = $this->User->read();
+		$this->assertEquals($user, array(), "User data retrieved after delete");
+	}
+
+	public function testFailToDeleteExternal() {
+		$this->User->id = 6;
+		$ok = $this->User->delete();
+		$this->assertFalse($ok, 'Erroneously deleted external user account');
+	}
+
+	public function testFailToDeleteOnlyAdmin() {
+		$this->User->id = 8;
+		$ok = $this->User->delete();
+		$this->assertFalse($ok, 'Erroneously deleted the only admin of a project');
 	}
 }

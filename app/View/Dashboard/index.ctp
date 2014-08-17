@@ -6,16 +6,18 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Dashboard
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Dashboard
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-  echo $this->Bootstrap->page_header($this->DT->t('header.text') . " <small>" . $this->DT->t('header.small.text') . " " . h(strtolower($user_name)) . "</small>");
+  echo $this->Bootstrap->page_header(__("Dashboard") . " <small>" . __("welcome") . " " . h(strtolower($current_user['name'])) . "</small>");
 
-  //echo $this->element('beta_warning'); // TODO show this for dev versions
+  /*if ($DEBUG) {
+    echo $this->element('beta_warning'); // TODO show this for dev versions
+  }*/
   $this->Html->css('tasks.index', null, array ('inline' => false));
 ?>
 
@@ -24,9 +26,11 @@
     <div class="span6">
       <h3>Assigned tasks</h3>
       <? if (!empty($tasks)){
+	    echo "<ul class='sprintboard-droplist'>";
         foreach ($tasks as $task){
-          echo $this->element('Task/element_1', array('task' => $task));
+          echo $this->element('Task/lozenge', array('task' => $task));
         }
+		echo "</ul>";
       } else {
         ?><div class='alert alert-success'>You have no assigned tasks! Why don't you assign yourself one?</div><?
       }?>
@@ -39,7 +43,7 @@
                 'left' => array(
                     array(
                         array(
-                            'text' => $this->DT->t('projects.viewall.text'),
+                            'text' => __("View all your projects"),
                             'url' => array(
                                 'action' => '.',
                                 'controller' => 'projects',
@@ -50,7 +54,7 @@
                 'right' => array(
                     array(
                         array(
-                            'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar', 'controller' => 'projects')),
+                            'text' => __("New Project"),
                             'url' => array(
                                 'action' => 'add',
                                 'controller' => 'projects',
@@ -66,7 +70,9 @@
         </div>
 
         <? if (!empty($projects)){
-          echo $this->Element("Project/list", array('projects' => $projects, 'nospan' => true));
+    		foreach ($projects as $project){
+				echo $this->Element('Project/block', array('project' => $project, 'nospan' => true));
+			}
         } else {
           echo $this->element('Project/noprojectsalert');
         }?>

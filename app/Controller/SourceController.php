@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Source controller for the DevTrack system
+ * Source controller for the SourceKettle system
  * Provides access to the code behind projects
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		 DevTrack v 0.1
+ * @copyright	 SourceKettle Development Team 2012
+ * @link			http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -20,6 +20,18 @@ class SourceController extends AppProjectController {
 
 	public $helpers = array('Time', 'Source');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'ajax_diff'  => 'read',
+			'commit'  => 'read',
+			'commits'  => 'read',
+			'gettingStarted'  => 'read',
+			'index'  => 'read',
+			'raw'  => 'read',
+			'tree'  => 'read',
+		);
+	}
 /**
  * __getPath function.
  *
@@ -42,12 +54,12 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	private function __initialiseResources($name, $ref = null) {
-		$project = parent::_projectCheck($name);
+		$project = parent::_getProject($name);
 		$this->Source->init();
 
 		$branches = $this->Source->getBranches();
 		if (empty($branches) && $this->request['action'] != 'gettingStarted') {
-			$this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
+			return $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
 		}
 		$this->set('branches', $branches);
 
@@ -141,7 +153,7 @@ class SourceController extends AppProjectController {
 		$path	= $this->__getPath();
 
 		if ($branch == null) {
-			$this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+			return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
 		}
 
 		$numPerPage = 10;
@@ -203,7 +215,7 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function index($project = null) {
-		$this->redirect(array('action' => 'tree', 'project' => $project));
+		return $this->redirect(array('action' => 'tree', 'project' => $project));
 	}
 
 /**
@@ -231,6 +243,10 @@ class SourceController extends AppProjectController {
 			throw new NotFoundException(__('Invalid Location'));
 		}
 
+		$finfo = new finfo(FILEINFO_MIME);
+		$mime = $finfo->buffer($blob['content']);
+
+		$this->set('mimeType', $mime);
 		$this->set('sourceFile', $blob['content']);
 	}
 
@@ -249,14 +265,20 @@ class SourceController extends AppProjectController {
 			$path	= $this->__getPath();
 
 			if ($branch == null) {
-				$this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+				return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
 			}
 
 			$blob = $this->Source->Blob->fetch($branch, $path);
-
 			if (!in_array($blob['type'], array('tree', 'blob'))) {
 				throw new NotFoundException(__('Invalid Location'));
 			}
+
+			// TODO this should probably go in the GitCake plugin
+			if ($blob['type'] == 'blob') {
+				$finfo = new finfo(FILEINFO_MIME);
+				$blob['mimeType'] = $finfo->buffer($blob['content']);
+			}
+
 
 			$this->set('tree', $blob);
 			$this->set("path", $path);

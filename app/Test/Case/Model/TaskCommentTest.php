@@ -13,8 +13,21 @@ class TaskCommentTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.task_comment',
+		'app.project',
+		'app.project_history',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
 		'app.task',
+		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
+		'app.task_status',
+		'app.task_priority',
+		'app.time',
+		'app.attachment',
+		'app.source',
+		'app.milestone',
 	);
 
 /**
@@ -38,12 +51,8 @@ class TaskCommentTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
-/**
- * testOpen method
- *
- * @return void
- */
-	public function testOpen() {
+	public function testDummy() {
+		$this->assertTrue(true);
 	}
 
 }

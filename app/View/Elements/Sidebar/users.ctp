@@ -2,15 +2,15 @@
 
 /**
  *
- * Element for displaying the user sidebar for the DevTrack system
+ * Element for displaying the user sidebar for the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  * 
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
     $options = array(
@@ -65,9 +65,9 @@
         ),
     );
 
-    // If we are logged in with a non-devtrack-managed account,
+    // If we are logged in with a non-sourcekettle-managed account,
     // do not offer the 'delete account' link or 'change password' link.
-    if(!$user_is_devtrack_managed){
+    if ($current_user['is_internal']) {
         unset($options['Your Account']['Delete Account']);
         unset($options['Your Account']['Change Password']);
     }

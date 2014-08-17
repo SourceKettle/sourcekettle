@@ -36,7 +36,12 @@
                     $user['User']['name'],
                     array('controller' => 'users', 'action' => 'view', $user['User']['id'])
                 );
-                echo "</span></td><td data-minutes=\"".h($user['Time']['time']['t'])."\">";
+                echo "</span> ";
+                echo "<small>".$this->Html->link(
+                    "[view time log]",
+                    array('controller' => 'times', 'action' => 'userlog', 'project' => $project['Project']['name'], $user['User']['id'])
+                )."</small>";
+				echo "</td><td data-minutes=\"".h($user['Time']['time']['t'])."\">";
                 echo h($user['Time']['time']['s']);
                 echo "</td></tr>";
             }

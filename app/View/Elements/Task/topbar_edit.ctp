@@ -1,20 +1,20 @@
 <?php
 /**
  *
- * Element for displaying the task topbar for the DevTrack system
+ * Element for displaying the task topbar for the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements.Topbar
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements.Topbar
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  $pl = $this->DT->t('bar.task').$id;
 
-if ($this->request->data['Task']['task_status_id'] != 4) {
+if ($this->request->data['TaskStatus']['name'] != 'closed') {
      $state = array(
          'text' => __("Close task"),
          'url' => '#closeModal',
@@ -33,7 +33,6 @@ if ($this->request->data['Task']['task_status_id'] != 4) {
  }
 
  $options = array(
-    'back' => $previousPage,
     'left' => array(
         array(
             array(

@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Task model for the DevTrack system
+ * Task model for the SourceKettle system
  * Stores the Tasks for a project in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
@@ -33,7 +33,6 @@ class Task extends AppModel {
 
 /**
  * Validation rules
- * TODO hard-coded IDs
  */
 	public $validate = array(
 		'project_id' => array(
@@ -59,10 +58,6 @@ class Task extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,5,6,7,8,'1','2','3','4','5','6','7','8')),
-				'message' => 'Select a task type',
-			),
 		),
 		'task_status_id' => array(
 			'numeric' => array(
@@ -71,10 +66,6 @@ class Task extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,5,'1','2','3','4','5')),
-				'message' => 'Select a task status',
-			),
 		),
 		'task_priority_id' => array(
 			'numeric' => array(
@@ -82,10 +73,6 @@ class Task extends AppModel {
 			),
 			'notempty' => array(
 				'rule' => array('notempty'),
-			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,'1','2','3','4')),
-				'message' => 'Select a task priority',
 			),
 		),
 		'time_estimate' => array(
@@ -256,17 +243,20 @@ class Task extends AppModel {
 		$table_prefix = $db->config['prefix'];
 
 		$this->virtualFields = array(
-			'public_id' => "(SELECT COUNT(`{$table_prefix}{$this->table}`.`id`) FROM `{$table_prefix}{$this->table}` WHERE `{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)"
+			'public_id' => "(SELECT COUNT(`{$table_prefix}{$this->table}`.`id`) FROM `{$table_prefix}{$this->table}` WHERE `{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
 		);
 	}
 
 /**
  */
 	public function beforeValidate($options = array()) {
+		if (empty($this->data)) {
+			return true;
+		}
+
 		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
 			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		}
-
 
 		// If we have priority and status names, replace them with IDs for saving
 		if (isset($this->data['Task']['type'])) {
@@ -282,7 +272,7 @@ class Task extends AppModel {
 			unset($this->data['Task']['status']);
 		}
 
-		if (isset($this->data['Task']['milestone_id']) && $this->data['Task']['milestone_id'] === null) {
+		if (array_key_exists('milestone_id', $this->data['Task']) && $this->data['Task']['milestone_id'] === null) {
 			$this->data['Task']['milestone_id'] = 0;
 		}
 		return true;
@@ -295,6 +285,7 @@ class Task extends AppModel {
  * @return bool True if the save was successful.
  */
 	public function beforeSave($options = array()) {
+
 		// Parse time estimate if necessary
 		if (!$this->beforeValidate($options)) {
 			return false;
@@ -315,8 +306,8 @@ class Task extends AppModel {
  * isAssignee function.
  * Returns true if the current user is assigned to the task
  */
-	public function isAssignee() {
-		return User::get('id') == $this->field('assignee_id');
+	public function isAssignee($userId) {
+		return $userId == $this->field('assignee_id');
 	}
 
 /**
@@ -324,8 +315,8 @@ class Task extends AppModel {
  * Returns true if a task is open
  */
 	public function isOpen() {
- 		// TODO hard-coded status ID
-		return $this->field('task_status_id') == 1;
+		$this->TaskStatus->id = $this->field('task_status_id');
+		return $this->TaskStatus->field('name') == 'open';
 	}
 
 /**
@@ -334,8 +325,8 @@ class Task extends AppModel {
  * @throws
  */
 	public function isInProgress() {
- 		// TODO hard-coded status ID
-		return $this->field('task_status_id') == 2;
+		$this->TaskStatus->id = $this->field('task_status_id');
+		return $this->TaskStatus->field('name') == 'in progress';
 	}
 
 /**
@@ -361,26 +352,27 @@ class Task extends AppModel {
 		}
 	}
 
-	public function fetchLoggableTasks() {
-		// TODO hard coded status IDs
+	public function fetchLoggableTasks($userId) {
 		$myTasks = $this->find(
 			'list',
 			array(
 				'conditions' => array(
-					'Task.task_status_id <' => 4,
+					'TaskStatus.name !=' => array('closed', 'dropped'),
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id' => User::get('id'),
-				)
+					'Task.assignee_id' => $userId,
+				),
+				'recursive' => 1,
 			)
 		);
 		$othersTasks = $this->find(
 			'list',
 			array(
 				'conditions' => array(
-					'Task.task_status_id <' => 4,
+					'TaskStatus.name !=' => array('closed', 'dropped'),
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id !=' => User::get('id'),
-				)
+					'Task.assignee_id !=' => $userId,
+				),
+				'recursive' => 1,
 			)
 		);
 		return array(

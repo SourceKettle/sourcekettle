@@ -13,16 +13,21 @@ class MilestoneTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.milestone',
 		'app.project',
+		'app.project_history',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
 		'app.task',
 		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
 		'app.task_status',
 		'app.task_priority',
-		'app.task_comment',
-		'app.task_dependency',
 		'app.time',
-		'app.user',
+		'app.attachment',
+		'app.source',
+		'app.milestone',
 	);
 
 /**
@@ -49,7 +54,7 @@ class MilestoneTest extends CakeTestCase {
 		$milestone = $this->Milestone->open(1);
 		$this->assertEquals(array(
 		'id' => '1',
-		'project_id' => '0',
+		'project_id' => '2',
 		'subject' => 'Sprint 1',
 		'description' => 'Short description here',
 		'due' => '2013-01-24',
@@ -58,13 +63,13 @@ class MilestoneTest extends CakeTestCase {
 		'modified' => '2012-06-02 20:05:59',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'percent' => (float) 33.333333333333
+		'percent' => 33.333333333333,
 		), $milestone['Milestone']);
 
 		$milestone = $this->Milestone->open(2);
 		$this->assertEquals(array(
 		'id' => '2',
-		'project_id' => '0',
+		'project_id' => '2',
 		'subject' => 'Sprint 2',
 		'description' => '<b>Foo</b>',
 		'due' => '2013-01-01',
@@ -73,13 +78,13 @@ class MilestoneTest extends CakeTestCase {
 		'modified' => '2012-09-02 20:05:59',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'percent' => (int) 100
+		'percent' => 50
 		), $milestone['Milestone']);
 
 		$milestone = $this->Milestone->open(3);
 		$this->assertEquals(array(
 		'id' => '3',
-		'project_id' => '0',
+		'project_id' => '2',
 		'subject' => 'Longer <i>subject</i>',
 		'description' => 'Short description here',
 		'due' => '2013-05-24',
@@ -88,7 +93,7 @@ class MilestoneTest extends CakeTestCase {
 		'modified' => '2012-06-02 20:05:59',
 		'deleted' => '0',
 		'deleted_date' => null,
-		'percent' => (int) 0
+		'percent' => 0
 		), $milestone['Milestone']);
 	}
 	
@@ -121,7 +126,7 @@ class MilestoneTest extends CakeTestCase {
 			'deleted' => '0',
 			'deleted_date' => null,
 			'public_id' => '5',
-			'dependenciesComplete' => false
+			'dependenciesComplete' => true
 			), $openTasks[0]['Task']);
 		$this->assertEqual(array(
 			'id' => '2',
@@ -184,7 +189,7 @@ class MilestoneTest extends CakeTestCase {
 			'task_type_id' => '1',
 			'task_status_id' => '2',
 			'task_priority_id' => '3',
-			'assignee_id' => '0',
+			'assignee_id' => '2',
 			'milestone_id' => '1',
 			'time_estimate' => '2h 25m',
 			'story_points' => '0',
@@ -419,7 +424,7 @@ class MilestoneTest extends CakeTestCase {
 			'task_type_id' => '1',
 			'task_status_id' => '2',
 			'task_priority_id' => '3',
-			'assignee_id' => '0',
+			'assignee_id' => '2',
 			'milestone_id' => '1',
 			'time_estimate' => '2h 25m',
 			'story_points' => '0',
@@ -450,7 +455,7 @@ class MilestoneTest extends CakeTestCase {
 			'deleted' => '0',
 			'deleted_date' => null,
 			'public_id' => '5',
-			'dependenciesComplete' => false
+			'dependenciesComplete' => true
 			), $urgentTasks[1]['Task']);
 	}
 
@@ -546,7 +551,7 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testGetOpenMilestones() {
-		$this->Milestone->open(2);
+		$this->Milestone->Project->id = 2;
 		$openMilestones = $this->Milestone->getOpenMilestones(true);
 		$this->assertEquals(array(
 			1 => 'Sprint 1',
@@ -565,7 +570,7 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testGetClosedMilestones() {
-		$this->Milestone->open(2);
+		$this->Milestone->Project->id = 2;
 		$closedMilestones = $this->Milestone->getClosedMilestones(true);
 		$this->assertEquals(array(
 			2 => 'Sprint 2'
@@ -658,7 +663,7 @@ class MilestoneTest extends CakeTestCase {
 					'task_type_id' => '1',
 					'task_status_id' => '2',
 					'task_priority_id' => '3',
-					'assignee_id' => '0',
+					'assignee_id' => '2',
 					'milestone_id' => '1',
 					'time_estimate' => '2h 25m',
 					'story_points' => '0',
@@ -826,18 +831,42 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testFetchHistory() {
-		
+		$history = $this->Milestone->fetchHistory(2);
+		$this->assertEquals($history, array(array(
+			'modified' => '2014-07-23 15:01:12',
+			'Type' => 'Milestone',
+			'Project' => array(
+				'id' => '2',
+				'name' => 'public'
+			),
+			'Actioner' => array(
+				'id' => '2',
+				'name' => 'Mrs Smith',
+				'email' => 'mrs.smith@example.com',
+				'exists' => true
+			),
+			'Subject' => array(
+				'id' => '3',
+				'title' => 'Longer <i>subject</i>',
+				'exists' => true
+			),
+			'Change' => array(
+				'field' => 'is_open',
+				'field_old' => '1',
+				'field_new' => '0'
+			)
+		)), "Incorrect history data returned");
 	}
 
-	// TODO we need a way to fake the currently logged in user before we can test the beforeDelete callback
-	/*public function testDelete() {
+	public function testDelete() {
 		$milestone_pre = $this->Milestone->findById(1);
+		$this->assertNotEquals($milestone_pre, array(), "Empty milestone returned before delete happened");
 
-		$this->Milestone->deleteAll(array('Milestone.id' => 1), false, false);
+		$this->Milestone->id = 1;
+		$this->Milestone->delete();
 		$milestone_post = $this->Milestone->findById(1);
 
-		debug($milestone_pre);
-		debug($milestone_post);
-	}*/
+		$this->assertEquals($milestone_post, array(), "Milestone was not deleted");
+	}
 
 }

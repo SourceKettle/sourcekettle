@@ -29,7 +29,9 @@
         echo '<hr>';
         echo '<div class="row">';
         echo "<h4 class='span12'>Projects shared with this user</h4>";
-        echo $this->Element("Project/list", array('projects' => $shared_projects));
+    	foreach ($shared_projects as $project){
+			echo $this->Element('Project/block', array('project' => $project));
+		}
         echo '</div>';
     }
 ?>
@@ -41,7 +43,9 @@
         echo "<h4 class='span12'>This user has no public projects</h4>";
     } else {
         echo "<h4 class='span12'>Users public projects</h4>";
-        echo $this->element('Project/list', array('projects' => $projects));
+    	foreach ($projects as $project){
+			echo $this->Element('Project/block', array('project' => $project));
+		}
 
     } ?>
 </div>

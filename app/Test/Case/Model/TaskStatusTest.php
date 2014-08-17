@@ -58,8 +58,20 @@ class TaskStatusTest extends CakeTestCase {
 		$this->assertEqual(4, $closed, "Got incorrect ID for status 'closed'");
 		$this->assertEqual(5, $dropped, "Got incorrect ID for status 'dropped'");
 	}
+
 	public function testNumberOfItems() {
 		$this->assertEqual(5, $this->TaskStatus->find('count'), "Wrong number of task statuses returned (tests need updating?)");
+	}
+
+	public function testGetLookupTable() {
+		$table = $this->TaskStatus->getLookupTable();
+		$this->assertEqual(array(
+			1 => array('id' => 1, 'name' => 'open',        'label' => 'Open',        'icon' => '', 'class' => 'important'),
+			2 => array('id' => 2, 'name' => 'in progress', 'label' => 'In Progress', 'icon' => '', 'class' => 'warning'),
+			3 => array('id' => 3, 'name' => 'resolved',    'label' => 'Resolved',    'icon' => '', 'class' => 'success'),
+			4 => array('id' => 4, 'name' => 'closed',      'label' => 'Closed',      'icon' => '', 'class' => 'info'),
+			5 => array('id' => 5, 'name' => 'dropped',     'label' => 'Dropped',     'icon' => '', 'class' => ''),
+		), $table, "Incorrect lookup table returned (tests need updating?)");
 	}
 
 }

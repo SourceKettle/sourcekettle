@@ -1,15 +1,15 @@
 <?php
 /**
  *
- * Behaviour for logging the changes in project components in the DevTrack system
+ * Behaviour for logging the changes in project components in the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model.Behavior
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model.Behavior
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -43,6 +43,11 @@ class ProjectHistoryBehavior extends ModelBehavior {
  */
 	private $_cache = array();
 
+	// We need to know who's changing things, so we'll be told
+	// who's logged in (or fudging things on the command line, or whatever).
+	// Default to a user ID of 0 to represent 'system actions'.
+	private $_log_user = array('id' => 0, 'name' => '(System action)');
+
 /**
  * this-
  *
@@ -52,6 +57,11 @@ class ProjectHistoryBehavior extends ModelBehavior {
 	public function setup(Model $model, $settings = array()) {
 		$this->settings[$model->name] = $settings;
 		$this->model = &$model;
+	}
+
+	//
+	public function setLogUser($task, $user) {
+		$this->_log_user = $user;
 	}
 
 /**
@@ -65,15 +75,6 @@ class ProjectHistoryBehavior extends ModelBehavior {
 	public function beforeSave(Model $Model) {
 		$exception = false;
 		$this->prepare($Model);
-
-		// Lock out those who aren't allowed to write
-		if ( $Model->name == 'Collaborator' && !$Model->findByProjectId($Model->Project->id) ) {
-			$exception = true;
-		}
-
-		if ( !$exception && !$Model->Project->hasWrite(User::get('id')) ) {
-			throw new ForbiddenException(__('You do not have permissions to write to this project'));
-		}
 
 		$before = $Model->findById($Model->id);
 		$this->_cache[$Model->name][$Model->id] = array();
@@ -96,16 +97,20 @@ class ProjectHistoryBehavior extends ModelBehavior {
 	public function afterSave(Model $Model, $created = false) {
 		if (!$created) {
 			// Some fields have been updated
-			foreach ($this->_cache[$Model->name][$Model->id] as $field => $value) {
+			foreach ($this->_cache[$Model->name][$Model->id] as $field => $old) {
+				$new = $Model->field($field);
+				if ($old == $new) {
+					continue;
+				}
 				$Model->Project->ProjectHistory->logC(
 					strtolower($Model->name),
 					$Model->id,
 					$this->getTitleForHistory($Model),
 					$field,
-					$value,
-					$Model->field($field),
-					User::get('id'),
-					User::get('name')
+					$old,
+					$new,
+					$this->_log_user['id'],
+					$this->_log_user['name']
 				);
 			}
 		} else {
@@ -117,8 +122,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 				'+',
 				null,
 				null,
-				User::get('id'),
-				User::get('name')
+				$this->_log_user['id'],
+				$this->_log_user['name']
 			);
 		}
 		return true;
@@ -133,6 +138,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
  * @return void
  */
 	public function beforeDelete(Model $Model, $cascade = true) {
+
 		$this->prepare($Model);
 		$this->_cache[$Model->name][$Model->id] = $this->getTitleForHistory($Model);
 		return true;
@@ -152,8 +158,8 @@ class ProjectHistoryBehavior extends ModelBehavior {
 			'-',
 			null,
 			null,
-			User::get('id'),
-			User::get('name')
+			$this->_log_user['id'],
+			$this->_log_user['name']
 		);
 		return true;
 	}

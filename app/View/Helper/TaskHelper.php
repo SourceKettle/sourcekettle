@@ -1,19 +1,20 @@
 <?php
 /**
  *
- * Helper class for Tasks section of the DevTrack system
+ * Helper class for Tasks section of the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	DevTrack Development Team 2012
- * @link		http://github.com/SourceKettle/devtrack
- * @package		DevTrack.View.Helper
- * @since		DevTrack v 0.1
+ * @copyright	SourceKettle Development Team 2012
+ * @link		http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.View.Helper
+ * @since		SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 class TaskHelper extends AppHelper {
+
 
 /**
  * helpers
@@ -31,19 +32,10 @@ class TaskHelper extends AppHelper {
  * @return void
  */
 	public function priority($id) {
-		$text = array(
-			1 => 'Minor',
-			2 => 'Major',
-			3 => 'Urgent',
-			4 => 'Blocker',
-		);
-		$content = array(
-			1 => 'download',
-			2 => 'upload',
-			3 => 'exclamation-sign',
-			4 => 'ban-circle',
-		);
-		return $this->Bootstrap->label($text[$id] . ' ' . $this->Bootstrap->icon($content[$id], "white"), "inverse", array('class' => 'taskpriority'));
+		$label = $this->_View->viewVars['task_priorities'][$id]['label'];
+		$icon  = $this->_View->viewVars['task_priorities'][$id]['icon'];
+		$class = $this->_View->viewVars['task_priorities'][$id]['class'];
+		return $this->Bootstrap->label($label . ' ' . $this->Bootstrap->icon($icon, "white"), "inverse", array('class' => "taskpriority $class"));
 	}
 
 /**
@@ -54,47 +46,19 @@ class TaskHelper extends AppHelper {
  * @return void
  */
 	public function status($id) {
-		$text = array(
-			1 => 'Open',
-			2 => 'In Progress',
-			3 => 'Resolved',
-			4 => 'Closed',
-			5 => 'Dropped',
-		);
-		$colour = array(
-			1 => 'success',
-			2 => 'primary',
-			3 => 'info',
-			4 => 'danger',
-			5 => '',
-		);
-		//return $this->Bootstrap->button($text[$id], array('class' => 'btn-mini disabled btn-'.$colour[$id]));
-		return $text[$id];
+		return $this->_View->viewVars['task_statuses'][$id]['label'];
 	}
 
 /**
  * Get a label to show the status of a task
- * TODO hard-coded IDs
  * @access public
  * @param mixed $id
  * @return void
  */
 	public function statusLabel($id) {
-		$text = array(
-			1 => 'Open',
-			2 => 'In Progress',
-			3 => 'Resolved',
-			4 => 'Closed',
-			5 => 'Dropped',
-		);
-		$colour = array(
-			1 => 'important',
-			2 => 'warning',
-			3 => 'success',
-			4 => 'info',
-			5 => '',
-		);
-		return $this->Bootstrap->label($text[$id], $colour[$id], array ("class" => "taskstatus"));
+		$label = $this->_View->viewVars['task_statuses'][$id]['label'];
+		$class = $this->_View->viewVars['task_statuses'][$id]['class'];
+		return $this->Bootstrap->label($label, $class, array ("class" => "taskstatus"));
 	}
 
 /**
@@ -105,26 +69,8 @@ class TaskHelper extends AppHelper {
  * @return void
  */
 	public function type($id) {
-		$colour = array(
-			1 => 'important',
-			2 => 'warning',
-			3 => 'success',
-			4 => '',
-			5 => 'info',
-			6 => 'inverse',
-			7 => 'info',
-			8 => 'info',
-		);
-		$text = array(
-			1 => 'bug',
-			2 => 'duplicate',
-			3 => 'enhancement',
-			4 => 'invalid',
-			5 => 'question',
-			6 => 'wontfix',
-			7 => 'documentation',
-			8 => 'meeting',
-		);
-		return $this->Bootstrap->label($text[$id], $colour[$id]);
+		$label = $this->_View->viewVars['task_types'][$id]['label'];
+		$class = $this->_View->viewVars['task_types'][$id]['class'];
+		return $this->Bootstrap->label($label, $class);
 	}
 }

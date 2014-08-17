@@ -1,55 +1,45 @@
 <?php
 App::uses('SettingsController', 'Controller');
-
-/**
- * TestSettingsController *
- */
-class TestSettingsController extends SettingsController {
-
-/**
- * Auto render
- *
- * @var boolean
- */
-	public $autoRender = false;
-
-/**
- * Redirect action
- *
- * @param mixed $url
- * @param mixed $status
- * @param boolean $exit
- * @return void
- */
-	public function redirect($url, $status = null, $exit = true) {
-		$this->redirectUrl = $url;
-	}
-
-}
+require_once(__DIR__ . DS . 'AppControllerTest.php');
 
 /**
  * SettingsController Test Case
  *
  */
-class SettingsControllerTest extends ControllerTestCase {
+class SettingsControllerTest extends AppControllerTest {
 
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('app.setting');
+    public $fixtures = array(
+		'app.setting',
+		'app.project',
+		'app.project_history',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
+		'app.task',
+		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
+		'app.task_status',
+		'app.task_priority',
+		'app.time',
+		'app.attachment',
+		'app.source',
+		'app.milestone',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
+	);
 
-/**
- * setUp method
- *
- * @return void
- */
 	public function setUp() {
-		parent::setUp();
-		$this->Settings = new TestSettingsController();
-		$this->Settings->constructClasses();
+		parent::setUp("Settings");
 	}
+
 
 /**
  * tearDown method
@@ -69,7 +59,6 @@ class SettingsControllerTest extends ControllerTestCase {
  */
 	public function testAdminIndex() {
 		$result = $this->testAction('/admin/settings/index');
-		debug($result);
 	}
 /**
  * testAdminView method

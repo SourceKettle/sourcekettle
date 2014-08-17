@@ -1,15 +1,15 @@
 <?php
 /**
  *
- * Helper class for the Popover Plugin for the DevTrack system
+ * Helper class for the Popover Plugin for the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	DevTrack Development Team 2012
- * @link		http://github.com/SourceKettle/devtrack
- * @package		DevTrack.View.Helper
- * @since		DevTrack v 0.1
+ * @copyright	SourceKettle Development Team 2012
+ * @link		http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.View.Helper
+ * @since		SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -29,7 +29,7 @@ class PopoverHelper extends AppHelper {
  */
 	public function popover($aText, $pTitle, $pContent) {
 		$this->__hasBeenCalled = true;
-		return $this->Html->link($aText, '#', array('class' => 'popover-devtrack', 'rel' => 'popover', 'data-content' => $pContent, 'data-original-title' => $pTitle));
+		return $this->Html->link($aText, '#', array('class' => 'popover-sourcekettle', 'rel' => 'popover', 'data-content' => $pContent, 'data-original-title' => $pTitle));
 	}
 
 /**
@@ -39,7 +39,7 @@ class PopoverHelper extends AppHelper {
  */
 	public function requirements() {
 		if ($this->__hasBeenCalled) {
-			return $this->Html->script(array('bootstrap-tooltip', 'bootstrap-popover')) . $this->Html->scriptBlock("$('.popover-devtrack').popover()");
+			return $this->Html->script(array('bootstrap-tooltip', 'bootstrap-popover')) . $this->Html->scriptBlock("$('.popover-sourcekettle').popover()");
 		}
 	}
 

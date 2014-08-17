@@ -19,7 +19,12 @@ class CollaboratorTestCase extends CakeTestCase {
     /**
      * fixtures - Populate the database with data of the following models
      */
-    public $fixtures = array('app.collaborator', 'app.project', 'app.user');
+    public $fixtures = array(
+		'app.collaborator',
+		'app.user',
+		'app.project',
+		'app.project_history',
+	);
 
     /**
      * setUp function.
@@ -71,6 +76,74 @@ class CollaboratorTestCase extends CakeTestCase {
         $this->assertEquals(null, $title, "wrong title returned");
     }
 
+	public function testFetchHistory() {
+		$history = $this->Collaborator->fetchHistory('private', 10);
+		$this->assertEquals($history, array(
+			array(
+				'modified' => '2014-07-23 15:02:12',
+				'Type' => 'Collaborator',
+				'Project' => array(
+					'id' => '1',
+					'name' => 'private'
+				),
+				'Actioner' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com',
+					'exists' => true
+				),
+				'Subject' => array(
+					'id' => '2',
+					'title' => 'Mr Admin',
+					'exists' => true
+				),
+				'Change' => array(
+					'field' => 'access_level',
+					'field_old' => '2',
+					'field_new' => '1'
+				),
+				'url' => array(
+					'api' => false,
+					'admin' => false,
+					'controller' => 'users',
+					'action' => 'view',
+					0 => '5'
+				)
+			),
+			array(
+				'modified' => '2014-07-23 15:01:12',
+				'Type' => 'Collaborator',
+				'Project' => array(
+					'id' => '1',
+					'name' => 'private'
+				),
+				'Actioner' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com',
+					'exists' => true
+				),
+				'Subject' => array(
+					'id' => '2',
+					'title' => 'Mr Admin',
+					'exists' => true
+				),
+				'Change' => array(
+					'field' => 'access_level',
+					'field_old' => '1',
+					'field_new' => '2'
+				),
+				'url' => array(
+					'api' => false,
+					'admin' => false,
+					'controller' => 'users',
+					'action' => 'view',
+					0 => '5'
+				)
+			),
+		), "Incorrect history data returned");
+	}
+
     /**
      * test Collaborator->collaboratorsForProject function.
      * Test that the correct array is returned.
@@ -84,7 +157,8 @@ class CollaboratorTestCase extends CakeTestCase {
             1 => "Mr Smith [Mr.Smith@example.com]",
             3 => "Mrs Guest [mrs.guest@example.com]",
             4 => "Mr User [mr.user@example.com]",
-            5 => "Mr Admin [mr.admin@example.com]"
+            5 => "Mr Admin [mr.admin@example.com]",
+            10 => "Another user [another-user@example.com]",
         );
         $this->assertEquals($usersB, $usersA, json_encode($usersA));
     }

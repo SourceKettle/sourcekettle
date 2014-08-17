@@ -7,16 +7,16 @@
  *
  * tl;dr Here be dragons.
  *
- * Core Configuration file for the DevTrack system
+ * Core Configuration file for the SourceKettle system
  * Provides the core config for the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Config
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Config
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -73,3 +73,4 @@ $config['dtcore']['pages']['times']['view']['en']['info.time.task'] = "Attached 
 
 // APP Time/add
 $config['dtcore']['pages']['times']['add']['en']['header.text'] = "record your effort";
+$config['dtcore']['pages']['times']['userlog']['en']['header.text'] = "Where was my time spent?";

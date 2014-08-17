@@ -1,0 +1,38 @@
+#!/bin/bash
+
+BASEDIR=$(readlink -f $0 | xargs dirname);
+REPODIR="$BASEDIR/git/gitproject.git";
+DATADIR="$BASEDIR/test-data-for-repo";
+echo "Creating a git repo for git, version $GITVER in $REPODIR...";
+
+if [[ -d "$REPODIR/.git" ]];  then
+	echo "Repository already exists.";
+	exit 0;
+fi;
+
+mkdir -p "$REPODIR" &&
+cd $REPODIR &&
+git init --bare &&
+mkdir $DATADIR/repo &&
+cd $DATADIR/repo &&
+git init &&
+cp ../0/* . &&
+git config --global user.name "Mr Smith" &&
+git config --global user.email "Mr.Smith@example.com" &&
+git add * &&
+git commit -m "first ever checkin" &&
+cp -f ../1/* . &&
+git add * &&
+git commit -m "second checkin" &&
+cp -f ../2/* . &&
+git add * &&
+git commit -m "third checkin ermagerd" &&
+git config --global user.name "Mrs Smith" &&
+git config --global user.email "Mrs.Smith@example.com" &&
+cp -f ../3/* . &&
+git add * &&
+git commit -m "stop overengineering" &&
+git remote add origin $REPODIR &&
+git push -u origin master &&
+cd .. &&
+rm -rf repo 

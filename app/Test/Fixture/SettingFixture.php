@@ -12,5 +12,23 @@ class SettingFixture extends CakeTestFixture {
             'created' => '2012-06-02 20:05:59',
             'modified' => '2012-06-02 20:05:59'
         ),
+        array(
+            'id' => 3,
+            'name' => 'sysadmin_email',
+            'value' => 'admin@example.org',
+            'created' => '2012-06-02 20:05:59',
+            'modified' => '2012-06-02 20:05:59'
+        ),
     );
+
+	public function __construct() {
+		$this->records[] = array(
+			'id' => 2,
+			'name' => 'repo.base',
+			'value' => realpath(__DIR__).'/repositories',
+			'created' => '2012-06-02 20:05:59',
+			'modified' => '2012-06-02 20:05:59'
+		);
+		parent::__construct();
+	}
 }

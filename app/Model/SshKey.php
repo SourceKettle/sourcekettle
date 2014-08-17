@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * SSH key model for the DevTrack system
+ * SSH key model for the SourceKettle system
  * Stores the SSH keys for a user in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
@@ -126,6 +126,9 @@ class SshKey extends AppModel {
 
 		$correct = array();
 		while ($result = array_shift($results)) {
+			if (!isset($result[$this->alias]['key']) || empty($result[$this->alias]['key'])) {
+				continue;
+			}
 			$sanitised = $this->__sanitiseKey($result[$this->alias]['key']);
 			if (!$sanitised) {
 				continue;

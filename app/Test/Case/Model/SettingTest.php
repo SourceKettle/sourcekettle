@@ -1,15 +1,15 @@
 <?php
 /**
 *
-* Setting Unit Tests for the DevTrack system
+* Setting Unit Tests for the SourceKettle system
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
 *
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/SourceKettle/devtrack
-* @package       DevTrack.Test.Case.Model
-* @since         DevTrack v 1.0
+* @copyright     SourceKettle Development Team 2012
+* @link          http://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.Test.Case.Model
+* @since         SourceKettle v 1.0
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 App::uses('Setting', 'Model');
@@ -70,7 +70,7 @@ class SettingTestCase extends CakeTestCase {
                 'modified' => '2012-06-02 20:05:59'
             ),
         );
-        $this->assertEquals($beforeA, $beforeB, "before settings arnt equal");
+        $this->assertEquals($beforeA, $beforeB, "before settings are not equal");
 
         $this->Setting->syncRequired();
 
@@ -84,6 +84,14 @@ class SettingTestCase extends CakeTestCase {
                 'modified' => '2012-06-02 20:05:59'
             ),
         );
-        $this->assertEquals($beforeA, $beforeB, "after settings arnt equal");
+        $this->assertEquals($beforeA, $beforeB, "after settings are not equal");
     }
+
+	public function testRepoDir() {
+		$settings = $this->Setting->find('all');
+		$sourcekettle_config = array_merge(
+			Configure::read('sourcekettle'),
+			ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
+		);
+	}
 }
