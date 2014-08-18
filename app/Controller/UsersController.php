@@ -118,29 +118,22 @@ class UsersController extends AppController {
 		if ($key == null) {
 			$this->Session->setFlash("The key given was not a valid activation key.", 'default', array(), 'error');
 			return $this->redirect('/');
-		} else {
-			$record = $this->User->EmailConfirmationKey->find('first', array('conditions' => array('key' => $key), 'recursive' => 1));
-			if (!empty($record)) {
-				$record['User']['is_active'] = 1;
-
-				// Create a new record to stop it rehashing the password
-				$newrecord['User'] = array();
-				$newrecord['User']['id'] = $record['User']['id'];
-				$newrecord['User']['is_active'] = '1';
-				if ($this->User->save($newrecord['User'])) {
-					$this->User->EmailConfirmationKey->delete($record['EmailConfirmationKey']['id'], false); //delete the email confirmation key
-					$this->Session->setFlash(__("<h4 class='alert-heading'>Success</h4>Your account is now activated. You can now login."), 'default', array(), 'success');
-					$this->log("[UsersController.activate] user[" . $newrecord['User']['id'] . "] activated", 'sourcekettle');
-
-					return $this->redirect('/login');
-				} else {
-					$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>An error occured, please contact your system administrator."), 'default', array(), 'error');
-				}
-			} else {
-				$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The link given was not valid. Please contact your system administrator to manually activate your account."), 'default', array(), 'error');
-			}
-			return $this->redirect('/');
 		}
+
+		$user = $this->User->getPendingAccount($key);
+
+		if (empty($user)) {
+			$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The link given was not valid. Please contact your system administrator to manually activate your account."), 'default', array(), 'error');
+
+		} elseif(!$this->User->approvePendingAccount($user)) {
+			$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>An error occured, please contact your system administrator."), 'default', array(), 'error');
+
+		} else {
+			$this->Session->setFlash(__("<h4 class='alert-heading'>Success</h4>Your account is now activated. You can now login."), 'default', array(), 'success');
+			$this->log("[UsersController.activate] user[" . $user['User']['id'] . "] activated", 'sourcekettle');
+			return $this->redirect('/login');
+		}
+		return $this->redirect('/');
 	}
 
 /**
@@ -302,6 +295,34 @@ class UsersController extends AppController {
 		$this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
 		$this->request->data = $this->User->read();
 		$this->request->data['User']['password'] = null;
+	}
+
+	public function admin_approve($key = null) {
+
+		if ($this->request->is('get')) {
+			$this->set('users', $this->User->getPendingApprovals());
+			$this->render('admin_approve');
+			return;
+		}
+
+		if (!$this->request->is('post') || $key == null) {
+			return $this->redirect('/admin/users/approve');
+		}
+
+		$user = $this->User->getPendingAccount($key);
+
+		if (empty($user)) {
+			$this->Session->setFlash(__("Failed to find a pending account for key '$key'"), 'default', array(), 'error');
+
+		} elseif(!$this->User->approvePendingAccount($user)) {
+			$this->Session->setFlash(__("A problem occurred when approving the account. Please try again."), 'default', array(), 'error');
+
+		} else {
+			$this->Session->setFlash(__("Account '".@$user['User']['email']."' approved."), 'default', array(), 'success');
+
+		}
+
+		return $this->redirect('/admin/users/approve');
 	}
 
 /**

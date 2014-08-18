@@ -45,6 +45,13 @@
                     'controller' => 'users',
                 ),
             ),
+            'Approvals' => array(
+                'icon' => 'check',
+                'url' => array(
+                    'action' => 'admin_approve',
+                    'controller' => 'users',
+                ),
+            ),
         ),
         'Projects' => array(
             'Search' => array(
