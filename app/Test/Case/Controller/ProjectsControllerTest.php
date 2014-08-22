@@ -183,6 +183,24 @@ class ProjectsControllerTestCase extends AppControllerTest {
  *
  * @return void
  */
+ 	public function testViewLinks() {
+		$this->_fakeLogin(5);
+		$this->testAction('/project/private', array('return' => 'view', 'method' => 'get'));
+
+		// Check all links are correct
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/tasks/index').'\?statuses=in\+progress">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/tasks/index').'\?statuses=open">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/tasks/index').'\?statuses=closed%2Cresolved">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/tasks/index').'\?statuses=dropped">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/tasks/index').'">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/tasks/add').'">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/milestones/view/').'\d+">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/milestones/add').'">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/collaborators').'">|', $this->view);
+		$this->assertRegexp('|<a href=".*'.Router::url('/project/private/time/add').'">|', $this->view);
+		
+	}
+
 	public function testViewSystemAdminOwner() {
 
 		// System admin can see everything
@@ -192,7 +210,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 
 		$this->assertContains('<h1>private <small>Project overview</small></h1>', $this->view);
-
 		$this->assertNotNull($this->vars['project']);
 		
 	}
