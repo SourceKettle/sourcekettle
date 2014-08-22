@@ -14,6 +14,7 @@ class UsersControllerTest extends AppControllerTest {
  * @var array
  */
 	public $fixtures = array(
+		'core.cake_session',
 		'app.user',
 		'app.collaborator',
 		'app.project',
@@ -41,6 +42,8 @@ class UsersControllerTest extends AppControllerTest {
 		$this->Setting = ClassRegistry::init("Setting");
 		$this->User = ClassRegistry::init("User");
 		$this->SshKey = ClassRegistry::init("SshKey");
+		// It seems loading Setting here breaks the sourcekettle_config loading somehow...
+		$this->controller->sourcekettle_config = $this->Setting->loadConfigSettings();
 	}
 /**
  * testRegister method
@@ -61,8 +64,8 @@ class UsersControllerTest extends AppControllerTest {
 		));
 
 		// Now make sure we get the registration form
-		$this->testAction('/register', array('method' => 'get', 'return' => 'vars'));
-		$this->assertContains("<h1>Register with SourceKettle <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
+		$this->testAction('/register', array('method' => 'get', 'return' => 'view'));
+		$this->assertContains("<h1>Register with ".$this->controller->sourcekettle_config['global']['alias']." <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
 	}
 
 	public function testRegisterLoggedIn() {
@@ -76,7 +79,7 @@ class UsersControllerTest extends AppControllerTest {
 
 		// Now make sure we get the registration form
 		$this->testAction('/register', array('method' => 'get', 'return' => 'vars'));
-		$this->assertContains("<h1>Register with SourceKettle <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
+		$this->assertContains("<h1>Register with ".$this->controller->sourcekettle_config['global']['alias']." <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
 	}
 
 	private function __testRegister($postData, $expectSuccess = true) {
@@ -308,7 +311,7 @@ class UsersControllerTest extends AppControllerTest {
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
-			->with("It looks like you're using an account that is not managed by SourceKettle - unfortunately, we can't help you reset your password. Try talking to <a href='mailto:admin@example.org'>the system administrator</a>.");
+			->with("It looks like you're using an account that is not managed by ".$this->controller->sourcekettle_config['global']['alias']." - unfortunately, we can't help you reset your password. Try talking to <a href='mailto:admin@example.org'>the system administrator</a>.");
 
 		$postData = array('User' => array(
 			'email' => 'snaitf@example.com',
