@@ -13,6 +13,7 @@ class PagesControllerTest extends AppControllerTest {
  * @var array
  */
 	public $fixtures = array(
+		'core.cake_session',
 		'app.setting',
 		'app.project',
 		'app.project_history',
@@ -71,7 +72,7 @@ class PagesControllerTest extends AppControllerTest {
 
 		// Logged out - show the home page at /
 		$rendered = $this->testAction('/', array('return' => 'view', 'method' => 'get'));
-		$this->assertContains('SourceKettle uses cookies!', $this->view);
+		$this->assertContains($this->controller->sourcekettle_config['global']['alias'].' uses cookies!', $this->view);
 	}
 
 	public function testDefaultLoggedIn() {
@@ -85,13 +86,13 @@ class PagesControllerTest extends AppControllerTest {
 
 	public function testHomeNotLoggedIn() {
 		$rendered = $this->testAction('/pages/home', array('return' => 'view', 'method' => 'get'));
-		$this->assertContains('SourceKettle uses cookies!', $this->view);
+		$this->assertContains($this->controller->sourcekettle_config['global']['alias'].' uses cookies!', $this->view);
 	}
 
 	public function testHomeLoggedIn() {
 		$this->_fakeLogin(2);
 		$this->testAction('/pages/home', array('return' => 'result', 'method' => 'get'));
-		$this->assertContains('SourceKettle uses cookies!', $this->view);
+		$this->assertContains($this->controller->sourcekettle_config['global']['alias'].' uses cookies!', $this->view);
 	}
 
 /**
