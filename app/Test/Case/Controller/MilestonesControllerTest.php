@@ -14,6 +14,7 @@ class MilestonesControllerTest extends AppControllerTest {
  * @var array
  */
 	public $fixtures = array(
+		'core.cake_session',
 		'app.setting',
 		'app.project',
 		'app.project_history',

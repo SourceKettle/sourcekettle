@@ -9,6 +9,7 @@ require_once(__DIR__ . DS . 'AppControllerTest.php');
 class TimesControllerTestCase extends AppControllerTest {
 
     public $fixtures = array(
+		'core.cake_session',
 		'app.setting',
 		'app.project',
 		'app.project_history',
