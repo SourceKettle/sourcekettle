@@ -96,7 +96,7 @@ class SettingTestCase extends CakeTestCase {
 			),
 			'repo' => array(
 				'user' => 'nobody',
-				'base' => '/export/1/var.www/sourcekettle-dev.ecs.soton.ac.uk/sourcekettle/app/Test/Fixture/repositories',
+				'base' => dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories',
 				'default' => 'Git'
 			),
 			'sync_required' => '0',
