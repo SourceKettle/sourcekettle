@@ -100,7 +100,12 @@ class ProjectsController extends AppProjectController {
 	public function admin_index() {
 		if ($this->request->is('post') && isset($this->request->data['Project']['name']) && $project = $this->request->data['Project']['name']) {
 			if ($project = $this->Project->findByName($project)) {
-				return $this->redirect(array('action' => 'view', $project['Project']['id']));
+				return $this->redirect(array(
+					'controller' => 'projects',
+					'action' => 'view',
+					'admin' => false,
+					'project' => $project['Project']['name']
+				));
 			} else {
 				$this->Flash->error('The specified Project does not exist. Please try again.');
 			}
