@@ -50,15 +50,33 @@ class Setting extends AppModel {
  * which take priority.
  */
 	public function loadConfigSettings() {
+
+		// Load config file first
 		$settings = Configure::read('sourcekettle');
+
 		foreach ($this->find('list', array('fields' => array('Setting.name', 'Setting.value')))  as $name => $value) {
-			if (preg_match('/^([^\.]+)\.(.+)$/', $name, $matches)) {
-				$settings[$matches[1]] = @$settings[$matches[1]] ?: array();
-				$settings[$matches[1]][$matches[2]] = $value;
-			} else {
-				$settings[$name] = $value;
+
+			// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
+			$path = explode('.', $name);
+			$current = &$settings;
+
+			// Eat key parts one at a time
+			while(($key = array_shift($path))) {
+
+				// If we're on the last key part, set the value
+				if (empty($path)) {
+					$current[$key] = $value;
+
+				// Otherwise, make sure it maps to an array
+				} else {
+					$current[$key] = @$current[$key] ?: array();
+				}
+
+				// Keep track of progress through the settings array
+				$current = &$current[$key];
 			}
 		}
+
 		return $settings;
 	}
 }

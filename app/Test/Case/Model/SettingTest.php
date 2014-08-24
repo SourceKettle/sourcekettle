@@ -70,28 +70,37 @@ class SettingTestCase extends CakeTestCase {
                 'modified' => '2012-06-02 20:05:59'
             ),
         );
-        $this->assertEquals($beforeA, $beforeB, "before settings are not equal");
+        $this->assertEquals($beforeB, $beforeA, "before settings are not equal");
 
         $this->Setting->syncRequired();
 
         $afterA = $this->Setting->findByName('sync_required');
+		unset($afterA['Setting']['created']);
+		unset($afterA['Setting']['modified']);
+
         $afterB = array(
             'Setting' => array(
                 'id' => 1,
                 'name' => 'sync_required',
-                'value' => 1,
-                'created' => '2012-06-02 20:05:59',
-                'modified' => '2012-06-02 20:05:59'
+                'value' => '1',
             ),
         );
-        $this->assertEquals($beforeA, $beforeB, "after settings are not equal");
+        $this->assertEquals($afterB, $afterA, "after settings are not equal");
     }
 
-	public function testRepoDir() {
-		$settings = $this->Setting->find('all');
-		$sourcekettle_config = array_merge(
-			Configure::read('sourcekettle'),
-			ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
-		);
+	public function testLoadConfigSettings() {
+		$settings = $this->Setting->loadConfigSettings();
+		$this->assertEquals(array(
+			'global' => array(
+				'alias' => 'SourceKettle Test Site'
+			),
+			'repo' => array(
+				'user' => 'nobody',
+				'base' => '/export/1/var.www/sourcekettle-dev.ecs.soton.ac.uk/sourcekettle/app/Test/Fixture/repositories',
+				'default' => 'Git'
+			),
+			'sync_required' => '0',
+			'sysadmin_email' => 'admin@example.org'
+		), $settings, "Incorrect settings returned");
 	}
 }
