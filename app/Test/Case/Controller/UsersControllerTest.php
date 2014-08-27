@@ -45,6 +45,33 @@ class UsersControllerTest extends AppControllerTest {
 		// It seems loading Setting here breaks the sourcekettle_config loading somehow...
 		$this->controller->sourcekettle_config = $this->Setting->loadConfigSettings();
 	}
+
+
+	public function testEditSettingsNotLoggedIn() {
+		try{
+			$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
+		} catch(Exception $e) {}
+		$this->assertNotAuthorized();
+	}
+
+	public function testEditSettingsFormInternal() {
+		$this->_fakeLogin(1);
+		$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/account/details').'"|', $this->view);
+		$this->assertRegexp('|<input name=.*"data\[User\]\[name\]".*value="Mr Smith"|', $this->view);
+		$this->assertRegexp('|<input name=.*"data\[User\]\[email\]"|', $this->view);
+	}
+
+	public function testEditSettingsFormExternal() {
+		$this->_fakeLogin(6);
+		$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/account/details').'"|', $this->view);
+		$this->assertRegexp('|<input name=.*"data\[User\]\[name\]".*value="Sir Not-Appearing-In-This-Film"|', $this->view);
+		$this->assertNotRegexp('|<input name=.*"data\[User\]\[email\]".*value="snaitf@example.com"|', $this->view);
+	}
+
 /**
  * testRegister method
  *
