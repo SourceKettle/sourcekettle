@@ -72,6 +72,56 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertNotRegexp('|<input name=.*"data\[User\]\[email\]".*value="snaitf@example.com"|', $this->view);
 	}
 
+	public function testEditSettingsInternal() {
+		$this->_fakeLogin(1);
+		$postData = array('User' => array(
+			'name' => 'Mr Flibble',
+			'email' => 'flibble@example.com',
+		));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your changes have been saved.'), 'default', array(), 'success');
+
+		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+
+		$retrieved = $this->User->find('first', array(
+			'conditions' => array('id' => 1),
+			'fields' => array('name', 'email'),
+			'recursive' => -1,
+		));
+
+		$this->assertEquals($postData, $retrieved);
+	}
+
+	public function testEditSettingsExternal() {
+		$this->_fakeLogin(6);
+		$postData = array('User' => array(
+			'name' => 'Mr Flibble',
+			'email' => 'flibble@example.com',
+		));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your changes have been saved.'), 'default', array(), 'success');
+
+		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// Check that the email address was not updated
+		$postData['User']['email'] = 'snaitf@example.com';
+		$retrieved = $this->User->find('first', array(
+			'conditions' => array('id' => 6),
+			'fields' => array('name', 'email'),
+			'recursive' => -1,
+		));
+
+		$this->assertEquals($postData, $retrieved);
+	}
+
 /**
  * testRegister method
  *
