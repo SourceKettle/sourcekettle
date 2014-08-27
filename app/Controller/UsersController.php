@@ -25,6 +25,11 @@ class UsersController extends AppController {
 
 	public $uses = array('User', 'Setting');
 
+	public function isAuthorized($user) {
+		// Must be logged in
+		return (isset($user) && !empty($user));
+	}
+
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow(
