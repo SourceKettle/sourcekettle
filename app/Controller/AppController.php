@@ -72,6 +72,7 @@ class AppController extends Controller {
 		}
 		return false;
 	}
+
 /**
  * Before filter method acts first in the controller
  *
