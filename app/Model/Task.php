@@ -178,51 +178,7 @@ class Task extends AppModel {
 				$results[$key]['Task']['time_estimate'] = $split['s'];
 			}
 		}
-
-		if (isset($results['id'])) {
-			return $results;
-		} else if (isset($results['Task'])) {
-			return $this->__setDependenciesComplete($results);
-		} else {
-			foreach ($results as $key => $value) {
-				$results[$key] = $this->__setDependenciesComplete($value);
-			}
-		}
 		return $results;
-	}
-
-	private function __setDependenciesComplete($result) {
-		if (isset($result['DependsOn'])) {
-			if (!empty($result['DependsOn'][0])) {
-				$completed = true;
-				foreach ($result['DependsOn'] as $dependsOn) {
-					if ($dependsOn['task_status_id'] < 3) {
-						$completed = false;
-						break;
-					}
-				}
-				if ($completed) {
-					if (isset($result['Task'])) {
-						$result['Task']['dependenciesComplete'] = true;
-					} else {
-						$result['dependenciesComplete'] = true;
-					}
-				} else {
-					if (isset($result['Task'])) {
-						$result['Task']['dependenciesComplete'] = false;
-					} else {
-						$result['dependenciesComplete'] = false;
-					}
-				}
-			} else {
-				if (isset($result['Task'])) {
-					$result['Task']['dependenciesComplete'] = false;
-				} else {
-					$result['dependenciesComplete'] = false;
-				}
-			}
-		}
-		return $result;
 	}
 
 /**
@@ -243,7 +199,27 @@ class Task extends AppModel {
 		$table_prefix = $db->config['prefix'];
 
 		$this->virtualFields = array(
-			'public_id' => "(SELECT COUNT(`{$table_prefix}{$this->table}`.`id`) FROM `{$table_prefix}{$this->table}` WHERE `{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
+			'public_id' => "(SELECT ".
+				"COUNT(`{$table_prefix}{$this->table}`.`id`) ".
+			"FROM ".
+				"`{$table_prefix}{$this->table}` ".
+			"WHERE ".
+				"`{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` ".
+			"AND ".
+				"`{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
+
+			'dependenciesComplete' => "(SELECT ".
+				"(COUNT(`DepTasks`.`id`) = 0) ".
+			"FROM ".
+				"`{$table_prefix}task_dependencies` TaskDeps ".
+			"INNER JOIN `{$table_prefix}{$this->table}` DepTasks ".
+				"ON `DepTasks`.`id` = `TaskDeps`.`parent_task_id` ".
+			"INNER JOIN `{$table_prefix}task_statuses` TaskStatuses ".
+				"ON `TaskStatuses`.`id` = `DepTasks`.`task_status_id` ".
+			"WHERE ".
+				"`TaskDeps`.`child_task_id` = `{$this->alias}`.`id` ".
+			"AND ".
+				"`TaskStatuses`.`name` NOT IN ('resolved', 'closed'))",
 		);
 	}
 

@@ -64,10 +64,10 @@ class TaskPriorityTest extends CakeTestCase {
 	public function testGetLookupTable() {
 		$table = $this->TaskPriority->getLookupTable();
 		$this->assertEqual(array(
-			1 => array('id' => 1, 'name' => 'minor',   'label' => 'Minor',   'level' => 1, 'icon' => 'download', 'class' => ''),
-			2 => array('id' => 2, 'name' => 'major',   'label' => 'Major',   'level' => 2, 'icon' => 'upload', 'class' => ''),
-			3 => array('id' => 3, 'name' => 'urgent',  'label' => 'Urgent',  'level' => 3, 'icon' => 'exclamation-sign', 'class' => ''),
-			4 => array('id' => 4, 'name' => 'blocker', 'label' => 'Blocker', 'level' => 4, 'icon' => 'ban-circle', 'class' => ''),
+			1 => array('id' => '1', 'name' => 'minor',   'label' => 'Minor',   'level' => 1, 'icon' => 'download', 'class' => ''),
+			2 => array('id' => '2', 'name' => 'major',   'label' => 'Major',   'level' => 2, 'icon' => 'upload', 'class' => ''),
+			3 => array('id' => '3', 'name' => 'urgent',  'label' => 'Urgent',  'level' => 3, 'icon' => 'exclamation-sign', 'class' => ''),
+			4 => array('id' => '4', 'name' => 'blocker', 'label' => 'Blocker', 'level' => 4, 'icon' => 'ban-circle', 'class' => ''),
 		), $table, "Incorrect lookup table returned (tests need updating?)");
 	}
 

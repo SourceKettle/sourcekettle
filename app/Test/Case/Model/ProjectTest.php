@@ -469,7 +469,7 @@ class ProjectTestCase extends CakeTestCase {
 				'deleted' => '0',
 				'deleted_date' => null,
 				'public_id' => '3',
-				'dependenciesComplete' => false
+				'dependenciesComplete' => 1
 			),
 			'Project' => array(
 				'id' => '2',

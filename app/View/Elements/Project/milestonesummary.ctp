@@ -14,7 +14,7 @@
             )) ?></strong></li>
         <br>
         <li>Due: <?= h($milestone['Milestone']['due']) ?></li>
-        <?= $this->Bootstrap->progress(array("width" => (int) $milestone['Milestone']['percent'], "striped" => true)) ?>
+        <?= $this->Bootstrap->progress(array("width" => (int) $milestone['Progress']['tasksPct'], "striped" => true)) ?>
         <? endif; ?>
     </ul>
 </div>

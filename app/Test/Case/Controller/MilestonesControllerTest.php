@@ -79,21 +79,19 @@ class MilestonesControllerTest extends AppControllerTest {
 		foreach ($this->vars['milestones'] as $milestone) {
 
 			if ($milestone['Milestone']['id'] == 1
-				&& count($milestone['Task']) == 7
-				&& count($milestone['Tasks']['open']) == 2
-				&& count($milestone['Tasks']['in_progress']) == 2
-				&& count($milestone['Tasks']['resolved']) == 1
-				&& count($milestone['Tasks']['completed']) == 1
-				&& count($milestone['Tasks']['dropped']) == 1
+				&& $milestone['Tasks']['open']['numTasks'] == 2
+				&& $milestone['Tasks']['in progress']['numTasks'] == 2
+				&& $milestone['Tasks']['resolved']['numTasks'] == 1
+				&& $milestone['Tasks']['closed']['numTasks'] == 1
+				&& $milestone['Tasks']['dropped']['numTasks'] == 1
 			) {
 				$this->assertTrue(true, "Impossible to fail");
 			} elseif ($milestone['Milestone']['id'] == 3
-				&& count($milestone['Task']) == 0
-				&& count($milestone['Tasks']['open']) == 0
-				&& count($milestone['Tasks']['in_progress']) == 0
-				&& count($milestone['Tasks']['resolved']) == 0
-				&& count($milestone['Tasks']['completed']) == 0
-				&& count($milestone['Tasks']['dropped']) == 0
+				&& $milestone['Tasks']['open']['numTasks'] == 0
+				&& $milestone['Tasks']['in progress']['numTasks'] == 0
+				&& $milestone['Tasks']['resolved']['numTasks'] == 0
+				&& $milestone['Tasks']['closed']['numTasks'] == 0
+				&& $milestone['Tasks']['dropped']['numTasks'] == 0
 			) {
 				$this->assertTrue(true, "Impossible to fail");
 			} else {
@@ -121,12 +119,11 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		foreach ($this->vars['milestones'] as $milestone) {
 			if ($milestone['Milestone']['id'] == 2
-				&& count($milestone['Task']) == 2
-				&& count($milestone['Tasks']['open']) == 0
-				&& count($milestone['Tasks']['in_progress']) == 1
-				&& count($milestone['Tasks']['resolved']) == 1
-				&& count($milestone['Tasks']['completed']) == 0
-				&& count($milestone['Tasks']['dropped']) == 0
+				&& $milestone['Tasks']['open']['numTasks'] == 0
+				&& $milestone['Tasks']['in progress']['numTasks'] == 1
+				&& $milestone['Tasks']['resolved']['numTasks'] == 1
+				&& $milestone['Tasks']['closed']['numTasks'] == 0
+				&& $milestone['Tasks']['dropped']['numTasks'] == 0
 			) {
 				$this->assertTrue(true, "Impossible to fail");
 			} else {

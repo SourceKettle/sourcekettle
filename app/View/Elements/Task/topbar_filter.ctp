@@ -28,15 +28,15 @@
     	<ul class="dropdown-menu">
 			<li><a href='?milestones='>Clear filter</a></li>
 			<li><a href='?milestones=all'>All milestones</a></li>
-		<? foreach ($milestones['open'] as $id => $name) {
+		<? foreach ($milestones['open'] as $id => $milestone) {
 			$class = in_array($id, array_keys($selected_milestones))? ' class="active"': '';
 			?>
-			<li<?=$class?>><a href='?milestones=<?=$id?>'><?=$name?></a></li>
+			<li<?=$class?>><a href='?milestones=<?=$id?>'><?=$milestone['Milestone']['subject']?></a></li>
 		<? } ?>
-		<? foreach ($milestones['closed'] as $id => $name) {
+		<? foreach ($milestones['closed'] as $id => $milestone) {
 			$class = in_array($id, array_keys($selected_milestones))? ' class="active"': '';
 			?>
-			<li<?=$class?>><a href='?milestones=<?=$id?>'><?=$name.' '.__('(closed)')?></a></li>
+			<li<?=$class?>><a href='?milestones=<?=$id?>'><?=$milestone['Milestone']['subject'].' '.__('(closed)')?></a></li>
 		<? } ?>
     	</ul>
     </li>

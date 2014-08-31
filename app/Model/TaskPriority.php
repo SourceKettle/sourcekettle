@@ -40,20 +40,26 @@ class TaskPriority extends AppModel {
 		),
 	);
 
-	public function nameToID($priority_name) {
-		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($priority_name)))));
-		if(empty($found)){
-			return 0;
+	private $__byId = array();
+	private $__byName = array();
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		$ts = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'level', 'icon', 'class')));
+		foreach ($ts as $s) {
+			$this->__byId[ $s['TaskPriority']['id'] ] = $s['TaskPriority'];
+			$this->__byName[ $s['TaskPriority']['name'] ] = $s['TaskPriority'];
 		}
-		return $found['TaskPriority']['id'];
+	}
+	public function idToName($id) {
+		return @$this->__byId[$id]['name'];
+	}
+
+	public function nameToID($name) {
+		return @$this->__byName[$name]['id'];
 	}
 
 	public function getLookupTable() {
-		$tp = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'level', 'icon', 'class')));
-		$table = array();
-		foreach ($tp as $p) {
-			$table[ $p['TaskPriority']['id'] ] = $p['TaskPriority'];
-		}
-		return $table;
+		return $this->__byId;
 	}
 }

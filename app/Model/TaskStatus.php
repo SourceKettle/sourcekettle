@@ -24,6 +24,19 @@ class TaskStatus extends AppModel {
  */
 	public $displayField = 'name';
 
+	private $__byId = array();
+	private $__byName = array();
+
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		$ts = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'icon', 'class')));
+		foreach ($ts as $s) {
+			$this->__byId[ $s['TaskStatus']['id'] ] = $s['TaskStatus'];
+			$this->__byName[ $s['TaskStatus']['name'] ] = $s['TaskStatus'];
+		}
+	}
+
 /**
  * hasMany associations
  */
@@ -41,21 +54,21 @@ class TaskStatus extends AppModel {
 		),
 	);
 
-	public function nameToID($status_name) {
-		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($status_name)))));
-		if(empty($found)){
-			return 0;
-		}
-		return $found['TaskStatus']['id'];
+	public function idToName($id) {
+		return @$this->__byId[$id]['name'];
+	}
+
+	public function nameToID($name) {
+		return @$this->__byName[$name]['id'];
 	}
 
 	public function getLookupTable() {
-		$ts = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'icon', 'class')));
-		$table = array();
-		foreach ($ts as $s) {
-			$table[ $s['TaskStatus']['id'] ] = $s['TaskStatus'];
-		}
-		return $table;
+		return $this->__byId;
 	}
+
+	public function getCompletedIdList() {
+		return array($this->__byName['resolved']['id'], $this->__byName['closed']['id']);
+	}
+
 }
 

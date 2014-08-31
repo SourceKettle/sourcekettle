@@ -160,7 +160,6 @@ class ProjectsController extends AppProjectController {
 		}
 
 		$openMilestones = $this->Project->Milestone->getOpenMilestones();
-		$openMilestones = $this->Project->Milestone->find('all', array('conditions' => array('Milestone.id' => array_values($openMilestones)), 'order' => 'Milestone.created ASC'));
 		if (empty($openMilestones)) {
 			$milestone = null;
 		} else {
