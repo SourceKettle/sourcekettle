@@ -144,22 +144,18 @@ class User extends AppModel {
 		// do some checks first to make sure we don't change things we shouldn't
 		if (isset($this->id) && $this->id) {
 
-			// Get the existing whitelist of savable fields
-			$wl = $this->whitelist;
-
 			// Load the existing data and work out if it's internal or not
 			$current_details = $this->findById($this->id);
 
 			if (!$current_details[$this->alias]['is_internal']) {
-				// Do not allow the email to be changed as this is not under our control
-				// (e.g. it's a field in LDAP)
-				$wl = array_diff($wl, array('email'));
 
-				// Do not allow password to be updated on externally-managed accounts
-				$wl = array_diff($wl, array('password'));
+				if (isset($this->data[$this->alias]['email'])) {
+					unset($this->data[$this->alias]['email']);
+				}
+				if (isset($this->data[$this->alias]['password'])) {
+					unset($this->data[$this->alias]['password']);
+				}
 			}
-
-			$this->whitelist = $wl;
 
 		} elseif (isset($this->data[$this->alias]['email'])) {
 

@@ -45,6 +45,83 @@ class UsersControllerTest extends AppControllerTest {
 		// It seems loading Setting here breaks the sourcekettle_config loading somehow...
 		$this->controller->sourcekettle_config = $this->Setting->loadConfigSettings();
 	}
+
+
+	public function testEditSettingsNotLoggedIn() {
+		try{
+			$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
+		} catch(Exception $e) {}
+		$this->assertNotAuthorized();
+	}
+
+	public function testEditSettingsFormInternal() {
+		$this->_fakeLogin(1);
+		$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/account/details').'"|', $this->view);
+		$this->assertRegexp('|<input name=.*"data\[User\]\[name\]".*value="Mr Smith"|', $this->view);
+		$this->assertRegexp('|<input name=.*"data\[User\]\[email\]"|', $this->view);
+	}
+
+	public function testEditSettingsFormExternal() {
+		$this->_fakeLogin(6);
+		$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/account/details').'"|', $this->view);
+		$this->assertRegexp('|<input name=.*"data\[User\]\[name\]".*value="Sir Not-Appearing-In-This-Film"|', $this->view);
+		$this->assertNotRegexp('|<input name=.*"data\[User\]\[email\]".*value="snaitf@example.com"|', $this->view);
+	}
+
+	public function testEditSettingsInternal() {
+		$this->_fakeLogin(1);
+		$postData = array('User' => array(
+			'name' => 'Mr Flibble',
+			'email' => 'flibble@example.com',
+		));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your changes have been saved.'), 'default', array(), 'success');
+
+		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+
+		$retrieved = $this->User->find('first', array(
+			'conditions' => array('id' => 1),
+			'fields' => array('name', 'email'),
+			'recursive' => -1,
+		));
+
+		$this->assertEquals($postData, $retrieved);
+	}
+
+	public function testEditSettingsExternal() {
+		$this->_fakeLogin(6);
+		$postData = array('User' => array(
+			'name' => 'Mr Flibble',
+			'email' => 'flibble@example.com',
+		));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your changes have been saved.'), 'default', array(), 'success');
+
+		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// Check that the email address was not updated
+		$postData['User']['email'] = 'snaitf@example.com';
+		$retrieved = $this->User->find('first', array(
+			'conditions' => array('id' => 6),
+			'fields' => array('name', 'email'),
+			'recursive' => -1,
+		));
+
+		$this->assertEquals($postData, $retrieved);
+	}
+
 /**
  * testRegister method
  *

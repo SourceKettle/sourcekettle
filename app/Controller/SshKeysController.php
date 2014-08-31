@@ -20,6 +20,11 @@ class SshKeysController extends AppController {
 
 	public $uses = array('SshKey', 'Setting');
 
+	public function isAuthorized($user) {
+		// Must be logged in
+		return (isset($user) && !empty($user));
+	}
+
 /**
  * Add an SSH key for the current user
  */
