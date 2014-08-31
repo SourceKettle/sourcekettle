@@ -27,20 +27,6 @@ class ProjectsController extends AppProjectController {
 
 	public $uses = array('Project', 'RepoType');
 
-/**
- * beforeFilter function.
- *
- * @access public
- * @return void
- */
-	public function beforeFilter() {
-		parent::beforeFilter();
-		/*$this->Auth->allow(
-			'api_all',
-			'api_view'
-		);*/
-	}
-
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
 		return array(
@@ -98,7 +84,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_index() {
-		if ($this->request->is('post') && isset($this->request->data['Project']['name']) && $project = $this->request->data['Project']['name']) {
+		/*if ($this->request->is('post') && isset($this->request->data['Project']['name']) && $project = $this->request->data['Project']['name']) {
 			if ($project = $this->Project->findByName($project)) {
 				return $this->redirect(array(
 					'controller' => 'projects',
@@ -109,7 +95,7 @@ class ProjectsController extends AppProjectController {
 			} else {
 				$this->Flash->error('The specified Project does not exist. Please try again.');
 			}
-		}
+		}*/
 		$this->Project->recursive = 0;
 		$this->set('projects', $this->paginate());
 	}
@@ -123,10 +109,6 @@ class ProjectsController extends AppProjectController {
 	public function view($name = null) {
 
 		$project = $this->_getProject($name);
-
-		if (is_numeric($name)) {
-			return $this->redirect(array('action' => 'view', 'project' => $project['Project']['name']));
-		}
 
 		$numberOfOpenTasks = $this->Project->Task->find('count', array(
 			'conditions' => array(
@@ -170,22 +152,6 @@ class ProjectsController extends AppProjectController {
 
 		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab'));
 		$this->set('historyCount', 8);
-	}
-
-/**
- * admin_view method
- *
- * @param string $id
- * @throws NotFoundException
- * @return void
- */
-	public function admin_view($project = null) {
-		// Check for valid project name
-		$project = $this->Project->getProject($project);
-		if ( empty($project)) {
-			throw new NotFoundException(__('Invalid project'));
-		}
-		return $this->redirect(array('controller' => 'projects', 'project' => $project['Project']['name'], 'action' => 'view', 'admin' => false));
 	}
 
 /**
@@ -258,21 +224,6 @@ class ProjectsController extends AppProjectController {
 	}
 
 /**
- * admin_add method
- *
- * @return void
- */
-	public function admin_add() {
-		if ($this->request->is('post')) {
-			$this->Project->create();
-			if ($this->Flash->c($this->Project->save($this->request->data))) {
-				return $this->redirect(array('action' => 'index'));
-			}
-		}
-		$this->set('repoTypes', $this->Project->RepoType->find('list'));
-	}
-
-/**
  * edit method
  *
  * @param string $id
@@ -336,31 +287,13 @@ class ProjectsController extends AppProjectController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			// TODO transactions for great justice, this is just lazy
 			$saved = $this->Project->save($this->request->data);
-			$this->Project->Source->create();
 			if ($this->Flash->u($saved)) {
+				$this->Project->Source->create();
 				$this->log("[ProjectController.add_repo] user[" . $current_user['id'] . "] added a repository to project[" . $this->Project->id . "]", 'sourcekettle');
 				return $this->redirect(array('project' => $this->Project->id, 'action' => 'view'));
 			}
 		}
 		$this->request->data = $project;
-	}
-
-/**
- * admin_edit method
- *
- * @param string $id
- * @return void
- */
-	public function admin_edit($project = null) {
-		$project = $this->_getProject($project);
-
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Flash->u($this->Project->save($this->request->data))) {
-				return $this->redirect(array('action' => 'admin_view', $this->Project->id));
-			}
-		}
-		$this->request->data = $project;
-		$this->set('repoTypes', $this->Project->RepoType->find('list'));
 	}
 
 /**

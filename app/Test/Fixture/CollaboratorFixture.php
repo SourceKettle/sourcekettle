@@ -109,6 +109,14 @@ class CollaboratorFixture extends CakeTestFixture {
             'access_level' => 0,
             'created' => '2012-06-01 12:32:15',
             'modified' => '2012-06-01 12:32:15'
-        )
+        ),
+        array(
+            'id' => 13,
+            'project_id' => 5,
+            'user_id' => 2,
+            'access_level' => 2,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
     );
 }
