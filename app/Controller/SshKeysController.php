@@ -32,7 +32,6 @@ class SshKeysController extends AppController {
 		$current_user = $this->viewVars['current_user'];
 		if ($this->request->is('post')) {
 
-			
 			$this->request->data['SshKey']['user_id'] = $current_user['id']; //Set the key to belong to the current user
 
 			if ($this->Flash->c($this->SshKey->save($this->request->data))) {
@@ -55,22 +54,21 @@ class SshKeysController extends AppController {
  * @throws ForbiddenException
  */
 	public function delete($id = null) {
-		$current_user = $this->viewVars['current_user'];
 		if ($this->request->is('post') && $id != null) {
-			$this->SshKey->id = $id;
-
-			if (!$this->SshKey->exists()) {
+			$key = $this->SshKey->findById($id);
+			if (empty($key)) {
 				throw new NotFoundException(__('Invalid SSH Key'));
 			}
 
-			if ($this->SshKey->field('user_id') != $current_user['id']) {
+			if ($key['SshKey']['user_id'] != $this->Auth->user('id')) {
 				throw new ForbiddenException(__('Ownership required'));
 			}
 
-			$comment = $this->SshKey->field('comment');
+			$comment = $key['SshKey']['comment'];
 			$this->Flash->setUp();
+			$this->SshKey->id = $key['SshKey']['id'];
 			if ($this->Flash->d($this->SshKey->delete(), $comment)) {
-				$this->log("[UsersController.deletekey] sshkey[" . $id . "] deleted by user[" . $current_user['id'] . "]", 'sourcekettle');
+				$this->log("[UsersController.deletekey] sshkey[" . $id . "] deleted by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
 				$this->Setting->syncRequired(); // Update the sync required flag
 			}
 		}
@@ -81,8 +79,7 @@ class SshKeysController extends AppController {
  * Displays the ssh keys of the current user
  */
 	public function view() {
-		$current_user = $this->viewVars['current_user'];
-		$this->SshKey->User->id = $current_user['id'];
+		$this->SshKey->User->id = $this->Auth->user('id');
 		$this->request->data = $this->SshKey->User->read();
 		$this->request->data['User']['password'] = null;
 	}

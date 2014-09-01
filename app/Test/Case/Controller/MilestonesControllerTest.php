@@ -321,6 +321,32 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
+	public function testAddFail() {
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Milestone' => array(
+				'subject' => 'A new milestone',
+				'description' => 'A new milestone for the project',
+				'due' => '2099-02-03',
+			)
+		);
+
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('save'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Milestone '<strong></strong>' could not be created. Please try again.");
+
+		$this->testAction('/project/personal/milestones/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+	}
+
 /**
  * testEdit method
  *
@@ -413,6 +439,33 @@ class MilestonesControllerTest extends AppControllerTest {
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
 		unset($milestone['Milestone']['percent']);
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
+	}
+
+	public function testEditFail() {
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Milestone' => array(
+				'id' => '4',
+				'subject' => 'Changed milestone',
+				'description' => 'This has changed',
+				'due' => '2099-02-03',
+			)
+		);
+
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('save'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Milestone '<strong>Longer &lt;i&gt;subject&lt;/i&gt;</strong>' could not be updated. Please try again.");
+
+		$this->testAction('/project/private/milestones/edit/4', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
 	}
 
 /**

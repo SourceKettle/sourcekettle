@@ -59,6 +59,20 @@ class SshKeysControllerTest extends AppControllerTest {
 		$this->assertRegexp('|<form action=".*'.Router::url('/account/sshkeys/add').'"|', $this->view);
 	}
 
+	public function testAddKeyMissingKey() {
+		$this->_fakeLogin(1);
+		$postData = array('SshKey' => array(
+			'comment' => 'A new SSH key',
+		));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("SshKey '<strong>A new SSH key</strong>' could not be created. Please try again."), 'default', array(), 'error');
+		$this->testAction('/account/sshkeys/add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
+		$this->assertAuthorized();
+	}
+
 	public function testAddKeyInternalOK() {
 		$this->_fakeLogin(1);
 		$postData = array('SshKey' => array(
@@ -66,6 +80,7 @@ class SshKeysControllerTest extends AppControllerTest {
 			'comment' => 'A new SSH key',
 		));
 
+		// TODO should contain the key comment in the flash message
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
@@ -150,6 +165,59 @@ class SshKeysControllerTest extends AppControllerTest {
 		$this->testAction('/account/sshkeys/view', array('method' => 'get', 'return' => 'view'));
 	    $this->assertAuthorized();
 		$this->assertContains('<td>DSA key, correct, no embedded comment</td>', $this->view);
+	}
+
+
+	public function testDeleteNotLoggedIn() {
+		try{
+			$this->testAction('/account/sshkeys/delete/3', array('method' => 'post', 'return' => 'view'));
+		} catch (ForbiddenException $e) {
+			$this->assertTrue(true);
+		}
+	}
+
+	public function testDeleteGetFail() {
+		$this->_fakeLogin(3);
+		$this->testAction('/account/sshkeys/delete/2', array('method' => 'get', 'return' => 'view'));
+	    $this->assertAuthorized();
+		$this->assertRedirect('/account/sshkeys/view');
+	}
+
+	public function testDeleteInvalidKey() {
+		$this->_fakeLogin(3);
+		try{
+			$this->testAction('/account/sshkeys/delete/9001', array('method' => 'post', 'return' => 'view'));
+		} catch (NotFoundException $e) {
+			$this->assertTrue(true);
+		} catch (Exception $e) {
+			$this->assertFalse(true, "Wrong exception thrown");
+		}
+	    $this->assertAuthorized();
+	}
+
+	public function testDeleteNotOwner() {
+		$this->_fakeLogin(3);
+		try{
+			$this->testAction('/account/sshkeys/delete/3', array('method' => 'post', 'return' => 'view'));
+		} catch (ForbiddenException $e) {
+			$this->assertTrue(true);
+		} catch (Exception $e) {
+			$this->assertFalse(true, "Wrong exception thrown");
+		}
+	    $this->assertAuthorized();
+	}
+
+	public function testDeleteOK() {
+		$this->_fakeLogin(3);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("SshKey '<strong>DSA key, correct, no embedded comment</strong>' has been deleted."), 'default', array(), 'success');
+		$this->testAction('/account/sshkeys/delete/2', array('method' => 'post', 'return' => 'view'));
+	    $this->assertAuthorized();
+		$this->assertRedirect('/account/sshkeys/view');
+		$retrieved = $this->controller->SshKey->findById(2);
+		$this->assertEquals(array(), $retrieved);
 	}
 
 
