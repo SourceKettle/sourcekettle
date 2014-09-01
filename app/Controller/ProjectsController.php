@@ -319,24 +319,6 @@ class ProjectsController extends AppProjectController {
 		$this->render('/Elements/Project/delete');
 	}
 
-/**
- * admin_delete method
- *
- * @param string $id
- * @throws MethodNotAllowedException
- * @return void
- */
-	public function admin_delete($name = null) {
-		$project = $this->_getProject($name);
-
-		if (!$this->request->is('post')) {
-			throw new MethodNotAllowedException();
-		}
-
-		$this->Flash->d($this->Project->delete(), $project['Project']['name']);
-		return $this->redirect(array('action' => 'admin_index'));
-	}
-
 	public function markupPreview() {
 		$this->layout = 'ajax';
 		$content = '';
