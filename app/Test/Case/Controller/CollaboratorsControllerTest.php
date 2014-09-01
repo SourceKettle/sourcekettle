@@ -384,10 +384,10 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
-			->with("Permissions level successfully changed for 'Mr Admin'");
-		$ret = $this->testAction('/project/personal/collaborators/makeuser/2', array('method' => 'post', 'return' => 'view'));
+			->with("Permissions level successfully changed for 'Mr Smith'");
+		$ret = $this->testAction('/project/private/collaborators/makeuser/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertAuthorized();
-		$this->assertRedirect('/project/personal/collaborators');
+		$this->assertRedirect('/project/private/collaborators');
 
 	}
 	public function testMakeUserProjectAdmin () {

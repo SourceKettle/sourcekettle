@@ -268,12 +268,13 @@ class Task extends AppModel {
 		}
 
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
+			
 			foreach ($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
-				if ($dependsOn == $this->id) {
-					unset ($this->data['DependsOn'][$key]);
-					break;
+				if (isset($this->id) && $dependsOn == $this->id) {
+					unset ($this->data['DependsOn']['DependsOn'][$key]);
 				}
 			}
+			$this->data['DependsOn']['DependsOn'] = array_unique(array_values($this->data['DependsOn']['DependsOn']));
 		}
 		return true;
 	}

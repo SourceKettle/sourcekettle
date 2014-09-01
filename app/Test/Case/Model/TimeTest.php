@@ -266,6 +266,7 @@ class TimeTestCase extends CakeTestCase {
         );
         $this->assertEquals(TimeString::renderTime(1500), $expectedResult);
 
+        $this->assertEquals('1h 30m', TimeString::renderTime(90, 's'));
         $expectedResult = array(
 			'w' => '1',
 			'd' => '1',

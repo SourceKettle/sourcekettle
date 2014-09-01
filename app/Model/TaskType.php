@@ -52,7 +52,7 @@ class TaskType extends AppModel {
 		}
 	}
 	public function idToName($id) {
-		return @$this->__byId[$id];
+		return @$this->__byId[$id]['name'];
 	}
 
 	public function nameToID($name) {

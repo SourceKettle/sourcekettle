@@ -186,7 +186,7 @@ class UserTestCase extends CakeTestCase {
 		$this->assertEquals($user['User']['email'], "festus@spam.example.com", "Incorrect email found after change");
 	}
 
-	public function testFailToChangeEmail() {
+	public function testFailToChangeEmailExternal() {
 		// Try a non-sourcekettle-managed user account, should fail
 		$this->User->id = 6;
 		$user = $this->User->read();
@@ -198,6 +198,18 @@ class UserTestCase extends CakeTestCase {
 		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found after change");
 		
 	}
+
+	public function testFailToChangePasswordExternal() {
+		$this->User->id = 6;
+		$user = $this->User->read();
+		$this->assertEquals($user['User']['password'], "", "Incorrect password found before change");
+
+		$this->User->saveField('password', 'testTESTtest');
+
+        	$user = $this->User->findById(6);
+		$this->assertEquals($user['User']['password'], "", "Incorrect password found after change");
+	}
+
 
 	public function testChangeTheme() {
 		$this->User->id = 1;

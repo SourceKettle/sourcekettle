@@ -256,6 +256,135 @@ class TaskTest extends CakeTestCase {
 		));
 	}
 
+
+	public function testCreateWithDependencies() {
+		$saved = $this->Task->save(array(
+			'Task' => array(
+				'project_id' => 2,
+				'owner_id' => 2,
+				'type' => 'enhancement',
+				'status' => 'resolved',
+				'priority' => 'major',
+				'time_estimate' => '2h 5m',
+				'story_points' => '20',
+				'subject' => 'Do a thing that depends on other things',
+			),
+			'DependsOn' => array(
+				'DependsOn' => array(
+					2, 3, 4
+				),
+			),
+		));
+
+		// Check the create/modify date are sane
+		$this->assertNotNull($saved['Task']['created'], "Create date was null");
+		$this->assertNotNull($saved['Task']['modified'], "Modify date was null");
+		$this->assertEqual($saved['Task']['created'], $saved['Task']['modified']);
+
+		unset($saved['Task']['modified']);
+		unset($saved['Task']['created']);
+
+		$this->assertEqual($saved, array(
+			'Task' => array(
+				'id' => $this->Task->getLastInsertID(),
+				'project_id' => 2,
+				'owner_id' => 2,
+				'task_type_id' => $this->Task->TaskType->nameToID('enhancement'),
+				'task_status_id' => $this->Task->TaskStatus->nameToID('resolved'),
+				'task_priority_id' => $this->Task->TaskPriority->nameToID('major'),
+				'time_estimate' => 125,
+				'story_points' => '20',
+				'subject' => 'Do a thing that depends on other things',
+			),
+			'DependsOn' => array(
+				'DependsOn' => array(
+					2, 3, 4
+				),
+			),
+		));
+		
+	}
+
+	public function testCreateWithDependenciesIncludingSelf() {
+		$saved = $this->Task->save(array(
+			'Task' => array(
+				'id' => 1,
+				'owner_id' => 2,
+				'type' => 'enhancement',
+				'status' => 'resolved',
+				'priority' => 'major',
+				'time_estimate' => '2h 5m',
+				'story_points' => '20',
+				'subject' => 'Do a thing that depends on other things',
+			),
+			'DependsOn' => array(
+				'DependsOn' => array(
+					1, 2, 3, 4
+				),
+			),
+		));
+
+		// Check the create/modify date are sane
+		$this->assertNotNull($saved['Task']['modified'], "Modify date was null");
+
+		unset($saved['Task']['modified']);
+
+		$this->assertEqual($saved, array(
+			'Task' => array(
+				'id' => 1,
+				'owner_id' => 2,
+				'task_type_id' => $this->Task->TaskType->nameToID('enhancement'),
+				'task_status_id' => $this->Task->TaskStatus->nameToID('resolved'),
+				'task_priority_id' => $this->Task->TaskPriority->nameToID('major'),
+				'time_estimate' => 125,
+				'story_points' => '20',
+				'subject' => 'Do a thing that depends on other things',
+			),
+			'DependsOn' => array(
+				'DependsOn' => array(
+					2, 3, 4
+				),
+			),
+		));
+		
+	}
+
+	public function testCreateEmptyData() {
+		$saved = $this->Task->save(array());
+		unset($saved['Task']['created']);
+		unset($saved['Task']['modified']);
+		$this->assertEquals(array('Task' => array(
+			'id' => $this->Task->getLastInsertID(),
+		)), $saved);
+	}
+
+	public function testCreateFailValidation() {
+		$this->Task = $this->getMockForModel('Task', array('beforeValidate'));
+		$this->Task
+			->expects($this->once())
+			->method('beforeValidate')
+			->will($this->returnValue(false));
+		
+		$saved = $this->Task->save(array(
+			'Task' => array(
+				'owner_id' => 2,
+				'type' => 'enhancement',
+				'status' => 'resolved',
+				'priority' => 'major',
+				'time_estimate' => '2h 5m',
+				'story_points' => '20',
+				'subject' => 'Do a thing that depends on other things',
+			),
+			'DependsOn' => array(
+				'DependsOn' => array(
+					2, 3, 4
+				),
+			),
+		));
+
+		$this->assertFalse($saved);
+	}
+
 /**
  * testFetchLoggableTasks method
  *

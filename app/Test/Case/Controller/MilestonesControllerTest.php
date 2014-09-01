@@ -869,7 +869,6 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		// Check that it's not been deleted
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('Milestone.id' => 1), 'recursive' => 1));
-		debug($milestone);
 		$this->assertEquals(1, $milestone['Milestone']['id']);
 		$this->assertEquals(true, $milestone['Milestone']['is_open']);
 

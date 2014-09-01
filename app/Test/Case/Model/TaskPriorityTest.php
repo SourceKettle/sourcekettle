@@ -57,6 +57,20 @@ class TaskPriorityTest extends CakeTestCase {
 		$this->assertEqual(4, $blocker, "Got incorrect ID for status 'blocker'");
 	}
 
+	public function testidToName() {
+		$fail    = $this->TaskPriority->idToName(0);
+		$minor   = $this->TaskPriority->idToName(1);
+		$major   = $this->TaskPriority->idToName(2);
+		$urgent  = $this->TaskPriority->idToName(3);
+		$blocker = $this->TaskPriority->idToName(4);
+
+		$this->assertEqual(null, $fail,    "Got valid name for invalid status 'fail'");
+		$this->assertEqual('minor', $minor,   "Got incorrect name for status 'minor'");
+		$this->assertEqual('major', $major,   "Got incorrect name for status 'major'");
+		$this->assertEqual('urgent', $urgent,  "Got incorrect name for status 'urgent'");
+		$this->assertEqual('blocker', $blocker, "Got incorrect name for status 'blocker'");
+	}
+
 	public function testNumberOfItems() {
 		$this->assertEqual(4, $this->TaskPriority->find('count'), "Wrong number of task priorities returned (tests need updating?)");
 	}
