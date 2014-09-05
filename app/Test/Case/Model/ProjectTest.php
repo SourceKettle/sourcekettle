@@ -845,6 +845,16 @@ class ProjectTestCase extends CakeTestCase {
 		$this->assertEquals($before, $after);
 	}
 
+	/*public function testRenameFail() {
+		$before = $this->Project->findById(1);
+		$this->Project->Folder = $this->getMock('Folder', array('move'))
+			->expects($this->once())
+			->method('move')
+			->will($this->returnValue(false));
+		$repo = $this->Project->Source->getRepositoryLocation();
+		$this->assertTrue($this->Project->rename("private", 'not_at_all_private'));
+	}*/
+
 	public function testListCollaborators() {
 		$this->Project->id = 1;
 		$collabs = $this->Project->listCollaborators();

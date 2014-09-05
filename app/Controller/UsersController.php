@@ -213,7 +213,7 @@ class UsersController extends AppController {
 		// TODO hard-coded expiry time, should be in config
 		$keyTime = new DateTime($passwordkey['LostPasswordKey']['created'], new DateTimeZone('UTC'));
 		$expiryTime = new DateTime('now', new DateTimeZone('UTC'));
-		$expiryTime->sub(new DateInterval('PT1800S'));
+		$expiryTime->sub(new DateInterval('PT18000S'));
 
 		if ($keyTime < $expiryTime) {
 			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);

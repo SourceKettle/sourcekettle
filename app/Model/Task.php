@@ -263,9 +263,7 @@ class Task extends AppModel {
 	public function beforeSave($options = array()) {
 
 		// Parse time estimate if necessary
-		if (!$this->beforeValidate($options)) {
-			return false;
-		}
+		$this->beforeValidate($options);
 
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
 			

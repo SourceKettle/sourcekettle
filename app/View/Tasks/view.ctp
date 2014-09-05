@@ -27,14 +27,23 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
 }?>
 
 <?= $this->DT->pHeader() ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
-    <div class="span10">
-        <div class="row">
+
+    <div class="span9">
+
             <?= $this->element('Task/topbar_view', array('id' => $task['Task']['id'], 'dependenciesComplete' => $task['Task']['dependenciesComplete'])) ?>
+
+    	<div class="row-fluid well"> fii
+			<?= $this->element('Task/card', array('task' => $task))?>
+		</div>
+
+	</div>
+
+
+    <div class="row">
             <div class="span10">
 
                 <div class="row-fluid">

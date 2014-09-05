@@ -329,7 +329,7 @@ class TaskTest extends CakeTestCase {
 
 		unset($saved['Task']['modified']);
 
-		$this->assertEqual($saved, array(
+		$this->assertEqual(array(
 			'Task' => array(
 				'id' => 1,
 				'owner_id' => 2,
@@ -345,7 +345,7 @@ class TaskTest extends CakeTestCase {
 					2, 3, 4
 				),
 			),
-		));
+		), $saved);
 		
 	}
 
@@ -356,33 +356,6 @@ class TaskTest extends CakeTestCase {
 		$this->assertEquals(array('Task' => array(
 			'id' => $this->Task->getLastInsertID(),
 		)), $saved);
-	}
-
-	public function testCreateFailValidation() {
-		$this->Task = $this->getMockForModel('Task', array('beforeValidate'));
-		$this->Task
-			->expects($this->once())
-			->method('beforeValidate')
-			->will($this->returnValue(false));
-		
-		$saved = $this->Task->save(array(
-			'Task' => array(
-				'owner_id' => 2,
-				'type' => 'enhancement',
-				'status' => 'resolved',
-				'priority' => 'major',
-				'time_estimate' => '2h 5m',
-				'story_points' => '20',
-				'subject' => 'Do a thing that depends on other things',
-			),
-			'DependsOn' => array(
-				'DependsOn' => array(
-					2, 3, 4
-				),
-			),
-		));
-
-		$this->assertFalse($saved);
 	}
 
 /**
@@ -408,6 +381,33 @@ class TaskTest extends CakeTestCase {
 				7 => 'Resolved Major Task 7 for milestone 1'
 			)
 		), "Incorrect task list returned");
+	}
+
+	public function testOpenNull() {
+		try{
+			$found = $this->Task->open();
+		} catch (NotFoundException $e) {
+			$this->assertTrue(true);
+		}
+	}
+
+	public function testOpenNullWithModelId() {
+		$this->Task->id = 1;
+		$found = $this->Task->open();
+		$this->assertEquals($found['Task']['id'], 1);
+	}
+
+	public function testOpenNotFound() {
+		try {
+			$found = $this->Task->open(9999);
+		} catch (NotFoundException $e) {
+			$this->assertTrue(true);
+		}
+	}
+
+	public function testOpenOK() {
+		$found = $this->Task->open(1);
+		$this->assertEquals($found['Task']['id'], 1);
 	}
 
 }
