@@ -70,39 +70,7 @@ class MilestonesController extends AppProjectController {
  */
 	public function open($project = null) {
 		$project = $this->_getProject($project);
-
-		$milestones = array();
-		// Iterate over all milestones
-		foreach ($this->Milestone->getOpenMilestones() as $x) {
-			$oTasks = $this->Milestone->openTasksForMilestone($x);
-			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
-			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
-			$cTasks = $this->Milestone->closedTasksForMilestone($x);
-			$dPoints = 0;
-			foreach (array_merge($rTasks, $cTasks) as $task) {
-				if ($task['Task']['story_points'] != null) {
-					$dPoints += $task['Task']['story_points'];
-				}
-			}
-			$tPoints = $dPoints;
-			foreach (array_merge($oTasks, $iTasks) as $task) {
-				if ($task['Task']['story_points'] != null) {
-					$tPoints += $task['Task']['story_points'];
-				}
-			}
-
-			$this->Milestone->id = $x;
-			$milestone = $this->Milestone->read();
-
-			$milestone['Milestone']['cTasks'] = count($cTasks);
-			$milestone['Milestone']['iTasks'] = count($iTasks);
-			$milestone['Milestone']['rTasks'] = count($rTasks);
-			$milestone['Milestone']['oTasks'] = count($oTasks);
-			$milestone['Milestone']['tPoints'] = $tPoints;
-			$milestone['Milestone']['dPoints'] = $dPoints;
-
-			$milestones[$x] = $milestone;
-		}
+		$milestones = $this->Milestone->getOpenMilestones();
 		$this->set('milestones', $milestones);
 		$this->render('open_closed');
 	}
@@ -114,42 +82,7 @@ class MilestonesController extends AppProjectController {
  */
 	public function closed($project = null) {
 		$project = $this->_getProject($project);
-
-		$milestones = array();
-		// Iterate over all milestones
-		foreach ($this->Milestone->getClosedMilestones() as $x) {
-			$oTasks = $this->Milestone->openTasksForMilestone($x);
-			$iTasks = $this->Milestone->inProgressTasksForMilestone($x);
-			$rTasks = $this->Milestone->resolvedTasksForMilestone($x);
-			$cTasks = $this->Milestone->closedTasksForMilestone($x);
-			$dPoints = 0;
-			foreach (array_merge($rTasks, $cTasks) as $task) {
-				if ($task['Task']['story_points'] != null) {
-					$dPoints += $task['Task']['story_points'];
-				}
-			}
-			$tPoints = $dPoints;
-			foreach (array_merge($oTasks, $iTasks) as $task) {
-				if ($task['Task']['story_points'] != null) {
-					$tPoints += $task['Task']['story_points'];
-				}
-			}
-
-			$this->Milestone->id = $x;
-			$milestone = $this->Milestone->read();
-
-			$milestone['Milestone']['cTasks'] = count($cTasks);
-			$milestone['Milestone']['iTasks'] = count($iTasks);
-			$milestone['Milestone']['rTasks'] = count($rTasks);
-			$milestone['Milestone']['oTasks'] = count($oTasks);
-			$milestone['Milestone']['tPoints'] = $tPoints;
-			$milestone['Milestone']['dPoints'] = $dPoints;
-
-			$milestone['Milestone']['closed_tasks'] = count($cTasks);
-			$milestone['Milestone']['open_tasks'] = count($oTasks);
-
-			$milestones[$x] = $milestone;
-		}
+		$milestones = $this->Milestone->getClosedMilestones();
 		$this->set('milestones', $milestones);
 		$this->render('open_closed');
 	}
@@ -259,10 +192,8 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function close($project = null, $id = null) {
-
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
-
 		if (!$milestone['Milestone']['is_open']) {
 			throw new NotFoundException(__("Cannot close milestone - it is already closed!"));
 		}
@@ -302,8 +233,11 @@ class MilestonesController extends AppProjectController {
 		}
 
 		// For the form, build a list of other open milestones we can attach tasks to
-		$otherMilestones = $this->Milestone->getOpenMilestones(true);
-		$otherMilestones[0] = '(no milestone)';
+		$otherMilestones = array(0 => '(no milestone)');
+		foreach ($this->Milestone->getOpenMilestones() as $m) {
+			$otherMilestones[$m['Milestone']['id']] = $m['Milestone']['subject'];
+		}
+
 		unset($otherMilestones[$id]);
 		ksort($otherMilestones);
 
@@ -380,8 +314,10 @@ class MilestonesController extends AppProjectController {
 		}
 
 		// For the form, build a list of other open milestones we can attach tasks to
-		$otherMilestones = $this->Milestone->getOpenMilestones(true);
-		$otherMilestones[0] = '(no milestone)';
+		$otherMilestones = array(0 => '(no milestone)');
+		foreach ($this->Milestone->getOpenMilestones() as $m) {
+			$otherMilestones[$m['Milestone']['id']] = $m['Milestone']['subject'];
+		}
 		unset($otherMilestones[$id]);
 		ksort($otherMilestones);
 

@@ -72,6 +72,56 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertNotRegexp('|<input name=.*"data\[User\]\[email\]".*value="snaitf@example.com"|', $this->view);
 	}
 
+	public function testEditSettingsInternal() {
+		$this->_fakeLogin(1);
+		$postData = array('User' => array(
+			'name' => 'Mr Flibble',
+			'email' => 'flibble@example.com',
+		));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your changes have been saved.'), 'default', array(), 'success');
+
+		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+
+		$retrieved = $this->User->find('first', array(
+			'conditions' => array('id' => 1),
+			'fields' => array('name', 'email'),
+			'recursive' => -1,
+		));
+
+		$this->assertEquals($postData, $retrieved);
+	}
+
+	public function testEditSettingsExternal() {
+		$this->_fakeLogin(6);
+		$postData = array('User' => array(
+			'name' => 'Mr Flibble',
+			'email' => 'flibble@example.com',
+		));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your changes have been saved.'), 'default', array(), 'success');
+
+		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// Check that the email address was not updated
+		$postData['User']['email'] = 'snaitf@example.com';
+		$retrieved = $this->User->find('first', array(
+			'conditions' => array('id' => 6),
+			'fields' => array('name', 'email'),
+			'recursive' => -1,
+		));
+
+		$this->assertEquals($postData, $retrieved);
+	}
+
 /**
  * testRegister method
  *
@@ -307,6 +357,11 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertRegexp('|<form action=".*'.Router::url('/lost_password').'"|', $this->view);
 	}
 
+	public function testLostPasswordPostFail() {
+		$this->testAction('/lost_password', array('method' => 'postt', 'return' => 'vars'));
+		$this->assertRedirect('/lost_password');
+	}
+
 	public function testLostPasswordUnknownEmail() {
 		$this->controller->Email
 			->expects($this->never())
@@ -509,6 +564,59 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertRedirect('/login');
 
 	}
+
+
+	public function testAdminApproveForm() {
+		$this->testAction('/admin/users/approve', array('method' => 'get', 'return' => 'vars'));
+		$this->assertRegexp('|<form.*action=".*'.Router::url('/admin/users/approve/ba6f23c5ce588f16647fe32603fb1593').'"|', $this->view);
+	}
+
+	public function testAdminApproveNoKey() {
+		$this->testAction('/admin/users/approve', array('method' => 'post', 'return' => 'vars'));
+		$this->assertRedirect('/admin/users/approve');
+	}
+
+	public function testAdminApproveBadKey() {
+		$this->testAction('/admin/users/approve/123123123123123123123123123', array('method' => 'post', 'return' => 'vars'));
+		$this->assertRedirect('/admin/users/approve');
+	}
+
+	public function testAdminApproveFailure() {
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->testAction('/admin/users/approve/ba6f23c5ce588f16647fe32603fb1593', array('method' => 'post', 'return' => 'vars'));
+		$this->assertRedirect('/admin/users/approve');
+
+		$key = $this->controller->User->EmailConfirmationKey->findByKey('ba6f23c5ce588f16647fe32603fb1593', array('recursive' => 0));
+		$this->assertEquals(array('EmailConfirmationKey' => array(
+			'id' => 2,
+			'user_id' => 11,
+			'key' => 'ba6f23c5ce588f16647fe32603fb1593',
+			'created' => '2012-06-01 12:33:03',
+			'modified' => '2012-06-01 12:33:03',
+		)), $key);
+
+		$isActive = $this->controller->User->find('first', array('recursive' => 0, 'conditions' => array('id' => 11), 'fields' => array('is_active')));
+		$this->assertEquals(array('User' => array('id' => 11, 'is_active' => false)), $isActive);
+	}
+
+	public function testAdminApproveOK() {
+		$this->testAction('/admin/users/approve/ba6f23c5ce588f16647fe32603fb1593', array('method' => 'post', 'return' => 'vars'));
+		$this->assertRedirect('/admin/users/approve');
+
+		$key = $this->controller->User->EmailConfirmationKey->findByKey('ba6f23c5ce588f16647fe32603fb1593');
+		$this->assertEquals(array(), $key);
+
+		$isActive = $this->controller->User->find('first', array('recursive' => 0, 'conditions' => array('id' => 11), 'fields' => array('is_active')));
+		$this->assertEquals(array('User' => array('id' => 11, 'is_active' => true)), $isActive);
+	}
+
+
+
 
 /**
  * testAdminIndex method

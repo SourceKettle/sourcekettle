@@ -14,6 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
+App::uses('TaskPriority', 'Model');
 
 class Milestone extends AppModel {
 
@@ -88,21 +89,13 @@ class Milestone extends AppModel {
  * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
  */
 	public function afterFind($results, $primary = false) {
+		if (!$primary) {
+			return $results;
+		}
+
 		foreach ($results as $a => $result) {
 			if (isset($result['Milestone']) && isset($result['Milestone']['id'])) {
-				$this->Task->recursive = -1;
-				$o = $results[$a]['Tasks']['open']        = $this->openTasksForMilestone($result['Milestone']['id']);
-				$i = $results[$a]['Tasks']['in_progress'] = $this->inProgressTasksForMilestone($result['Milestone']['id']);
-				$r = $results[$a]['Tasks']['resolved']    = $this->resolvedTasksForMilestone($result['Milestone']['id']);
-				$c = $results[$a]['Tasks']['completed']   = $this->closedTasksForMilestone($result['Milestone']['id']);
-				$d = $results[$a]['Tasks']['dropped']     = $this->droppedTasksForMilestone($result['Milestone']['id']);
-
-				if ((count($o) + count($i) + count($r) + count($c)) > 0) {
-					$results[$a]['Milestone']['percent'] = (count($r) + count($c)) / (count($o) + count($i) + count($r) + count($c)) * 100;
-				} else {
-					$results[$a]['Milestone']['percent'] = 0;
-				}
-				$this->Task->recursive = 1;
+				$results[$a]['Tasks'] = $this->taskSummaryForMilestone($result['Milestone']['id']);
 			}
 		}
 		return $results;
@@ -114,7 +107,15 @@ class Milestone extends AppModel {
  * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
  */
 	public function beforeDelete($cascade = false) {
-		foreach ($this->Task->find('all', array('conditions' => array('milestone_id' => $this->id, 'TaskStatus.name =' => array('open', 'in progress')))) as $task) {
+		$tasks = $this->Task->find('all', array(
+			'conditions' => array(
+				'milestone_id' => $this->id,
+				'TaskStatus.name =' => array('open', 'in progress')
+			),
+			'recursive' => 1,
+		));
+
+		foreach ($tasks as $task) {
 			$this->Task->id = $task['Task']['id'];
 			$this->Task->set('milestone_id', null);
 			$this->Task->save();
@@ -216,19 +217,26 @@ class Milestone extends AppModel {
 	public function tasksOfStatusForMilestone($id = null, $status = 'open') {
 		$this->id = $id;
 
-		$statusId = $this->Task->TaskStatus->nameToId($status);
-
 		if (!$this->exists()) return null;
-
 		$tasks = $this->Task->find(
 			'all',
 			array(
-				'field' => array('milestone_id'),
-				'conditions' => array(
-					'task_status_id =' => $statusId,
-					'milestone_id =' => $id
+				'fields' => array(
+					'Milestone.id',
+					'Task.*',
+					'TaskPriority.name',
+					'TaskStatus.name',
+					'TaskType.name',
+					'Assignee.email',
+					'Assignee.name',
+					'Project.name',
 				),
-				'order' => 'task_priority_id DESC', // TODO should be TaskPriority.level really but atm this does weird recursing things, need to dig it out
+				'conditions' => array(
+					'TaskStatus.name =' => $status,
+					'Milestone.id =' => $id
+				),
+				'order' => 'TaskPriority.level DESC',
+				'recursive' => 0,
 			)
 		);
 		return $tasks;
@@ -273,57 +281,117 @@ class Milestone extends AppModel {
 		return $tasks;
 	}
 
+	public function taskSummaryForMilestone($id = null) {
+		$this->id = $id;
+
+		if (!$this->exists()) return null;
+
+		$tasks = $this->Task->find(
+			'all',
+			array(
+				'fields' => array(
+					'COUNT(Task.id) AS numTasks',
+					'TaskStatus.name',
+					'SUM(Task.story_points) AS totalPoints',
+				),
+				'conditions' => array(
+					'milestone_id =' => $id
+				),
+				'group' => 'TaskStatus.name',
+				'recursive' => 0,
+			)
+		);
+
+		$summary = array();
+		foreach ($tasks as $taskSummary) {
+			$status = $taskSummary['TaskStatus']['name'];
+			$count = $taskSummary[0]['numTasks'];
+			$points = $taskSummary[0]['totalPoints'];
+			if (!$points) $points = 0;
+			$summary[$status] = array('numTasks' => $count, 'points' => $points);
+		}
+
+		foreach ($this->Task->TaskStatus->getLookupTable() as $id => $status) {
+			if (!isset($summary[$status['name']])) {
+				$summary[$status['name']] = array('numTasks' => 0, 'points' => 0);
+			}
+		}
+		return $summary;
+	}
+
 /**
  * getOpenMilestones function.
  * Get all the open milestones
  *
  * @param bool $assoc true if names needed
  */
-	public function getOpenMilestones($assoc = false) {
-		if ($assoc) {
-			$fields = array('id', 'subject');
-		} else {
-			$fields = array('id');
-		}
-
-		// Fetch a list of milestones for the project
-		return $this->find(
-			'list',
-			array(
-				'fields' => $fields,
-				'conditions' => array(
-					'project_id' => $this->Project->id,
-					'is_open' => true,
-				)
-			)
-		);
+	public function getOpenMilestones() {
+		return $this->listMilestones(true);
 	}
 
-/**
- * getClosedMilestones function.
- * Get all the closed milestones
- *
- * @param bool $assoc true if names needed
- */
-	public function getClosedMilestones($assoc = false) {
-		if ($assoc) {
-			$fields = array('id', 'subject');
-		} else {
-			$fields = array('id');
-		}
-
-		// Fetch a list of milestones for the project
-		return $this->find(
-			'list',
-			array(
-				'fields' => $fields,
-				'conditions' => array(
-					'project_id' => $this->Project->id,
-					'is_open' => false,
-				)
-			)
-		);
+	public function getClosedMilestones() {
+		return $this->listMilestones(false);
 	}
+
+	public function listMilestones($open = true) {
+		$milestones = $this->find('all', array(
+			'conditions' => array(
+				'project_id' => $this->Project->id,
+				'is_open' => $open,
+			),
+			'fields' => array(
+				'Milestone.id',
+				'Milestone.subject',
+				'Milestone.description',
+				'Milestone.is_open',
+				'Milestone.due',
+			),
+			'recursive' => 0,
+		));
+
+		foreach ($milestones as $id => $milestone) {
+			//debug($milestones[$id]);
+			//$milestones[$id]['Tasks'] = $this->taskSummaryForMilestone($milestone['Milestone']['id']);
+
+			$milestones[$id]['Progress'] = array(
+				'pointsComplete' => 0,
+				'pointsTotal' => 0,
+				'pointsPct' => 0,
+				'tasksComplete' => 0,
+				'tasksTotal' => 0,
+				'tasksPct' => 0,
+			);
+
+			foreach ($milestones[$id]['Tasks'] as $status => $summary) {
+				if ($status != 'dropped') {
+					$milestones[$id]['Progress']['pointsTotal'] += $summary['points'];
+					$milestones[$id]['Progress']['tasksTotal'] += $summary['numTasks'];
+				}
+
+				if (in_array($status, array('closed', 'resolved'))) {
+					$milestones[$id]['Progress']['pointsComplete'] += $summary['points'];
+					$milestones[$id]['Progress']['tasksComplete'] += $summary['numTasks'];
+				}
+			}
+
+			if ($milestones[$id]['Progress']['tasksTotal']) {
+				$milestones[$id]['Progress']['tasksPct'] = ceil((
+					$milestones[$id]['Progress']['tasksComplete'] /
+					$milestones[$id]['Progress']['tasksTotal']
+				) * 100);
+			}
+
+			if ($milestones[$id]['Progress']['pointsTotal']) {
+				$milestones[$id]['Progress']['pointsPct'] = ceil((
+					$milestones[$id]['Progress']['pointsComplete'] /
+					$milestones[$id]['Progress']['pointsTotal']
+				) * 100);
+			}
+		}
+		return $milestones;
+
+	}
+
 
 /**
  * shiftTasks function

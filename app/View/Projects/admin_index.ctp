@@ -128,7 +128,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
 						)?>
                         <?= $this->Bootstrap->button_form(
                             $this->Bootstrap->icon('eject', 'white'),
-                            $this->Html->url(array('controller' => 'projects', 'action' => 'admin_delete', 'project' => $project['Project']['name']), true),
+                            $this->Html->url(array('controller' => 'projects', 'action' => 'delete', 'admin' => false, 'project' => $project['Project']['name']), true),
                             array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
                             __("Are you sure you want to delete ") . h($project['Project']['name']) . "?"
                         )?>

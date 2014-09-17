@@ -15,46 +15,35 @@
  */
 
 $this->Html->css('tasks.view', null, array ('inline' => false));
-
-
-// The following JS will change a comment box into an input box
-// TODO move to separate JS file
-$this->Html->scriptBlock("
-    $('.comment').find(':button.edit').bind('click', function() {
-		$('.comment form').hide();
-        var p = $(this).parent('.comment');
-        p.find('p').hide();
-        p.find('form').show();
-    });
-
-	$('.comment').find (':button.delete').click (function() {
-		var result = confirm ('Are you sure you want to delete this comment?');
-		if ( result ) {
-			$(this).parent('.comment').find('form.comment-delete').submit();
-		}
-	});
-", array('inline' => false));
+$this->Html->script("tasks.view", array ('inline' => false));
 
 echo $this->element('Task/modal_close');
+echo $this->element('Task/modal_assign');
 
 if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     echo $this->element('Task/modal_resolve');
 } else if ($task['TaskStatus']['name'] == 'resolved'){
     echo $this->element('Task/modal_unresolve');
-}
-echo $this->element('Task/modal_assign');
-
-?>
+}?>
 
 <?= $this->DT->pHeader() ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
-    <div class="span10">
-        <div class="row">
+
+    <div class="span9">
+
             <?= $this->element('Task/topbar_view', array('id' => $task['Task']['id'], 'dependenciesComplete' => $task['Task']['dependenciesComplete'])) ?>
+
+    	<div class="row-fluid well"> fii
+			<?= $this->element('Task/card', array('task' => $task))?>
+		</div>
+
+	</div>
+
+
+    <div class="row">
             <div class="span10">
 
                 <div class="row-fluid">

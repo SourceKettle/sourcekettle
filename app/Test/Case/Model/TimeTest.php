@@ -266,6 +266,7 @@ class TimeTestCase extends CakeTestCase {
         );
         $this->assertEquals(TimeString::renderTime(1500), $expectedResult);
 
+        $this->assertEquals('1h 30m', TimeString::renderTime(90, 's'));
         $expectedResult = array(
 			'w' => '1',
 			'd' => '1',
@@ -626,6 +627,24 @@ class TimeTestCase extends CakeTestCase {
 		));
 	}
 
+	public function testCreateFail() {
+		
+		$this->Time = $this->getMockForModel('Time', array('beforeValidate'));
+		$this->Time
+			->expects($this->once())
+			->method('beforeValidate')
+			->will($this->returnValue(false));
+		$saved = $this->Time->save(array(
+			'Time' => array(
+				'project_id' => 2,
+				'user_id' => 3,
+				'mins' => 23,
+				'date' => '2014-07-03',
+			),
+		));
+		$this->assertFalse($saved);
+	}
+
 	/**
 	 * @expectedException InvalidArgumentException
 	 */
@@ -777,5 +796,20 @@ class TimeTestCase extends CakeTestCase {
 				7 => new DateTime('2012-11-18 00:00', new DateTimeZone('UTC')),
 			)
 		));
+	}
+
+	public function testFetchWeeklySummaryThisWeek() {
+		$this->Time->Project->id = 1;
+		$weekTimes = $this->Time->fetchWeeklySummary(1);
+		$expectedDates = array(
+			1 => new DateTime('monday this week', new DateTimeZone('UTC')),
+			2 => new DateTime('tuesday this week', new DateTimeZone('UTC')),
+			3 => new DateTime('wednesday this week', new DateTimeZone('UTC')),
+			4 => new DateTime('thursday this week', new DateTimeZone('UTC')),
+			5 => new DateTime('friday this week', new DateTimeZone('UTC')),
+			6 => new DateTime('saturday this week', new DateTimeZone('UTC')),
+			7 => new DateTime('sunday this week', new DateTimeZone('UTC')),
+		);
+		$this->assertEquals($expectedDates, $weekTimes['dates']);
 	}
 }

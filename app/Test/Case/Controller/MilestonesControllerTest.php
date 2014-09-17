@@ -79,21 +79,19 @@ class MilestonesControllerTest extends AppControllerTest {
 		foreach ($this->vars['milestones'] as $milestone) {
 
 			if ($milestone['Milestone']['id'] == 1
-				&& count($milestone['Task']) == 7
-				&& count($milestone['Tasks']['open']) == 2
-				&& count($milestone['Tasks']['in_progress']) == 2
-				&& count($milestone['Tasks']['resolved']) == 1
-				&& count($milestone['Tasks']['completed']) == 1
-				&& count($milestone['Tasks']['dropped']) == 1
+				&& $milestone['Tasks']['open']['numTasks'] == 2
+				&& $milestone['Tasks']['in progress']['numTasks'] == 2
+				&& $milestone['Tasks']['resolved']['numTasks'] == 1
+				&& $milestone['Tasks']['closed']['numTasks'] == 1
+				&& $milestone['Tasks']['dropped']['numTasks'] == 1
 			) {
 				$this->assertTrue(true, "Impossible to fail");
 			} elseif ($milestone['Milestone']['id'] == 3
-				&& count($milestone['Task']) == 0
-				&& count($milestone['Tasks']['open']) == 0
-				&& count($milestone['Tasks']['in_progress']) == 0
-				&& count($milestone['Tasks']['resolved']) == 0
-				&& count($milestone['Tasks']['completed']) == 0
-				&& count($milestone['Tasks']['dropped']) == 0
+				&& $milestone['Tasks']['open']['numTasks'] == 0
+				&& $milestone['Tasks']['in progress']['numTasks'] == 0
+				&& $milestone['Tasks']['resolved']['numTasks'] == 0
+				&& $milestone['Tasks']['closed']['numTasks'] == 0
+				&& $milestone['Tasks']['dropped']['numTasks'] == 0
 			) {
 				$this->assertTrue(true, "Impossible to fail");
 			} else {
@@ -121,12 +119,11 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		foreach ($this->vars['milestones'] as $milestone) {
 			if ($milestone['Milestone']['id'] == 2
-				&& count($milestone['Task']) == 2
-				&& count($milestone['Tasks']['open']) == 0
-				&& count($milestone['Tasks']['in_progress']) == 1
-				&& count($milestone['Tasks']['resolved']) == 1
-				&& count($milestone['Tasks']['completed']) == 0
-				&& count($milestone['Tasks']['dropped']) == 0
+				&& $milestone['Tasks']['open']['numTasks'] == 0
+				&& $milestone['Tasks']['in progress']['numTasks'] == 1
+				&& $milestone['Tasks']['resolved']['numTasks'] == 1
+				&& $milestone['Tasks']['closed']['numTasks'] == 0
+				&& $milestone['Tasks']['dropped']['numTasks'] == 0
 			) {
 				$this->assertTrue(true, "Impossible to fail");
 			} else {
@@ -324,6 +321,32 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
+	public function testAddFail() {
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Milestone' => array(
+				'subject' => 'A new milestone',
+				'description' => 'A new milestone for the project',
+				'due' => '2099-02-03',
+			)
+		);
+
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('save'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Milestone '<strong></strong>' could not be created. Please try again.");
+
+		$this->testAction('/project/personal/milestones/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+	}
+
 /**
  * testEdit method
  *
@@ -418,6 +441,33 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
+	public function testEditFail() {
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Milestone' => array(
+				'id' => '4',
+				'subject' => 'Changed milestone',
+				'description' => 'This has changed',
+				'due' => '2099-02-03',
+			)
+		);
+
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('save'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Milestone '<strong>Longer &lt;i&gt;subject&lt;/i&gt;</strong>' could not be updated. Please try again.");
+
+		$this->testAction('/project/private/milestones/edit/4', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+	}
+
 /**
  * testClose method
  *
@@ -461,6 +511,95 @@ class MilestonesControllerTest extends AppControllerTest {
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 3), 'recursive' => -1));
 		$this->assertEquals(3, $milestone['Milestone']['id']);
 		$this->assertEquals(false, $milestone['Milestone']['is_open']);
+	}
+
+	public function testCloseAlreadyClosed() {
+		$this->_fakeLogin(1);
+
+		try{
+			$this->testAction('/project/public/milestones/close/2', array('return' => 'view', 'method' => 'post'));
+			$this->assertFalse(true);
+		} catch (NotFoundException $e) {
+			$this->assertTrue(true);
+		}
+
+		$this->assertAuthorized();
+
+	}
+
+	public function testCloseShiftTasks() {
+		
+		$this->_fakeLogin(1);
+
+		$postData = array(
+			'Milestone' => array('new_milestone' => 2)
+		);
+
+		$this->testAction('/project/public/milestones/close/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the milestone page
+		$this->assertRedirect('/project/public/milestones/index');
+
+		// Check that it's been closed
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('Milestone.id' => 1), 'recursive' => 1));
+		$this->assertEquals(1, $milestone['Milestone']['id']);
+		$this->assertEquals(false, $milestone['Milestone']['is_open']);
+
+		// Check that all tasks have been shifted
+		foreach ($milestone['Task'] as $task) {
+			$this->assertContains($task['task_status_id'], array(3, 4));
+		}
+	}
+
+	public function testCloseShiftTasksFail() {
+		
+		$this->_fakeLogin(1);
+
+		$postData = array(
+			'Milestone' => array('new_milestone' => 2)
+		);
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('shiftTasks'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('shiftTasks')
+			->will($this->returnValue(false));
+
+		$this->testAction('/project/public/milestones/close/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// Check that it's not been closed
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('Milestone.id' => 1), 'recursive' => 1));
+		$this->assertEquals(1, $milestone['Milestone']['id']);
+		$this->assertEquals(true, $milestone['Milestone']['is_open']);
+
+		// Check that tasks were not shifted
+		$this->assertEquals(7, count($milestone['Task']));
+	}
+
+	public function testCloseSaveFail() {
+		
+		$this->_fakeLogin(1);
+
+		$postData = array(
+			'Milestone' => array('new_milestone' => 2)
+		);
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('save'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->testAction('/project/public/milestones/close/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// Check that it's not been closed
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('Milestone.id' => 1), 'recursive' => 1));
+		$this->assertEquals(1, $milestone['Milestone']['id']);
+		$this->assertEquals(true, $milestone['Milestone']['is_open']);
+
+		// Check that tasks were not shifted
+		$this->assertEquals(7, count($milestone['Task']));
 	}
 
 	public function testCloseProjectAdmin() {
@@ -543,6 +682,23 @@ class MilestonesControllerTest extends AppControllerTest {
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
 		$this->assertEquals($milestone['Milestone']['id'], 5);
 		$this->assertEquals($milestone['Milestone']['is_open'], 1);
+	}
+
+	public function testReopenFail() {
+		$this->_fakeLogin(1);
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('save'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Milestone '<strong>Longer &lt;i&gt;subject&lt;/i&gt;</strong>' could not be updated. Please try again.");
+
+		$this->testAction('/project/private/milestones/reopen/5', array('return' => 'view', 'method' => 'post'));
+		$this->assertAuthorized();
 	}
 
 	public function testReopenProjectAdmin() {
@@ -645,6 +801,79 @@ class MilestonesControllerTest extends AppControllerTest {
 		// Check it's been deleted
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 5), 'recursive' => -1));
 		$this->assertEquals($milestone, array());
+	}
+
+	public function testDeleteShiftTasks() {
+		
+		$this->_fakeLogin(1);
+
+		$postData = array(
+			'Milestone' => array('new_milestone' => 2)
+		);
+
+		$this->testAction('/project/public/milestones/delete/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the milestone page
+		$this->assertRedirect('/project/public/milestones/index');
+
+		// Check that it's been deleted
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('Milestone.id' => 1), 'recursive' => 1));
+		$this->assertEquals(array(), $milestone);
+
+		// Check that all tasks have been shifted to milestone 2
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('Milestone.id' => 2), 'recursive' => 1));
+		$this->assertEquals(9, count($milestone['Task']));
+	}
+
+	public function testDeleteShiftTasksFail() {
+		
+		$this->_fakeLogin(1);
+
+		$postData = array(
+			'Milestone' => array('new_milestone' => 2)
+		);
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('shiftTasks'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('shiftTasks')
+			->will($this->returnValue(false));
+
+		$this->testAction('/project/public/milestones/delete/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// Check that it's not been deleted
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('Milestone.id' => 1), 'recursive' => 1));
+		$this->assertEquals(1, $milestone['Milestone']['id']);
+		$this->assertEquals(true, $milestone['Milestone']['is_open']);
+
+		// Check that tasks were not shifted
+		$this->assertEquals(7, count($milestone['Task']));
+	}
+
+	public function testDeleteSaveFail() {
+		
+		$this->_fakeLogin(1);
+
+		$postData = array(
+			'Milestone' => array('new_milestone' => 2)
+		);
+		$this->controller->Milestone = $this->getMockForModel('Milestone', array('delete'));
+		$this->controller->Milestone
+			->expects($this->once())
+			->method('delete')
+			->will($this->returnValue(false));
+
+		$this->testAction('/project/public/milestones/delete/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// Check that it's not been deleted
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('Milestone.id' => 1), 'recursive' => 1));
+		$this->assertEquals(1, $milestone['Milestone']['id']);
+		$this->assertEquals(true, $milestone['Milestone']['is_open']);
+
+		// Check that tasks were not shifted
+		$this->assertEquals(7, count($milestone['Task']));
 	}
 
 /**

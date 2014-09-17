@@ -132,7 +132,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
+		$this->assertEqual(count($this->vars['projects']), 3, "Incorrect number of projects returned");
 
 		// Check each project 
 		foreach ($this->vars['projects'] as $project) {
@@ -141,6 +141,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			if ($project['Project']['id'] == 2){
 				$this->assertTrue(true, "Impossible to fail");
 			} elseif ($project['Project']['id'] == 4){
+				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 5){
 				$this->assertTrue(true, "Impossible to fail");
 			} else {
 				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") was retrieved");
@@ -162,7 +164,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
+		$this->assertEqual(count($this->vars['projects']), 3, "Incorrect number of projects returned");
 
 		// Check each project 
 		foreach ($this->vars['projects'] as $project) {
@@ -171,6 +173,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			if ($project['Project']['id'] == 2){
 				$this->assertTrue(true, "Impossible to fail");
 			} elseif ($project['Project']['id'] == 4){
+				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 5){
 				$this->assertTrue(true, "Impossible to fail");
 			} else {
 				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") was retrieved");
@@ -301,6 +305,38 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 		$this->assertRegexp('|<form action=".*'.Router::url('/projects/add').'"|', $this->view);
 	}
+	
+	public function testAddSourceFail() {
+		$this->_fakeLogin(3);
+		$postData = array(
+			'Project' => array(
+				'name' => 'new_PROJECT',
+				'description' => 'A new project',
+				'repo_type' => 2,
+				'public' => 1,
+			)
+		);
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Project '<strong>new_PROJECT</strong>' could not be created. Please try again.");
+
+		$this->controller->Project = $this->getMockForModel('Project', array('delete'));
+		$this->controller->Project->Source = $this->getMockForModel('Source', array('create'));
+		$this->controller->Project->Source
+			->expects($this->once())
+			->method('create')
+			->will($this->returnValue(false));
+
+		$this->controller->Project
+			->expects($this->once())
+			->method('delete')
+			->will($this->returnValue(true));
+
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+	}
 
 	public function testAddProject() {
 		$this->_fakeLogin(3);
@@ -338,6 +374,53 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertRedirect('/project/newproject_withgit/view');
 	}
 
+	public function testAddDefaultRepoType() {
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'repo' => array('default' => 'Git'),
+				'global' => array('alias' => 'SourceKettle'),
+			)));
+		$this->_fakeLogin(3);
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/projects/add').'"|', $this->view);
+		$this->assertRegexp('|<option value="2" selected="selected">Git</option>|', $this->view);
+	}
+
+	public function testAddBadDefaultRepoType() {
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'repo' => array('default' => 'Shoes'),
+				'global' => array('alias' => 'SourceKettle'),
+			)));
+		$this->_fakeLogin(3);
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/projects/add').'"|', $this->view);
+		$this->assertRegexp('|<option value="1" selected="selected">None</option>|', $this->view);
+	}
+
+	public function testAddNoDefaultRepoType() {
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'repo' => array(),
+				'global' => array('alias' => 'SourceKettle'),
+			)));
+		$this->_fakeLogin(3);
+		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/projects/add').'"|', $this->view);
+		$this->assertRegexp('|<option value="1" selected="selected">None</option>|', $this->view);
+	}
 
 /**
  * testEdit method
@@ -433,6 +516,32 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertNotAuthorized();
 
 	}
+
+	public function testEditFail() {
+		$this->_fakeLogin(7);
+		$postData = array(
+			'Project' => array(
+				'id' => '3',
+				'name' => 'personal',
+				'description' => 'Updated description of a project',
+				'repo_type' => '2',
+				'public' => false,
+			)
+		);
+
+		$this->controller->Project = $this->getMockForModel('Project', array('save'));
+		$this->controller->Project
+			->expects($this->any())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Project '<strong>personal</strong>' could not be updated. Please try again.");
+
+		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+	}
 /**
  * testDelete method
  *
@@ -461,12 +570,67 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertEquals($saved, array(), "Failed to delete");
 	}
 
+	public function testDeleteFail() {
+		$this->_fakeLogin(7);
+		$this->controller->Project = $this->getMockForModel('Project', array('delete'));
+		$this->controller->Project
+			->expects($this->once())
+			->method('delete')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Project '<strong>personal</strong>' could not be deleted. Please try again.");
+
+		$this->testAction('/project/personal/delete', array('return' => 'view', 'method' => 'post'));
+	}
+
 	// TODO awaiting better authorization checks
 	/*public function testDeleteNotAdmin() {
 		$this->_fakeLogin(1);
 		$this->testAction('/project/personal/delete', array('return' => 'view', 'method' => 'post'));
 		$this->assertNotAuthorized();
 	}*/
+
+	public function testAdminDeleteForm() {
+		$this->_fakeLogin(5);
+		$saved = $this->controller->Project->findById(3);
+		$this->testAction('/admin/projects/personal/delete', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertContains('<h1>Are you sure you want to delete?</h1>', $this->view);
+	}
+
+	public function testAdminDeleteSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/admin/projects/personal/delete', array('return' => 'view', 'method' => 'post'));
+		$this->assertAuthorized();
+		$saved = $this->controller->Project->findById(3);
+		$this->assertEquals($saved, array(), "Failed to delete");
+	}
+
+	/* TODO awaiting better authorisation checks
+	public function testAdminDeleteNotSystemAdmin() {
+		$this->_fakeLogin(3);
+		$this->testAction('/admin/projects/private/delete', array('return' => 'view', 'method' => 'post'));
+		$this->assertNotAuthorized();
+	}*/
+
+	public function testAdminDeleteFail() {
+		$this->_fakeLogin(5);
+		$this->controller->Project = $this->getMockForModel('Project', array('delete'));
+		$this->controller->Project
+			->expects($this->once())
+			->method('delete')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Project '<strong>personal</strong>' could not be deleted. Please try again.");
+
+		$this->testAction('/admin/projects/personal/delete', array('return' => 'view', 'method' => 'post'));
+	}
 
 	public function testAdminIndexSystemAdmin() {
 
@@ -484,12 +648,12 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 4, "Incorrect number of projects returned");
+		$this->assertEqual(count($this->vars['projects']), 5, "Incorrect number of projects returned");
 
 		// Check each project 
 		foreach ($this->vars['projects'] as $project) {
 
-			// We should get all 4 projects with correct repo types
+			// We should get all 5 projects with correct repo types
 			if ($project['Project']['id'] == 1 && $project['RepoType']['name'] == 'Git') {
 				$this->assertTrue(true, "Impossible to fail");
 			} elseif ($project['Project']['id'] == 2 && $project['RepoType']['name'] == 'None') {
@@ -498,10 +662,26 @@ class ProjectsControllerTestCase extends AppControllerTest {
 				$this->assertTrue(true, "Impossible to fail");
 			} elseif ($project['Project']['id'] == 4 && $project['RepoType']['name'] == 'None') {
 				$this->assertTrue(true, "Impossible to fail");
+			} elseif ($project['Project']['id'] == 5 && $project['RepoType']['name'] == 'None') {
+				$this->assertTrue(true, "Impossible to fail");
 			} else {
 				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or repo type (".$project['RepoType']['name'].") was retrieved");
 			}
 		}
+	}
+
+	public function testHistory() {
+		$this->_fakeLogin(7);
+		$this->testAction('/project/personal/history', array('return' => 'view', 'method' => 'get'));
+		$this->assertRegexp('/<a href=".*\/project\/personal\/view">/', $this->view);
+		$this->assertContains('<div id="histId', $this->view);
+	}
+	
+	public function testRedirectIdToName() {
+		
+		$this->_fakeLogin(7);
+		$this->testAction('/project/2', array('return' => 'view', 'method' => 'get'));
+		$this->assertRedirect('/project/public/view');
 	}
 
 /**
@@ -509,8 +689,127 @@ class ProjectsControllerTestCase extends AppControllerTest {
  *
  * @return void
  */
-	public function testAdminView() {
+	public function testAdminRenameNotSystemAdmin() {
+		$this->_fakeLogin(2);
+		$this->testAction('/admin/projects/public/rename', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
 	}
+
+	public function testAdminRenameForm() {
+		$this->_fakeLogin(5);
+		$this->testAction('/admin/projects/public/rename', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/admin/projects/public/rename').'"|', $this->view);
+		$this->assertRegexp('/<input name="data\[Project\]\[name\]".*value="public"/', $this->view);
+	}
+
+	public function testAdminRenameFail() {
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Project' => array(
+				'name' => 'NotAtAllPublic',
+			),
+		);
+
+		$this->controller->Project = $this->getMockForModel('Project', array('save'));
+		$this->controller->Project
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Project '<strong>public</strong>' could not be updated. Please try again.");
+
+		$this->testAction('/admin/projects/public/rename', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$retrieved = $this->controller->Project->findById(2);
+		$this->assertEquals('public', $retrieved['Project']['name']);
+	}
+	public function testAdminRenameOK() {
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Project' => array(
+				'name' => 'NotAtAllPublic',
+			),
+		);
+		$this->testAction('/admin/projects/public/rename', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$retrieved = $this->controller->Project->findById(2);
+		$this->assertEquals('NotAtAllPublic', $retrieved['Project']['name']);
+	}
+
+
+	public function testAddRepoNotProjectAdmin() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/add_repo', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddRepoForm() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/add_repo', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/add_repo').'"|', $this->view);
+	}
+
+	public function testAddRepoAlreadyGotOne() {
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Project' => array(
+				'repo_type' => 2,
+			),
+		);
+		try{
+			$this->testAction('/project/private/add_repo', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		} catch (NotFoundException $e) {
+			$this->assertTrue(true);
+		}
+
+		$this->assertAuthorized();
+		$retrieved = $this->controller->Project->findById(1);
+		$this->assertEquals(2, $retrieved['Project']['repo_type']);
+	}
+
+	public function testAddRepoFail() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Project' => array(
+				'repo_type' => 2,
+			),
+		);
+
+		$this->controller->Project = $this->getMockForModel('Project', array('save'));
+		$this->controller->Project
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Project '<strong>repoless</strong>' could not be updated. Please try again.");
+
+		$this->testAction('/project/repoless/add_repo', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$retrieved = $this->controller->Project->findById(5);
+		$this->assertEquals(1, $retrieved['Project']['repo_type']);
+	}
+
+	public function testAddRepoOK() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Project' => array(
+				'repo_type' => 2,
+			),
+		);
+		$this->testAction('/project/repoless/add_repo', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$retrieved = $this->controller->Project->findById(5);
+		$this->assertEquals(2, $retrieved['Project']['repo_type']);
+	}
+
 /**
  * testAdminAdd method
  *
@@ -532,4 +831,5 @@ class ProjectsControllerTestCase extends AppControllerTest {
  */
 	public function testAdminDelete() {
 	}
+
 }

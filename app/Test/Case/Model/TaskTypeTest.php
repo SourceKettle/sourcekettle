@@ -43,7 +43,29 @@ class TaskTypeTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testNameToID() {
+	public function testIdToName() {
+		$fail          = $this->TaskType->idToName(0);
+		$bug           = $this->TaskType->idToName(1);
+		$duplicate     = $this->TaskType->idToName(2);
+		$enhancement   = $this->TaskType->idToName(3);
+		$invalid       = $this->TaskType->idToName(4);
+		$question      = $this->TaskType->idToName(5);
+		$wontfix       = $this->TaskType->idToName(6);
+		$documentation = $this->TaskType->idToName(7);
+		$meeting       = $this->TaskType->idToName(8);
+
+		$this->assertEqual(null, $fail,          "Got valid name for invalid status 'fail'");
+		$this->assertEqual('bug', $bug,           "Got incorrect name for status 'bug'");
+		$this->assertEqual('duplicate', $duplicate,     "Got incorrect name for status 'duplicate'");
+		$this->assertEqual('enhancement', $enhancement,   "Got incorrect name for status 'enhancement'");
+		$this->assertEqual('invalid', $invalid,       "Got incorrect name for status 'invalid'");
+		$this->assertEqual('question', $question,      "Got incorrect name for status 'question'");
+		$this->assertEqual('wontfix', $wontfix,       "Got incorrect name for status 'wontfix'");
+		$this->assertEqual('documentation', $documentation, "Got incorrect name for status 'documentation'");
+		$this->assertEqual('meeting', $meeting,       "Got incorrect name for status 'meeting'");
+	}
+
+	public function testNameToId() {
 		$fail          = $this->TaskType->nameToID('fail');
 		$bug           = $this->TaskType->nameToID('bug');
 		$duplicate     = $this->TaskType->nameToID('duplicate');

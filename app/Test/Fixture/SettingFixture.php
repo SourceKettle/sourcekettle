@@ -19,6 +19,20 @@ class SettingFixture extends CakeTestFixture {
             'created' => '2012-06-02 20:05:59',
             'modified' => '2012-06-02 20:05:59'
         ),
+		array(
+			'id' => 4,
+			'name' => 'global.alias',
+			'value' => 'SourceKettle Test Site',
+            'created' => '2012-06-02 20:05:59',
+            'modified' => '2012-06-02 20:05:59'
+		),
+		array(
+			'id' => 5,
+			'name' => 'repo.user',
+			'value' => 'nobody',
+            'created' => '2012-06-02 20:05:59',
+            'modified' => '2012-06-02 20:05:59'
+		),
     );
 
 	public function __construct() {

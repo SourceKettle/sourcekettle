@@ -21,7 +21,7 @@ class LostPasswordKeyFixture extends CakeTestFixture {
 		// TODO hard coded expiration length
 		$dateRecent  = new DateTime('now', new DateTimeZone('UTC'));
 		$dateExpired = clone($dateRecent);
-		$dateExpired->sub(new DateInterval('PT1805S'));
+		$dateExpired->sub(new DateInterval('PT18005S'));
 
 		$this->records[] = array(
             'id' => 1,

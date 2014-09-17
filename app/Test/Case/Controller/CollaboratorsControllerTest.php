@@ -190,6 +190,26 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 	}
 
+	public function testAddFail() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'Collaborator' => array(
+				'name' => 'Fake Name [admin-no-projects@example.com]',
+			)
+		);
+		$this->controller->Collaborator = $this->getMockForModel('Collaborator', array('save'));
+		$this->controller->Collaborator
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("An admin with no projects could not be added to the project. Please try again.");
+		$ret = $this->testAction('/project/private/collaborators/add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
+		$this->assertAuthorized();
+	}
+
 	public function testAddSuccess() {
 		$this->_fakeLogin(1);
 		$postData = array(
@@ -201,6 +221,7 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 			->expects($this->once())
 			->method('setFlash')
 			->with("An admin with no projects has been added to the project");
+
 		$ret = $this->testAction('/project/private/collaborators/add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
 		$this->assertAuthorized();
 		$collab = $this->controller->Collaborator->findById($this->controller->Collaborator->getLastInsertId());
@@ -313,6 +334,20 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$ret = $this->__testChangeAccessLevel(5, '/project/public/collaborators/makeadmin/6', 6, 2);
 	}
 
+	public function testMakeAdminFail () {
+		$this->controller->Collaborator = $this->getMockForModel('Collaborator', array('save'));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Permissions level for 'Mrs Smith' could not be updated. Please try again.");
+		$this->controller->Collaborator
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$ret = $this->testAction('/project/public/collaborators/makeadmin/9', array('method' => 'post', 'return' => 'view'));
+
+	}
+
 	public function testMakeUserNotLoggedIn () {
 		$ret = $this->testAction('/project/public/collaborators/makeuser/6', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
@@ -341,6 +376,18 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$ret = $this->testAction('/project/personal/collaborators/makeuser/7', array('method' => 'post', 'return' => 'view'));
 		$this->assertAuthorized();
 		$this->assertRedirect('/project/personal/collaborators');
+
+	}
+
+	public function testMakeUserNotTooFewAdmins () {
+		$this->_fakeLogin(5);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Permissions level successfully changed for 'Mr Smith'");
+		$ret = $this->testAction('/project/private/collaborators/makeuser/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertAuthorized();
+		$this->assertRedirect('/project/private/collaborators');
 
 	}
 	public function testMakeUserProjectAdmin () {

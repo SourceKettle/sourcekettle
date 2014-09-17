@@ -115,6 +115,10 @@
          */
         Router::connect('/account/:action/*', array('controller' => 'users'), array ('action' => 'index|delete|details|security|theme'));
 
+		// Approval links for new accounts
+        Router::connect('/admin/users/approve', array('controller' => 'users', 'action' => 'approve', 'admin' => true));
+        Router::connect('/admin/users/approve/:key', array('controller' => 'users', 'action' => 'approve', 'admin' => true), array ('pass' => array('key')));
+
 
 /**
  * ...and connect the rest of 'Pages' controller's urls.

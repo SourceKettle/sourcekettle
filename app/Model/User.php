@@ -144,22 +144,18 @@ class User extends AppModel {
 		// do some checks first to make sure we don't change things we shouldn't
 		if (isset($this->id) && $this->id) {
 
-			// Get the existing whitelist of savable fields
-			$wl = $this->whitelist;
-
 			// Load the existing data and work out if it's internal or not
 			$current_details = $this->findById($this->id);
 
 			if (!$current_details[$this->alias]['is_internal']) {
-				// Do not allow the email to be changed as this is not under our control
-				// (e.g. it's a field in LDAP)
-				$wl = array_diff($wl, array('email'));
 
-				// Do not allow password to be updated on externally-managed accounts
-				$wl = array_diff($wl, array('password'));
+				if (isset($this->data[$this->alias]['email'])) {
+					unset($this->data[$this->alias]['email']);
+				}
+				if (isset($this->data[$this->alias]['password'])) {
+					unset($this->data[$this->alias]['password']);
+				}
 			}
-
-			$this->whitelist = $wl;
 
 		} elseif (isset($this->data[$this->alias]['email'])) {
 
@@ -231,6 +227,63 @@ class User extends AppModel {
 			'fields' => $fields,
 			'order' => $order
 		));
+	}
+
+	// Gets a list of all pending account approvals i.e. confirmation keys
+	// that have not yet been confirmed by the user
+	public function getPendingApprovals() {
+		$userList = $this->EmailConfirmationKey->find('all', array(
+			'conditions' => array(
+				'User.is_active' => false,
+			),
+			'fields' => array(
+				'EmailConfirmationKey.key',
+				'User.id',
+				'User.name',
+				'User.email',
+				'User.is_active',
+			),
+			'recursive' => 1,
+		));
+		return $userList;
+	}
+
+	// Gets a single pending account given an email confirmation key
+	public function getPendingAccount($key) {
+		$user = $this->EmailConfirmationKey->find('first', array(
+			'conditions' => array(
+				'EmailConfirmationKey.key' => $key,
+				'User.is_active' => false,
+			),
+			'fields' => array(
+				'EmailConfirmationKey.key',
+				'User.id',
+				'User.name',
+				'User.email',
+				'User.is_active',
+			),
+			'recursive' => 1,
+		));
+		return $user;
+	}
+
+	public function approvePendingAccount($user) {
+
+		if (empty($user) || !isset($user['User']) || !isset($user['User']['id']) || @$user['User']['is_active']) {
+			return false;
+		}
+		
+		$ok = $this->save(array('User' => array(
+			'id' => $user['User']['id'],
+			'is_active' => true,
+		)));
+
+		if (!$ok) {
+			return false;
+		}
+
+		$this->EmailConfirmationKey->deleteAll(array('user_id' => $user['User']['id']));
+		return true;
 	}
 
 }

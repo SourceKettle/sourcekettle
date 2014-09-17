@@ -186,7 +186,7 @@ class UserTestCase extends CakeTestCase {
 		$this->assertEquals($user['User']['email'], "festus@spam.example.com", "Incorrect email found after change");
 	}
 
-	public function testFailToChangeEmail() {
+	public function testFailToChangeEmailExternal() {
 		// Try a non-sourcekettle-managed user account, should fail
 		$this->User->id = 6;
 		$user = $this->User->read();
@@ -198,6 +198,18 @@ class UserTestCase extends CakeTestCase {
 		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found after change");
 		
 	}
+
+	public function testFailToChangePasswordExternal() {
+		$this->User->id = 6;
+		$user = $this->User->read();
+		$this->assertEquals($user['User']['password'], "", "Incorrect password found before change");
+
+		$this->User->saveField('password', 'testTESTtest');
+
+        	$user = $this->User->findById(6);
+		$this->assertEquals($user['User']['password'], "", "Incorrect password found after change");
+	}
+
 
 	public function testChangeTheme() {
 		$this->User->id = 1;
@@ -288,5 +300,68 @@ class UserTestCase extends CakeTestCase {
 		$this->User->id = 8;
 		$ok = $this->User->delete();
 		$this->assertFalse($ok, 'Erroneously deleted the only admin of a project');
+	}
+
+	public function testGetPendingApprovals() {
+		$pending = $this->User->getPendingApprovals();
+		$this->assertEquals(array(
+			array(
+				'EmailConfirmationKey' => array(
+					'key' => 'ba6f23c5ce588f16647fe32603fb1593'
+				),
+				'User' => array(
+					'id' => '11',
+					'name' => 'A non-confirmed user',
+					'email' => 'non-confirmed@example.com',
+					'is_active' => false
+				)
+			)
+		), $pending);
+	}
+
+	public function testGetPendingAccount() {
+		$pending = $this->User->getPendingAccount('ba6f23c5ce588f16647fe32603fb1593');
+		$this->assertEquals(array(
+			'EmailConfirmationKey' => array(
+				'key' => 'ba6f23c5ce588f16647fe32603fb1593'
+			),
+			'User' => array(
+				'id' => '11',
+				'name' => 'A non-confirmed user',
+				'email' => 'non-confirmed@example.com',
+				'is_active' => false
+			)
+		), $pending);
+	}
+
+	public function testApprovePendingAccountFailures() {
+		$ok = $this->User->approvePendingAccount(null);
+		$this->assertFalse($ok);
+		$ok = $this->User->approvePendingAccount(array());
+		$this->assertFalse($ok);
+		$ok = $this->User->approvePendingAccount(array('Foo'));
+		$this->assertFalse($ok);
+		$ok = $this->User->approvePendingAccount(array('User' => array()));
+		$this->assertFalse($ok);
+		$ok = $this->User->approvePendingAccount(array('User' => array('id' => 11, 'is_active' => true)));
+		$this->assertFalse($ok);
+
+		$this->User = $this->getMockForModel('User', array('save'));
+		$this->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$ok = $this->User->approvePendingAccount(array('User' => array('id' => 11, 'is_active' => false)));
+		$this->assertFalse($ok);
+	}
+
+	public function testApprovePendingAccountSuccess() {
+		$pending = $this->User->getPendingAccount('ba6f23c5ce588f16647fe32603fb1593');
+		$ok = $this->User->approvePendingAccount($pending);
+		$this->assertTrue($ok);
+
+		$deadKey = $this->User->EmailConfirmationKey->findByKey('ba6f23c5ce588f16647fe32603fb1593');
+		$this->assertEquals(array(), $deadKey);
 	}
 }

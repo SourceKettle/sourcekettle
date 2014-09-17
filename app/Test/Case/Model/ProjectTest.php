@@ -469,7 +469,7 @@ class ProjectTestCase extends CakeTestCase {
 				'deleted' => '0',
 				'deleted_date' => null,
 				'public_id' => '3',
-				'dependenciesComplete' => false
+				'dependenciesComplete' => 1
 			),
 			'Project' => array(
 				'id' => '2',
@@ -844,6 +844,16 @@ class ProjectTestCase extends CakeTestCase {
 		unset($after['Project']['modified']);
 		$this->assertEquals($before, $after);
 	}
+
+	/*public function testRenameFail() {
+		$before = $this->Project->findById(1);
+		$this->Project->Folder = $this->getMock('Folder', array('move'))
+			->expects($this->once())
+			->method('move')
+			->will($this->returnValue(false));
+		$repo = $this->Project->Source->getRepositoryLocation();
+		$this->assertTrue($this->Project->rename("private", 'not_at_all_private'));
+	}*/
 
 	public function testListCollaborators() {
 		$this->Project->id = 1;

@@ -40,21 +40,26 @@ class TaskType extends AppModel {
 		),
 	);
 
-	public function nameToID($type_name) {
-		$found = $this->find('first', array('conditions' => array('LOWER(name)' => strtolower(trim($type_name)))));
-		if(empty($found)){
-			return 0;
+	private $__byId = array();
+	private $__byName = array();
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		$ts = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'icon', 'class')));
+		foreach ($ts as $s) {
+			$this->__byId[ $s['TaskType']['id'] ] = $s['TaskType'];
+			$this->__byName[ $s['TaskType']['name'] ] = $s['TaskType'];
 		}
-		return $found['TaskType']['id'];
+	}
+	public function idToName($id) {
+		return @$this->__byId[$id]['name'];
+	}
+
+	public function nameToID($name) {
+		return @$this->__byName[$name]['id'];
 	}
 
 	public function getLookupTable() {
-		$tt = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'icon', 'class')));
-		$table = array();
-		foreach ($tt as $t) {
-			$table[ $t['TaskType']['id'] ] = $t['TaskType'];
-		}
-		return $table;
+		return $this->__byId;
 	}
-
 }

@@ -51,6 +51,15 @@ class ProjectFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:46:07',
             'modified' => '2012-06-01 12:46:07'
         ),
+        array(
+            'id' => 5,
+            'name' => 'repoless',
+            'description' => 'A repo-less project',
+            'public' => 1,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
     );
 
 	// Constructor puts our repository data into the repository directory

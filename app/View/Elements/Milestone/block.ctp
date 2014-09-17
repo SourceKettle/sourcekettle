@@ -12,12 +12,11 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$o = $milestone['Milestone']['oTasks'];
-$i = $milestone['Milestone']['iTasks'];
-$r = $milestone['Milestone']['rTasks'];
-$c = $milestone['Milestone']['cTasks'];
-
-$t = ($o + $i + $r + $c);
+$o = @$milestone['Tasks']['open']['numTasks'];
+$i = @$milestone['Tasks']['in progress']['numTasks'];
+$r = @$milestone['Tasks']['resolved']['numTasks'];
+$c = @$milestone['Tasks']['closed']['numTasks'];
+$t = @$milestone['Progress']['tasksTotal'];
 
 $percent_o = ($t == 0) ? 0 : $o / $t * 100;
 $percent_i = ($t == 0) ? 0 : $i / $t * 100;
@@ -117,7 +116,7 @@ $link_plan= $this->Html->link(
                         <?= ($r > 0)  ? $this->Bootstrap->badge($r, 'success').' '.__('resolved') : ''?>
                         <?= ($i > 0)  ? $this->Bootstrap->badge($i, 'warning').' '.__('in progress') : ''?>
                         <?= ($o > 0)  ? $this->Bootstrap->badge($o, 'important').' '.__('open') : ''?>
-                        <span class="pull-right muted"><?=$milestone['Milestone']['dPoints']?>/<?=$milestone['Milestone']['tPoints']?> points</span>
+                        <span class="pull-right muted"><?=@$milestone['Progress']['pointsComplete']?>/<?=@$milestone['Progress']['pointsTotal']?> points</span>
                     </small>
                 </p>
                 <div class="progress progress-striped">
