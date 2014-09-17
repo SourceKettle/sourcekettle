@@ -36,12 +36,12 @@ class DashboardController extends AppController {
 	}
 
 	private function __getRecentProjects() {
-		$this->Project->Collaborator->recursive = 0;
 		$current_user = $this->viewVars['current_user'];
 
 		return $this->Project->Collaborator->find(
 			'all', array(
 			'conditions' => array('Collaborator.user_id' => $current_user['id']),
+			'recursive' => 0,
 			'order' => array('Project.modified DESC'),
 			'limit' => 3
 			)
@@ -55,7 +55,7 @@ class DashboardController extends AppController {
 				'Task.assignee_id' => $current_user['id'],
 				'TaskStatus.name <>' => 'closed'
 			),
-			'recursive' => 3,
+			'recursive' => 0,
 			'order' => array('task_priority_id DESC', 'task_status_id ASC'),
 			'limit' => 7
 		));
