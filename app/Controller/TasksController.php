@@ -457,8 +457,14 @@ class TasksController extends AppProjectController {
 
 		// Fetch all the variables for the view
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
-		$milestonesOpen	= $this->Task->Milestone->getOpenMilestones(true);
-		$milestonesClosed = $this->Task->Milestone->getClosedMilestones(true);
+		$milestonesOpen	= array();
+		foreach ($this->Task->Milestone->getOpenMilestones() as $m) {
+			$milestonesOpen[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
+		}
+		$milestonesClosed = array();
+		foreach ($this->Task->Milestone->getClosedMilestones() as $m) {
+			$milestonesClosed[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
+		}
 		$milestones = array('No Assigned Milestone');
 		if (!empty($milestonesOpen)) {
 			$milestones['Open'] = $milestonesOpen;
