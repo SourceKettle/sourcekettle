@@ -456,7 +456,7 @@ class TasksController extends AppProjectController {
 		}
 
 		// Fetch all the variables for the view
-		$taskPriorities	= $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
+		// TODO should be a simpler list milestones method in milestone model and consolidate with edit method
 		$milestonesOpen	= array();
 		foreach ($this->Task->Milestone->getOpenMilestones() as $m) {
 			$milestonesOpen[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
@@ -472,6 +472,8 @@ class TasksController extends AppProjectController {
 		if (!empty($milestonesClosed)) {
 			$milestones['Closed'] = $milestonesClosed;
 		}
+
+		$taskPriorities	= $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
 		foreach ($taskPriorities as $id => $p) {
 			$taskPriorities[$id] = ucfirst(strtolower($p));
 		}
@@ -510,9 +512,15 @@ class TasksController extends AppProjectController {
 			$this->request->data = $task;
 
 			// Fetch all the variables for the view
-			$taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
-			$milestonesOpen = $this->Task->Milestone->getOpenMilestones(true);
-			$milestonesClosed = $this->Task->Milestone->getClosedMilestones(true);
+			// TODO should be a simpler list milestones method in milestone model and consolidate with edit method
+			$milestonesOpen	= array();
+			foreach ($this->Task->Milestone->getOpenMilestones() as $m) {
+				$milestonesOpen[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
+			}
+			$milestonesClosed = array();
+			foreach ($this->Task->Milestone->getClosedMilestones() as $m) {
+				$milestonesClosed[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
+			}
 			$milestones = array('No Assigned Milestone');
 			if (!empty($milestonesOpen)) {
 				$milestones['Open'] = $milestonesOpen;
@@ -520,6 +528,7 @@ class TasksController extends AppProjectController {
 			if (!empty($milestonesClosed)) {
 				$milestones['Closed'] = $milestonesClosed;
 			}
+			$taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
 			foreach ($taskPriorities as $id => $p) {
 				$taskPriorities[$id] = ucfirst(strtolower($p));
 			}
