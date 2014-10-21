@@ -104,17 +104,12 @@
 		// TODO set default type based on config
         if (!isset($this->request->data['Task']['task_type_id'])) $this->request->data['Task']['task_type_id'] = 1;
         
+		$options = array();
+		foreach ($task_types as $id => $type) {
+			$options[$id] = '<div class="tasktype label label-'.$type['class'].'">'.$type['name'].'</div>';
+		}
         echo $this->Bootstrap->radio("task_type_id", array(
-            "options" => array(
-                1 => '<div class="tasktype label label-important">bug</div>',
-                2 => '<div class="tasktype label label-warning">duplicate</div>',
-                3 => '<div class="tasktype label label-success">enhancement</div>',
-                4 => '<div class="tasktype label">invalid</div>',
-                5 => '<div class="tasktype label label-info">question</div>',
-                6 => '<div class="tasktype label label-inverse">wontfix</div>',
-                7 => '<div class="tasktype label label-info">documentation</div>',
-                8 => '<div class="tasktype label label-info">meeting</div>',
-            ),
+            "options" => $options,
             "label" => false,
             "control" => false
         ));

@@ -56,6 +56,8 @@ class AppSchema extends CakeSchema {
 						array('name' => 'wontfix',       'label' => 'Won\'t Fix',    'icon' => '', 'class' => 'inverse'),
 						array('name' => 'documentation', 'label' => 'Documentation', 'icon' => '', 'class' => 'info'),
 						array('name' => 'meeting',       'label' => 'Meeting',       'icon' => '', 'class' => 'info')
+						array('name' => 'maintenance',   'label' => 'Maintenance Work', 'icon' => '', 'class' => 'warning')
+						array('name' => 'testing',       'label' => 'Testing',       'icon' => '', 'class' => 'success')
 					));
 					break;
 
