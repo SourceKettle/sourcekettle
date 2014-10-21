@@ -56,6 +56,18 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                                 echo "<span class='label label-success' title='Dependencies complete'>D</span>";
                             }
                         }
+
+						// Display story points or time estimate if we have one
+						if (!empty($task['Task']['story_points'])) {
+							echo "<span class='label' title='Story points'>";
+							printf(ngettext("%d point", "%d points", $task['Task']['story_points']), $task['Task']['story_points']);
+							echo "</span>";
+						
+						} elseif (!empty($task['Task']['time_estimate']) && TimeString::parseTime($task['Task']['time_estimate']) > 0) {
+							echo "<span class='label' title='Time estimate'>";
+							echo "Est. ".$task['Task']['time_estimate'];
+							echo "</span>";
+						}
                         ?>
                     </div>
                     <div class="span2">
