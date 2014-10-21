@@ -64,7 +64,7 @@
 }
 
 .task p > a:hover {
-	text-decoration:none;
+	text-decoration:underline;
 }
 
 .type_bar_small {
