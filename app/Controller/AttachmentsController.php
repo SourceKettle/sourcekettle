@@ -33,10 +33,11 @@ class AttachmentsController extends AppProjectController{
 		return array(
 			'index'  => 'read',
 			'view'   => 'read',
-			'image'   => 'read',
-			'video'   => 'read',
+			'image'  => 'read',
+			'video'  => 'read',
 			'text'   => 'read',
-			'other'   => 'read',
+			'other'  => 'read',
+			'add'    => 'write',
 			'edit'   => 'write',
 			'delete' => 'write',
 		);
