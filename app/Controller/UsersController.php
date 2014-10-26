@@ -555,12 +555,12 @@ class UsersController extends AppController {
  * Function to delete a user
  * Use at your own peril
  *
- * Deletes the specif ed user and any projects for which there are no other
+ * Deletes the specified user and any projects for which there are no other
  * collaborators - but only if the current user is a system admin.
  */
 	public function admin_delete($userId) {
+
 		// Check we're logged in as an admin
-		// TODO - pretty sure by this point we've already checked, but I'm in a paranoid mood
 		$this->User->id = $this->Auth->user('id');
 		$currentUserData = $this->User->read();
 
@@ -603,8 +603,8 @@ class UsersController extends AppController {
 	}
 
 	public function admin_promote($userId) {
+
 		// Check we're logged in as an admin
-		// TODO - pretty sure by this point we've already checked, but I'm in a paranoid mood
 		$this->User->id = $this->Auth->user('id');
 		$currentUserData = $this->User->read();
 
@@ -643,8 +643,8 @@ class UsersController extends AppController {
 	}
 
 	public function admin_demote($userId) {
+
 		// Check we're logged in as an admin
-		// TODO - pretty sure by this point we've already checked, but I'm in a paranoid mood
 		$this->User->id = $this->Auth->user('id');
 		$currentUserData = $this->User->read();
 
