@@ -507,238 +507,100 @@ class TasksController extends AppProjectController {
 		}
 	}
 
-/**
- * starttask function.
- *
- * @access public
- * @param mixed $project (default: null)
- * @param mixed $id (default: null)
- * @return void
+/*
+ * These functions are convenient helpers for changing task statuses
  */
 	public function starttask($project = null, $public_id = null) {
-		$task = $this->Task->open($public_id);
-
-		$isAjax = $this->request->is("ajax");
-
-		$updated = $this->__updateTaskStatus($project, $public_id, 'in progress', $isAjax);
-
-		if ($isAjax) {
-			if ($updated) {
-				$this->set("error", "no_error");
-				$this->set("errorDescription", "Task status updated");
-			} else {
-				$this->set("error", "failed_to_save");
-				$this->set("errorDescription", "An error occurred while updating the task status");
-			}
-			$this->set("_serialize", array("error"));
-		} else {
-			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
-		}
+		return $this->__updateTaskStatus($project, $public_id, 'in progress');
 	}
 
-/**
- * stoptask function.
- *
- * @access public
- * @param mixed $project (default: null)
- * @param mixed $id (default: null)
- * @return void
- */
 	public function stoptask($project = null, $public_id = null) {
-		$isAjax = $this->request->is("ajax");
-
-		$task = $this->Task->open($public_id);
-
-		$updated = $this->__updateTaskStatus($project, $public_id, 'open', $isAjax);
-		if ($isAjax) {
-			if ($updated) {
-				$this->set("error", "no_error");
-				$this->set("errorDescription", "Task status updated");
-			} else {
-				$this->set("error", "failed_to_save");
-				$this->set("errorDescription", "An error occurred while updating the task status");
-			}
-			$this->set("_serialize", array("error"));
-		} else {
-			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
-		}
+		return $this->__updateTaskStatus($project, $public_id, 'open');
 	}
 
-/**
- * opentask function.
- *
- * @access public
- * @param mixed $project (default: null)
- * @param mixed $id (default: null)
- * @return void
- */
 	public function opentask($project = null, $public_id = null) {
-		$isAjax = $this->request->is("ajax");
-
-		$success = $this->__updateTaskStatus($project, $public_id, 'open', $isAjax);
-		return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
+		return $this->__updateTaskStatus($project, $public_id, 'open');
 	}
 
-/**
- * closetask function.
- *
- * @access public
- * @param mixed $project (default: null)
- * @param mixed $id (default: null)
- * @return void
- */
 	public function closetask($project = null, $public_id = null) {
-		$isAjax = $this->request->is("ajax");
-
-		$success = $this->__updateTaskStatus($project, $public_id, 'closed', $isAjax);
-
-		// If a User has commented
-		if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
-			$this->Task->TaskComment->create();
-
-			$this->request->data['TaskComment']['task_id'] = $id;
-			$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
-
-			if ($this->Task->TaskComment->save($this->request->data)) {
-				$this->Flash->info('The comment has been added successfully');
-				unset($this->request->data['TaskComment']);
-			} else {
-				$this->Flash->error('The comment could not be saved. Please, try again.');
-			}
-		}
-		return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
+		return $this->__updateTaskStatus($project, $public_id, 'closed');
 	}
 
 	public function resolve($project = null, $public_id = null) {
-		$isAjax = $this->request->is("ajax");
-
-		$success = $this->__updateTaskStatus($project, $public_id, 'resolved', $isAjax);
-		if ($isAjax) {
-			if ($success) {
-				$this->set ("error", "no_error");
-				$this->set("errorDescription", "Task status updated");
-			} else {
-				$this->set ("error", "failed_to_save");
-				$this->set("errorDescription", "An error occurred while updating the task status");
-			}
-
-			$this->set ("_serialize", array ("error"));
-		} else {
-			// If a User has commented
-			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
-				$this->Task->TaskComment->create();
-
-				$this->request->data['TaskComment']['task_id'] = $id;
-				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
-
-				if ($this->Task->TaskComment->save($this->request->data)) {
-					$this->Flash->info('The comment has been added successfully');
-					unset($this->request->data['TaskComment']);
-				} else {
-					$this->Flash->error('The comment could not be saved. Please, try again.');
-				}
-			}
-			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
-		}
+		return $this->__updateTaskStatus($project, $public_id, 'resolved');
 	}
 
 	public function unresolve($project = null, $public_id = null) {
-		$isAjax = $this->request->is("ajax");
+		return $this->__updateTaskStatus($project, $public_id, 'open');
+	}
 
-		$success = $this->__updateTaskStatus($project, $public_id, 'open', $isAjax);
-
-		if ($isAjax) {
-			if ($success) {
-				$this->set ("error", "no_error");
-				$this->set("errorDescription", "Task status updated");
-			} else {
-				$this->set ("error", "failed_to_save");
-				$this->set("errorDescription", "An error occurred while updating the task status");
-			}
-
-			$this->set ("_serialize", array ("error"));
-		} else {
-			// If a User has commented
-			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
-				$this->Task->TaskComment->create();
-
-				$this->request->data['TaskComment']['task_id'] = $id;
-				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
-
-				if ($this->Task->TaskComment->save($this->request->data)) {
-					$this->Flash->info('The comment has been added successfully');
-					unset($this->request->data['TaskComment']);
-				} else {
-					$this->Flash->error('The comment could not be saved. Please, try again.');
-				}
-			}
-			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
-		}
+	public function freeze($project = null, $public_id = null) {
+		return $this->__updateTaskStatus($project, $public_id, 'dropped');
 	}
 
 /**
- * freeze function.
+ * __updateTaskStatus function. Does the bulk of the work for changing task statuses,
+ * including error handling and adding comments if we have them.
  *
  * @access public
  * @param mixed $project (default: null)
- * @param mixed $taskId (default: null)
- * @throws MethodNotAllowedException
+ * @param mixed $id (default: null)
+ * @return void
  */
-	public function freeze($project = null, $public_id = null) {
+	private function __updateTaskStatus($project = null, $public_id = null, $status_name = null) {
+
+		$project = $this->_getProject($project);
+		$task = $this->Task->open($public_id);
+		$status = $this->TaskStatus->nameToId($status_name);
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $public_id, 'dropped', $isAjax);
+		$this->Task->set('task_status_id', $status);
+		$success = $this->Task->save();
 
+		$messages = array();
+		if ($success) {
+			$messages[] = __("Task #%d updated - status set to %s", $public_id, $status_name);
+		} else {
+			$messages[] = __("Could not update status for task #%d", $public_id);
+		}
+
+		// If a user has made a comment, add it
+		if ($success && isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+			$this->Task->TaskComment->create();
+
+			$this->request->data['TaskComment']['task_id'] = $this->Task->id;
+			$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+
+			if ($this->Task->TaskComment->save($this->request->data)) {
+				$messages[] = __("Comment added to task %d", $public_id);
+				unset($this->request->data['TaskComment']);
+			} else {
+				$success = 0;
+				$messages[] = __("Could not add comment to task #%d", $public_id);
+			}
+		}
+
+		// Set appropriate error/success messages
 		if ($isAjax) {
 			if ($success) {
 				$this->set("error", "no_error");
-				$this->set("errorDescription", "Task status updated");
+				$this->set("errorDescription", join("; ", $messages));
 			} else {
 				$this->set("error", "failed_to_save");
-				$this->set("errorDescription", "An error occurred while updating the task status");
+				$this->set("errorDescription", join("; ", $messages));
 			}
 
 			$this->set ("_serialize", array ("error", "errorDescription"));
 		} else {
-			// If a User has commented
-			if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
-				$this->Task->TaskComment->create();
-
-				$this->request->data['TaskComment']['task_id'] = $id;
-				$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
-
-				if ($this->Task->TaskComment->save($this->request->data)) {
-					$this->Flash->info('The comment has been added successfully');
-					unset($this->request->data['TaskComment']);
-				} else {
-					$this->Flash->error('The comment could not be saved. Please, try again.');
-				}
+			if ($success) {
+				$this->Flash->info(join("; ", $messages));
+			} else {
+				$this->Flash->error(join("; ", $messages));
 			}
-			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
 		}
-	}
-
-/**
- * __updateTaskStatus function.
- *
- * @access public
- * @param mixed $project (default: null)
- * @param mixed $id (default: null)
- * @return void
- */
-	private function __updateTaskStatus($project = null, $public_id = null, $status = null, $isAjax = false) {
-		$project = $this->_getProject($project);
-		$task = $this->Task->open($public_id);
-
-		$status = $this->TaskStatus->nameToId($status);
-
-		$this->Task->set('task_status_id', $status);
-		$result = $this->Task->save();
-		if ($isAjax) {
-			return $result;
-		} else {
-			return $this->Flash->U($result);
-		}
+		
+		// Redirect to the view task page
+		return $this->redirect(array('controller' => 'tasks', 'project' => $project['Project']['name'], 'action' => 'view', $public_id));
 	}
 
 
