@@ -427,7 +427,7 @@ class Task extends AppModel {
 		if (!$this->exists()) {
 			return null;
 		} else {
-			return '#' . $id;
+			return '#' . $this->field('public_id');
 		}
 	}
 
