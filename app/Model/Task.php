@@ -277,6 +277,11 @@ class Task extends AppModel {
 			$this->data['DependsOn']['DependsOn'] = array_unique(array_values($this->data['DependsOn']['DependsOn']));
 		}
 
+		// If there's no actual data, we're done here
+		if (!isset($this->data['Task']['project_id'])) {
+			return;
+		}
+
 		// Find the existing task if there is one
 		$task = $this->find('first', array(
 			'conditions' => array('Task.id' => $this->id),
@@ -284,18 +289,18 @@ class Task extends AppModel {
 			'recursive' => -1,
 		));
 
-		// No task...
+		// Creating the task...
 		// TODO I have a horrible feeling that this is a terrible idea - what happens with saveMany()?
 		if (empty($task)) {
 			$task_id = 0;
 			$project_id = $this->data['Task']['project_id'];
-			$milestone_id = $this->data['Task']['milestone_id'];
+			$milestone_id = @$this->data['Task']['milestone_id'];
 		
 		// Updating the task...
 		} else {
 			$task_id = $this->id;
 			$project_id = $task['Task']['project_id'];
-			$milestone_id = $task['Task']['milestone_id'];
+			$milestone_id = @$task['Task']['milestone_id'];
 		}
 
 		// Remember the milestone and project ID for our burndown logging
@@ -312,6 +317,11 @@ class Task extends AppModel {
  * afterSave function - logs project/milestone burndown chart updates
  */
 	public function afterSave($created, $options = array()) {
+		// If there's no actual data, we're done here
+		if (!isset($this->data['Task']['project_id'])) {
+			return;
+		}
+
 		if ($created) {
 			$project_id = $this->__burndownLog[0]['project_id'];
 			$milestone_id = $this->__burndownLog[0]['milestone_id'];

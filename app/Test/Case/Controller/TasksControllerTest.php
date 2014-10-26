@@ -35,6 +35,8 @@ class TasksControllerTest extends AppControllerTest {
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
 	);
 
 	public function setUp() {

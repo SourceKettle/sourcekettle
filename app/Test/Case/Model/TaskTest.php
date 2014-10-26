@@ -28,6 +28,8 @@ class TaskTest extends CakeTestCase {
 		'app.attachment',
 		'app.source',
 		'app.milestone',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
 	);
 
 /**

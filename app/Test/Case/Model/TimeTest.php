@@ -801,15 +801,30 @@ class TimeTestCase extends CakeTestCase {
 	public function testFetchWeeklySummaryThisWeek() {
 		$this->Time->Project->id = 1;
 		$weekTimes = $this->Time->fetchWeeklySummary(1);
+
+		// We need to do some shifty date shenanigans to make sure we get the right week...
+		$monday = new DateTime('today', new DateTimeZone('UTC'));
+		if ($monday->format('D') != 'Mon'){
+			$monday = new DateTime('last monday', new DateTimeZone('UTC'));
+		}
+
+		$tuesday   = clone($monday);
+		$wednesday = clone($monday);
+		$thursday  = clone($monday);
+		$friday    = clone($monday);
+		$saturday  = clone($monday);
+		$sunday    = clone($monday);
+
 		$expectedDates = array(
-			1 => new DateTime('monday this week', new DateTimeZone('UTC')),
-			2 => new DateTime('tuesday this week', new DateTimeZone('UTC')),
-			3 => new DateTime('wednesday this week', new DateTimeZone('UTC')),
-			4 => new DateTime('thursday this week', new DateTimeZone('UTC')),
-			5 => new DateTime('friday this week', new DateTimeZone('UTC')),
-			6 => new DateTime('saturday this week', new DateTimeZone('UTC')),
-			7 => new DateTime('sunday this week', new DateTimeZone('UTC')),
+			1 => $monday,
+			2=> $tuesday->add(new DateInterval('P1D')),
+			3=> $wednesday->add(new DateInterval('P2D')),
+			4=> $thursday->add(new DateInterval('P3D')),
+			5=> $friday->add(new DateInterval('P4D')),
+			6=> $saturday->add(new DateInterval('P5D')),
+			7=> $sunday->add(new DateInterval('P6D')),
 		);
+
 		$this->assertEquals($expectedDates, $weekTimes['dates']);
 	}
 }

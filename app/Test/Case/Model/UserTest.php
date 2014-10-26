@@ -36,7 +36,9 @@ class UserTestCase extends CakeTestCase {
         'app.email_confirmation_key',
         'app.lost_password_key',
         'app.ssh_key',
-        'app.api_key'
+        'app.api_key',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
     );
 
     /**
