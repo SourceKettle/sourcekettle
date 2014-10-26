@@ -52,7 +52,6 @@ class ProjectBurndownLog extends AppModel {
 		foreach ($fields as $field) {
 			if ($lastLog['ProjectBurndownLog'][$field] != $this->data['ProjectBurndownLog'][$field]){
 				$changed = 1;
-				debug("Changed field: $field (old ".$lastLog['ProjectBurndownLog'][$field]." new ".$this->data['ProjectBurndownLog'][$field].")");
 				break;
 			}
 		}
