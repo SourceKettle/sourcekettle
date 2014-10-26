@@ -278,6 +278,82 @@ class Task extends AppModel {
 	}
 
 /**
+ * afterSave function - logs project/milestone burndown chart updates
+ */
+	public function afterSave($created, $options = array()) {
+
+		// First get the project and milestone ID for the task we saved
+		$task = $this->find('first', array(
+			'conditions' => array('Task.id' => $this->id),
+			'fields' => array('Task.project_id', 'Task.milestone_id'),
+			'recursive' => -1,
+		));
+
+		$project_id = $task['Task']['project_id'];
+		$milestone_id = $task['Task']['milestone_id'];
+
+		$counts = $this->__getBurndownCounts(array("Task.project_id" => $project_id));
+		$counts['project_id'] = $project_id;
+		$counts['timestamp'] = DboSource::expression('NOW()');
+
+		$this->Project->ProjectBurndownLog->save(array(
+			'ProjectBurndownLog' => $counts,
+		));
+
+		// If the task is part of a milestone, get the aggregate milestone data and log it
+		if ($milestone_id) {
+
+			$counts = $this->__getBurndownCounts(array("Task.milestone_id" => $milestone_id));
+			$counts['milestone_id'] = $milestone_id;
+			$counts['timestamp'] = DboSource::expression('NOW()');
+
+			$this->Milestone->MilestoneBurndownLog->save(array(
+				'MilestoneBurndownLog' => $counts,
+			));
+		}
+	}
+
+/**
+ * Gets the current count of tasks and their estimates in an "open" state (i.e. "tasks
+ * that still need to be done") and a "closed" state (i.e. "tasks that have been done or postponed").
+ */
+	private function __getBurndownCounts($conditions) {
+	
+		$db_conditions = array_merge($conditions, array("TaskStatus.name" => array("open", "in progress")));
+
+		$data = $this->find("first", array(
+			'conditions' => $db_conditions,
+			'fields' => array(
+				'COUNT(Task.id) AS open_task_count',
+				'SUM(Task.time_estimate) AS open_minutes_count',
+				'SUM(Task.story_points) AS open_points_count',
+			),
+		));
+		$counts = $data[0];
+
+		$db_conditions = array_merge($conditions, array("TaskStatus.name !=" => array("open", "in progress")));
+		$data = $this->find("first", array(
+			'conditions' => $db_conditions,
+			'fields' => array(
+				'COUNT(Task.id) AS closed_task_count',
+				'SUM(Task.time_estimate) AS closed_minutes_count',
+				'SUM(Task.story_points) AS closed_points_count',
+			),
+		));
+		$counts = array_merge($counts, $data[0]);
+
+		// Sanity check: make sure nulls become zeroes, and everything's a number
+		foreach (array_keys($counts) as $k) {
+			if (!$counts[$k]) {
+				$counts[$k] = 0;
+			} else {
+				$counts[$k] = (int)$counts[$k];
+			}
+		}
+		return $counts;
+	}
+
+/**
  * isAssignee function.
  * Returns true if the current user is assigned to the task
  */

@@ -167,9 +167,12 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 		'timestamp' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'milestone_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
-		'minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
-		'points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'milestone_id' => array('column' => 'milestone_id', 'unique' => 0)
@@ -199,9 +202,12 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 		'timestamp' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
-		'minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
-		'points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'project_id' => array('column' => 'project_id', 'unique' => 0)
