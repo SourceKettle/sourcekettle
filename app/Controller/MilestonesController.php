@@ -108,11 +108,20 @@ class MilestonesController extends AppProjectController {
 		$draggable = $this->Milestone->Project->hasWrite($this->Auth->user('id'));
 		$this->set('draggable', $draggable);
 
+		// Calculate number of points complete/total for the milestone
+		$points_total = 0;
+		foreach ($milestone['Tasks'] as $k => $v){
+			if ($k == 'dropped') continue;
+			$points_total += $v['points'];
+		}
+		$points_todo = $milestone['Tasks']['in progress']['points'] + $milestone['Tasks']['open']['points'];
+		$points_complete = $points_total - $points_todo;
+
 		$this->set('milestone', $milestone);
 		$this->set('backlog_empty', $max - count($backlog));
 		$this->set('inProgress_empty', $max - count($inProgress));
 		$this->set('completed_empty', $max - count($completed));
-		$this->set(compact('backlog', 'inProgress', 'completed', 'iceBox'));
+		$this->set(compact('backlog', 'inProgress', 'completed', 'iceBox', 'points_complete', 'points_todo', 'points_total'));
 	}
 
 /**
