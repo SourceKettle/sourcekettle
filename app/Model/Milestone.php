@@ -458,6 +458,10 @@ class Milestone extends AppModel {
 		}
 
 		// Save all the tasks
+		if (empty($tasks)) {
+			return true;
+		}
+
 		return $this->Task->saveMany($tasks, $options);
 	}
 
