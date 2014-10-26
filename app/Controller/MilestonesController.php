@@ -387,7 +387,7 @@ class MilestonesController extends AppProjectController {
 
 		$log = array_map(function($a){return $a['MilestoneBurndownLog'];}, $log);
 
-		$this->set('log', $log);
+		$this->set(compact('milestone', 'log'));
 
 	}
 
