@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Source model for the DevTrack system
+ * Source model for the SourceKettle system
  * Represents a source in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
@@ -52,6 +52,7 @@ class Source extends AppModel {
  */
 	public function getType() {
 		$types = array(
+			0 => 0,
 			1 => 0,
 			2 => RepoTypes::GIT,
 			3 => RepoTypes::SVN
@@ -127,8 +128,8 @@ class Source extends AppModel {
  * @throws UnsupportedRepositoryType
  */
 	public function getRepositoryLocation() {
-		$devtrackConfig = Configure::read('devtrack');
-		$base = $devtrackConfig['repo']['base'];
+		$sourcekettleConfig = ClassRegistry::init('Setting')->loadConfigSettings();
+		$base = $sourcekettleConfig['repo']['base'];
 
 		if ($base[strlen($base) - 1] != '/') $base .= '/';
 
@@ -173,7 +174,13 @@ class Source extends AppModel {
 					$commit = $this->Commit->fetch($commit);
 
 					$newEvent = array();
-					$newEvent['modified'] = date('Y-m-d H:i:s', strtotime($commit['date']));
+
+					// TODO We are effectively losing the timezone here,
+					// if possible we should store all dates as DateTimes
+					// so local timezones don't screw things up
+					$dt = new DateTime($commit['date'], new DateTimeZone('UTC'));
+					$newEvent['modified'] = $dt->format('Y-m-d H:i:s');
+
 					$newEvent['Type'] = 'Source';
 
 					// Gather project details

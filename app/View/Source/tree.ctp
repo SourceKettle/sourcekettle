@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/Source/tree for the DevTrack system
+ * View class for APP/Source/tree for the SourceKettle system
  * Allows users to view tree objects
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Source
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Source
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -38,7 +38,7 @@ foreach (explode('/',$path) as $crumb) {
         <?= $this->element('Source/topbar') ?>
 		<?// TODO This is a quick and dirty git-specific hack, should really have a way to specify a git or svn URL ?>
         <div class="span10">
-			<code><?=__("Checkout URI")?>: <?= $devtrack_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= h($project['Project']['name']) ?>.git</code>
+			<code><?=__("Checkout URI")?>: <?= $sourcekettle_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= h($project['Project']['name']) ?>.git</code>
         </div>
         <div class="span10">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>

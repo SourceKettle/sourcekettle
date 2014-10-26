@@ -1,40 +1,81 @@
 Quick install instructions
 ==========================
 
+Unfortunately, SourceKettle is not currently available as a package for easy installation. Sorry about that :-(
+
 Prerequisites
 -------------
+
+You will need to install the following packages before you start:
 
 * Apache
 * mod_rewrite
 * mod_php (PHP >= 5.2.8)
 * MySQL (>= 5.1)
+* mod_ssl, if you wish to use a secure connection (definitely do this for a production setup!)
 
-Get everything in place
+What to know in advance
 -----------------------
 
-* Make sure you've got all submodules:
+You will need to know:
+
+* Basic knowledge of how to configure Apache on your distro
+* Your MySQL root password
+
+Getting the code
+----------------
+
+* Choose where you want to install SourceKettle (here we're putting it in /var/www/sourcekettle, adjust to taste)
+* Get a copy of the code
+  cd /var/www/
+  git clone https://github.com/SourceKettle/sourcekettle.git
+  cd sourcekettle
+
+* If you want to use the development version (newer, more features, but may not be 100% working!), switch to the develop branch:
+  git checkout develop
+
+* Make sure you've got all submodules checked out:
   git submodule update --init --recursive
 
 Webserver setup
 ---------------
 
-* Make sure your apache virtualhost config allows the use of .htaccess files
-* Point apache at the devtrack directory (the parent directory of 'app')
+* Point apache at the sourcekettle directory (/var/www/sourcekettle in our example; you may want to use a separate VirtualHost for this)
+* Make sure your apache config allows the use of .htaccess files
+* Optional, but recommended: set up SSL
 
-DevTrack setup
---------------
+Please refer to the apache documentation for more information on configuring apache. This should be less of a problem once we release packages for SourceKettle!
 
-* Run scm-scripts/devtrack-setup.py
-* Ensure permissions are correct (TODO put this in the setup script):
-  chown -R apache:devtrack tmp/ Plugin/TwitterBootswatch/webroot/ # set user and group as appropriate
-* Set 'Security.cipherSeed' and 'Security.salt' in Config/core.php
+SourceKettle setup script
+-------------------------
+
+* Run the setup script and follow the instructions (run it with the --help option to see possible arguments)
+  ./scm-scripts/sourcekettle-setup.py
 * Reload/restart apache
 * Load the webpage, then go to /setup to see any possible problems
+
+Add an admin user
+-----------------
+
+At the moment, the setup script doesn't do this for you :-( Sorry.
+
+Add yourself an admin user so you can log in, e.g.:
+
+cd app
+./Console/cake user add root@localhost.local "System Administrator" -a -p adminPassword
+
+
+Get started
+-----------
+
+You should now be able to log into SourceKettle using your admin account (in this example, use the email address root@localhost.local and the password adminPassword).
+
+
 
 Multiple VirtualHosts
 ---------------------
 
-If you want to set up several DevTrack installations in different vhosts, this is supported - simply
+If you want to set up several SourceKettle installations in different vhosts, this is supported - simply
 run through the setup steps above for each installation.  You should of course set a different user,
 group, Security.salt, Security.cipherSeed and repository directory for each install.
 
@@ -44,42 +85,4 @@ You will also need to change the following settings in app/Config/core.php:
 * Session => cookie - this doesn't necessarily need to be different, but will make it more obvious when debugging problems!
 
 
-LDAP authentication
--------------------
-
-To use this, currently it's a case of "add some lines to the AppController" :-(
-
-Edit app/Controller/AppController.php and add something like this to the authenticate array (before Form):
-
-	'LDAPAuthCake.LDAP' => array(
-		// Connection details, the user account only needs read access
-	    'ldap_url'      => 'ldaps://ldap.example.org',
-    	'ldap_bind_dn'  => 'cn=LdapReadOnlyUser,ou=User,dc=example,dc=org',
-	    'ldap_bind_pw'  => 'CorrectHorseBatteryStaple',
-
-		// Base DN to search under
-    	'ldap_base_dn'  => 'ou=User,dc=example,dc=org',
-
-		// %USERNAME% will be replaced with the email address - this should be a valid LDAP
-		// filter that will find a user account based on the email address.
-		// Finding by proxyAddresses should allow them to use ANY email address they have.
-    	'ldap_filter'   => '(| (proxyAddresses=SMTP:%USERNAME%) (proxyAddresses=smtp:%USERNAME%) )',
-
-		// These are DevTrack-specific, leave alone
-    	'form_fields'   => array ('username' => 'email', 'password' => 'password'),
-
-		// Mapping of LDAP attributes to DevTrack database fields
-		// Should just need name and email fields.
-	    'ldap_to_user'  => array(
-    	    'displayName' => 'name',
-	        'mail'        => 'email',
-    	),
-
-		// Default flags to set when creating the DevTrack account entry on first login.
-		// This is pretty sane...
-	    'defaults'      => array(
-    		'is_active'   => 1,
-	        'is_admin'    => 0,
-		),
-	),
 

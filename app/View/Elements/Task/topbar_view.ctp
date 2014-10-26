@@ -1,21 +1,21 @@
 <?php
 /**
  *
- * Element for displaying the task topbar for the DevTrack system
+ * Element for displaying the task topbar for the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements.Topbar
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements.Topbar
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  $pl = $this->DT->t('bar.task').$id;
 
 if ($task['Task']['assignee_id'] != null) {
-    if ($task['Task']['task_status_id'] == 1) {
+    if ($task['TaskStatus']['name'] == 'open') {
         $progress = array(
             'text' => 'Start progress',
             'url' => array(
@@ -24,7 +24,7 @@ if ($task['Task']['assignee_id'] != null) {
                 $id
             ),
         );
-    } else if ($task['Task']['task_status_id'] == 2) {
+    } else if ($task['TaskStatus']['name'] == 'in progress') {
         $progress = array(
             'text' => 'Stop progress',
             'url' => array(
@@ -39,7 +39,7 @@ if ($task['Task']['assignee_id'] != null) {
 } else {
     $progress = false;
 }
-if ($task['Task']['task_status_id'] != 4) {
+if ($task['TaskStatus']['name'] != 'closed') {
      $state = array(
          'text' => $this->DT->t('bar.close'),
          'url' => '#closeModal',
@@ -58,13 +58,13 @@ if ($task['Task']['task_status_id'] != 4) {
      );
  }
 
- if ($task['Task']['task_status_id'] <= 2) {
+ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     $resolve = array(
         'text' => $this->DT->t('bar.resolve'),
         'url' => '#resolveModal',
         'props' => array('data-toggle' => 'modal')
     );
-} else if ($task['Task']['task_status_id'] == 3){
+} else if ($task['TaskStatus']['name'] == 'resolved'){
     $resolve = array(
         'text' => $this->DT->t('bar.unresolve'),
         'url' => '#unresolveModal',
@@ -75,7 +75,6 @@ if ($task['Task']['task_status_id'] != 4) {
  }
 
  $options = array(
-    'back' => $previousPage,
     'left' => array(
         array(
             array(

@@ -25,8 +25,8 @@ class CollaboratorFixture extends CakeTestFixture {
         array(
             'id' => 2,
             'project_id' => 2,
-            'user_id' => 1,
-            'access_level' => 2,
+            'user_id' => 5,
+            'access_level' => 1,
             'created' => '2012-06-01 12:32:15',
             'modified' => '2012-06-01 12:32:15'
         ),
@@ -50,6 +50,70 @@ class CollaboratorFixture extends CakeTestFixture {
             'id' => 5,
             'project_id' => 1,
             'user_id' => 5,
+            'access_level' => 2,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
+        array(
+            'id' => 6,
+            'project_id' => 2,
+            'user_id' => 1,
+            'access_level' => 1,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
+        array(
+            'id' => 7,
+            'project_id' => 3,
+            'user_id' => 7,
+            'access_level' => 2,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
+        array(
+            'id' => 8,
+            'project_id' => 4,
+            'user_id' => 8,
+            'access_level' => 2,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
+        array(
+            'id' => 9,
+            'project_id' => 2,
+            'user_id' => 2,
+            'access_level' => 2,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
+        array(
+            'id' => 10,
+            'project_id' => 4,
+            'user_id' => 1,
+            'access_level' => 1,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
+        array(
+            'id' => 11,
+            'project_id' => 1,
+            'user_id' => 10,
+            'access_level' => 1,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
+        array(
+            'id' => 12,
+            'project_id' => 2,
+            'user_id' => 8,
+            'access_level' => 0,
+            'created' => '2012-06-01 12:32:15',
+            'modified' => '2012-06-01 12:32:15'
+        ),
+        array(
+            'id' => 13,
+            'project_id' => 5,
+            'user_id' => 2,
             'access_level' => 2,
             'created' => '2012-06-01 12:32:15',
             'modified' => '2012-06-01 12:32:15'

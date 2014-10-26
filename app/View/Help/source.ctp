@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/help/source for the DevTrack system
+ * View class for APP/help/source for the SourceKettle system
  * Display the help page for viewing source code
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Help
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Help
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -37,7 +37,7 @@ echo $this->Bootstrap->page_header('Help! <small>Source code for your project</s
 			<h4>Already a git wizard?</h4>
 			<p>
 			If you already know what you're doing and just want a git URL, it will look like:
-			<pre><?= $devtrack_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/my-project-name.git</pre>
+			<pre><?= $sourcekettle_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/my-project-name.git</pre>
 			</p>
 			<p>
 			If you have created a brand, spanking new project but haven't yet checked anything in, click on the '<a href='#'><i class="icon-pencil"></i>Source</a>' link in your project's sidebar for instructions on how to get started (it'll tell you all the project-specific stuff so you can pretty much copy-and-paste lines into a terminal).
@@ -48,7 +48,7 @@ echo $this->Bootstrap->page_header('Help! <small>Source code for your project</s
 			<h3>Checking out an existing repository</h3>
 			<p>
 			If you've got an existing project full of code-y goodness, at some point you will probably want to check out a copy somewhere else! You will need to run:
-			<pre>git checkout <?= $devtrack_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/my-project-name.git</pre>
+			<pre>git checkout <?= $sourcekettle_config['repo']['user'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/my-project-name.git</pre>
 
 			...with your actual project name, of course! The URI for your actual repository is displayed on the source page for easy copy-and-pasting.
 			</p>

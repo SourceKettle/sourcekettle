@@ -1,22 +1,98 @@
 <?php
 /**
  *
- * View class for APP/help/tasks for the DevTrack system
+ * View class for APP/help/tasks for the SourceKettle system
  * Display the help page for logging time
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Help
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Help
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 $this->Html->css('time.tempo', null, array ('inline' => false));
 $this->Html->css('pages/help', null, array ('inline' => false));
 $this->Html->css('tasks.index', null, array ('inline' => false));
+$this->Html->script('help', array('inline' => false));
+
+// Fake example data
+$project = array('Project' => array(
+	'id' => '0',
+	'name' => 'SourceKettle',
+));
+
+$tasks = array(
+	array(
+		'Task' => array(
+			'id' => 0,
+			'subject' => 'Do something',
+			'task_status_id' => 1,
+			'task_priority_id' => 2,
+			'task_type_id' => 1,
+		),
+		'TaskType' => array(
+			'name' => 'bug',
+		),
+		'Project' => array(
+			'id' => '0',
+			'name' => 'SourceKettle',
+		),
+		'Assignee' => array(
+			'id' => 0,
+			'name' => 'Andy Newton',
+			'email' => 'andy@example.org',
+		),
+	),
+
+	array(
+		'Task' => array(
+			'id' => 0,
+			'subject' => 'Do something else',
+			'task_status_id' => 2,
+			'task_priority_id' => 3,
+			'task_type_id' => 2,
+		),
+		'TaskType' => array(
+			'name' => 'enhancement',
+		),
+		'Project' => array(
+			'id' => '0',
+			'name' => 'SourceKettle',
+		),
+		'Assignee' => array(
+			'id' => 0,
+			'name' => 'Phill Whittlesea',
+			'email' => 'phill@example.org',
+		),
+	),
+
+	array(
+		'Task' => array(
+			'id' => 0,
+			'subject' => 'Do something',
+			'task_status_id' => 4,
+			'task_priority_id' => 4,
+			'task_type_id' => 1,
+			'dependenciesComplete' => true,
+		),
+		'DependsOn' => array(0 => array('fish')),
+		'TaskType' => array(
+			'name' => 'bug',
+		),
+		'Project' => array(
+			'id' => '0',
+			'name' => 'SourceKettle',
+		),
+		'Assignee' => array(
+			'name' => 'unassigned',
+		),
+	),
+);
+
 
 echo $this->Bootstrap->page_header('Help! <small>How do I manage tasks?</small>'); ?>
 
@@ -80,105 +156,40 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage tasks?</small>'
           Once you've created a task (or a few tasks - treat yourself!), they will show up in the task display board.  This is a master list of all tasks for the project,
           which you can filter by:
           <ul>
-            <li>Assignment (assigned to you, somebody else, nobody, all) - select from the top bar (<strong>exhibit 1</strong>)</li>
-            <li>Status, type and milestone - select from the right hand panel (<strong>exhibit 2</strong>)</li>
+            <li>Assignment (who will be actually doing the work?)</li>
+			<li>Status (what is currently happening?)</li>
+			<li>Priority (how urgent is it?)</li>
+			<li>Milestone (which milestone, if any, is the task part of?)</li>
           </ul>
         </p>
 
         <p>
-          The centre panel displays a list of tasks (matching your filter selections) in order of priority.  Click on a task to display the full detail page for that task.
+          The panel displays a list of tasks (matching your filter selections) in order of priority.  Click on a task to display the full detail page for that task.
         </p>
       </div>
 
-      <div class="well col span7 offset1">
-        <div class="btn-group"><a href="/project/bluedog/tasks/." class="btn"><strong>Assigned to you</strong></a><a href="/project/bluedog/tasks/others" class="btn">Assigned to others</a><a href="/project/bluedog/tasks/nobody" class="btn">Assigned to nobody</a><a href="/project/bluedog/tasks/all" class="btn">All tasks</a></div>
-      </div>
 
-      <div class="alert alert-info span7 offset1">
-        <strong>Exhibit 1:</strong> Assignment selections in top bar
-      </div>
-
-      <div class="well span7 offset1"> 
-
-          <div class="row-fluid">
-
-            <div class="span6">
-                <ul id="taskStatus" class="nav nav-pills nav-stacked">
-                    <li class="active">
-                      <a href="#" status-id="0">All</a>
-                    </li>
-                    <li class="">
-                        <a href="#" status-id="1">Open</a>
-                    </li>
-                    <li class="">
-                        <a href="#" status-id="2">In Progress</a>
-                    </li>
-                    <li class="">
-                        <a href="#" status-id="3">Resolved</a>
-                    </li>
-                    <li class="">
-                        <a href="#" status-id="4">Closed</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div id="priorityCheckboxes" class="span6">
-                <div class="tasktype label label-important">
-                  <input type="hidden" name="data[bug]" id="bug_" value="0"/>
-                  <input type="checkbox" name="data[bug]"  value="1" checked="checked" id="bug"/>
-                  bug
-                </div>
-                <div class="tasktype label label-warning">
-                  <input type="hidden" name="data[duplicate]" id="duplicate_" value="0"/>
-                  <input type="checkbox" name="data[duplicate]"  value="2" checked="checked" id="duplicate"/>
-                  duplicate
-                </div>
-                <div class="tasktype label label-success">
-                  <input type="hidden" name="data[enhancement]" id="enhancement_" value="0"/>
-                  <input type="checkbox" name="data[enhancement]"  value="3" checked="checked" id="enhancement"/>
-                  enhancement
-                </div>
-                <div class="tasktype label">
-                  <input type="hidden" name="data[invalid]" id="invalid_" value="0"/>
-                  <input type="checkbox" name="data[invalid]"  value="4" checked="checked" id="invalid"/>
-                  invalid
-                </div>
-                <div class="tasktype label label-info">
-                  <input type="hidden" name="data[question]" id="question_" value="0"/>
-                  <input type="checkbox" name="data[question]"  value="5" checked="checked" id="question"/>
-                  question
-                </div>
-                <div class="tasktype label label-inverse">
-                  <input type="hidden" name="data[wontfix]" id="wontfix_" value="0"/>
-                  <input type="checkbox" name="data[wontfix]"  value="6" checked="checked" id="wontfix"/>
-                  wontfix
-                </div>
-                <div class="tasktype label label-info">
-                  <input type="hidden" name="data[documentation]" id="documentation_" value="0"/>
-                  <input type="checkbox" name="data[documentation]"  value="7" checked="checked" id="documentation"/>
-                  documentation
-                </div>
-                <div class="tasktype label label-info">
-                  <input type="hidden" name="data[meeting]" id="meeting_" value="0"/>
-                  <input type="checkbox" name="data[meeting]"  value="8" checked="checked" id="meeting"/>
-				  meeting
-                </div>
-            </div>
-
+    <div class="span10 example">
+        <div class="row-fluid">
+            <?= $this->element('Task/topbar_filter', array(
+				'collaborators' => array(),
+				'selected_statuses' => array(),
+				'selected_priorities' => array(),
+				'selected_types' => array(),
+				'selected_milestones' => array(),
+				'milestones' => array('open' => array(), 'closed' => array()),
+			)) ?>
         </div>
-
-        <hr>
-
-        <p class="lead span12">
-          <strong>Milestone:</strong>
-          <select name="data[milestone]" id="milestone">
-            <option value=""></option>
-            <option value="1">Initial planning</option>
-            <option value="2">Coding frenzy</option>
-          </select>
-        </p>
-        
-      </div>
+		<div class="row-fluid well col">
+            <h2><?=__("Task list")?></h2>
+            <hr />
+			<ul class="sprintboard-droplist">
+			  <? foreach ($tasks as $task) {
+			  echo $this->element('Task/lozenge', array('task' => $task));
+			  } ?>
+			</ul>
+		</div>
+    </div>
 
       <div class="alert alert-info span7 offset1">
         <strong>Exhibit 2:</strong> Task filtering controls
@@ -190,9 +201,9 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage tasks?</small>'
 
         <h4>Task lozenges</h4>
         <p>
-          Wherever tasks are listed, such as the display board or milestone board, they are displayed as lozenges containing a brief overview of the task (exhibit 3).  At a glance, you can see:
+          Wherever tasks are listed, such as the display board or milestone board, they are displayed as lozenges containing a brief overview of the task.  At a glance, you can see:
           <ul>
-            <li><strong>Task type:</strong> Indicated by the coloured strip on the left edge of the lozenge - matches up with the type colours in exhibit 2</li>
+            <li><strong>Task type:</strong> Indicated by the coloured strip on the left edge of the lozenge</li>
             <li><strong>Task ID and subject:</strong> Displayed as text</li>
             <li><strong>Priority:</strong> A black-and-white indicator with icon</li>
             <li><strong>Status:</strong> A coloured indicator showing the current status</li>
@@ -202,34 +213,6 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage tasks?</small>'
         </p>
 
       </div>
-
-      <div class="well col span7 offset1">
-        <div class="task">
-          <div class="well type_bar_enhancement">
-            <div class="row-fluid">
-                <div>
-                    <div class="span10">
-                        <p>
-                            <a href="#"><strong>#6</strong> - Create help page for tasks</a>
-                        </p>
-                        <span class="label label-inverse">Urgent <i class="icon-exclamation-sign icon-white"></i></span>
-                        <span class="label label-warning">In Progress</span>
-                        <span class="label label-important" title="Dependencies incomplete">D</span>
-                    </div>
-                    <div class="span2">
-                        <img src="https://secure.gravatar.com/avatar/6258d5a7f3119188649d2562a3836641.jpg?d=mm" alt="Andy Newton" height="80" width="80">
-                    </div>
-                </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="alert alert-info span7 offset1">
-        <strong>Exhibit 3:</strong> An example task lozenge
-      </div>
-
-
 
 
      <div class="well span9">

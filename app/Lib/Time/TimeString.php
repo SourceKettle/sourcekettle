@@ -6,7 +6,7 @@ class TimeString{
 
 	// Given a time in minutes, render it as
 	// a nicely formatted time interval e.g. "2h 6m"
-	function renderTime($minutes){
+	function renderTime($minutes, $field = 'all'){
 		if (!is_numeric($minutes)) {
 			throw new InvalidArgumentException("Minutes must be an integer: ${minutes} given");
 		}
@@ -47,6 +47,10 @@ class TimeString{
 			$output['s'] = "${weeks}w ${days}d ${hours}h ${mins}m";
 		} elseif ($days > 0) {
 			$output['s'] = "${days}d ${hours}h ${mins}m";
+		}
+
+		if (array_key_exists($field, $output)) {
+			return $output[$field];
 		}
 
 		return $output;

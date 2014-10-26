@@ -27,5 +27,12 @@ App::uses('Shell', 'Console');
  * @package       app.Console.Command
  */
 class AppShell extends Shell {
-
+	public $uses = array('Settings');
+	protected function getSourceKettleConfig() {
+		return array_merge(
+			Configure::read('sourcekettle'),
+			$this->Settings->find('list', array('fields' => array('Settings.name', 'Settings.value')))
+		);
+		
+	}
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * View class for APP/milestones/edit for the DevTrack system
+ * View class for APP/milestones/edit for the SourceKettle system
  * Allows a user to edit a task for a project
  *
  * Licensed under The MIT License
@@ -27,7 +27,7 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
     <div class="row">
         <div class="well span8 offset1">
 
-			<h4><?=__("Are you sure you want to delete")?> '<?=h($name)?>'? <?=__("This action is irreversible!")?></h4>
+			<h4><?=__("Are you sure you want to delete")?> '<?=h($milestone['Milestone']['subject'])?>'? <?=__("This action is irreversible!")?></h4>
         	<?=$this->Form->create('Milestone', array('type' => 'post'))?>
 
 			<?if(count($milestone['Tasks']['open']) > 0 || count($milestone['Tasks']['in_progress']) > 0 || count($milestone['Tasks']['dropped']) > 0){?>

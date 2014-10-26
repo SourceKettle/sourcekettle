@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Tempo display for APP/times/history for the DevTrack system
+ * Tempo display for APP/times/history for the SourceKettle system
  * Shows a table of time vs. tasks
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements.Time
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements.Time
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -18,26 +18,6 @@
 $this->Html->css('time.tempo', null, array ('inline' => false));
 $this->Html->css('jquery.dataTables', null, array ('inline' => false));
 $this->Html->script('jquery.dataTables.min', array ('inline' => false));
-
-/*$this->Html->scriptBlock("
-    $('.tempo').tooltip({
-        selector: 'th[rel=tooltip]'
-    })
-    $('.tempoBody').bind('click', function() {
-        var a = $('#' + $(this).attr('data-toggle'));
-
-        $('.dp1').val($(this).attr('data-date'));
-
-        var taskId = $(this).attr('data-taskId');
-        $('option[value='+taskId+']').attr('selected', 'selected');
-
-        if (a.size() === 0) {
-            $('#addTimeModal').modal('show');
-        } else {
-            a.modal('show');
-        }
-    });
-", array('inline' => false));*/
 
 echo $this->element('Time/modal_add');
 
@@ -51,14 +31,18 @@ echo $this->element('Time/modal_add');
 				<? foreach ($weekTimes['dates'] as $daynum => $date){ ?>
 				<th><?= __($date->format('D M d')) ?></th>
 				<? } ?>
+				<th>Total</th>
             </tr>
         </thead>
         <tbody>
         <?php
+			// Sorry :-(
+
+			$overallTotal = 0;
+			$elements = '';
 			foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 				foreach ($taskDetails['users'] as $userId => $userDetails) {
 					echo "<tr>\n";
-
 					if ($taskId == 0) {
 						echo "<td>(".__("No associated task").")</td>\n";
 
@@ -87,15 +71,42 @@ echo $this->element('Time/modal_add');
 					));
 					echo "</td>\n";
 
+					// Loop over the days of the week
 					// 1=Mon, 7=Sun...
+					$rowTotal = 0;
 					for ($i = 1; $i <= 7; $i++) {
-						if (array_key_exists($i, $userDetails['days'])) {
-							$timeSpent = TimeString::renderTime($userDetails['days'][$i]);
-							echo "<td>".h($timeSpent['s'])."</td>\n";
+
+						// The date for this day, and day name for display
+						$date = $weekTimes['dates'][$i]->format('Y-m-d');
+						$day = $weekTimes['dates'][$i]->format('D');
+
+						// Popup for viewing times
+		                $popover = "tempo_{$day}_{$taskId}_{$userId}";
+
+						// times_by_day is a list of Time... cake-y object-like array things
+						if (array_key_exists($i, $userDetails['times_by_day'])) {
+							$timeSpent = 0;
+							foreach ($userDetails['times_by_day'][$i] as $time){
+								$rowTotal += $time['Time']['mins'];
+								$timeSpent += $time['Time']['mins'];
+
+							}
+  	                    	$elements .= $this->element('Time/tempo_modal',
+                        		array(
+                            		'id' => $popover,
+                             		'times' => $userDetails['times_by_day'][$i],
+                        	    	'date'  => $weekTimes['dates'][$i]
+                        		)
+                        	);
+							$timeSpent = TimeString::renderTime($timeSpent);
+							echo "<td class=\"tempoBody\" data-toggle=\"$popover\" data-taskid=\"$taskId\" data-date=\"$date\">".h($timeSpent['s'])."</td>\n";
 						} else {
-							echo "<td>---</td>\n";
+							echo "<td class=\"tempoBody\" data-toggle=\"$popover\" data-taskid=\"$taskId\" data-date=\"$date\">---</td>\n";
 						}
 					}
+					$overallTotal += $rowTotal;
+					$timeSpent = TimeString::renderTime($rowTotal);
+					echo "<th>".h($timeSpent['s'])."</th>\n";
 
 					echo "</tr>\n";
 
@@ -116,10 +127,16 @@ echo $this->element('Time/modal_add');
                 		echo "<th>---</th>\n";
 					}
 
-				} ?>
+				} 
+				$overallTotal = TimeString::renderTime($overallTotal);
+				echo "<th>".h($overallTotal['s'])."</th>\n";
+				?>
             </tr>
         </tfoot>
     </table>
+
+	<?=$elements // Add in elements for each of our drill-down displays?>
+
     <div class="btn-toolbar tempo-toolbar span12">
         <div class="btn-group">
             <?php

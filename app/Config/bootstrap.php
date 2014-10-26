@@ -103,10 +103,10 @@ CakeLog::config('error', array(
  *	));
  */
 Cache::config('default', array('engine' => 'Apc'));
-Configure::load('devtrack');
+Configure::load('sourcekettle');
 
 /**
- * Load all the language files for devtrack
+ * Load all the language files for sourcekettle
  */
 Configure::load('Language/dt_core');
 Configure::load('Language/dt_core_en');

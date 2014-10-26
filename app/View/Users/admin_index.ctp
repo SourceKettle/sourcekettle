@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/users/admin_index for the DevTrack system
+ * View class for APP/users/admin_index for the SourceKettle system
  * View will render lists of users
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Users
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Users
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -105,7 +105,7 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
                             );
 
 							// Don't allow admins to demote themselves (enforced in controller)
-							if($user['User']['id'] == $this->get('user_id')){
+							if($user['User']['id'] == $current_user['id']){
                                 echo $this->Bootstrap->button(
 									$this->Bootstrap->icon('none'),
 									array('escape'=>false, 'size' => 'mini', 'class' => 'disabled')

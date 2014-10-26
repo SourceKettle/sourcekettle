@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/help/milestones for the DevTrack system
+ * View class for APP/help/milestones for the SourceKettle system
  * Display the help page for logging time
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Help
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Help
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -21,6 +21,27 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 $this->Html->script("jquery-ui.min", array ('inline' => false));
 $this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
 $this->Html->script('help.milestones', array('inline' => false));
+$this->Html->script('help', array('inline' => false));
+
+// Some fake example data
+$milestone = array(
+	'Milestone' => array(
+		'id' => 0,
+		'is_open' => true,
+		'subject' => 'User accounts',
+		'description' => 'Create a user account system, possibly with bees',
+		'oTasks' => 5,
+		'iTasks' => 2,
+		'rTasks' => 3,
+		'cTasks' => 3,
+		'dPoints' => 4,
+		'tPoints' => 9,
+	),
+);
+$project = array('Project' => array(
+	'id' => '0',
+	'name' => 'SourceKettle',
+));
 
 echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</small>'); ?>
 
@@ -67,38 +88,8 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</sm
 
 
 		<!-- Exhibit 1 -->
-		<div class="row-fluid">
-		<div class="span10 offset1">
-
-			<div class="well span12">
-
-              <div class="span5">
-                <h3><a href="#" title="Click to show the milestone board">User accounts</a></h3>
-              </div>
-
-              <div class="span7">
-                <a id="deleteLink" href="#" class="close delete" title="Click to delete the milestone"><i class="icon-remove-circle"></i></a>
-                <a id="closeLink" href="#" class="close delete" title="Click to close the milestone (closed milestones will have a re-open control)"><i class="icon-off"></i></a>
-                <a id="editLink" href="#" class="close edit" title="Click to edit the milestone"><i class="icon-pencil"></i></a>
-                <p>
-                  <small>
-                    <span class="badge badge-info">1</span> closed
-                    <span class="badge badge-success">1</span> resolved
-                    <span class="badge badge-warning">1</span> in progress
-                    <span class="badge badge-important">1</span> open
-					<span class="pull-right muted" title="Story point progress">17/23 points</span>
-                  </small>
-                </p>
-                <div id="progressBar" class="progress progress-striped" title="The milestone's progress">
-                  <div class="bar bar-info" style="width: 25%;"></div>
-                  <div class="bar bar-success" style="width: 25%;"></div>
-                  <div class="bar bar-warning" style="width: 25%;"></div>
-                  <div class="bar bar-danger" style="width: 25%;"></div>
-                </div>
-              </div>
-			</div>
-
-		</div>
+		<div class="row-fluid example">
+			<?=$this->element('Milestone/block', array('milestone' => $milestone, 'project' => $project))?>
 		</div>
 
 		<div class="row-fluid">

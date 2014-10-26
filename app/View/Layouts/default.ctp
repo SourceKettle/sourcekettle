@@ -18,13 +18,13 @@
 <html>
 <head>
     <title>
-        <?= h($devtrack_config['global']['alias']) ?> - <?= h($title_for_layout) ?>
+        <?= h($sourcekettle_config['global']['alias']) ?> - <?= h($title_for_layout) ?>
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
     <?= $this->Html->charset('UTF-8') . "\n" ?>
     <?= $this->Html->css('bootstrap.min') ?>
-    <?= ($user_theme != 'default') ? $this->TwitterBootswatch->cssForTheme($user_theme) : '' ?>
+    <?= ($current_user['theme'] != 'default') ? $this->TwitterBootswatch->cssForTheme($current_user['theme']) : '' ?>
     <?= $this->Html->css('layout'); ?>
     <?= $this->Html->css('bootstrap-responsive.min') ?>
     <?= $this->fetch ('css') ?>
@@ -48,18 +48,18 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <?= $this->Html->link($devtrack_config['global']['alias'], '/', array('class' => 'brand')); ?>
+                    <?= $this->Html->link($sourcekettle_config['global']['alias'], '/', array('class' => 'brand')); ?>
 
 
                     <ul class="nav pull-right">
-                    <? if(isset($user_name)){ ?>
+                    <? if(isset($current_user)){ ?>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <?= $this->Gravatar->image(
-                                    $user_email,
+                                    $current_user['email'],
                                     array('size' => 20),
-                                    array('alt' => $user_name)
-                                ) ?> <?= h($user_name) ?>
+                                    array('alt' => $current_user['name'])
+                                ) ?> <?= h($current_user['name']) ?>
                                 <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users', 'action' => 'index')) ?></li>
@@ -81,7 +81,7 @@
                                 'projects' => __('Projects'),
                                 'help' => __('Help'),
                             );
-                            if($user_is_admin){
+                            if($current_user && $current_user['is_admin'] == 1){
                                 $navItems['admin'] = __('Administration');
                             }
 
@@ -112,7 +112,7 @@
         </div>
         <div id='footer'>
             <hr>
-            <?=$this->Html->link("About SourceKettle $devtrackVersion", '/about');?>
+            <?=$this->Html->link("About SourceKettle $sourcekettleVersion", '/about');?>
             <?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
             <?//=$this->Html->link('SVN help', '/svn_help');?>
         </div>

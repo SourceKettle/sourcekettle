@@ -17,6 +17,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+// Increase timeout and memory limit to allow tests to run
+set_time_limit(9001);
+ini_set('memory_limit', '512M');
 $ds = DIRECTORY_SEPARATOR;
 $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 

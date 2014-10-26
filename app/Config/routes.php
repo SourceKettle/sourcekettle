@@ -63,6 +63,7 @@
 
         Router::connect('/project/:project/time/:action/:year/:week/*', array('controller' => 'times'), array('pass' => array('project', 'year', 'week'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/time/:action/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/project/:project/time/userlog/:user/*', array('controller' => 'times', 'action' => 'userlog'), array('pass' => array('project', 'user'), 'project' => '[0-9a-zA-Z_-]+', 'user' => '[0-9]+'));
         Router::connect('/project/:project/time/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
         Router::connect('/project/:project/source/:action/:branch/*', array('controller' => 'source', 'action' => 'tree'), array('pass' => array('project', 'branch'), 'project' => '[0-9a-zA-Z_-]+'));
@@ -79,12 +80,30 @@
          * If no other controller is to be used, use the projects controller
          */
         Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/projects/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        //Router::connect('/projects/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/project/:project', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
-		/*
-		 * Admin link for project names, this sorts out some issues with generating links from the admin pages
-		 */
-        Router::connect('/admin/projects/:project', array('controller' => 'projects', 'action' => 'view', 'admin' => true), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+		// Make sure our intended /projects/ links work, but you can also go to /projects/foo/edit as well as /project/foo/edit
+        Router::connect('/projects/public_projects/*', array('controller' => 'projects', 'action' => 'public_projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/projects/add', array('controller' => 'projects', 'action' => 'add'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/projects/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+		// This is a (fudgy!) fix to make submodules' links in the source view work. We may want to change this if we ever support HTTPS access to git.
+		Router::connect('/projects/:project.git', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/projects/*', array('controller' => 'projects', 'action' => 'index'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+
+
+		// Point admin project actions to the right controller
+		// TODO this is a mess, rename is the only sysadmin-only function, I am too dumb to route though
+        Router::connect('/admin/projects/:project/view', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/admin/projects/:project/edit', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/admin/projects/:project/time', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/admin/projects/:project/tasks', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/admin/projects/:project/collaborators', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/admin/projects/:project/rename', array('controller' => 'projects', 'action' => 'rename', 'admin' => true), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/admin/projects/:project/:action', array('controller' => 'projects', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/admin/projects/:project', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
         /*
          * Add custom route for editing the sshkeys associated to a user
@@ -95,6 +114,10 @@
          * Route to make the 'account settings' addresses look nicer.
          */
         Router::connect('/account/:action/*', array('controller' => 'users'), array ('action' => 'index|delete|details|security|theme'));
+
+		// Approval links for new accounts
+        Router::connect('/admin/users/approve', array('controller' => 'users', 'action' => 'approve', 'admin' => true));
+        Router::connect('/admin/users/approve/:key', array('controller' => 'users', 'action' => 'approve', 'admin' => true), array ('pass' => array('key')));
 
 
 /**

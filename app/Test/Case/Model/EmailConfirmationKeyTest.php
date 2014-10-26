@@ -1,15 +1,15 @@
 <?php
 /**
  *
- * Email Confirmation Unit Tests for the DevTrack system
+ * Email Confirmation Unit Tests for the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	DevTrack Development Team 2012
- * @link			http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Test.Case.Model
- * @since		DevTrack v 1.0
+ * @copyright	SourceKettle Development Team 2012
+ * @link			http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Test.Case.Model
+ * @since		SourceKettle v 1.0
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('EmailConfirmationKey', 'Model');
@@ -64,6 +64,15 @@ class EmailConfirmationKeyTestCase extends CakeTestCase {
 					'created' => '2012-06-01 12:33:03',
 					'modified' => '2012-06-01 12:33:03'
 				),
+			),
+			array(
+		        'EmailConfirmationKey' => array(
+		            'id' => 2,
+		            'user_id' => 11,
+		            'key' => 'ba6f23c5ce588f16647fe32603fb1593',
+		            'created' => '2012-06-01 12:33:03',
+		            'modified' => '2012-06-01 12:33:03'
+        		),
 			),
 		);
 		$fixturesB = $this->EmailConfirmationKey->find('all');

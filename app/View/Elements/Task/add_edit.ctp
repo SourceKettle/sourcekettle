@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/tasks/add for the DevTrack system
+ * View class for APP/tasks/add for the SourceKettle system
  * Add a new task for a project
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Tasks
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Tasks
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
@@ -101,19 +101,15 @@
         <h5><?= __('Issue type') ?></h5>
         <?php
 
+		// TODO set default type based on config
         if (!isset($this->request->data['Task']['task_type_id'])) $this->request->data['Task']['task_type_id'] = 1;
         
+		$options = array();
+		foreach ($task_types as $id => $type) {
+			$options[$id] = '<div class="tasktype label label-'.$type['class'].'">'.$type['name'].'</div>';
+		}
         echo $this->Bootstrap->radio("task_type_id", array(
-            "options" => array(
-                1 => '<div class="tasktype label label-important">bug</div>',
-                2 => '<div class="tasktype label label-warning">duplicate</div>',
-                3 => '<div class="tasktype label label-success">enhancement</div>',
-                4 => '<div class="tasktype label">invalid</div>',
-                5 => '<div class="tasktype label label-info">question</div>',
-                6 => '<div class="tasktype label label-inverse">wontfix</div>',
-                7 => '<div class="tasktype label label-info">documentation</div>',
-                8 => '<div class="tasktype label label-info">meeting</div>',
-            ),
+            "options" => $options,
             "label" => false,
             "control" => false
         ));

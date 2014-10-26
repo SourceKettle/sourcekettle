@@ -1,15 +1,15 @@
 <?php
 /**
 *
-* Email Confirmation Unit Tests for the DevTrack system
+* Email Confirmation Unit Tests for the SourceKettle system
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
 *
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/SourceKettle/devtrack
-* @package       DevTrack.Test.Case.Model
-* @since         DevTrack v 1.0
+* @copyright     SourceKettle Development Team 2012
+* @link          http://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.Test.Case.Model
+* @since         SourceKettle v 1.0
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 App::uses('LostPasswordKey', 'Model');
@@ -61,12 +61,17 @@ class LostPasswordKeyTestCase extends CakeTestCase {
                     'id' => "1",
                     'user_id' => "1",
                     'key' => 'ab169f5ff7fbbcdd7db9bd077',
-                    'created' => '2012-11-04 13:16:47',
-                    'modified' => '2012-11-04 13:16:47'
+                ),
+			),
+			array(
+                'LostPasswordKey' => array(
+                    'id' => "2",
+                    'user_id' => "1",
+                    'key' => 'ab169f5ff7fbbcdd7db9bd078',
                 ),
             ),
         );
-        $fixturesB = $this->LostPasswordKey->find('all');
+        $fixturesB = $this->LostPasswordKey->find('all', array('fields' => array('id', 'user_id', 'key')));
         $this->assertEquals($fixtures, $fixturesB, "Arrays were not equal");
     }
 }

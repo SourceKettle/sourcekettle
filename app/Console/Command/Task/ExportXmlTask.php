@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * ExportXmlTask Task for the DevTrack system
+ * ExportXmlTask Task for the SourceKettle system
  * A task for exporting data in an XML format
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	DevTrack Development Team 2012
- * @link		http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Console.Command.Task
- * @since		DevTrack v 1.0
+ * @copyright	SourceKettle Development Team 2012
+ * @link		http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Console.Command.Task
+ * @since		SourceKettle v 1.0
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class ExportXmlTask extends Shell {
@@ -32,7 +32,7 @@ class ExportXmlTask extends Shell {
  * @var string
  * @access private
  */
-	private $__rootXMLElement = 'codekettle';
+	private $__rootXMLElement = 'sourcekettle';
 
 /**
  * uses

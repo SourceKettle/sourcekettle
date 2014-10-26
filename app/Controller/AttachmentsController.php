@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * AttachmentsController for the DevTrack system
+ * AttachmentsController for the SourceKettle system
  * The controller to allow users to upload and view attachments
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 DevTrack Development Team 2012
- * @link		  http://github.com/SourceKettle/devtrack
- * @package	   DevTrack.Controller
- * @since		 DevTrack v 0.1
+ * @copyright	 SourceKettle Development Team 2012
+ * @link		  http://github.com/SourceKettle/sourcekettle
+ * @package	   SourceKettle.Controller
+ * @since		 SourceKettle v 0.1
  * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -28,6 +28,20 @@ class AttachmentsController extends AppProjectController{
 
 	public $helpers = array('Time');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+		return array(
+			'index'  => 'read',
+			'view'   => 'read',
+			'image'  => 'read',
+			'video'  => 'read',
+			'text'   => 'read',
+			'other'  => 'read',
+			'add'    => 'write',
+			'edit'   => 'write',
+			'delete' => 'write',
+		);
+	}
 /**
  * index function.
  *
@@ -93,7 +107,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function view($project = null, $id = null) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$attachment = $this->Attachment->open($id);
 
 		// Lets pretend we are serving a real file
@@ -119,11 +133,11 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function add($project = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 
 		if (!empty($this->data)) {
 			if ($this->Flash->c($this->Attachment->upload($this->data))) {
-				$this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
 			}
 		}
 	}
@@ -137,7 +151,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function delete($project = null, $id = null) {
-		$project = $this->_projectCheck($project, true);
+		$project = $this->_getProject($project);
 		$attachment = $this->Attachment->open($id);
 
 		if (!$this->request->is('post')) {
@@ -146,7 +160,7 @@ class AttachmentsController extends AppProjectController{
 
 		$this->Flash->setUp();
 		$this->Flash->d($this->Attachment->delete());
-		$this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
+		return $this->redirect(array('project' => $project['Project']['name'], 'action' => '.'));
 	}
 
 /**
@@ -158,7 +172,7 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	private function __attachmentWithRestrictions($project = null, $conditions = array()) {
-		$project = $this->_projectCheck($project);
+		$project = $this->_getProject($project);
 		$conditions['Attachment.project_id'] = $project['Project']['id'];
 		$conditions['Attachment.model'] = null;
 		$attachments = $this->Attachment->find(

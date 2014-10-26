@@ -1,27 +1,26 @@
 <?php
 /**
  *
- * Tempo modal for APP/times/history for the DevTrack system
+ * Tempo modal for APP/times/history for the SourceKettle system
  * Shows a modal of time vs. tasks
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements.Time
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements.Time
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-unset($times['total']);
 ?>
 <div class="modal hide" id="<?= $id ?>">
     <table class="modal-body table table-striped table-modal">
         <thead>
             <tr>
-                <th><?= $this->DT->t('tempo.modal.description.header') ?></th>
-                <th><?= $this->DT->t('tempo.modal.time.header') ?></th>
+                <th><?= __('Description') ?></th>
+                <th><?= __('Time spent') ?></th>
             </tr>
         </thead>
         <tbody>
@@ -40,7 +39,7 @@ unset($times['total']);
     </table>
     <div class="modal-footer tempo-footer">
         <?=$this->Bootstrap->button_link(
-            $this->DT->t('tempo.modal.add'),
+            __('Log time'),
             "#addTimeModal",
             array(
                 'data-dismiss' => "modal",
@@ -49,6 +48,6 @@ unset($times['total']);
                 "style" => "primary"
             )
         )?>
-        <a href="#" class="btn btn-mini" data-dismiss="modal"><?= $this->DT->t('tempo.modal.close') ?></a>
+        <a href="#" class="btn btn-mini" data-dismiss="modal"><?= __('Close') ?></a>
     </div>
 </div>

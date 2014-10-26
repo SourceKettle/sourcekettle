@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * ProjectHistory model for the DevTrack system
+ * ProjectHistory model for the SourceKettle system
  * Stores the past for a project
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  *
  * @extends AppModel
@@ -41,6 +41,7 @@ class ProjectHistory extends AppModel {
 		),
 		'model' => array(
 			'inlist' => array(
+				// TODO Bad idea - hard coded :-(
 				'rule' => array('inlist', array('collaborator','task','milestone','source','time','projectattachment')),
 			),
 		),
@@ -74,14 +75,8 @@ class ProjectHistory extends AppModel {
 		)
 	);
 
+	public function logC($model, $rowId, $rowTitle, $rowField, $rowFieldOld, $rowFieldNew, $userId, $userName) {
 
-	public function logC($model, $rowId, $rowTitle, $row_field, $rowFieldOld, $rowFieldNew, $userId, $userName  ) {
-		if (is_array($rowFieldOld)) {
-			$rowFieldOld = serialize($rowFieldOld);
-		}
-		if (is_array($rowFieldNew)) {
-			$rowFieldNew = serialize($rowFieldNew);
-		}
 		$this->create();
 		return $this->save(array(
 			'ProjectHistory' => array(
@@ -89,7 +84,7 @@ class ProjectHistory extends AppModel {
 				'model' => $model,
 				'row_id' => $rowId,
 				'row_title' => $rowTitle,
-				'row_field' => $row_field,
+				'row_field' => $rowField,
 				'row_field_old' => $rowFieldOld,
 				'row_field_new' => $rowFieldNew,
 				'user_id' => $userId,
@@ -106,7 +101,6 @@ class ProjectHistory extends AppModel {
  * @param int $number (default: 10)
  * @param int $offset (default: 0)
  * @param float $user (default: -1)
- * @param array $query (default: array())
  * @return void
  */
 	public function fetchHistory($project = null, $number = 50, $offset = 0, $user = -1, $model = null) {
@@ -116,14 +110,6 @@ class ProjectHistory extends AppModel {
 			'offset' => $offset,
 			'order' => 'ProjectHistory.created DESC'
 		);
-
-		// Decant query values in
-		foreach ($search as $s => $v) {
-			if (isset($query[$s])) {
-				$search[$s] = $query[$s];
-
-			}
-		}
 
 		// If a user is specified
 		if ($project == null && $user > 0) {
@@ -191,6 +177,7 @@ class ProjectHistory extends AppModel {
 				$events[$a]['Subject']['exists'] = true;
 			}
 
+			// TODO surely the URL can be added/automated for all objects using the routing engine somehow?
 			switch ($events[$a]['Type']) {
 				case 'Collaborator':
 					$this->Project->Collaborator->id = $events[$a]['Subject']['id'];

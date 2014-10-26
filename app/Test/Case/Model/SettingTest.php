@@ -1,15 +1,15 @@
 <?php
 /**
 *
-* Setting Unit Tests for the DevTrack system
+* Setting Unit Tests for the SourceKettle system
 *
 * Licensed under The MIT License
 * Redistributions of files must retain the above copyright notice.
 *
-* @copyright     DevTrack Development Team 2012
-* @link          http://github.com/SourceKettle/devtrack
-* @package       DevTrack.Test.Case.Model
-* @since         DevTrack v 1.0
+* @copyright     SourceKettle Development Team 2012
+* @link          http://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.Test.Case.Model
+* @since         SourceKettle v 1.0
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 App::uses('Setting', 'Model');
@@ -70,20 +70,37 @@ class SettingTestCase extends CakeTestCase {
                 'modified' => '2012-06-02 20:05:59'
             ),
         );
-        $this->assertEquals($beforeA, $beforeB, "before settings arnt equal");
+        $this->assertEquals($beforeB, $beforeA, "before settings are not equal");
 
         $this->Setting->syncRequired();
 
         $afterA = $this->Setting->findByName('sync_required');
+		unset($afterA['Setting']['created']);
+		unset($afterA['Setting']['modified']);
+
         $afterB = array(
             'Setting' => array(
                 'id' => 1,
                 'name' => 'sync_required',
-                'value' => 1,
-                'created' => '2012-06-02 20:05:59',
-                'modified' => '2012-06-02 20:05:59'
+                'value' => '1',
             ),
         );
-        $this->assertEquals($beforeA, $beforeB, "after settings arnt equal");
+        $this->assertEquals($afterB, $afterA, "after settings are not equal");
     }
+
+	public function testLoadConfigSettings() {
+		$settings = $this->Setting->loadConfigSettings();
+		$this->assertEquals(array(
+			'global' => array(
+				'alias' => 'SourceKettle Test Site'
+			),
+			'repo' => array(
+				'user' => 'nobody',
+				'base' => dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories',
+				'default' => 'Git'
+			),
+			'sync_required' => '0',
+			'sysadmin_email' => 'admin@example.org'
+		), $settings, "Incorrect settings returned");
+	}
 }

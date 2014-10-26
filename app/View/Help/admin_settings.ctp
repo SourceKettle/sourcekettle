@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     SourceKettle Development Team 2014
- * @link          http://github.com/SourceKettle/devtrack
+ * @link          http://github.com/SourceKettle/sourcekettle
  * @package       SourceKettle.View.Help
  * @since         SourceKettle v1.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)

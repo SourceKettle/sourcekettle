@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Task model for the DevTrack system
+ * Task model for the SourceKettle system
  * Stores the Tasks for a project in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
@@ -33,7 +33,6 @@ class Task extends AppModel {
 
 /**
  * Validation rules
- * TODO hard-coded IDs
  */
 	public $validate = array(
 		'project_id' => array(
@@ -59,10 +58,6 @@ class Task extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,5,6,7,8,'1','2','3','4','5','6','7','8')),
-				'message' => 'Select a task type',
-			),
 		),
 		'task_status_id' => array(
 			'numeric' => array(
@@ -71,10 +66,6 @@ class Task extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,5,'1','2','3','4','5')),
-				'message' => 'Select a task status',
-			),
 		),
 		'task_priority_id' => array(
 			'numeric' => array(
@@ -82,10 +73,6 @@ class Task extends AppModel {
 			),
 			'notempty' => array(
 				'rule' => array('notempty'),
-			),
-			'inlist' => array(
-				'rule' => array('inlist', array(1,2,3,4,'1','2','3','4')),
-				'message' => 'Select a task priority',
 			),
 		),
 		'time_estimate' => array(
@@ -191,51 +178,7 @@ class Task extends AppModel {
 				$results[$key]['Task']['time_estimate'] = $split['s'];
 			}
 		}
-
-		if (isset($results['id'])) {
-			return $results;
-		} else if (isset($results['Task'])) {
-			return $this->__setDependenciesComplete($results);
-		} else {
-			foreach ($results as $key => $value) {
-				$results[$key] = $this->__setDependenciesComplete($value);
-			}
-		}
 		return $results;
-	}
-
-	private function __setDependenciesComplete($result) {
-		if (isset($result['DependsOn'])) {
-			if (!empty($result['DependsOn'][0])) {
-				$completed = true;
-				foreach ($result['DependsOn'] as $dependsOn) {
-					if ($dependsOn['task_status_id'] < 3) {
-						$completed = false;
-						break;
-					}
-				}
-				if ($completed) {
-					if (isset($result['Task'])) {
-						$result['Task']['dependenciesComplete'] = true;
-					} else {
-						$result['dependenciesComplete'] = true;
-					}
-				} else {
-					if (isset($result['Task'])) {
-						$result['Task']['dependenciesComplete'] = false;
-					} else {
-						$result['dependenciesComplete'] = false;
-					}
-				}
-			} else {
-				if (isset($result['Task'])) {
-					$result['Task']['dependenciesComplete'] = false;
-				} else {
-					$result['dependenciesComplete'] = false;
-				}
-			}
-		}
-		return $result;
 	}
 
 /**
@@ -250,16 +193,63 @@ class Task extends AppModel {
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 
+		// Get the DB table prefix from our database config, for if
+		// we have multiple systems in the same DB or fixtures have a prefix
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$table_prefix = $db->config['prefix'];
+
 		$this->virtualFields = array(
-			'public_id' => "(SELECT COUNT(`{$this->table}`.`id`) FROM `{$this->table}` WHERE `{$this->table}`.`id` <= `{$this->alias}`.`id` AND `{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)"
+			'public_id' => "(SELECT ".
+				"COUNT(`{$table_prefix}{$this->table}`.`id`) ".
+			"FROM ".
+				"`{$table_prefix}{$this->table}` ".
+			"WHERE ".
+				"`{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` ".
+			"AND ".
+				"`{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
+
+			'dependenciesComplete' => "(SELECT ".
+				"(COUNT(`DepTasks`.`id`) = 0) ".
+			"FROM ".
+				"`{$table_prefix}task_dependencies` TaskDeps ".
+			"INNER JOIN `{$table_prefix}{$this->table}` DepTasks ".
+				"ON `DepTasks`.`id` = `TaskDeps`.`parent_task_id` ".
+			"INNER JOIN `{$table_prefix}task_statuses` TaskStatuses ".
+				"ON `TaskStatuses`.`id` = `DepTasks`.`task_status_id` ".
+			"WHERE ".
+				"`TaskDeps`.`child_task_id` = `{$this->alias}`.`id` ".
+			"AND ".
+				"`TaskStatuses`.`name` NOT IN ('resolved', 'closed'))",
 		);
 	}
 
 /**
  */
 	public function beforeValidate($options = array()) {
+		if (empty($this->data)) {
+			return true;
+		}
+
 		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
 			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
+		}
+
+		// If we have priority and status names, replace them with IDs for saving
+		if (isset($this->data['Task']['type'])) {
+			$this->data['Task']['task_type_id'] = $this->TaskType->nameToID($this->data['Task']['type']);
+			unset($this->data['Task']['type']);
+		}
+		if (isset($this->data['Task']['priority'])) {
+			$this->data['Task']['task_priority_id'] = $this->TaskPriority->nameToID($this->data['Task']['priority']);
+			unset($this->data['Task']['priority']);
+		}
+		if (isset($this->data['Task']['status'])) {
+			$this->data['Task']['task_status_id'] = $this->TaskStatus->nameToID($this->data['Task']['status']);
+			unset($this->data['Task']['status']);
+		}
+
+		if (array_key_exists('milestone_id', $this->data['Task']) && $this->data['Task']['milestone_id'] === null) {
+			$this->data['Task']['milestone_id'] = 0;
 		}
 		return true;
 	}
@@ -273,17 +263,16 @@ class Task extends AppModel {
 	public function beforeSave($options = array()) {
 
 		// Parse time estimate if necessary
-		if (!$this->beforeValidate($options)) {
-			return false;
-		}
+		$this->beforeValidate($options);
 
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
+			
 			foreach ($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
-				if ($dependsOn == $this->id) {
-					unset ($this->data['DependsOn'][$key]);
-					break;
+				if (isset($this->id) && $dependsOn == $this->id) {
+					unset ($this->data['DependsOn']['DependsOn'][$key]);
 				}
 			}
+			$this->data['DependsOn']['DependsOn'] = array_unique(array_values($this->data['DependsOn']['DependsOn']));
 		}
 		return true;
 	}
@@ -292,17 +281,17 @@ class Task extends AppModel {
  * isAssignee function.
  * Returns true if the current user is assigned to the task
  */
-	public function isAssignee() {
-		return User::get('id') == $this->field('assignee_id');
+	public function isAssignee($userId) {
+		return $userId == $this->field('assignee_id');
 	}
 
 /**
  * isOpen function.
  * Returns true if a task is open
  */
- 	// TODO hard-coded status ID
 	public function isOpen() {
-		return $this->field('task_status_id') == 1;
+		$this->TaskStatus->id = $this->field('task_status_id');
+		return $this->TaskStatus->field('name') == 'open';
 	}
 
 /**
@@ -310,9 +299,9 @@ class Task extends AppModel {
  * Returns true if a task is in progress
  * @throws
  */
- 	// TODO hard-coded status ID
 	public function isInProgress() {
-		return $this->field('task_status_id') == 2;
+		$this->TaskStatus->id = $this->field('task_status_id');
+		return $this->TaskStatus->field('name') == 'in progress';
 	}
 
 /**
@@ -326,7 +315,10 @@ class Task extends AppModel {
 /**
  * TODO: Remove
  */
-	public function getTitleForHistory($id) {
+	public function getTitleForHistory($id = null) {
+		if ($id == null) {
+			$id = $this->id;
+		}
 		$this->id = $id;
 		if (!$this->exists()) {
 			return null;
@@ -335,26 +327,27 @@ class Task extends AppModel {
 		}
 	}
 
-	public function fetchLoggableTasks() {
-		// TODO hard coded status IDs
+	public function fetchLoggableTasks($userId) {
 		$myTasks = $this->find(
 			'list',
 			array(
 				'conditions' => array(
-					'Task.task_status_id <' => 4,
+					'TaskStatus.name !=' => array('closed', 'dropped'),
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id' => User::get('id'),
-				)
+					'Task.assignee_id' => $userId,
+				),
+				'recursive' => 1,
 			)
 		);
 		$othersTasks = $this->find(
 			'list',
 			array(
 				'conditions' => array(
-					'Task.task_status_id <' => 4,
+					'TaskStatus.name !=' => array('closed', 'dropped'),
 					'Task.project_id' => $this->Project->id,
-					'Task.assignee_id !=' => User::get('id'),
-				)
+					'Task.assignee_id !=' => $userId,
+				),
+				'recursive' => 1,
 			)
 		);
 		return array(

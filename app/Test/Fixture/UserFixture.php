@@ -2,18 +2,7 @@
 
 class UserFixture extends CakeTestFixture {
 
-    public $fields = array(
-        'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-        'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-        'email' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-        'password' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-        'is_admin' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
-        'is_active' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
-        'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-        'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-        'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-        'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
-    );
+	public $import = array('model' => 'User');
 
     public $records = array(
         array(
@@ -60,9 +49,69 @@ class UserFixture extends CakeTestFixture {
             'id' => 5,
             'name' => 'Mr Admin',
             'email' => 'mr.admin@example.com',
-            'password' => null,
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 1,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 6,
+            'name' => 'Sir Not-Appearing-In-This-Film',
+            'email' => 'snaitf@example.com',
+            'password' => '', // e.g. LDAP account
+            'is_admin' => 0,
+            'is_active' => 0,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 7,
+            'name' => 'A Deletable User',
+            'email' => 'deletable@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
             'is_admin' => 0,
             'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 8,
+            'name' => 'An only-admin',
+            'email' => 'only-admin@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 9,
+            'name' => 'An admin with no projects',
+            'email' => 'admin-no-projects@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 1,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 10,
+            'name' => 'Another user',
+            'email' => 'another-user@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 11,
+            'name' => 'A non-confirmed user',
+            'email' => 'non-confirmed@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 0,
             'created' => '2012-06-01 12:50:08',
             'modified' => '2012-06-01 12:50:08'
         ),

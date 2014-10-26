@@ -1,21 +1,21 @@
 <?php
 /**
  *
- * AppController for the DevTrack system
+ * AppController for the SourceKettle system
  * The application wide controller.
  *
  * Base system: CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Base system: Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * Modifications: DevTrack Development Team 2012
+ * Modifications: SourceKettle Development Team 2012
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright	Original: Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @copyright	Modifications: DevTrack Development Team 2012
- * @link		http://github.com/SourceKettle/devtrack
- * @package		DevTrack.Controller
- * @since		DevTrack v 0.1
+ * @copyright	Modifications: SourceKettle Development Team 2012
+ * @link		http://github.com/SourceKettle/sourcekettle
+ * @package		SourceKettle.Controller
+ * @since		SourceKettle v 0.1
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Controller', 'Controller');
@@ -57,9 +57,21 @@ class AppController extends Controller {
 			'loginRedirect' => array(
 				'controller' => 'dashboard',
 				'action' => 'index'
-			)
+			),
+			'authorize' => array('Controller')
 		)
 	);
+
+	// Default authorisation - allow admins, disallow anyone else.
+	// Override this in the other controller objects to taste.
+	public function isAuthorized($user) {
+
+		// Sysadmins can do anything...
+		if (@$user['is_admin'] == 1) {
+			return true;
+		}
+		return false;
+	}
 
 /**
  * Before filter method acts first in the controller
@@ -67,14 +79,20 @@ class AppController extends Controller {
  * Configures the auth component to use the email column as the user name
  */
 	public function beforeFilter() {
+
 		parent::beforeFilter();
+
+		// There are various database models that are simple lists - we will simply load them here
+		// so they can be used as lookups.
+		$this->set('task_priorities', ClassRegistry::init('TaskPriority')->getLookupTable());
+		$this->set('task_statuses',   ClassRegistry::init('TaskStatus')->getLookupTable());
+		$this->set('task_types',      ClassRegistry::init('TaskType')->getLookupTable());
+
+		//var_dump($this->Auth); exit(0);
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
 		// Load config file in
-		$this->devtrack_config = array_merge(
-			Configure::read('devtrack'),
-			ClassRegistry::init('Settings')->find('list', array('fields' => array('Settings.name', 'Settings.value')))
-		);
+		$this->sourcekettle_config = ClassRegistry::init('Setting')->loadConfigSettings();
 
 		// Default form authentication
 		$formConfig = array(
@@ -82,51 +100,51 @@ class AppController extends Controller {
 		);
 
 		// Is LDAP authentication enabled?
-		if (!isset($this->devtrack_config['ldap_enabled'])) {
-			$this->devtrack_config['ldap_enabled'] = false;
+		if (!isset($this->sourcekettle_config['ldap_enabled'])) {
+			$this->sourcekettle_config['ldap_enabled'] = false;
 		}
 
 		// Default to just form-based authentication
 		$this->Auth->authenticate = array('Form' => $formConfig);
 
-		if ($this->devtrack_config['ldap_enabled']) {
+		if ($this->sourcekettle_config['ldap_enabled']) {
 			$ldapConfErrors = array();
 
 			// Check for existence of all LDAP config fields
-			if (!isset($this->devtrack_config['ldap_url']) || empty($this->devtrack_config['ldap_url'])) {
+			if (!isset($this->sourcekettle_config['ldap_url']) || empty($this->sourcekettle_config['ldap_url'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify an LDAP URL';
 			}
-			if (!isset($this->devtrack_config['ldap_bind_dn'])) {
+			if (!isset($this->sourcekettle_config['ldap_bind_dn'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify a bind DN, or empty string';
 			}
-			if (!isset($this->devtrack_config['ldap_bind_pw'])) {
+			if (!isset($this->sourcekettle_config['ldap_bind_pw'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify a bind password, or empty string';
 			}
-			if (!isset($this->devtrack_config['ldap_base_dn']) || empty($this->devtrack_config['ldap_base_dn'])) {
+			if (!isset($this->sourcekettle_config['ldap_base_dn']) || empty($this->sourcekettle_config['ldap_base_dn'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify an LDAP base DN';
 			}
 
 			// Make sure all-whitespace string is converted to empty string for binding...
-			if (preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_dn'])) {
-				$this->devtrack_config['ldap_bind_dn'] = '';
+			if (preg_match('/^\s*$/', $this->sourcekettle_config['ldap_bind_dn'])) {
+				$this->sourcekettle_config['ldap_bind_dn'] = '';
 			}
-			if (preg_match('/^\s*$/', $this->devtrack_config['ldap_bind_pw'])) {
-				$this->devtrack_config['ldap_bind_pw'] = '';
+			if (preg_match('/^\s*$/', $this->sourcekettle_config['ldap_bind_pw'])) {
+				$this->sourcekettle_config['ldap_bind_pw'] = '';
 			}
 
 			// Default: look them up by the 'mail' field
-			if (!isset($this->devtrack_config['ldap_filter'])) {
-				$this->devtrack_config['ldap_filter'] = '(mail=%USERNAME%)';
+			if (!isset($this->sourcekettle_config['ldap_filter'])) {
+				$this->sourcekettle_config['ldap_filter'] = '(mail=%USERNAME%)';
 			}
 
 			// Default: use the email address the user typed in
-			if (!isset($this->devtrack_config['ldap_email_field'])) {
-				$this->devtrack_config['ldap_email_field'] = '__SUPPLIED__';
+			if (!isset($this->sourcekettle_config['ldap_email_field'])) {
+				$this->sourcekettle_config['ldap_email_field'] = '__SUPPLIED__';
 			}
 
 			// Default: use the given name and surname fields as the name
-			if (!isset($this->devtrack_config['ldap_name_field'])) {
-				$this->devtrack_config['ldap_name_field'] = 'givenName sn';
+			if (!isset($this->sourcekettle_config['ldap_name_field'])) {
+				$this->sourcekettle_config['ldap_name_field'] = 'givenName sn';
 			}
 
 			// Report errors, do not enable LDAP
@@ -136,27 +154,27 @@ class AppController extends Controller {
 				}
 			} else {
 				$ldapConfig = array(
-					'ldap_url'          => $this->devtrack_config['ldap_url'],
-						'ldap_bind_dn'      => $this->devtrack_config['ldap_bind_dn'],
-						'ldap_bind_pw'      => $this->devtrack_config['ldap_bind_pw'],
-						'ldap_base_dn'      => $this->devtrack_config['ldap_base_dn'],
-						'ldap_filter'       => $this->devtrack_config['ldap_filter'],
-						'ldap_to_user'      => array(
-							$this->devtrack_config['ldap_email_field'] => 'email',
-							$this->devtrack_config['ldap_name_field'] => 'name',
-						),
-						// TODO this is an array, we need to make sure we can DB-ify this
-						'all_usernames' => array(
-							'proxyAddresses',
-							'mail',
-						),
+					'ldap_url'          => $this->sourcekettle_config['ldap_url'],
+					'ldap_bind_dn'      => $this->sourcekettle_config['ldap_bind_dn'],
+					'ldap_bind_pw'      => $this->sourcekettle_config['ldap_bind_pw'],
+					'ldap_base_dn'      => $this->sourcekettle_config['ldap_base_dn'],
+					'ldap_filter'       => $this->sourcekettle_config['ldap_filter'],
+					'ldap_to_user'      => array(
+						$this->sourcekettle_config['ldap_email_field'] => 'email',
+						$this->sourcekettle_config['ldap_name_field'] => 'name',
+					),
+					// TODO this is an array, we need to make sure we can DB-ify this
+					'all_usernames' => array(
+						'proxyAddresses',
+						'mail',
+					),
 
-						// These are SourceKettle-specific, not server-specific
-						'form_fields'       => array ('username' => 'email', 'password' => 'password'),
-						'defaults'      => array(
-							'is_active' => 1,
-							'is_admin'  => 0,
-						)
+					// These are SourceKettle-specific, not server-specific
+					'form_fields'       => array ('username' => 'email', 'password' => 'password'),
+					'defaults'      => array(
+						'is_active' => 1,
+						'is_admin'  => 0,
+					)
 				);
 
 				// Put the LDAP authentication in before form auth
@@ -166,10 +184,10 @@ class AppController extends Controller {
 
 		}
 
-		$this->set('devtrack_config', $this->devtrack_config);
-		$this->set('devtrackVersion', 'v1.1');
+		$this->set('sourcekettle_config', $this->sourcekettle_config);
+		$this->set('sourcekettleVersion', 'v1.3.3');
 
-		// Set up the devtrack-specific auth model
+		// Set up the sourcekettle-specific auth model
 		$this->Auth->userModel = 'User';
 
 		//Customise the login error
@@ -183,43 +201,34 @@ class AppController extends Controller {
 		//Use sha256 as the hashing algorithm for the site as it is the most secure out of the allowed options.
 		Security::setHash('sha256');
 
+		// Currently logged-in user ID
+		$userId = null;
+
+		$this->User = ClassRegistry::init('User');
 		if ($this->Auth->loggedIn()) {
-			User::store($this->Auth->user());
+			$userId = $this->Auth->user('id');
+			$current_user = $this->User->findById($userId);
 
-			$userId = User::get('id');
-			$userName = User::get('name');
-			$userEmail = User::get('email');
-			$isAdmin = (User::get('is_admin') == 1);
-			$this->set('user_id', $userId);
-			$this->set('user_name', $userName);
-			$this->set('user_email', $userEmail);
-			$this->set('user_is_admin', $isAdmin);
+			$this->set('current_user', $current_user['User']);
+
+			// TODO this is a bit of a hacky way to let the project history logger know who did what :-/
+			// Pretty much nicked from http://bakery.cakephp.org/articles/alkemann/2008/10/21/logablebehavior
+			if (sizeof($this->uses) && @$this->{$this->modelClass}->Behaviors && $this->{$this->modelClass}->Behaviors->attached('ProjectHistory')) {
+				$this->{$this->modelClass}->setLogUser($current_user['User']);
+			}
 		} else {
-			$this->set('user_is_admin', false);
+			$this->set('current_user', null);
 		}
-
 		// if admin pages are being requested
 		if (isset($this->params['admin'])) {
 			// check the admin is logged in
-			if ( !isset($userId) || empty($userId) ) $this->redirect('/login');
-			if ( $this->Auth->user('is_admin') == 0 ) $this->redirect('/');
+			if ( !isset($userId) || empty($userId) ) return $this->redirect('/login');
+			if ( $this->Auth->user('is_admin') == 0 ) return $this->redirect('/');
 		}
 		if (isset($this->params['api'])) {
 			// The following line kinda breaks the M->V->C thing
+			// TODO this needs tidying up
 			$this->{$this->modelClass}->_is_api = true;
-		}
-
-		if ($theme = $this->Auth->user('theme')) {
-			$this->set('user_theme', $theme);
-		} else {
-			$this->set('user_theme', null);
-		}
-
-		// Is the user account devtrack-managed or external e.g. LDAP?
-		if (isset($userId)) {
-			$_userModel = ClassRegistry::init('User');
-			$user = $_userModel->findById($userId);
-			$this->set('user_is_devtrack_managed', User::isDevTrackManaged($user));
 		}
 	}
 
@@ -229,7 +238,7 @@ class AppController extends Controller {
 			$this->Flash->errorReason("The request was blackholed due to a CSRF violation. You have either tried to submit this form more than once or submitted the form from another web site");
 
 			if (!$this->request->is('ajax')) {
-				$this->redirect($this->referer());
+				return $this->redirect($this->referer());
 			}
 		}
 	}

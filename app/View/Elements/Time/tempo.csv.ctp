@@ -1,26 +1,29 @@
 <?php
 /**
  *
- * Tempo display for APP/times/history for the DevTrack system
+ * Tempo display for APP/times/history for the SourceKettle system
  * Shows a table of time vs. tasks
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements.Time
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements.Time
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+
 $headers = array(__('Task'), __('User'));
 foreach ($weekTimes['dates'] as $daynum => $date){
-	$headers[] = __($date->format('D M d'));
+	$headers[] = __($date->format('D M d Y'));
 }
+$headers[] = __('Total');
 
 $body = array($headers);
 
+$overallTotal = 0;
 foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 	foreach ($taskDetails['users'] as $userId => $userDetails) {
 		$line = array();
@@ -35,13 +38,18 @@ foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 		$line[] = $userDetails['User']['name'];
 
 		// 1=Mon, 7=Sun...
+		$rowTotal = 0;
 		for ($i = 1; $i <= 7; $i++) {
 			if (array_key_exists($i, $userDetails['days'])) {
 				$line[] = $userDetails['days'][$i];
+				$rowTotal += $userDetails['days'][$i];
 			} else {
 				$line[] = '';
 			}
 		}
+
+		$line[] = $rowTotal;
+		$overallTotal += $rowTotal;
 
 		$body[] = $line;
 	}
@@ -55,12 +63,10 @@ for ($i = 1; $i <= 7; $i++) {
 		$foot[] = '';
 	}
 }
+$foot[] = $overallTotal;
 
 $body[] = $foot;
 
-// TODO this content-type never seems to work :-(
-header('Content-type: text/csv; charset=utf-8');
-header('Content-Disposition: attachment; filename="timesheet.csv"');
 $stdout = fopen('php://output', 'w');
 foreach ($body as $line) {
 	fputcsv($stdout, $line);

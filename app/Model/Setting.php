@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Setting model for the DevTrack system
+ * Setting model for the SourceKettle system
  * Represents core settings in the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('AppModel', 'Model');
@@ -31,12 +31,7 @@ class Setting extends AppModel {
 				'rule' => array('notempty'),
 			),
 		),
-		// We may need to set e.g. LDAP fields to empty
-		/*'value' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
-			),
-		),*/
+		// NB values may be empty.
 	);
 
 /**
@@ -48,5 +43,40 @@ class Setting extends AppModel {
 		$this->id = $setting['Setting']['id'];
 		$this->set('value', '1');
 		$this->save();
+	}
+
+/**
+ * Merges any settings from our config files with settings from the database,
+ * which take priority.
+ */
+	public function loadConfigSettings() {
+
+		// Load config file first
+		$settings = Configure::read('sourcekettle');
+
+		foreach ($this->find('list', array('fields' => array('Setting.name', 'Setting.value')))  as $name => $value) {
+
+			// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
+			$path = explode('.', $name);
+			$current = &$settings;
+
+			// Eat key parts one at a time
+			while(($key = array_shift($path))) {
+
+				// If we're on the last key part, set the value
+				if (empty($path)) {
+					$current[$key] = $value;
+
+				// Otherwise, make sure it maps to an array
+				} else {
+					$current[$key] = @$current[$key] ?: array();
+				}
+
+				// Keep track of progress through the settings array
+				$current = &$current[$key];
+			}
+		}
+
+		return $settings;
 	}
 }

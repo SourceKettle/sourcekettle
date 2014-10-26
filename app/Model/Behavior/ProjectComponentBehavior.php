@@ -1,15 +1,15 @@
 <?php
 /**
  *
- * Behaviour for omponents of a project in the DevTrack system
+ * Behaviour for omponents of a project in the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Model.Behavior
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Model.Behavior
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -34,19 +34,21 @@ class ProjectComponentBehavior extends ModelBehavior {
  * @throws NotFoundException
  * @throws ForbiddenException
  */
-	public function open(Model $Model, $id = null, $ownerRequired = false) {
-		if ($id == null) {
-			if ($Model->id == null) {
-				throw new NotFoundException(__('Invalid ' . $Model->name));
-			}
+	public function open(Model $Model, $id = null) {
+
+		// Override the ID if we were specifically given one
+		if ($id != null) {
+			$Model->id = $id;
+		}
+
+		if ($Model->id == null) {
+			throw new NotFoundException(__('Invalid ' . $Model->name));
 		}
 
 		// Enable when public_id's are used
-		// if ($Model->hasField('public_id', true) && $_virtual = $Model->findByPublicId($id)) {
-		//	   $id = $_virtual[$Model->name]['id'];
-		// }
-
-		$Model->id = $id;
+		if ($Model->hasField('public_id', true) && $_virtual = $Model->findByPublicIdAndProjectId($id, $Model->Project->id)) {
+		    $Model->id = $_virtual[$Model->name]['id'];
+		}
 
 		if (!$Model->exists()) {
 			throw new NotFoundException(__('Invalid ' . $Model->name));
@@ -56,15 +58,6 @@ class ProjectComponentBehavior extends ModelBehavior {
 
 		if ($Model->Project->id && ($object[$Model->name]['project_id'] != $Model->Project->id)) {
 			throw new NotFoundException(__('Invalid ' . $Model->name));
-		}
-
-		if ($ownerRequired) {
-			$isNotOwner = ($object[$Model->name]['user_id'] != User::get('id'));
-			$isNotAdmin = !$Model->Project->isAdmin();
-
-			if ($isNotOwner && $isNotAdmin) {
-				throw new ForbiddenException(__('Ownership required'));
-			}
 		}
 
 		return $object;

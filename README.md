@@ -14,4 +14,3 @@ The feature list includes:
 * Configurable options and themes
 * and more...
 
-It's still under development at the moment! Deploy at your own risk.

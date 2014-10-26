@@ -12,7 +12,7 @@
 	url = git://github.com/SourceKettle/GitCake.git
 [submodule "app/Plugin/TwitterBootswatch"]
 	path = app/Plugin/TwitterBootswatch
-	url = git://github.com/pwhittlesea/TwitterBootswatchHelper.git
+	url = git://github.com/SourceKettle/TwitterBootswatchHelper.git
 [submodule "app/Plugin/LDAPAuthCake"]
 	path = app/Plugin/LDAPAuthCake
 	url = git://github.com/amn-ecs/LDAPAuthCake.git

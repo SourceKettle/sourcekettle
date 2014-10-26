@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Element for APP/tasks/index for the DevTrack system
+ * Element for APP/tasks/index for the SourceKettle system
  * Shows a task box for a task
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Elements.Task
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Elements.Task
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (!isset($draggable)){
@@ -22,7 +22,12 @@ if(isset($span) && $span){
 } else {
 	$span="";
 }
-$url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
+$url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
+	if($draggable){
+		echo "<li class='draggable' data-taskid='".h($task['Task']['id'])."'>";
+	} else {
+		echo "<li>";
+	}
 ?>
 <div id="task_<?= $task['Task']['id'] ?>" 
   class="task-container<?=$span?>"
@@ -38,7 +43,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                 <div>
                     <div class="span10">
                         <p>
-                            <?= $this->Html->link('<strong>#'.$task['Task']['id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
+                            <?= $this->Html->link('<strong>#'.$task['Task']['public_id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
                         </p>
                         <?= $this->Task->priority($task['Task']['task_priority_id']) ?>
                         <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
@@ -51,6 +56,18 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                                 echo "<span class='label label-success' title='Dependencies complete'>D</span>";
                             }
                         }
+
+						// Display story points or time estimate if we have one
+						if (!empty($task['Task']['story_points'])) {
+							echo "<span class='label' title='Story points'>";
+							printf(ngettext("%d point", "%d points", $task['Task']['story_points']), $task['Task']['story_points']);
+							echo "</span>";
+						
+						} elseif (!empty($task['Task']['time_estimate']) && TimeString::parseTime($task['Task']['time_estimate']) > 0) {
+							echo "<span class='label' title='Time estimate'>";
+							echo "Est. ".$task['Task']['time_estimate'];
+							echo "</span>";
+						}
                         ?>
                     </div>
                     <div class="span2">
@@ -65,3 +82,4 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
         </div>
     </div>
 </div>
+</li>

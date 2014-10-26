@@ -53,7 +53,7 @@ if ($securitySaltChanged && $securityCipherChanged) { ?>
 <? }
 if (!$gitUserSet) { ?>
 	<div class="alert alert-error">
-		<?=__d('cake_dev', 'Your git user is NOT set. The git user can be set in [' . $configdir . 'devtrack.php]')?>
+		<?=__d('cake_dev', 'Your git user is NOT set. The git user can be set in [' . $configdir . 'sourcekettle.php]')?>
 	</div>
 <? } else { ?>
 	<div class="alert alert-success">
@@ -146,7 +146,7 @@ if ($gitRepoSet) { ?>
 	<? }
 } else { ?>
 	<div class="alert alert-error">
-		<?=__d('cake_dev', 'Your git repositories directory is NOT set. The git repositories directory can be set in [' . $configdir . 'devtrack.php]')?>
+		<?=__d('cake_dev', 'Your git repositories directory is NOT set. The git repositories directory can be set in [' . $configdir . 'sourcekettle.php]')?>
 	</div>
 <? }
 if ($complete) { ?>

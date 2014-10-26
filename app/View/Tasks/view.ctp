@@ -1,49 +1,30 @@
 <?php
 /**
  *
- * View class for APP/tasks/view for the DevTrack system
+ * View class for APP/tasks/view for the SourceKettle system
  * Allows a user to view a task for a project
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Tasks
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Tasks
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 $this->Html->css('tasks.view', null, array ('inline' => false));
-
-
-// The following JS will change a comment box into an input box
-$this->Html->scriptBlock("
-    $('.comment').find(':button.edit').bind('click', function() {
-		$('.comment form').hide();
-        var p = $(this).parent('.comment');
-        p.find('p').hide();
-        p.find('form').show();
-    });
-
-	$('.comment').find (':button.delete').click (function() {
-		var result = confirm ('Are you sure you want to delete this comment?');
-		if ( result ) {
-			$(this).parent('.comment').find('form.comment-delete').submit();
-		}
-	});
-", array('inline' => false));
+$this->Html->script("tasks.view", array ('inline' => false));
 
 echo $this->element('Task/modal_close');
-
-if ($task['Task']['task_status_id'] ==  1 || $task['Task']['task_status_id'] ==  2){
-    echo $this->element('Task/modal_resolve');
-} else if ($task['Task']['task_status_id'] ==  3){
-    echo $this->element('Task/modal_unresolve');
-}
 echo $this->element('Task/modal_assign');
 
-?>
+if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
+    echo $this->element('Task/modal_resolve');
+} else if ($task['TaskStatus']['name'] == 'resolved'){
+    echo $this->element('Task/modal_unresolve');
+}?>
 
 <?= $this->DT->pHeader() ?>
 <div class="row">
@@ -53,7 +34,7 @@ echo $this->element('Task/modal_assign');
     <div class="row">
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar_view', array('id' => $task['Task']['id'], 'dependenciesComplete' => $task['Task']['dependenciesComplete'])) ?>
+            <?= $this->element('Task/topbar_view', array('id' => $task['Task']['public_id'], 'dependenciesComplete' => $task['Task']['dependenciesComplete'])) ?>
             <div class="span10">
 
                 <div class="row-fluid">
@@ -72,12 +53,12 @@ echo $this->element('Task/modal_assign');
                                     <?= $this->Bootstrap->icon('pencil') ?>
                                     <small>
                                         <?= h($task['Owner']['name']) ?>
-                                        <?= $this->DT->t('history.create.action') ?>
+                                        <?= __("created this task") ?>
                                         <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
                                     </small>
                                     <span class="pull-right">
                                         <? if (!is_null($task['Assignee']['id'])) : ?>
-                                            <?= $this->DT->t('history.assignee.assigned') ?>
+                                            <?= __("Assigned to:") ?>
                                             <?= $this->Html->link(
                                                 $task['Assignee']['name'],
                                                 array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
@@ -88,7 +69,7 @@ echo $this->element('Task/modal_assign');
                                                 array('escape' => false, 'class' => '')
                                             ) ?>
                                         <? else : ?>
-                                            <?= $this->DT->t('history.assignee.none') ?>
+                                            <?= __("No-one currently assigned") ?>
                                         <? endif; ?>
                                     </span>
                                 </h5>
@@ -147,26 +128,26 @@ echo $this->element('Task/modal_assign');
 
                     <div class="span1">
                         <?= $this->Html->link(
-                            $this->Gravatar->image($user_email, array('d' => 'mm')),
-                            array('controller' => 'users', 'action' => 'view', $user_id),
+                            $this->Gravatar->image($current_user['email'], array('d' => 'mm')),
+                            array('controller' => 'users', 'action' => 'view', $current_user['id']),
                             array('escape' => false, 'class' => 'thumbnail')
                         ) ?>
                     </div>
                     <div class="span11">
                         <div class="well col">
                             <?php
-                            echo $this->Form->create('TaskComment', array('class' => 'form'));
+                            echo $this->Form->create('TaskComment', array('class' => 'form', 'url' => array('controller' => 'tasks', 'action' => 'comment', 'project' => $project['Project']['name'], $task['Task']['id'])));
 
 							echo $this->Bootstrap->input("comment", array(
 								"input" => $this->Markitup->editor("comment", array(
 									"class" => "span11",
 									"label" => false,
-									"placeholder" => $this->DT->t('history.newcomment.placeholder')
+									"placeholder" => __("Add a new comment to this task...")
 								)),
 								"label" => false,
 							));
 
-                            echo $this->Bootstrap->button($this->DT->t('history.newcomment.submit'), array("style" => "primary", 'class' => 'controls'));
+                            echo $this->Bootstrap->button(__("Comment"), array("style" => "primary", 'class' => 'controls'));
                             echo $this->Form->end();
                             ?>
                         </div>

@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * Time model for the CodeKettle system
+ * Time model for the SourceKettle system
  * Represents a time segment
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/CodeKettle
- * @package       CodeKettle.Model
- * @since         CodeKettle v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle
+ * @package       SourceKettle.Model
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -72,7 +72,7 @@ class Time extends AppModel {
 			'rule' => array('numeric'),
 			'message' => 'A valid user id was not entered',
 		),
-		// TODO why min of 3 days? Seems reasonable but hard coded...
+		// TODO why max of 3 days? Seems reasonable but hard coded...
 		'mins' => array(
 			'maximum' => array(
 				'rule' => array('comparison', '<', 4320),
@@ -104,11 +104,11 @@ class Time extends AppModel {
 		)
 	);
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
 
 		// Set the current date
-		$this->__currentDate = new DateTime();
+		$this->__currentDate = new DateTime(null, new DateTimeZone('UTC'));
 		$this->__maximumAllowedYear = $this->currentYear(1);
 	}
 
@@ -135,7 +135,7 @@ class Time extends AppModel {
 			return true;
 		}
 
-		if(is_int($this->data['Time']['mins'])){
+		if (is_int($this->data['Time']['mins'])) {
 			return true;
 		}
 
@@ -178,37 +178,40 @@ class Time extends AppModel {
 
 /**
  * @OVERRIDE
+ * @throws
  */
 	public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
 		$events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'time');
 		return $events;
 	}
 
-	public function fetchWeeklySummary($projectId = null, $year = null, $week = null, $userId = null){
-		$projectId = ($projectId == null) ? $this->project->id : $projectId;
+	public function fetchWeeklySummary($projectId = null, $year = null, $week = null, $userId = null) {
+		$projectId = ($projectId == null) ? $this->Project->id : $projectId;
 
 		if ($projectId == null) {
 			throw new InvalidArgumentException("Could not fetch times for unknown project");
 		}
 
-		if($year === null){
+		if ($year === null) {
 			$year = date('Y');
 		}
 
-		if($week === null){
+		if ($week === null) {
 			$week = date('W');
 		}
 
 		// Convert to date range
-		$startDate = new DateTime();
+		$startDate = new DateTime(null, new DateTimeZone('UTC'));
 		$startDate->setISODate($year, $week, 1);
-		$endDate = new DateTime();
+		$startDate->setTime(0, 0, 0);
+		$endDate = new DateTime(null, new DateTimeZone('UTC'));
 		$endDate->setISODate($year, $week, 7);
+		$endDate->setTime(0, 0, 0);
 
 		$conditions = array(
-                'Project.id' => $projectId,
-                'Time.date >=' => $startDate->format('Y-m-d'),
-                'Time.date <=' => $endDate->format('Y-m-d'),
+			'Project.id' => $projectId,
+			'Time.date >=' => $startDate->format('Y-m-d'),
+			'Time.date <=' => $endDate->format('Y-m-d'),
 		);
 
 		if (isset($userId) && $userId != null) {
@@ -216,67 +219,81 @@ class Time extends AppModel {
 		}
 
 		$weekTimes = $this->find('all', array(
-            'fields' => array(
-                'Task.id', 'Task.subject',
-                'User.id', 'User.name', 'User.email',
-                'Time.date', 'SUM(Time.mins) as total_mins'
-            ),
-            'conditions'    => $conditions,
-            'group' => array('Task.id', 'User.id', 'Time.date'),
-            'order' => array('Task.subject', 'User.name', 'Time.date')
-        ));
+			'fields' => array(
+				'Task.id', 'Task.subject',
+				'User.id', 'User.name', 'User.email',
+				'Time.id', 'Time.date', 'Time.description', 'Time.mins' //'SUM(Time.mins) as total_mins'
+			),
+			'conditions' => $conditions,
+			'order' => array('Task.subject', 'User.name', 'Time.date')
+		));
 
 		$summary = array('totals' => array(), 'tasks' => array(), 'dates' => array());
-		$last_uid = 0;
-		$last_tid = -1;
+		$lastUid = 0;
+		$lastTid = -1;
+		$lastDate = null;
 		$totals = array();
+
 		for ($i = 1; $i <= 7; $i++) {
 			$summary['totals'][$i] = 0;
 			$day = clone $startDate;
-			$day->add(new DateInterval('P'.($i-1).'D'));
+			$day->add(new DateInterval('P' . ($i - 1) . 'D'));
 			$summary['dates'][$i] = $day;
 
 		}
 		foreach ($weekTimes as $time) {
 
 			// Make the variables a bit more managable...
-			$minutes = $time[0]['total_mins'];
 			$task = $time['Task'];
 			$user = $time['User'];
 			$time = $time['Time'];
+			$minutes = $time['mins'];
+			$date = strtotime($time['date']);
 
 			// Convert null task ID to 0
 			$task['id'] = isset($task['id']) ? $task['id'] : 0;
 
 			// ISO day of week, 1=Monday 7=Sunday
-			$dow = date('N', strtotime($time['date']));
+			$dow = date('N', $date);
 
 			// Build Horrible Array of Doom... start ordered by task
-			if($last_tid != $task['id']){
-				$last_uid = 0;
+			if ($lastTid != $task['id']) {
+				$lastUid = 0;
 				$summary['tasks'][ $task['id'] ] = array(
 					'Task' => $task,
 					'users' => array()
 				);
 			}
+			$summary_task = $summary['tasks'][ $task['id'] ];
 
 			// Now for each task, add a list of users; each user then has a breakdown of tasks by day
-			if($last_uid != $user['id']){
-				$summary['tasks'][ $task['id'] ]['users'][ $user['id'] ] = array(
+			if ($lastUid != $user['id']) {
+				$summary_task['users'][ $user['id'] ] = array(
 					'User' => $user,
-					'days' => array()
+					'times_by_day' => array()
 				);
 			}
+			$summary_user = $summary_task['users'][ $user['id'] ];
 
-			// Yes, this is "fun". But it makes rendering the summary table fairly easy.
-			// TODO make less bollocks.
-			$summary['tasks'][ $task['id'] ]['users'][ $user['id'] ]['days'][$dow] = $minutes;
+			// Add time to the list for that day
+			if (!isset($summary_user['times_by_day'][$dow])) {
+				$summary_user['times_by_day'][$dow] = array();
+			}
+			$summary_user['times_by_day'][$dow][] = array('Time' => $time);
+
+			// Store everything back in the Array of Doom
+			$summary_task['users'][ $user['id'] ] = $summary_user;
+			$summary['tasks'][ $task['id'] ] = $summary_task;
+
+
+			// Keep a convenient 'total minutes for each day' entry for rendering
 			$summary['totals'][$dow] += $minutes;
 
-			$last_uid = $user['id'];
-			$last_tid = $task['id'];
+			// Track where we are in the list
+			$lastUid = $user['id'];
+			$lastTid = $task['id'];
+			$lastDate = $date;
 		}
-
 		return $summary;
 	}
 
@@ -296,10 +313,10 @@ class Time extends AppModel {
 
 		$totalLoggedTime = $this->find('all', array(
 			'conditions' => array('Time.project_id' => $projectId),
-			'fields' => array('SUM(Time.mins)')
+			'fields' => array('SUM(Time.mins) AS total_mins')
 		));
 
-		$totalLoggedTime = $totalLoggedTime[0][0]['SUM(`Time`.`mins`)'];
+		$totalLoggedTime = $totalLoggedTime[0][0]['total_mins'];
 
 		try{
 			$totalLoggedTime = TimeString::renderTime($totalLoggedTime);
@@ -330,12 +347,12 @@ class Time extends AppModel {
 				'User.id',
 				'User.name',
 				'User.email',
-				'SUM(Time.mins)'
+				'SUM(Time.mins) AS total_mins'
 			)
 		));
 
 		foreach ($userTimes as $key => $value) {
-			$userTimes[$key]['Time']['time'] = TimeString::renderTime($value[0]["SUM(`Time`.`mins`)"]);
+			$userTimes[$key]['Time']['time'] = TimeString::renderTime($value[0]["total_mins"]);
 		}
 
 		return $userTimes;
@@ -413,103 +430,6 @@ class Time extends AppModel {
 	}
 
 /**
- * tasksForWeek function.
- * Return a list of tasks worked on this week
- *
- * @param mixed $year the year
- * @param mixed $week the week
- */
-	public function tasksForWeek($year, $week, $current_user_only = true) {
-		$conditions = array(
-			'Time.date BETWEEN ? AND ?' => array(
-				$this->startOfWeek($year, $week),
-				$this->startOfWeek($year, $week + 1)
-			),
-			'Time.project_id' => $this->Project->id
-		);
-		if($current_user_only){
-			$conditions['Time.user_id'] = User::get('id');
-		}
-		$tasksForWeek = $this->find(
-			'list',
-			array(
-				'fields' => array('Time.task_id'),
-				'group' => array('Time.task_id'),
-				'conditions' => $conditions
-			)
-		);
-		return array_values($tasksForWeek);
-	}
-
-/**
- * timesForWeek function.
- * Fetch the time logged in a week
- *
- * @param mixed $year the year
- * @param mixed $week the week
- */
-	public function timesForWeek($year, $week, $current_user_only = true) {
-		$this->recursive = -1;
-		$weekEvents = array();
-		$dateToday = date('Y-m-d');
-
-		// Iterate over our week
-		for ($day = 1; $day <= 7; $day++) {
-
-			// Real date for the day
-			$today = $this->dayOfWeek($year, $week, $day);
-
-			$weekEvents[$day] = array(
-				'date' => $today,
-				'times' => array(),
-				'today' => ($today == $dateToday) ? true : false,
-				'totalTimes' => array(),
-				'totalTime' => 0
-			);
-
-			$conditions = array(
-				'Time.date' => $today,
-				'Time.project_id' => $this->Project->id,
-			);
-			if($current_user_only){
-				$conditions['Time.user_id'] = User::get('id');
-			}
-
-			$todaysTimes = $this->find(
-				'all', array(
-				'conditions' => $conditions
-			));
-
-			foreach ($todaysTimes as $time) {
-				if (!$time['Time']['task_id']) {
-					$time['Time']['task_id'] = 0;
-				}
-				if (!isset($weekEvents[$day]['times'][$time['Time']['task_id']])) {
-					$weekEvents[$day]['times'][$time['Time']['task_id']] = array();
-					$weekEvents[$day]['totalTimes'][$time['Time']['task_id']] = 0;
-				}
-				$weekEvents[$day]['times'][$time['Time']['task_id']][] = $time;
-				$weekEvents[$day]['totalTimes'][$time['Time']['task_id']] += $time['Time']['mins'];
-				$weekEvents[$day]['totalTime'] += $time['Time']['mins'];
-			}
-
-			// Change the total to a useful format
-			foreach ($weekEvents[$day]['totalTimes'] as $a => $b) {
-				$b = TimeString::renderTime($b);
-				$weekEvents[$day]['totalTimes'][$a] = $b['h'] + round($b['m'] / 60, 1);
-			}
-			$totalTime = TimeString::renderTime($weekEvents[$day]['totalTime']);
-			$weekEvents[$day]['totalTime'] = $totalTime['h'] + round($totalTime['m'] / 60, 1);
-
-			$weekEvents[$this->__currentDate->format('D')] = $weekEvents[$day];
-
-			unset($weekEvents[$day]);
-		}
-
-		return $weekEvents;
-	}
-
-/**
  * toString function.
  *
  * @param mixed $id the optional id of the time element
@@ -524,6 +444,9 @@ class Time extends AppModel {
 
 		$this->recursive = -1;
 		$time = $this->findById($id);
+		if (!array_key_exists('Time', $time)) {
+			throw new InvalidArgumentException("Could not find time with ID '$id'");
+		}
 		return $time['Time']['minutes']['s'];
 	}
 
@@ -553,7 +476,7 @@ class Time extends AppModel {
  * @throws InvalidArgumentException
  */
 	public function validateWeek($week = null, $year = null) {
-		if ($week == null) {
+		if ($week === null) {
 			return $this->currentWeek();
 		}
 		if (!is_numeric($week) || $week < 1 || $week > $this->lastWeekOfYear($year)) {

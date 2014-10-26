@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * View class for APP/projects/admin_index for the DevTrack system
+ * View class for APP/projects/admin_index for the SourceKettle system
  * View will render lists of projects
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Projects
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Projects
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -63,7 +63,7 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                 <? foreach ( $projects as $project ) : ?>
                     <tr>
                         <td>
-                            <?= $this->Html->link($project['Project']['name'], array('action' => 'view', $project['Project']['id'], 'admin' => false))?>
+                            <?= $this->Html->link($project['Project']['name'], array('controller' => 'projects', 'action' => 'view', 'project' => $project['Project']['name'], 'admin' => false))?>
                         </td>
                         <td>
                             <div id='project_description'>
@@ -110,9 +110,25 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
 								'escape' => false
 							)
 						)?>
+						<?= $this->Bootstrap->button_link(
+							$this->Bootstrap->icon('random'),
+							$this->Html->url(
+								array(
+									'project' => $project['Project']['name'],
+									'action' => 'rename',
+									'controller' => 'projects',
+									'admin' => true
+								 )
+							),
+							array(
+								'size' => 'mini',
+								'title' => __('Rename project'),
+								'escape' => false
+							)
+						)?>
                         <?= $this->Bootstrap->button_form(
                             $this->Bootstrap->icon('eject', 'white'),
-                            $this->Html->url(array('controller' => 'projects', 'action' => 'admin_delete', $project['Project']['id']), true),
+                            $this->Html->url(array('controller' => 'projects', 'action' => 'delete', 'admin' => false, 'project' => $project['Project']['name']), true),
                             array('escape'=>false, 'style' => 'danger', 'size' => 'mini', 'class' => ''),
                             __("Are you sure you want to delete ") . h($project['Project']['name']) . "?"
                         )?>

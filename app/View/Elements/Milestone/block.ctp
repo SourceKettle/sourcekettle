@@ -1,23 +1,22 @@
 <?php
 /**
  *
- * Element for displaying A Milestone in the DevTrack system
+ * Element for displaying A Milestone in the SourceKettle system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Element.Milestone
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Element.Milestone
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$o = $milestone['Milestone']['oTasks'];
-$i = $milestone['Milestone']['iTasks'];
-$r = $milestone['Milestone']['rTasks'];
-$c = $milestone['Milestone']['cTasks'];
-
-$t = ($o + $i + $r + $c);
+$o = @$milestone['Tasks']['open']['numTasks'];
+$i = @$milestone['Tasks']['in progress']['numTasks'];
+$r = @$milestone['Tasks']['resolved']['numTasks'];
+$c = @$milestone['Tasks']['closed']['numTasks'];
+$t = @$milestone['Progress']['tasksTotal'];
 
 $percent_o = ($t == 0) ? 0 : $o / $t * 100;
 $percent_i = ($t == 0) ? 0 : $i / $t * 100;
@@ -42,6 +41,7 @@ $link_remove = $this->Html->link(
     ),
     array(
         'class' => 'close delete',
+		'title' => __('Delete milestone'),
         'escape' => false
     )
 );
@@ -54,6 +54,7 @@ $link_close = $this->Html->link(
     ),
     array(
         'class' => 'close delete',
+		'title' => __('Close milestone'),
         'escape' => false
     )
 );
@@ -66,6 +67,7 @@ $link_reopen = $this->Html->link(
     ),
     array(
         'class' => 'close delete',
+		'title' => __('Re-open milestone'),
         'escape' => false
     )
 );
@@ -74,6 +76,19 @@ $link_edit = $this->Html->link(
     array(
         'project' => $project['Project']['name'],
         'action' => 'edit',
+        $milestone['Milestone']['id']
+    ),
+    array(
+        'class' => 'close edit',
+		'title' => __('Edit milestone'),
+        'escape' => false
+    )
+);
+$link_plan= $this->Html->link(
+    $this->Bootstrap->icon('list-alt'),
+    array(
+        'project' => $project['Project']['name'],
+        'action' => 'plan',
         $milestone['Milestone']['id']
     ),
     array(
@@ -92,6 +107,7 @@ $link_edit = $this->Html->link(
             <div class="span7">
                 <?= $link_remove ?>
                 <?= $milestone['Milestone']['is_open']? $link_close : $link_reopen?>
+                <?= $link_plan?>
                 <?= $link_edit ?>
                 <p>
                     <small>
@@ -100,7 +116,7 @@ $link_edit = $this->Html->link(
                         <?= ($r > 0)  ? $this->Bootstrap->badge($r, 'success').' '.__('resolved') : ''?>
                         <?= ($i > 0)  ? $this->Bootstrap->badge($i, 'warning').' '.__('in progress') : ''?>
                         <?= ($o > 0)  ? $this->Bootstrap->badge($o, 'important').' '.__('open') : ''?>
-                        <span class="pull-right muted"><?=$milestone['Milestone']['dPoints']?>/<?=$milestone['Milestone']['tPoints']?> points</span>
+                        <span class="pull-right muted"><?=@$milestone['Progress']['pointsComplete']?>/<?=@$milestone['Progress']['pointsTotal']?> points</span>
                     </small>
                 </p>
                 <div class="progress progress-striped">

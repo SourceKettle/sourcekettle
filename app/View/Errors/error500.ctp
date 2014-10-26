@@ -1,16 +1,16 @@
 <?php
 /**
  *
- * APP/View/Error/error500 for the DevTrack system
+ * APP/View/Error/error500 for the SourceKettle system
  * Shows an error when something has gone wrong
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.View.Errors
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.View.Errors
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 $this->layout = 'error';

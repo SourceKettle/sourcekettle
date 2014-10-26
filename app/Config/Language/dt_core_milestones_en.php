@@ -7,16 +7,16 @@
  *
  * tl;dr Here be dragons.
  *
- * Core Configuration file for the DevTrack system
+ * Core Configuration file for the SourceKettle system
  * Provides the core config for the system
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     DevTrack Development Team 2012
- * @link          http://github.com/SourceKettle/devtrack
- * @package       DevTrack.Config
- * @since         DevTrack v 0.1
+ * @copyright     SourceKettle Development Team 2012
+ * @link          http://github.com/SourceKettle/sourcekettle
+ * @package       SourceKettle.Config
+ * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -83,5 +83,7 @@ $config['dtcore']['pages']['milestones']['edit']['en']['form.due.label'] = "Comp
 $config['dtcore']['pages']['milestones']['edit']['en']['form.due.help'] = "When the milestone should be complete.";
 $config['dtcore']['pages']['milestones']['edit']['en']['form.submit'] = "Submit";
 
+//APP/Milestones/plan
+$config['dtcore']['pages']['milestones']['plan']['en']['header.text'] = "Milestone task planner";
 //APP/Milestones/close
 $config['dtcore']['pages']['milestones']['close']['en']['header.text'] = "Close Milestone";
