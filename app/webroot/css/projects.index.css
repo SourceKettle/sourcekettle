@@ -19,3 +19,7 @@
 .project-desc {
   height: 40px;
 }
+
+.burndown {
+	min-height: 500px;
+}

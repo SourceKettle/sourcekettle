@@ -1,5 +1,5 @@
 // JavaScript code to plot a burndown chart based on log data only
-// Fallse back to just showing a list of logged changes, which is less fun
+// Falls back to just showing a list of logged changes, which is less fun
 $('.burndown').each(function(index, chartbox) {
 
 	// Hide the table of data
