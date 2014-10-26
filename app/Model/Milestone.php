@@ -319,12 +319,7 @@ class Milestone extends AppModel {
 		return $summary;
 	}
 
-/**
- * getOpenMilestones function.
- * Get all the open milestones
- *
- * @param bool $assoc true if names needed
- */
+	// Helpers to get open and closed milestone lists
 	public function getOpenMilestones() {
 		return $this->listMilestones(true);
 	}
@@ -390,6 +385,40 @@ class Milestone extends AppModel {
 		}
 		return $milestones;
 
+	}
+
+	// Helper to get a list of milestone options e.g. for selecting milestones to
+	// add a task to. This is a simplified set of data compared to listMilestones().
+	public function listMilestoneOptions() {
+		$milestones = array('open' => array(), 'closed' => array());
+
+		$milestones = array(
+			"No assigned milestone",
+			'Open' => $this->find('list', array(
+				'conditions' => array(
+					'project_id' => $this->Project->id,
+					'is_open' => 1,
+				),
+				'fields' => array(
+					'Milestone.id',
+					'Milestone.subject',
+				),
+				'recursive' => 0,
+			)),
+
+			'Closed' => $this->find('list', array(
+				'conditions' => array(
+					'project_id' => $this->Project->id,
+					'is_open' => 0,
+				),
+				'fields' => array(
+					'Milestone.id',
+					'Milestone.subject',
+				),
+				'recursive' => 0,
+			)),
+		);
+		return $milestones;
 	}
 
 

@@ -453,28 +453,9 @@ class TasksController extends AppProjectController {
 			}
 		}
 
-		// Fetch all the variables for the view
-		// TODO should be a simpler list milestones method in milestone model and consolidate with edit method
-		$milestonesOpen	= array();
-		foreach ($this->Task->Milestone->getOpenMilestones() as $m) {
-			$milestonesOpen[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
-		}
-		$milestonesClosed = array();
-		foreach ($this->Task->Milestone->getClosedMilestones() as $m) {
-			$milestonesClosed[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
-		}
-		$milestones = array('No Assigned Milestone');
-		if (!empty($milestonesOpen)) {
-			$milestones['Open'] = $milestonesOpen;
-		}
-		if (!empty($milestonesClosed)) {
-			$milestones['Closed'] = $milestonesClosed;
-		}
+		$milestones = $this->Milestone->listMilestoneOptions();
 
-		$taskPriorities	= $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
-		foreach ($taskPriorities as $id => $p) {
-			$taskPriorities[$id] = ucfirst(strtolower($p));
-		}
+		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
 		$availableTasks = $this->Task->find('list', array(
 			'conditions' => array('project_id =' => $project['Project']['id']),
@@ -509,27 +490,10 @@ class TasksController extends AppProjectController {
 		} else {
 			$this->request->data = $task;
 
-			// Fetch all the variables for the view
-			// TODO should be a simpler list milestones method in milestone model and consolidate with edit method
-			$milestonesOpen	= array();
-			foreach ($this->Task->Milestone->getOpenMilestones() as $m) {
-				$milestonesOpen[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
-			}
-			$milestonesClosed = array();
-			foreach ($this->Task->Milestone->getClosedMilestones() as $m) {
-				$milestonesClosed[ $m['Milestone']['id'] ] = $m['Milestone']['subject'];
-			}
-			$milestones = array('No Assigned Milestone');
-			if (!empty($milestonesOpen)) {
-				$milestones['Open'] = $milestonesOpen;
-			}
-			if (!empty($milestonesClosed)) {
-				$milestones['Closed'] = $milestonesClosed;
-			}
-			$taskPriorities = $this->Task->TaskPriority->find('list', array('order' => 'id DESC'));
-			foreach ($taskPriorities as $id => $p) {
-				$taskPriorities[$id] = ucfirst(strtolower($p));
-			}
+			$milestones = $this->Milestone->listMilestoneOptions();
+
+			$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
+
 			$availableTasks = $this->Task->find('list', array(
 				'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
 				'fields' => array('Task.id', 'Task.subject'),
