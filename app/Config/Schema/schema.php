@@ -55,8 +55,8 @@ class AppSchema extends CakeSchema {
 						array('name' => 'question',      'label' => 'Question',      'icon' => '', 'class' => 'info'),
 						array('name' => 'wontfix',       'label' => 'Won\'t Fix',    'icon' => '', 'class' => 'inverse'),
 						array('name' => 'documentation', 'label' => 'Documentation', 'icon' => '', 'class' => 'info'),
-						array('name' => 'meeting',       'label' => 'Meeting',       'icon' => '', 'class' => 'info')
-						array('name' => 'maintenance',   'label' => 'Maintenance Work', 'icon' => '', 'class' => 'warning')
+						array('name' => 'meeting',       'label' => 'Meeting',       'icon' => '', 'class' => 'info'),
+						array('name' => 'maintenance',   'label' => 'Maintenance Work', 'icon' => '', 'class' => 'warning'),
 						array('name' => 'testing',       'label' => 'Testing',       'icon' => '', 'class' => 'success')
 					));
 					break;
@@ -345,6 +345,7 @@ class AppSchema extends CakeSchema {
 	public $tasks = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
+		'relative_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'owner_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'task_type_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'task_status_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
@@ -362,6 +363,7 @@ class AppSchema extends CakeSchema {
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'project_id' => array('column' => 'project_id', 'unique' => 0),
+			'project_id_relative_id' => array('column' => array('project_id', 'relative_id'), 'unique' => 1),
 			'task_status_id' => array('column' => 'task_status_id', 'unique' => 0),
 			'owner_id' => array('column' => 'owner_id', 'unique' => 0),
 			'task_type_id' => array('column' => 'task_type_id', 'unique' => 0),
