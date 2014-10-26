@@ -35,3 +35,7 @@ hr {
 	border-color: #cc3333;
 	box-shadow: 0 0 10px #cc3333;
 }
+
+.burndown {
+	min-height: 500px;
+}

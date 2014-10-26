@@ -15,10 +15,12 @@
  */
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
-$this->Html->script ("milestones.index", array ('inline' => false));
+$this->Html->css('milestones.index', null, array ('inline' => false));
 $this->Html->script ("jquery-ui.min", array ('inline' => false));
 $this->Html->script ("jquery.ui.touch-punch.min", array ('inline' => false));
-$this->Html->script ("milestones.index", array ('inline' => false));
+$this->Html->script('jquery.flot.min', array('inline' => false));
+$this->Html->script('jquery.flot.categories.min', array('inline' => false));
+$this->Html->script('jquery.flot.stack.min', array('inline' => false));
 $this->Html->script ("burndown", array ('inline' => false));
 ?>
 <?= $this->DT->pHeader() ?>
@@ -32,10 +34,34 @@ $this->Html->script ("burndown", array ('inline' => false));
 
             <div class="span10">
                 <div class="row-fluid">
-				<div class="burndown">
-					foo.
+				<div class="span12"><div class="burndown">
+					<!-- Note that this table will be replaced with a graph, if JavaScript is working properly! -->
+					<table>
+						<thead>
+						  <tr>
+						  	<th>Timestamp</th>
+						 	<th>Open tasks</th>
+						 	<th>Closed tasks</th>
+						 	<th>Open story points</th>
+						 	<th>Closed story points</th>
+						 	<th>Open time, estimated</th>
+						 	<th>Closed time, estimated</th>
+						  </tr>
+						</thead>
+						<? foreach($log as $event) {?>
+							<tr>
+								<td><?=$event['timestamp']?></td>
+								<td><?=$event['open_task_count']?></td>
+								<td><?=$event['closed_task_count']?></td>
+								<td><?=$event['open_points_count']?></td>
+								<td><?=$event['closed_points_count']?></td>
+								<td><?=$event['open_minutes_count']?></td>
+								<td><?=$event['closed_minutes_count']?></td>
+							</tr>
+						<? } ?>
+					</table>
 				</div>
-				</div>
+				</div></div>
 
             </div>
         </div>
