@@ -20,7 +20,7 @@ $this->Html->script ("jquery-ui.min", array ('inline' => false));
 $this->Html->script ("jquery.ui.touch-punch.min", array ('inline' => false));
 $this->Html->script ("milestones.index", array ('inline' => false));
 ?>
-<? print_r($events); exit(0);?>
+<? print_r($log); exit(0);?>
 <?= $this->DT->pHeader() ?>
 <div class="row">
     <div class="span2">
