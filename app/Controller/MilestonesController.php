@@ -335,6 +335,62 @@ class MilestonesController extends AppProjectController {
 		$this->set('name', $milestone['Milestone']['subject']);
 	}
 
+	public function burndown($project = null, $id = null) {
+
+		$milestone = $this->Milestone->open($id);
+
+		$now = new DateTime();
+
+		// Start date: provided in GET or POST data, or use the milestone creation date
+		if (isset($this->request->query['start'])) {
+			$start = new DateTime($this->request->query['start']);
+		} elseif (isset($this->request->data['start'])) {
+			$start = new DateTime($this->request->data['start']);
+		} else {
+			$start = new DateTime($milestone['Milestone']['created']);
+		}
+
+		// End date: provided in GET or POST data, or use the due date if it's in the future,
+		// finally falling back to the current date
+		if (isset($this->request->query['end'])) {
+			$end = new DateTime($this->request->query['end']);
+		} elseif (isset($this->request->data['end'])) {
+			$end = new DateTime($this->request->data['end']);
+		} elseif (isset($milestone['Milestone']['due']) ) {
+			$end = new DateTime($milestone['Milestone']['due']);
+			if ($end < $now) {
+				$end = $now;
+			}
+		} else {
+			$end = $now;
+		}
+
+		// Find logged changes between the start and end dates
+		$log = $this->Milestone->MilestoneBurndownLog->find('all', array(
+			'conditions' => array(
+				'milestone_id' => $id,
+				'timestamp <=' => $end->format('Y-m-d 23:59:59'),
+				'timestamp >=' => $start->format('Y-m-d 00:00:00'),
+			),
+			'fields' => array(
+				'timestamp',
+				'open_task_count',
+				'open_minutes_count',
+				'open_points_count',
+				'closed_task_count',
+				'closed_minutes_count',
+				'closed_points_count',
+			),
+			'order' => array('timestamp'),
+			'recursive' => -1,
+		));
+
+		$log = array_map(function($a){return $a['MilestoneBurndownLog'];}, $log);
+
+		$this->set(compact('milestone', 'log'));
+
+	}
+
 	/* ************************************************ *
 	*													*
 	*			API SECTION OF CONTROLLER				*

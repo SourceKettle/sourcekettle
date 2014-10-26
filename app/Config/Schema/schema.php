@@ -163,6 +163,23 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
 
+	public $milestone_burndown_logs = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'timestamp' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'milestone_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'open_task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'milestone_id' => array('column' => 'milestone_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
+	);
+
 	public $milestones = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
@@ -179,6 +196,23 @@ class AppSchema extends CakeSchema {
 			'project_id' => array('column' => 'project_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $project_burndown_logs = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'timestamp' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'open_task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'open_points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_task_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_minutes_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'closed_points_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'project_id' => array('column' => 'project_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 
 	public $project_histories = array(

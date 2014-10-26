@@ -120,7 +120,12 @@ class Project extends AppModel {
 			'className' => 'Attachment',
 			'foreignKey' => 'project_id',
 			'dependent' => true,
-		)
+		),
+		'ProjectBurndownLog' => array(
+			'className' => 'ProjectBurndownLog',
+			'foreignKey' => 'project_id',
+			'dependent' => true,
+		),
 	);
 
 	public function beforeSave($options = array()) {

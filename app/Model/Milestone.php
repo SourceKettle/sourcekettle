@@ -81,7 +81,12 @@ class Milestone extends AppModel {
 			'className' => 'Task',
 			'foreignKey' => 'milestone_id',
 			'dependent' => false,
-		)
+		),
+		'MilestoneBurndownLog' => array(
+			'className' => 'MilestoneBurndownLog',
+			'foreignKey' => 'milestone_id',
+			'dependent' => true,
+		),
 	);
 
 /**

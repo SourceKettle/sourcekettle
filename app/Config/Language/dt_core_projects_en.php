@@ -43,3 +43,7 @@ $config['dtcore']['pages']['projects']['history']['en']['header.text'] = "What's
 $config['dtcore']['pages']['projects']['topbar']['en']['topbar.index.text'] = "My projects";
 $config['dtcore']['pages']['projects']['topbar']['en']['topbar.public.text'] = "Public projects";
 $config['dtcore']['pages']['projects']['topbar']['en']['topbar.create.text'] = "New Project";
+
+// APP/Projects/burndown
+$config['dtcore']['pages']['projects']['burndown']['en']['header.text'] = "Burn Down Chart";
+

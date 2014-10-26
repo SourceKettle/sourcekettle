@@ -45,6 +45,19 @@ $link_remove = $this->Html->link(
         'escape' => false
     )
 );
+$link_graph = $this->Html->link(
+    $this->Bootstrap->icon('signal'),
+    array(
+        'project' => $project['Project']['name'],
+        'action' => 'burndown',
+        $milestone['Milestone']['id']
+    ),
+    array(
+        'class' => 'close delete',
+		'title' => __('Burn-down chart'),
+        'escape' => false
+    )
+);
 $link_close = $this->Html->link(
     $this->Bootstrap->icon('off'),
     array(
@@ -109,6 +122,7 @@ $link_plan= $this->Html->link(
                 <?= $milestone['Milestone']['is_open']? $link_close : $link_reopen?>
                 <?= $link_plan?>
                 <?= $link_edit ?>
+                <?= $link_graph ?>
                 <p>
                     <small>
                         <?= ($t == 0) ? __('no tasks in this milestone')  : '' ?>
