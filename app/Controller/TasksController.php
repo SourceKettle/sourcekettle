@@ -166,15 +166,13 @@ class TasksController extends AppProjectController {
  * @param string $id
  * @return void
  */
-	public function view($project = null, $id = null) {
+	public function view($project = null, $public_id = null) {
 		$project = $this->_getProject($project);
-		$task = $this->Task->open($id);
+		$task = $this->Task->open($public_id);
 		$current_user = $this->Auth->user();
 
-
-
 		// Re-read to pick up changes
-		$this->set('task', $this->Task->open($id));
+		$this->set('task', $this->Task->open($public_id));
 
 		// Fetch the changes that will have happened
 		$changes	= $this->Task->Project->ProjectHistory->find(
@@ -257,12 +255,12 @@ class TasksController extends AppProjectController {
 		$this->set('collaborators', $collabs);
 	}
 
-	public function assign($project = null, $id = null) {
+	public function assign($project = null, $public_id = null) {
 		$project = $this->_getProject($project);
-		$task = $this->Task->open($id);
+		$task = $this->Task->open($public_id);
 
 		if (!$this->request->is('post') || !isset($this->request->data['Assignee']) || !isset($this->request->data['Assignee']['id'])) {
-			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $public_id));
 		}
 		
 		$assigneeId = $this->request->data['Assignee']['id'];
@@ -275,24 +273,24 @@ class TasksController extends AppProjectController {
 	
 		unset($this->request->data['Assignee']);
 	
-		return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+		return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $public_id));
 	}
 
 /**
  * Post a comment for a task
  */
-	public function comment($project = null, $id = null) {
+	public function comment($project = null, $public_id = null) {
 		$project = $this->_getProject($project);
-		$task = $this->Task->open($id);
+		$task = $this->Task->open($public_id);
 
 		// No comment posted, redirect to the task
 		if (!$this->request->is('post') || !isset($this->request->data['TaskComment'])) {
-			return $this->redirect(array ('project' => $project['Project']['name'], 'action' => 'view', $id));
+			return $this->redirect(array ('project' => $project['Project']['name'], 'action' => 'view', $public_id));
 		}
 
 		$this->Task->TaskComment->create();
 
-		$this->request->data['TaskComment']['task_id'] = $id;
+		$this->request->data['TaskComment']['task_id'] = $this->Task->id;
 		$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
 
 		// NB do not add a flash message, as they'll see the new task has been added
@@ -302,7 +300,7 @@ class TasksController extends AppProjectController {
 			$this->Flash->error(__('The comment could not be saved. Please try again.'));
 		}
 
-		return $this->redirect(array ('controller' => 'tasks', 'project' => $project['Project']['name'], 'action' => 'view', $id));
+		return $this->redirect(array ('controller' => 'tasks', 'project' => $project['Project']['name'], 'action' => 'view', $public_id));
 
 	}
 
@@ -496,9 +494,9 @@ class TasksController extends AppProjectController {
  * @param string $id
  * @return void
  */
-	public function edit($project = null, $id = null) {
+	public function edit($project = null, $public_id = null) {
 		$project = $this->_getProject($project);
-		$task = $this->Task->open($id);
+		$task = $this->Task->open($public_id);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 
@@ -506,7 +504,7 @@ class TasksController extends AppProjectController {
 			unset($this->request->data['Task']['owner_id']);
 
 			if ($this->Flash->u($this->Task->save($this->request->data))) {
-				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
 			}
 		} else {
 			$this->request->data = $task;
@@ -553,12 +551,12 @@ class TasksController extends AppProjectController {
  * @param mixed $id (default: null)
  * @return void
  */
-	public function starttask($project = null, $id = null) {
-		$task = $this->Task->open($id);
+	public function starttask($project = null, $public_id = null) {
+		$task = $this->Task->open($public_id);
 
 		$isAjax = $this->request->is("ajax");
 
-		$updated = $this->__updateTaskStatus($project, $id, 'in progress', $isAjax);
+		$updated = $this->__updateTaskStatus($project, $public_id, 'in progress', $isAjax);
 
 		if ($isAjax) {
 			if ($updated) {
@@ -570,7 +568,7 @@ class TasksController extends AppProjectController {
 			}
 			$this->set("_serialize", array("error"));
 		} else {
-			return $this->redirect(array('project' => $project, 'action' => 'view', $id));
+			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
 		}
 	}
 
@@ -582,12 +580,12 @@ class TasksController extends AppProjectController {
  * @param mixed $id (default: null)
  * @return void
  */
-	public function stoptask($project = null, $id = null) {
+	public function stoptask($project = null, $public_id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$task = $this->Task->open($id);
+		$task = $this->Task->open($public_id);
 
-		$updated = $this->__updateTaskStatus($project, $id, 'open', $isAjax);
+		$updated = $this->__updateTaskStatus($project, $public_id, 'open', $isAjax);
 		if ($isAjax) {
 			if ($updated) {
 				$this->set("error", "no_error");
@@ -598,7 +596,7 @@ class TasksController extends AppProjectController {
 			}
 			$this->set("_serialize", array("error"));
 		} else {
-			return $this->redirect(array('project' => $project, 'action' => 'view', $id));
+			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
 		}
 	}
 
@@ -610,11 +608,11 @@ class TasksController extends AppProjectController {
  * @param mixed $id (default: null)
  * @return void
  */
-	public function opentask($project = null, $id = null) {
+	public function opentask($project = null, $public_id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 'open', $isAjax);
-		return $this->redirect(array('project' => $project, 'action' => 'view', $id));
+		$success = $this->__updateTaskStatus($project, $public_id, 'open', $isAjax);
+		return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
 	}
 
 /**
@@ -625,10 +623,10 @@ class TasksController extends AppProjectController {
  * @param mixed $id (default: null)
  * @return void
  */
-	public function closetask($project = null, $id = null) {
+	public function closetask($project = null, $public_id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 'closed', $isAjax);
+		$success = $this->__updateTaskStatus($project, $public_id, 'closed', $isAjax);
 
 		// If a User has commented
 		if (isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
@@ -644,13 +642,13 @@ class TasksController extends AppProjectController {
 				$this->Flash->error('The comment could not be saved. Please, try again.');
 			}
 		}
-		return $this->redirect(array('project' => $project, 'action' => 'view', $id));
+		return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
 	}
 
-	public function resolve($project = null, $id = null) {
+	public function resolve($project = null, $public_id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 'resolved', $isAjax);
+		$success = $this->__updateTaskStatus($project, $public_id, 'resolved', $isAjax);
 		if ($isAjax) {
 			if ($success) {
 				$this->set ("error", "no_error");
@@ -676,14 +674,14 @@ class TasksController extends AppProjectController {
 					$this->Flash->error('The comment could not be saved. Please, try again.');
 				}
 			}
-			return $this->redirect(array('project' => $project, 'action' => 'view', $id));
+			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
 		}
 	}
 
-	public function unresolve($project = null, $id = null) {
+	public function unresolve($project = null, $public_id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 'open', $isAjax);
+		$success = $this->__updateTaskStatus($project, $public_id, 'open', $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
@@ -710,7 +708,7 @@ class TasksController extends AppProjectController {
 					$this->Flash->error('The comment could not be saved. Please, try again.');
 				}
 			}
-			return $this->redirect(array('project' => $project, 'action' => 'view', $id));
+			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
 		}
 	}
 
@@ -722,10 +720,10 @@ class TasksController extends AppProjectController {
  * @param mixed $taskId (default: null)
  * @throws MethodNotAllowedException
  */
-	public function freeze($project = null, $id = null) {
+	public function freeze($project = null, $public_id = null) {
 		$isAjax = $this->request->is("ajax");
 
-		$success = $this->__updateTaskStatus($project, $id, 'dropped', $isAjax);
+		$success = $this->__updateTaskStatus($project, $public_id, 'dropped', $isAjax);
 
 		if ($isAjax) {
 			if ($success) {
@@ -752,7 +750,7 @@ class TasksController extends AppProjectController {
 					$this->Flash->error('The comment could not be saved. Please, try again.');
 				}
 			}
-			return $this->redirect(array('project' => $project, 'action' => 'view', $id));
+			return $this->redirect(array('project' => $project, 'action' => 'view', $public_id));
 		}
 	}
 
@@ -764,9 +762,9 @@ class TasksController extends AppProjectController {
  * @param mixed $id (default: null)
  * @return void
  */
-	private function __updateTaskStatus($project = null, $id = null, $status = null, $isAjax = false) {
+	private function __updateTaskStatus($project = null, $public_id = null, $status = null, $isAjax = false) {
 		$project = $this->_getProject($project);
-		$task = $this->Task->open($id);
+		$task = $this->Task->open($public_id);
 
 		$status = $this->TaskStatus->nameToId($status);
 

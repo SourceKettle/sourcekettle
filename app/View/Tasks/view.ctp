@@ -34,7 +34,7 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     <div class="row">
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar_view', array('id' => $task['Task']['id'], 'dependenciesComplete' => $task['Task']['dependenciesComplete'])) ?>
+            <?= $this->element('Task/topbar_view', array('id' => $task['Task']['public_id'], 'dependenciesComplete' => $task['Task']['dependenciesComplete'])) ?>
             <div class="span10">
 
                 <div class="row-fluid">

@@ -19,7 +19,7 @@
         <button type="button" class="close" data-dismiss="modal">x</button>
         <h4><?= $this->DT->t('modal.unresolve.header') ?></h4>
     </div>
-    <?= $this->Form->create('TaskComment', array('url' => array('project' => $project['Project']['name'], 'controller' => 'tasks', 'action' => 'unresolve', $task['Task']['id']))) ?>
+    <?= $this->Form->create('TaskComment', array('url' => array('project' => $project['Project']['name'], 'controller' => 'tasks', 'action' => 'unresolve', $task['Task']['public_id']))) ?>
     <div class="modal-body">
         <p>
             <?= $this->DT->t('modal.unresolve.body') ?>
