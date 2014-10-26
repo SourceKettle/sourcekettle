@@ -260,11 +260,13 @@ class Task extends AppModel {
  * @param array $options (default: empty array)
  * @return bool True if the save was successful.
  */
-	public function beforeSave($options = array()) {
+ 	private $__burndownLog = array('milestone' => array(), 'project' => array());
 
+	public function beforeSave($options = array()) {
 		// Parse time estimate if necessary
 		$this->beforeValidate($options);
 
+		// Update dependency list
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
 			
 			foreach ($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
@@ -274,6 +276,35 @@ class Task extends AppModel {
 			}
 			$this->data['DependsOn']['DependsOn'] = array_unique(array_values($this->data['DependsOn']['DependsOn']));
 		}
+
+		// Find the existing task if there is one
+		$task = $this->find('first', array(
+			'conditions' => array('Task.id' => $this->id),
+			'fields' => array('Task.project_id', 'Task.milestone_id'),
+			'recursive' => -1,
+		));
+
+		// No task...
+		// TODO I have a horrible feeling that this is a terrible idea - what happens with saveMany()?
+		if (empty($task)) {
+			$task_id = 0;
+			$project_id = $this->data['Task']['project_id'];
+			$milestone_id = $this->data['Task']['milestone_id'];
+		
+		// Updating the task...
+		} else {
+			$task_id = $this->id;
+			$project_id = $task['Task']['project_id'];
+			$milestone_id = $task['Task']['milestone_id'];
+		}
+
+		// Remember the milestone and project ID for our burndown logging
+		// NB this is because the milestone ID may have changed by the time we log it!
+		$this->__burndownLog[$task_id] = array(
+			'milestone_id' => $milestone_id, 
+			'project_id' => $project_id, 
+		);
+
 		return true;
 	}
 
@@ -281,16 +312,13 @@ class Task extends AppModel {
  * afterSave function - logs project/milestone burndown chart updates
  */
 	public function afterSave($created, $options = array()) {
-
-		// First get the project and milestone ID for the task we saved
-		$task = $this->find('first', array(
-			'conditions' => array('Task.id' => $this->id),
-			'fields' => array('Task.project_id', 'Task.milestone_id'),
-			'recursive' => -1,
-		));
-
-		$project_id = $task['Task']['project_id'];
-		$milestone_id = $task['Task']['milestone_id'];
+		if ($created) {
+			$project_id = $this->__burndownLog[0]['project_id'];
+			$milestone_id = $this->__burndownLog[0]['milestone_id'];
+		} else {
+			$project_id = $this->__burndownLog[$this->id]['project_id'];
+			$milestone_id = $this->__burndownLog[$this->id]['milestone_id'];
+		}
 
 		$counts = $this->__getBurndownCounts(array("Task.project_id" => $project_id));
 		$counts['project_id'] = $project_id;
