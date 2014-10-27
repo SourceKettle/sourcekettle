@@ -31,7 +31,6 @@ $this->Html->scriptBlock ("
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar_add') ?>
             <div class="span10">
 				<?= $this->element('Task/add_edit') ?>
             </div>

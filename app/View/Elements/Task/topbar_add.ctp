@@ -17,28 +17,28 @@
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.index.text', array('action' => 'topbar')),
+                'text' => __('Assigned to you'),
                 'url' => array(
                     'action' => '.',
                     'controller' => 'tasks',
                 ),
             ),
             array(
-                'text' => $this->DT->t('topbar.others.text', array('action' => 'topbar')),
+                'text' => __('Assigned to others'),
                 'url' => array(
                     'action' => 'others',
                     'controller' => 'tasks',
                 ),
             ),
             array(
-                'text' => $this->DT->t('topbar.nobody.text', array('action' => 'topbar')),
+                'text' => __('Assigned to nobody'),
                 'url' => array(
                     'action' => 'nobody',
                     'controller' => 'tasks',
                 ),
             ),
             array(
-                'text' => $this->DT->t('topbar.all.text', array('action' => 'topbar')),
+                'text' => __('All tasks'),
                 'url' => array(
                     'action' => 'all',
                     'controller' => 'tasks',

@@ -14,5 +14,5 @@
  */
 ?>
 <div class="alert alert-info<?if(isset($span)){ echo ' span3';}?>">
-    <?= $this->DT->t('noprojects.text', array('action' => 'all', 'controller' => 'projects')) ?>
+    <?= __('<strong>No projects :(</strong> Why don\'t you create one?', array('action' => 'all', 'controller' => 'projects')) ?>
 </div>

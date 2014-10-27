@@ -12,7 +12,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- $pl = $this->DT->t('bar.task').$id;
+ $pl = __('Task')." #$id";
 
 if ($this->request->data['TaskStatus']['name'] != 'closed') {
      $state = array(

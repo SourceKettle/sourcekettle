@@ -13,7 +13,6 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$_dt = array('action' => 'add');
 
 // Submit the serialize data on submit click
 $this->Js->get('#UserMyaddForm')->event('submit',
@@ -33,15 +32,14 @@ $this->Js->get('#UserMyaddForm')->event('submit',
 <div class="modal hide" id="addTaskModal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">x</button>
-        <h4><?= $this->DT->t('modal.header.text', $_dt) ?></h4>
-        <h6><small><?= $this->DT->t('modal.header.subtext', $_dt) ?></small></h6>
+        <h4><?= __('Add a new task to this Project') ?></h4>
     </div>
     <?= $this->Form->create('Task', array('id' => 'UserMyaddForm', 'default' => false, 'style' => 'margin-bottom: 0px;')) ?>
     <div class="modal-body">
         <?php
         echo $this->Bootstrap->input("subject", array(
-            "input" => $this->Form->text("subject", array("class" => "span5", "placeholder" => $this->DT->t('form.subject.placeholder', $_dt))),
-            "label" => $this->DT->t('form.subject.label', $_dt),
+            "input" => $this->Form->text("subject", array("class" => "span5", "placeholder" => __('Quick, yet informative, description'))),
+            "label" => __('Subject'),
         ));
 
         echo $this->Bootstrap->input("description", array(
@@ -49,16 +47,16 @@ $this->Js->get('#UserMyaddForm')->event('submit',
                 "type" => "textarea",
                 "class" => "span5",
                 "label" => false,
-                "placeholder" => $this->DT->t('form.description.placeholder', $_dt)
+                "placeholder" => __('Longer and more descriptive explanation...')
             )),
             "label" => false,
         ));
         ?>
     </div>
     <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal"><?= $this->DT->t('modal.form.close', $_dt) ?></a>
-        <?= $this->Bootstrap->button($this->DT->t('form.submit.continue', $_dt), array("style" => "primary")) ?>
-        <?= $this->Bootstrap->button($this->DT->t('form.submit', $_dt), array("style" => "primary")) ?>
+        <a href="#" class="btn" data-dismiss="modal"><?= __('Close') ?></a>
+        <?= $this->Bootstrap->button(__('Submit and Edit'), array("style" => "primary")) ?>
+        <?= $this->Bootstrap->button(__('Submit'), array("style" => "primary")) ?>
     </div>
     <?= $this->Form->end() ?>
 </div>

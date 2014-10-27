@@ -185,7 +185,7 @@ class AppController extends Controller {
 		}
 
 		$this->set('sourcekettle_config', $this->sourcekettle_config);
-		$this->set('sourcekettleVersion', 'v1.4.0');
+		$this->set('sourcekettleVersion', 'v1.4.1');
 
 		// Set up the sourcekettle-specific auth model
 		$this->Auth->userModel = 'User';
