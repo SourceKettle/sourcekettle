@@ -177,7 +177,8 @@ class TimesControllerTestCase extends AppControllerTest {
 			2 => array(
 				'Task' => array(
 					'id' => '2',
-					'subject' => 'Open Minor Task 2 for milestone 1'
+					'subject' => 'Open Minor Task 2 for milestone 1',
+					'public_id' => '2',
 				),
 				'users' => array(
 					1 => array(
