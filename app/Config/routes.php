@@ -96,6 +96,7 @@
 
 		// Point admin project actions to the right controller
 		// TODO this is a mess, rename is the only sysadmin-only function, I am too dumb to route though
+        Router::connect('/admin/projects/index/*', array('controller' => 'projects', 'action' => 'index', 'admin' => true));
         Router::connect('/admin/projects/:project/view', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/admin/projects/:project/edit', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/admin/projects/:project/time', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));

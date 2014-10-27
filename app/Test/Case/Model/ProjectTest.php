@@ -480,7 +480,9 @@ class ProjectTestCase extends CakeTestCase {
 				'public' => true,
 				'repo_type' => '1',
 				'created' => '2012-06-01 12:46:07',
-				'modified' => '2012-06-01 12:46:07'
+				'modified' => '2012-06-01 12:46:07',
+				'deleted' => '0',
+				'deleted_date' => null
 			),
 			'Owner' => array(
 				'id' => '3',

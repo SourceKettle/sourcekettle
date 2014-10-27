@@ -2,6 +2,12 @@
 
 class UserFixture extends CakeTestFixture {
 
+	// Force InnoDB table type so we can test transactions
+	public function create($db) {
+	    $this->fields['tableParameters']['engine'] = 'InnoDB';
+	    return parent::create($db);
+	}
+
 	public $import = array('model' => 'User');
 
     public $records = array(

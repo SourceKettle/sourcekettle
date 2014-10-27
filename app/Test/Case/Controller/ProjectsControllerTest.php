@@ -458,6 +458,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 				'description' => 'Updated description of a project',
 				'repo_type' => '2',
 				'public' => false,
+				'deleted' => 0,
+				'deleted_date' => null,
 			)
 		);
 
@@ -485,6 +487,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 				'description' => 'Updated description of a project',
 				'repo_type' => '2',
 				'public' => false,
+				'deleted' => 0,
+				'deleted_date' => null,
 			)
 		);
 
