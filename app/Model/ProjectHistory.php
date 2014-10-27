@@ -196,6 +196,11 @@ class ProjectHistory extends AppModel {
 						$events[$a]['Subject']['title'] = 'logged time';
 					}
 					break;
+
+				// Tasks: swap out the real task ID for its public ID
+				case 'Task':
+					$events[$a]['Subject']['id'] = $this->Project->Task->field('public_id', array('id' => $events[$a]['Subject']['id']));
+					break;
 			}
 		}
 
