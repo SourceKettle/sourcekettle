@@ -2,6 +2,12 @@
 
 class CollaboratorFixture extends CakeTestFixture {
 
+	// Force InnoDB table type so we can test transactions
+	public function create($db) {
+	    $this->fields['tableParameters']['engine'] = 'InnoDB';
+	    return parent::create($db);
+	}
+
     public $fields = array(
         'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
         'project_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10),
@@ -10,7 +16,7 @@ class CollaboratorFixture extends CakeTestFixture {
         'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
         'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
         'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-        'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+        'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
     );
 
     public $records = array(

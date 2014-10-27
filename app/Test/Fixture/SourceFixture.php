@@ -4,6 +4,13 @@
  *
  */
 class SourceFixture extends CakeTestFixture {
+
+	// Force InnoDB table type so we can test transactions
+	public function create($db) {
+	    $this->fields['tableParameters']['engine'] = 'InnoDB';
+	    return parent::create($db);
+	}
+
 /**
  * Table name
  *

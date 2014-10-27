@@ -2,6 +2,12 @@
 
 class EmailConfirmationKeyFixture extends CakeTestFixture {
 
+	// Force InnoDB table type so we can test transactions
+	public function create($db) {
+	    $this->fields['tableParameters']['engine'] = 'InnoDB';
+	    return parent::create($db);
+	}
+
     public $fields = array(
         'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
         'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10),
