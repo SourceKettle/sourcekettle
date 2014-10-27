@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-
+//debug($weekTimes);
 $headers = array(__('Task'), __('User'));
 foreach ($weekTimes['dates'] as $daynum => $date){
 	$headers[] = __($date->format('D M d Y'));
@@ -25,7 +25,10 @@ $body = array($headers);
 
 $overallTotal = 0;
 foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
-	foreach ($taskDetails['users'] as $userId => $userDetails) {
+	foreach ($taskDetails['users'] as $userId => $row) {
+		$userDetails = $row['User'];
+		$timeDetails = $row['times_by_day'];
+
 		$line = array();
 
 		if ($taskId == 0) {
@@ -35,16 +38,17 @@ foreach ($weekTimes['tasks'] as $taskId => $taskDetails) {
 			$line[] = $taskDetails['Task']['subject'];
 		}
 
-		$line[] = $userDetails['User']['name'];
+		$line[] = $userDetails['name'];
 
 		// 1=Mon, 7=Sun...
 		$rowTotal = 0;
 		for ($i = 1; $i <= 7; $i++) {
-			if (array_key_exists($i, $userDetails['days'])) {
-				$line[] = $userDetails['days'][$i];
-				$rowTotal += $userDetails['days'][$i];
+			if (array_key_exists($i, $timeDetails)) {
+				$day_total = array_reduce($timeDetails[$i], function($total, $time) {$total += $time['Time']['mins']; return $total;});
+				$line[] = $day_total;
+				$rowTotal += $day_total;
 			} else {
-				$line[] = '';
+				$line[] = 0;
 			}
 		}
 
