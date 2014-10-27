@@ -350,8 +350,6 @@ class Milestone extends AppModel {
 		));
 
 		foreach ($milestones as $id => $milestone) {
-			//debug($milestones[$id]);
-			//$milestones[$id]['Tasks'] = $this->taskSummaryForMilestone($milestone['Milestone']['id']);
 
 			$milestones[$id]['Progress'] = array(
 				'pointsComplete' => 0,
