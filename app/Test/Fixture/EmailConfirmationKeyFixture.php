@@ -8,14 +8,7 @@ class EmailConfirmationKeyFixture extends CakeTestFixture {
 	    return parent::create($db);
 	}
 
-    public $fields = array(
-        'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-        'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10),
-        'key' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 150, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-        'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-        'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-        'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
-    );
+	public $import = array('model' => 'EmailConfirmationKey');
 
     public $records = array(
         array(
