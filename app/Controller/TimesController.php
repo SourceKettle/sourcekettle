@@ -269,7 +269,7 @@ class TimesController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$this->set('times', $this->Time->find('all', array(
 			'conditions' => array('user_id' => $user_id, 'Project.id' => $project['Project']['id']),
-			'fields' => array('Task.id', 'Task.subject', 'User.id', 'User.name', 'SUM(Time.mins) AS total_mins'),
+			'fields' => array('Task.id', 'Task.subject', 'User.id', 'User.name', 'SUM(Time.mins) AS total_mins', $this->Time->Task->getVirtualField('public_id')." AS Task__public_id"),
 			'group' => array('Time.task_id'),
 		)));
 	}

@@ -38,7 +38,7 @@
 						echo " ";
 						echo $this->Html->link(
 							$time['Task']['subject'], array(
-							'controller' => 'tasks', 'action' => 'view', 'project' => $project['Project']['name'], $time['Task']['id']
+							'controller' => 'tasks', 'action' => 'view', 'project' => $project['Project']['name'], $time['Task']['public_id']
 							));
 					} else {
 						echo __("to no specific task");
