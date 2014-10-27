@@ -185,7 +185,7 @@ class AppController extends Controller {
 		}
 
 		$this->set('sourcekettle_config', $this->sourcekettle_config);
-		$this->set('sourcekettleVersion', 'v1.3.3');
+		$this->set('sourcekettleVersion', 'v1.4.0');
 
 		// Set up the sourcekettle-specific auth model
 		$this->Auth->userModel = 'User';
@@ -211,10 +211,11 @@ class AppController extends Controller {
 
 			$this->set('current_user', $current_user['User']);
 
-			// TODO this is a bit of a hacky way to let the project history logger know who did what :-/
 			// Pretty much nicked from http://bakery.cakephp.org/articles/alkemann/2008/10/21/logablebehavior
-			if (sizeof($this->uses) && @$this->{$this->modelClass}->Behaviors && $this->{$this->modelClass}->Behaviors->attached('ProjectHistory')) {
-				$this->{$this->modelClass}->setLogUser($current_user['User']);
+			foreach ($this->uses as $class) {
+				if (@$this->{$class}->Behaviors && $this->{$class}->Behaviors->enabled('ProjectHistory')) {
+					$this->{$class}->setLogUser($current_user['User']);
+				}
 			}
 		} else {
 			$this->set('current_user', null);

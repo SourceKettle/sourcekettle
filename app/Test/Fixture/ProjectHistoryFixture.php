@@ -5,32 +5,13 @@
  */
 class ProjectHistoryFixture extends CakeTestFixture {
 
-/**
- * Fields
- *
- * @var array
- */
-	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
-		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
-		'model' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 25, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-		'row_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10),
-		'row_field' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10),
-		'user_name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-		'row_title' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-		'row_field_old' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-		'row_field_new' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null, 'key' => 'index'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'modified' => array('column' => 'modified', 'unique' => 0),
-			'created' => array('column' => 'modified', 'unique' => 0),
-			'project_id' => array('column' => 'project_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
-	);
+	// Force InnoDB table type so we can test transactions
+	public function create($db) {
+	    $this->fields['tableParameters']['engine'] = 'InnoDB';
+	    return parent::create($db);
+	}
+
+	public $import = array('model' => 'ProjectHistory');
 
 /**
  * Records

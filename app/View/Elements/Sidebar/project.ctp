@@ -31,6 +31,14 @@
                     'project' => $this->params['project'],
                 ),
             ),
+            'Chart' => array(
+                'icon' => 'signal',
+                'url' => array(
+                    'action' => array('burndown'),
+                    'controller' => 'projects',
+                    'project' => $this->params['project'],
+                ),
+            ),
             'Source' => array(
                 'icon' => 'pencil',
                 'url' => array(

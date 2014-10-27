@@ -35,6 +35,8 @@ class TasksControllerTest extends AppControllerTest {
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
 	);
 
 	public function setUp() {
@@ -178,8 +180,12 @@ class TasksControllerTest extends AppControllerTest {
 
 		// Check we've got the right stuff back
 		$this->assertEquals($this->vars['task']['Task']['id'], 1);
-		$this->assertEquals(array(1, 4, 10), array_keys($this->vars['tasks']['Your Tasks']));
-		$this->assertEquals(array(2, 3, 5, 6, 7), array_keys($this->vars['tasks']['Others Tasks']));
+		$yours = array_keys($this->vars['tasks']['Your Tasks']);
+		sort($yours);
+		$others = array_keys($this->vars['tasks']['Others Tasks']);
+		sort($others);
+		$this->assertEquals(array(1, 4, 10), $yours);
+		$this->assertEquals(array(2, 3, 5, 6, 7), $others);
 
 	}
 

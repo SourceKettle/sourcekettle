@@ -27,11 +27,16 @@ $this->Html->script("milestones.droplist", array ('inline' => false));
         <?= $this->element('Sidebar/project') ?>
     </div>
 
-
     <?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
 
     <!-- Milestone board -->
-    <div class="span10">  <div class="row">
+    <div class="span10">
+	
+	<div class="row"><div class="span2 offset4">
+	<span class="label">Story points complete: <span id="points_complete"><?=$points_complete?></span> / <span id="points_total"><?=$points_total?></span></span>
+	</div></div>
+
+	<div class="row">
 
     <!-- Primary columns -->
 	<div class="row-fluid span12">

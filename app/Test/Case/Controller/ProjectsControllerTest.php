@@ -36,6 +36,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
 	);
 
 	public function setUp() {
@@ -456,6 +458,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 				'description' => 'Updated description of a project',
 				'repo_type' => '2',
 				'public' => false,
+				'deleted' => 0,
+				'deleted_date' => null,
 			)
 		);
 
@@ -483,6 +487,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 				'description' => 'Updated description of a project',
 				'repo_type' => '2',
 				'public' => false,
+				'deleted' => 0,
+				'deleted_date' => null,
 			)
 		);
 

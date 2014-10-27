@@ -260,11 +260,13 @@ class Task extends AppModel {
  * @param array $options (default: empty array)
  * @return bool True if the save was successful.
  */
-	public function beforeSave($options = array()) {
+ 	private $__burndownLog = array('milestone' => array(), 'project' => array());
 
+	public function beforeSave($options = array()) {
 		// Parse time estimate if necessary
 		$this->beforeValidate($options);
 
+		// Update dependency list
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
 			
 			foreach ($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
@@ -274,7 +276,119 @@ class Task extends AppModel {
 			}
 			$this->data['DependsOn']['DependsOn'] = array_unique(array_values($this->data['DependsOn']['DependsOn']));
 		}
+
+		// If there's no actual data, we're done here
+		if (!isset($this->data['Task']['project_id'])) {
+			return;
+		}
+
+		// Find the existing task if there is one
+		$task = $this->find('first', array(
+			'conditions' => array('Task.id' => $this->id),
+			'fields' => array('Task.project_id', 'Task.milestone_id'),
+			'recursive' => -1,
+		));
+
+		// Creating the task...
+		// TODO I have a horrible feeling that this is a terrible idea - what happens with saveMany()?
+		if (empty($task)) {
+			$task_id = 0;
+			$project_id = $this->data['Task']['project_id'];
+			$milestone_id = @$this->data['Task']['milestone_id'];
+		
+		// Updating the task...
+		} else {
+			$task_id = $this->id;
+			$project_id = $task['Task']['project_id'];
+			$milestone_id = @$task['Task']['milestone_id'];
+		}
+
+		// Remember the milestone and project ID for our burndown logging
+		// NB this is because the milestone ID may have changed by the time we log it!
+		$this->__burndownLog[$task_id] = array(
+			'milestone_id' => $milestone_id, 
+			'project_id' => $project_id, 
+		);
+
 		return true;
+	}
+
+/**
+ * afterSave function - logs project/milestone burndown chart updates
+ */
+	public function afterSave($created, $options = array()) {
+		// If there's no actual data, we're done here
+		if (!isset($this->data['Task']['project_id'])) {
+			return;
+		}
+
+		if ($created) {
+			$project_id = $this->__burndownLog[0]['project_id'];
+			$milestone_id = $this->__burndownLog[0]['milestone_id'];
+		} else {
+			$project_id = $this->__burndownLog[$this->id]['project_id'];
+			$milestone_id = $this->__burndownLog[$this->id]['milestone_id'];
+		}
+
+		$counts = $this->__getBurndownCounts(array("Task.project_id" => $project_id));
+		$counts['project_id'] = $project_id;
+		$counts['timestamp'] = DboSource::expression('NOW()');
+
+		$this->Project->ProjectBurndownLog->save(array(
+			'ProjectBurndownLog' => $counts,
+		));
+
+		// If the task is part of a milestone, get the aggregate milestone data and log it
+		if ($milestone_id) {
+
+			$counts = $this->__getBurndownCounts(array("Task.milestone_id" => $milestone_id));
+			$counts['milestone_id'] = $milestone_id;
+			$counts['timestamp'] = DboSource::expression('NOW()');
+
+			$this->Milestone->MilestoneBurndownLog->save(array(
+				'MilestoneBurndownLog' => $counts,
+			));
+		}
+	}
+
+/**
+ * Gets the current count of tasks and their estimates in an "open" state (i.e. "tasks
+ * that still need to be done") and a "closed" state (i.e. "tasks that have been done or postponed").
+ */
+	private function __getBurndownCounts($conditions) {
+	
+		$db_conditions = array_merge($conditions, array("TaskStatus.name" => array("open", "in progress")));
+
+		$data = $this->find("first", array(
+			'conditions' => $db_conditions,
+			'fields' => array(
+				'COUNT(Task.id) AS open_task_count',
+				'SUM(Task.time_estimate) AS open_minutes_count',
+				'SUM(Task.story_points) AS open_points_count',
+			),
+		));
+		$counts = $data[0];
+
+		$db_conditions = array_merge($conditions, array("TaskStatus.name !=" => array("open", "in progress")));
+		$data = $this->find("first", array(
+			'conditions' => $db_conditions,
+			'fields' => array(
+				'COUNT(Task.id) AS closed_task_count',
+				'SUM(Task.time_estimate) AS closed_minutes_count',
+				'SUM(Task.story_points) AS closed_points_count',
+			),
+		));
+		$counts = array_merge($counts, $data[0]);
+
+		// Sanity check: make sure nulls become zeroes, and everything's a number
+		foreach (array_keys($counts) as $k) {
+			if (!$counts[$k]) {
+				$counts[$k] = 0;
+			} else {
+				$counts[$k] = (int)$counts[$k];
+			}
+		}
+		return $counts;
 	}
 
 /**
@@ -323,7 +437,7 @@ class Task extends AppModel {
 		if (!$this->exists()) {
 			return null;
 		} else {
-			return '#' . $id;
+			return '#' . $this->field('public_id');
 		}
 	}
 

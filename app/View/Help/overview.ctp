@@ -34,8 +34,15 @@ $milestone = array(
 		'id' => 0,
 		'subject' => 'First Milestone',
 		'due' => $due->format('Y-m-d'),
-		'percent' => '23',
-	)
+	),
+	'Progress' => array(
+		'pointsComplete' => 10,
+		'pointsTotal' => 100,
+		'pointsPct' => 10,
+		'tasksComplete' => 5,
+		'tasksTotal' => 20,
+		'tasksPct' => 25,
+	),
 );
 
 echo $this->Bootstrap->page_header('Help!<small> the project overview page...</small>'); ?>

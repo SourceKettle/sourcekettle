@@ -4,6 +4,13 @@
  *
  */
 class SourceFixture extends CakeTestFixture {
+
+	// Force InnoDB table type so we can test transactions
+	public function create($db) {
+	    $this->fields['tableParameters']['engine'] = 'InnoDB';
+	    return parent::create($db);
+	}
+
 /**
  * Table name
  *
@@ -11,17 +18,7 @@ class SourceFixture extends CakeTestFixture {
  */
 	public $table = 'source';
 
-/**
- * Fields
- *
- * @var array
- */
-	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'project_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
-	);
+	public $import = array('model' => 'Source');
 
 /**
  * Records

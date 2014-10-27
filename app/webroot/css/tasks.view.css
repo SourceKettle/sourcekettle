@@ -47,3 +47,12 @@ form {
 .section_title {
     cursor: pointer;
 }
+
+/* Work around unusual modal dialog behaviour, this stops it from appearing offscreen */
+.modal {
+	margin: 0px;
+	position: absolute;
+	width: 60%;
+	left: 20%;
+	top: 100px;
+}

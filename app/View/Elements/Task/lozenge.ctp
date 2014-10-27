@@ -22,7 +22,7 @@ if(isset($span) && $span){
 } else {
 	$span="";
 }
-$url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['id']);
+$url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
 		echo "<li class='draggable' data-taskid='".h($task['Task']['id'])."'>";
 	} else {
@@ -43,7 +43,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                 <div>
                     <div class="span10">
                         <p>
-                            <?= $this->Html->link('<strong>#'.$task['Task']['id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
+                            <?= $this->Html->link('<strong>#'.$task['Task']['public_id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
                         </p>
                         <?= $this->Task->priority($task['Task']['task_priority_id']) ?>
                         <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>

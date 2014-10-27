@@ -3,16 +3,13 @@
 app::uses('Folder', 'Utility');
 class ProjectFixture extends CakeTestFixture {
 
-    public $fields = array(
-        'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-        'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-        'description' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-        'public' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
-        'repo_type' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 2),
-        'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-        'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-        'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-    );
+	// Force InnoDB table type so we can test transactions
+	public function create($db) {
+	    $this->fields['tableParameters']['engine'] = 'InnoDB';
+	    return parent::create($db);
+	}
+
+	public $import = array('model' => 'Project');
 
     public $records = array(
         array(

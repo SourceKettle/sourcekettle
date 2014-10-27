@@ -46,10 +46,9 @@ class ProjectComponentBehavior extends ModelBehavior {
 		}
 
 		// Enable when public_id's are used
-		// if ($Model->hasField('public_id', true) && $_virtual = $Model->findByPublicId($id)) {
-		//	   $id = $_virtual[$Model->name]['id'];
-		// }
-
+		if ($Model->hasField('public_id', true) && $_virtual = $Model->findByPublicIdAndProjectId($id, $Model->Project->id)) {
+		    $Model->id = $_virtual[$Model->name]['id'];
+		}
 
 		if (!$Model->exists()) {
 			throw new NotFoundException(__('Invalid ' . $Model->name));

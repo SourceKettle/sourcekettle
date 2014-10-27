@@ -33,6 +33,7 @@ $tasks = array(
 			'task_status_id' => 1,
 			'task_priority_id' => 2,
 			'task_type_id' => 1,
+			'public_id' => 0,
 		),
 		'TaskType' => array(
 			'name' => 'bug',
@@ -55,6 +56,7 @@ $tasks = array(
 			'task_status_id' => 2,
 			'task_priority_id' => 3,
 			'task_type_id' => 2,
+			'public_id' => 0,
 		),
 		'TaskType' => array(
 			'name' => 'enhancement',
@@ -78,6 +80,7 @@ $tasks = array(
 			'task_priority_id' => 4,
 			'task_type_id' => 1,
 			'dependenciesComplete' => true,
+			'public_id' => 0,
 		),
 		'DependsOn' => array(0 => array('fish')),
 		'TaskType' => array(

@@ -87,3 +87,6 @@ $config['dtcore']['pages']['milestones']['edit']['en']['form.submit'] = "Submit"
 $config['dtcore']['pages']['milestones']['plan']['en']['header.text'] = "Milestone task planner";
 //APP/Milestones/close
 $config['dtcore']['pages']['milestones']['close']['en']['header.text'] = "Close Milestone";
+
+//APP/Milestones/burndown
+$config['dtcore']['pages']['milestones']['burndown']['en']['header.text'] = "Burn-down Chart";

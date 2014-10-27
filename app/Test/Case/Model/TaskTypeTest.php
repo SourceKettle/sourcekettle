@@ -53,6 +53,8 @@ class TaskTypeTest extends CakeTestCase {
 		$wontfix       = $this->TaskType->idToName(6);
 		$documentation = $this->TaskType->idToName(7);
 		$meeting       = $this->TaskType->idToName(8);
+		$maintenance   = $this->TaskType->idToName(9);
+		$testing       = $this->TaskType->idToName(10);
 
 		$this->assertEqual(null, $fail,          "Got valid name for invalid status 'fail'");
 		$this->assertEqual('bug', $bug,           "Got incorrect name for status 'bug'");
@@ -63,6 +65,8 @@ class TaskTypeTest extends CakeTestCase {
 		$this->assertEqual('wontfix', $wontfix,       "Got incorrect name for status 'wontfix'");
 		$this->assertEqual('documentation', $documentation, "Got incorrect name for status 'documentation'");
 		$this->assertEqual('meeting', $meeting,       "Got incorrect name for status 'meeting'");
+		$this->assertEqual('maintenance', $maintenance, "Got incorrect name for status 'maintenance'");
+		$this->assertEqual('testing', $testing,       "Got incorrect name for status 'testing'");
 	}
 
 	public function testNameToId() {
@@ -75,6 +79,8 @@ class TaskTypeTest extends CakeTestCase {
 		$wontfix       = $this->TaskType->nameToID('wontfix');
 		$documentation = $this->TaskType->nameToID('documentation');
 		$meeting       = $this->TaskType->nameToID('meeting');
+		$maintenance   = $this->TaskType->nameToID('maintenance');
+		$testing       = $this->TaskType->nameToID('testing');
 
 		$this->assertEqual(0, $fail,          "Got valid ID for invalid status 'fail'");
 		$this->assertEqual(1, $bug,           "Got incorrect ID for status 'bug'");
@@ -85,10 +91,12 @@ class TaskTypeTest extends CakeTestCase {
 		$this->assertEqual(6, $wontfix,       "Got incorrect ID for status 'wontfix'");
 		$this->assertEqual(7, $documentation, "Got incorrect ID for status 'documentation'");
 		$this->assertEqual(8, $meeting,       "Got incorrect ID for status 'meeting'");
+		$this->assertEqual(9, $maintenance,   "Got incorrect ID for status 'maintenance'");
+		$this->assertEqual(10, $testing,       "Got incorrect ID for status 'testing'");
 	}
 
 	public function testNumberOfItems() {
-		$this->assertEqual(8, $this->TaskType->find('count'), "Wrong number of task types returned (tests need updating?)");
+		$this->assertEqual(10, $this->TaskType->find('count'), "Wrong number of task types returned (tests need updating?)");
 	}
 
 	public function testGetLookupTable() {
@@ -102,6 +110,8 @@ class TaskTypeTest extends CakeTestCase {
 			6 => array('id' => 6, 'name' => 'wontfix',       'label' => 'Won\'t Fix',    'icon' => '', 'class' => 'inverse'),
 			7 => array('id' => 7, 'name' => 'documentation', 'label' => 'Documentation', 'icon' => '', 'class' => 'info'),
 			8 => array('id' => 8, 'name' => 'meeting',       'label' => 'Meeting',       'icon' => '', 'class' => 'info'),
+			9 => array('id' => 9, 'name' => 'maintenance',   'label' => 'Maintenance Work', 'icon' => '', 'class' => 'warning'),
+			10 => array('id' => 10, 'name' => 'testing',      'label' => 'Testing',         'icon' => '', 'class' => 'success'),
 		), $table, "Incorrect lookup table returned (tests need updating?)");
 	}
 }
