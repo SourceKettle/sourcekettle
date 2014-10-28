@@ -25,11 +25,19 @@
             "help_inline" => __("50 characters max")
         ));
 
+        echo $this->Bootstrap->input("milestone_id", array(
+            "input" => $this->Form->input("milestone_id", array(
+                "label" => false,
+                "class" => "span5"
+            )),
+            "label" => __('Milestone').' '.$this->Bootstrap->icon('road'),
+        ));
+
         echo $this->Bootstrap->input("task_priority_id", array(
             "input" => $this->Form->input("task_priority_id", array(
                 "label"   => false,
                 "default" => "2",
-                "class"   => "span3"
+                "class"   => "span5"
             )),
             "label" => __('Priority'),
         ));
@@ -38,7 +46,7 @@
             "input" => $this->Form->input("assignee_id", array(
                 "label"   => false,
                 "default" => "2",
-                "class"   => "span3",
+                "class"   => "span5",
             )),
             "label" => __('Assigned to')
         ));
@@ -68,25 +76,18 @@
         echo $this->Bootstrap->input("DependsOn.DependsOn", array(
             "input" => $this->Form->input("DependsOn.DependsOn", array(
                 "label"    => false,
-                "class"    => "span6",
+                "class"    => "span9",
                 "multiple" => "multiple",
+				"size"     => 10,
                 "options"  => $availableTasks, 
             )),
             "label" => __('Depends on').' '.$this->Bootstrap->icon('tasks'),
 			"help_block" => "<a href='#' id='unselect-all'>".__("Unselect all")."</a>"
         ));
 
-        echo $this->Bootstrap->input("milestone_id", array(
-            "input" => $this->Form->input("milestone_id", array(
-                "label" => false,
-                "class" => "span6"
-            )),
-            "label" => __('Milestone').' '.$this->Bootstrap->icon('road'),
-        ));
-
 		echo $this->Bootstrap->input("description", array( 
 			"input" => $this->Markitup->editor("description", array(
-				"class" => "span7",
+				"class" => "span8",
 				"label" => false,
 				"placeholder" => __('Longer and more descriptive explanation...')
 			)),
@@ -102,7 +103,9 @@
         <?php
 
 		// TODO set default type based on config
-        if (!isset($this->request->data['Task']['task_type_id'])) $this->request->data['Task']['task_type_id'] = 1;
+        if (!isset($this->request->data['Task']['task_type_id'])) {
+			$this->request->data['Task']['task_type_id'] = 1;
+		}
         
 		$options = array();
 		foreach ($task_types as $id => $type) {
