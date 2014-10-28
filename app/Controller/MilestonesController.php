@@ -35,6 +35,7 @@ class MilestonesController extends AppProjectController {
 			'edit'   => 'write',
 			'close'   => 'write',
 			'reopen'   => 'write',
+			'burndown' => 'read',
 			'delete'   => 'write',
 			'api_view'   => 'read',
 			'api_all'   => 'read',
