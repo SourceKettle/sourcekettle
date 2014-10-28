@@ -38,6 +38,7 @@ class ProjectsController extends AppProjectController {
 			'edit'   => 'write',
 			'add_repo'   => 'admin',
 			'delete' => 'write',
+			'burndown' => 'read',
 			'markupPreview'  => 'read',
 			'api_history' => 'read',
 			'api_autocomplete' => 'read',
