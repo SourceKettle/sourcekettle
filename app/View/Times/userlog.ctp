@@ -12,7 +12,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Where was your time spent?")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

@@ -27,7 +27,7 @@ $this->Html->scriptBlock ("
 
 ?>
 
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Edit a task")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

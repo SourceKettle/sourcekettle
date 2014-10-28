@@ -22,22 +22,6 @@ class DTHelper extends AppHelper {
 	public $helpers = array('TwitterBootstrap.TwitterBootstrap');
 
 /**
- * __lazyLoad function.
- *
- * @access private
- * @param mixed $c
- * @param mixed $lang
- * @return void
- */
-	private function __lazyLoad($c, $lang) {
-		//debug($c);
-		if (!isset($this->__config['pages'][$c])) {
-			Configure::load('Language/dt_core_' . $c . '_' . $lang);
-			$this->__config = Configure::read('dtcore');
-		}
-	}
-
-/**
  * __construct function.
  *
  * @access public
@@ -49,24 +33,6 @@ class DTHelper extends AppHelper {
 		$this->__config = Configure::read('dtcore');
 	}
 
-/**
- * t function.
- *
- * @access public
- * @param mixed $string
- * @param array $overrides (default: array())
- * @return void
- */
-	public function t($string, $overrides = array()) {
-		$lang = (isset($overrides['lang']) != null) ? $overrides['lang'] : $this->__lang;
-
-		$c = (isset($overrides['controller']) != null) ? $overrides['controller'] : $this->request['controller'];
-		$a = (isset($overrides['action']) != null) ? $overrides['action'] : $this->request['action'];
-
-		$this->__lazyLoad($c, $lang);
-
-		return $this->__config['pages'][$c][$a][$lang][$string];
-	}
 
 /**
  * pHeader function.
@@ -75,15 +41,13 @@ class DTHelper extends AppHelper {
  * @param array $overrides (default: array())
  * @return void
  */
-	public function pHeader($overrides = array()) {
-		$lang = (isset($overrides['lang'])) ? $overrides['lang'] : $this->__lang;
-		$text = (isset($overrides['text'])) ? $overrides['text'] : $this->t('header.text', $overrides);
+	public function pHeader($title) {
+		//$lang = (isset($overrides['lang'])) ? $overrides['lang'] : $this->__lang;
+		//$text = (isset($overrides['text'])) ? $overrides['text'] : $this->t('header.text', $overrides);
 
 		$rBefore	= array("{project}", "{text}");
-		$rAfter	= array($this->request['project'], $text);
-
+		$rAfter	= array($this->request['project'], $title);
 		$h = str_replace($rBefore, $rAfter, $this->__config['common']['header']['project']['format']);
-
 		return $this->TwitterBootstrap->page_header($h);
 	}
 

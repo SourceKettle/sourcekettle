@@ -30,7 +30,7 @@ $hover_conditions = $this->Popover->popover(
 
 ?>
 
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Attach a file to the project")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

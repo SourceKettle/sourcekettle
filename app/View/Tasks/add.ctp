@@ -24,7 +24,7 @@ $this->Html->scriptBlock ("
 	", array ("inline" => false));
 
 ?>
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Create a task")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

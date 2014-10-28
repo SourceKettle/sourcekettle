@@ -18,7 +18,7 @@ $this->Html->scriptBlock("$('.dp1').datepicker()", array('inline' => false));
 $this->Html->css('datepicker', null, array ('inline' => false));
 ?>
 
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Change your logged time")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

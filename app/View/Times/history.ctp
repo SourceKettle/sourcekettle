@@ -16,7 +16,7 @@
 $this->Html->script("times.history", array ('inline' => false));
 ?>
 
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Timesheets")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
