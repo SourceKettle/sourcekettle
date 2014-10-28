@@ -141,10 +141,7 @@ class TasksController extends AppProjectController {
 		$this->set('tasks', $tasks);
 
 		// For the filters: lists of available statuses, priorities etc.
-		$this->set('milestones', array(
-			'open'   => $this->Project->Milestone->getOpenMilestones(true),
-			'closed' => $this->Project->Milestone->getClosedMilestones(true),
-		));
+		$this->set('milestones', $this->Project->Milestone->listMilestoneOptions());
 
 		$this->set('selected_statuses',   $statuses);
 		$this->set('selected_priorities', $priorities);

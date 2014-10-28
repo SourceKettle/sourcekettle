@@ -27,16 +27,17 @@
     	</a>
     	<ul class="dropdown-menu">
 			<li><a href='?milestones='>Clear filter</a></li>
+			<li><a href='?milestones=0'>Tasks with no milestone</a></li>
 			<li><a href='?milestones=all'>All milestones</a></li>
-		<? foreach ($milestones['open'] as $id => $milestone) {
+		<? foreach ($milestones['Open'] as $id => $milestone) {
 			$class = in_array($id, array_keys($selected_milestones))? ' class="active"': '';
 			?>
-			<li<?=$class?>><a href='?milestones=<?=$id?>'><?=$milestone['Milestone']['subject']?></a></li>
+			<li<?=$class?>><a href='?milestones=<?=h($id)?>'><?=h($milestone)?></a></li>
 		<? } ?>
-		<? foreach ($milestones['closed'] as $id => $milestone) {
+		<? foreach ($milestones['Closed'] as $id => $milestone) {
 			$class = in_array($id, array_keys($selected_milestones))? ' class="active"': '';
 			?>
-			<li<?=$class?>><a href='?milestones=<?=$id?>'><?=$milestone['Milestone']['subject'].' '.__('(closed)')?></a></li>
+			<li<?=$class?>><a href='?milestones=<?=h($id)?>'><?=h($milestone).' '.__('(closed)')?></a></li>
 		<? } ?>
     	</ul>
     </li>
