@@ -106,32 +106,133 @@ class TasksController extends AppProjectController {
 		$milestones = preg_split('/\s*,\s*/', trim(@$this->request->query['milestones']), null, PREG_SPLIT_NO_EMPTY);
 
 		// Filter out invalid entries
-		$statuses   = $this->TaskStatus->filterValid($statuses);
-		$priorities = $this->TaskPriority->filterValid($priorities);
-		$types      = $this->TaskType->filterValid($types);
-		$assignees  = $this->User->filterValid($assignees);
-		$creators   = $this->User->filterValid($creators);
-		$milestones = $this->Milestone->filterValid($milestones);
+		$selected_statuses   = $this->TaskStatus->filterValid($statuses);
+		$selected_priorities = $this->TaskPriority->filterValid($priorities);
+		$selected_types      = $this->TaskType->filterValid($types);
+		$selected_assignees  = $this->User->filterValid($assignees);
+		$selected_creators   = $this->User->filterValid($creators);
+		$selected_milestones = $this->Milestone->filterValid($milestones);
+
+		// For the filters: lists of available statuses, priorities etc.
+		$milestones    = $this->Project->Milestone->listMilestoneOptions();
+		$milestones = array($milestones[0]) + $milestones['Open'] + $milestones['Closed'];
+		$statuses      = $this->TaskStatus->find('list', array());
+		$priorities    = $this->TaskPriority->find('list', array());
+		$types         = $this->TaskType->find('list', array());
+		$collaborators = $this->Project->listCollaborators();
+
+		// Combine the data for easily generating URLs for the task filter bar
+		// Yes, this is horrible.
+		$filter_clear_status = 'priorities='.urlencode(implode(',', array_keys($selected_priorities))).
+							   '&types='.urlencode(implode(',', array_keys($selected_types))).
+							   '&assignees='.urlencode(implode(',', array_keys($selected_assignees))).
+							   '&creators='.urlencode(implode(',', array_keys($selected_creators))).
+							   '&milestones='.urlencode(implode(',', array_keys($selected_milestones)));
+
+		$filter_clear_priority = 'statuses='.urlencode(implode(',', array_keys($selected_statuses))).
+							   '&types='.urlencode(implode(',', array_keys($selected_types))).
+							   '&assignees='.urlencode(implode(',', array_keys($selected_assignees))).
+							   '&creators='.urlencode(implode(',', array_keys($selected_creators))).
+							   '&milestones='.urlencode(implode(',', array_keys($selected_milestones)));
+
+		$filter_clear_type   = 'statuses='.urlencode(implode(',', array_keys($selected_statuses))).
+							   '&priorities='.urlencode(implode(',', array_keys($selected_priorities))).
+							   '&assignees='.urlencode(implode(',', array_keys($selected_assignees))).
+							   '&creators='.urlencode(implode(',', array_keys($selected_creators))).
+							   '&milestones='.urlencode(implode(',', array_keys($selected_milestones)));
+
+		$filter_clear_assignee = 'statuses='.urlencode(implode(',', array_keys($selected_statuses))).
+							     '&priorities='.urlencode(implode(',', array_keys($selected_priorities))).
+							     '&types='.urlencode(implode(',', array_keys($selected_types))).
+							     '&creators='.urlencode(implode(',', array_keys($selected_creators))).
+							     '&milestones='.urlencode(implode(',', array_keys($selected_milestones)));
+
+		$filter_clear_creator = 'statuses='.urlencode(implode(',', array_keys($selected_statuses))).
+							    '&priorities='.urlencode(implode(',', array_keys($selected_priorities))).
+							    '&types='.urlencode(implode(',', array_keys($selected_types))).
+							    '&assignees='.urlencode(implode(',', array_keys($selected_assignees))).
+							    '&milestones='.urlencode(implode(',', array_keys($selected_milestones)));
+
+		$filter_clear_milestone = 'statuses='.urlencode(implode(',', array_keys($selected_statuses))).
+							      '&priorities='.urlencode(implode(',', array_keys($selected_priorities))).
+							      '&types='.urlencode(implode(',', array_keys($selected_types))).
+							      '&assignees='.urlencode(implode(',', array_keys($selected_assignees))).
+							      '&creators='.urlencode(implode(',', array_keys($selected_creators)));
+
+		$filter_urls = array(
+			'status'    => array(
+				'clear' => $filter_clear_status,
+				'all'   => $filter_clear_status.'&statuses=all',
+			),
+			'priority'  => array(
+				'clear' => $filter_clear_priority,
+				'all'   => $filter_clear_priority.'&priorities=all',
+			),
+			'type'      => array(
+				'clear' => $filter_clear_type,
+				'all'   => $filter_clear_type.'&types=all',
+			),
+			'assignee'  => array(
+				'clear' => $filter_clear_assignee,
+				'all'   => $filter_clear_assignee.'&assignees=all',
+				'none'  => $filter_clear_assignee.'&assignees=0',
+			),
+			'creator'   => array(
+				'clear' => $filter_clear_creator,
+				'all'   => $filter_clear_creator.'&creators=all',
+			),
+			'milestone' => array(
+				'clear' => $filter_clear_milestone,
+				'all'   => $filter_clear_milestone.'&milestones=all',
+				'none'  => $filter_clear_milestone.'&milestones=0',
+			),
+		);
+
+		foreach ($statuses as $id => $status) {
+			$filter_urls['status'][$id] = $filter_clear_status."&statuses=".urlencode($status);
+		}
+
+		foreach ($priorities as $id => $priority) {
+			$filter_urls['priority'][$id] = $filter_clear_priority."&priorities=".urlencode($priority);
+		}
+
+		foreach ($types as $id => $type) {
+			$filter_urls['type'][$id] = $filter_clear_type."&types=".urlencode($type);
+		}
+
+		foreach ($collaborators as $id => $assignee) {
+			$filter_urls['assignee'][$id] = $filter_clear_assignee."&assignees=".urlencode($id);
+		}
+
+		foreach ($collaborators as $id => $creator) {
+			$filter_urls['creator'][$id] = $filter_clear_creator."&creators=".urlencode($id);
+		}
+
+		foreach ($milestones as $id => $milestone) {
+			$filter_urls['milestone'][$id] = $filter_clear_milestone."&milestones=".urlencode($id);
+		}
+
+		$this->set('filter_urls', $filter_urls);
 
 		$conditions = array('Task.project_id' => $project['Project']['id']);
 
-		if (!empty($statuses)) {
-			$conditions['Task.task_status_id'] = array_keys($statuses);
+		if (!empty($selected_statuses)) {
+			$conditions['Task.task_status_id'] = array_keys($selected_statuses);
 		}
-		if (!empty($priorities)) {
-			$conditions['Task.task_priority_id'] = array_keys($priorities);
+		if (!empty($selected_priorities)) {
+			$conditions['Task.task_priority_id'] = array_keys($selected_priorities);
 		}
-		if (!empty($types)) {
-			$conditions['Task.task_type_id'] = array_keys($types);
+		if (!empty($selected_types)) {
+			$conditions['Task.task_type_id'] = array_keys($selected_types);
 		}
-		if (!empty($assignees)) {
-			$conditions['Task.assignee_id'] = array_keys($assignees);
+		if (!empty($selected_assignees)) {
+			$conditions['Task.assignee_id'] = array_keys($selected_assignees);
 		}
-		if (!empty($creators)) {
-			$conditions['Task.owner_id']   = array_keys($creators);
+		if (!empty($selected_creators)) {
+			$conditions['Task.owner_id']   = array_keys($selected_creators);
 		}
-		if (!empty($milestones)) {
-			$conditions['Task.milestone_id'] = array_keys($milestones);
+		if (!empty($selected_milestones)) {
+			$conditions['Task.milestone_id'] = array_keys($selected_milestones);
 		}
 
 		// Load task list based on the filtering rules
@@ -140,23 +241,20 @@ class TasksController extends AppProjectController {
 		));
 		$this->set('tasks', $tasks);
 
-		// For the filters: lists of available statuses, priorities etc.
-		$this->set('milestones', array(
-			'open'   => $this->Project->Milestone->getOpenMilestones(true),
-			'closed' => $this->Project->Milestone->getClosedMilestones(true),
-		));
 
-		$this->set('selected_statuses',   $statuses);
-		$this->set('selected_priorities', $priorities);
-		$this->set('selected_types',      $types);
-		$this->set('selected_assignees',  $assignees);
-		$this->set('selected_creators',   $creators);
-		$this->set('selected_milestones', $milestones);
+		$this->set('statuses',      $statuses);
+		$this->set('priorities',    $priorities);
+		$this->set('types',         $types);
+		$this->set('collaborators', $collaborators);
+		$this->set('milestones',    $milestones);
 
-		$this->set('statuses', $this->TaskStatus->find('list', array()));
-		$this->set('priorities', $this->TaskPriority->find('list', array()));
-		$this->set('types', $this->TaskType->find('list', array()));
-		$this->set('collaborators', $this->Project->listCollaborators());
+		$this->set('selected_statuses',   $selected_statuses);
+		$this->set('selected_priorities', $selected_priorities);
+		$this->set('selected_types',      $selected_types);
+		$this->set('selected_assignees',  $selected_assignees);
+		$this->set('selected_creators',   $selected_creators);
+		$this->set('selected_milestones', $selected_milestones);
+
 
 	}
 
