@@ -19,6 +19,7 @@
 	<li class="disabled">
 	  <a href="#">Filters:</a>
 	</li>
+	<li><a href="?">(clear)</a></li>
 
     <li class="dropdown">
     	<a class="dropdown-toggle" data-toggle="dropdown"
@@ -26,17 +27,14 @@
     		<?=__("Milestone")?> <b class="caret"></b>
     	</a>
     	<ul class="dropdown-menu">
-			<li><a href='?milestones='>Clear filter</a></li>
-			<li><a href='?milestones=all'>All milestones</a></li>
-		<? foreach ($milestones['open'] as $id => $milestone) {
+			<?// NB filters are pre-urlencoded... ?>
+			<li><a href='?<?=$filter_urls['milestone']['clear']?>'>Clear filter</a></li>
+			<li><a href='?<?=$filter_urls['milestone']['all']?>'>All milestones</a></li>
+			<li><a href='?<?=$filter_urls['milestone']['none']?>'>Tasks with no milestone</a></li>
+		<? foreach ($milestones as $id => $milestone) {
 			$class = in_array($id, array_keys($selected_milestones))? ' class="active"': '';
 			?>
-			<li<?=$class?>><a href='?milestones=<?=$id?>'><?=$milestone['Milestone']['subject']?></a></li>
-		<? } ?>
-		<? foreach ($milestones['closed'] as $id => $milestone) {
-			$class = in_array($id, array_keys($selected_milestones))? ' class="active"': '';
-			?>
-			<li<?=$class?>><a href='?milestones=<?=$id?>'><?=$milestone['Milestone']['subject'].' '.__('(closed)')?></a></li>
+			<li<?=$class?>><a href='?<?=$filter_urls['milestone'][$id]?>'><?=h($milestone)?></a></li>
 		<? } ?>
     	</ul>
     </li>
@@ -47,12 +45,12 @@
     		<?=__("Status")?> <b class="caret"></b>
     	</a>
     	<ul class="dropdown-menu">
-			<li><a href='?statuses='>Clear filter</a></li>
-			<li><a href='?statuses=all'>All statuses</a></li>
+			<li><a href='?<?=$filter_urls['status']['clear']?>'>Clear filter</a></li>
+			<li><a href='?<?=$filter_urls['status']['all']?>'>All statuses</a></li>
 		<? foreach ($statuses as $id => $name) {
 			$class = in_array($id, array_keys($selected_statuses))? ' class="active"': '';
 			?>
-			<li<?=$class?>><a href='?statuses=<?=urlencode($name)?>'><?=h($name)?></a></li>
+			<li<?=$class?>><a href='?<?=$filter_urls['status'][$id]?>'><?=h($name)?></a></li>
 		<? } ?>
     	</ul>
     </li>
@@ -63,12 +61,12 @@
     		<?=__("Priority")?> <b class="caret"></b>
     	</a>
     	<ul class="dropdown-menu">
-			<li><a href='?priorities='>Clear filter</a></li>
-			<li><a href='?priorities=all'>All priorities</a></li>
+			<li><a href='?<?=$filter_urls['priority']['clear']?>'>Clear filter</a></li>
+			<li><a href='?<?=$filter_urls['priority']['all']?>'>All priorities</a></li>
 		<? foreach ($priorities as $id => $name) {
 			$class = in_array($id, array_keys($selected_priorities))? ' class="active"': '';
 		?>
-			<li<?=$class?>><a href='?priorities=<?=urlencode($name)?>'><?=h($name)?></a></li>
+			<li<?=$class?>><a href='?<?=$filter_urls['priority'][$id]?>'><?=h($name)?></a></li>
 		<? } ?>
     	</ul>
     </li>
@@ -79,12 +77,12 @@
     		<?=__("Type")?> <b class="caret"></b>
     	</a>
     	<ul class="dropdown-menu">
-			<li><a href='?types='>Clear filter</a></li>
-			<li><a href='?types=all'>All types</a></li>
+			<li><a href='?<?=$filter_urls['type']['clear']?>'>Clear filter</a></li>
+			<li><a href='?<?=$filter_urls['type']['all']?>'>All types</a></li>
 		<? foreach ($types as $id => $name) {
 			$class = in_array($id, array_keys($selected_types))? ' class="active"': '';
 			?>
-			<li<?=$class?>><a href='?types=<?=urlencode($name)?>'><?=h($name)?></a></li>
+			<li<?=$class?>><a href='?<?=$filter_urls['type'][$id]?>'><?=h($name)?></a></li>
 		<? } ?>
     	</ul>
     </li>
@@ -95,12 +93,13 @@
     		<?=__("Assigned to")?> <b class="caret"></b>
     	</a>
     	<ul class="dropdown-menu">
-			<li><a href='?assignees='>Clear filter</a></li>
-			<li><a href='?assignees=all'>All assignees</a></li>
+			<li><a href='?<?=$filter_urls['assignee']['clear']?>'>Clear filter</a></li>
+			<li><a href='?<?=$filter_urls['assignee']['all']?>'>All assignees</a></li>
+			<li><a href='?<?=$filter_urls['assignee']['none']?>'>Tasks with no assignee</a></li>
 		<? foreach ($collaborators as $id => $name) {
 			$class = in_array($id, array_keys($selected_assignees))? ' class="active"': '';
 			?>
-			<li<?=$class?>><a href='?assignees=<?=$id?>'><?=$name?></a></li>
+			<li<?=$class?>><a href='?<?=$filter_urls['assignee'][$id]?>'><?=$name?></a></li>
 		<? } ?>
     	</ul>
     </li>
@@ -111,12 +110,12 @@
     		<?=__("Created by")?> <b class="caret"></b>
     	</a>
     	<ul class="dropdown-menu">
-			<li><a href='?creators='>Clear filter</a></li>
-			<li><a href='?creators=all'>All creators</a></li>
+			<li><a href='?<?=$filter_urls['creator']['clear']?>'>Clear filter</a></li>
+			<li><a href='?<?=$filter_urls['creator']['all']?>'>All creators</a></li>
 		<? foreach ($collaborators as $id => $name) {
 			$class = in_array($id, array_keys($selected_creators))? ' class="active"': '';
 		?>
-			<li<?=$class?>><a href='?creators=<?=$id?>'><?=$name?></a></li>
+			<li<?=$class?>><a href='?<?=$filter_urls['creator'][$id]?>'><?=$name?></a></li>
 		<? } ?>
     	</ul>
     </li>

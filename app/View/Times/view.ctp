@@ -15,7 +15,7 @@
  */
 ?>
 
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Time logged for the project")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -25,22 +25,22 @@
         <div class="span10">
             <div class="well times form form-horizontal">
                 <dl class="dl-horizontal">
-                    <dt><?= $this->DT->t('info.time.logged') ?></dt>
+                    <dt><?= __('Time Logged') ?></dt>
                     <dd><?= h($time['Time']['minutes']['s']) ?></dd>
 
-                    <dt><?= $this->DT->t('info.time.description') ?></dt>
+                    <dt><?= __('Description') ?></dt>
                     <dd><?= ($time['Time']['description']) ? h($time['Time']['description']) : 'n/a' ?></dd>
 
-                    <dt><?= $this->DT->t('info.time.date') ?></dt>
+                    <dt><?= __('Date') ?></dt>
                     <dd><?= h($time['Time']['date']) ?></dd>
 
                     <? if (isset($task['Task']) && $task['Task']['id']) { ?>
-                    <dt><?= $this->DT->t('info.time.task') ?></dt>
+                    <dt><?= __('Attached Task') ?></dt>
                     <dd><?= $this->Html->link('#'.$task['Task']['public_id'].' - '.$task['Task']['subject'], array('project'=>$project['Project']['name'],'controller'=>'tasks','action'=>'view',$task['Task']['public_id'])) ?></dd>
                     <? } ?>
                 </dl>
                 <dl class="dl-horizontal">
-                    <dt><?= $this->DT->t('info.time.created') ?></dt>
+                    <dt><?= __('Created By') ?></dt>
                     <dd>
                         <?= $this->Gravatar->image($time['User']['email'], array('size' => 24), array('alt' => $time['User']['name'])) ?>
                         <?= $this->Html->link($time['User']['name'], array('controller'=>'users','action'=>'view',$time['User']['id'])) ?>

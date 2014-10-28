@@ -17,12 +17,12 @@
 <div class="modal hide" id="unresolveModal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">x</button>
-        <h4><?= $this->DT->t('modal.unresolve.header') ?></h4>
+        <h4><?= __('Un-resolve the task') ?></h4>
     </div>
     <?= $this->Form->create('TaskComment', array('url' => array('project' => $project['Project']['name'], 'controller' => 'tasks', 'action' => 'unresolve', $task['Task']['public_id']))) ?>
     <div class="modal-body">
         <p>
-            <?= $this->DT->t('modal.unresolve.body') ?>
+            <?= __('Before the task can be un-resolved, please leave an explanation.') ?>
         </p>
         <?php
         echo $this->Bootstrap->input("comment", array(
@@ -30,15 +30,15 @@
                 "type" => "textarea",
                 "class" => "span5",
                 "label" => false,
-                "placeholder" => $this->DT->t('modal.unresolve.comment.placeholder')
+                "placeholder" => __('Enter a comment for un-resolving the task...')
             )),
             "label" => false,
         ));
         ?>
     </div>
     <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal"><?= $this->DT->t('modal.unresolve.close') ?></a>
-        <?= $this->Bootstrap->button($this->DT->t('modal.unresolve.submit'), array("style" => "primary")) ?>
+        <a href="#" class="btn" data-dismiss="modal"><?= __('Cancel') ?></a>
+        <?= $this->Bootstrap->button(__('Un-resolve Task'), array("style" => "primary")) ?>
     </div>
     <?= $this->Form->end() ?>
 </div>

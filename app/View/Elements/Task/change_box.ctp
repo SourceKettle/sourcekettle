@@ -66,7 +66,7 @@
                 <?= $this->Bootstrap->label($this->Bootstrap->icon('pencil', 'white').' Update') ?>
                 <small>
                     <?= $this->Html->link($change['User']['name'], array('controller' => 'users', 'action' => 'view', $change['User']['id'])) ?>
-                    <?= $this->DT->t('history.change.action') ?>
+                    <?= __('updated the task\'s') ?>
                     <?= $pop_over ?>
                     <span class="pull-right"><?= $this->Time->timeAgoInWords($change['ProjectHistory']['created']) ?></span>
                 </small>

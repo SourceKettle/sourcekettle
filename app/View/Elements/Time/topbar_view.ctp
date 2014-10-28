@@ -12,13 +12,13 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- $pl = $this->DT->t('bar.time').$id;
+ $pl = __('Time')." #$id";
 
  $options = array(
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('bar.edit'),
+                'text' => __('Edit'),
                 'url' => array(
                     'action' => 'edit',
                     'controller' => 'times',
@@ -26,7 +26,7 @@
                 ),
             ),
             array(
-                'text' => $this->DT->t('bar.delete'),
+                'text' => __('Delete'),
                 'url' => array(
                     'action' => 'delete',
                     'controller' => 'times',
@@ -39,7 +39,7 @@
     'right' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),
+                'text' => __('Log Time'),
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'times',

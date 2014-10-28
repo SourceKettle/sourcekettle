@@ -21,7 +21,7 @@ foreach ($branches as $b) {
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('bar.tree'),
+                'text' => __('Source'),
                 'url' => array(
                     'action' => 'tree',
                     'controller' => 'source',
@@ -29,7 +29,7 @@ foreach ($branches as $b) {
                 ),
             ),
             array(
-                'text' => $this->DT->t('bar.commits'),
+                'text' => __('Commits'),
                 'url' => array(
                     'action' => 'commits',
                     'controller' => 'source',
@@ -41,7 +41,7 @@ foreach ($branches as $b) {
     'right' => array(
         array(
             array(
-                'text' => $this->DT->t('bar.getthecode'),
+                'text' => __('Get The Code'),
                 'url' => array(
                     'action' => 'gettingStarted',
                     'controller' => 'source',
@@ -50,7 +50,7 @@ foreach ($branches as $b) {
         ),
         array(
             array(
-                'text' => $this->Bootstrap->icon('random', 'white')." ".$this->DT->t('bar.branch'),
+                'text' => __('Branches'),
                 'url' => '#',
                 'type' => 'dropdown',
                 'props' => array(

@@ -24,14 +24,13 @@ $this->Html->scriptBlock ("
 	", array ("inline" => false));
 
 ?>
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Create a task")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar_add') ?>
             <div class="span10">
 				<?= $this->element('Task/add_edit') ?>
             </div>

@@ -50,7 +50,7 @@ foreach ($branches as $b) {
         ),
         array(
             array(
-                'text' => $this->Bootstrap->icon('random', 'white')." ".__("Branch:").$branch,
+				'text' => __("Branch:").$branch,
                 'url' => '#',
                 'type' => 'dropdown',
                 'props' => array(

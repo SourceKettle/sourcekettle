@@ -34,7 +34,7 @@ $_levels = array(
 );
 ?>
 
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Collaborators working on the project")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

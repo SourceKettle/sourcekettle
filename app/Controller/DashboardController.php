@@ -53,7 +53,7 @@ class DashboardController extends AppController {
 		return $this->Task->find('all', array(
 			'conditions' => array(
 				'Task.assignee_id' => $current_user['id'],
-				'TaskStatus.name <>' => 'closed'
+				'TaskStatus.name <>' => array('closed', 'resolved', 'dropped')
 			),
 			'recursive' => 0,
 			'order' => array('task_priority_id DESC', 'task_status_id ASC'),

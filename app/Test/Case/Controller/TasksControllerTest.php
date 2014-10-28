@@ -87,7 +87,7 @@ class TasksControllerTest extends AppControllerTest {
 	}
 
 	public function testIndexAssignedAll() {
-		$this->__testTaskIndex(2, '/project/public/tasks?assignees=all', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?assignees=all', array(1, 4, 10));
 	}
 
 

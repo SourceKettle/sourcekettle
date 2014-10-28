@@ -12,7 +12,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- $pl = $this->DT->t('bar.task').$id;
+ $pl = __('Task')." #$id";
 
 if ($task['Task']['assignee_id'] != null) {
     if ($task['TaskStatus']['name'] == 'open') {
@@ -41,13 +41,13 @@ if ($task['Task']['assignee_id'] != null) {
 }
 if ($task['TaskStatus']['name'] != 'closed') {
      $state = array(
-         'text' => $this->DT->t('bar.close'),
+         'text' => __('Close task'),
          'url' => '#closeModal',
          'props' => array("data-toggle" => "modal", "class" => "btn-success")
      );
  } else {
      $state =  array(
-         'text' => $this->DT->t('bar.open'),
+         'text' => __('Re-open task'),
          'url' => array(
             'action' => 'opentask',
             'controller' => 'tasks',
@@ -60,13 +60,13 @@ if ($task['TaskStatus']['name'] != 'closed') {
 
  if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     $resolve = array(
-        'text' => $this->DT->t('bar.resolve'),
+        'text' => __('Resolve'),
         'url' => '#resolveModal',
         'props' => array('data-toggle' => 'modal')
     );
 } else if ($task['TaskStatus']['name'] == 'resolved'){
     $resolve = array(
-        'text' => $this->DT->t('bar.unresolve'),
+        'text' => __('Un-resolve'),
         'url' => '#unresolveModal',
         'props' => array('data-toggle' => 'modal')
     );
@@ -78,7 +78,7 @@ if ($task['TaskStatus']['name'] != 'closed') {
     'left' => array(
         array(
             array(
-                'text' => $this->DT->t('bar.edit'),
+                'text' => __('Edit'),
                 'url' => array(
                     'action' => 'edit',
                     'controller' => 'tasks',
@@ -86,7 +86,7 @@ if ($task['TaskStatus']['name'] != 'closed') {
                 ),
             ),
             array(
-                'text' => $this->DT->t('bar.assign'),
+                'text' => __('Assign'),
                 'url' => '#assignModal',
                 'props' => array('data-toggle' => 'modal'),
             ),
@@ -98,7 +98,7 @@ if ($task['TaskStatus']['name'] != 'closed') {
     'right' => array(
         array(
             array(
-                'text' => $this->DT->t('topbar.create.text', array('action' => 'topbar')),
+                'text' => __('Create Task'),
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'tasks',

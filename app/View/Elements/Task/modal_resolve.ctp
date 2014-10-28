@@ -17,12 +17,12 @@
 <div class="modal hide" id="resolveModal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">x</button>
-        <h4><?= $this->DT->t('modal.resolve.header') ?></h4>
+        <h4><?= __('Resolve the task') ?></h4>
     </div>
     <?= $this->Form->create('TaskComment', array('url' => array('project' => $project['Project']['name'], 'controller' => 'tasks', 'action' => 'resolve', $task['Task']['public_id']))) ?>
     <div class="modal-body">
         <p>
-            <?= $this->DT->t('modal.resolve.body') ?>
+            <?= __('Before the task can be resolved, please leave an explanation. ') ?>
         </p>
         <?php
         echo $this->Bootstrap->input("comment", array(
@@ -30,15 +30,15 @@
                 "type" => "textarea",
                 "class" => "span5",
                 "label" => false,
-                "placeholder" => $this->DT->t('modal.resolve.comment.placeholder')
+                "placeholder" => __('Enter a comment for resolving this task...')
             )),
             "label" => false,
         ));
         ?>
     </div>
     <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal"><?= $this->DT->t('modal.resolve.close') ?></a>
-        <?= $this->Bootstrap->button($this->DT->t('modal.resolve.submit'), array("style" => "primary")) ?>
+        <a href="#" class="btn" data-dismiss="modal"><?= __('Cancel') ?></a>
+        <?= $this->Bootstrap->button(__('Resolve Task'), array("style" => "primary")) ?>
     </div>
     <?= $this->Form->end() ?>
 </div>

@@ -21,8 +21,7 @@
 <?=$this->Html->script('projects.overview', array('inline' => false));?>
 
 
-
-<?= $this->DT->pHeader() ?>
+<?= $this->DT->pHeader(__("Project overview")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
