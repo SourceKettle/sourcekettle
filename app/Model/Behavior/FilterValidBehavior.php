@@ -49,7 +49,6 @@ class FilterValidBehavior extends ModelBehavior {
 		// Build an SQL query to list ID => name or just an ID list if we have no name field
 		$byId = array_filter($values, 'is_numeric');
 		$byName = array_filter($values, function($a) {return !is_numeric($a);});
-
 		$conditions = array();
 		$fields = array('id');
 		$nameField = null;
@@ -59,23 +58,23 @@ class FilterValidBehavior extends ModelBehavior {
 			$fields[] = $nameField;
 		}
 
-		// If it's a project component, make sure the project matches too
-		if ($model->Behaviors->enabled('ProjectComponent')) {
-			$conditions["project_id"] = $model->Project->id;
-		}
 
 		// If they've specified 'all', then we'll default to listing everything
 		if (!in_array('all', $byName)) {
-			//return array_merge(array(0 => 'None'), $model->find('list'));
 
 			$conditions['id'] = $byId;
 
-			if ($nameField) {
+			if ($nameField && !empty($byName)) {
 				$conditions = array('OR' => array(
 					$conditions,
 					array($nameField => $byName)
 				));
 			}
+		}
+
+		// If it's a project component, make sure the project matches too
+		if ($model->Behaviors->enabled('ProjectComponent')) {
+			$conditions["project_id"] = $model->Project->id;
 		}
 
 		$found = $model->find('list', array('conditions' => $conditions, 'fields' => $fields));
