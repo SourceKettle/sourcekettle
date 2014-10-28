@@ -50,6 +50,9 @@
                 $isFeat = ($c1==$c2 && ($a1==$a2 || ($a1=='index' && $a2=='.') || $a2=='*'));
             }
 
+			// Don't highlight anything with ?foo=bar query options
+			$isFeat = $isFeat && (!isset($options['url']['?']));
+
             echo "<li ";
             if ($isFeat) echo 'class="active"';
             echo ">";
@@ -58,11 +61,15 @@
                 $options['url']['action'] = '.';
             }
 
-            echo $this->Html->link(
-                $this->Bootstrap->icon($options['icon'], ($isFeat) ? 'white' : 'black').' '.h(ucwords($feature)),
-                $options['url'],
-                array('escape' => false)
-            );
+			$icon = '';
+			if (isset($options['icon'])) {
+				$icon = $this->Bootstrap->icon($options['icon'], ($isFeat) ? 'white' : 'black').' ';
+			}
+	         echo $this->Html->link(
+	            $icon.h(ucwords($feature)),
+	            $options['url'],
+	            array('escape' => false)
+	        );
 
             echo "</li>";
         }

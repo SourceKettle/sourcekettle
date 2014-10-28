@@ -54,7 +54,16 @@
                     'controller' => 'tasks',
                     'project' => $this->params['project'],
                 ),
-            ),
+			),
+		    '-> My tasks' => array(
+                'icon' => 'file',
+		        'url' => array(
+		            'action' => array('*'),
+					'?' => 'assignees='.urlencode($current_user['id']),
+		            'controller' => 'tasks',
+		            'project' => $this->params['project'],
+		        ),
+		    ),
             'Milestones' => array(
                 'icon' => 'road',
                 'url' => array(
