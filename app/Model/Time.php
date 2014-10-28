@@ -220,9 +220,9 @@ class Time extends AppModel {
 
 		$weekTimes = $this->find('all', array(
 			'fields' => array(
-				'Task.id', 'Task.subject',
+				'Task.id', 'Task.subject', $this->Task->getVirtualField('public_id')." AS Task__public_id",
 				'User.id', 'User.name', 'User.email',
-				'Time.id', 'Time.date', 'Time.description', 'Time.mins' //'SUM(Time.mins) as total_mins'
+				'Time.id', 'Time.date', 'Time.description', 'Time.mins'
 			),
 			'conditions' => $conditions,
 			'order' => array('Task.subject', 'User.name', 'Time.date')
