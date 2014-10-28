@@ -327,7 +327,6 @@ class Project extends AppModel {
 
 	public function fetchEventsForProject($number = 8) {
 
-		$this->recursive = 2;
 		$project = $this->getProject($this->id);
 
 		$events = array();
@@ -337,7 +336,7 @@ class Project extends AppModel {
 
 		try {
 			$this->Source->init();
-			array_push($_types, 'Source');
+			array_unshift($_types, 'Source');
 		} catch (UnsupportedRepositoryType $e) {
 		}
 
