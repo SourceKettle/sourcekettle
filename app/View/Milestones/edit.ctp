@@ -19,7 +19,7 @@ $this->Html->css('datepicker', null, array ('inline' => false));
 $this->Html->css('milestones.index', null, array ('inline' => false));
 ?>
 
-<?= $this->DT->pHeader(__("Edit a milestone")) ?>
+<?= $this->DT->pHeader(__("Edit a Milestone")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

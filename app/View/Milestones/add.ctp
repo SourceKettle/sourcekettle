@@ -20,7 +20,7 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
 
 ?>
 
-<?= $this->DT->pHeader(__("Create a milestone")) ?>
+<?= $this->DT->pHeader(__("New Milestone")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

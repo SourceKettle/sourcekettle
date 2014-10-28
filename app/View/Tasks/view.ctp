@@ -26,7 +26,7 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     echo $this->element('Task/modal_unresolve');
 }?>
 
-<?= $this->DT->pHeader(__("Task details")) ?>
+<?= $this->DT->pHeader(__("A task for the Project")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

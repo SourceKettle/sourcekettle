@@ -21,7 +21,7 @@ $this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
 $this->Html->script("milestones.droplist", array ('inline' => false));
 ?>
 
-<?= $this->DT->pHeader(__("Milestone planning")) ?>
+<?= $this->DT->pHeader(__("Milestone task planner")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
