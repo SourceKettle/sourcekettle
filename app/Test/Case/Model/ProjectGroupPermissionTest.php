@@ -1,0 +1,65 @@
+<?php
+App::uses('ProjectGroupPermission', 'Model');
+
+/**
+ * ProjectGroupPermission Test Case
+ *
+ */
+class ProjectGroupPermissionTest extends CakeTestCase {
+
+/**
+ * Fixtures
+ *
+ * @var array
+ */
+	public $fixtures = array(
+		'app.project_group_permission',
+		'app.project_group',
+		'app.project_group_member',
+		'app.project',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
+		'app.task',
+		'app.task_type',
+		'app.task_status',
+		'app.task_priority',
+		'app.milestone',
+		'app.milestone_burndown_log',
+		'app.task_comment',
+		'app.time',
+		'app.task_dependency',
+		'app.source',
+		'app.blob',
+		'app.commit',
+		'app.project_history',
+		'app.attachment',
+		'app.project_burndown_log'
+	);
+
+/**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->ProjectGroupPermission = ClassRegistry::init('ProjectGroupPermission');
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		unset($this->ProjectGroupPermission);
+
+		parent::tearDown();
+	}
+
+}
