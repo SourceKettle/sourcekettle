@@ -52,7 +52,7 @@ echo $this->element('Time/modal_add');
                            'controller' => 'tasks',
 	                       'action' => 'view',
     	                   'project' => $project['Project']['name'],
-        	                $taskId
+						   $taskDetails['Task']['public_id']
                         ));
 						echo "</td>\n";
 					}
