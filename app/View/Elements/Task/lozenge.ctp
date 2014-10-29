@@ -24,7 +24,7 @@ if(isset($span) && $span){
 }
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
-		echo "<li class='draggable' data-taskid='".h($task['Task']['id'])."'>";
+		echo "<li class='draggable' data-taskid='".h($task['Task']['public_id'])."'>";
 	} else {
 		echo "<li>";
 	}
@@ -36,7 +36,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
   if(!$draggable){?>
   onclick="location.href='<?= $this->Html->url($url) ?>';"
   <?}?>
-  data-taskid="<?= $task['Task']['id'] ?>">
+  data-taskid="<?= $task['Task']['public_id'] ?>">
     <div class="task">
         <div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
             <div class="row-fluid">

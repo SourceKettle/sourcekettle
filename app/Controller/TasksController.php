@@ -776,53 +776,57 @@ class TasksController extends AppProjectController {
 		$this->render('/Elements/json');
 	}
 
-	function api_update($id = null) {
+	function api_update($project_name = null, $public_id = null) {
 		$this->layout = 'ajax';
 		$data = array();
 
-		if ($id == null) {
+		if ($public_id == null) {
 			$this->response->statusCode(400);
-			$data['error'] = 400;
-			$data['message'] = 'Bad request, no task id specified.';
+			$this->set('data', array('error' => 400, 'message' => 'Bad request, no project specified.'));
+			$this->render('/Elements/json');
+			return;
+
+		} elseif ($public_id == null) {
+			$this->response->statusCode(400);
+			$this->set('data', array('error' => 400, 'message' => 'Bad request, no task ID specified.'));
+			$this->render('/Elements/json');
+			return;
+
+		} elseif (!is_numeric($public_id)) {
+			$this->response->statusCode(400);
+			$this->set('data', array('error' => 400, 'message' => 'Bad request, task ID should be numeric.'));
+			$this->render('/Elements/json');
+			return;
+
 		}
 
-		if (is_numeric($id)) {
-			$this->Task->id = $id;
+		$task = $this->Task->find('first', array('conditions' => array(
+			'Task.public_id' => $public_id,
+			'Project.name' => $project_name,
+		)));
 
-			if (!$this->Task->exists()) {
-				$this->response->statusCode(404);
-				$data['error'] = 404;
-				$data['message'] = 'No task found of that ID.';
-				$data['id'] = $id;
-			} else {
-				$task = $this->Task->read();
+		if (empty($task)) {
+			$this->response->statusCode(404);
+			$this->set('data', array('error' => 404, 'message' => "Task with ID $public_id not found for project $project"));
+			$this->render('/Elements/json');
+			return;
+		
+		}
 
-				$this->Task->Project->id = $task['Task']['project_id'];
+		// Make sure we're operating  on the correct task ID...
+		$this->request->data['id'] = $task['Task']['id'];
 
-				$partOfProject = $this->Task->Project->hasRead($this->Auth->user('id'));
-				$isAdmin = ($this->_apiAuthLevel() == 1);
+		$task = $this->Task->save($this->request->data);
 
-				if ($isAdmin || $partOfProject) {
-					/*//task_type_id
-					unset($task['Task']['task_type_id']);
-					$task['Task']['type'] = $task['TaskType']['name'];
-					//task_status_id
-					unset($task['Task']['task_status_id']);
-					$task['Task']['status'] = $task['TaskStatus']['name'];
-					//task_priority_id
-					unset($task['Task']['task_priority_id']);
-					$task['Task']['priority'] = $task['TaskPriority']['name'];
-					*/
-					$this->Task->save($this->request->data);
+		if ($task) {
+			$this->response->statusCode(200);
+			$data = $task['Task'];
+			unset($data['id']);
+			$data['error'] = 'no_error';
 
-					$data = $task['Task'];
-					$data['error'] = 'no_error';
-				} else {
-					$data['error'] = 401;
-					$data['message'] = 'Task found, but is not public.';
-					$data['id'] = $id;
-				}
-			}
+		} else {
+			$this->response->statusCode(500);
+			$data = array('error' => 500, 'message' => 'Task update failed');
 		}
 
 		$this->set('data',$data);
@@ -877,7 +881,6 @@ class TasksController extends AppProjectController {
  */
 	public function api_marshalled() {
 		$this->layout = 'ajax';
-
 		$data = array();
 		$request = array();
 
