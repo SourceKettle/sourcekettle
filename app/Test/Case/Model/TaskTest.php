@@ -374,6 +374,7 @@ class TaskTest extends CakeTestCase {
 				1  => 'Resolved Major Task 1 for milestone 2',
 				4  => 'In progress Urgent Task 4 for milestone 1',
 				10 => 'In Progress Major Task 1 for milestone 2',
+				11 => 'Task with differing public ID',
 			),
 			'Others Tasks' => array(
 				2 => 'Open Minor Task 2 for milestone 1',
