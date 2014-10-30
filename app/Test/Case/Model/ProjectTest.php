@@ -452,7 +452,8 @@ class ProjectTestCase extends CakeTestCase {
 			$backlog[$i] = $b;
 		}
 
-		$this->assertEquals($backlog, array(array(
+		$this->assertEquals($backlog, array(
+		array(
 			'Task' => array(
 				'id' => '3',
 				'project_id' => '2',
