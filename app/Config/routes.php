@@ -106,6 +106,9 @@
         Router::connect('/admin/projects/:project/:action', array('controller' => 'projects', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/admin/projects/:project', array('controller' => 'projects', 'action' => 'view', 'admin' => false), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
+		// Fix API links
+        Router::connect('/api/:controller/:project/:action/*', array('api' => true), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+
         /*
          * Add custom route for editing the sshkeys associated to a user
          */

@@ -19,6 +19,15 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 $this->Html->script("jquery-ui.min", array ('inline' => false));
 $this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
 $this->Html->script("milestones.droplist", array ('inline' => false));
+
+// API base for updating tasks
+$api_base = $this->Html->url(array(
+	'controller' => 'tasks',
+	'project' => $milestone['Project']['name'],
+	'action' => 'update',
+	'api' => true
+));
+$this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader(__("Milestone task planner")) ?>

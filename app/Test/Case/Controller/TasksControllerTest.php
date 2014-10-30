@@ -83,16 +83,16 @@ class TasksControllerTest extends AppControllerTest {
 	}
 
 	public function testIndexDefault() {
-		$this->__testTaskIndex(2, '/project/public/tasks', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13));
 	}
 
 	public function testIndexAssignedAll() {
-		$this->__testTaskIndex(2, '/project/public/tasks?assignees=all', array(1, 4, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?assignees=all', array(1, 4, 10, 13));
 	}
 
 
 	public function testIndexAssignedToOne() {
-		$this->__testTaskIndex(2, '/project/public/tasks?assignees=2', array(1, 4, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?assignees=2', array(1, 4, 10, 13));
 	}
 
 	public function testIndexUnassigned() {
@@ -100,7 +100,7 @@ class TasksControllerTest extends AppControllerTest {
 	}
 
 	public function testPriorityAll() {
-		$this->__testTaskIndex(2, '/project/public/tasks?priorities=all', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=all', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13));
 	}
 	public function testPriorityMinorNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=1', array(2, 9));
@@ -109,10 +109,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=minor', array(2, 9));
 	}
 	public function testIndexPriorityMajorNum() {
-		$this->__testTaskIndex(2, '/project/public/tasks?priorities=2', array(1, 7, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=2', array(1, 7, 10, 13));
 	}
 	public function testIndexPriorityMajorName() {
-		$this->__testTaskIndex(2, '/project/public/tasks?priorities=major', array(1, 7, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=major', array(1, 7, 10, 13));
 	}
 	public function testIndexPriorityUrgentNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=3', array(3, 4, 5));
@@ -133,10 +133,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=open', array(2, 5));
 	}
 	public function testIndexStatusInProgressNum() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=2', array(3, 4, 6, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=2', array(3, 4, 6, 10, 13));
 	}
 	public function testIndexStatusInProgressName() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=in%20progress', array(3, 4, 6, 10));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=in%20progress', array(3, 4, 6, 10, 13));
 	}
 	public function testIndexStatusResolvedNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?statuses=3', array(1, 7));
@@ -184,7 +184,7 @@ class TasksControllerTest extends AppControllerTest {
 		sort($yours);
 		$others = array_keys($this->vars['tasks']['Others Tasks']);
 		sort($others);
-		$this->assertEquals(array(1, 4, 10), $yours);
+		$this->assertEquals(array(1, 4, 10, 13), $yours);
 		$this->assertEquals(array(2, 3, 5, 6, 7), $others);
 
 	}
@@ -229,9 +229,7 @@ class TasksControllerTest extends AppControllerTest {
 		$id = $this->controller->Task->getLastInsertID();
 
 		// We should be redirected to the new task
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/'.$id, true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/'.$id);
 	}
 /**
  * testEdit method
@@ -270,9 +268,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/1');
 	}
 
 
@@ -282,9 +278,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/'.$id, true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/'.$id);
 
 		$retrieved = $this->controller->Task->findById($id);
 		$this->assertTrue(is_array($retrieved));
@@ -371,9 +365,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/1');
 	}
 
 	public function testAssignTask() {
@@ -388,9 +380,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/1');
 
 		$task = $this->controller->Task->find('first', array('conditions' => array('id' => 1), 'recursive' => -1));
 		$this->assertEquals(1, $task['Task']['assignee_id']);
@@ -408,9 +398,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/1');
 	}
 
 	public function testComment() {
@@ -425,14 +413,35 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/1', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/1');
 
 		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('task_id' => 1), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
 		$this->assertEquals('Something terrible...', $task['TaskComment']['comment']);
 		$this->assertEquals(1, $task['TaskComment']['task_id']);
 		$this->assertEquals(2, $task['TaskComment']['user_id']);
+	}
+
+	public function testCommentFail() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'TaskComment' => array(
+				'comment' => 'Something terrible...'
+			)
+		);
+
+		$this->controller->TaskComment = $this->getMockForModel('TaskComment', array('save'));
+		$this->controller->TaskComment
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false)); 
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("The comment could not be saved. Please try again."));
+
+		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
 	}
 
 	public function testUpdateCommentTaskNotLoggedIn() {
@@ -446,9 +455,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/2', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/2');
 	}
 
 	public function testUpdateComment() {
@@ -464,14 +471,54 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/2', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/2');
 
 		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('id' => 2), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
 		$this->assertEquals('A further terrible thing...', $task['TaskComment']['comment']);
 		$this->assertEquals(2, $task['TaskComment']['task_id']);
 		$this->assertEquals(1, $task['TaskComment']['user_id']);
+	}
+
+	public function testUpdateCommentInvalidID() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'TaskCommentEdit' => array(
+				'id' => 2000,
+				'comment' => 'A further terrible thing...'
+			)
+		);
+
+		try{ 
+			$this->testAction('/project/public/tasks/updateComment/2000', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		} catch(NotFoundException $e) {
+			$this->assertTrue(true, "Correct exception thrown");
+		} catch(Exception $e) {
+			$this->assertFalse(true, "Incorrect exception thrown");
+		}
+		$this->assertAuthorized();
+	}
+
+	public function testUpdateCommentFail() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'TaskCommentEdit' => array(
+				'id' => 2,
+				'comment' => 'A further terrible thing...'
+			)
+		);
+
+		$this->controller->TaskComment = $this->getMockForModel('TaskComment', array('save'));
+		$this->controller->TaskComment
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false)); 
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("The comment could not be updated. Please try again."));
+
+		$this->testAction('/project/public/tasks/updateComment/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
 	}
 
 	public function testDeleteCommentNotLoggedIn() {
@@ -485,9 +532,48 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/2', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/2');
+	}
+
+	public function testDeleteCommentInvalidID() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'TaskCommentDelete' => array(
+				'id' => 2000,
+			)
+		);
+
+		try{ 
+			$this->testAction('/project/public/tasks/deleteComment/2000', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		} catch(NotFoundException $e) {
+			$this->assertTrue(true, "Correct exception thrown");
+		} catch(Exception $e) {
+			$this->assertFalse(true, "Incorrect exception thrown");
+		}
+		$this->assertAuthorized();
+	}
+
+	public function testDeleteCommentFail() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'TaskCommentDelete' => array(
+				'id' => 2,
+			)
+		);
+
+		$this->controller->TaskComment = $this->getMockForModel('TaskComment', array('delete'));
+		$this->controller->TaskComment
+			->expects($this->once())
+			->method('delete')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("The comment could not be deleted. Please try again."));
+
+
+		$this->testAction('/project/public/tasks/deleteComment/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
 	}
 
 	public function testDeleteComment() {
@@ -502,47 +588,136 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
-		$this->assertNotNull($this->headers);
-		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/project/public/tasks/view/2', true), $this->headers['Location']);
+		$this->assertRedirect('/project/public/tasks/view/2');
 
 		$task = $this->controller->Task->TaskComment->find('first', array('conditions' => array('id' => 2), 'fields' => array('user_id', 'task_id', 'comment'), 'recursive' => -1));
 		$this->assertEquals(array(), $task);
 	}
 
-
-
-
-/**
- * testApiView method
- *
- * @return void
- */
-	public function testApiView() {
+	// Tests for updates via API
+	public function testApiUpdateSystemAdminOK() {
+		$this->_fakeLogin(5);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+		$this->testAction('/api/tasks/private/update/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		
+		$returned = json_decode($this->view, true);
+		unset($returned['modified']);
+		$this->assertEquals($returned, array('task_status_id' => 3, 'task_priority_id' => 4, 'error' => 'no_error'));
 	}
 
-/**
- * testApiUpdate method
- *
- * @return void
- */
-	public function testApiUpdate() {
+	public function testApiUpdateProjectAdminOK() {
+		$this->_fakeLogin(1);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+		$this->testAction('/api/tasks/private/update/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		
+		$returned = json_decode($this->view, true);
+		unset($returned['modified']);
+		$this->assertEquals($returned, array('task_status_id' => 3, 'task_priority_id' => 4, 'error' => 'no_error'));
+		
 	}
 
-/**
- * testApiAll method
- *
- * @return void
- */
-	public function testApiAll() {
+	public function testApiUpdateProjectUserOK() {
+		$this->_fakeLogin(4);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+		$this->testAction('/api/tasks/private/update/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		
+		$returned = json_decode($this->view, true);
+		unset($returned['modified']);
+		$this->assertEquals($returned, array('task_status_id' => 3, 'task_priority_id' => 4, 'error' => 'no_error'));
+		
+	}
+	public function testApiUpdateProjectGuestFail() {
+		$this->_fakeLogin(3);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+		$this->testAction('/api/tasks/private/update/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertNotAuthorized();
+		
 	}
 
-/**
- * testApiMarshalled method
- *
- * @return void
- */
-	public function testApiMarshalled() {
+	public function testApiUpdateNotProjectUserFail() {
+		$this->_fakeLogin(8);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+		$this->testAction('/api/tasks/private/update/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertNotAuthorized();
+		
 	}
 
+	public function testApiUpdateInactiveFail() {
+		$this->_fakeLogin(6);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+		$this->testAction('/api/tasks/private/update/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertNotAuthorized();
+		
+	}
+
+	public function testApiUpdateNoProject() {
+
+		$this->_fakeLogin(4);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+
+		$this->testAction('/api/tasks/update/', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		
+		$returned = json_decode($this->view, true);
+		$this->assertEquals($returned, array('error' => '400', 'message' => __('Bad request, no project specified.')));
+		
+	}
+	public function testApiUpdateNoId() {
+
+		$this->_fakeLogin(4);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+
+		$this->testAction('/api/tasks/private/update/', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		
+		$returned = json_decode($this->view, true);
+		$this->assertEquals($returned, array('error' => '400', 'message' => __('Bad request, no task ID specified.')));
+		
+	}
+
+	public function testApiUpdateInvalidId() {
+
+		$this->_fakeLogin(4);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+
+		$this->testAction('/api/tasks/private/update/shoe', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		
+		$returned = json_decode($this->view, true);
+		$this->assertEquals($returned, array('error' => '400', 'message' => __('Bad request, task ID should be numeric.')));
+		
+	}
+
+	public function testApiUpdateIncorrectId() {
+
+		$this->_fakeLogin(4);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+
+		$this->testAction('/api/tasks/private/update/2000', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		
+		$returned = json_decode($this->view, true);
+		$this->assertEquals($returned, array('error' => '404', 'message' => __('Task with ID %s not found for project %s', 2000, 'private')));
+		
+	}
+
+	public function testApiUpdateFail() {
+		$this->_fakeLogin(4);
+		$postData = array('task_status_id' => 3, 'task_priority_id' => 4);
+
+		$this->controller->Task = $this->getMockForModel('Task', array('save'));
+		$this->controller->Task
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->testAction('/api/tasks/private/update/2', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		
+		$returned = json_decode($this->view, true);
+		$this->assertEquals($returned, array('error' => '500', 'message' => __('Task update failed')));
+		
+	}
 }

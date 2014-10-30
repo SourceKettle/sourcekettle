@@ -17,7 +17,7 @@ function equaliseColumns(column) {
 
 
 // Initialise the drag and drop task lists on this page
-$(function initTaskDroplists() {
+function initTaskDroplists(api_url_base) {
 
     // Labels for the various statuses - TODO should be loaded from database
     var taskStatusLabels = {
@@ -39,7 +39,7 @@ $(function initTaskDroplists() {
     // Priority labels and icons
    var taskPriorityLabels = {
         blocker: "Blocker",
-        urgent:  "Ugent",
+        urgent:  "Urgent",
         major:   "Major",
         minor:   "Minor"
    };
@@ -50,8 +50,6 @@ $(function initTaskDroplists() {
         major:   "upload",
         minor:   "download"
    };
-
-    var apiURL = '../../../../api/tasks/update';
 
     $('.sprintboard-droplist').each(function(index, column){equaliseColumns(column);});
 
@@ -126,7 +124,7 @@ $(function initTaskDroplists() {
                 taskInfo.milestone_id = toMilestone;
             }
 
-            $.post(apiURL  + '/' + taskID, taskInfo, function (data) {
+            $.post(api_url_base  + '/' + taskID, taskInfo, function (data) {
                 if (data.error === "no_error") {
                     
                     // Update task lozenge's status
@@ -158,4 +156,4 @@ $(function initTaskDroplists() {
     }).disableSelection();
 
 
-});
+}

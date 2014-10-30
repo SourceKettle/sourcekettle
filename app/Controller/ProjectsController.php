@@ -491,22 +491,22 @@ class ProjectsController extends AppProjectController {
  * @param int $number (default: 0)
  * @return void
  */
-	public function api_history($number = 0) {
-		if (!isset($this->request->params['named']['project'])) {
+	public function api_history($project = null, $number = 0) {
+		if (!isset($project)  || !$project) {
 			$this->response->statusCode(400);
 			$data['error'] = 400;
-			$data['message'] = 'Bad request, no project id specified.';
+			$data['message'] = 'Bad request, no project specified.';
 
 			$this->layout = 'ajax';
 			$this->set('data',$data);
 			$this->render('/Elements/json');
 		} else {
-			$project = $this->_getProject($this->request->params['named']['project']);
 			$this->layout = 'ajax';
 
 			if (!is_numeric($number) || $number < 1 || $number > 50) {
 				$number = 8;
 			}
+
 			$this->set('events', $this->Project->fetchEventsForProject($number));
 			$this->render('/Elements/history');
 		}

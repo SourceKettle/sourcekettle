@@ -254,7 +254,10 @@ class TimesControllerTestCase extends AppControllerTest {
 		$this->assertEqual(array(
 			0 => 'No Assigned Task',
 			'Your Tasks' => array(),
-			'Others Tasks' => array()
+			'Others Tasks' => array(
+				1 => 'Task 1 for private project',
+				2 => 'Task 2 for private project',
+			)
 		), $this->vars['tasks']);
 	}
 

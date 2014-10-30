@@ -442,6 +442,7 @@ class Task extends AppModel {
 	}
 
 	public function fetchLoggableTasks($userId) {
+
 		$myTasks = $this->find(
 			'list',
 			array(
@@ -450,9 +451,11 @@ class Task extends AppModel {
 					'Task.project_id' => $this->Project->id,
 					'Task.assignee_id' => $userId,
 				),
+				'fields' => array('Task.public_id', 'Task.subject'),
 				'recursive' => 1,
 			)
 		);
+
 		$othersTasks = $this->find(
 			'list',
 			array(
@@ -461,9 +464,11 @@ class Task extends AppModel {
 					'Task.project_id' => $this->Project->id,
 					'Task.assignee_id !=' => $userId,
 				),
+				'fields' => array('Task.public_id', 'Task.subject'),
 				'recursive' => 1,
 			)
 		);
+
 		return array(
 			'No Assigned Task',
 			'Your Tasks' => $myTasks,
