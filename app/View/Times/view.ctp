@@ -34,7 +34,7 @@
                     <dt><?= __('Date') ?></dt>
                     <dd><?= h($time['Time']['date']) ?></dd>
 
-                    <? if (isset($task['Task']) && $task['Task']['id']) { ?>
+                    <? if (isset($task['Task']) && $task['Task']['public_id']) { ?>
                     <dt><?= __('Attached Task') ?></dt>
                     <dd><?= $this->Html->link('#'.$task['Task']['public_id'].' - '.$task['Task']['subject'], array('project'=>$project['Project']['name'],'controller'=>'tasks','action'=>'view',$task['Task']['public_id'])) ?></dd>
                     <? } ?>
