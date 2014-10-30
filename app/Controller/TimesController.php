@@ -69,7 +69,9 @@ class TimesController extends AppProjectController {
 			$this->request->data['Time']['user_id'] = $this->Auth->user('id');
 			$this->request->data['Time']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->c($this->Time->save($this->request->data))) {
+			$time = $this->Time->save($this->request->data);
+
+			if ($this->Flash->c($time)) {
 				if (@$this->request->data['Time']['task_id']){
 					return $this->redirect(array('controller' => 'tasks', 'project' => $project['Project']['name'], 'action' => 'view', $this->request->data['Time']['task_id']));
 				} else {
