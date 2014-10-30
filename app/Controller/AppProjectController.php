@@ -52,6 +52,12 @@ class AppProjectController extends AppController {
 	// to work out what level is required for the given action.
 	public function isAuthorized($user) {
 
+		// Deactivated users do not get access
+		// (NB they should not be able to log in anyway, of course!)
+		if (@$user['is_active'] != 1) {
+			return false;
+		}
+
 		// System admins can do whatever they want
 		if (@$user['is_admin'] == 1) {
 			return true;

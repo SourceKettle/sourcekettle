@@ -66,10 +66,18 @@ class AppController extends Controller {
 	// Override this in the other controller objects to taste.
 	public function isAuthorized($user) {
 
+		// Deactivated users explicitly do not get access
+		// (NB they should not be able to log in anyway, of course!)
+		if (@$user['is_active'] != 1) {
+			return false;
+		}
+
 		// Sysadmins can do anything...
 		if (@$user['is_admin'] == 1) {
 			return true;
 		}
+
+		// No further information available
 		return false;
 	}
 
@@ -185,7 +193,7 @@ class AppController extends Controller {
 		}
 
 		$this->set('sourcekettle_config', $this->sourcekettle_config);
-		$this->set('sourcekettleVersion', 'v1.4.2');
+		$this->set('sourcekettleVersion', 'v1.4.3');
 
 		// Set up the sourcekettle-specific auth model
 		$this->Auth->userModel = 'User';
