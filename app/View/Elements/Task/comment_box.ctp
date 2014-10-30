@@ -33,8 +33,7 @@
             <h5><?= $this->Bootstrap->icon('comment') ?><small> <?= h($comment['User']['name']) ?> <?= __('commented') ?> <?= $this->Time->timeAgoInWords($comment['TaskComment']['created']) ?></small></h5>
             <hr />
             <p><?= $this->Markitup->parse($comment['TaskComment']['comment']) ?></p>
-			<?= $this->Form->create('TaskCommentEdit', array ('class' => 'hide', 'url' => array('controller' => 'tasks', 'action' => 'updateComment', 'project' => $project['Project']['name'], $comment['Task']['id']))); ?>
-			<?= $this->Form->hidden('id', array ('value' => $comment['TaskComment']['id'])); ?>
+			<?= $this->Form->create('TaskCommentEdit', array ('class' => 'hide', 'url' => array('controller' => 'tasks', 'action' => 'updateComment', 'project' => $project['Project']['name'], $comment['TaskComment']['id']))); ?>
 			<?= $this->Bootstrap->input("comment", array(
     			"input" => $this->Form->textarea("comment", array("value" => $comment['TaskComment']['comment'], "class" => "span12", "rows" => 5)),"label" => false)); ?>
 			<?= $this->Bootstrap->button(__("Update comment"), array("style" => "primary", 'class' => 'controls')); ?>

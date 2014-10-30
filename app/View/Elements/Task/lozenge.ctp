@@ -29,7 +29,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 		echo "<li>";
 	}
 ?>
-<div id="task_<?= $task['Task']['id'] ?>" 
+<div id="task_<?= $task['Task']['public_id'] ?>" 
   class="task-container<?=$span?>"
   <?
   // If it's a draggable item in the milestone board, do NOT make the whole thing a click target...
