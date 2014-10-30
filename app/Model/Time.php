@@ -121,6 +121,17 @@ class Time extends AppModel {
 			if (isset($val['Time']['mins'])) {
 				$results[$key]['Time']['minutes'] = TimeString::renderTime($val['Time']['mins']);
 			}
+
+			// Convert real task ID to public ID
+			if (isset($this->data['Time']['task_id'])) {
+				$task_id = $this->Task->field('public_id', array(
+						'id' => $this->data['Time']['task_id']));
+	
+				if (empty($task_id)) {
+					return false;
+				}
+				$this->data['Time']['task_id'] = $task_id;
+			}
 		}
 		return $results;
 	}
@@ -131,6 +142,19 @@ class Time extends AppModel {
  * and turn it into a number of mins
  */
 	public function beforeValidate($options = array()) {
+
+		// Convert public ID to real task ID
+		if (isset($this->data['Time']['task_id'])) {
+			$task_id = $this->Task->field('id', array(
+				'project_id' => $this->data['Time']['project_id'],
+				'public_id' => $this->data['Time']['task_id']));
+
+			if (empty($task_id)) {
+				return false;
+			}
+			$this->data['Time']['task_id'] = $task_id;
+		}
+
 		if (!isset($this->data['Time']['mins'])) {
 			return true;
 		}
