@@ -780,21 +780,21 @@ class TasksController extends AppProjectController {
 		$this->layout = 'ajax';
 		$data = array();
 
-		if ($public_id == null) {
+		if ($project_name == null) {
 			$this->response->statusCode(400);
-			$this->set('data', array('error' => 400, 'message' => 'Bad request, no project specified.'));
+			$this->set('data', array('error' => 400, 'message' => __('Bad request, no project specified.')));
 			$this->render('/Elements/json');
 			return;
 
 		} elseif ($public_id == null) {
 			$this->response->statusCode(400);
-			$this->set('data', array('error' => 400, 'message' => 'Bad request, no task ID specified.'));
+			$this->set('data', array('error' => 400, 'message' => __('Bad request, no task ID specified.')));
 			$this->render('/Elements/json');
 			return;
 
 		} elseif (!is_numeric($public_id)) {
 			$this->response->statusCode(400);
-			$this->set('data', array('error' => 400, 'message' => 'Bad request, task ID should be numeric.'));
+			$this->set('data', array('error' => 400, 'message' => __('Bad request, task ID should be numeric.')));
 			$this->render('/Elements/json');
 			return;
 
@@ -807,7 +807,7 @@ class TasksController extends AppProjectController {
 
 		if (empty($task)) {
 			$this->response->statusCode(404);
-			$this->set('data', array('error' => 404, 'message' => "Task with ID $public_id not found for project $project"));
+			$this->set('data', array('error' => 404, 'message' => __("Task with ID %s not found for project %s", $public_id, $project_name)));
 			$this->render('/Elements/json');
 			return;
 		
@@ -826,7 +826,7 @@ class TasksController extends AppProjectController {
 
 		} else {
 			$this->response->statusCode(500);
-			$data = array('error' => 500, 'message' => 'Task update failed');
+			$data = array('error' => 500, 'message' => __('Task update failed'));
 		}
 
 		$this->set('data',$data);
