@@ -263,6 +263,7 @@ class Task extends AppModel {
  	private $__burndownLog = array('milestone' => array(), 'project' => array());
 
 	public function beforeSave($options = array()) {
+
 		// Parse time estimate if necessary
 		$this->beforeValidate($options);
 
@@ -275,11 +276,6 @@ class Task extends AppModel {
 				}
 			}
 			$this->data['DependsOn']['DependsOn'] = array_unique(array_values($this->data['DependsOn']['DependsOn']));
-		}
-
-		// If there's no actual data, we're done here
-		if (!isset($this->data['Task']['project_id'])) {
-			return;
 		}
 
 		// Find the existing task if there is one
@@ -317,10 +313,6 @@ class Task extends AppModel {
  * afterSave function - logs project/milestone burndown chart updates
  */
 	public function afterSave($created, $options = array()) {
-		// If there's no actual data, we're done here
-		if (!isset($this->data['Task']['project_id'])) {
-			return;
-		}
 
 		if ($created) {
 			$project_id = $this->__burndownLog[0]['project_id'];
