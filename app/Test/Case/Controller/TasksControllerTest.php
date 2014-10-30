@@ -184,7 +184,7 @@ class TasksControllerTest extends AppControllerTest {
 		sort($yours);
 		$others = array_keys($this->vars['tasks']['Others Tasks']);
 		sort($others);
-		$this->assertEquals(array(1, 4, 10, 13), $yours);
+		$this->assertEquals(array(1, 4, 10, 11), $yours);
 		$this->assertEquals(array(2, 3, 5, 6, 7), $others);
 
 	}
