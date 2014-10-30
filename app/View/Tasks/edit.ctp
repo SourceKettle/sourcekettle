@@ -34,7 +34,7 @@ $this->Html->scriptBlock ("
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar_edit', array('id' => $this->request->data['Task']['id'])) ?>
+            <?= $this->element('Task/topbar_edit', array('id' => $this->request->data['Task']['public_id'])) ?>
             <div class="span10">
 				<?= $this->element('Task/add_edit') ?>
             </div>

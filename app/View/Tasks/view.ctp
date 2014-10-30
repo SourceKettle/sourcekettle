@@ -136,7 +136,7 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
                     <div class="span11">
                         <div class="well col">
                             <?php
-                            echo $this->Form->create('TaskComment', array('class' => 'form', 'url' => array('controller' => 'tasks', 'action' => 'comment', 'project' => $project['Project']['name'], $task['Task']['id'])));
+                            echo $this->Form->create('TaskComment', array('class' => 'form', 'url' => array('controller' => 'tasks', 'action' => 'comment', 'project' => $project['Project']['name'], $task['Task']['public_id'])));
 
 							echo $this->Bootstrap->input("comment", array(
 								"input" => $this->Markitup->editor("comment", array(

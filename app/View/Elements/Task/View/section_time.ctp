@@ -17,7 +17,7 @@ $closed = ($task['TaskStatus']['name'] == 'closed');
 if (!$closed){
     $this->Html->scriptBlock("
         $('.timeButton').bind('click', function() {
-            $('option[value={$task['Task']['id']}]').attr('selected', 'selected');
+            $('option[value={$task['Task']['public_id']}]').attr('selected', 'selected');
         });
     ", array('inline' => false));
 

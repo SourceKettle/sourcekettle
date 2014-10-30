@@ -414,7 +414,7 @@ class TasksController extends AppProjectController {
 			throw new NotFoundException(__("Cannot find a comment with ID $id"));
 		}
 
-		$taskId = $comment['Task']['id'];
+		$taskId = $comment['Task']['public_id'];
 
 		// Check that we own the comment or we are a project or system admin...
 		if (
@@ -422,7 +422,7 @@ class TasksController extends AppProjectController {
 			&& !$this->Project->hasWrite($this->Auth->user('id'))
 			&& !$this->Auth->user('is_admin')
 		) {
-			$this->Flash->error (__('You don\'t have permission to edit that comment'));
+			$this->Flash->error (__('You don\'t have permission to delete that comment'));
 			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
 		}
 
@@ -453,8 +453,7 @@ class TasksController extends AppProjectController {
 			throw new NotFoundException(__("Cannot find a comment with ID $id"));
 		}
 
-		$taskId = $comment['Task']['id'];
-		
+		$taskId = $comment['Task']['public_id'];
 		// Only the comment owner can edit the comment
 		if ($comment['User']['id'] != $this->Auth->user('id')) {
 			$this->Flash->error (__('You don\'t have permission to edit that comment'));
@@ -467,7 +466,7 @@ class TasksController extends AppProjectController {
 		}
 		$this->request->data['TaskComment'] = array(
 			'comment' => $this->request->data['TaskCommentEdit']['comment'],
-			'id' => $this->request->data['TaskCommentEdit']['id']
+			'id' => $id,
 		);
 		unset($this->request->data['TaskCommentEdit']);
 
