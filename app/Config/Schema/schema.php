@@ -352,6 +352,22 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
 
+	public $stories = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'description' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'creator_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'story_points' => array('type' => 'integer', 'null' => true, 'default' => null),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'creator_id' => array('column' => 'creator_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+
 	public $task_comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'task_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
@@ -386,7 +402,7 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'label' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-		'level' => array('type' => 'integer', 'null' => false, 'default' => 0, 'length' => 10, 'key' => 'index'),
+		'level' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 10),
 		'icon' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
@@ -434,6 +450,7 @@ class AppSchema extends CakeSchema {
 		'task_priority_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'assignee_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'milestone_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'key' => 'index'),
+		'story_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'key' => 'index'),
 		'time_estimate' => array('type' => 'integer', 'null' => true, 'default' => null),
 		'story_points' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10),
 		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
@@ -450,7 +467,8 @@ class AppSchema extends CakeSchema {
 			'task_type_id' => array('column' => 'task_type_id', 'unique' => 0),
 			'assignee_id' => array('column' => 'assignee_id', 'unique' => 0),
 			'milestone_id' => array('column' => 'milestone_id', 'unique' => 0),
-			'task_priority_id' => array('column' => 'task_priority_id', 'unique' => 0)
+			'task_priority_id' => array('column' => 'task_priority_id', 'unique' => 0),
+			'story_id' => array('column' => 'story_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
