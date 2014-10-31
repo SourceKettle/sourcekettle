@@ -52,6 +52,11 @@ class AppProjectController extends AppController {
 	// to work out what level is required for the given action.
 	public function isAuthorized($user) {
 
+		// Anyone can access, even when not logged in - e.g. registration page
+		if ($requiredLevel == 'any') {
+			return true;
+		}
+
 		// Deactivated users do not get access
 		// (NB they should not be able to log in anyway, of course!)
 		if (@$user['is_active'] != 1) {
@@ -63,13 +68,14 @@ class AppProjectController extends AppController {
 			return true;
 		}
 
-		// No access to admin functions for non-admin users
+		// We're now definitely not a sysadmin, so deny admin actions
 		if (preg_match('/^admin_/i', $this->action)) {
 			$this->Auth->authError = __('You do not have site admin access to this '.$this->modelClass);
 			return false;
 		}
 
-		// If we've not explicitly set the authorisation level, user is not authorised
+		// If we've not explicitly set the authorisation level, user is not authorised.
+		// This probably indicates a bug though.
 		$mapping = $this->_getAuthorizationMapping();
 		if (!array_key_exists($this->action, $mapping)) {
 			$this->Auth->authError = __('Authentication level problem while accessing this '.$this->modelClass.', action '.$this->action);
@@ -77,11 +83,6 @@ class AppProjectController extends AppController {
 		}
 
 		$requiredLevel = $mapping[$this->action];
-
-		// Anyone can access, even when not logged in
-		if ($requiredLevel == 'any') {
-			return true;
-		}
 
 		// If we just need to be logged in, that's easy
 		if ($requiredLevel == 'login') {

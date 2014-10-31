@@ -32,14 +32,14 @@ class UsersController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+
+		// Registration and other "setting your password" actions cannot
+		// require a login
 		$this->Auth->allow(
 			'register',
 			'activate',
 			'lost_password',
-			'reset_password'/*,
-			'api_all',
-			'api_view',
-			'api_register'*/
+			'reset_password'
 		);
 	}
 
