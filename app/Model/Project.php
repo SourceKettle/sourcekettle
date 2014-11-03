@@ -86,11 +86,6 @@ class Project extends AppModel {
  * hasMany associations
  */
 	public $hasMany = array(
-		'Collaborator' => array(
-			'className' => 'Collaborator',
-			'foreignKey' => 'project_id',
-			'dependent' => true,
-		),
 		'Task' => array(
 			'className' => 'Task',
 			'foreignKey' => 'project_id',
@@ -125,6 +120,33 @@ class Project extends AppModel {
 			'className' => 'ProjectBurndownLog',
 			'foreignKey' => 'project_id',
 			'dependent' => true,
+		),
+
+		// Has-many-through relationships here...
+
+		// The Collaborator mapping maps users to projects with an associated access level
+		'Collaborator' => array(
+			'className' => 'Collaborator',
+			'foreignKey' => 'project_id',
+			'dependent' => false,
+		),
+
+		// Collaborating teams are teams of users mapped to projects with an access level
+		'CollaboratingTeam' => array(
+			'className' => 'CollaboratingTeam',
+			'foreignKey' => 'project_id',
+			'dependent' => false,
+		),
+
+	);
+
+	// Projects can belong to any number of project groups
+	public $hasAndBelongsToMany = array(
+		'ProjectGroup' => array(
+			'className' => 'ProjectGroup',
+			'foreignKey' => 'project_id',
+			'associatedForeignKey' => 'project_group_id',
+			'dependent' => false,
 		),
 	);
 
@@ -236,6 +258,91 @@ class Project extends AppModel {
 		return $project;
 	}
 
+	// Check a user's access level to the project
+	public function checkAccessLevel($accessLevel = 0, $userId = null, $projectId = null) {
+		
+		// We currently do not allow access to non-logged-in users
+		if ($userId == null) {
+			return false;
+		}
+
+		// Default project ID if we have one already...
+		if ($this->id) {
+			$projectId = $this->id;
+		}
+
+		// Public projects can be read by anybody who is logged in
+		if ($this->field('public', array('Project.id' => $projectId))) {
+			return true;
+		}
+
+		// Check to see if they are a collaborator on the project
+		$member = $this->Collaborator->find('first', array(
+			'conditions' => array(
+				'user_id' => $userId,
+				'project_id' => $projectId
+			),
+			'fields' => array('access_level')));
+
+		if (!empty($member) && $member['Collaborator']['access_level'] >= $accessLevel) {
+			return true;
+		}
+
+		// Direct SQL querying is the easiest way to do this due to the model complexity...
+		$db = $this->getDataSource();
+		$table_prefix = $db->config['prefix'];
+
+		// Check to see if the user is a member of any teams collaborating on the project
+		$members = $db->fetchAll(
+			"SELECT
+				max(access_level) AS access_level
+			FROM
+				${table_prefix}collaborating_teams
+			INNER JOIN
+				${table_prefix}teams ON ${table_prefix}teams.id = ${table_prefix}collaborating_teams.team_id
+			INNER JOIN
+				${table_prefix}teams_users ON ${table_prefix}teams.id = ${table_prefix}teams_users.team_id
+			WHERE
+				${table_prefix}teams_users.user_id = ?
+				AND
+				${table_prefix}collaborating_teams.project_id = ?",
+			array($userId, $projectId)
+		);
+
+		$hasAccessLevel = $members[0][0]['access_level'];
+
+		if ($hasAccessLevel !== null && $hasAccessLevel >= $accessLevel) {
+			return true;
+		}
+
+		// Check to see if the user is a member of any teams collaborating on
+		// any of the project's groups
+		$members = $db->fetchAll(
+			"SELECT
+				max(access_level) AS access_level
+			FROM
+				${table_prefix}group_collaborating_teams
+			INNER JOIN
+				${table_prefix}teams ON ${table_prefix}teams.id = ${table_prefix}group_collaborating_teams.team_id
+			INNER JOIN
+				${table_prefix}teams_users ON ${table_prefix}teams.id = ${table_prefix}teams_users.team_id
+			INNER JOIN
+				${table_prefix}project_groups_projects ON ${table_prefix}project_groups_projects.project_group_id = ${table_prefix}group_collaborating_teams.project_group_id
+			WHERE
+				${table_prefix}teams_users.user_id = ?
+				AND
+				${table_prefix}project_groups_projects.project_id = ?",
+			array($userId, $projectId)
+		);
+
+		$hasAccessLevel = $members[0][0]['access_level'];
+		if ($hasAccessLevel !== null && $hasAccessLevel >= $accessLevel) {
+			return true;
+		}
+		// Default: fail safe and deny access
+		return false;
+	}
+
 /**
  * Checks to see if a user has read access of this project
  *
@@ -243,23 +350,7 @@ class Project extends AppModel {
  * @return boolean true if read permissions
  */
 	public function hasRead($userId = null, $projectId = null) {
-		if ( $userId == null ) {
-			return false;
-		}
-
-		if ($this->id) $projectId = $this->id;
-
-		if ($this->field('public', array('Project.id' => $projectId))) {
-			return true;
-		}
-
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
-
-		if ( !empty($member) && $member['Collaborator']['access_level'] > -1 ) {
-			return true;
-		}
-
-		return false;
+		return $this->checkAccessLevel(-1, $userId, $projectId);
 	}
 
 /**
@@ -269,29 +360,7 @@ class Project extends AppModel {
  * @return boolean true if write permissions
  */
 	public function hasWrite($userId = null, $projectId = null) {
-		if ( $userId == null ) {
-			return false;
-		}
-
-		// System admins can write to any project
-		$isAdmin = $this->Collaborator->User->field('is_admin', array('id' => $userId));
-		if ( $isAdmin ) {
-			return true;
-		}
-
-		if ($this->id) {
-			$projectId = $this->id;
-		}
-
-
-		// Check whether user is a project admin
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
-		if ( !empty($member) && $member['Collaborator']['access_level'] > 0 ) {
-			return true;
-		}
-
-		// Fail safe, no write privilege
-		return false;
+		return $this->checkAccessLevel(1, $userId, $projectId);
 	}
 
 /**
@@ -301,20 +370,7 @@ class Project extends AppModel {
  * @return boolean true if admin
  */
 	public function isAdmin($userId = null, $projectId = null) {
-		if ( $userId == null ) {
-			return false;
-		}
-
-		if ($this->id) {
-			$projectId = $this->id;
-		}
-
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
-		if ( !empty($member) && $member['Collaborator']['access_level'] > 1 ) {
-			return true;
-		}
-
-		return false;
+		return $this->checkAccessLevel(2, $userId, $projectId);
 	}
 
 	// Sort function for events

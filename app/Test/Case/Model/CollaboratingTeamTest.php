@@ -1,11 +1,11 @@
 <?php
-App::uses('TeamProject', 'Model');
+App::uses('CollaboratingTeam', 'Model');
 
 /**
- * TeamProject Test Case
+ * CollaboratingTeam Test Case
  *
  */
-class TeamProjectTest extends CakeTestCase {
+class CollaboratingTeamTest extends CakeTestCase {
 
 /**
  * Fixtures
@@ -13,9 +13,8 @@ class TeamProjectTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.team_project',
+		'app.collaborating_team',
 		'app.team',
-		'app.team_member',
 		'app.user',
 		'app.collaborator',
 		'app.project',
@@ -35,10 +34,13 @@ class TeamProjectTest extends CakeTestCase {
 		'app.project_history',
 		'app.attachment',
 		'app.project_burndown_log',
+		'app.project_group',
+		'app.project_groups_project',
 		'app.email_confirmation_key',
 		'app.ssh_key',
 		'app.api_key',
-		'app.lost_password_key'
+		'app.lost_password_key',
+		'app.teams_user'
 	);
 
 /**
@@ -48,7 +50,7 @@ class TeamProjectTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->TeamProject = ClassRegistry::init('TeamProject');
+		$this->CollaboratingTeam = ClassRegistry::init('CollaboratingTeam');
 	}
 
 /**
@@ -57,7 +59,7 @@ class TeamProjectTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this->TeamProject);
+		unset($this->CollaboratingTeam);
 
 		parent::tearDown();
 	}

@@ -1,11 +1,11 @@
 <?php
-App::uses('ProjectGroupMember', 'Model');
+App::uses('GroupCollaboratingTeam', 'Model');
 
 /**
- * ProjectGroupMember Test Case
+ * GroupCollaboratingTeam Test Case
  *
  */
-class ProjectGroupMemberTest extends CakeTestCase {
+class GroupCollaboratingTeamTest extends CakeTestCase {
 
 /**
  * Fixtures
@@ -13,18 +13,17 @@ class ProjectGroupMemberTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.project_group_member',
+		'app.group_collaborating_team',
 		'app.project_group',
-		'app.project_group_permission',
 		'app.project',
 		'app.repo_type',
-		'app.collaborator',
+		'app.task',
 		'app.user',
+		'app.collaborator',
 		'app.email_confirmation_key',
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
-		'app.task',
 		'app.task_type',
 		'app.task_status',
 		'app.task_priority',
@@ -38,7 +37,11 @@ class ProjectGroupMemberTest extends CakeTestCase {
 		'app.commit',
 		'app.project_history',
 		'app.attachment',
-		'app.project_burndown_log'
+		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_groups_project'
 	);
 
 /**
@@ -48,7 +51,7 @@ class ProjectGroupMemberTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->ProjectGroupMember = ClassRegistry::init('ProjectGroupMember');
+		$this->GroupCollaboratingTeam = ClassRegistry::init('GroupCollaboratingTeam');
 	}
 
 /**
@@ -57,7 +60,7 @@ class ProjectGroupMemberTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this->ProjectGroupMember);
+		unset($this->GroupCollaboratingTeam);
 
 		parent::tearDown();
 	}

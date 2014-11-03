@@ -120,6 +120,19 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
 
+	public $collaborating_teams = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'access_level' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'team_id' => array('column' => 'team_id', 'unique' => 0),
+			'project_id' => array('column' => 'project_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
 	public $collaborators = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
@@ -146,6 +159,19 @@ class AppSchema extends CakeSchema {
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'user_id' => array('column' => 'user_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $group_collaborating_teams = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'project_group_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'access_level' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'project_group_id' => array('column' => 'project_group_id', 'unique' => 0),
+			'team_id' => array('column' => 'team_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
@@ -215,18 +241,6 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
 
-	public $project_group_members = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
-		'project_group_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'project_group_id' => array('column' => 'project_group_id', 'unique' => 0),
-			'project_id' => array('column' => 'project_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
-	);
-
 	public $project_groups = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'unique', 'collate' => 'utf8_bin', 'charset' => 'utf8'),
@@ -234,6 +248,18 @@ class AppSchema extends CakeSchema {
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'name' => array('column' => 'name', 'unique' => 1)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $project_groups_projects = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'project_group_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'project_group_id' => array('column' => 'project_group_id', 'unique' => 0),
+			'project_id' => array('column' => 'project_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
@@ -308,6 +334,7 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 4, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'unique', 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'value' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'allow_override' => array('type' => 'integer', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
@@ -355,7 +382,6 @@ class AppSchema extends CakeSchema {
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
-
 
 	public $task_comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
@@ -462,44 +488,6 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
 
-	public $team_members = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
-		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'team_id' => array('column' => 'team_id', 'unique' => 0),
-			'user_id' => array('column' => 'user_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
-	);
-
-	public $team_project_groups = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
-		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'project_group_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'access_level' => array('type' => 'integer', 'null' => false, 'default' => '1'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'team_id' => array('column' => 'team_id', 'unique' => 0),
-			'project_group_id' => array('column' => 'project_group_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
-	);
-
-	public $team_projects = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
-		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'access_level' => array('type' => 'integer', 'null' => false, 'default' => '1'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'team_id' => array('column' => 'team_id', 'unique' => 0),
-			'project_id' => array('column' => 'project_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
-	);
-
 	public $teams = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'unique', 'collate' => 'utf8_bin', 'charset' => 'utf8'),
@@ -507,6 +495,18 @@ class AppSchema extends CakeSchema {
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'name' => array('column' => 'name', 'unique' => 1)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $teams_users = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'team_id' => array('column' => 'team_id', 'unique' => 0),
+			'user_id' => array('column' => 'user_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);

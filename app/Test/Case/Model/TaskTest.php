@@ -59,24 +59,8 @@ class TaskTest extends CakeTestCase {
 		unset($details['Task']['created']);
 		unset($details['Task']['modified']);
 
-		$this->assertEquals(array(
-				'id' => '2',
-				'project_id' => '2',
-				'owner_id' => '3',
-				'task_type_id' => '1',
-				'task_status_id' => '1',
-				'task_priority_id' => '1',
-				'assignee_id' => '0',
-				'milestone_id' => '1',
-				'time_estimate' => '4h 0m',
-				'story_points' => '0',
-				'subject' => 'Open Minor Task 2 for milestone 1',
-				'description' => 'lorem ipsum dolor sit amet',
-				'deleted' => '0',
-				'deleted_date' => null,
-				'public_id' => '2',
-				'dependenciesComplete' => 0
-		), $details['Task']);
+		$this->assertEquals('2', $details['Task']['id']);
+		$this->assertEquals('0', $details['Task']['dependenciesComplete']);
 	}
 
 /**
@@ -352,12 +336,7 @@ class TaskTest extends CakeTestCase {
 	}
 
 	public function testCreateEmptyData() {
-		$saved = $this->Task->save(array());
-		unset($saved['Task']['created']);
-		unset($saved['Task']['modified']);
-		$this->assertEquals(array('Task' => array(
-			'id' => $this->Task->getLastInsertID(),
-		)), $saved);
+		$this->assertFalse($this->Task->save(array()));
 	}
 
 /**
@@ -369,21 +348,21 @@ class TaskTest extends CakeTestCase {
 		$this->Task->Project->id = 2;
 		$tasks = $this->Task->fetchLoggableTasks(2);
 		$this->assertEquals($tasks, array(
-			0 => 'No Assigned Task',
-			'Your Tasks' => array(
+			0 => __('No Assigned Task'),
+			__('Your Tasks') => array(
 				1  => 'Resolved Major Task 1 for milestone 2',
 				4  => 'In progress Urgent Task 4 for milestone 1',
 				10 => 'In Progress Major Task 1 for milestone 2',
 				11 => 'Task with differing public ID',
 			),
-			'Others Tasks' => array(
+			__('Others Tasks') => array(
 				2 => 'Open Minor Task 2 for milestone 1',
 				3 => 'In Progress Urgent Task 3 for no milestone',
 				5 => 'Open Urgent Task 5 for milestone 1',
 				6 => 'In Progress Blocker Task 7 for milestone 1',
 				7 => 'Resolved Major Task 7 for milestone 1'
 			)
-		), "Incorrect task list returned");
+		), __('Incorrect task list returned'));
 	}
 
 	public function testOpenNull() {

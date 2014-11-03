@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BASEDIR=$(readlink -f $0 | xargs dirname);
-REPODIR="$BASEDIR/git/gitproject.git";
+REPODIR="$BASEDIR/git/private.git";
 DATADIR="$BASEDIR/test-data-for-repo";
 echo "Creating a git repo for git, version $GITVER in $REPODIR...";
 
@@ -21,14 +21,17 @@ git config --global user.name "Mr Smith" &&
 git config --global user.email "Mr.Smith@example.com" &&
 git add * &&
 git commit -m "first ever checkin" &&
+sleep 1 &&
 cp -f ../1/* . &&
 git add * &&
 git commit -m "second checkin" &&
+sleep 5 &&
 cp -f ../2/* . &&
 git add * &&
 git commit -m "third checkin ermagerd" &&
 git config --global user.name "Mrs Smith" &&
 git config --global user.email "Mrs.Smith@example.com" &&
+sleep 10 &&
 cp -f ../3/* . &&
 git add * &&
 git commit -m "stop overengineering" &&

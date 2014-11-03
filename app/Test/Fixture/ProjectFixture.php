@@ -57,6 +57,69 @@ class ProjectFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:46:07',
             'modified' => '2012-06-01 12:46:07'
         ),
+        array(
+            'id' => 6,
+            'name' => 'php-1',
+            'description' => 'A project written in PHP',
+            'public' => 0,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
+        array(
+            'id' => 7,
+            'name' => 'php-2',
+            'description' => 'Another project written in PHP',
+            'public' => 0,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
+        array(
+            'id' => 8,
+            'name' => 'java-1',
+            'description' => 'A project written in Java',
+            'public' => 0,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
+        array(
+            'id' => 9,
+            'name' => 'java-2',
+            'description' => 'Another project written in Java',
+            'public' => 0,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
+        array(
+            'id' => 10,
+            'name' => 'python-1',
+            'description' => 'A project written in Python',
+            'public' => 0,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
+        array(
+            'id' => 11,
+            'name' => 'python-2',
+            'description' => 'Another project written in Python',
+            'public' => 0,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
+        array(
+            'id' => 12,
+            'name' => 'perl-1',
+            'description' => 'A project written in Perl',
+            'public' => 0,
+            'repo_type' => 1,
+            'created' => '2012-06-01 12:46:07',
+            'modified' => '2012-06-01 12:46:07'
+        ),
     );
 
 	// Constructor puts our repository data into the repository directory

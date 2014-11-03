@@ -24,6 +24,10 @@ class ProjectTestCase extends CakeTestCase {
 		'app.project_history',
 		'app.repo_type',
 		'app.collaborator',
+		'app.collaborating_team',
+		'app.project_group',
+		'app.project_groups_project',
+		'app.group_collaborating_team',
 		'app.user',
 		'app.task',
 		'app.task_type',
@@ -32,6 +36,8 @@ class ProjectTestCase extends CakeTestCase {
 		'app.task_status',
 		'app.task_priority',
 		'app.time',
+		'app.team',
+		'app.teams_user',
 		'app.attachment',
 		'app.source',
 		'app.milestone',
@@ -382,6 +388,99 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasWrite, "user has incorrect privileges");
     }
 
+	// Check that our 3 sets of developers (PHP, Java and Python devs)
+	// have admin access to their respective projects via team/group collaboration
+	public function testCheckAdminAccessLevelToGroupedProjects() {
+
+		// NB: order of args is access_level, user_id, project_id
+
+		// Check PHP devs/projects
+		$this->assertTrue($this->Project->checkAccessLevel(2, 13, 6), "PHP developer should be an admin on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 13, 7), "PHP developer should be an admin on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 16, 6), "PHP developer should be an admin on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 16, 7), "PHP developer should be an admin on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 17, 6), "PHP developer should be an admin on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 17, 7), "PHP developer should be an admin on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 19, 6), "PHP developer should be an admin on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 19, 7), "PHP developer should be an admin on both PHP projects");
+
+		// Check Java devs/projects
+		$this->assertTrue($this->Project->checkAccessLevel(2, 14, 8), "Java developer should be an admin on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 14, 9), "Java developer should be an admin on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 17, 8), "Java developer should be an admin on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 17, 9), "Java developer should be an admin on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 18, 8), "Java developer should be an admin on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 18, 9), "Java developer should be an admin on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 19, 8), "Java developer should be an admin on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 19, 9), "Java developer should be an admin on both Java projects");
+
+		// Check Python devs/projects
+		$this->assertTrue($this->Project->checkAccessLevel(2, 15, 10), "Python developer should be an admin on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 15, 11), "Python developer should be an admin on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 16, 10), "Python developer should be an admin on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 16, 11), "Python developer should be an admin on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 18, 10), "Python developer should be an admin on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 18, 11), "Python developer should be an admin on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 19, 10), "Python developer should be an admin on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 19, 11), "Python developer should be an admin on both Python projects");
+	}
+
+	// Check that our 3 sets of developers (PHP, Java and Python devs)
+	// have user-level access to their respective non-specialist projects via team/group collaboration
+	public function testCheckUserAccessLevelToGroupedProjects() {
+
+		// Multi-skilled developers have admin access, checked above
+	
+		// NB: order of args is access_level, user_id, project_id
+
+		// Check PHP devs/Java projects
+		$this->assertTrue($this->Project->checkAccessLevel(1, 13, 8), "PHP developer should be a user on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 13, 9), "PHP developer should be a user on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 16, 8), "PHP developer should be a user on both Java projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 16, 9), "PHP developer should be a user on both Java projects");
+
+		// Check Java devs/Python projects
+		$this->assertTrue($this->Project->checkAccessLevel(1, 14, 10), "Java developer should be a user on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 14, 11), "Java developer should be a user on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 17, 10), "Java developer should be a user on both Python projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 17, 11), "Java developer should be a user on both Python projects");
+
+		// Check Python devs/PHP projects
+		$this->assertTrue($this->Project->checkAccessLevel(1, 15, 6), "Python developer should be a user on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 15, 7), "Python developer should be a user on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 18, 6), "Python developer should be a user on both PHP projects");
+		$this->assertTrue($this->Project->checkAccessLevel(1, 18, 7), "Python developer should be a user on both PHP projects");
+		
+	}
+
+	// Check that our 3 sets of developers (PHP, Java and Python devs)
+	// have no access to their respective non-linked projects via team/group collaboration
+	public function testCheckNoAccessLevelToGroupedProjects() {
+
+		// NB: order of args is access_level, user_id, project_id
+
+		// Check PHP devs/Python projects
+		$this->assertFalse($this->Project->checkAccessLevel(0, 13, 10), "PHP developer should have no access Python projects");
+		$this->assertFalse($this->Project->checkAccessLevel(0, 13, 11), "PHP developer should have no access Python projects");
+
+		// Check Java devs/PHP projects
+		$this->assertFalse($this->Project->checkAccessLevel(0, 14, 6), "Java developer should have no access PHP projects");
+		$this->assertFalse($this->Project->checkAccessLevel(0, 14, 7), "Java developer should have no access PHP projects");
+
+		// Check Python devs/Java projects
+		$this->assertFalse($this->Project->checkAccessLevel(0, 15, 8), "Python developer should have no access Java projects");
+		$this->assertFalse($this->Project->checkAccessLevel(0, 15, 9), "Python developer should have no access Java projects");
+	}
+
+	// Check that our ninja perl team has access to the one perl project
+	public function testCheckAdminAccessLevelToPerlProject() {
+
+		// NB: order of args is access_level, user_id, project_id
+
+		$this->assertTrue($this->Project->checkAccessLevel(2, 20, 12), "Perl developer should have admin access to Perl project");
+		$this->assertTrue($this->Project->checkAccessLevel(2, 21, 12), "Perl developer should have admin access to Perl project");
+
+	}
 
 	public function testDelete() {
 		$this->Project->id = 3;
@@ -436,276 +535,112 @@ class ProjectTestCase extends CakeTestCase {
 		$this->assertEquals($before, $after);
 	}
 
+	// Test that only the tasks with no milestone are returned
 	public function testGetProjectBacklog() {
 		$this->Project->id = 2;
 		$this->Project->read();
 		$backlog = $this->Project->getProjectBacklog();
-
-		// Ignore the modified/created dates on TaskStatus et al, we don't care...
-		foreach ($backlog as $i => $b) {
-			unset($b['TaskStatus']['created']);
-			unset($b['TaskStatus']['modified']);
-			unset($b['TaskPriority']['created']);
-			unset($b['TaskPriority']['modified']);
-			unset($b['TaskType']['created']);
-			unset($b['TaskType']['modified']);
-			$backlog[$i] = $b;
-		}
-
-		$this->assertEquals($backlog, array(
-		array(
-			'Task' => array(
-				'id' => '3',
-				'project_id' => '2',
-				'owner_id' => '3',
-				'task_type_id' => '1',
-				'task_status_id' => '2',
-				'task_priority_id' => '3',
-				'assignee_id' => '0',
-				'milestone_id' => '0',
-				'time_estimate' => '2h 25m',
-				'story_points' => '0',
-				'subject' => 'In Progress Urgent Task 3 for no milestone',
-				'description' => 'lorem ipsum dolor sit amet',
-				'created' => '0000-00-00 00:00:00',
-				'modified' => '0000-00-00 00:00:00',
-				'deleted' => '0',
-				'deleted_date' => null,
-				'public_id' => '3',
-				'dependenciesComplete' => 1
-			),
-			'Project' => array(
-				'id' => '2',
-				'name' => 'public',
-				'description' => 'desc',
-				'public' => true,
-				'repo_type' => '1',
-				'created' => '2012-06-01 12:46:07',
-				'modified' => '2012-06-01 12:46:07',
-				'deleted' => '0',
-				'deleted_date' => null
-			),
-			'Owner' => array(
-				'id' => '3',
-				'name' => 'Mrs Guest',
-				'email' => 'mrs.guest@example.com',
-				'password' => 'Lorem ipsum dolor sit amet',
-				'is_admin' => false,
-				'is_active' => true,
-				'theme' => 'default',
-				'created' => '2012-06-01 12:50:08',
-				'modified' => '2012-06-01 12:50:08',
-				'deleted' => '0',
-				'deleted_date' => null,
-				'is_internal' => '1'
-			),
-			'TaskType' => array(
-				'id' => '1',
-				'name' => 'bug',
-				'label' => 'Bug',
-				'icon' => '',
-				'class' => 'important',
-			),
-			'TaskStatus' => array(
-				'id' => '2',
-				'name' => 'in progress',
-				'label' => 'In Progress',
-				'icon' => '',
-				'class' => 'warning',
-			),
-			'TaskPriority' => array(
-				'id' => '3',
-				'name' => 'urgent',
-				'label' => 'Urgent',
-				'level' => 3,
-				'icon' => 'exclamation-sign',
-				'class' => '',
-			),
-			'Assignee' => array(
-				'password' => null,
-				'id' => null,
-				'name' => null,
-				'email' => null,
-				'is_admin' => null,
-				'is_active' => null,
-				'theme' => null,
-				'created' => null,
-				'modified' => null,
-				'deleted' => null,
-				'deleted_date' => null,
-				'is_internal' => '0'
-			),
-			'Milestone' => array(
-				'id' => null,
-				'project_id' => null,
-				'subject' => null,
-				'description' => null,
-				'due' => null,
-				'is_open' => null,
-				'created' => null,
-				'modified' => null,
-				'deleted' => null,
-				'deleted_date' => null
-			),
-			'TaskComment' => array(),
-			'Time' => array(),
-			'DependsOn' => array(),
-			'DependedOnBy' => array()
-		)), "Incorrect project backlog returned");
+		$backlog = array_map(function($a){return $a['Task']['id'];}, $backlog);
+		$this->assertEquals(array(3, 13), $backlog);
 	}
 
 	public function testFetchEventsForProject() {
 		$this->Project->id = 1;
 		$this->Project->read();
 		$events = $this->Project->fetchEventsForProject();
-		$this->assertEquals($events, array(
-			0 => array(
-				'modified' => '2014-07-31 18:45:27',
+
+		$events = array_map(function($a) {
+			return array(
+				'Type' => $a['Type'],
+				'project_id' => $a['Project']['id'],
+				'actioner_id' => $a['Actioner']['id'],
+				'subject_id' => $a['Subject']['id'],
+				'subject_title' => $a['Subject']['title'],
+				'change_field' => $a['Change']['field'],
+				'change_field_old' => $a['Change']['field_old'],
+				'change_field_new' => $a['Change']['field_new'],
+				'url' => $a['url'],
+			);
+		}, $events);
+
+		$this->assertEquals(array(
+			array(
 				'Type' => 'Source',
-				'Project' => array(
-					'id' => '1',
-					'name' => 'private'
-				),
-				'Actioner' => array(
-					'id' => '1',
-					'name' => 'Mr Smith',
-					'email' => 'Mr.Smith@example.com',
-					'exists' => true
-				),
-				'Subject' => array(
-					'id' => '25b7355ef40ec350de1fdfefd332170e9740155f',
-					'title' => 'second checkin',
-					'exists' => true
-				),
-				'Change' => array(
-					'field' => '+',
-					'field_old' => null,
-					'field_new' => null
-				),
+				'project_id' => '1',
+				'actioner_id' => '2',
+				'subject_id' => '2325c49ec93a7164bbcbd4a3c0594170d4d9e121',
+				'subject_title' => 'stop overengineering',
+				'change_field' => '+',
+				'change_field_old' => null,
+				'change_field_new' => null,
 				'url' => array(
 					'api' => false,
 					'project' => 'private',
 					'controller' => 'source',
 					'action' => 'commit',
-					0 => '25b7355ef40ec350de1fdfefd332170e9740155f'
+					0 => '2325c49ec93a7164bbcbd4a3c0594170d4d9e121'
 				)
 			),
-			1 => array(
-				'modified' => '2014-07-31 18:45:27',
+			array(
 				'Type' => 'Source',
-				'Project' => array(
-					'id' => '1',
-					'name' => 'private'
-				),
-				'Actioner' => array(
-					'id' => '1',
-					'name' => 'Mr Smith',
-					'email' => 'Mr.Smith@example.com',
-					'exists' => true
-				),
-				'Subject' => array(
-					'id' => '783d699c9acd8dbb9a8ba441038ab3d9440a6ead',
-					'title' => 'third checkin ermagerd',
-					'exists' => true
-				),
-				'Change' => array(
-					'field' => '+',
-					'field_old' => null,
-					'field_new' => null
-				),
+				'project_id' => '1',
+				'actioner_id' => '1',
+				'subject_id' => '04022f5b0b7c9f635520f68a511cccfad4330da3',
+				'subject_title' => 'third checkin ermagerd',
+				'change_field' => '+',
+				'change_field_old' => null,
+				'change_field_new' => null,
 				'url' => array(
 					'api' => false,
 					'project' => 'private',
 					'controller' => 'source',
 					'action' => 'commit',
-					0 => '783d699c9acd8dbb9a8ba441038ab3d9440a6ead'
+					0 => '04022f5b0b7c9f635520f68a511cccfad4330da3'
 				)
 			),
-			2 => array(
-				'modified' => '2014-07-31 18:45:27',
+			array(
 				'Type' => 'Source',
-				'Project' => array(
-					'id' => '1',
-					'name' => 'private'
-				),
-				'Actioner' => array(
-					'id' => '2',
-					'name' => 'Mrs Smith',
-					'email' => 'Mrs.Smith@example.com',
-					'exists' => true
-				),
-				'Subject' => array(
-					'id' => '7fafe8bdeb1b29964959aafe0133aa2123be6d84',
-					'title' => 'stop overengineering',
-					'exists' => true
-				),
-				'Change' => array(
-					'field' => '+',
-					'field_old' => null,
-					'field_new' => null
-				),
+				'project_id' => '1',
+				'actioner_id' => '1',
+				'subject_id' => '1436052fb1244a045981392e20efa03f39e0737a',
+				'subject_title' => 'second checkin',
+				'change_field' => '+',
+				'change_field_old' => null,
+				'change_field_new' => null,
 				'url' => array(
 					'api' => false,
 					'project' => 'private',
 					'controller' => 'source',
 					'action' => 'commit',
-					0 => '7fafe8bdeb1b29964959aafe0133aa2123be6d84'
+					0 => '1436052fb1244a045981392e20efa03f39e0737a'
 				)
 			),
-			3 => array(
-				'modified' => '2014-07-31 18:45:26',
+			array(
 				'Type' => 'Source',
-				'Project' => array(
-					'id' => '1',
-					'name' => 'private'
-				),
-				'Actioner' => array(
-					'id' => '1',
-					'name' => 'Mr Smith',
-					'email' => 'Mr.Smith@example.com',
-					'exists' => true
-				),
-				'Subject' => array(
-					'id' => '6df76712905c60dc439f1edee8b593b835782036',
-					'title' => 'first ever checkin',
-					'exists' => true
-				),
-				'Change' => array(
-					'field' => '+',
-					'field_old' => null,
-					'field_new' => null
-				),
+				'project_id' => '1',
+				'actioner_id' => '1',
+				'subject_id' => '848f3fe7032a76b180e9831d53e4152fd4da85d9',
+				'subject_title' => 'first ever checkin',
+				'change_field' => '+',
+				'change_field_old' => null,
+				'change_field_new' => null,
 				'url' => array(
 					'api' => false,
 					'project' => 'private',
 					'controller' => 'source',
 					'action' => 'commit',
-					0 => '6df76712905c60dc439f1edee8b593b835782036'
+					0 => '848f3fe7032a76b180e9831d53e4152fd4da85d9'
 				)
 			),
-			4 => array(
-				'modified' => '2014-07-23 15:02:12',
+			array(
 				'Type' => 'Collaborator',
-				'Project' => array(
-					'id' => '1',
-					'name' => 'private'
-				),
-				'Actioner' => array(
-					'id' => '1',
-					'name' => 'Mr Smith',
-					'email' => 'Mr.Smith@example.com',
-					'exists' => true
-				),
-				'Subject' => array(
-					'id' => '2',
-					'title' => 'Mr Admin',
-					'exists' => true
-				),
-				'Change' => array(
-					'field' => 'access_level',
-					'field_old' => '2',
-					'field_new' => '1'
-				),
+				'project_id' => '1',
+				'actioner_id' => '1',
+				'subject_id' => '2',
+				'subject_title' => 'Mr Admin',
+				'change_field' => 'access_level',
+				'change_field_old' => '2',
+				'change_field_new' => '1',
 				'url' => array(
 					'api' => false,
 					'admin' => false,
@@ -714,29 +649,15 @@ class ProjectTestCase extends CakeTestCase {
 					0 => '5'
 				)
 			),
-			5 => array(
-				'modified' => '2014-07-23 15:01:12',
+			array(
 				'Type' => 'Collaborator',
-				'Project' => array(
-					'id' => '1',
-					'name' => 'private'
-				),
-				'Actioner' => array(
-					'id' => '1',
-					'name' => 'Mr Smith',
-					'email' => 'Mr.Smith@example.com',
-					'exists' => true
-				),
-				'Subject' => array(
-					'id' => '2',
-					'title' => 'Mr Admin',
-					'exists' => true
-				),
-				'Change' => array(
-					'field' => 'access_level',
-					'field_old' => '1',
-					'field_new' => '2'
-				),
+				'project_id' => '1',
+				'actioner_id' => '1',
+				'subject_id' => '2',
+				'subject_title' => 'Mr Admin',
+				'change_field' => 'access_level',
+				'change_field_old' => '1',
+				'change_field_new' => '2',
 				'url' => array(
 					'api' => false,
 					'admin' => false,
@@ -745,7 +666,8 @@ class ProjectTestCase extends CakeTestCase {
 					0 => '5'
 				)
 			)
-		), "Incorrect project events returned");
+		), $events);
+
 	}
 
 	public function testRenameUnknownProject() {

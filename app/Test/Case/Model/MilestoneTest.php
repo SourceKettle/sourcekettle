@@ -15,8 +15,11 @@ class MilestoneTest extends CakeTestCase {
 	public $fixtures = array(
 		'app.project',
 		'app.project_history',
+		'app.project_group',
+		'app.project_groups_project',
 		'app.repo_type',
 		'app.collaborator',
+		'app.collaborating_team',
 		'app.user',
 		'app.task',
 		'app.task_type',
@@ -126,52 +129,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testOpenTasksForMilestone() {
+
 		$openTasks = $this->Milestone->openTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(2, count($openTasks));
+
+		// All tasks are open
 		foreach ($openTasks as $task) {
 			$this->assertEqual('open', $task['TaskStatus']['name']);
 		}
-
-		$this->assertEqual(array(
-			'id' => '5',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '1',
-			'task_priority_id' => '3',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '20h 45m',
-			'story_points' => '0',
-			'subject' => 'Open Urgent Task 5 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '5',
-			'dependenciesComplete' => 1,
-		), $openTasks[0]['Task']);
-		$this->assertEqual(array(
-			'id' => '2',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '1',
-			'task_priority_id' => '1',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '4h 0m',
-			'story_points' => '0',
-			'subject' => 'Open Minor Task 2 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '2',
-			'dependenciesComplete' => 0,
-		), $openTasks[1]['Task']);
+		
+		// Correct task IDs returned
+		$openTasks = array_map(function($a){return $a['Task']['id'];}, $openTasks);
+		$this->assertEqual(array(5, 2), $openTasks);
 
 	}
 
@@ -181,51 +152,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testInProgressTasksForMilestone() {
+
 		$inProgressTasks = $this->Milestone->inProgressTasksForMilestone(1);
+		
+		// Correct number of tasks
 		$this->assertEqual(2, count($inProgressTasks));
+		
+		// All tasks are in progress
 		foreach ($inProgressTasks as $task) {
 			$this->assertEqual('in progress', $task['TaskStatus']['name']);
 		}
-		$this->assertEqual(array(
-			'id' => '6',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '2',
-			'task_priority_id' => '4',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'In Progress Blocker Task 7 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '6',
-			'dependenciesComplete' => 1,
-			), $inProgressTasks[0]['Task']);
-		$this->assertEqual(array(
-			'id' => '4',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '2',
-			'task_priority_id' => '3',
-			'assignee_id' => '2',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'In progress Urgent Task 4 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '4',
-			'dependenciesComplete' => 1,
-			), $inProgressTasks[1]['Task']);
+
+		// Correct task IDs returned
+		$inProgressTasks = array_map(function($a){return $a['Task']['id'];}, $inProgressTasks);
+		$this->assertEqual(array(6, 4), $inProgressTasks);
 	}
 
 /**
@@ -234,31 +174,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testResolvedTasksForMilestone() {
+
 		$resolvedTasks = $this->Milestone->resolvedTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(1, count($resolvedTasks));
+
+		// All tasks are resolved
 		foreach ($resolvedTasks as $task) {
 			$this->assertEqual('resolved', $task['TaskStatus']['name']);
 		}
-		$this->assertEqual(array(
-			'id' => '7',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '3',
-			'task_priority_id' => '2',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'Resolved Major Task 7 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '7',
-			'dependenciesComplete' => 1,
-			), $resolvedTasks[0]['Task']);
+
+		// Correct task IDs returned
+		$resolvedTasks = array_map(function($a){return $a['Task']['id'];}, $resolvedTasks);
+		$this->assertEqual(array(7), $resolvedTasks);
 	}
 
 /**
@@ -267,31 +196,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testClosedTasksForMilestone() {
+
 		$closedTasks = $this->Milestone->closedTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(1, count($closedTasks));
+
+		// All tasks are closed
 		foreach ($closedTasks as $task) {
 			$this->assertEqual('closed', $task['TaskStatus']['name']);
 		}
-		$this->assertEqual(array(
-			'id' => '8',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '4',
-			'task_priority_id' => '4',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'Closed Blocker Task 8 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '8',
-			'dependenciesComplete' => 1,
-			), $closedTasks[0]['Task']);
+
+		// Correct task IDs returned
+		$closedTasks = array_map(function($a){return $a['Task']['id'];}, $closedTasks);
+		$this->assertEqual(array(8), $closedTasks);
 	}
 
 /**
@@ -300,48 +218,15 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testClosedOrResolvedTasksForMilestone() {
+
 		$closedOrResolvedTasks = $this->Milestone->closedOrResolvedTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(2, count($closedOrResolvedTasks));
-		$this->assertEqual(array(
-			'id' => '8',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '4',
-			'task_priority_id' => '4',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'Closed Blocker Task 8 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '8',
-			'dependenciesComplete' => 1,
-			), $closedOrResolvedTasks[0]['Task']);
-		$this->assertEqual(array(
-			'id' => '7',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '3',
-			'task_priority_id' => '2',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'Resolved Major Task 7 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '7',
-			'dependenciesComplete' => 1,
-			), $closedOrResolvedTasks[1]['Task']);
+
+		// Correct task IDs returned
+		$closedOrResolvedTasks = array_map(function($a){return $a['Task']['id'];}, $closedOrResolvedTasks);
+		$this->assertEqual(array(8, 7), $closedOrResolvedTasks);
 	}
 
 /**
@@ -350,31 +235,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testDroppedTasksForMilestone() {
+
 		$droppedTasks = $this->Milestone->droppedTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(1, count($droppedTasks));
+
+		// All tasks are dropped
 		foreach ($droppedTasks as $task) {
 			$this->assertEqual('dropped', $task['TaskStatus']['name']);
 		}
-		$this->assertEqual(array(
-			'id' => '9',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '5',
-			'task_priority_id' => '1',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'Dropped Minor Task 9 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '9',
-			'dependenciesComplete' => 1,
-			), $droppedTasks[0]['Task']);
+
+		// Correct task IDs returned
+		$droppedTasks = array_map(function($a){return $a['Task']['id'];}, $droppedTasks);
+		$this->assertEqual(array(9), $droppedTasks);
 	}
 
 /**
@@ -383,51 +257,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testBlockerTasksForMilestone() {
+
 		$blockerTasks = $this->Milestone->blockerTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(2, count($blockerTasks));
+
+		// All tasks are blockers
 		foreach ($blockerTasks as $task) {
 			$this->assertEqual('blocker', $task['TaskPriority']['name']);
 		}
-		$this->assertEqual(array(
-			'id' => '6',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '2',
-			'task_priority_id' => '4',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'In Progress Blocker Task 7 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '6',
-			'dependenciesComplete' => 1,
-			), $blockerTasks[0]['Task']);
-		$this->assertEqual(array(
-			'id' => '8',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '4',
-			'task_priority_id' => '4',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'Closed Blocker Task 8 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '8',
-			'dependenciesComplete' => 1,
-			), $blockerTasks[1]['Task']);
+
+		// Correct task IDs returned
+		$blockerTasks = array_map(function($a){return $a['Task']['id'];}, $blockerTasks);
+		$this->assertEqual(array(6, 8), $blockerTasks);
 	}
 
 /**
@@ -436,51 +279,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testUrgentTasksForMilestone() {
+
 		$urgentTasks = $this->Milestone->urgentTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(2, count($urgentTasks));
+
+		// All tasks are urgent
 		foreach ($urgentTasks as $task) {
 			$this->assertEqual('urgent', $task['TaskPriority']['name']);
 		}
-		$this->assertEqual(array(
-			'id' => '4',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '2',
-			'task_priority_id' => '3',
-			'assignee_id' => '2',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'In progress Urgent Task 4 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '4',
-			'dependenciesComplete' => 1,
-		), $urgentTasks[0]['Task']);
-		$this->assertEqual(array(
-			'id' => '5',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '1',
-			'task_priority_id' => '3',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '20h 45m',
-			'story_points' => '0',
-			'subject' => 'Open Urgent Task 5 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '5',
-			'dependenciesComplete' => 1
-			), $urgentTasks[1]['Task']);
+
+		// Correct task IDs returned
+		$urgentTasks = array_map(function($a){return $a['Task']['id'];}, $urgentTasks);
+		$this->assertEqual(array(4, 5), $urgentTasks);
 	}
 
 /**
@@ -489,31 +301,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testMajorTasksForMilestone() {
+
 		$majorTasks = $this->Milestone->majorTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(1, count($majorTasks));
+
+		// All tasks are major
 		foreach ($majorTasks as $task) {
 			$this->assertEqual('major', $task['TaskPriority']['name']);
 		}
-		$this->assertEqual(array(
-			'id' => '7',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '3',
-			'task_priority_id' => '2',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'Resolved Major Task 7 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '7',
-			'dependenciesComplete' => 1
-			), $majorTasks[0]['Task']);
+
+		// Correct task IDs returned
+		$majorTasks = array_map(function($a){return $a['Task']['id'];}, $majorTasks);
+		$this->assertEqual(array(7), $majorTasks);
 	}
 
 /**
@@ -522,51 +323,20 @@ class MilestoneTest extends CakeTestCase {
  * @return void
  */
 	public function testMinorTasksForMilestone() {
+
 		$minorTasks = $this->Milestone->minorTasksForMilestone(1);
+
+		// Correct number of tasks
 		$this->assertEqual(2, count($minorTasks));
+
+		// All tasks are minor
 		foreach ($minorTasks as $task) {
 			$this->assertEqual('minor', $task['TaskPriority']['name']);
 		}
-		$this->assertEqual(array(
-			'id' => '2',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '1',
-			'task_priority_id' => '1',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '4h 0m',
-			'story_points' => '0',
-			'subject' => 'Open Minor Task 2 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '2',
-			'dependenciesComplete' => 0
-			), $minorTasks[0]['Task']);
-		$this->assertEqual(array(
-			'id' => '9',
-			'project_id' => '2',
-			'owner_id' => '3',
-			'task_type_id' => '1',
-			'task_status_id' => '5',
-			'task_priority_id' => '1',
-			'assignee_id' => '0',
-			'milestone_id' => '1',
-			'time_estimate' => '2h 25m',
-			'story_points' => '0',
-			'subject' => 'Dropped Minor Task 9 for milestone 1',
-			'description' => 'lorem ipsum dolor sit amet',
-			'created' => '0000-00-00 00:00:00',
-			'modified' => '0000-00-00 00:00:00',
-			'deleted' => '0',
-			'deleted_date' => null,
-			'public_id' => '9',
-			'dependenciesComplete' => 1
-			), $minorTasks[1]['Task']);
+
+		// Correct task IDs returned
+		$minorTasks = array_map(function($a){return $a['Task']['id'];}, $minorTasks);
+		$this->assertEqual(array(2, 9), $minorTasks);
 	}
 
 /**
@@ -708,6 +478,22 @@ class MilestoneTest extends CakeTestCase {
 		$milestone_post = $this->Milestone->findById(1);
 
 		$this->assertEquals($milestone_post, array(), "Milestone was not deleted");
+	}
+
+	public function testListMilestoneOptions() {
+
+		$this->Milestone->Project->id = 2;
+		$options = $this->Milestone->listMilestoneOptions();
+		$this->assertEquals(array(
+			__('No assigned milestone'),
+			__('Open') => array(
+				1 => 'Sprint 1',
+				3 => 'Longer <i>subject</i>',
+			),
+			__('Closed') => array(
+				2 => 'Sprint 2',
+			),
+		), $options);
 	}
 
 }

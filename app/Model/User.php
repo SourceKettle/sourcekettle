@@ -17,6 +17,7 @@ App::uses('AppModel', 'Model', 'AuthComponent', 'Controller/Component');
 
 class User extends AppModel {
 
+
 /**
  * Display field
  */

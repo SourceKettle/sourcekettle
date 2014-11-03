@@ -227,7 +227,7 @@ class Task extends AppModel {
  */
 	public function beforeValidate($options = array()) {
 		if (empty($this->data)) {
-			return true;
+			return false;
 		}
 
 		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
@@ -265,7 +265,9 @@ class Task extends AppModel {
 	public function beforeSave($options = array()) {
 
 		// Parse time estimate if necessary
-		$this->beforeValidate($options);
+		if (!$this->beforeValidate($options)) {
+			return false;
+		}
 
 		// Update dependency list
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {

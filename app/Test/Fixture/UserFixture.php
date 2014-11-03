@@ -121,5 +121,105 @@ class UserFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:50:08',
             'modified' => '2012-06-01 12:50:08'
         ),
+        array(
+            'id' => 12,
+            'name' => 'A user',
+            'email' => 'user-@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 13,
+            'name' => 'A PHP developer',
+            'email' => 'php-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 14,
+            'name' => 'A Java developer',
+            'email' => 'java-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 15,
+            'name' => 'A Python developer',
+            'email' => 'python-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 16,
+            'name' => 'A PHP and Python developer',
+            'email' => 'php-and-python-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 17,
+            'name' => 'A PHP and Java developer',
+            'email' => 'php-and-java-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 18,
+            'name' => 'A Python and Java developer',
+            'email' => 'python-and-java-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 19,
+            'name' => 'A PHP, Python and Java developer',
+            'email' => 'php-python-and-java-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 20,
+            'name' => 'A Perl developer',
+            'email' => 'perl-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 21,
+            'name' => 'Another Perl developer',
+            'email' => 'another-perl-dev@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
     );
 }

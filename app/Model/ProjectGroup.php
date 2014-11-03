@@ -8,48 +8,24 @@ App::uses('AppModel', 'Model');
  */
 class ProjectGroup extends AppModel {
 
-/**
- * Display field
- *
- * @var string
- */
 	public $displayField = 'name';
 
-
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
-/**
- * hasMany associations
- *
- * @var array
- */
-	public $hasMany = array(
-		'ProjectGroupMember' => array(
-			'className' => 'ProjectGroupMember',
+	public $hasAndBelongsToMany = array(
+		'Project' => array(
+			'className' => 'Project',
 			'foreignKey' => 'project_group_id',
+			'associatedForeignKey' => 'project_id',
 			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
 		),
-		'ProjectGroupPermission' => array(
-			'className' => 'ProjectGroupPermission',
+	);
+
+	public $hasMany = array(
+		// Group collaborating teams are teams of users mapped to project groups with an access level
+		'GroupCollaboratingTeam' => array(
+			'className' => 'GroupCollaboratingTeam',
 			'foreignKey' => 'project_group_id',
 			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		)
+		),
 	);
 
 }

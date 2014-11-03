@@ -1,21 +1,13 @@
 <?php
 App::uses('AppModel', 'Model');
 /**
- * ProjectGroupMember Model
+ * GroupCollaboratingTeam Model
  *
  * @property ProjectGroup $ProjectGroup
- * @property Project $Project
+ * @property Team $Team
  */
-class ProjectGroupMember extends AppModel {
+class GroupCollaboratingTeam extends AppModel {
 
-
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
-/**
- * belongsTo associations
- *
- * @var array
- */
 	public $belongsTo = array(
 		'ProjectGroup' => array(
 			'className' => 'ProjectGroup',
@@ -24,9 +16,9 @@ class ProjectGroupMember extends AppModel {
 			'fields' => '',
 			'order' => ''
 		),
-		'Project' => array(
-			'className' => 'Project',
-			'foreignKey' => 'project_id',
+		'Team' => array(
+			'className' => 'Team',
+			'foreignKey' => 'team_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''

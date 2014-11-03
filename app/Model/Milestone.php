@@ -393,11 +393,10 @@ class Milestone extends AppModel {
 	// Helper to get a list of milestone options e.g. for selecting milestones to
 	// add a task to. This is a simplified set of data compared to listMilestones().
 	public function listMilestoneOptions() {
-		$milestones = array('open' => array(), 'closed' => array());
 
 		$milestones = array(
-			"No assigned milestone",
-			'Open' => $this->find('list', array(
+			__('No assigned milestone'),
+			__('Open') => $this->find('list', array(
 				'conditions' => array(
 					'project_id' => $this->Project->id,
 					'is_open' => 1,
@@ -409,7 +408,7 @@ class Milestone extends AppModel {
 				'recursive' => 0,
 			)),
 
-			'Closed' => $this->find('list', array(
+			__('Closed') => $this->find('list', array(
 				'conditions' => array(
 					'project_id' => $this->Project->id,
 					'is_open' => 0,

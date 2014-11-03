@@ -60,32 +60,15 @@ class SettingTestCase extends CakeTestCase {
      * @return void
      */
     public function testSyncRequired() {
-        $beforeA = $this->Setting->findByName('sync_required');
-        $beforeB = array(
-            'Setting' => array(
-                'id' => 1,
-                'name' => 'sync_required',
-                'value' => 0,
-                'created' => '2012-06-02 20:05:59',
-                'modified' => '2012-06-02 20:05:59'
-            ),
-        );
-        $this->assertEquals($beforeB, $beforeA, "before settings are not equal");
+        $before = $this->Setting->findByName('sync_required');
+        $this->assertEquals($before['Setting']['name'], 'sync_required', "Failed to retrieve sync_required setting");
+        $this->assertEquals($before['Setting']['value'], '0', "Incorrect sync_required setting found");
 
         $this->Setting->syncRequired();
 
-        $afterA = $this->Setting->findByName('sync_required');
-		unset($afterA['Setting']['created']);
-		unset($afterA['Setting']['modified']);
-
-        $afterB = array(
-            'Setting' => array(
-                'id' => 1,
-                'name' => 'sync_required',
-                'value' => '1',
-            ),
-        );
-        $this->assertEquals($afterB, $afterA, "after settings are not equal");
+        $after = $this->Setting->findByName('sync_required');
+        $this->assertEquals($after['Setting']['name'], 'sync_required', "Failed to retrieve sync_required setting");
+        $this->assertEquals($after['Setting']['value'], '1', "Incorrect sync_required setting found");
     }
 
 	public function testLoadConfigSettings() {

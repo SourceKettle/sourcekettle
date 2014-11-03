@@ -52,11 +52,6 @@ class AppProjectController extends AppController {
 	// to work out what level is required for the given action.
 	public function isAuthorized($user) {
 
-		// Anyone can access, even when not logged in - e.g. registration page
-		if ($requiredLevel == 'any') {
-			return true;
-		}
-
 		// Deactivated users do not get access
 		// (NB they should not be able to log in anyway, of course!)
 		if (@$user['is_active'] != 1) {
@@ -83,6 +78,11 @@ class AppProjectController extends AppController {
 		}
 
 		$requiredLevel = $mapping[$this->action];
+
+		// Anyone can access, even when not logged in - e.g. registration page
+		if ($requiredLevel == 'any') {
+			return true;
+		}
 
 		// If we just need to be logged in, that's easy
 		if ($requiredLevel == 'login') {
