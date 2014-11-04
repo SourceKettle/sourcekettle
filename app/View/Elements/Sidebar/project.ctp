@@ -59,7 +59,7 @@
                 'icon' => 'file',
 		        'url' => array(
 		            'action' => array('*'),
-					'?' => 'assignees='.urlencode($current_user['id']),
+					'?' => 'assignees='.urlencode($current_user['id']).'&statuses=open,in+progress',
 		            'controller' => 'tasks',
 		            'project' => $this->params['project'],
 		        ),
