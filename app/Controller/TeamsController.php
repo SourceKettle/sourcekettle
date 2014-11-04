@@ -58,7 +58,18 @@ class TeamsController extends AppController {
 		$this->set(compact('users'));
 		
 	}
-	public function admin_delete() {
+	public function admin_delete($id = null) {
+		$this->Team->id = $id;
+		if (!$this->Team->exists()) {
+			throw new NotFoundException(__('Invalid team'));
+		}
+		$this->request->onlyAllow('post', 'delete');
+		if ($this->Team->delete()) {
+			$this->Session->setFlash(__('Team deleted'));
+			$this->redirect(array('action' => 'index'));
+		}
+		$this->Session->setFlash(__('Team was not deleted'));
+		$this->redirect(array('action' => 'index'));
 		
 	}
 
