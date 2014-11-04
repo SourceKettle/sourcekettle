@@ -162,6 +162,7 @@ class TaskTest extends CakeTestCase {
 				'subject' => 'Do a thing',
 			)
 		));
+
 	}
 
 	public function testCreateForMilestone() {

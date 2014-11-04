@@ -559,7 +559,7 @@ class ProjectTestCase extends CakeTestCase {
 				'change_field' => $a['Change']['field'],
 				'change_field_old' => $a['Change']['field_old'],
 				'change_field_new' => $a['Change']['field_new'],
-				'url' => $a['url'],
+				'url' => (isset($a['url'])? $a['url']: null),
 			);
 		}, $events);
 
@@ -633,6 +633,17 @@ class ProjectTestCase extends CakeTestCase {
 				)
 			),
 			array(
+				'Type' => 'Task',
+				'project_id' => '1',
+				'actioner_id' => '1',
+				'subject_id' => '1',
+				'subject_title' => '#1',
+				'change_field' => 'task_status_id',
+				'change_field_old' => '1',
+				'change_field_new' => '2',
+				'url' => null,
+			),
+			array(
 				'Type' => 'Collaborator',
 				'project_id' => '1',
 				'actioner_id' => '1',
@@ -650,6 +661,17 @@ class ProjectTestCase extends CakeTestCase {
 				)
 			),
 			array(
+				'Type' => 'Task',
+				'project_id' => '1',
+				'actioner_id' => '1',
+				'subject_id' => '1',
+				'subject_title' => '#1',
+				'change_field' => '+',
+				'change_field_old' => '',
+				'change_field_new' => '',
+				'url' => null,
+			),
+			array(
 				'Type' => 'Collaborator',
 				'project_id' => '1',
 				'actioner_id' => '1',
@@ -665,7 +687,7 @@ class ProjectTestCase extends CakeTestCase {
 					'action' => 'view',
 					0 => '5'
 				)
-			)
+			),
 		), $events);
 
 	}

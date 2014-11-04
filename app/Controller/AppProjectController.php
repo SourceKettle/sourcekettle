@@ -92,8 +92,6 @@ class AppProjectController extends AppController {
 		// At this point, we are definitely logged in, and we need to check
 		// more granular access levels.
 
-
-
 		// Slightly fudgy special-case for things that use a Project directly...
 		if ( $this->modelClass == "Project" ) {
 			$model = $this->Project;
@@ -108,21 +106,18 @@ class AppProjectController extends AppController {
 			throw new NotFoundException(__('Invalid project'));
 		}
 
-		$model->id = $project['Project']['id'];
-		$isProjectAdmin = $model->isAdmin($user['id']);
-		$hasWrite = $model->hasWrite($user['id']);
-		$hasRead = $model->hasRead($user['id']);
+		$project_id = $project['Project']['id'];
 
 		switch ($requiredLevel) {
 			case 'read':
 				$this->Auth->authError = __('You do not have read access to this '.$this->modelClass);
-				return $hasRead;
+				return $model->hasRead($user['id'], $project_id);
 			case 'write':
 				$this->Auth->authError = __('You do not have write access to this '.$this->modelClass);
-				return $hasWrite;
+				return $model->hasWrite($user['id'], $project_id);
 			case 'admin':
 				$this->Auth->authError = __('You do not have admin access to this '.$this->modelClass);
-				return $isProjectAdmin;
+				return $model->isAdmin($user['id'], $project_id);
 		}
 	
 		return false;

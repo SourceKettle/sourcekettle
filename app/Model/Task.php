@@ -226,6 +226,7 @@ class Task extends AppModel {
 /**
  */
 	public function beforeValidate($options = array()) {
+
 		if (empty($this->data)) {
 			return false;
 		}

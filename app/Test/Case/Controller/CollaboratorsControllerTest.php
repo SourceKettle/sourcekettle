@@ -36,6 +36,12 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	public function setUp() {

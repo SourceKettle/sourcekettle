@@ -123,6 +123,7 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function makeadmin($project = null, $id = null) {
+		debug("Making $id admin on $project: logged in as ".$this->Auth->user('id'));
 		$this->__changePermissionLevel($project, $id, 2);
 	}
 

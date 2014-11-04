@@ -127,9 +127,6 @@ class Time extends AppModel {
 				$task_id = $this->Task->field('public_id', array(
 						'id' => $this->data['Time']['task_id']));
 	
-				if (empty($task_id)) {
-					return false;
-				}
 				$this->data['Time']['task_id'] = $task_id;
 			}
 		}
@@ -149,9 +146,6 @@ class Time extends AppModel {
 				'project_id' => $this->data['Time']['project_id'],
 				'public_id' => $this->data['Time']['task_id']));
 
-			if (empty($task_id)) {
-				return false;
-			}
 			$this->data['Time']['task_id'] = $task_id;
 		}
 

@@ -546,7 +546,8 @@ class TimeTestCase extends CakeTestCase {
 	public function testCreate() {
 		$saved = $this->Time->save(array(
 			'Time' => array(
-				'project_id' => 2,
+				'project_id' => 1,
+				'task_id' => 2,
 				'user_id' => 3,
 				'mins' => '2h3m',
 				'date' => '2014-07-03',
@@ -564,12 +565,18 @@ class TimeTestCase extends CakeTestCase {
 		$this->assertEqual($saved, array(
 			'Time' => array(
 				'id' => $this->Time->getLastInsertID(),
-				'project_id' => 2,
+				'project_id' => 1,
+				'task_id' => 2,
 				'user_id' => 3,
 				'mins' => '123',
 				'date' => '2014-07-03',
 			)
 		));
+
+		// Make sure the correct task was linked i.e. we've done the Right Thing with the public ID
+		$retrieved = $this->Time->findById($this->Time->getLastInsertID());
+		$this->assertEquals(12, $retrieved['Task']['id']);
+		$this->assertEquals(2, $retrieved['Task']['public_id']);
 	}
 
 	public function testCreateNoMins() {

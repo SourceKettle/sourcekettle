@@ -37,6 +37,12 @@ class MilestonesControllerTest extends AppControllerTest {
 		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	public function setUp() {

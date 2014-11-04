@@ -267,12 +267,13 @@ class Project extends AppModel {
 		}
 
 		// Default project ID if we have one already...
-		if ($this->id) {
+		if ($this->id && !isset($projectId)) {
 			$projectId = $this->id;
 		}
 
-		// Public projects can be read by anybody who is logged in
-		if ($this->field('public', array('Project.id' => $projectId))) {
+		// Public projects can be read by anybody who is logged in,
+		// so if only read access is needed, grant access
+		if ($this->field('public', array('Project.id' => $projectId)) && $accessLevel < 1) {
 			return true;
 		}
 

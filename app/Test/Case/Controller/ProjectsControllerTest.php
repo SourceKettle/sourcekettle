@@ -38,6 +38,12 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	public function setUp() {
@@ -654,26 +660,25 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 5, "Incorrect number of projects returned");
+		$this->assertEqual(12, count($this->vars['projects']), "Incorrect number of projects returned");
 
-		// Check each project 
-		foreach ($this->vars['projects'] as $project) {
+		$projects = array_map(function($a){return array('id' => $a['Project']['id'], 'repo_type' => $a['RepoType']['name']);}, $this->vars['projects']);
 
-			// We should get all 5 projects with correct repo types
-			if ($project['Project']['id'] == 1 && $project['RepoType']['name'] == 'Git') {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 2 && $project['RepoType']['name'] == 'None') {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 3 && $project['RepoType']['name'] == 'None') {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 4 && $project['RepoType']['name'] == 'None') {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 5 && $project['RepoType']['name'] == 'None') {
-				$this->assertTrue(true, "Impossible to fail");
-			} else {
-				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or repo type (".$project['RepoType']['name'].") was retrieved");
-			}
-		}
+		$this->assertEquals(array(
+			array('id' => 1, 'repo_type' => 'Git'),
+			array('id' => 2, 'repo_type' => 'None'),
+			array('id' => 3, 'repo_type' => 'None'),
+			array('id' => 4, 'repo_type' => 'None'),
+			array('id' => 5, 'repo_type' => 'None'),
+			array('id' => 6, 'repo_type' => 'None'),
+			array('id' => 7, 'repo_type' => 'None'),
+			array('id' => 8, 'repo_type' => 'None'),
+			array('id' => 9, 'repo_type' => 'None'),
+			array('id' => 10, 'repo_type' => 'None'),
+			array('id' => 11, 'repo_type' => 'None'),
+			array('id' => 12, 'repo_type' => 'None'),
+		), $projects);
+
 	}
 
 	public function testHistory() {
