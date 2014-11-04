@@ -9,6 +9,31 @@ class Team extends AppModel {
 
 	public $displayField = 'name';
 
+	public $validate = array(
+		'name' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				'message' => 'Please enter a name for the team',
+			),
+			'isUnique' => array(
+				'rule' => array('isUnique'),
+				'message' => 'This team name has already been taken',
+			),
+			'minLength' => array(
+				'rule' => array('minLength', 4),
+				'message' => 'Team names must be at least 4 characters long',
+			),
+			'alphaNumericDashUnderscore' => array(
+				'rule' => '/^[0-9a-zA-Z_-]+$/',
+				'message' => 'May contain only letters, numbers, dashes and underscores',
+			),
+			'startWithALetter' => array(
+				'rule' => '/^[a-zA-Z].+$/',
+				'message' => 'Team names must start with a letter',
+			),
+		),
+	);
+
  	public $hasMany = array(
 		// Collaborating teams are teams of users mapped to projects with an access level
 		'CollaboratingTeam' => array(
