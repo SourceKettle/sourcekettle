@@ -19,6 +19,8 @@ App::uses('AppProjectController', 'Controller');
 
 class CollaboratorsController extends AppProjectController {
 
+	public $uses = array("Collaborator", "CollaboratingTeam", "GroupCollaboratingTeam", "ProjectGroup");
+
 /**
  * Project helpers
  * @var type
@@ -34,6 +36,10 @@ class CollaboratorsController extends AppProjectController {
 			'makeuser'    => 'admin',
 			'makeguest'   => 'admin',
 			'delete' => 'admin',
+			'team_makeadmin'   => 'admin',
+			'team_makeuser'    => 'admin',
+			'team_makeguest'   => 'admin',
+			'team_delete' => 'admin',
 			'api_autocomplete' => 'read',
 		);
 	}
@@ -59,7 +65,49 @@ class CollaboratorsController extends AppProjectController {
 			);
 		}
 
+		$collaboratingTeams = array();
+		foreach (array(0, 1, 2) as $x) {
+			$collaboratingTeams[$x] = $this->CollaboratingTeam->find(
+				'all',
+				array(
+					'conditions' => array(
+						'access_level' => $x,
+						'project_id' => $project['Project']['id']
+					)
+				)
+			);
+		}
+
+		$projectGroups = $this->ProjectGroup->find('list', array(
+			'conditions' => array('ProjectGroupsProject.project_id' => $project['Project']['id']),
+			'fields' => array('ProjectGroup.id'),
+			'joins' => array(
+			 	array('table' => 'project_groups_projects',
+					'alias' => 'ProjectGroupsProject',
+					'type' => 'INNER',
+					'conditions' => array(
+						'ProjectGroupsProject.project_group_id = ProjectGroup.id',
+					)
+				),
+			),
+		));
+
+		$groupCollaboratingTeams = array();
+		foreach (array(0, 1, 2) as $x) {
+			$groupCollaboratingTeams[$x] = $this->GroupCollaboratingTeam->find(
+				'all',
+				array(
+					'conditions' => array(
+						'access_level' => $x,
+						'project_group_id' => $projectGroups,
+					)
+				)
+			);
+		}
+
 		$this->set('collaborators', $collaborators);
+		$this->set('collaborating_teams', $collaboratingTeams);
+		$this->set('group_collaborating_teams', $groupCollaboratingTeams);
 	}
 
 /**
@@ -116,20 +164,19 @@ class CollaboratorsController extends AppProjectController {
 
 /**
  * makeadmin
- * Allows users to premote a user to an admin
+ * Allows users to promote a user to an admin
  *
  * @param string $project project name
  * @param string $id user to change
  * @return void
  */
 	public function makeadmin($project = null, $id = null) {
-		debug("Making $id admin on $project: logged in as ".$this->Auth->user('id'));
 		$this->__changePermissionLevel($project, $id, 2);
 	}
 
 /**
  * makeuser
- * Allows users to premote a user to a regular user
+ * Allows users to promote a user to a regular user
  *
  * @param string $project project name
  * @param string $id user to change
@@ -142,7 +189,7 @@ class CollaboratorsController extends AppProjectController {
 
 /**
  * makeguest
- * Allows users to premote a user to an observer
+ * Allows users to promote a user to an observer
  *
  * @param string $project project name
  * @param string $id user to change
@@ -189,6 +236,67 @@ class CollaboratorsController extends AppProjectController {
 	}
 
 /**
+ * makeadmin
+ * Allows users to promote a team to admin status
+ *
+ * @param string $project project name
+ * @param string $id user to change
+ * @return void
+ */
+	public function team_makeadmin($project = null, $id = null) {
+		$this->__changeTeamPermissionLevel($project, $id, 2);
+	}
+
+/**
+ * makeuser
+ * Allows users to promote a team to a regular user status
+ *
+ * @param string $project project name
+ * @param string $id user to change
+ * @return void
+ */
+	public function team_makeuser($project = null, $id = null) {
+		$this->__changeTeamPermissionLevel($project, $id, 1);
+	}
+
+
+/**
+ * makeguest
+ * Allows users to promote a user to an observer
+ *
+ * @param string $project project name
+ * @param string $id user to change
+ * @return void
+ */
+	public function team_makeguest($project = null, $id = null) {
+		$this->__changeTeamPermissionLevel($project, $id, 0);
+	}
+
+/**
+ * changePermissionLevel
+ *
+ * @param string $project project name
+ * @param string $id user to change
+ * @param string $newaccesslevel new access level to assign
+ * @return void
+ */
+	private function __changeTeamPermissionLevel($project = null, $id = null, $newaccesslevel = 0) {
+		$project = $this->_getProject($project);
+		$collaborator = $this->CollaboratingTeam->findById($id);
+
+		// Save the changes to the team
+		$collaborator['CollaboratingTeam']['access_level'] = $newaccesslevel;
+		if ($this->CollaboratingTeam->save($collaborator)) {
+			$this->Flash->info("Permissions level successfully changed for '" . $collaborator['Team']['name'] . "'");
+		} else {
+			$this->Flash->error("Permissions level for '" . $collaborator['Team']['name'] . "' could not be updated. Please try again.");
+		}
+		$collaborator = $this->CollaboratingTeam->findById($id);
+
+		return $this->redirect(array('project' => $project['Project']['name'], 'action' => '*'));
+	}
+
+/**
  * delete method
  *
  * @param string $name project name
@@ -227,6 +335,32 @@ class CollaboratorsController extends AppProjectController {
 			'id'	=> $collaborator['Collaborator']['id']
 		));
 		$this->set('objects', $this->Collaborator->preDelete());
+		$this->render('/Elements/Project/delete');
+	}
+
+/**
+ * team_delete method
+ *
+ * @param string $name project name
+ * @param string $id
+ * @return void
+ */
+	public function team_delete($project = null, $id = null) {
+		$project = $this->_getProject($project);
+		$collaborator = $this->CollaboratingTeam->findById($id);
+
+		$this->Flash->setUp();
+
+		// If the user has confimed deletion
+		if ($this->request->is('post') && $this->Flash->d($this->CollaboratingTeam->delete($collaborator['CollaboratingTeam']['id']))) {
+			return $this->redirect(array('project' => $project['Project']['name'], 'action' => '*'));
+		}
+
+		$this->set('object', array(
+			'name' => $collaborator['Team']['name'],
+			'id'	=> $collaborator['CollaboratingTeam']['id']
+		));
+		$this->set('objects', array());
 		$this->render('/Elements/Project/delete');
 	}
 

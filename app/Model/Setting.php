@@ -54,6 +54,7 @@ class Setting extends AppModel {
 		// Load config file first
 		$settings = Configure::read('sourcekettle');
 
+		// Override with database settings
 		foreach ($this->find('list', array('fields' => array('Setting.name', 'Setting.value')))  as $name => $value) {
 
 			// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']

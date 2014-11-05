@@ -1,27 +1,10 @@
 <?php
 App::uses('AppModel', 'Model');
-/**
- * UserSetting Model
- *
- * @property User $User
- */
+
 class UserSetting extends AppModel {
 
-/**
- * Display field
- *
- * @var string
- */
 	public $displayField = 'name';
 
-
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
-/**
- * belongsTo associations
- *
- * @var array
- */
 	public $belongsTo = array(
 		'User' => array(
 			'className' => 'User',
@@ -31,4 +14,38 @@ class UserSetting extends AppModel {
 			'order' => ''
 		)
 	);
+
+	// Loads in user settings, overriding anything that isn't already locked
+	public function loadUserSettings($settings = array(), $userId) {
+
+		// TODO locked settings?
+		$userSettings = $this->find('list', array(
+			'conditions' => array('user_id' => $userId),
+			'fields' => array('UserSetting.name', 'UserSetting.value'),
+		));
+
+		foreach ($userSettings as $name => $value) {
+
+			// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
+			$path = explode('.', $name);
+			$current = &$settings;
+
+			// Eat key parts one at a time
+			while(($key = array_shift($path))) {
+
+				// If we're on the last key part, set the value
+				if (empty($path)) {
+					$current[$key] = $value;
+
+				// Otherwise, make sure it maps to an array
+				} else {
+					$current[$key] = @$current[$key] ?: array();
+				}
+
+				// Keep track of progress through the settings array
+				$current = &$current[$key];
+			}
+		}
+		return $settings;
+	}
 }

@@ -99,7 +99,7 @@ class AppController extends Controller {
 		//var_dump($this->Auth); exit(0);
 		$this->Security->blackHoleCallback = 'appBlackhole';
 
-		// Load config file in
+		// Load config
 		$this->sourcekettle_config = ClassRegistry::init('Setting')->loadConfigSettings();
 
 		// Default form authentication
@@ -225,6 +225,10 @@ class AppController extends Controller {
 					$this->{$class}->setLogUser($current_user['User']);
 				}
 			}
+
+			// Override any non-locked settings with user preferences
+			$this->sourcekettle_config = ClassRegistry::init('UserSetting')->loadUserSettings($this->sourcekettle_config, $userId);
+
 		} else {
 			$this->set('current_user', null);
 		}
