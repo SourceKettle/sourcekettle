@@ -382,9 +382,9 @@ class Project extends AppModel {
 		return -1;
 	}
 
-	public function fetchEventsForProject($number = 8) {
+	public function fetchEventsForProject($projectId, $number = 8) {
 
-		$project = $this->getProject($this->id);
+		$project = $this->getProject($projectId);
 
 		$events = array();
 

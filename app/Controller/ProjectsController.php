@@ -573,7 +573,7 @@ class ProjectsController extends AppProjectController {
 				$number = 8;
 			}
 
-			$this->set('events', $this->Project->fetchEventsForProject($number));
+			$this->set('events', $this->Project->fetchEventsForProject($project, $number));
 			$this->render('/Elements/history');
 		}
 	}
