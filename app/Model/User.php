@@ -96,6 +96,16 @@ class User extends AppModel {
 		)
 	);
 
+	public $hasAndBelongsToMany = array(
+		'Team' => array(
+			'className' => 'Team',
+			'joinTable' => 'teams_users',
+			'foreignKey' => 'user_id',
+			'associationForeignKey' => 'team_id',
+			'unique' => 'keepExisting',
+		)
+	);
+
 	public $actsAs = array(
 		'FilterValid' => array(
 			'nameField' => 'email',

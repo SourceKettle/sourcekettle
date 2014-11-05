@@ -14,15 +14,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
     $options = array(
-        'Administration' => array(
-            'Overview' => array(
+        __('Administration') => array(
+            __('Overview') => array(
                 'icon' => 'fullscreen',
                 'url' => array(
                     'action' => 'admin_index',
                     'controller' => 'admin',
                 ),
             ),
-            'Settings' => array(
+            __('Settings') => array(
                 'icon' => 'warning-sign',
                 'url' => array(
                     'action' => 'admin_index',
@@ -30,22 +30,22 @@
                 ),
             ),
         ),
-        'Users' => array(
-            'Search' => array(
+        __('Users') => array(
+            __('Search') => array(
                 'icon' => 'search',
                 'url' => array(
                     'action' => 'admin_index',
                     'controller' => 'users',
                 ),
             ),
-            'Add' => array(
+            __('Add') => array(
                 'icon' => 'user',
                 'url' => array(
                     'action' => 'admin_add',
                     'controller' => 'users',
                 ),
             ),
-            'Approvals' => array(
+            __('Approvals') => array(
                 'icon' => 'check',
                 'url' => array(
                     'action' => 'admin_approve',
@@ -53,20 +53,52 @@
                 ),
             ),
         ),
-        'Projects' => array(
-            'Search' => array(
+		__('Teams') => array(
+			__('Search') => array(
+                'icon' => 'search',
+                'url' => array(
+                    'action' => 'admin_index',
+                    'controller' => 'teams',
+                ),
+			),
+            __('Add') => array(
+                'icon' => 'bullhorn',
+                'url' => array(
+                    'action' => 'admin_add',
+                    'controller' => 'teams',
+                ),
+            ),
+		),
+        __('Projects') => array(
+            __('Search') => array(
                 'icon' => 'search',
                 'url' => array(
                     'action' => 'admin_index',
                     'controller' => 'projects',
                 ),
             ),
-            'Add' => array(
+            __('Add') => array(
                 'icon' => 'file',
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'projects',
 					'admin' => false,
+                ),
+            ),
+        ),
+        __('Project Groups') => array(
+            __('Search') => array(
+                'icon' => 'search',
+                'url' => array(
+                    'action' => 'admin_index',
+                    'controller' => 'project_groups',
+                ),
+            ),
+            __('Add') => array(
+                'icon' => 'th',
+                'url' => array(
+                    'action' => 'add',
+                    'controller' => 'project_groups',
                 ),
             ),
         ),
@@ -76,7 +108,7 @@
     );
 
 	if ( Configure::read('debug') > 0 ) {
-		$options['Administration']['Unit tests'] = array(
+		$options[__('Administration')][__('Unit tests')] = array(
 			'icon' => 'fire',
 			'url' => '/test.php' // TODO can we route this properly?
 		);

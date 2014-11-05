@@ -25,13 +25,14 @@ class ProjectsController extends AppProjectController {
  */
 	public $helpers = array('Time', 'Paginator', 'Markitup', 'History');
 
-	public $uses = array('Project', 'RepoType');
+	public $uses = array('Project', 'RepoType', 'Team', 'GroupCollaboratingTeam');
 
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
 		return array(
 			'history'  => 'read',
 			'index'  => 'login',
+			'team_projects'  => 'login',
 			'public_projects'  => 'login',
 			'view'   => 'read',
 			'add' => 'login',
@@ -67,10 +68,75 @@ class ProjectsController extends AppProjectController {
 		$this->set('projects', $projects);
 	}
 
+	public function team_projects() {
+
+		// Teams the user is a member of
+		$teams = $this->Team->TeamsUser->find('list', array(
+			'conditions' => array(
+				'user_id' => $this->Auth->user('id'),
+			),
+			'fields' => array('team_id'),
+		));
+		$teams = array_values($teams);
+
+		// Nothing to do if they're not in any teams...
+		if (empty($teams)) {
+			$this->set('projects', array());
+			return;
+		}
+
+		// Project groups the user's teams have access to
+		$teamProjectGroups = $this->GroupCollaboratingTeam->find('list', array(
+			'conditions' => array(
+				'GroupCollaboratingTeam.team_id' => $teams,
+			),
+			'fields' => array('GroupCollaboratingTeam.project_group_id'),
+		));
+
+		$teamProjectGroups = array_values($teamProjectGroups);
+
+		if (empty($teamProjectGroups)) {
+			$conditions = array(
+				'CollaboratingTeam.team_id' => $teams,
+			);
+		} else {
+			$conditions = array(
+				'OR' => array(
+					'CollaboratingTeam.team_id' => $teams,
+					'ProjectGroupsProject.project_group_id' => $teamProjectGroups,
+				)
+			);
+		}
+
+		$projects = $this->Project->find('all', array(
+			'conditions' => $conditions,
+			'joins' => array(
+			 	array('table' => 'collaborating_teams',
+					'alias' => 'CollaboratingTeam',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CollaboratingTeam.project_id = Project.id',
+					)
+				),
+			 	array('table' => 'project_groups_projects',
+					'alias' => 'ProjectGroupsProject',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'ProjectGroupsProject.project_id = Project.id',
+					)
+				),
+			),
+			'group' => array('Project.id'),
+		));
+
+		$this->set('projects', $projects);
+	}
+
 	public function public_projects() {
-		$this->Project->recursive = -1;
 		$this->paginate = array(
-			'conditions' => array('Project.public' => true),
+			'conditions' => array(
+				'Project.public' => true,
+			),
 			'limit' => 15,
 			'order' => 'Project.modified DESC'
 		);

@@ -111,6 +111,37 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
 							)
 						)?>
 						<?= $this->Bootstrap->button_link(
+							$this->Bootstrap->icon('bullhorn'),
+							$this->Html->url(
+								array(
+									'project' => $project['Project']['name'],
+									'action' => 'collaboratoring_teams',
+									'controller' => 'projects',
+									'admin' => false
+								 )
+							),
+							array(
+								'size' => 'mini',
+								'title' => __('Edit collaborating teams'),
+								'escape' => false
+							)
+						)?>
+						<?= $this->Bootstrap->button_link(
+							$this->Bootstrap->icon('th'),
+							$this->Html->url(
+								array(
+									'project' => $project['Project']['name'],
+									'action' => 'groups',
+									'controller' => 'projects',
+								 )
+							),
+							array(
+								'size' => 'mini',
+								'title' => __('Group memberships'),
+								'escape' => false
+							)
+						)?>
+						<?= $this->Bootstrap->button_link(
 							$this->Bootstrap->icon('random'),
 							$this->Html->url(
 								array(

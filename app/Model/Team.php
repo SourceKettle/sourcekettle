@@ -56,14 +56,6 @@ class Team extends AppModel {
 			'foreignKey' => 'team_id',
 			'associationForeignKey' => 'user_id',
 			'unique' => 'keepExisting',
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'finderQuery' => '',
-			'deleteQuery' => '',
-			'insertQuery' => ''
 		)
 	);
 

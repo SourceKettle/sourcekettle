@@ -14,29 +14,29 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
     $options = array(
-        'Your Account' => array(
-            'Basic details' => array(
+        __('Your Account') => array(
+            __('Basic details') => array(
                 'icon' => 'user',
                 'url' => array(
                     'action' => 'details',
                     'controller' => 'users',
                 ),
             ),
-            'Change Password' => array(
+            __('Change Password') => array(
                 'icon' => 'lock',
                 'url' => array(
                     'action' => 'security',
                     'controller' => 'users',
                 ),
             ),
-            'Change Theme' => array(
+            __('Change Theme') => array(
                 'icon' => 'glass',
                 'url' => array(
                     'action' => 'theme',
                     'controller' => 'users',
                 ),
             ),
-            'Delete Account' => array(
+            __('Delete Account') => array(
                 'icon' => 'remove',
                 'url' => array(
                     'action' => 'delete',
@@ -44,15 +44,15 @@
                 ),
             ),
         ),
-        'SSH Keys' => array(
-            'Add Key' => array(
+        __('SSH Keys') => array(
+            __('Add Key') => array(
                 'icon' => 'plus-sign',
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'sshKeys',
                 ),
             ),
-            'Edit Keys' => array(
+            __('Edit Keys') => array(
                 'icon' => 'minus-sign',
                 'url' => array(
                     'action' => 'view',
@@ -68,8 +68,8 @@
     // If we are logged in with a non-sourcekettle-managed account,
     // do not offer the 'delete account' link or 'change password' link.
     if ($current_user['is_internal']) {
-        unset($options['Your Account']['Delete Account']);
-        unset($options['Your Account']['Change Password']);
+        unset($options[__('Your Account')][__('Delete Account')]);
+        unset($options[__('Your Account')][__('Change Password')]);
     }
 
     

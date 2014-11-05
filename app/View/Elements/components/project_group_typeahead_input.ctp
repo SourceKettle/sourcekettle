@@ -1,0 +1,39 @@
+<?php
+if (isset($url)) {
+    $url = $this->Html->url($url, true);
+} else {
+    $url  = $this->Html->url(
+        array(
+            'api' => true,
+            'controller' => 'project_groups',
+            'action' => 'autocomplete',
+        ),
+        true
+    );
+}
+$this->Html->scriptBlock("
+    jQuery(function(){
+	var cache = {};
+        $('.typeahead').typeahead({
+            items: 5,
+            minLength: 1,
+            source: function (query, process) {
+                $.get('$url', { query: query }, function (data) {
+                    process($.parseJSON(data).projectGroups);
+                });
+            }
+        });
+    });
+", array('inline' => false));
+
+if (!isset($properties['class'])) {
+    $properties['class'] = '';
+}
+$properties['class'] .= ' typeahead';
+
+if (!isset($properties['data-provide'])) {
+    $properties['data-provide'] = '';
+}
+$properties['data-provide'] .= ' typeahead';
+?>
+<?= $this->Form->text($name, $properties) ?>
