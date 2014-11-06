@@ -43,7 +43,7 @@ class DTHelper extends AppHelper {
  */
 	public function pHeader($title) {
 
-		$header = '<div class="page-header"><h1>'.h($this->request['project']).' <small>'.h($title).'</small></h1></div>';
+		$header = h($this->request['project']).' <small>'.h($title).'</small>';
 		return $this->TwitterBootstrap->page_header($header);
 	}
 

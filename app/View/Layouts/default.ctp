@@ -121,6 +121,7 @@
     <!-- JavaScript! Placed at the end of the file for faster page loading -->
     <?= $this->Html->script('jquery-1.11.0.min.js'); ?>
     <?= $this->Html->script('bootstrap.min') ?>
+    <?= $this->Html->script('sourcekettle') ?>
     <?= $this->Popover->requirements() ?>
     <?= $this->fetch('scriptBottom') ?>
     <?= $scripts_for_layout ?>
