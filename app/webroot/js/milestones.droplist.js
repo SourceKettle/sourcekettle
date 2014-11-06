@@ -124,31 +124,39 @@ function initTaskDroplists(api_url_base) {
                 taskInfo.milestone_id = toMilestone;
             }
 
-            $.post(api_url_base  + '/' + taskID, taskInfo, function (data) {
-                if (data.error === "no_error") {
+            $.ajax(api_url_base  + '/' + taskID, {
+				"data" : taskInfo,
+				"dataType" : "json",
+				"success" : function (data) {
+	                if (data.error === "no_error") {
                     
-                    // Update task lozenge's status
-                    if (toPrio != null) {
-                        var icon = '<i class="icon-'+taskPriorityIcons[toPrio]+' icon-white"> </i>';
-                        prioLabel.html(taskPriorityLabels[toPrio]+' '+icon);
-                    }
-
-                    if (toStatus != null) {
-                        statusLabel.html(taskStatusLabels[toStatus]);
-
-                        // Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
-                        statusLabel.removeClass(function(index, css){
-                            return (css.match (/\blabel-\S+/g) || []).join(' ');
-                        });
-                        statusLabel.addClass(taskStatusLabelTypes[toStatus]);
-                        
-                    }
-
-                } else {
-                    alert("Problem: "+data.errorDescription);
-                    $(ui.sender).sortable('cancel');
-                }
-            }, "json");
+	                    // Update task lozenge's status
+	                    if (toPrio != null) {
+	                        var icon = '<i class="icon-'+taskPriorityIcons[toPrio]+' icon-white"> </i>';
+	                        prioLabel.html(taskPriorityLabels[toPrio]+' '+icon);
+	                    }
+	
+	                    if (toStatus != null) {
+	                        statusLabel.html(taskStatusLabels[toStatus]);
+	
+	                        // Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
+	                        statusLabel.removeClass(function(index, css){
+	                            return (css.match (/\blabel-\S+/g) || []).join(' ');
+	                        });
+	                        statusLabel.addClass(taskStatusLabelTypes[toStatus]);
+	                        
+	                    }
+	
+	                } else {
+	                    alert("Problem: "+data.errorDescription);
+	                    $(ui.sender).sortable('cancel');
+	                }
+	            },
+				"error" : function (data) {
+	                alert("Problem: "+data.statusText);
+	                $(ui.sender).sortable('cancel');
+				}
+			});
 
         }
 
