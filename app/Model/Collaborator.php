@@ -18,6 +18,19 @@ App::uses('AppModel', 'Model');
 
 class Collaborator extends AppModel {
 
+	// Lookup for access levels
+	private $__accessLevelById = array(
+		0 => 'Guest',
+		1 => 'User',
+		2 => 'Admin',
+	);
+
+	private $__accessLevelByName = array(
+		'guest' => 0,
+		'user'  => 1,
+		'admin' => 2,
+	);
+
 /**
  * actsAs behaviours
  */
@@ -104,4 +117,21 @@ class Collaborator extends AppModel {
 		}
 		return $users;
 	}
+
+	public function accessLevelIdToName($accessLevel) {
+		if (isset($this->__accessLevelById[$accessLevel])) {
+			return $this->__accessLevelById[$accessLevel];
+		}
+		return null;
+	}
+
+	public function accessLevelNameToId($accessLevel) {
+		$accessLevel = strtolower($accessLevel);
+		if (isset($this->__accessLevelByName[$accessLevel])) {
+			return $this->__accessLevelByName[$accessLevel];
+		}
+		return null;
+	}
+
+
 }
