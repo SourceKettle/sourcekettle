@@ -1,0 +1,10 @@
+
+/* Highlight things that may be the obvious action to take */
+.glowtip {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    from {background: green;}
+    to {background: none;}
+}

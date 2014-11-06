@@ -12,6 +12,10 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->Html->css('glowtip', null, array('inline' => false));
+$this->Html->script(array('bootstrap-tooltip'), array('inline' => false));
+$this->Html->scriptBlock("$('.milestone-quicklink').tooltip()", array('inline' => false));
+
 $o = @$milestone['Tasks']['open']['numTasks'];
 $i = @$milestone['Tasks']['in progress']['numTasks'];
 $r = @$milestone['Tasks']['resolved']['numTasks'];
@@ -40,7 +44,7 @@ $link_remove = $this->Html->link(
         $milestone['Milestone']['id']
     ),
     array(
-        'class' => 'close delete',
+        'class' => 'close delete milestone-quicklink',
 		'title' => __('Delete milestone'),
         'escape' => false
     )
@@ -53,7 +57,7 @@ $link_graph = $this->Html->link(
         $milestone['Milestone']['id']
     ),
     array(
-        'class' => 'close delete',
+        'class' => 'close delete milestone-quicklink',
 		'title' => __('Burn-down chart'),
         'escape' => false
     )
@@ -66,8 +70,9 @@ $link_close = $this->Html->link(
         $milestone['Milestone']['id']
     ),
     array(
-        'class' => 'close delete',
-		'title' => __('Close milestone'),
+		// Anything that's got all its tasks finished, highlight the close button...
+        'class' => 'close delete milestone-quicklink' . ($percent_c + $percent_r == 100? ' glowtip': ''),
+		'title' => ($percent_c + $percent_r == 100? __('All tasks are finished - click here to close the milestone') : __('Close milestone')),
         'escape' => false
     )
 );
@@ -79,7 +84,7 @@ $link_reopen = $this->Html->link(
         $milestone['Milestone']['id']
     ),
     array(
-        'class' => 'close delete',
+        'class' => 'close delete milestone-quicklink',
 		'title' => __('Re-open milestone'),
         'escape' => false
     )
@@ -92,7 +97,7 @@ $link_edit = $this->Html->link(
         $milestone['Milestone']['id']
     ),
     array(
-        'class' => 'close edit',
+        'class' => 'close edit milestone-quicklink',
 		'title' => __('Edit milestone'),
         'escape' => false
     )
@@ -105,7 +110,9 @@ $link_plan= $this->Html->link(
         $milestone['Milestone']['id']
     ),
     array(
-        'class' => 'close edit',
+        'class' => 'close edit milestone-quicklink',
+		'title' => __('Plan the milestone'),
+		//'title' => __('Plan the milestone'),
         'escape' => false
     )
 );
