@@ -40,8 +40,10 @@
 <? if (!empty($shared_projects)) { ?>
 <hr>
 
-<div class="row">';
-	<h4 class='span12'><?=__("Projects shared with this user")?></h4>
+<div class="row">
+	<h4 class='span12'>
+		<?=__("%s collaborates on these projects:", h($user['User']['name']))?>
+	</h4>
 	<?foreach ($shared_projects as $project) {
 		echo $this->Element('Project/block', array('project' => $project));
 	}?>
@@ -53,9 +55,13 @@
 	<?php
 	// Loop through all the projects that a user has access to
 	if (empty($projects)) {
-		echo "<h4 class='span12'>This user has no public projects</h4>";
+		echo "<h4 class='span12'>";
+		echo __("%s has no public projects", h($user['User']['name']));
+		echo "</h4>";
 	} else {
-		echo "<h4 class='span12'>Users public projects</h4>";
+		echo "<h4 class='span12'>";
+		echo __("%s's public projects", h($user['User']['name']));
+		echo "</h4>";
 		foreach ($projects as $project){
 			echo $this->Element('Project/block', array('project' => $project));
 		}
