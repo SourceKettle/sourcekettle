@@ -176,9 +176,12 @@
 	display: inline-block;
 }
 
-/* Hide assignee icon in task lozenges when they get too small */
-@media screen and (max-width: 150px) {
-	.task-lozenge-assignee {
-		display: none;
-	}
+/* Hack to make span4 tasks take up the right amount of space */
+.sprintboard-droplist li.span4{
+	width: 33.33333333333%;
 }
+
+.sprintboard-droplist li.span3 {
+	width: 25%;
+}
+
