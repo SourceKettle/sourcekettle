@@ -32,7 +32,7 @@ class TaskHelper extends AppHelper {
  * @return void
  */
 	public function priority($id, $textLabel = true) {
-		$label = $textLabel? $this->_View->viewVars['task_priorities'][$id]['label'].' ' : '';
+		$label = $textLabel? '<span class="hidden-phone hidden-tablet">'.$this->_View->viewVars['task_priorities'][$id]['label'].'</span> ' : '';
 		$icon  = $this->_View->viewVars['task_priorities'][$id]['icon'];
 		$class = $this->_View->viewVars['task_priorities'][$id]['class'];
 		return $this->Bootstrap->label($label . $this->Bootstrap->icon($icon, "white"), "inverse", array('class' => "taskpriority $class"));

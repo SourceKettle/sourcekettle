@@ -29,21 +29,21 @@ echo $this->Bootstrap->page_header('Administration <small>da vinci code locator<
                     )
                 );
 
-                echo $this->element('components/user_typeahead_input',
+                echo $this->element('typeahead_input',
                     array(
                         'name' => 'name',
+						'jsonListName' => 'projects',
+                        'url' => array(
+                            'api' => true,
+                            'controller' => 'projects',
+                            'action' => 'autocomplete',
+                        ),
                         'properties' => array(
-                            'id' => 'appendedInputButton',
+                            'id' => 'projectSearchBox',
                             'class' => 'span11',
                             "placeholder" => __("Start typing a project name..."),
                             'label' => false,
-							'autocomplete' => 'off'
                         ),
-                        'url' => array(
-                            'controller' => 'projects',
-                            'action' => 'autocomplete',
-                            'api' => true
-                        )
                     )
                 );
                 echo $this->Bootstrap->button('Search', array('escape' => false, 'style' => 'primary'));

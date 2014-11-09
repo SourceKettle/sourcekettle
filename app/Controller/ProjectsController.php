@@ -587,7 +587,7 @@ class ProjectsController extends AppProjectController {
 	public function api_autocomplete() {
 		$this->layout = 'ajax';
 
-		$data = array('users' => array());
+		$data = array('projects' => array());
 
 		if (isset($this->request->query['query'])
 			&& $this->request->query['query'] != null
@@ -617,7 +617,7 @@ class ProjectsController extends AppProjectController {
 				)
 			);
 			foreach ($projects as $project) {
-				$data['users'][] = $project['Project']['name'];
+				$data['projects'][] = $project['Project']['name'];
 			}
 
 		}
