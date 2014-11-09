@@ -43,7 +43,7 @@ class Team extends AppModel {
 		),
 		// Group collaborating teams are teams of users mapped to project groups with an access level
 		'GroupCollaboratingTeam' => array(
-			'className' => 'CollaboratingTeam',
+			'className' => 'GroupCollaboratingTeam',
 			'foreignKey' => 'team_id',
 			'dependent' => false,
 		),

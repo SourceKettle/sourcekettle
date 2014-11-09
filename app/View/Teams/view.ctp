@@ -14,18 +14,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header('Administration <small>organise your hackers</small>'); ?>
+echo $this->Bootstrap->page_header(__('Team: <small>%s</small>', h($team['Team']['name']))); ?>
 
-<div class="row">
-    <div class="span2">
-        <?= $this->element('Sidebar/admin') ?>
-    </div>
-    <div class="span10">
-        <div class="row-fluid">
+<div class="row-fluid">
 <div class="teams view">
-<h2><?php  echo __('Team: %s', h($team['Team']['name'])); ?></h2>
 <p>
-	<small><?= h($team['Team']['description']) ?></small>
+	<?= h($team['Team']['description']) ?>
 </p>
 
 <div>
@@ -41,7 +35,7 @@ echo $this->Bootstrap->page_header('Administration <small>organise your hackers<
   <h4><?=__('Collaborating on projects')?></h4>
   <ul>
     <? foreach($team['CollaboratingTeam'] as $collab) {?>
-	  <li><?=$this->Html->link(h($collab['name']), array('controller' => 'projects', 'action' => 'view', $collab['name']))?> <?__('(Level: %s)', 'admin')?></li>
+	  <li><?=$this->Html->link(h($collab['project_name']), array('controller' => 'projects', 'action' => 'view', 'project' => $collab['project_name']))?> <?=__('(Level: %s)', $collab['access_level'])?></li>
 	<? } ?>
   </ul>
 </div>
@@ -50,11 +44,8 @@ echo $this->Bootstrap->page_header('Administration <small>organise your hackers<
   <h4><?=__('Collaborating on project groups')?></h4>
   <ul>
     <? foreach($team['GroupCollaboratingTeam'] as $collab) {?>
-	  <li><?=$this->Html->link(h($collab['name']), array('controller' => 'projects', 'action' => 'view', $collab['name']))?> <?__('(Level: %s)', 'admin')?></li>
+	  <li><?=$this->Html->link(h($collab['project_group_name']), array('controller' => 'project_groups', 'action' => 'view', $collab['project_group_name']))?> <?=__('(Level: %s)', $collab['access_level'])?></li>
 	<? } ?>
   </ul>
 </div>
 
-		</div>
-	</div>
-</div>

@@ -15,7 +15,14 @@
  */
 ?>
 
-<ul id="sourcekettle-sidebar" class="well nav nav-list collapse" style="padding: 8px 14px;">
+<ul id="sourcekettle-sidebar" class="well nav nav-list nav-collapse" style="padding: 8px 14px;">
+ <!--<div class="navbar-inner">
+ <a class="btn btn-navbar" data-toggle="collapse" data-target="#sourcekettle-sidebar">
+ <span class="icon-bar"></span>
+ <span class="icon-bar"></span>
+ <span class="icon-bar"></span>
+ </a>
+ </div>-->
 <?php
     $c1 = $this->request['controller'];
     $a1 = $this->request['action'];
@@ -27,7 +34,7 @@
 
     foreach ($options as $title => $section) {
 
-        echo '<li class="nav-header" data-toggle="collapse" data-target="#sourcekettle-sidebar">'.h($title).'</li>';
+        echo '<li class="nav-header">'.h($title).'</li>';
 
         // Iterate over the sidebar options in $sshkey
         foreach ( $section as $feature => $options ){

@@ -14,7 +14,7 @@ if (isset($url)) {
 $this->Html->scriptBlock("
     jQuery(function(){
 	var cache = {};
-        $('.typeahead').typeahead({
+        $('.user_typeahead').typeahead({
             items: 5,
             minLength: 1,
             source: function (query, process) {
@@ -29,7 +29,7 @@ $this->Html->scriptBlock("
 if (!isset($properties['class'])) {
     $properties['class'] = '';
 }
-$properties['class'] .= ' typeahead';
+$properties['class'] .= 'user_typeahead typeahead';
 
 if (!isset($properties['data-provide'])) {
     $properties['data-provide'] = '';

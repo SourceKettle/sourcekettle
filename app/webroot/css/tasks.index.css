@@ -35,14 +35,19 @@
 
 .task > .well {
 	padding:3px 5px;
-	min-height: 20px;
-	max-height: 75px;
+
+	/* Fix the height so lozenges aren't irregular */
+	/*min-height: 2.5em;
+	max-height: 2.5em;*/
+	height: 2.5em;
+	overflow:hidden;
 	background: #d3d3d3; /* TODO: doesn't work properly with Bootswatch themes */
 
 	-webkit-border-radius:4px 0 0 4px;
 	-moz-border-radius:4px 0 0 4px;
 	border-radius:14px;
 	margin-bottom: 7px;
+
 }
 
 .task img {
@@ -51,11 +56,15 @@
 }
 
 .task p {
-	overflow:hidden;
+	
 	margin-top:-2px;
 	margin-bottom:0;
 	padding-left: 5px;
-	max-height:40px;
+
+	/* Stop the text from overflowing and increasing the lozenge height */
+	max-height:1.5em;
+	overflow:hidden;
+	white-space: nowrap;
 	text-overflow:ellipsis;
 }
 
@@ -71,7 +80,6 @@
 	float:left;
 	width:7px;
 	height:55px;
-	/*border-right:1px solid #E3E3E3;*/
 	-webkit-border-radius:4px 0 0 4px;
 	-moz-border-radius:4px 0 0 4px;
 	border-radius:4px 0 0 4px;
@@ -135,6 +143,7 @@
 
 .sprintboard-column {
 	min-height: 300px;
+  margin: 0px;
 }
 
 .sprintboard-column.over {
@@ -142,9 +151,13 @@
 	border-color: #858585;
 }
 
+.sprintboard-droplist [class*="span"]{
+	margin: 0;
+}
+
 .sprintboard-droplist {
   list-style-type: none;
-  margin: 0;
+  margin: 0px;
   padding: 0px;
   float: left;
   margin: 0px;
@@ -156,8 +169,18 @@
 
 .sprintboard-droplist li {
   cursor: pointer;
-  margin: 0px;
-  padding: 0px;
+  min-width: 250px;
+  margin: 0px !important;
+  padding: 1px !important;
   font-size: 1.2em;
   border-radius: 3px 3px 3px 3px;
+	display: inline-block;
+	/*width: 100%;*/
+}
+
+/* Hide assignee icon in task lozenges when they get too small */
+@media screen and (max-width: 150px) {
+	.task-lozenge-assignee {
+		display: none;
+	}
 }

@@ -24,13 +24,13 @@ if(isset($span) && $span){
 }
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
-		echo "<li class='draggable' data-taskid='".h($task['Task']['public_id'])."'>";
+		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."'>";
 	} else {
-		echo "<li>";
+		echo "<li class='$span'>";
 	}
 ?>
 <div id="task_<?= $task['Task']['public_id'] ?>" 
-  class="task-container<?=$span?>"
+  class="task-container"
   <?
   // If it's a draggable item in the milestone board, do NOT make the whole thing a click target...
   if(!$draggable){?>
@@ -45,8 +45,8 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                         <p>
                             <?= $this->Html->link('<strong>#'.$task['Task']['public_id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
                         </p>
-                        <?= $this->Task->priority($task['Task']['task_priority_id']) ?>
                         <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
+                        <?= $this->Task->priority($task['Task']['task_priority_id'], false) ?>
 
                         <?
                         if (!empty($task['DependsOn'])){
@@ -70,7 +70,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						}
                         ?>
                     </div>
-                    <div class="span2">
+                    <div class="span2 task-lozenge-assignee">
 					  <?if(isset($task['Assignee']['id'])){?>
                         <?= $this->Gravatar->image($task['Assignee']['email'], array(), array('alt' => $task['Assignee']['name'])) ?>
 					  <?} else {?>

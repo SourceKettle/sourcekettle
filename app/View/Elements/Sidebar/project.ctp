@@ -55,8 +55,8 @@
                     'project' => $this->params['project'],
                 ),
 			),
-		    '-> '.__('My tasks') => array(
-                'icon' => 'file',
+		    __('My tasks') => array(
+                'icon' => 'heart',
 		        'url' => array(
 		            'action' => array('*'),
 					'?' => 'assignees='.urlencode($current_user['id']).'&statuses=open,in+progress',

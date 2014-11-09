@@ -116,15 +116,20 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
 
                 echo '<h3>'. __("Add a User") .'</h3>';
 
-                echo $this->element('components/user_typeahead_input',
+               	echo $this->element('typeahead_input',
                     array(
+						'url' => array(
+            				'api' => true,
+       					    'controller' => 'users',
+            				'action' => 'autocomplete',
+						),
                         'name' => 'name',
+						'jsonListName' => 'users',
                         'properties' => array(
-                            'id' => 'appendedInputButton',
+                            'id' => 'userSearchBox',
                             'class' => 'span3',
-                            "placeholder" => "john.smith@example.com",
+                            'placeholder' => 'john.smith@example.com',
                             'label' => false,
-							"autocomplete" => 'off'
                         )
                     )
                 );
@@ -205,15 +210,20 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
 
                 echo '<h3>'. __("Add a Team") .'</h3>';
 
-                echo $this->element('components/team_typeahead_input',
+                echo $this->element('typeahead_input',
                     array(
                         'name' => 'name',
+						'jsonListName' => 'teams',
+						'url' => array(
+            				'api' => true,
+       					   	'controller' => 'teams',
+            				'action' => 'autocomplete',
+						),
                         'properties' => array(
-                            'id' => 'appendedInputButton',
+                            'id' => 'teamSearchBox',
                             'class' => 'span3',
                             "placeholder" => __("Start typing to search..."),
                             'label' => false,
-							'autocomplete' => 'off'
                         )
                     )
                 );
@@ -225,7 +235,7 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
             </div>
         </div>
         <div class="row">
-		The following teams have access via project groups - you must ask a system administrator to chamge these permissions:
+		<?=__("The following teams have access via project groups - you must ask a system administrator to change these permissions:")?>
 
 		<ul>
 		<?php

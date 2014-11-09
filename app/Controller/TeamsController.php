@@ -14,15 +14,42 @@ class TeamsController extends AppController {
 		),
     );
 
+	public function view($team = null) {
+		if (!is_numeric($team)) {
+			$team = $this->Team->field('id', array('name' => $team));
+		}
+		$team = $this->Team->findById($team);
+
+		if (empty($team)) {
+			throw new NotFoundException(__('Invalid team'));
+		}
+
+		// TODO this should really be picked up by the model...
+		foreach ($team['CollaboratingTeam'] as $i => $ct) {
+			$team['CollaboratingTeam'][$i]['project_name'] = $this->Team->CollaboratingTeam->Project->field('name', array('id' => $ct['project_id']));
+			$team['CollaboratingTeam'][$i]['access_level'] = $this->Team->CollaboratingTeam->Project->Collaborator->accessLevelIdToName($ct['access_level']);
+		}
+
+		foreach ($team['GroupCollaboratingTeam'] as $i => $ct) {
+			$team['GroupCollaboratingTeam'][$i]['project_group_name'] = $this->Team->CollaboratingTeam->Project->ProjectGroup->field('name', array('id' => $ct['project_group_id']));
+			$team['GroupCollaboratingTeam'][$i]['access_level'] = $this->Team->CollaboratingTeam->Project->Collaborator->accessLevelIdToName($ct['access_level']);
+		}
+
+		$this->set(compact('team'));
+
+	}
+
 	public function admin_index() {
 		$this->Paginator->settings = $this->paginate;
 		$teams = $this->Paginator->paginate('Team');
 		$this->set('teams', $teams);
 	}
-	public function admin_view($teamId = null) {
-		$team = $this->Team->findById($teamId);
-		$this->set(compact('team'));
+
+	// No special admin permission needed to view teams
+	public function admin_view($team = null) {
+		return $this->redirect(array('action' => 'view', 'admin' => false));
 	}
+
 	public function admin_add() {
 		
 		if ($this->request->is('post')) {

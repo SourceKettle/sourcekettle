@@ -24,12 +24,27 @@ class ProjectGroupsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function admin_view($id = null) {
-		if (!$this->ProjectGroup->exists($id)) {
-			throw new NotFoundException(__('Invalid project group'));
+	public function view($group = null) {
+		if (!is_numeric($group)) {
+			$group = $this->ProjectGroup->field('id', array('name' => $group));
 		}
-		$options = array('conditions' => array('ProjectGroup.' . $this->ProjectGroup->primaryKey => $id));
-		$this->set('projectGroup', $this->ProjectGroup->find('first', $options));
+		$projectGroup = $this->ProjectGroup->findById($group);
+
+		if (empty($projectGroup)) {
+			throw new NotFoundException(__('Invalid group'));
+		}
+
+		// TODO should really be pulled in by the model
+		foreach ($projectGroup['GroupCollaboratingTeam'] as $i => $ct) {
+			$projectGroup['GroupCollaboratingTeam'][$i]['team_name'] = $this->ProjectGroup->GroupCollaboratingTeam->Team->field('name', array('id' => $ct['team_id']));
+			$projectGroup['GroupCollaboratingTeam'][$i]['access_level'] = $this->ProjectGroup->Project->Collaborator->accessLevelIdToName($ct['access_level']);
+		}
+		$this->set(compact('projectGroup'));
+	}
+
+	// No special admin permission needed to view teams
+	public function admin_view($group = null) {
+		return $this->redirect(array('action' => 'view', 'admin' => false));
 	}
 
 /**

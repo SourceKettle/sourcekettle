@@ -16,15 +16,20 @@
                     )
                 );
 
-                echo $this->element('components/team_typeahead_input',
+               	echo $this->element('typeahead_input',
                     array(
+						'url' => array(
+            				'api' => true,
+       					    'controller' => 'teams',
+            				'action' => 'autocomplete',
+						),
                         'name' => 'name',
+						'jsonListName' => 'teams',
                         'properties' => array(
                             'id' => 'appendedInputButton',
                             'class' => 'span11',
-                            "placeholder" => __("Start typing to search..."),
+                            'placeholder' => __("Start typing to search..."),
                             'label' => false,
-							'autocomplete' => 'off'
                         )
                     )
                 );
