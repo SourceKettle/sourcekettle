@@ -123,8 +123,8 @@ class TaskTest extends CakeTestCase {
 		$this->assertEquals(null, $this->Task->getTitleForHistory());
 		$this->Task->id = 1;
 		$this->Task->read();
-		$this->assertEquals('#1', $this->Task->getTitleForHistory());
-		$this->assertEquals('#2', $this->Task->getTitleForHistory(2));
+		$this->assertEquals('#1 (Resolved Major Task 1 for milestone 2)', $this->Task->getTitleForHistory());
+		$this->assertEquals('#2 (Open Minor Task 2 for milestone 1)', $this->Task->getTitleForHistory(2));
 	}
 
 	public function testCreate() {

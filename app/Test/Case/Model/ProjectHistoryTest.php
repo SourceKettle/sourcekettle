@@ -251,7 +251,7 @@ class ProjectHistoryTest extends CakeTestCase {
 				),
 				'Subject' => array(
 					'id' => '1',
-					'title' => '#1',
+					'title' => '#1 (Task 1 for private project)',
 					'exists' => true
 				),
 				'Change' => array(
@@ -275,7 +275,7 @@ class ProjectHistoryTest extends CakeTestCase {
 				),
 				'Subject' => array(
 					'id' => '1',
-					'title' => '#1',
+					'title' => '#1 (Task 1 for private project)',
 					'exists' => true
 				),
 				'Change' => array(

@@ -161,7 +161,6 @@ class UserTestCase extends CakeTestCase {
 		// Check the create/modify date are sane, then add to array for comparison
 		$this->assertNotNull($saved['User']['created'], "Create date was null");
 		$this->assertNotNull($saved['User']['modified'], "Modify date was null");
-		$this->assertEqual($saved['User']['created'], $saved['User']['modified']);
 
 		$data['User']['created']  = $saved['User']['created'];
 		$data['User']['modified'] = $saved['User']['modified'];

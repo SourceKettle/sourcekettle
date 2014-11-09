@@ -119,6 +119,10 @@ class Collaborator extends AppModel {
 	}
 
 	public function accessLevelIdToName($accessLevel) {
+		if (!is_numeric($accessLevel)) {
+			return null;
+		}
+
 		if (isset($this->__accessLevelById[$accessLevel])) {
 			return $this->__accessLevelById[$accessLevel];
 		}
@@ -126,6 +130,10 @@ class Collaborator extends AppModel {
 	}
 
 	public function accessLevelNameToId($accessLevel) {
+		if (!is_string($accessLevel)) {
+			return null;
+		}
+
 		$accessLevel = strtolower($accessLevel);
 		if (isset($this->__accessLevelByName[$accessLevel])) {
 			return $this->__accessLevelByName[$accessLevel];

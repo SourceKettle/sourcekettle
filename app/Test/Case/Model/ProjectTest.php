@@ -545,9 +545,7 @@ class ProjectTestCase extends CakeTestCase {
 	}
 
 	public function testFetchEventsForProject() {
-		$this->Project->id = 1;
-		$this->Project->read();
-		$events = $this->Project->fetchEventsForProject();
+		$events = $this->Project->fetchEventsForProject(1);
 
 		$events = array_map(function($a) {
 			return array(
@@ -637,7 +635,7 @@ class ProjectTestCase extends CakeTestCase {
 				'project_id' => '1',
 				'actioner_id' => '1',
 				'subject_id' => '1',
-				'subject_title' => '#1',
+				'subject_title' => '#1 (Task 1 for private project)',
 				'change_field' => 'task_status_id',
 				'change_field_old' => '1',
 				'change_field_new' => '2',
@@ -665,7 +663,7 @@ class ProjectTestCase extends CakeTestCase {
 				'project_id' => '1',
 				'actioner_id' => '1',
 				'subject_id' => '1',
-				'subject_title' => '#1',
+				'subject_title' => '#1 (Task 1 for private project)',
 				'change_field' => '+',
 				'change_field_old' => '',
 				'change_field_new' => '',
