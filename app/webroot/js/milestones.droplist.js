@@ -144,6 +144,13 @@ function initTaskDroplists(api_url_base) {
 	                            return (css.match (/\blabel-\S+/g) || []).join(' ');
 	                        });
 	                        statusLabel.addClass(taskStatusLabelTypes[toStatus]);
+
+                            // Make sure the task is the correct span width for this column
+                            newspan = 'span' + $(taskLozenge).parent().attr('data-taskspan');
+	                        $(taskLozenge).removeClass(function(index, css){
+	                            return (css.match (/\bspan\d+/g) || []).join(' ');
+	                        });
+	                        $(taskLozenge).addClass(newspan);
 	                        
 	                    }
 	

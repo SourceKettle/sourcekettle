@@ -20,7 +20,7 @@ if (!isset($classes)) {
 	$classes = " $classes";
 }
 if (!isset($task_span)) {
-	$task_span = False;
+	$task_span = 12;
 }
 
 $dtStatus = '';
@@ -44,7 +44,7 @@ if (isset($tooltip)) {
 	$tooltip = "";
 }
 
-echo "<ul class='well col sprintboard-droplist span$span$classes' $dtStatus $dtPriority $dtMilestone>\n";
+echo "<ul class='well col sprintboard-droplist span$span$classes' data-taskspan='$task_span' $dtStatus $dtPriority $dtMilestone>\n";
 echo "<h2$tooltip>$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {

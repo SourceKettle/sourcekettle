@@ -168,14 +168,12 @@
 }
 
 .sprintboard-droplist li {
-  cursor: pointer;
-  min-width: 250px;
-  margin: 0px !important;
-  padding: 1px !important;
-  font-size: 1.2em;
-  border-radius: 3px 3px 3px 3px;
+	cursor: pointer;
+	margin: 0px !important;
+	padding: 1px !important;
+	font-size: 1.2em;
+	border-radius: 3px 3px 3px 3px;
 	display: inline-block;
-	/*width: 100%;*/
 }
 
 /* Hide assignee icon in task lozenges when they get too small */
