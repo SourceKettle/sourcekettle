@@ -234,6 +234,8 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
             } ?>
             </div>
         </div>
+
+		<? if (!empty($group_collaborating_teams[0]) || !empty($group_collaborating_teams[1]) || !empty($group_collaborating_teams[2])) { ?>
         <div class="row">
 		<?=__("The following teams have access via project groups - you must ask a system administrator to change these permissions:")?>
 
@@ -250,5 +252,6 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
 		} ?>
 		</ul>
         </div>
+		<? } ?>
     </div>
 </div>

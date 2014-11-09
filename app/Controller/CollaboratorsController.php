@@ -40,7 +40,6 @@ class CollaboratorsController extends AppProjectController {
 			'team_makeuser'    => 'admin',
 			'team_makeguest'   => 'admin',
 			'team_delete' => 'admin',
-			'api_autocomplete' => 'read',
 		);
 	}
 /**
@@ -364,53 +363,4 @@ class CollaboratorsController extends AppProjectController {
 		$this->render('/Elements/Project/delete');
 	}
 
-
-	/* ************************************************ *
-	 *													*
-	 *			API SECTION OF CONTROLLER			 	*
-	 *			 CAUTION: PUBLIC FACING					*
-	 *													*
-	 * ************************************************ */
-
-/**
- * api_autocomplete function.
- *
- * @access public
- * @return void
- */
-	public function api_autocomplete() {
-		$this->layout = 'ajax';
-
-		$data = array('users' => array());
-
-		if (isset($this->request->query['query'])
-			&& $this->request->query['query'] != null
-			&& strlen($this->request->query['query']) > 2
-			&& isset($this->request['named']['project'])) {
-
-			$query = $this->request->query['query'];
-			$users = $this->Collaborator->find(
-				"all",
-				array(
-					'conditions' => array(
-						'OR' => array(
-							'User.name	LIKE' => $query . '%',
-							'User.email LIKE' => $query . '%'
-						),
-						'Project.id' => $this->request['named']['project']
-					),
-					'fields' => array(
-						'User.name',
-						'User.email'
-					)
-				)
-			);
-			foreach ($users as $user) {
-				$data['users'][] = $user['User']['name'] . " [" . $user['User']['email'] . "]";
-			}
-
-		}
-		$this->set('data',$data);
-		$this->render('/Elements/json');
-	}
 }
