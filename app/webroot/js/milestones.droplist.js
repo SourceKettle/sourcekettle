@@ -127,6 +127,7 @@ function initTaskDroplists(api_url_base) {
             $.ajax(api_url_base  + '/' + taskID, {
 				"data" : taskInfo,
 				"dataType" : "json",
+                "type" : "post",
 				"success" : function (data) {
 	                if (data.error === "no_error") {
                     
