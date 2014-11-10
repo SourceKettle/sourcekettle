@@ -30,7 +30,7 @@ $api_base = $this->Html->url(array(
 $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
 ?>
 
-<?= $this->DT->pHeader(__("Milestone task planner")) ?>
+<?= $this->DT->pHeader(__("Milestone planner: '%s'", $milestone['Milestone']['subject'])) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

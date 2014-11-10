@@ -228,6 +228,7 @@ class Milestone extends AppModel {
 			array(
 				'fields' => array(
 					'Milestone.id',
+					'Milestone.subject',
 					'Task.*',
 					'TaskPriority.name',
 					'TaskStatus.name',

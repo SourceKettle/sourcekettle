@@ -17,6 +17,8 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
     public $fixtures = array(
 		'core.cake_session',
 		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',
@@ -166,17 +168,32 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 
 	}
 
-	public function testAddNonexistentUser() {
+	public function testAddNoEmailAddress() {
 		$this->_fakeLogin(1);
 		$postData = array(
 			'Collaborator' => array(
-				'name' => 'Jimminy Cricket (fooble@example.com)',
+				'name' => 'Just add some user will you',
 			)
 		);
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
-			->with("The user specified does not exist. Please try again.");
+			->with(__("Failed to find an email address in your query. Please try again."));
+		$ret = $this->testAction('/project/private/collaborators/add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
+		$this->assertAuthorized();
+	}
+
+	public function testAddNonexistentUser() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'Collaborator' => array(
+				'name' => 'Jimminy Cricket [fooble@example.com]',
+			)
+		);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("The user specified does not exist. Please try again."));
 		$ret = $this->testAction('/project/private/collaborators/add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
 		$this->assertAuthorized();
 	}
@@ -185,7 +202,7 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(1);
 		$postData = array(
 			'Collaborator' => array(
-				'name' => 'Mr Admin (mr.admin@example.com)',
+				'name' => 'Mr Admin [mr.admin@example.com]',
 			)
 		);
 		$this->controller->Session
@@ -241,31 +258,31 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
  * @return void
  */
 	public function testDeleteNotLoggedIn() {
-		$ret = $this->testAction('/project/private/collaborators/delete/11', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/collaborators/delete/10', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testDeleteProjectUser() {
 		$this->_fakeLogin(10);
-		$ret = $this->testAction('/project/private/collaborators/delete/11', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/collaborators/delete/3', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testDeleteProjectGuest() {
 		$this->_fakeLogin(3);
-		$ret = $this->testAction('/project/private/collaborators/delete/11', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/collaborators/delete/10', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testDeleteProjectAdmin() {
 		$this->_fakeLogin(1);
-		$ret = $this->testAction('/project/private/collaborators/delete/11', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/collaborators/delete/10', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 	}
 
 	public function testDeleteSystemAdmin() {
 		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/collaborators/delete/11', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/collaborators/delete/10', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 	}
 
@@ -289,15 +306,15 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 			->expects($this->once())
 			->method('setFlash')
 			->with("<h4 class='alert-heading'>The Request could not be completed:</h4>There must be at least one admin in the project.");
-		$ret = $this->testAction('/project/public/collaborators/delete/9', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/delete/2', array('method' => 'post', 'return' => 'view'));
 		$this->assertAuthorized();
-		$collab = $this->controller->Collaborator->findById(6);
-		$this->assertEquals(6, $collab['Collaborator']['id']);
+		$collab = $this->controller->Collaborator->findById(9);
+		$this->assertEquals(9, $collab['Collaborator']['id']);
 	}
 
 	public function testDeleteSuccess() {
 		$this->_fakeLogin(9);
-		$ret = $this->testAction('/project/public/collaborators/delete/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/delete/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertAuthorized();
 		$collab = $this->controller->Collaborator->findById(6);
 		$this->assertEquals(array(), $collab);
@@ -315,29 +332,29 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 	}
 
 	public function testMakeAdminNotLoggedIn () {
-		$ret = $this->testAction('/project/public/collaborators/makeadmin/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeadmin/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 	public function testMakeAdminNotCollaborator () {
 		$this->_fakeLogin(10);
-		$ret = $this->testAction('/project/public/collaborators/makeadmin/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeadmin/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 	public function testMakeAdminProjectGuest () {
 		$this->_fakeLogin(8);
-		$ret = $this->testAction('/project/public/collaborators/makeadmin/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeadmin/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 	public function testMakeAdminProjectUser () {
 		$this->_fakeLogin(1);
-		$ret = $this->testAction('/project/public/collaborators/makeadmin/9', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeadmin/2', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 	public function testMakeAdminProjectAdmin () {
-		$ret = $this->__testChangeAccessLevel(2, '/project/public/collaborators/makeadmin/6', 6, 2);
+		$ret = $this->__testChangeAccessLevel(2, '/project/public/collaborators/makeadmin/1', 6, 2);
 	}
 	public function testMakeAdminSystemAdmin () {
-		$ret = $this->__testChangeAccessLevel(5, '/project/public/collaborators/makeadmin/6', 6, 2);
+		$ret = $this->__testChangeAccessLevel(5, '/project/public/collaborators/makeadmin/1', 6, 2);
 	}
 
 	public function testMakeAdminFail () {
@@ -350,27 +367,27 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 			->expects($this->once())
 			->method('save')
 			->will($this->returnValue(false));
-		$ret = $this->testAction('/project/public/collaborators/makeadmin/9', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeadmin/2', array('method' => 'post', 'return' => 'view'));
 
 	}
 
 	public function testMakeUserNotLoggedIn () {
-		$ret = $this->testAction('/project/public/collaborators/makeuser/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeuser/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 	public function testMakeUserNotCollaborator () {
 		$this->_fakeLogin(10);
-		$ret = $this->testAction('/project/public/collaborators/makeuser/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeuser/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 	public function testMakeUserProjectGuest () {
 		$this->_fakeLogin(8);
-		$ret = $this->testAction('/project/public/collaborators/makeuser/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeuser/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 	public function testMakeUserProjectUser () {
 		$this->_fakeLogin(1);
-		$ret = $this->testAction('/project/public/collaborators/makeuser/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeuser/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 	public function testMakeUserTooFewAdmins () {
@@ -396,39 +413,47 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->assertRedirect('/project/private/collaborators');
 
 	}
+
 	public function testMakeUserProjectAdmin () {
-		$ret = $this->__testChangeAccessLevel(2, '/project/public/collaborators/makeuser/6', 6, 1);
+		$ret = $this->__testChangeAccessLevel(2, '/project/public/collaborators/makeuser/1', 6, 1);
 	}
+
 	public function testMakeUserSystemAdmin () {
-		$ret = $this->__testChangeAccessLevel(5, '/project/public/collaborators/makeuser/6', 6, 1);
+		$ret = $this->__testChangeAccessLevel(5, '/project/public/collaborators/makeuser/1', 6, 1);
 	}
 
 
 	public function testMakeGuestNotLoggedIn () {
-		$ret = $this->testAction('/project/public/collaborators/makeguest/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeguest/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
+
 	public function testMakeGuestNotCollaborator () {
 		$this->_fakeLogin(10);
-		$ret = $this->testAction('/project/public/collaborators/makeguest/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeguest/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
+
 	public function testMakeGuestProjectGuest () {
 		$this->_fakeLogin(8);
-		$ret = $this->testAction('/project/public/collaborators/makeguest/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeguest/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
+
 	public function testMakeGuestProjectUser () {
 		$this->_fakeLogin(1);
-		$ret = $this->testAction('/project/public/collaborators/makeguest/6', array('method' => 'post', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/collaborators/makeguest/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
+
 	public function testMakeGuestProjectAdmin () {
-		$ret = $this->__testChangeAccessLevel(2, '/project/public/collaborators/makeguest/6', 6, 0);
+		$ret = $this->__testChangeAccessLevel(2, '/project/public/collaborators/makeguest/1', 6, 0);
 	}
+
 	public function testMakeGuestSystemAdmin () {
-		$ret = $this->__testChangeAccessLevel(5, '/project/public/collaborators/makeguest/6', 6, 0);
+		$ret = $this->__testChangeAccessLevel(5, '/project/public/collaborators/makeguest/1', 6, 0);
 	}
+
 	public function testMakeGuestTooFewAdmins () {
 		$this->_fakeLogin(5);
 		$this->controller->Session
@@ -438,5 +463,114 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$ret = $this->testAction('/project/personal/collaborators/makeguest/7', array('method' => 'post', 'return' => 'view'));
 		$this->assertAuthorized();
 		$this->assertRedirect('/project/personal/collaborators');
+	}
+
+	private function __testChangeTeamAccessLevel($userId, $url, $teamCollabId, $level) {
+		$this->_fakeLogin($userId);
+		$ret = $this->testAction($url, array('method' => 'post', 'return' => 'view'));
+		$this->assertAuthorized();
+		$collab = $this->controller->CollaboratingTeam->findById($teamCollabId);
+		$this->assertEquals($level, $collab['CollaboratingTeam']['access_level']);
+		$this->assertRedirect('/project/perl-1/collaborators');
+	}
+
+	public function testMakeTeamAdminNotLoggedIn () {
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeadmin/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+	public function testMakeTeamAdminNotCollaboratingTeam () {
+		$this->_fakeLogin(10);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeadmin/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+	public function testMakeTeamAdminProjectGuest () {
+		$this->_fakeLogin(8);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeadmin/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+	public function testMakeTeamAdminProjectUser () {
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeadmin/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+	public function testMakeTeamAdminProjectAdmin () {
+		$ret = $this->__testChangeTeamAccessLevel(2, '/project/perl-1/collaborators/team_makeadmin/4', 1, 2);
+	}
+	public function testMakeTeamAdminSystemAdmin () {
+		$ret = $this->__testChangeTeamAccessLevel(5, '/project/perl-1/collaborators/team_makeadmin/4', 1, 2);
+	}
+
+	public function testMakeTeamAdminFail () {
+		$this->controller->CollaboratingTeam = $this->getMockForModel('CollaboratingTeam', array('save'));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("Permissions level for 'Perl developers' could not be updated. Please try again.");
+		$this->controller->CollaboratingTeam
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeadmin/4', array('method' => 'post', 'return' => 'view'));
+
+	}
+
+	public function testMakeTeamUserNotLoggedIn () {
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeuser/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+	public function testMakeTeamUserNotCollaboratingTeam () {
+		$this->_fakeLogin(10);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeuser/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+	public function testMakeTeamUserProjectGuest () {
+		$this->_fakeLogin(8);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeuser/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+	public function testMakeTeamUserProjectUser () {
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeuser/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testMakeTeamUserProjectAdmin () {
+		$ret = $this->__testChangeTeamAccessLevel(2, '/project/perl-1/collaborators/team_makeuser/4', 1, 1);
+	}
+
+	public function testMakeTeamUserSystemAdmin () {
+		$ret = $this->__testChangeTeamAccessLevel(5, '/project/perl-1/collaborators/team_makeuser/4', 1, 1);
+	}
+
+
+	public function testMakeTeamGuestNotLoggedIn () {
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeguest/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testMakeTeamGuestNotCollaboratingTeam () {
+		$this->_fakeLogin(10);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeguest/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testMakeTeamGuestProjectGuest () {
+		$this->_fakeLogin(8);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeguest/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testMakeTeamGuestProjectUser () {
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_makeguest/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testMakeTeamGuestProjectAdmin () {
+		$ret = $this->__testChangeTeamAccessLevel(2, '/project/perl-1/collaborators/team_makeguest/4', 1, 0);
+	}
+
+	public function testMakeTeamGuestSystemAdmin () {
+		$ret = $this->__testChangeTeamAccessLevel(5, '/project/perl-1/collaborators/team_makeguest/4', 1, 0);
 	}
 }

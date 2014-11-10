@@ -31,7 +31,7 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 
 ?>
 
-<?= $this->DT->pHeader(__("Milestone board")) ?>
+<?= $this->DT->pHeader(__("Milestone board: '%s'", $milestone['Milestone']['subject'])) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

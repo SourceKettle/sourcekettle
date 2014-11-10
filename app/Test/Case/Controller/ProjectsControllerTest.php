@@ -17,6 +17,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
     public $fixtures = array(
 		'core.cake_session',
 		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',

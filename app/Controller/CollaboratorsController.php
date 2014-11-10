@@ -262,10 +262,13 @@ class CollaboratorsController extends AppProjectController {
  */
 	private function __changePermissionLevel($project = null, $userId = null, $newaccesslevel = 0) {
 		$project = $this->_getProject($project);
+
 		$collaborator = $this->Collaborator->findByProjectIdAndUserId($project['Project']['id'], $userId);
+		
 		if (empty($collaborator)) {
 			throw new NotFoundException(__("User with ID %d is not a collaborator on the project", $userId));
 		}
+
 		if ($newaccesslevel <= 1 && $collaborator['Collaborator']['access_level'] > 1) {
 			// Count the number of admins
 			$numAdmins = $this->Collaborator->find ('count', array (
@@ -300,8 +303,8 @@ class CollaboratorsController extends AppProjectController {
  * @param string $id user to change
  * @return void
  */
-	public function team_makeadmin($project = null, $id = null) {
-		$this->__changeTeamPermissionLevel($project, $id, 2);
+	public function team_makeadmin($project = null, $teamId = null) {
+		$this->__changeTeamPermissionLevel($project, $teamId, 2);
 	}
 
 /**
@@ -309,11 +312,11 @@ class CollaboratorsController extends AppProjectController {
  * Allows users to promote a team to a regular user status
  *
  * @param string $project project name
- * @param string $id user to change
+ * @param string $teamId user to change
  * @return void
  */
-	public function team_makeuser($project = null, $id = null) {
-		$this->__changeTeamPermissionLevel($project, $id, 1);
+	public function team_makeuser($project = null, $teamId = null) {
+		$this->__changeTeamPermissionLevel($project, $teamId, 1);
 	}
 
 
@@ -322,37 +325,41 @@ class CollaboratorsController extends AppProjectController {
  * Allows users to promote a user to an observer
  *
  * @param string $project project name
- * @param string $id user to change
+ * @param string $teamId user to change
  * @return void
  */
-	public function team_makeguest($project = null, $id = null) {
-		$this->__changeTeamPermissionLevel($project, $id, 0);
+	public function team_makeguest($project = null, $teamId = null) {
+		$this->__changeTeamPermissionLevel($project, $teamId, 0);
 	}
 
 /**
  * changePermissionLevel
  *
  * @param string $project project name
- * @param string $id user to change
+ * @param string $teamId user to change
  * @param string $newaccesslevel new access level to assign
  * @return void
  */
-	private function __changeTeamPermissionLevel($project = null, $id = null, $newaccesslevel = 0) {
+	private function __changeTeamPermissionLevel($project = null, $teamId = null, $newaccesslevel = 0) {
 		$project = $this->_getProject($project);
-		$collaborator = $this->CollaboratingTeam->findById($id);
-		debug($collaborator);
+
+		$team = $this->CollaboratingTeam->Team->findById($teamId);
+		if (!isset($team)) {
+			throw new NotFoundException(__("Invalid Team"));
+		}
+
+		$collaborator = $this->CollaboratingTeam->findByProjectIdAndTeamId($project['Project']['id'], $teamId);
 		if (!isset($collaborator)) {
-			throw new NotFoundException(__("Invalid CollaboratingTeam"));
+			throw new NotFoundException(__("The specified team is not collaborating on this project"));
 		}
 
 		// Save the changes to the team
 		$collaborator['CollaboratingTeam']['access_level'] = $newaccesslevel;
 		if ($this->CollaboratingTeam->save($collaborator)) {
-			$this->Flash->info("Permissions level successfully changed for '" . $collaborator['Team']['name'] . "'");
+			$this->Flash->info("Permissions level successfully changed for '" . $team['Team']['name'] . "'");
 		} else {
-			$this->Flash->error("Permissions level for '" . $collaborator['Team']['name'] . "' could not be updated. Please try again.");
+			$this->Flash->error("Permissions level for '" . $team['Team']['name'] . "' could not be updated. Please try again.");
 		}
-		$collaborator = $this->CollaboratingTeam->findById($id);
 
 		return $this->redirect(array('project' => $project['Project']['name'], 'action' => '*'));
 	}

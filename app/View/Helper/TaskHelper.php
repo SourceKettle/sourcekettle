@@ -59,6 +59,7 @@ class TaskHelper extends AppHelper {
 		$label = $this->_View->viewVars['task_statuses'][$id]['label'];
 		$class = $this->_View->viewVars['task_statuses'][$id]['class'];
 		return $this->Bootstrap->label($label, $class, array ("class" => "taskstatus"));
+
 	}
 
 /**
