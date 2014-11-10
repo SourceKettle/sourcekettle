@@ -69,14 +69,13 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
                                 $_user_mail = h($collaborator['User']['email']);
                                 $_user_id   = $collaborator['User']['id'];
                                 $_user_url  = array('controller' => 'users', 'action' => 'view', $_user_id);
-                                $_c_id      = $collaborator['Collaborator']['id'];
 
-                                $_promote_url = ($_access_level < 2) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level + 1]['action'], $_c_id), true) : null;
-                                $_demote_url  = ($_access_level > 0) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level - 1]['action'], $_c_id), true) : null;
-                                $_delete_url  = $this->Html->url(array('controller' => 'collaborators', 'project' => $_project_name, 'action' => 'delete', $_c_id), true);
+                                $_promote_url = ($_access_level < 2) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level + 1]['action'], $_user_id), true) : null;
+                                $_demote_url  = ($_access_level > 0) ? $this->Html->url(array('project' => $_project_name, 'action' => $_levels[$_access_level - 1]['action'], $_user_id), true) : null;
+                                $_delete_url  = $this->Html->url(array('controller' => 'collaborators', 'project' => $_project_name, 'action' => 'delete', $_user_id), true);
 
-                                $_blank_button = $this->Bootstrap->button($this->Bootstrap->icon('none'), array('escape'=>false, 'size' => 'mini', 'class' => 'disabled'))
-                            ?>
+                                $_blank_button = $this->Bootstrap->button($this->Bootstrap->icon('none'), array('escape'=>false, 'size' => 'mini', 'class' => 'disabled'));
+							?>
                             <tr>
                                 <td><?= $this->Html->link("$_user_name &lt;$_user_mail&gt;", $_user_url, array('escape' => false)) ?></td>
                                 <td><?= $_access_icon . " " . h($_access_text) ?></td>
@@ -163,11 +162,10 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
                                 $_team_name = h($collaborator['Team']['name']);
                                 $_team_id   = $collaborator['Team']['id'];
                                 $_team_url  = array('controller' => 'teams', 'action' => 'view', $_team_id);
-                                $_c_id      = $collaborator['CollaboratingTeam']['id'];
 
-                                $_promote_url = ($_access_level < 2) ? $this->Html->url(array('project' => $_project_name, 'action' => "team_".$_levels[$_access_level + 1]['action'], $_c_id), true) : null;
-                                $_demote_url  = ($_access_level > 0) ? $this->Html->url(array('project' => $_project_name, 'action' => "team_".$_levels[$_access_level - 1]['action'], $_c_id), true) : null;
-                                $_delete_url  = $this->Html->url(array('controller' => 'collaborators', 'project' => $_project_name, 'action' => 'team_delete', $_c_id), true);
+                                $_promote_url = ($_access_level < 2) ? $this->Html->url(array('project' => $_project_name, 'action' => "team_".$_levels[$_access_level + 1]['action'], $_team_id), true) : null;
+                                $_demote_url  = ($_access_level > 0) ? $this->Html->url(array('project' => $_project_name, 'action' => "team_".$_levels[$_access_level - 1]['action'], $_team_id), true) : null;
+                                $_delete_url  = $this->Html->url(array('controller' => 'collaborators', 'project' => $_project_name, 'action' => 'team_delete', $_team_id), true);
 
                                 $_blank_button = $this->Bootstrap->button($this->Bootstrap->icon('none'), array('escape'=>false, 'size' => 'mini', 'class' => 'disabled'))
                             ?>
@@ -198,10 +196,10 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
             </div>
             <div class="span4">
             <?php if ($isAdmin) {
-                echo $this->Form->create('CollaboratingTeam',
+                echo $this->Form->create('Collaborator',
                     array(
                         'url' => array(
-                            'action' => 'add',
+                            'action' => 'team_add',
                             'project' => $project['Project']['name']
                         ),
                         'class' => 'form-inline well input-append'
