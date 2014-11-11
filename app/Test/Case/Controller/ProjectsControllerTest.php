@@ -109,23 +109,17 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 1, "Incorrect number of projects returned");
+		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
 
-		// Check each project 
-		foreach ($this->vars['projects'] as $project) {
+		// Crunch to get the project ID, user ID and access level only
+		$ids = array_map(function($a) {return array('p' => $a['Project']['id'], 'u' => $a['User']['id'], 'l' => $a['Collaborator']['access_level']);}, $this->vars['projects']);
 
-			// We should be a collaborator
-			if (!isset($project['User']) || $project['User']['id'] != 3) {
-				$this->assertTrue(false, "A project for another collaborator was found");
-			}
+		// Should have two projects, guest on both
+		$this->assertEquals(array(
+			array('p' => 1, 'u' => 3, 'l' => 0),
+			array('p' => 12, 'u' => 3, 'l' => 0),
+		), $ids);
 
-			// We should only get one, and with the correct access level
-			if ($project['Project']['id'] == 1 && $project['Collaborator']['access_level'] == 0) {
-				$this->assertTrue(true, "Impossible to fail");
-			} else {
-				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or access level (".$project['Collaborator']['access_level'].") was retrieved");
-			}
-		}
 	}
 
 	public function testPublicIndexSystemAdmin() {

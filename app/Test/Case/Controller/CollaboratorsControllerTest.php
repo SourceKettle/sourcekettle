@@ -286,12 +286,26 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 	}
 
+	public function testDeleteNotCollaborating() {
+		$this->_fakeLogin(1);
+		try{
+			$ret = $this->testAction('/project/private/collaborators/delete/2', array('method' => 'get', 'return' => 'view'));
+		} catch (NotFoundException $e) {
+			$this->assertEquals(__("User with ID %d is not a collaborator on the project", 2), $e->getMessage());
+			return;
+		} catch (Exception $e) {
+			$this->assertFalse(true, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertFalse(true, "No exception thrown");
+	}
+
 	public function testDeleteNonexistentCollaborator() {
 		$this->_fakeLogin(1);
 		try{
 			$ret = $this->testAction('/project/public/collaborators/delete/999', array('method' => 'get', 'return' => 'view'));
 		} catch (NotFoundException $e) {
-			$this->assertTrue(true);
+			$this->assertEquals(__("User with ID %d does not exist", 999), $e->getMessage());
 			return;
 		} catch (Exception $e) {
 			$this->assertFalse(true, "Incorrect exception thrown");
@@ -446,6 +460,29 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testMakeGuestInvalidCollaborator () {
+		$this->_fakeLogin(2);
+		try{
+			$ret = $this->testAction('/project/private/collaborators/makeguest/2', array('method' => 'post', 'return' => 'view'));
+		} catch(NotFoundException $e) {
+			$this->assertEquals(__("User with ID %d is not a collaborator on the project", 2), $e->getMessage());
+		} catch(Exception $e) {
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+		}
+	}
+
+	public function testMakeGuestInvalidUser () {
+		$this->_fakeLogin(2);
+
+		try {
+			$ret = $this->testAction('/project/public/collaborators/makeguest/999', array('method' => 'post', 'return' => 'view'));
+		} catch(NotFoundException $e) {
+			$this->assertEquals(__("User with ID %d does not exist", 999), $e->getMessage());
+		} catch(Exception $e) {
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+		}
+	}
+
 	public function testMakeGuestProjectAdmin () {
 		$ret = $this->__testChangeAccessLevel(2, '/project/public/collaborators/makeguest/1', 6, 0);
 	}
@@ -505,7 +542,7 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
-			->with("Permissions level for 'Perl developers' could not be updated. Please try again.");
+			->with("Permissions level for 'perl_developers' could not be updated. Please try again.");
 		$this->controller->CollaboratingTeam
 			->expects($this->once())
 			->method('save')
@@ -572,5 +609,217 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 
 	public function testMakeTeamGuestSystemAdmin () {
 		$ret = $this->__testChangeTeamAccessLevel(5, '/project/perl-1/collaborators/team_makeguest/4', 1, 0);
+	}
+
+	public function testMakeTeamGuestInvalidCollaborator () {
+		$this->_fakeLogin(2);
+		try{
+			$ret = $this->testAction('/project/perl-1/collaborators/team_makeguest/3', array('method' => 'post', 'return' => 'view'));
+		} catch(NotFoundException $e) {
+			$this->assertEquals(__("The team with ID %d is not collaborating on the project", 3), $e->getMessage());
+			return;
+		} catch(Exception $e) {
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testMakeTeamGuestInvalidTeam () {
+		$this->_fakeLogin(2);
+
+		try {
+			$ret = $this->testAction('/project/perl-1/collaborators/team_makeguest/999', array('method' => 'post', 'return' => 'view'));
+		} catch(NotFoundException $e) {
+			$this->assertEquals(__("The team with ID %d does not exist", 999), $e->getMessage());
+			return;
+		} catch(Exception $e) {
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+
+	public function testAddTeamNotLoggedIn() {
+		$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddTeamProjectUser() {
+		$this->_fakeLogin(10);
+		$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddTeamProjectGuest() {
+		$this->_fakeLogin(3);
+		$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddTeamProjectAdmin() {
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'post', 'return' => 'view'));
+		$this->assertAuthorized();
+	}
+
+	public function testAddTeamSystemAdmin() {
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'post', 'return' => 'view'));
+		$this->assertAuthorized();
+	}
+
+	public function testAddTeamGetFail() {
+		$this->_fakeLogin(1);
+		try{
+			$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'get', 'return' => 'view'));
+		} catch (MethodNotAllowedException $e) {
+			$this->assertTrue(true);
+			return;
+		} catch (Exception $e) {
+			$this->assertFalse(true, "Incorrect exception thrown");
+			return;
+		}
+		$this->assertFalse(true, "No exception thrown");
+
+	}
+
+	public function testAddTeamNonexistentTeam() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'Collaborator' => array(
+				'name' => 'FakeTeamThatDoesNotExist',
+			)
+		);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("The team specified does not exist. Please try again."));
+		$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
+		$this->assertAuthorized();
+	}
+
+	public function testAddTeamAlreadyHere() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Collaborator' => array(
+				'name' => 'perl_developers',
+			)
+		);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("The team specified is already collaborating in this project."));
+		$ret = $this->testAction('/project/perl-1/collaborators/team_add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
+		$this->assertAuthorized();
+	}
+
+	public function testAddTeamFail() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'Collaborator' => array(
+				'name' => 'php_developers',
+			)
+		);
+		$this->controller->CollaboratingTeam = $this->getMockForModel('CollaboratingTeam', array('save'));
+		$this->controller->CollaboratingTeam
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("%s could not be added to the project. Please try again.", "php_developers"));
+		$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
+		$this->assertAuthorized();
+	}
+
+	public function testAddTeamSuccess() {
+		$this->_fakeLogin(1);
+		$postData = array(
+			'Collaborator' => array(
+				'name' => 'php_developers',
+			)
+		);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("%s has been added to the project", "php_developers"));
+
+		$ret = $this->testAction('/project/private/collaborators/team_add', array('method' => 'post', 'return' => 'view', 'data' => $postData));
+		$this->assertAuthorized();
+		$collab = $this->controller->CollaboratingTeam->findById($this->controller->CollaboratingTeam->getLastInsertId());
+		$this->assertEquals(1, $collab['CollaboratingTeam']['team_id']);
+		$this->assertEquals(1, $collab['CollaboratingTeam']['project_id']);
+	}
+
+/**
+ * testDeleteTeam method
+ *
+ * @return void
+ */
+	public function testDeleteTeamNotLoggedIn() {
+		$ret = $this->testAction('/project/perl-1/collaborators/team_delete/4', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testDeleteTeamProjectUser() {
+		$this->_fakeLogin(10);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_delete/4', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testDeleteTeamProjectGuest() {
+		$this->_fakeLogin(3);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_delete/4', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testDeleteTeamProjectAdmin() {
+		$this->_fakeLogin(2);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_delete/4', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+	}
+
+	public function testDeleteTeamSystemAdmin() {
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_delete/4', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+	}
+
+	public function testDeleteTeamNotCollaborating() {
+		$this->_fakeLogin(2);
+		try{
+			$ret = $this->testAction('/project/perl-1/collaborators/team_delete/1', array('method' => 'get', 'return' => 'view'));
+		} catch (NotFoundException $e) {
+			$this->assertEquals(__("Team with ID %d is not collaborating on the project", 1), $e->getMessage());
+			return;
+		} catch (Exception $e) {
+			$this->assertFalse(true, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertFalse(true, "No exception thrown");
+	}
+
+	public function testDeleteTeamNonexistentTeam() {
+		$this->_fakeLogin(2);
+		try{
+			$ret = $this->testAction('/project/perl-1/collaborators/team_delete/999', array('method' => 'get', 'return' => 'view'));
+		} catch (NotFoundException $e) {
+			$this->assertEquals(__("Team with ID %d does not exist", 999), $e->getMessage());
+			return;
+		} catch (Exception $e) {
+			$this->assertFalse(true, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertFalse(true, "No exception thrown");
+	}
+
+	public function testDeleteTeamSuccess() {
+		$this->_fakeLogin(2);
+		$ret = $this->testAction('/project/perl-1/collaborators/team_delete/4', array('method' => 'post', 'return' => 'view'));
+		$this->assertAuthorized();
+		$collab = $this->controller->CollaboratingTeam->findById(1);
+		$this->assertEquals(array(), $collab);
+		$this->assertRedirect('/project/perl-1/collaborators');
 	}
 }

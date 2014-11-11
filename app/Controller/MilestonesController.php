@@ -37,8 +37,6 @@ class MilestonesController extends AppProjectController {
 			'reopen'   => 'write',
 			'burndown' => 'read',
 			'delete'   => 'write',
-			'api_view'   => 'read',
-			'api_all'   => 'read',
 		);
 	}
 /**
@@ -49,10 +47,6 @@ class MilestonesController extends AppProjectController {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
-		/*$this->Auth->allow(
-			'api_all',
-			'api_view'
-		);*/
 	}
 
 /**
@@ -392,100 +386,4 @@ class MilestonesController extends AppProjectController {
 
 	}
 
-	/* ************************************************ *
-	*													*
-	*			API SECTION OF CONTROLLER				*
-	*			 CAUTION: PUBLIC FACING					*
-	*													*
-	* ************************************************* */
-
-/**
- * api_view function.
- *
- * @access public
- * @param mixed $id (default: null)
- * @return void
- */
-	public function api_view($id = null) {
-		$this->layout = 'ajax';
-
-		$this->Milestone->recursive = -1;
-		$this->Milestone->Task->recursive = -1;
-
-		$data = array();
-
-		if ($id == null) {
-			$this->response->statusCode(400);
-			$data['error'] = 400;
-			$data['message'] = 'Bad request, no project id specified.';
-		}
-
-		if ($id == 'all') {
-			$this->api_all();
-			return;
-		}
-
-		if (is_numeric($id)) {
-			$this->Milestone->id = $id;
-
-			if (!$this->Milestone->exists()) {
-				$this->response->statusCode(404);
-				$data['error'] = 404;
-				$data['message'] = 'No milestone found of that ID.';
-				$data['id'] = $id;
-			} else {
-				$milestone = $this->Milestone->read();
-
-				$this->Milestone->Project->id = $milestone['Milestone']['project_id'];
-
-				$partOfProject = $this->Milestone->Project->hasRead($this->Auth->user('id'));
-				$publicProject	= $this->Milestone->Project->field('public');
-				$isAdmin = ($this->_apiAuthLevel() == 1);
-
-				if ($publicProject || $isAdmin || $partOfProject) {
-					$milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $id))));
-
-					$data = $milestone['Milestone'];
-				} else {
-					$data['error'] = 401;
-					$data['message'] = 'Milestone found, but is not public.';
-					$data['id'] = $id;
-				}
-			}
-		}
-
-		$this->set('data',$data);
-		$this->render('/Elements/json');
-	}
-
-/**
- * api_all function.
- * ADMINS only
- *
- * @access public
- * @return void
- */
-	public function api_all() {
-		$this->layout = 'ajax';
-
-		$this->Milestone->recursive = -1;
-		$data = array();
-
-		switch ($this->_apiAuthLevel()) {
-			case 1:
-				foreach ($this->Milestone->find("all") as $milestone) {
-					$milestone['Milestone']['tasks'] = array_values($this->Milestone->Task->find('list', array('conditions' => array('milestone_id' => $milestone['Milestone']['id']))));
-
-					$data[] = $milestone['Milestone'];
-				}
-				break;
-			default:
-				$this->response->statusCode(403);
-				$data['error'] = 403;
-				$data['message'] = 'You are not authorised to access this.';
-		}
-
-		$this->set('data',$data);
-		$this->render('/Elements/json');
-	}
 }

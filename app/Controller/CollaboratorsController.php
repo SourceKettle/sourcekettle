@@ -263,6 +263,12 @@ class CollaboratorsController extends AppProjectController {
 	private function __changePermissionLevel($project = null, $userId = null, $newaccesslevel = 0) {
 		$project = $this->_getProject($project);
 
+		$user = $this->Collaborator->User->findById($userId);
+
+		if (empty($user)) {
+			throw new NotFoundException(__("User with ID %d does not exist", $userId));
+		}
+
 		$collaborator = $this->Collaborator->findByProjectIdAndUserId($project['Project']['id'], $userId);
 		
 		if (empty($collaborator)) {
@@ -344,13 +350,13 @@ class CollaboratorsController extends AppProjectController {
 		$project = $this->_getProject($project);
 
 		$team = $this->CollaboratingTeam->Team->findById($teamId);
-		if (!isset($team)) {
-			throw new NotFoundException(__("Invalid Team"));
+		if (empty($team)) {
+			throw new NotFoundException(__("The team with ID %d does not exist", $teamId));
 		}
 
 		$collaborator = $this->CollaboratingTeam->findByProjectIdAndTeamId($project['Project']['id'], $teamId);
-		if (!isset($collaborator)) {
-			throw new NotFoundException(__("The specified team is not collaborating on this project"));
+		if (empty($collaborator)) {
+			throw new NotFoundException(__("The team with ID %d is not collaborating on the project", $teamId));
 		}
 
 		// Save the changes to the team
@@ -373,6 +379,13 @@ class CollaboratorsController extends AppProjectController {
  */
 	public function delete($project = null, $userId = null) {
 		$project = $this->_getProject($project);
+
+		$user = $this->User->findById($userId);
+
+		if (empty($user)) {
+			throw new NotFoundException(__("User with ID %d does not exist", $userId));
+		}
+
 		$collaborator = $this->Collaborator->findByProjectIdAndUserId($project['Project']['id'], $userId);
 		
 		if (empty($collaborator)) {
@@ -418,9 +431,20 @@ class CollaboratorsController extends AppProjectController {
  * @param string $id
  * @return void
  */
-	public function team_delete($project = null, $id = null) {
+	public function team_delete($project = null, $teamId = null) {
 		$project = $this->_getProject($project);
-		$collaborator = $this->CollaboratingTeam->findById($id);
+
+		$team = $this->CollaboratingTeam->Team->findById($teamId);
+
+		if (empty($team)) {
+			throw new NotFoundException(__("Team with ID %d does not exist", $teamId));
+		}
+
+		$collaborator = $this->CollaboratingTeam->findByProjectIdAndTeamId($project['Project']['id'], $teamId);
+		
+		if (empty($collaborator)) {
+			throw new NotFoundException(__("Team with ID %d is not collaborating on the project", $teamId));
+		}
 
 		$this->Flash->setUp();
 

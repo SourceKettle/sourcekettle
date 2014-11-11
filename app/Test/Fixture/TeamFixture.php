@@ -15,22 +15,22 @@ class TeamFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'name' => 'PHP developers',
+			'name' => 'php_developers',
 			'description' => 'Devs who code in PHP'
 		),
 		array(
 			'id' => 2,
-			'name' => 'Java developers',
+			'name' => 'java_developers',
 			'description' => 'Devs who code in Java'
 		),
 		array(
 			'id' => 3,
-			'name' => 'Python developers',
+			'name' => 'python_developers',
 			'description' => 'Devs who code in Python'
 		),
 		array(
 			'id' => 4,
-			'name' => 'Perl developers',
+			'name' => 'perl_developers',
 			'description' => 'Devs who code in Perl'
 		),
 	);
