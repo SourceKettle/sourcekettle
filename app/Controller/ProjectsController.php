@@ -42,7 +42,7 @@ class ProjectsController extends AppProjectController {
 			'burndown' => 'read',
 			'markupPreview'  => 'read',
 			'api_history' => 'read',
-			'api_autocomplete' => 'read',
+			'api_autocomplete' => 'login',
 		);
 	}
 

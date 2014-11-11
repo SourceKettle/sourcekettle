@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header("My Projects <small>all the projects you care about</small>"); 
+echo $this->Bootstrap->page_header(__("Team Projects <small>we do what we must because we can</small>")); 
 echo $this->Html->css('projects.index', null, array ('inline' => false));
 ?>
 
