@@ -22,6 +22,17 @@ echo $this->Bootstrap->page_header(__('Team: <small>%s</small>', h($team['Team']
 	<?= h($team['Team']['description']) ?>
 </p>
 
+<p>
+	<?= $this->Html->link(
+		__('View kanban chart'),
+		array(
+			'controller' => 'tasks',
+			'action' => 'team_kanban',
+			'team' => $team['Team']['name']
+		)
+	)?>
+</p>
+
 <div>
   <h4><?=__('Members')?></h4>
   <ul>
