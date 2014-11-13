@@ -26,6 +26,9 @@
     <div class="span6">
       <h3>Assigned tasks</h3>
       <? if (!empty($tasks)){
+	  	echo "<p>";
+		echo $this->Html->link(__("View kanban chart"), array('controller' => 'tasks', 'action' => 'personal_kanban'));
+	  	echo "</p>";
 	    echo "<ul class='sprintboard-droplist'>";
         foreach ($tasks as $task){
           echo $this->element('Task/lozenge', array('task' => $task, 'span' => 6));

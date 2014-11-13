@@ -10,6 +10,7 @@
             <?php
                 $_delete_icon  = $this->Bootstrap->icon('eject', 'white');
                 $_edit_icon    = $this->Bootstrap->icon('pencil');
+                $_kanban_icon  = $this->Bootstrap->icon('tasks');
                 echo $this->Form->create('Team',
                     array(
                         'class' => 'form-inline input-append'
@@ -70,9 +71,21 @@
 										$team['Team']['id']
 									), true
 								);
+							 	$_kanban_url = $this->Html->url(
+									array(
+										'controller' => 'tasks',
+										'action' => 'team_kanban',
+										'team' => $team['Team']['name'],
+										'admin' => false
+									), true
+								);
 
 
 							echo "<div class='btn-group'>\n";
+                            echo $this->Bootstrap->button_link(
+								$_kanban_icon, $_kanban_url,
+                                array('escape'=>false, 'size' => 'mini', 'title' => __('Show team kanban chart'))
+                            );
                             echo $this->Bootstrap->button_link(
 								$_edit_icon, $_edit_url,
                                 array('escape'=>false, 'size' => 'mini', 'title' => __('Edit team details'))
