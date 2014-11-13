@@ -13,10 +13,9 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('AppModel', 'Model', 'AuthComponent', 'Controller/Component');
+//App::uses('AppModel', 'Model', 'AuthComponent', 'Controller/Component', 'Task');
 
 class User extends AppModel {
-
 
 /**
  * Display field
@@ -295,6 +294,36 @@ class User extends AppModel {
 
 		$this->EmailConfirmationKey->deleteAll(array('user_id' => $user['User']['id']));
 		return true;
+	}
+
+	public function tasksOfStatusForUser($userId = null, $status = 'open') {
+		$this->id = $userId;
+
+		if (!$this->exists()) return null;
+
+		$tasks = $this->Collaborator->Project->Task->find(
+			'all',
+			array(
+				'fields' => array(
+					'Milestone.id',
+					'Milestone.subject',
+					'Task.*',
+					'TaskPriority.name',
+					'TaskStatus.name',
+					'TaskType.name',
+					'Assignee.email',
+					'Assignee.name',
+					'Project.name',
+				),
+				'conditions' => array(
+					'TaskStatus.name =' => $status,
+					'Assignee.id =' => $userId
+				),
+				'order' => 'TaskPriority.level DESC',
+				'recursive' => 0,
+			)
+		);
+		return $tasks;
 	}
 
 }

@@ -34,6 +34,7 @@ class TasksController extends AppProjectController {
 		'User',
 		'Milestone',
 		'Collaborator',
+		'Team',
 	);
 
 /**
@@ -255,6 +256,36 @@ class TasksController extends AppProjectController {
 		$this->set('selected_creators',   $selected_creators);
 		$this->set('selected_milestones', $selected_milestones);
 
+
+	}
+
+	public function personal_kanban() {
+
+		$backlog = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'open');
+		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
+		$completed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'));
+
+		$this->set(compact('backlog', 'inProgress', 'completed'));
+
+	}
+
+	public function team_kanban($team = null) {
+
+		if (!is_numeric($team)) {
+			$team = $this->Team->findByName($team);
+		} else {
+			$team = $this->Team->findById($team);
+		}
+
+		if (empty($team)) {
+			throw new NotFoundException(__("Invalid team"));
+		}
+
+		$backlog = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), 'open');
+		$inProgress = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), 'in progress');
+		$completed = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), array('resolved', 'closed'));
+
+		$this->set(compact('team', 'backlog', 'inProgress', 'completed'));
 
 	}
 

@@ -59,4 +59,35 @@ class Team extends AppModel {
 		)
 	);
 
+	public function tasksOfStatusForTeam($teamId = null, $status = 'open') {
+
+		$teamMembers = $this->TeamsUser->find('list', array(
+			'conditions' => array('team_id' => $teamId),
+		));
+
+		$tasks = $this->CollaboratingTeam->Project->Task->find(
+			'all',
+			array(
+				'fields' => array(
+					'Milestone.id',
+					'Milestone.subject',
+					'Task.*',
+					'TaskPriority.name',
+					'TaskStatus.name',
+					'TaskType.name',
+					'Assignee.email',
+					'Assignee.name',
+					'Project.name',
+				),
+				'conditions' => array(
+					'TaskStatus.name =' => $status,
+					'Assignee.id =' => $teamMembers
+				),
+				'order' => 'TaskPriority.level DESC',
+				'recursive' => 0,
+			)
+		);
+		return $tasks;
+	}
+
 }
