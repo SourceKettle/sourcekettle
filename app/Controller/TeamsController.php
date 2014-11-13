@@ -14,6 +14,33 @@ class TeamsController extends AppController {
 		),
     );
 
+	public function isAuthorized($user) {
+
+		// No public pages here, must be logged in
+		if (empty($user)) {
+			return false;
+		}
+
+		// Deactivated users explicitly do not get access
+		// (NB they should not be able to log in anyway, of course!)
+		if (@$user['is_active'] != 1) {
+			return false;
+		}
+
+		// If you are logged in, you can view teams and autocomplete team names
+		if ($this->action == 'view' || $this->action == 'api_autocomplete') {
+			return true;
+		}
+
+		// Sysadmins can do anything...
+		if (@$user['is_admin'] == 1) {
+			return true;
+		}
+
+		// Admins only for all but viewing teams
+		return false;
+	}
+
 	public function view($team = null) {
 		if (!is_numeric($team)) {
 			$team = $this->Team->field('id', array('name' => $team));
@@ -47,7 +74,7 @@ class TeamsController extends AppController {
 
 	// No special admin permission needed to view teams
 	public function admin_view($team = null) {
-		return $this->redirect(array('action' => 'view', 'admin' => false));
+		return $this->redirect(array('action' => 'view', 'team' => $team, 'admin' => false));
 	}
 
 	public function admin_add() {
@@ -70,6 +97,7 @@ class TeamsController extends AppController {
 		if (!$this->Team->exists($id)) {
 			throw new NotFoundException(__('Invalid team'));
 		}
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Team->save($this->request->data)) {
 				$this->Session->setFlash(__('The team has been saved'));
@@ -85,6 +113,7 @@ class TeamsController extends AppController {
 		$this->set(compact('users'));
 		
 	}
+
 	public function admin_delete($id = null) {
 		$this->Team->id = $id;
 		if (!$this->Team->exists()) {

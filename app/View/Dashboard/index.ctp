@@ -28,7 +28,7 @@
       <? if (!empty($tasks)){
 	    echo "<ul class='sprintboard-droplist'>";
         foreach ($tasks as $task){
-          echo $this->element('Task/lozenge', array('task' => $task));
+          echo $this->element('Task/lozenge', array('task' => $task, 'span' => 6));
         }
 		echo "</ul>";
       } else {

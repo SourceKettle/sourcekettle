@@ -15,17 +15,17 @@ class ProjectGroupFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'name' => 'PHP projects',
+			'name' => 'php_projects',
 			'description' => 'Some projects written in PHP'
 		),
 		array(
 			'id' => 2,
-			'name' => 'Java projects',
+			'name' => 'java_projects',
 			'description' => 'Some projects written in Java'
 		),
 		array(
 			'id' => 3,
-			'name' => 'Python projects',
+			'name' => 'python_projects',
 			'description' => 'Some projects written in Python'
 		),
 	);

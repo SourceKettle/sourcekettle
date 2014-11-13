@@ -42,6 +42,7 @@ class ProjectBurndownLog extends AppModel {
 
 		// Get the latest log entry
 		$lastLog = $this->find('first', array(
+			'conditions' => array('project_id' => $this->data['ProjectBurndownLog']['project_id']),
 			'order' => array('timestamp DESC'),
 			'recursive' => -1,
 			'fields' => $fields,

@@ -473,7 +473,9 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			$this->testAction('/project/newproject/edit', array('return' => 'view', 'method' => 'post'));
 		} catch (NotFoundException $e) {
 			$this->assertTrue(true, "Correct exception thrown");
+			return;
 		}
+		$this->assertFalse(true, "Should have thrown an exception");
 
 	}
 

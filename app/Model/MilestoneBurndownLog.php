@@ -48,6 +48,11 @@ class MilestoneBurndownLog extends AppModel {
 			'fields' => $fields,
 		));
 
+		// No previous logs - definitely a change...
+		if (empty($lastLog)) {
+			return 1;
+		}
+
 		// Find out if any counts have changed
 		$changed = 0;
 		foreach ($fields as $field) {

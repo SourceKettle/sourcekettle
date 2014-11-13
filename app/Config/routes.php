@@ -125,7 +125,7 @@
         Router::connect('/admin/users/approve/:key', array('controller' => 'users', 'action' => 'approve', 'admin' => true), array ('pass' => array('key')));
 
         Router::connect('/teams/:team', array('controller' => 'teams', 'action' => 'view', 'admin' => false), array('pass' => array('team')));
-        Router::connect('/project_groups/:group', array('controller' => 'teams', 'action' => 'view', 'admin' => false), array('pass' => array('group')));
+        Router::connect('/project_groups/:group', array('controller' => 'project_groups', 'action' => 'view', 'admin' => false), array('pass' => array('group')));
 
 
 /**

@@ -13,11 +13,13 @@ class AllControllerTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'Controller/DashboardControllerTest.php');
 		$suite->addTestFile($path . 'Controller/MilestonesControllerTest.php');
 		$suite->addTestFile($path . 'Controller/PagesControllerTest.php');
+		$suite->addTestFile($path . 'Controller/ProjectGroupsControllerTest.php');
 		$suite->addTestFile($path . 'Controller/ProjectsControllerTest.php');
 		$suite->addTestFile($path . 'Controller/SettingsControllerTest.php');
 		$suite->addTestFile($path . 'Controller/SourceControllerTest.php');
 		$suite->addTestFile($path . 'Controller/SshKeysControllerTest.php');
 		$suite->addTestFile($path . 'Controller/TasksControllerTest.php');
+		$suite->addTestFile($path . 'Controller/TeamsControllerTest.php');
 		$suite->addTestFile($path . 'Controller/TimesControllerTest.php');
 		$suite->addTestFile($path . 'Controller/UsersControllerTest.php');
 		$suite->addTestFile($path . 'Controller/VersionControllerTest.php');
