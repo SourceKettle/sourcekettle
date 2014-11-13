@@ -28,7 +28,7 @@ $api_base = $this->Html->link(array(
 	'action' => 'update',
 	'api' => true
 ));
-$this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
+// TODO fix up the javascript to work across projects//$this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
 
 ?>
 
