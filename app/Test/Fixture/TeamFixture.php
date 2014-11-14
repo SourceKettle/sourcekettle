@@ -33,6 +33,11 @@ class TeamFixture extends CakeTestFixture {
 			'name' => 'perl_developers',
 			'description' => 'Devs who code in Perl'
 		),
+		array(
+			'id' => 5,
+			'name' => 'other_developers',
+			'description' => 'Other devs who code in erlang or something'
+		),
 	);
 
 }

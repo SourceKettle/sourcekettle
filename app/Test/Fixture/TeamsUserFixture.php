@@ -96,6 +96,13 @@ class TeamsUserFixture extends CakeTestFixture {
 			'team_id' => 4,
 			'user_id' => 21
 		),
+
+		// Misc
+		array(
+			'id' => 15,
+			'team_id' => 5,
+			'user_id' => 2,
+		),
 	);
 
 }

@@ -32,6 +32,7 @@ class UserTestCase extends CakeTestCase {
         'app.task_dependency',
         'app.task_comment',
         'app.team',
+        'app.teams_user',
         'app.time',
         'app.milestone',
 		'app.attachment',
@@ -367,5 +368,25 @@ class UserTestCase extends CakeTestCase {
 
 		$deadKey = $this->User->EmailConfirmationKey->findByKey('ba6f23c5ce588f16647fe32603fb1593');
 		$this->assertEquals(array(), $deadKey);
+	}
+
+	private function crunchTaskList($tasks) {
+		return array_map(function($a){return $a['Task']['id'];}, $tasks);
+	}
+
+	public function testTasksOfStatusForUser() {
+		$open = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'open'));
+		$inProgress = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'in progress'));
+		$resolved = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'resolved'));
+		$closed = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'closed'));
+		$dropped = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'dropped'));
+		$done = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, array('resolved', 'closed')));
+
+		$this->assertEquals(array(), $open);
+		$this->assertEquals(array(4, 10, 11, 12, 13), $inProgress);
+		$this->assertEquals(array(1), $resolved);
+		$this->assertEquals(array(), $closed);
+		$this->assertEquals(array(), $dropped);
+		$this->assertEquals(array(1), $done);
 	}
 }

@@ -130,7 +130,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testOpenTasksForMilestone() {
 
-		$openTasks = $this->Milestone->openTasksForMilestone(1);
+		$openTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'open');
 
 		// Correct number of tasks
 		$this->assertEqual(2, count($openTasks));
@@ -153,7 +153,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testInProgressTasksForMilestone() {
 
-		$inProgressTasks = $this->Milestone->inProgressTasksForMilestone(1);
+		$inProgressTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'in progress');
 		
 		// Correct number of tasks
 		$this->assertEqual(2, count($inProgressTasks));
@@ -175,7 +175,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testResolvedTasksForMilestone() {
 
-		$resolvedTasks = $this->Milestone->resolvedTasksForMilestone(1);
+		$resolvedTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'resolved');
 
 		// Correct number of tasks
 		$this->assertEqual(1, count($resolvedTasks));
@@ -197,7 +197,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testClosedTasksForMilestone() {
 
-		$closedTasks = $this->Milestone->closedTasksForMilestone(1);
+		$closedTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'closed');
 
 		// Correct number of tasks
 		$this->assertEqual(1, count($closedTasks));
@@ -219,7 +219,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testClosedOrResolvedTasksForMilestone() {
 
-		$closedOrResolvedTasks = $this->Milestone->closedOrResolvedTasksForMilestone(1);
+		$closedOrResolvedTasks = $this->Milestone->tasksOfStatusForMilestone(1, array('closed', 'resolved'));
 
 		// Correct number of tasks
 		$this->assertEqual(2, count($closedOrResolvedTasks));
@@ -236,7 +236,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testDroppedTasksForMilestone() {
 
-		$droppedTasks = $this->Milestone->droppedTasksForMilestone(1);
+		$droppedTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'dropped');
 
 		// Correct number of tasks
 		$this->assertEqual(1, count($droppedTasks));
@@ -258,7 +258,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testBlockerTasksForMilestone() {
 
-		$blockerTasks = $this->Milestone->blockerTasksForMilestone(1);
+		$blockerTasks = $this->Milestone->tasksOfPriorityForMilestone(1, 'blocker');
 
 		// Correct number of tasks
 		$this->assertEqual(2, count($blockerTasks));
@@ -280,7 +280,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testUrgentTasksForMilestone() {
 
-		$urgentTasks = $this->Milestone->urgentTasksForMilestone(1);
+		$urgentTasks = $this->Milestone->tasksOfPriorityForMilestone(1, 'urgent');
 
 		// Correct number of tasks
 		$this->assertEqual(2, count($urgentTasks));
@@ -302,7 +302,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testMajorTasksForMilestone() {
 
-		$majorTasks = $this->Milestone->majorTasksForMilestone(1);
+		$majorTasks = $this->Milestone->tasksOfPriorityForMilestone(1, 'major');
 
 		// Correct number of tasks
 		$this->assertEqual(1, count($majorTasks));
@@ -324,7 +324,7 @@ class MilestoneTest extends CakeTestCase {
  */
 	public function testMinorTasksForMilestone() {
 
-		$minorTasks = $this->Milestone->minorTasksForMilestone(1);
+		$minorTasks = $this->Milestone->tasksOfPriorityForMilestone(1, 'minor');
 
 		// Correct number of tasks
 		$this->assertEqual(2, count($minorTasks));
@@ -370,11 +370,54 @@ class MilestoneTest extends CakeTestCase {
  *
  * @return void
  */
- 	// TODO requires currently logged-in user to be set
-	public function testShiftTasks() {
 
-		// Should do nothing if we pass in null...
+ 	public function testShiftTasksNull() {
 		$this->assertFalse($this->Milestone->shiftTasks(null));
+	}
+
+	public function testShiftTasksNothingToShift() {
+
+		// Load in both milestones' data before moving
+		$milestone5_pre = $this->Milestone->findById(5);
+		$milestone1_pre = $this->Milestone->findById(1);
+
+		$this->assertEqual($milestone5_pre['Tasks'], array(
+			'open'        => array('numTasks' => '0', 'points' => '0'),
+			'in progress' => array('numTasks' => '0', 'points' => '0'),
+			'resolved'    => array('numTasks' => '0', 'points' => '0'),
+			'closed'      => array('numTasks' => '0', 'points' => '0'),
+			'dropped'     => array('numTasks' => '0', 'points' => '0'),
+		));
+		$this->assertEqual($milestone1_pre['Tasks'], array(
+			'open'        => array('numTasks' => '2', 'points' => '0'),
+			'in progress' => array('numTasks' => '2', 'points' => '0'),
+			'resolved'    => array('numTasks' => '1', 'points' => '0'),
+			'closed'      => array('numTasks' => '1', 'points' => '0'),
+			'dropped'     => array('numTasks' => '1', 'points' => '0'),
+		));
+
+		// Shift only the non-resolved/closed tasks and check all is well
+		$this->Milestone->shiftTasks(5, 1, false, array('callbacks' => false));
+
+		$milestone5_post = $this->Milestone->findById(5);
+		$milestone1_post = $this->Milestone->findById(1);
+		$this->assertEqual($milestone5_post['Tasks'], array(
+			'open'        => array('numTasks' => '0', 'points' => '0'),
+			'in progress' => array('numTasks' => '0', 'points' => '0'),
+			'resolved'    => array('numTasks' => '0', 'points' => '0'),
+			'closed'      => array('numTasks' => '0', 'points' => '0'),
+			'dropped'     => array('numTasks' => '0', 'points' => '0'),
+		));
+		$this->assertEqual($milestone1_post['Tasks'], array(
+			'open'        => array('numTasks' => '2', 'points' => '0'),
+			'in progress' => array('numTasks' => '2', 'points' => '0'),
+			'resolved'    => array('numTasks' => '1', 'points' => '0'),
+			'closed'      => array('numTasks' => '1', 'points' => '0'),
+			'dropped'     => array('numTasks' => '1', 'points' => '0'),
+		));
+	}
+
+	public function testShiftTasksOpenOnly() {
 
 		// Load in both milestones' data before moving
 		$milestone1_pre = $this->Milestone->findById(1);
@@ -414,8 +457,28 @@ class MilestoneTest extends CakeTestCase {
 			'closed'      => array('numTasks' => '0', 'points' => '0'),
 			'dropped'     => array('numTasks' => '1', 'points' => '0'),
 		));
+	}
 
-		// Now try shifting all tasks and make sure that also works
+	public function testShiftTasksAll() {
+
+		// Load in both milestones' data before moving
+		$milestone1_pre = $this->Milestone->findById(1);
+		$milestone3_pre = $this->Milestone->findById(3);
+
+		$this->assertEqual($milestone1_pre['Tasks'], array(
+			'open'        => array('numTasks' => '2', 'points' => '0'),
+			'in progress' => array('numTasks' => '2', 'points' => '0'),
+			'resolved'    => array('numTasks' => '1', 'points' => '0'),
+			'closed'      => array('numTasks' => '1', 'points' => '0'),
+			'dropped'     => array('numTasks' => '1', 'points' => '0'),
+		));
+		$this->assertEqual($milestone3_pre['Tasks'], array(
+			'open'        => array('numTasks' => '0', 'points' => '0'),
+			'in progress' => array('numTasks' => '0', 'points' => '0'),
+			'resolved'    => array('numTasks' => '0', 'points' => '0'),
+			'closed'      => array('numTasks' => '0', 'points' => '0'),
+			'dropped'     => array('numTasks' => '0', 'points' => '0'),
+		));
 		$this->Milestone->shiftTasks(1, 3, true, array('callbacks' => false));
 
 		$milestone1_post = $this->Milestone->findById(1);
@@ -435,6 +498,7 @@ class MilestoneTest extends CakeTestCase {
 			'dropped'     => array('numTasks' => '1', 'points' => '0'),
 		));
 	}
+
 
 /**
  * testFetchHistory method

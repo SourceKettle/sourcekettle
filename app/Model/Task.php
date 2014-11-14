@@ -231,6 +231,10 @@ class Task extends AppModel {
 			return false;
 		}
 
+		if (!isset($this->data['Task']['project_id'])) {
+			return false;
+		}
+
 		if (isset($this->data['Task']['time_estimate']) && !is_int($this->data['Task']['time_estimate'])) {
 			$this->data['Task']['time_estimate'] = TimeString::parseTime($this->data['Task']['time_estimate']);
 		}
@@ -264,11 +268,6 @@ class Task extends AppModel {
  	private $__burndownLog = array('milestone' => array(), 'project' => array());
 
 	public function beforeSave($options = array()) {
-
-		// Parse time estimate if necessary
-		if (!$this->beforeValidate($options)) {
-			return false;
-		}
 
 		// Update dependency list
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
@@ -468,6 +467,59 @@ class Task extends AppModel {
 			'No Assigned Task',
 			'Your Tasks' => $myTasks,
 			'Others Tasks' => $othersTasks
+		);
+	}
+
+	public function listTasksOfStatusFor($status = 'open', $relatedClass = 'Milestone', $id = null) {
+
+		return $this->find(
+			'all',
+			array(
+				'fields' => array(
+					'Milestone.id',
+					'Milestone.subject',
+					'Task.*',
+					'TaskPriority.name',
+					'TaskStatus.name',
+					'TaskType.name',
+					'Assignee.email',
+					'Assignee.name',
+					'Project.name',
+				),
+				'conditions' => array(
+					'TaskStatus.name =' => $status,
+					$relatedClass.'.id =' => $id
+				),
+				'order' => 'TaskPriority.level DESC',
+				'recursive' => 0,
+			)
+		);
+
+	}
+
+	public function listTasksOfPriorityFor($priority = 'major', $relatedClass = 'Milestone', $id = null) {
+
+		return $this->find(
+			'all',
+			array(
+				'fields' => array(
+					'Milestone.id',
+					'Milestone.subject',
+					'Task.*',
+					'TaskPriority.name',
+					'TaskStatus.name',
+					'TaskType.name',
+					'Assignee.email',
+					'Assignee.name',
+					'Project.name',
+				),
+				'conditions' => array(
+					'TaskPriority.name =' => $priority,
+					$relatedClass.'.id =' => $id
+				),
+				'order' => 'TaskPriority.level DESC',
+				'recursive' => 0,
+			)
 		);
 	}
 }

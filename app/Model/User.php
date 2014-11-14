@@ -297,33 +297,7 @@ class User extends AppModel {
 	}
 
 	public function tasksOfStatusForUser($userId = null, $status = 'open') {
-		$this->id = $userId;
-
-		if (!$this->exists()) return null;
-
-		$tasks = $this->Collaborator->Project->Task->find(
-			'all',
-			array(
-				'fields' => array(
-					'Milestone.id',
-					'Milestone.subject',
-					'Task.*',
-					'TaskPriority.name',
-					'TaskStatus.name',
-					'TaskType.name',
-					'Assignee.email',
-					'Assignee.name',
-					'Project.name',
-				),
-				'conditions' => array(
-					'TaskStatus.name =' => $status,
-					'Assignee.id =' => $userId
-				),
-				'order' => 'TaskPriority.level DESC',
-				'recursive' => 0,
-			)
-		);
-		return $tasks;
+		return $this->Collaborator->Project->Task->listTasksOfStatusFor($status, 'Assignee', $userId);
 	}
 
 }

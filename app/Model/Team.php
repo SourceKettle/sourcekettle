@@ -63,31 +63,15 @@ class Team extends AppModel {
 
 		$teamMembers = $this->TeamsUser->find('list', array(
 			'conditions' => array('team_id' => $teamId),
+			'fields' => array('user_id'),
 		));
 
-		$tasks = $this->CollaboratingTeam->Project->Task->find(
-			'all',
-			array(
-				'fields' => array(
-					'Milestone.id',
-					'Milestone.subject',
-					'Task.*',
-					'TaskPriority.name',
-					'TaskStatus.name',
-					'TaskType.name',
-					'Assignee.email',
-					'Assignee.name',
-					'Project.name',
-				),
-				'conditions' => array(
-					'TaskStatus.name =' => $status,
-					'Assignee.id =' => $teamMembers
-				),
-				'order' => 'TaskPriority.level DESC',
-				'recursive' => 0,
-			)
-		);
-		return $tasks;
+		// Cannot pass in an array of length 1, cake's ORM breaks...
+		if (count($teamMembers) == 1) {
+			$teamMembers = array_shift($teamMembers);
+		}
+
+		return $this->CollaboratingTeam->Project->Task->listTasksOfStatusFor($status, 'Assignee', $teamMembers);
 	}
 
 }
