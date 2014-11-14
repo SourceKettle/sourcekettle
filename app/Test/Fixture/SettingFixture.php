@@ -13,29 +13,43 @@ class SettingFixture extends CakeTestFixture {
     public $records = array(
         array(
             'id' => 1,
-            'name' => 'sync_required',
+            'name' => 'Status.sync_required',
             'value' => 0,
             'created' => '2012-06-02 20:05:59',
             'modified' => '2012-06-02 20:05:59'
         ),
         array(
             'id' => 3,
-            'name' => 'sysadmin_email',
+            'name' => 'Users.sysadmin_email',
             'value' => 'admin@example.org',
             'created' => '2012-06-02 20:05:59',
             'modified' => '2012-06-02 20:05:59'
         ),
 		array(
 			'id' => 4,
-			'name' => 'global.alias',
+			'name' => 'UserInterface.alias',
 			'value' => 'SourceKettle Test Site',
             'created' => '2012-06-02 20:05:59',
             'modified' => '2012-06-02 20:05:59'
 		),
 		array(
 			'id' => 5,
-			'name' => 'repo.user',
+			'name' => 'SourceRepository.user',
 			'value' => 'nobody',
+            'created' => '2012-06-02 20:05:59',
+            'modified' => '2012-06-02 20:05:59'
+		),
+		array(
+			'id' => 6,
+			'name' => 'Features.task_enabled',
+			'value' => '1',
+            'created' => '2012-06-02 20:05:59',
+            'modified' => '2012-06-02 20:05:59'
+		),
+		array(
+			'id' => 7,
+			'name' => 'FakeSetting.fake',
+			'value' => 'moose',
             'created' => '2012-06-02 20:05:59',
             'modified' => '2012-06-02 20:05:59'
 		),
@@ -44,7 +58,7 @@ class SettingFixture extends CakeTestFixture {
 	public function __construct() {
 		$this->records[] = array(
 			'id' => 2,
-			'name' => 'repo.base',
+			'name' => 'SourceRepository.base',
 			'value' => realpath(__DIR__).'/repositories',
 			'created' => '2012-06-02 20:05:59',
 			'modified' => '2012-06-02 20:05:59'

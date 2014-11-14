@@ -197,7 +197,7 @@ class TeamsControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 		$teams = array_map(function($a) {return $a['Team']['id'];}, $this->vars['teams']);
 		sort($teams);
-		$this->assertEquals(array(1, 2, 3, 4), $teams);
+		$this->assertEquals(array(1, 2, 3, 4, 5), $teams);
 	}
 
 	public function testAdminAddNotLoggedIn() {
@@ -457,11 +457,11 @@ class TeamsControllerTest extends AppControllerTest {
 		$this->_fakeLogin(3);
 		$this->testAction('/api/teams/autocomplete?query=ers');
 		$this->assertAuthorized();
-		$this->assertEquals(array('php_developers [Devs who code in PHP]', 'java_developers [Devs who code in Java]', 'python_developers [Devs who code in Python]', 'perl_developers [Devs who code in Perl]'), $this->vars['data']['teams']);
+		$this->assertEquals(array('php_developers [Devs who code in PHP]', 'java_developers [Devs who code in Java]', 'python_developers [Devs who code in Python]', 'perl_developers [Devs who code in Perl]', 'other_developers [Other devs who code in erlang or something]'), $this->vars['data']['teams']);
 
 		$this->testAction('/api/teams/autocomplete?query=devel');
 		$this->assertAuthorized();
-		$this->assertEquals(array('php_developers [Devs who code in PHP]', 'java_developers [Devs who code in Java]', 'python_developers [Devs who code in Python]', 'perl_developers [Devs who code in Perl]'), $this->vars['data']['teams']);
+		$this->assertEquals(array('php_developers [Devs who code in PHP]', 'java_developers [Devs who code in Java]', 'python_developers [Devs who code in Python]', 'perl_developers [Devs who code in Perl]', 'other_developers [Other devs who code in erlang or something]'), $this->vars['data']['teams']);
 
 
 	}

@@ -764,7 +764,7 @@ class ProjectTestCase extends CakeTestCase {
 	// Rename, but fail because a git repository exists in the new location
 	public function testRenameWithClashingGitRepository() {
 		$sourcekettleConfig = ClassRegistry::init('Setting')->loadConfigSettings();
-		$base = $sourcekettleConfig['repo']['base'];
+		$base = $sourcekettleConfig['SourceRepository']['base']['value'];
 		mkdir("$base/not_at_all_private.git");
 		$before = $this->Project->findById(1);
 		try{

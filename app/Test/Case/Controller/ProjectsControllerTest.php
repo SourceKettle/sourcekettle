@@ -420,8 +420,15 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array('default' => 'Git'),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
@@ -436,8 +443,15 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array('default' => 'Shoes'),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Shoes'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
@@ -452,8 +466,14 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array(),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+				),
+				'SourceRepository' => array(
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));

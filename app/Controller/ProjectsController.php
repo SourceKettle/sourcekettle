@@ -233,8 +233,8 @@ class ProjectsController extends AppProjectController {
 
 		// Flip keys for values, then look up the ID of the default repo type name
 		$defaultRepo = array_flip($repoTypes);
-		if (isset($this->sourcekettle_config['repo']['default'])) {
-			$d = $this->sourcekettle_config['repo']['default'];
+		if (isset($this->sourcekettle_config['SourceRepository']['default']['value'])) {
+			$d = $this->sourcekettle_config['SourceRepository']['default']['value'];
 		} else {
 			$d = 'None';
 		}

@@ -39,7 +39,7 @@ class Setting extends AppModel {
  * Notify the system that the keys need to be sync'd
  */
 	public function syncRequired() {
-		$setting = $this->findByName('sync_required', array('id'));
+		$setting = $this->findByName('Status.sync_required', array('id'));
 		$this->id = $setting['Setting']['id'];
 		$this->set('value', '1');
 		$this->save();

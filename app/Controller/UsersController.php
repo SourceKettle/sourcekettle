@@ -51,7 +51,7 @@ class UsersController extends AppController {
 		$ok = true;
 
 		// Registration is disabled, render a message instead
-		if (!$this->sourcekettle_config['Users']['register_enabled']['value']))) {
+		if (!$this->sourcekettle_config['Users']['register_enabled']['value']) {
 			$this->render('registration_disabled');
 			return;
 		}
@@ -162,14 +162,14 @@ class UsersController extends AppController {
 		
 		// Don't know them...
 		if (empty($user)) {
-			$this->Session->setFlash("A problem occurred when resetting your password - if the problem persists you should contact <a href='mailto:".$this->sourcekettle_config['sysadmin_email']."'>the system administrator</a>.", 'default', array(), 'error');
+			$this->Session->setFlash("A problem occurred when resetting your password - if the problem persists you should contact <a href='mailto:".$this->sourcekettle_config['Users']['sysadmin_email']['value']."'>the system administrator</a>.", 'default', array(), 'error');
 			return $this->redirect('/login');
 		}
 		// Check the user account is internally managed by SourceKettle
 		if (!@$user['User']['is_internal']) {
-			$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->sourcekettle_config['global']['alias'] . " - " .
+			$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->sourcekettle_config['UserInterface']['alias']['value'] . " - " .
 				"unfortunately, we can't help you reset your password. Try talking to " .
-				"<a href='mailto:" . $this->sourcekettle_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
+				"<a href='mailto:" . $this->sourcekettle_config['Users']['sysadmin_email']['value'] . "'>the system administrator</a>.", 'default', array(), 'error');
 			return $this->redirect('/login');
 		}
 	

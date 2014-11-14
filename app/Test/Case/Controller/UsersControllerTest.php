@@ -128,45 +128,30 @@ class UsersControllerTest extends AppControllerTest {
  * @return void
  */
 	public function testRegisterRegistrationDisabled() {
+		$this->Setting->save(array(
+			'name' => 'Users.register_enabled',
+			'value' => false,
+		));
 		$this->testAction('/register', array('method' => 'get', 'return' => 'vars'));
 		$this->assertContains("Registration disabled", $this->view);
 	}
 
 	public function testRegisterNotLoggedIn() {
 
-		// First, enable registration
-		$this->Setting->save(array(
-			'name' => 'register_enabled',
-			'value' => true,
-		));
-
 		// Now make sure we get the registration form
 		$this->testAction('/register', array('method' => 'get', 'return' => 'view'));
-		$this->assertContains("<h1>Register with ".$this->controller->sourcekettle_config['global']['alias']." <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
+		$this->assertContains("<h1>Register with ".$this->controller->sourcekettle_config['UserInterface']['alias']['value']." <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
 	}
 
 	public function testRegisterLoggedIn() {
 		$this->_fakeLogin(2);
 
-		// First, enable registration
-		$this->Setting->save(array(
-			'name' => 'register_enabled',
-			'value' => true,
-		));
-
 		// Now make sure we get the registration form
 		$this->testAction('/register', array('method' => 'get', 'return' => 'vars'));
-		$this->assertContains("<h1>Register with ".$this->controller->sourcekettle_config['global']['alias']." <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
+		$this->assertContains("<h1>Register with ".$this->controller->sourcekettle_config['UserInterface']['alias']['value']." <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
 	}
 
 	private function __testRegister($postData, $expectSuccess = true) {
-
-		// First, enable registration
-		$this->Setting->save(array(
-			'name' => 'register_enabled',
-			'value' => true,
-		));
-
 
 		// Register an account
 		$this->testAction('/register', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
@@ -268,11 +253,6 @@ class UsersControllerTest extends AppControllerTest {
  */
 	public function testActivateNoKey() {
 
-		// First, enable registration
-		$this->Setting->save(array(
-			'name' => 'register_enabled',
-			'value' => true,
-		));
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
@@ -286,11 +266,6 @@ class UsersControllerTest extends AppControllerTest {
 
 	public function testActivateBadKey() {
 
-		// First, enable registration
-		$this->Setting->save(array(
-			'name' => 'register_enabled',
-			'value' => true,
-		));
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
@@ -304,11 +279,6 @@ class UsersControllerTest extends AppControllerTest {
 
 	public function testActivateFailed() {
 
-		// First, enable registration
-		$this->Setting->save(array(
-			'name' => 'register_enabled',
-			'value' => true,
-		));
 		$this->controller->User = $this->getMockForModel('User', array('save'));
 		$this->controller->User
 			->expects($this->once())
@@ -326,12 +296,6 @@ class UsersControllerTest extends AppControllerTest {
 	}
 
 	public function testActivateOK() {
-
-		// First, enable registration
-		$this->Setting->save(array(
-			'name' => 'register_enabled',
-			'value' => true,
-		));
 
 		$this->controller->Session
 			->expects($this->once())
@@ -388,7 +352,7 @@ class UsersControllerTest extends AppControllerTest {
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
-			->with("It looks like you're using an account that is not managed by ".$this->controller->sourcekettle_config['global']['alias']." - unfortunately, we can't help you reset your password. Try talking to <a href='mailto:admin@example.org'>the system administrator</a>.");
+			->with("It looks like you're using an account that is not managed by ".$this->controller->sourcekettle_config['UserInterface']['alias']['value']." - unfortunately, we can't help you reset your password. Try talking to <a href='mailto:admin@example.org'>the system administrator</a>.");
 
 		$postData = array('User' => array(
 			'email' => 'snaitf@example.com',

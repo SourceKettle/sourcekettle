@@ -80,7 +80,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage my SSH keys?</s
 
       <h4>No really, it's been over a day now and I still can't get in - what gives?</h4>
       <p>
-        OK, something's probably broken - contact the <a href='mailto:<?=$sourcekettle_config['sysadmin_email']?>'>system administrator</a> for help.
+        OK, something's probably broken - contact the <a href='mailto:<?=$sourcekettle_config['Users']['sysadmin_email']['value']?>'>system administrator</a> for help.
       </p>
       </div>
 

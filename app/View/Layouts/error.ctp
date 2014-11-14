@@ -17,8 +17,7 @@
 try {
     $sourcekettle_config = Configure::read('sourcekettle'); 
 } catch (Exception $e){
-    $sourcekettle_config = array();
-    $sourcekettle_config['global']['alias'] = 'SourceKettle';
+    $sourcekettle_config = array('UserInterface' => array('alias' => array('value' => 'SourceKettle')));
 }
 
 ?>
@@ -26,7 +25,7 @@ try {
 <html>
 <head>
     <title>
-        <?= h($sourcekettle_config['global']['alias']) ?> - <?= h($title_for_layout) ?>
+        <?= h($sourcekettle_config['UserInterface']['alias']['value']) ?> - <?= h($title_for_layout) ?>
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
@@ -51,7 +50,7 @@ try {
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <?= $this->Html->link($sourcekettle_config['global']['alias'], '/', array('class' => 'brand')); ?>
+                    <?= $this->Html->link($sourcekettle_config['UserInterface']['alias']['value'], '/', array('class' => 'brand')); ?>
 
                     <ul class="nav pull-right">
                     <? if(isset($user_name)){ ?>
