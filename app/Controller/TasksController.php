@@ -390,6 +390,7 @@ class TasksController extends AppProjectController {
 		$collabs[0] = "None";
 		ksort($collabs);
 		$this->set('collaborators', $collabs);
+
 	}
 
 	public function assign($project = null, $public_id = null) {
@@ -615,31 +616,34 @@ class TasksController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 
+		$milestones = $this->Milestone->listMilestoneOptions();
+
+		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
+
+		$availableTasks = $this->Task->find('list', array(
+			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
+			'fields' => array('Task.id', 'Task.subject'),
+		));
+
+		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$assignees[0] = "None";
+		ksort($assignees);
+
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 
 			unset($this->request->data['Task']['project_id']);
 			unset($this->request->data['Task']['owner_id']);
 
+			$this->request->data['Task']['public_id'] = $public_id;
 			if ($this->Flash->u($this->Task->save($this->request->data))) {
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
+			} else {
+				$this->request->data = array_merge($task, $this->request->data);
 			}
 		} else {
 			$this->request->data = $task;
-
-			$milestones = $this->Milestone->listMilestoneOptions();
-
-			$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
-
-			$availableTasks = $this->Task->find('list', array(
-				'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
-				'fields' => array('Task.id', 'Task.subject'),
-			));
-
-			$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
-			$assignees[0] = "None";
-			ksort($assignees);
-
-			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
 	}
 
