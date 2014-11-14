@@ -107,4 +107,24 @@
         );
     }
 
+	// Remove anything that's disabled
+	if (!$sourcekettle_config['Features']['time_enabled']['value']) {
+		unset($options[__('Features')][__('Time')]);
+	}
+
+	if (!$sourcekettle_config['Features']['task_enabled']['value']) {
+		unset($options[__('Features')][__('Tasks')]);
+		unset($options[__('Features')][__('My Tasks')]);
+		unset($options[__('Features')][__('Chart')]);
+		unset($options[__('Features')][__('Milestones')]);
+	}
+
+	if (!$sourcekettle_config['Features']['source_enabled']['value']) {
+		unset($options[__('Features')][__('Source')]);
+	}
+
+	if (!$sourcekettle_config['Features']['attachment_enabled']['value']) {
+		unset($options[__('Features')][__('Attachments')]);
+	}
+
     echo $this->element('Sidebar/generic', array('options' => $options));

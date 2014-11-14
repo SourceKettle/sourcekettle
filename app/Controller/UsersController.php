@@ -51,7 +51,7 @@ class UsersController extends AppController {
 		$ok = true;
 
 		// Registration is disabled, render a message instead
-		if (!$this->Setting->field('value', array('name' => 'register_enabled'))) {
+		if (!$this->sourcekettle_config['Users']['register_enabled']['value']))) {
 			$this->render('registration_disabled');
 			return;
 		}

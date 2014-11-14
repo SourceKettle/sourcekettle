@@ -30,6 +30,13 @@ class AttachmentsController extends AppProjectController{
 
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
+		if (!$this->sourcekettle_config['Features']['attachment_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['attachment_enabled']['source'] == 'Project settings') {
+				throw new ForbiddenException(__('This project does not have attachment uploads enabled. Please contact a project administrator to enable attachment uploads.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow attachment uploads. Please contact a system administrator to enable attachment uploads.'));
+			}
+		}
 		return array(
 			'index'  => 'read',
 			'view'   => 'read',

@@ -401,7 +401,7 @@ class Project extends AppModel {
 		try {
 			$this->Source->init();
 			array_unshift($_types, 'Source');
-		} catch (UnsupportedRepositoryType $e) {
+		} catch (Exception $e) {
 		}
 
 		// Iterate over all of the types of event

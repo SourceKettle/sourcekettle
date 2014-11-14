@@ -18,19 +18,19 @@ class AppSchema extends CakeSchema {
 					$setting = ClassRegistry::init('Setting');
 					$setting->create();
 					$setting->saveMany(array(
-						array('name' => 'register_enabled',           'value' => '1'),
-						array('name' => 'sysadmin_email',             'value' => 'sysadmin@example.com'),
-						array('name' => 'sync_required',              'value' => '0'),
-						array('name' => 'feature_time_enabled',       'value' => '1'),
-						array('name' => 'feature_source_enabled',     'value' => '1'),
-						array('name' => 'feature_task_enabled',       'value' => '1'),
-						array('name' => 'feature_attachment_enabled', 'value' => '0'),
-						array('name' => 'ldap_enabled',               'value' => '0'),
-						array('name' => 'ldap_url',                   'value' => ''),
-						array('name' => 'ldap_bind_dn',               'value' => ''),
-						array('name' => 'ldap_bind_pw',               'value' => ''),
-						array('name' => 'ldap_base_dn',               'value' => ''),
-						array('name' => 'ldap_filter',                'value' => 'mail=%USERNAME%'),
+						array('name' => 'Users.register_enabled',     'value' => '1'),
+						array('name' => 'Users.sysadmin_email',       'value' => 'sysadmin@example.com'),
+						array('name' => 'Status.sync_required',       'value' => '0'),
+						array('name' => 'Feature.time_enabled',       'value' => '1'),
+						array('name' => 'Feature.source_enabled',     'value' => '1'),
+						array('name' => 'Feature.task_enabled',       'value' => '1'),
+						array('name' => 'Feature.attachment_enabled', 'value' => '0'),
+						array('name' => 'Ldap.enabled',               'value' => '0'),
+						array('name' => 'Ldap.url',                   'value' => ''),
+						array('name' => 'Ldap.bind_dn',               'value' => ''),
+						array('name' => 'Ldap.bind_pw',               'value' => ''),
+						array('name' => 'Ldap.base_dn',               'value' => ''),
+						array('name' => 'Ldap.filter',                'value' => 'mail=%USERNAME%'),
 					));
 					break;
 

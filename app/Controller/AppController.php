@@ -107,52 +107,47 @@ class AppController extends Controller {
 			'fields' => array ('username' => 'email', 'password' => 'password')
 		);
 
-		// Is LDAP authentication enabled?
-		if (!isset($this->sourcekettle_config['ldap_enabled'])) {
-			$this->sourcekettle_config['ldap_enabled'] = false;
-		}
-
 		// Default to just form-based authentication
 		$this->Auth->authenticate = array('Form' => $formConfig);
 
-		if ($this->sourcekettle_config['ldap_enabled']) {
+		if ($this->sourcekettle_config['Ldap']['enabled']['value']) {
 			$ldapConfErrors = array();
 
 			// Check for existence of all LDAP config fields
-			if (!isset($this->sourcekettle_config['ldap_url']) || empty($this->sourcekettle_config['ldap_url'])) {
+			if (!isset($this->sourcekettle_config['Ldap']['url']['value']) || empty($this->sourcekettle_config['Ldap']['url']['value'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify an LDAP URL';
 			}
-			if (!isset($this->sourcekettle_config['ldap_bind_dn'])) {
+			if (!isset($this->sourcekettle_config['Ldap']['bind_dn']['value'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify a bind DN, or empty string';
 			}
-			if (!isset($this->sourcekettle_config['ldap_bind_pw'])) {
+			if (!isset($this->sourcekettle_config['Ldap']['bind_pw']['value'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify a bind password, or empty string';
 			}
-			if (!isset($this->sourcekettle_config['ldap_base_dn']) || empty($this->sourcekettle_config['ldap_base_dn'])) {
+			if (!isset($this->sourcekettle_config['Ldap']['base_dn']['value']) || empty($this->sourcekettle_config['Ldap']['base_dn']['value'])) {
 				$ldapConfErrors[] = 'ldap config error: must specify an LDAP base DN';
 			}
 
 			// Make sure all-whitespace string is converted to empty string for binding...
-			if (preg_match('/^\s*$/', $this->sourcekettle_config['ldap_bind_dn'])) {
-				$this->sourcekettle_config['ldap_bind_dn'] = '';
+			if (preg_match('/^\s*$/', $this->sourcekettle_config['Ldap']['bind_dn']['value'])) {
+				$this->sourcekettle_config['Ldap']['bind_dn']['value'] = '';
 			}
-			if (preg_match('/^\s*$/', $this->sourcekettle_config['ldap_bind_pw'])) {
-				$this->sourcekettle_config['ldap_bind_pw'] = '';
+			if (preg_match('/^\s*$/', $this->sourcekettle_config['Ldap']['bind_pw']['value'])) {
+				$this->sourcekettle_config['Ldap']['bind_pw']['value'] = '';
 			}
 
 			// Default: look them up by the 'mail' field
-			if (!isset($this->sourcekettle_config['ldap_filter'])) {
-				$this->sourcekettle_config['ldap_filter'] = '(mail=%USERNAME%)';
+			if (!isset($this->sourcekettle_config['Ldap']['filter']['value'])) {
+				$this->sourcekettle_config['Ldap']['filter']['value'] = '(mail=%USERNAME%)';
 			}
 
 			// Default: use the email address the user typed in
-			if (!isset($this->sourcekettle_config['ldap_email_field'])) {
-				$this->sourcekettle_config['ldap_email_field'] = '__SUPPLIED__';
+			if (!isset($this->sourcekettle_config['Ldap']['email_field']['value'])) {
+				$this->sourcekettle_config['Ldap']['email_field']['value'] = '__SUPPLIED__';
 			}
 
 			// Default: use the given name and surname fields as the name
-			if (!isset($this->sourcekettle_config['ldap_name_field'])) {
-				$this->sourcekettle_config['ldap_name_field'] = 'givenName sn';
+			if (!isset($this->sourcekettle_config['Ldap']['name_field']['value'])) {
+				$this->sourcekettle_config['Ldap']['name_field']['value'] = 'givenName sn';
 			}
 
 			// Report errors, do not enable LDAP
@@ -162,14 +157,14 @@ class AppController extends Controller {
 				}
 			} else {
 				$ldapConfig = array(
-					'ldap_url'          => $this->sourcekettle_config['ldap_url'],
-					'ldap_bind_dn'      => $this->sourcekettle_config['ldap_bind_dn'],
-					'ldap_bind_pw'      => $this->sourcekettle_config['ldap_bind_pw'],
-					'ldap_base_dn'      => $this->sourcekettle_config['ldap_base_dn'],
-					'ldap_filter'       => $this->sourcekettle_config['ldap_filter'],
+					'ldap_url'          => $this->sourcekettle_config['Ldap']['url']['value'],
+					'ldap_bind_dn'      => $this->sourcekettle_config['Ldap']['bind_dn']['value'],
+					'ldap_bind_pw'      => $this->sourcekettle_config['Ldap']['bind_pw']['value'],
+					'ldap_base_dn'      => $this->sourcekettle_config['Ldap']['base_dn']['value'],
+					'ldap_filter'       => $this->sourcekettle_config['Ldap']['filter']['value'],
 					'ldap_to_user'      => array(
-						$this->sourcekettle_config['ldap_email_field'] => 'email',
-						$this->sourcekettle_config['ldap_name_field'] => 'name',
+						$this->sourcekettle_config['Ldap']['email_field']['value'] => 'email',
+						$this->sourcekettle_config['Ldap']['name_field']['value'] => 'name',
 					),
 					// TODO this is an array, we need to make sure we can DB-ify this
 					'all_usernames' => array(
