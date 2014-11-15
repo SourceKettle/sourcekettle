@@ -38,7 +38,7 @@
       }?>
     </div>
     <div class="span6">
-        <h3>Most recent projects</h3>
+        <h3><?=__("Most recent projects")?></h3>
         <div class='row'>
           <?
              $options = array(
@@ -83,7 +83,7 @@
 
 <div class='row'>
     <div class='span10'>
-      <h3>Recent events</h3>
+      <h3><?=__("Recent events")?></h3>
         <? if (!empty($history)){
           ?><div class='alert alert-info'><strong>In progress!</strong> Source code events are not shown here yet.</div><?
           echo $this->element('history', array('context_global' => true, 'events' => $history));

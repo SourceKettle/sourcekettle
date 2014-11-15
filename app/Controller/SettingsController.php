@@ -20,8 +20,11 @@ class SettingsController extends AppController {
 
 	// Regexes for validating LDAP-related fields
 	private static $_regex = array(
-		'ldap_url' => '/^ldap(s)?:\/\/[.a-zA-Z0-9-]+$/',
-		'ldap_dn'  => '/^[a-zA-Z]+=[a-zA-Z]+(,[a-zA-Z]+=[a-zA-Z]+)*$/',
+		'Ldap,url' => '/^ldap(s)?:\/\/[.a-zA-Z0-9-]+$/',
+		'Ldap,base_dn'  => '/^[a-zA-Z]+=[a-zA-Z]+(,[a-zA-Z]+=[a-zA-Z]+)*$/',
+		'Ldap,bind_dn'  => '/^[a-zA-Z]+=[a-zA-Z]+(,[a-zA-Z]+=[a-zA-Z]+)*$/',
+		//'Users,sysadmin_email' => Validation::email,
+		//'Users,email' => Validation::email,
 	);
 
 /**
@@ -30,28 +33,75 @@ class SettingsController extends AppController {
  * @return void
  */
 	public function admin_index() {
-		$this->Setting->recursive = 0;
-		$this->set('register', $this->Setting->field('value', array('name' => 'register_enabled')));
-		$this->set('sysadmin_email', $this->Setting->field('value', array('name' => 'sysadmin_email')));
-		$this->set('repo_location', $this->Setting->field('value', array('name' => 'repo_location')));
+	}
 
-		// Project options
-		$this->set('features', array(
-			'time'			=> $this->Setting->field('value', array('name' => 'feature_time_enabled')),
-			'source'		=> $this->Setting->field('value', array('name' => 'feature_source_enabled')),
-			'task'			=> $this->Setting->field('value', array('name' => 'feature_task_enabled')),
-			'attachment'	=> $this->Setting->field('value', array('name' => 'feature_attachment_enabled'))
-		));
+	public function admin_set() {
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
 
-		// LDAP authentication settings
-		$this->set('ldap', array(
-			'ldap_enabled'	=> $this->Setting->field('value', array('name' => 'ldap_enabled')),
-			'ldap_url'		=> $this->Setting->field('value', array('name' => 'ldap_url')),
-			'ldap_bind_dn'	=> $this->Setting->field('value', array('name' => 'ldap_bind_dn')),
-			'ldap_bind_pw'	=> $this->Setting->field('value', array('name' => 'ldap_bind_pw')),
-			'ldap_base_dn'	=> $this->Setting->field('value', array('name' => 'ldap_base_dn')),
-			'ldap_filter'	=> $this->Setting->field('value', array('name' => 'ldap_filter'))
-		));
+		$code = 200;
+		$message = '';
+
+		foreach ($this->request->data as $name => $value) {
+			$name = preg_replace('/,/', '.', $name);
+			if (strtolower($value) == 'true') {
+				$value = 1;
+			} elseif(strtolower($value) == 'false') {
+				$value = 0;
+			}
+			$this->Setting->id = $this->Setting->field('id', array('name' => $name));
+			if ($this->Setting->exists()) {
+				$this->Setting->set('value', $value);
+				if (!$this->Setting->save()) {
+					$message .= __('Failed to update setting "%s";', $name);
+				}
+			} else {
+				$message .= __('Unknown setting "%s";', $name);
+			}
+		}
+
+		if (empty($message)) {
+			$message = __('Settings updated OK');
+		}
+
+		$this->set('data', array('code' => $code, 'message' => $message));
+		$this->render('/Elements/json');
+	}
+
+	function admin_setLock() {
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+
+		$code = 200;
+		$message = '';
+
+		foreach ($this->request->data as $name => $value) {
+			if (strtolower($value) == 'true') {
+				$value = 1;
+			} else {
+				$value = 0;
+			}
+
+			$name = preg_replace('/,/', '.', $name);
+			$this->Setting->id = $this->Setting->field('id', array('name' => $name));
+			if ($this->Setting->exists()) {
+				$this->Setting->set('locked', $value);
+				if (!$this->Setting->save()) {
+					$message .= __('Failed to update setting "%s";', $name);
+				}
+			} else {
+				$message .= __('Unknown setting "%s";', $name);
+			}
+		}
+
+		if (empty($message)) {
+			$message = __('Settings updated OK');
+		}
+
+		$this->set('data', array('code' => $code, 'message' => $message));
+		$this->render('/Elements/json');
 	}
 
 /**

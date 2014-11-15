@@ -22,7 +22,7 @@ $basedir = realpath(dirname(__FILE__).'/../../');
 if(file_exists("$basedir/Config/homepage.php")){
     include("$basedir/Config/homepage.php");
 } else{?>
-   <h1>Welcome to SourceKettle!</h1>
-   <?= $this->Html->link('Click here', array('controller' => 'login'))?> to get started.
+   <h1><?=__("Welcome to %s!", $sourcekettle_config['UserInterface']['alias']['value'])?></h1>
+   <?= __("%s to get started.", $this->Html->link(__('Click here'), array('controller' => 'login')))?>
 <?}
 

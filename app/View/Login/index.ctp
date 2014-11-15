@@ -19,22 +19,22 @@
     <div class="span6 offset3">
         <?= $this->Form->create('User', array('class' => 'well form-horizontal')) ?>
         <div class="row-fluid">
-            <h1>Login to SourceKettle</h1>
+            <h1><?=__("Login to %s", $sourcekettle_config['UserInterface']['alias']['value'])?></h1>
 			<?php if($sourcekettle_config['Users']['register_enabled']['value']){?>
-            <p>Don't have an account? <?= $this->Html->link('Register here', '/register') ?></p>
+            <p><?=__("Don't have an account?")?> <?= $this->Html->link(__('Register here'), '/register') ?></p>
 			<?php } ?>
 
             <?php
-            echo $this->Bootstrap->input("email", array(
+            echo $this->Bootstrap->input(__("email"), array(
                 "input" => $this->Form->text("email", array('class'=>'span12', 'tabindex'=>'1', 'autofocus' => '')),
             ));
 
-            echo $this->Bootstrap->input("password", array(
+            echo $this->Bootstrap->input(__("password"), array(
                 "input" => $this->Form->password("password", array('class'=>'span12', 'escape'=>false, 'tabindex'=>'2')),
-                "label" => "Password (".$this->Html->link('Forgot?','/users/lost_password').')',
+                "label" => __("Password (%s)", $this->Html->link(__('Forgot?'),'/users/lost_password')),
             ));
 
-            echo $this->Bootstrap->button("Login", array("style" => "primary", "size" => "large", 'class' => 'controls', 'tabindex'=>'3'));
+            echo $this->Bootstrap->button(__("Login"), array("style" => "primary", "size" => "large", 'class' => 'controls', 'tabindex'=>'3'));
             ?>
         </div>
         <?= $this->Form->end() ?>
