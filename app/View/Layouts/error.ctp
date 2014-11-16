@@ -15,11 +15,10 @@
  */
 
 try {
-    $sourcekettle_config = Configure::read('sourcekettle'); 
+    $sourcekettle_config = ClassRegistry::init('Setting')->loadConfigSettings();
 } catch (Exception $e){
     $sourcekettle_config = array('UserInterface' => array('alias' => array('value' => 'SourceKettle')));
 }
-
 ?>
 <!DOCTYPE html>
 <html>
