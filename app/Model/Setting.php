@@ -35,7 +35,7 @@ class Setting extends AppModel {
 	);
 
 	// Helper function to flatten out the settings tree into a flat 'foo.bar.baz' => 'quux' format
-	private function flattenTree($data, $soFar = null, $output = array()) {
+	public static function flattenTree($data, $soFar = null, $output = array()) {
 
 		if (!is_array($data)) {
 			// Convert flags from true/false to 1/0
@@ -50,7 +50,7 @@ class Setting extends AppModel {
 				} else {
 					$newKey = $key;
 				}
-				$this->flattenTree($value, $newKey, &$output);
+				self::flattenTree($value, $newKey, &$output);
 			}
 		}
 
@@ -64,10 +64,10 @@ class Setting extends AppModel {
 			return false;
 		}
 
-		$settings = $this->flattenTree($data['Setting']);
+		$settings = self::flattenTree($data['Setting']);
 
 		// Get defaults and flatten; note that it will also have the 'value', 'locked' etc. on the end...
-		$defaults = $this->flattenTree($this->getDefaultSettings());
+		$defaults = self::flattenTree($this->getDefaultSettings());
 
 		$ok = true;
 
@@ -184,7 +184,7 @@ class Setting extends AppModel {
 		// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
 		$path = explode('.', $name);
 		$current = &$currentSettings;
-
+		
 		// Eat key parts one at a time
 		while(($key = array_shift($path))) {
 
@@ -258,7 +258,6 @@ class Setting extends AppModel {
 				$settings = $this->mergeSetting("Project-specific settings", $settings, $name, $value);
 			}
 		}
-
 		return $settings;
 
 	}

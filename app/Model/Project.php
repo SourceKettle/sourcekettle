@@ -121,6 +121,11 @@ class Project extends AppModel {
 			'foreignKey' => 'project_id',
 			'dependent' => true,
 		),
+		'ProjectSetting' => array(
+			'className' => 'ProjectSetting',
+			'foreignKey' => 'project_id',
+			'dependent' => true,
+		),
 
 		// Has-many-through relationships here...
 

@@ -187,9 +187,6 @@ class AppController extends Controller {
 
 		}
 
-		$this->set('sourcekettle_config', $this->sourcekettle_config);
-		$this->set('sourcekettleVersion', 'v1.5.0');
-
 		// Set up the sourcekettle-specific auth model
 		$this->Auth->userModel = 'User';
 
@@ -246,6 +243,11 @@ class AppController extends Controller {
 
 		// Override any non-locked settings with user/project settings
 		$this->sourcekettle_config = ClassRegistry::init('Setting')->loadConfigSettings($this->Auth->user('id'), $project);
+
+		// Set config and version
+		$this->set('sourcekettle_config', $this->sourcekettle_config);
+		$this->set('sourcekettleVersion', 'v1.5.0');
+
 
 	}
 

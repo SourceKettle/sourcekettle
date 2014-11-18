@@ -42,4 +42,46 @@ class ProjectSetting extends AppModel {
 	public function isValidName($name) {
 		return in_array($name, $this->validNames);
 	}
+
+	public function saveSettingsTree($project, $data) {
+
+		if (!is_numeric($project)) {
+			$project = $this->Project->findByName($project);
+		} else {
+			$project = $this->Project->findById($project);
+		}
+
+		if (empty($project) || !isset($data['ProjectSetting'])) {
+			return false;
+		}
+
+		// Flatten out the settings tree into dot-separated key => value
+		$settings = Setting::flattenTree($data['ProjectSetting']);
+
+		$ok = true;
+
+		// Save each setting in turn...
+		foreach ($settings as $name => $value) {
+
+			// Not a valid setting - skip it
+			if (!$this->isValidName($name)) {
+				continue;
+			}
+
+			// Default data to save
+			$save = array('ProjectSetting' => array('project_id' => $project['Project']['id'], 'name' => $name, 'value' => $value));
+
+			// Find the setting's ID in the database, if present
+			$id = $this->findByNameAndProjectId($name, $project['Project']['id']);
+			if ($id) {
+				$save['ProjectSetting']['id'] = $id['ProjectSetting']['id'];
+			}
+
+			if (!$this->save($save)) {
+				$ok = false;
+			}
+		}
+
+		return $ok;
+	}
 }

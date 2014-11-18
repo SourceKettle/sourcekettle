@@ -18,7 +18,6 @@ $this->Html->script('bootstrap-switch.min', array ('inline' => false));
 $this->Html->script('switches', array ('inline' => false));
 
 $smallText = " <small>Edit Project</small>";
-debug($sourcekettle_config['Features']);
 echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
 
 <div class="row">
@@ -67,7 +66,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
                     <h4><?= __('Time tracking') ?> <small>- <?= __('allow logging of time to projects and tasks') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'time-enabled', 'name' => 'Features,time_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'projectSet')), 'sectionHide' => 'timeSection', 'value' => $sourcekettle_config['Features']['time_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['time_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'time-enabled', 'name' => 'ProjectSetting.Features.time_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'timeSection', 'value' => $sourcekettle_config['Features']['time_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['time_enabled']['locked'])) ?>
                 </td>
             </tr>
             <tr>
@@ -75,7 +74,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
                     <h4><?= __('Source code management') ?> <small>- <?= __('allow creation of a source code repository for a project') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'task-enabled', 'name' => 'Features,task_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'projectSet')), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'task-enabled', 'name' => 'ProjectSetting.Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
                 </td>
             </tr>
             <tr>
@@ -83,7 +82,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
                     <h4><?= __('Task management') ?> <small>- <?= __('allow users to add tasks and milestones to track progress') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'source-enabled', 'name' => 'Features,source_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'projectSet')), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['source_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'source-enabled', 'name' => 'ProjectSetting.Features.source_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['source_enabled']['locked'])) ?>
                 </td>
             </tr>
             <tr>
@@ -91,7 +90,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
                     <h4><?= __('File uploads') ?> <small>- <?= __('allow users to upload files to projects') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'attachment-enabled', 'name' => 'Features,attachment_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'projectSet')), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['attachment_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['attachment_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'attachment-enabled', 'name' => 'ProjectSetting.Features.attachment_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['attachment_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['attachment_enabled']['locked'])) ?>
                 </td>
             </tr>
         </tbody>

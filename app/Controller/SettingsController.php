@@ -90,5 +90,4 @@ class SettingsController extends AppController {
 		$this->set('data', array('code' => $code, 'message' => $message));
 		$this->render('/Elements/json');
 	}
-
 }
