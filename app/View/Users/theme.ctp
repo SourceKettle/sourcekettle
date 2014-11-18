@@ -22,7 +22,7 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
     </div>
     <div class="span6">
         <?= $this->Form->create('User', array('class' => 'well form-horizontal', 'type' => 'post')) ?>
-		<?= $this->element('Setting/themes') ?>
+		<?= $this->element('Setting/themes', array("options" => array())) ?>
         <?= $this->Form->end() ?>
     </div>
     <div class="span4">

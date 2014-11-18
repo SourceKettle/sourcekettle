@@ -74,4 +74,11 @@ class Team extends AppModel {
 		return $this->CollaboratingTeam->Project->Task->listTasksOfStatusFor($status, 'Assignee', $teamMembers);
 	}
 
+	public function isMember($teamId, $userId) {
+		$found = $this->TeamsUser->find('list', array(
+			'conditions' => array('team_id' => $teamId, 'user_id' => $userId),
+		));
+		return !empty($found);
+	}
+
 }

@@ -1,13 +1,14 @@
-<?= $this->Form->create('Settings', array('action'=>$action)) ?>
-	<? if(count($items) == 1) {?>
-    <div class="input-append">
-	<? } else { ?>
-	<div class="input">
+<?= $this->Form->create('Setting', array('action'=>'set')) ?>
+	<? foreach ($items as $item) { ?>
+	<tr>
+		<th><h4><?=h($item['label'])?> <small><?=h($item['description'])?></small></h4></th>
+		<td>
+        <?= $this->Form->text($item['name'], array('id' => $item['name'], 'class' => 'xlarge', "value" => $item['value'])) ?>
+		</td>
+	</tr>
 	<? } ?>
-
-	<? foreach ($items as $name => $value) { ?>
-        <?= $this->Form->text($name, array('id' => 'appendedInputButton', 'class' => 'xlarge', "value" => $value)) ?>
-	<? } ?>
-    <?= $this->Bootstrap->button(__("Change"), array('escape' => false, 'style' => 'primary')) ?>
-    </div>
+	<tr>
+	<td>&nbsp;</td>
+    <td><?= $this->Bootstrap->button(__("Change"), array('escape' => false, 'style' => 'primary')) ?></td>
+	</tr>
 <?= $this->Form->end() ?>

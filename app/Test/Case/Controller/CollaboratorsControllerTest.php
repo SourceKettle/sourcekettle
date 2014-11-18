@@ -34,6 +34,7 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		'app.attachment',
 		'app.source',
 		'app.milestone',
+		'app.milestone_burndown_log',
 		'app.email_confirmation_key',
 		'app.ssh_key',
 		'app.api_key',
@@ -42,6 +43,7 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		'app.group_collaborating_team',
 		'app.team',
 		'app.teams_user',
+		'app.project_burndown_log',
 		'app.project_group',
 		'app.project_groups_project',
 	);

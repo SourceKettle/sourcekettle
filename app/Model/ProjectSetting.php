@@ -31,4 +31,15 @@ class ProjectSetting extends AppModel {
 			'order' => ''
 		)
 	);
+
+	private $validNames = array(
+		'Features.time_enabled',
+		'Features.task_enabled',
+		'Features.source_enabled',
+		'Features.attachment_enabled',
+	);
+
+	public function isValidName($name) {
+		return in_array($name, $this->validNames);
+	}
 }

@@ -193,25 +193,25 @@ class UserTestCase extends CakeTestCase {
 
 	public function testFailToChangeEmailExternal() {
 		// Try a non-sourcekettle-managed user account, should fail
-		$this->User->id = 6;
+		$this->User->id = 23;
 		$user = $this->User->read();
-		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found before change");
+		$this->assertEquals($user['User']['email'], "ldap-user@example.com", "Incorrect email found before change");
 
 		$this->User->saveField('email', 'blah@example.com');
 
         	$user = $this->User->findById(6);
-		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found after change");
+		$this->assertEquals($user['User']['email'], "ldap-user@example.com", "Incorrect email found after change");
 		
 	}
 
 	public function testFailToChangePasswordExternal() {
-		$this->User->id = 6;
+		$this->User->id = 23;
 		$user = $this->User->read();
 		$this->assertEquals($user['User']['password'], "", "Incorrect password found before change");
 
 		$this->User->saveField('password', 'testTESTtest');
 
-        	$user = $this->User->findById(6);
+        	$user = $this->User->findById(23);
 		$this->assertEquals($user['User']['password'], "", "Incorrect password found after change");
 	}
 
@@ -296,7 +296,7 @@ class UserTestCase extends CakeTestCase {
 	}
 
 	public function testFailToDeleteExternal() {
-		$this->User->id = 6;
+		$this->User->id = 23;
 		$ok = $this->User->delete();
 		$this->assertFalse($ok, 'Erroneously deleted external user account');
 	}

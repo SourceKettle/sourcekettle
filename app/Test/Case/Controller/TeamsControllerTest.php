@@ -57,6 +57,12 @@ class TeamsControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testViewInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/teams/view/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testViewNormalUser() {
 		$this->_fakeLogin(3);
 		$this->testAction('/teams/view/1', array('return' => 'view', 'method' => 'get'));
@@ -185,6 +191,12 @@ class TeamsControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testAdminIndexInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/admin/teams', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testAdminIndexNormalUser() {
 		$this->_fakeLogin(3);
 		$this->testAction('/admin/teams', array('return' => 'view', 'method' => 'get'));
@@ -207,6 +219,12 @@ class TeamsControllerTest extends AppControllerTest {
 
 	public function testAdminAddInactiveUser() {
 		$this->_fakeLogin(6);
+		$this->testAction('/admin/teams/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminAddInactiveAdmin() {
+		$this->_fakeLogin(22);
 		$this->testAction('/admin/teams/add', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}

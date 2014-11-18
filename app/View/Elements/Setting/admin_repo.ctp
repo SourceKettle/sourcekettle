@@ -25,27 +25,22 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    <h4><?= __('Repository location') ?> <small>- <?= __('Where the repositories are stored on disk') ?></small></h4>
-                </td>
-                <td>
-					<?= $this->element('Setting/text_fields', array('action'=>'setEmail', 'items' => array(
-						'sysadmin_email' => $sourcekettle_config['SourceRepository']['base']['value'],
-					))) ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <h4><?= __('SSH user') ?> <small>- <?= __('Users will connect using this username and their SSH key') ?></small></h4>
-                </td>
-                <td>
-					<?= $this->element('Setting/text_fields', array('action'=>'setEmail', 'items' => array(
-						'send_email_from' => $sourcekettle_config['SourceRepository']['user']['value'],
-					))) ?>
-                </td>
-            </tr>
-
+			<?= $this->element('Setting/text_fields', array(
+				'items' => array(
+					array(
+						'name' => 'Setting.SourceRepository.base',
+						'label' => __('Repository location'),
+						'description' => __('Where the repositories are stored on disk'),
+						'value' => $sourcekettle_config['SourceRepository']['base']['value'],
+					),
+					array(
+						'name' => 'Setting.SourceRepository.user',
+						'label' => __('SSH user'),
+						'description' => __('Users will connect to their repositories via SSH using this username and their SSH key'),
+						'value' => $sourcekettle_config['SourceRepository']['user']['value'],
+					),
+				),
+			)) ?>
 
         </tbody>
     </table>

@@ -231,7 +231,7 @@ class Task extends AppModel {
 			return false;
 		}
 
-		if (!isset($this->data['Task']['project_id'])) {
+		if (!isset($this->data['Task']['id']) && !isset($this->id) && !isset($this->data['Task']['project_id'])) {
 			return false;
 		}
 
@@ -271,7 +271,7 @@ class Task extends AppModel {
 
 		// Update dependency list
 		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
-			
+
 			foreach ($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
 				if (isset($this->id) && $dependsOn == $this->id) {
 					unset ($this->data['DependsOn']['DependsOn'][$key]);
@@ -307,7 +307,6 @@ class Task extends AppModel {
 			'milestone_id' => $milestone_id, 
 			'project_id' => $project_id, 
 		);
-
 		return true;
 	}
 
@@ -315,7 +314,6 @@ class Task extends AppModel {
  * afterSave function - logs project/milestone burndown chart updates
  */
 	public function afterSave($created, $options = array()) {
-
 		if ($created) {
 			$project_id = $this->__burndownLog[0]['project_id'];
 			$milestone_id = $this->__burndownLog[0]['milestone_id'];
@@ -327,7 +325,6 @@ class Task extends AppModel {
 		$counts = $this->__getBurndownCounts(array("Task.project_id" => $project_id));
 		$counts['project_id'] = $project_id;
 		$counts['timestamp'] = DboSource::expression('NOW()');
-
 		$this->Project->ProjectBurndownLog->save(array(
 			'ProjectBurndownLog' => $counts,
 		));

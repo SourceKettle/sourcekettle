@@ -26,8 +26,19 @@ class UsersController extends AppController {
 	public $uses = array('User', 'Setting');
 
 	public function isAuthorized($user) {
-		// Must be logged in
-		return (isset($user) && !empty($user));
+
+		// Must be logged in and active
+		if (!isset($user) || empty($user) || !$user['is_active']) {
+			return false;
+		}
+
+		// Sysadmins only for admin actions
+		if (preg_match('/^admin_/', $this->action) && !$user['is_admin']) {
+			return false;
+		}
+
+		// Anything else you just need to be logged in for
+		return true;
 	}
 
 	public function beforeFilter() {
@@ -490,16 +501,16 @@ class UsersController extends AppController {
  * Edit the current users theme
  */
 	public function theme() {
-		$this->User->id = $this->Auth->user('id'); //get the current user
+		$model = ClassRegistry::init("UserSetting");
+		$currentTheme = $model->findByNameAndUserId("UserInterface.theme", $this->Auth->user('id'));
 
 		if ($this->request->is('post')) {
-			$this->User->set('theme', (string)$this->request->data['User']['theme']);
-
-			if ($this->User->save()) {
+			// TODO save UserSetting instead
+			if ($model->save(array('UserSetting' => array(
+				'name' => 'UserInterface.theme',
+				'value' => (string)$this->request->data['UserInterface']['theme'])))) {
 
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-				$this->log("[UsersController.theme] user[" . $this->Auth->user('id') . "] changed theme", 'sourcekettle');
-				$this->Session->write('Auth.User.theme', (string)$this->request->data['User']['theme']);
 				return $this->redirect(array('action' => 'theme'));
 			} else {
 				$this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
@@ -510,7 +521,9 @@ class UsersController extends AppController {
 		$this->set('user', $user);
 		$this->User->id = $user['id'];
 		$this->request->data = $this->User->read();
-		$this->request->data['User']['password'] = null; // We need to set the password to null, otherwise it get's changed!
+		unset($this->request->data['User']['password']);
+		// TODO replace with UserSetting lookup
+		$this->request->data['Setting'] = array('UserInterface' => array('theme' => $this->request->data['User']['theme']));
 	}
 
 /**
@@ -604,14 +617,6 @@ class UsersController extends AppController {
 
 	public function admin_promote($userId) {
 
-		// Check we're logged in as an admin
-		$this->User->id = $this->Auth->user('id');
-		$currentUserData = $this->User->read();
-
-		if (!$currentUserData['User']['is_admin']) {
-			return $this->redirect('/');
-		}
-
 		// Check user ID is numeric...
 		$userId = trim($userId);
 		if (!is_numeric($userId)) {
@@ -622,6 +627,12 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) {
 			$this->User->id = $userId;
 			$targetUserData = $this->User->read();
+
+			// Never promote an inactive user account, just in case!
+			if (!$targetUserData['User']['is_active']) {
+				$this->Session->setFlash(__('Account was not promoted as it is inactive'), 'default', array(), 'error');
+				return $this->redirect(array('action' => 'admin_index'));
+			}
 
 			// Now promote the user
 			$targetUserData['User']['is_admin'] = 1;
@@ -644,12 +655,11 @@ class UsersController extends AppController {
 
 	public function admin_demote($userId) {
 
-		// Check we're logged in as an admin
-		$this->User->id = $this->Auth->user('id');
-		$currentUserData = $this->User->read();
-
-		if (!$currentUserData['User']['is_admin']) {
-			return $this->redirect('/');
+		// Check user ID is numeric...
+		$userId = trim($userId);
+		if (!is_numeric($userId)) {
+			$this->Session->setFlash(__('Could not promote user - bad user ID was given'), 'error', array(), '');
+			return $this->redirect(array('action' => 'admin_index'));
 		}
 
 		// Safety net: do not allow a sysadmin to demote themself!

@@ -30,29 +30,31 @@
                     <h4><?= __('Allow Registration') ?> <small>- <?= __('allow new users to create accounts') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'register-enabled', 'name' => 'Users,register_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => true)), 'value' => $sourcekettle_config['Users']['register_enabled']['value'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'register-enabled', 'name' => 'Setting.Users.register_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => true)), 'value' => $sourcekettle_config['Users']['register_enabled']['value'])) ?>
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <h4><?= __('Support email address') ?> <small>- <?= __('users will be told to email this address for tech support') ?></small></h4>
-                </td>
-                <td>
-					<?= $this->element('Setting/text_fields', array('action'=>'setEmail', 'items' => array(
-						'sysadmin_email' => $sourcekettle_config['Users']['sysadmin_email']['value'],
-					))) ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <h4><?= __('Sending email address') ?> <small>- <?= __('emails sent by the system will come from this address') ?></small></h4>
-                </td>
-                <td>
-					<?= $this->element('Setting/text_fields', array('action'=>'setEmail', 'items' => array(
-						'send_email_from' => $sourcekettle_config['Users']['send_email_from']['value'],
-					))) ?>
-                </td>
-            </tr>
+			<?= $this->element('Setting/text_fields', array(
+				'items' => array(
+					array(
+						'name' => 'Setting.Users.sysadmin_email',
+						'label' => __('Support email address'),
+						'description' => __('Users will be told to email this address for tech support'),
+						'value' => $sourcekettle_config['Users']['sysadmin_email']['value'],
+					),
+					array(
+						'name' => 'Setting.Users.send_email_from',
+						'label' => __('Sending email address'),
+						'description' => __('Emails sent by the system will come from this address'),
+						'value' => $sourcekettle_config['Users']['send_email_from']['value'],
+					),
+					array(
+						'name' => 'Setting.UserInterface.alias',
+						'label' => __('System alias'),
+						'description' => __("Change the system name, if you prefer not to call it 'SourceKettle'"),
+						'value' => $sourcekettle_config['UserInterface']['alias']['value'],
+					),
+				),
+			)) ?>
 
 
         </tbody>

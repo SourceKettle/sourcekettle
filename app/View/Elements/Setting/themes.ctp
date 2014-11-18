@@ -17,5 +17,5 @@ foreach ($this->TwitterBootswatch->getThemes() as $a => $theme) {
     );
 
 } ?>
-<?= $this->Bootstrap->radio("theme", array("options" => $options)) ?>
+<?= $this->Bootstrap->radio("Setting.UserInterface.theme", array("label" => false, "options" => $options)) ?>
 <?= $this->Bootstrap->button("Update", array("style" => "primary", "size" => "large", 'class' => 'controls')) ?>

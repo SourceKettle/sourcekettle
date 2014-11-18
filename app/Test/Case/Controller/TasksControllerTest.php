@@ -394,6 +394,28 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertEquals(1, $task['Task']['assignee_id']);
 	}
 
+	public function testAssignTaskNotCollaborator() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Assignee' => array(
+				'id' => 3
+			)
+		);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("The assignee could not be updated. The selected user is not a collaborator!"));
+
+		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		// We should be redirected to the task page
+		$this->assertRedirect('/project/public/tasks/view/1');
+
+		$task = $this->controller->Task->find('first', array('conditions' => array('id' => 3), 'recursive' => -1));
+		$this->assertNotEquals(3, $task['Task']['assignee_id']);
+	}
+
 	// Comments
 	public function testCommentNotLoggedIn() {
 		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'get'));
@@ -460,6 +482,15 @@ class TasksControllerTest extends AppControllerTest {
 	public function testUpdateCommentGetRedirect() {
 		$this->_fakeLogin(2);
 		$this->testAction('/project/public/tasks/updateComment/2', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+
+		// We should be redirected to the task page
+		$this->assertRedirect('/project/public/tasks/view/2');
+	}
+
+	public function testUpdateCommentNoDataRedirect() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/tasks/updateComment/2', array('return' => 'view', 'method' => 'post'));
 		$this->assertAuthorized();
 
 		// We should be redirected to the task page
@@ -727,5 +758,59 @@ class TasksControllerTest extends AppControllerTest {
 		$returned = json_decode($this->view, true);
 		$this->assertEquals($returned, array('error' => '500', 'message' => __('Task update failed')));
 		
+	}
+
+	public function testPersonalKanbanNotLoggedIn() {
+		
+		$this->testAction('/kanban', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+		
+	}
+
+	public function testPersonalKanban() {
+		
+		$this->_fakeLogin(2);
+
+		$this->testAction('/kanban', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		
+		$backlog = array_map(function($a){return $a['Task']['id'];}, $this->vars['backlog']);
+		$this->assertEquals(array(), $backlog);
+
+		$inProgress = array_map(function($a){return $a['Task']['id'];}, $this->vars['inProgress']);
+		$this->assertEquals(array(4, 10, 11, 12, 13), $inProgress);
+
+		$completed = array_map(function($a){return $a['Task']['id'];}, $this->vars['completed']);
+		$this->assertEquals(array(1), $completed);
+	}
+
+	public function testTeamKanbanNotLoggedIn() {
+		
+		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+		
+	}
+
+	public function testTeamKanbanNotTeamMember() {
+		$this->_fakeLogin(2);
+		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testTeamKanban() {
+		
+		$this->_fakeLogin(14);
+
+		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		
+		$backlog = array_map(function($a){return $a['Task']['id'];}, $this->vars['backlog']);
+		$this->assertEquals(array(5, 2), $backlog);
+
+		$inProgress = array_map(function($a){return $a['Task']['id'];}, $this->vars['inProgress']);
+		$this->assertEquals(array(6, 3), $inProgress);
+
+		$completed = array_map(function($a){return $a['Task']['id'];}, $this->vars['completed']);
+		$this->assertEquals(array(8, 7), $completed);
 	}
 }

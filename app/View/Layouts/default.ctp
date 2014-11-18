@@ -24,7 +24,8 @@
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
     <?= $this->Html->charset('UTF-8') . "\n" ?>
     <?= $this->Html->css('bootstrap.min') ?>
-    <?= ($current_user['theme'] != 'default') ? $this->TwitterBootswatch->cssForTheme($current_user['theme']) : '' ?>
+	<? //=$this->Theme->css() ?>
+    <?// =($current_user['theme'] != 'default') ? $this->TwitterBootswatch->cssForTheme($current_user['theme']) : '' ?>
     <?= $this->Html->css('layout'); ?>
     <?= $this->Html->css('bootstrap-responsive.min') ?>
     <?= $this->fetch ('css') ?>

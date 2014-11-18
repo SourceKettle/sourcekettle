@@ -210,8 +210,8 @@ class AppController extends Controller {
 		$this->User = ClassRegistry::init('User');
 		if ($this->Auth->loggedIn()) {
 			$userId = $this->Auth->user('id');
-			$current_user = $this->User->findById($userId);
 
+			$current_user = $this->User->findById($userId);
 			$this->set('current_user', $current_user['User']);
 
 			// Pretty much nicked from http://bakery.cakephp.org/articles/alkemann/2008/10/21/logablebehavior
@@ -221,8 +221,6 @@ class AppController extends Controller {
 				}
 			}
 
-			// Override any non-locked settings with user preferences
-			$this->sourcekettle_config = ClassRegistry::init('UserSetting')->loadUserSettings($this->sourcekettle_config, $userId);
 
 		} else {
 			$this->set('current_user', null);
@@ -238,6 +236,17 @@ class AppController extends Controller {
 			// TODO this needs tidying up
 			$this->{$this->modelClass}->_is_api = true;
 		}
+
+		// Re-load the settings, now optionally with user and project settings
+		if (isset($this->params->params['project'])) {
+			$project = $this->params->params['project'];
+		} else {
+			$project = null;
+		}
+
+		// Override any non-locked settings with user/project settings
+		$this->sourcekettle_config = ClassRegistry::init('Setting')->loadConfigSettings($this->Auth->user('id'), $project);
+
 	}
 
 	public function appBlackhole($type) {

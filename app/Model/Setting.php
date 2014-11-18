@@ -34,15 +34,78 @@ class Setting extends AppModel {
 		// NB values may be empty.
 	);
 
+	// Helper function to flatten out the settings tree into a flat 'foo.bar.baz' => 'quux' format
+	private function flattenTree($data, $soFar = null, $output = array()) {
+
+		if (!is_array($data)) {
+			// Convert flags from true/false to 1/0
+			if (preg_match('/[_.]enabled$/', $soFar)) {
+				$data = ($data && strtolower($data) != 'false') ? 1 : 0;
+			}
+			$output[$soFar] = $data;
+		} else {
+			foreach($data as $key => $value) {
+				if($soFar) {
+					$newKey = "$soFar.$key";
+				} else {
+					$newKey = $key;
+				}
+				$this->flattenTree($value, $newKey, &$output);
+			}
+		}
+
+		return $output;
+	}
+
+	public function saveSettingsTree($data) {
+
+		// Flatten out the settings tree into dot-separated key => value
+		if (!isset($data['Setting'])) {
+			return false;
+		}
+
+		$settings = $this->flattenTree($data['Setting']);
+
+		// Get defaults and flatten; note that it will also have the 'value', 'locked' etc. on the end...
+		$defaults = $this->flattenTree($this->getDefaultSettings());
+
+		$ok = true;
+
+		// Save each setting in turn...
+		foreach ($settings as $name => $value) {
+
+			// Default data to save
+			$save = array('Setting' => array('name' => $name, 'value' => $value));
+
+			// Not a valid setting (not in defaults) - skip it
+			if (!isset($defaults["$name.value"])) {
+				continue;
+			}
+
+			// Find the setting's ID in the database, if present
+			$id = $this->findByName($name);
+			if ($id) {
+				$save['Setting']['id'] = $id['Setting']['id'];
+
+			// If it's not in the DB, we'll need to provide a 'locked' status; use the default...
+			} else {
+				$save['Setting']['locked'] = $defaults["$name.locked"];
+			}
+
+			if (!$this->save($save)) {
+				$ok = false;
+			}
+		}
+
+		return $ok;
+	}
+
 /**
  * syncRequired function.
  * Notify the system that the keys need to be sync'd
  */
 	public function syncRequired() {
-		$setting = $this->findByName('Status.sync_required', array('id'));
-		$this->id = $setting['Setting']['id'];
-		$this->set('value', '1');
-		$this->save();
+		return $this->save(array('Setting' => array('Status' => array('sync_required' => true))));
 	}
 
 	// Hard coded default settings, for when we don't have anything in the database
@@ -114,11 +177,37 @@ class Setting extends AppModel {
 		);
 	}
 
-/**
- * Merges any settings from our config files with settings from the database,
- * which take priority.
- */
-	public function loadConfigSettings() {
+
+	// Given an array of settings, a dotted-path name and a value, merge the value into the settings tree
+	private function mergeSetting($source, $currentSettings, $name, $value, $locked = false) {
+
+		// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
+		$path = explode('.', $name);
+		$current = &$currentSettings;
+
+		// Eat key parts one at a time
+		while(($key = array_shift($path))) {
+
+			// Not a valid setting - skip it
+			if(!isset($current[$key])) {
+				continue;
+
+			// If we're on the last key part, set the value if it's overridable
+			} elseif (empty($path) && !$current[$key]['locked']) {
+				if (preg_match('/_enabled$/', $key)) {
+					$value = (boolean) $value;
+				}
+				$current[$key] = array('value' => $value, 'locked' => $locked, 'source' => $source);
+			}
+
+			// Keep track of progress through the settings array
+			$current = &$current[$key];
+		}
+
+		return $currentSettings;
+	}
+
+	public function loadConfigSettings($userId = null, $project = null) {
 
 		// Start with the defaults - this also provides a complete list of all settings that are valid
 		$settings = $this->getDefaultSettings();
@@ -129,30 +218,48 @@ class Setting extends AppModel {
 			$name = $dbSetting['Setting']['name'];
 			$value = $dbSetting['Setting']['value'];
 			$locked = $dbSetting['Setting']['locked'];
+			
+			$settings = $this->mergeSetting("System settings", $settings, $name, $value, $locked);
+		}
 
-			// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
-			$path = explode('.', $name);
-			$current = &$settings;
-
-			// Eat key parts one at a time
-			while(($key = array_shift($path))) {
-
-				// Not a valid setting - skip it
-				if(!isset($current[$key])) {
-					continue 2;
-
-				// If we're on the last key part, set the value if it's overridable
-				} elseif (empty($path) && !$current[$key]['locked']) {
-					if (preg_match('/_enabled$/', $key)) {
-						$value = (boolean) $value;
-					}
-					$current[$key] = array('value' => $value, 'locked' => $locked, 'source' => 'System settings');
+		// Now, find any overridden settings form the user's choices
+		if ($userId) {
+			$model = ClassRegistry::init('UserSetting');
+			$userSettings = $model->find('all', array('conditions' => array('user_id' => $userId), 'fields' => array('UserSetting.name', 'UserSetting.value')));
+			foreach ($userSettings as $dbSetting) {
+				$name = $dbSetting['UserSetting']['name'];
+				$value = $dbSetting['UserSetting']['value'];
+				
+				if (!$model->isValidName($name)){
+					continue;
 				}
-
-				// Keep track of progress through the settings array
-				$current = &$current[$key];
+				$settings = $this->mergeSetting("User preferences", $settings, $name, $value);
 			}
 		}
+
+		// Load any project settings - a bit messy...
+		if ($project) {
+			if (!is_numeric($project)) {
+				$project = ClassRegistry::init('Project')->findByName($project);
+				if (empty($project)) {
+					return $settings;
+				}
+				$project = $project['Project']['id'];
+			}
+			$model = ClassRegistry::init('ProjectSetting');
+			$projectSettings = $model->find('all', array('conditions' => array('project_id' => $project), 'fields' => array('ProjectSetting.name', 'ProjectSetting.value')));
+			foreach ($projectSettings as $dbSetting) {
+				$name = $dbSetting['ProjectSetting']['name'];
+				$value = $dbSetting['ProjectSetting']['value'];
+
+				if (!$model->isValidName($name)){
+					continue;
+				}
+				$settings = $this->mergeSetting("Project-specific settings", $settings, $name, $value);
+			}
+		}
+
 		return $settings;
+
 	}
 }

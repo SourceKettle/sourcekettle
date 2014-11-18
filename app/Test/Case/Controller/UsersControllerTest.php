@@ -15,26 +15,36 @@ class UsersControllerTest extends AppControllerTest {
  */
 	public $fixtures = array(
 		'core.cake_session',
-		'app.user',
-		'app.collaborator',
+		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
+		'app.project_history',
 		'app.repo_type',
+		'app.collaborator',
+		'app.user',
 		'app.task',
 		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
 		'app.task_status',
 		'app.task_priority',
-		'app.milestone',
-		'app.task_comment',
 		'app.time',
-		'app.task_dependency',
-		'app.source',
-		'app.project_history',
 		'app.attachment',
+		'app.source',
+		'app.milestone',
 		'app.email_confirmation_key',
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
-		'app.setting'
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	public function setUp() {
@@ -54,6 +64,12 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testEditSettingsFormInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testEditSettingsFormInternal() {
 		$this->_fakeLogin(1);
 		$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
@@ -64,12 +80,42 @@ class UsersControllerTest extends AppControllerTest {
 	}
 
 	public function testEditSettingsFormExternal() {
-		$this->_fakeLogin(6);
+		$this->_fakeLogin(23);
 		$this->testAction('/account/details', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 		$this->assertRegexp('|<form action=".*'.Router::url('/account/details').'"|', $this->view);
-		$this->assertRegexp('|<input name=.*"data\[User\]\[name\]".*value="Sir Not-Appearing-In-This-Film"|', $this->view);
-		$this->assertNotRegexp('|<input name=.*"data\[User\]\[email\]".*value="snaitf@example.com"|', $this->view);
+		$this->assertRegexp('|<input name=.*"data\[User\]\[name\]".*value="An external account"|', $this->view);
+		$this->assertNotRegexp('|<input name=.*"data\[User\]\[email\]".*value="ldap-user@example.com"|', $this->view);
+	}
+
+	public function testEditSettingsFail() {
+		$this->_fakeLogin(1);
+		$postData = array('User' => array(
+			'name' => 'Mr Flibble',
+			'email' => 'flibble@example.com',
+		));
+
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
+
+		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+
+		$retrieved = $this->User->find('first', array(
+			'conditions' => array('id' => 1),
+			'fields' => array('name', 'email'),
+			'recursive' => -1,
+		));
+
+		$this->assertEquals($postData, $retrieved);
 	}
 
 	public function testEditSettingsInternal() {
@@ -97,7 +143,7 @@ class UsersControllerTest extends AppControllerTest {
 	}
 
 	public function testEditSettingsExternal() {
-		$this->_fakeLogin(6);
+		$this->_fakeLogin(23);
 		$postData = array('User' => array(
 			'name' => 'Mr Flibble',
 			'email' => 'flibble@example.com',
@@ -112,9 +158,9 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// Check that the email address was not updated
-		$postData['User']['email'] = 'snaitf@example.com';
+		$postData['User']['email'] = 'ldap-user@example.com';
 		$retrieved = $this->User->find('first', array(
-			'conditions' => array('id' => 6),
+			'conditions' => array('id' => 23),
 			'fields' => array('name', 'email'),
 			'recursive' => -1,
 		));
@@ -694,36 +740,179 @@ class UsersControllerTest extends AppControllerTest {
 	public function testAdminDemote() {
 	}
 
-/**
- * testApiRegister method
- *
- * @return void
- */
-	public function testApiRegister() {
+	private function __testChangeAdminLevel($loginAs, $userId, $setAdmin, $resultAdmin) {
+		$this->_fakeLogin($loginAs);
+		$action = ($setAdmin? 'promote' : 'demote');
+		$ret = $this->testAction("/admin/users/$action/$userId", array('method' => 'post', 'return' => 'view'));
+		$this->assertAuthorized();
+		$user = $this->controller->User->findById($userId);
+		$this->assertEquals($resultAdmin, $user['User']['is_admin']);
+		$this->assertRedirect('/admin/users');
 	}
 
-/**
- * testApiView method
- *
- * @return void
- */
-	public function testApiView() {
+	public function testAdminPromoteNotLoggedIn () {
+		$ret = $this->testAction('/admin/users/promote/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
 	}
 
-/**
- * testApiAll method
- *
- * @return void
- */
-	public function testApiAll() {
+	public function testAdminPromoteNotSystemAdmin () {
+		$this->_fakeLogin(10);
+		$ret = $this->testAction('/admin/users/promote/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
 	}
 
-/**
- * testApiAutocomplete method
- *
- * @return void
- */
-	public function testApiAutocomplete() {
+	public function testAdminPromoteInactiveUser () {
+		$this->_fakeLogin(6);
+		$ret = $this->testAction('/admin/users/promote/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminPromoteInactiveAdmin () {
+		$this->_fakeLogin(22);
+		$ret = $this->testAction('/admin/users/promote/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminPromoteAlreadyAdmin () {
+		$this->__testChangeAdminLevel(5, 9, true, true);
+	}
+
+	public function testAdminPromoteSelfAlreadyAdmin () {
+		$this->__testChangeAdminLevel(5, 5, true, true);
+	}
+
+	public function testAdminPromoteUserToAdmin () {
+		$this->__testChangeAdminLevel(5, 1, true, true);
+	}
+
+	public function testAdminPromoteInactiveUserToAdmin () {
+		$this->__testChangeAdminLevel(5, 6, true, false);
+	}
+
+	public function testAdminDemoteNotLoggedIn () {
+		$ret = $this->testAction('/admin/users/demote/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminDemoteNotSystemAdmin () {
+		$this->_fakeLogin(10);
+		$ret = $this->testAction('/admin/users/demote/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminDemoteInactiveUser () {
+		$this->_fakeLogin(6);
+		$ret = $this->testAction('/admin/users/demote/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminDemoteInactiveAdmin () {
+		$this->_fakeLogin(22);
+		$ret = $this->testAction('/admin/users/demote/1', array('method' => 'post', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminDemoteAlreadyNotAdmin () {
+		$this->__testChangeAdminLevel(5, 1, false, false);
+	}
+
+	public function testAdminDemoteSelfFail () {
+		$this->__testChangeAdminLevel(5, 5, false, true);
+	}
+
+	public function testAdminDemoteAdminToUser () {
+		$this->__testChangeAdminLevel(5, 9, false, false);
+	}
+
+	// Note that we have an invalid test fixture to test whether 'inactive admins' have access to things
+	// We will happily demote an inactive admin, but NOT promote an inactive user to admin.
+	public function testAdminDemoteInactiveAdminToUser () {
+		$this->__testChangeAdminLevel(5, 22, false, false);
+	}
+
+	public function testApiAutocompleteNotLoggedIn() {
+		$this->testAction('/api/users/autocomplete');
+		$this->assertNotAuthorized();
+	}
+
+	public function testApiAutocompleteNormalUser() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/users/autocomplete');
+		$this->assertAuthorized();
+	}
+
+	public function testApiAutocompleteSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/api/users/autocomplete');
+		$this->assertAuthorized();
+	}
+
+	public function testApiAutocompleteTwoCharsAndBelow() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/users/autocomplete?query=a');
+
+		$this->assertAuthorized();
+		$this->assertEquals(array(
+			'A Deletable User [deletable@example.com]',
+			'An only-admin [only-admin@example.com]',
+			'An admin with no projects [admin-no-projects@example.com]',
+			'Another user [another-user@example.com]',
+			'A non-confirmed user [non-confirmed@example.com]',
+			'A user [user-@example.com]',
+			'A PHP developer [php-dev@example.com]',
+			'A Java developer [java-dev@example.com]',
+			'A Python developer [python-dev@example.com]',
+			'A PHP and Python developer [php-and-python-dev@example.com]',
+			'A PHP and Java developer [php-and-java-dev@example.com]',
+			'A Python and Java developer [python-and-java-dev@example.com]',
+			'A PHP, Python and Java developer [php-python-and-java-dev@example.com]',
+			'A Perl developer [perl-dev@example.com]',
+			'Another Perl developer [another-perl-dev@example.com]',
+			'An inactive admin user [inactive-admin@example.com]',
+			'An external account [ldap-user@example.com]',
+		), $this->vars['data']['users']);
+
+		$this->testAction('/api/users/autocomplete?query=an');
+		$this->assertAuthorized();
+		$this->assertEquals(array(
+			'An only-admin [only-admin@example.com]',
+			'An admin with no projects [admin-no-projects@example.com]',
+			'Another user [another-user@example.com]',
+			'Another Perl developer [another-perl-dev@example.com]',
+			'An inactive admin user [inactive-admin@example.com]',
+			'An external account [ldap-user@example.com]',
+		), $this->vars['data']['users']);
+
+		$this->testAction('/api/users/autocomplete?query=er');
+		$this->assertAuthorized();
+		$this->assertEquals(array(), $this->vars['data']['users']);
+	}
+
+	public function testApiAutocompleteThreeCharsAndAbove() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/users/autocomplete?query=pyt');
+		$this->assertAuthorized();
+		$this->assertEquals(array(
+			'A Python developer [python-dev@example.com]',
+			'A PHP and Python developer [php-and-python-dev@example.com]',
+			'A Python and Java developer [python-and-java-dev@example.com]',
+			'A PHP, Python and Java developer [php-python-and-java-dev@example.com]',
+		), $this->vars['data']['users']);
+
+		$this->testAction('/api/users/autocomplete?query=devel');
+		$this->assertAuthorized();
+		$this->assertEquals(array(
+			'A PHP developer [php-dev@example.com]',
+			'A Java developer [java-dev@example.com]',
+			'A Python developer [python-dev@example.com]',
+			'A PHP and Python developer [php-and-python-dev@example.com]',
+			'A PHP and Java developer [php-and-java-dev@example.com]',
+			'A Python and Java developer [python-and-java-dev@example.com]',
+			'A PHP, Python and Java developer [php-python-and-java-dev@example.com]',
+			'A Perl developer [perl-dev@example.com]',
+			'Another Perl developer [another-perl-dev@example.com]',
+		), $this->vars['data']['users']);
+
 	}
 
 }

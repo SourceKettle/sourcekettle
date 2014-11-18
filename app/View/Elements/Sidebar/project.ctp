@@ -114,7 +114,7 @@
 
 	if (!$sourcekettle_config['Features']['task_enabled']['value']) {
 		unset($options[__('Features')][__('Tasks')]);
-		unset($options[__('Features')][__('My Tasks')]);
+		unset($options[__('Features')][__('My tasks')]);
 		unset($options[__('Features')][__('Chart')]);
 		unset($options[__('Features')][__('Milestones')]);
 	}
