@@ -503,13 +503,19 @@ class UsersController extends AppController {
 	public function theme() {
 		$model = ClassRegistry::init("UserSetting");
 		$currentTheme = $model->findByNameAndUserId("UserInterface.theme", $this->Auth->user('id'));
-
 		if ($this->request->is('post')) {
-			// TODO save UserSetting instead
-			if ($model->save(array('UserSetting' => array(
-				'name' => 'UserInterface.theme',
-				'value' => (string)$this->request->data['UserInterface']['theme'])))) {
 
+			$save = array('UserSetting' => array(
+				'user_id' => $this->Auth->user('id'),
+				'name' => 'UserInterface.theme',
+				'value' => (string)$this->request->data['Setting']['UserInterface']['theme']
+			));
+
+			if (!empty($currentTheme)) {
+				$save['UserSetting']['id'] = $currentTheme['UserSetting']['id'];
+			}
+
+			if ($model->save($save)) {
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
 				return $this->redirect(array('action' => 'theme'));
 			} else {
@@ -517,13 +523,14 @@ class UsersController extends AppController {
 			}
 		}
 
-		$user = $this->Auth->user();
-		$this->set('user', $user);
-		$this->User->id = $user['id'];
-		$this->request->data = $this->User->read();
-		unset($this->request->data['User']['password']);
-		// TODO replace with UserSetting lookup
-		$this->request->data['Setting'] = array('UserInterface' => array('theme' => $this->request->data['User']['theme']));
+		if (!empty($currentTheme)) {
+			$currentTheme = $currentTheme['UserSetting']['value'];
+		} else {
+			$currentTheme = 'default';
+		}
+
+		$this->request->data['Setting'] = array('UserInterface' => array('theme' => $currentTheme));
+		$this->set('username', $this->Auth->user('name'));
 	}
 
 /**
@@ -732,14 +739,14 @@ class UsersController extends AppController {
 			$this->Email->delivery = 'debug';
 		}
 		$User = $this->User->read(null,$id);
-		$Addr = $this->Setting->field('value', array('name' => 'sysadmin_email'));
+		$Addr = $this->sourcekettle_config['Users']['send_email_from']['value'];
 		$Key	= $this->User->EmailConfirmationKey->field('key', array('user_id' => $id));
 
 		$this->Email->to		= $User['User']['email'];
 		$this->Email->bcc		= array('secret@example.com');
-		$this->Email->subject	= 'Welcome to SourceKettle - Account activation';
+		$this->Email->subject	= __('Welcome to %s - Account activation', $this->sourcekettle_config['UserInterface']['alias']['value']);
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
+		$this->Email->from		= __('%s Admin <%s>', $this->sourcekettle_config['UserInterface']['alias']['value'], $Addr);
 		$this->Email->template	= 'email_activation';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
@@ -767,7 +774,7 @@ class UsersController extends AppController {
 		}
 		$User	= $this->User->read(null, $userId);
 		$Key	= $this->User->LostPasswordKey->read(null, $keyId);
-		$Addr	= $this->Setting->field('value', array('name' => 'sysadmin_email'));
+		$Addr = $this->sourcekettle_config['Users']['send_email_from']['value'];
 
 		// Couldn't find the user or the key for some reason, FAILURE.
 		if (!$User || !$Key) {
@@ -776,9 +783,9 @@ class UsersController extends AppController {
 		}
 
 		$this->Email->to		= $User['User']['email'];
-		$this->Email->subject	= 'SourceKettle - Forgotten Password';
+		$this->Email->subject	= __('%s - Forgotten Password', $this->sourcekettle_config['UserInterface']['alias']['value']);
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
+		$this->Email->from		= __('%s Admin <%s>', $this->sourcekettle_config['UserInterface']['alias']['value'], $Addr);
 		$this->Email->template	= 'email_forgotten_password';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
@@ -809,13 +816,12 @@ class UsersController extends AppController {
 		}
 		$User	= $this->User->read(null, $userId);
 		$Key	= $this->User->LostPasswordKey->read(null, $keyId);
-		$Addr	= $this->Setting->field('value', array('name' => 'sysadmin_email'));
+		$Addr = $this->sourcekettle_config['Users']['send_email_from']['value'];
 
 		$this->Email->to		= $User['User']['email'];
-		//$this->Email->bcc		= array('secret@example.com');
-		$this->Email->subject	= 'Welcome to SourceKettle - Suprise!';
+		$this->Email->subject	= __('Welcome to %s - Suprise!', $this->sourcekettle_config['UserInterface']['alias']['value']);
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
+		$this->Email->from		= __('%s Admin <%s>', $this->sourcekettle_config['UserInterface']['alias']['value'], $Addr);
 		$this->Email->template	= 'email_admin_create';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail

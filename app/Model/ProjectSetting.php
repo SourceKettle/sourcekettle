@@ -37,6 +37,7 @@ class ProjectSetting extends AppModel {
 		'Features.task_enabled',
 		'Features.source_enabled',
 		'Features.attachment_enabled',
+		'UserInterface.terminology',
 	);
 
 	public function isValidName($name) {

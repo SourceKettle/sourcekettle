@@ -71,7 +71,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
             </tr>
             <tr>
                 <td>
-                    <h4><?= __('Source code management') ?> <small>- <?= __('allow creation of a source code repository for a project') ?></small></h4>
+                    <h4><?= __('Task management') ?> <small>- <?= __('allow users to add tasks and milestones to track progress') ?></small></h4>
                 </td>
                 <td>
                     <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'task-enabled', 'name' => 'ProjectSetting.Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
@@ -79,7 +79,7 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
             </tr>
             <tr>
                 <td>
-                    <h4><?= __('Task management') ?> <small>- <?= __('allow users to add tasks and milestones to track progress') ?></small></h4>
+                    <h4><?= __('Source code management') ?> <small>- <?= __('allow creation of a source code repository for a project') ?></small></h4>
                 </td>
                 <td>
                     <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'source-enabled', 'name' => 'ProjectSetting.Features.source_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['source_enabled']['locked'])) ?>

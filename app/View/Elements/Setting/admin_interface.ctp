@@ -35,9 +35,19 @@
 					<?= $this->element('Setting/themes') ?>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'theme', 'name' => 'Setting.UserInterface.theme', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'setLock', 'admin' => true)), 'value' => $sourcekettle_config['UserInterface']['theme']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'theme', 'name' => 'Setting.UserInterface.theme', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => true, 'lock')), 'value' => $sourcekettle_config['UserInterface']['theme']['locked'])) ?>
                 </td>
             </tr>
+			<?= $this->element('Setting/text_fields', array(
+				'items' => array(
+					array(
+						'name' => 'Setting.UserInterface.terminology',
+						'label' => __('Terminology'),
+						'description' => __('use the terminology from your favourite agile methodology'),
+						'value' => $sourcekettle_config['UserInterface']['terminology']['value'],
+					),
+				)
+			))?>
 	</tr>
 <?= $this->Form->end() ?>
         </tbody>

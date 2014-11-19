@@ -14,14 +14,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
+echo $this->Bootstrap->page_header($username); ?>
 
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/users') ?>
     </div>
     <div class="span6">
-        <?= $this->Form->create('User', array('class' => 'well form-horizontal', 'type' => 'post')) ?>
+        <?= $this->Form->create('UserSetting', array('class' => 'well form-horizontal', 'type' => 'post')) ?>
 		<?= $this->element('Setting/themes', array("options" => array())) ?>
         <?= $this->Form->end() ?>
     </div>

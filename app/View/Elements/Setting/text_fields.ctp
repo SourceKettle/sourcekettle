@@ -9,6 +9,6 @@
 	<? } ?>
 	<tr>
 	<td>&nbsp;</td>
-    <td><?= $this->Bootstrap->button(__("Change"), array('escape' => false, 'style' => 'primary')) ?></td>
+    <td><?= $this->Bootstrap->button(__("Update"), array('escape' => false, 'style' => 'primary')) ?></td>
 	</tr>
 <?= $this->Form->end() ?>

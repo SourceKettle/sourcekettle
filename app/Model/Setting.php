@@ -57,7 +57,7 @@ class Setting extends AppModel {
 		return $output;
 	}
 
-	public function saveSettingsTree($data) {
+	public function saveSettingsTree($data, $locked = false) {
 
 		// Flatten out the settings tree into dot-separated key => value
 		if (!isset($data['Setting'])) {
@@ -74,6 +74,10 @@ class Setting extends AppModel {
 		// Save each setting in turn...
 		foreach ($settings as $name => $value) {
 
+			// Ensure true/false strings are booleanised
+			if ($locked) {
+				$value = ($value && strtolower($value) != 'false') ? 1 : 0;
+			}
 			// Default data to save
 			$save = array('Setting' => array('name' => $name, 'value' => $value));
 
@@ -84,14 +88,22 @@ class Setting extends AppModel {
 
 			// Find the setting's ID in the database, if present
 			$id = $this->findByName($name);
+
+
 			if ($id) {
 				$save['Setting']['id'] = $id['Setting']['id'];
-
-			// If it's not in the DB, we'll need to provide a 'locked' status; use the default...
-			} else {
-				$save['Setting']['locked'] = $defaults["$name.locked"];
 			}
 
+			// If we're just updating the lock status, set that
+			if ($locked) {
+				$save['Setting']['locked'] = $value;
+				unset($save['Setting']['value']);
+
+			// If it's not in the DB, get a locked status from the defaults
+			} elseif(!$id) {
+				$save['Setting']['locked'] = $defaults["$name.locked"];
+			}
+debug("Save setting:"); debug($save);
 			if (!$this->save($save)) {
 				$ok = false;
 			}
@@ -181,6 +193,11 @@ class Setting extends AppModel {
 	// Given an array of settings, a dotted-path name and a value, merge the value into the settings tree
 	private function mergeSetting($source, $currentSettings, $name, $value, $locked = false) {
 
+		// Make sure true/false strings are booleanised
+		if ($locked) {
+			$locked = (boolean) $locked;
+		}
+
 		// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
 		$path = explode('.', $name);
 		$current = &$currentSettings;
@@ -194,9 +211,6 @@ class Setting extends AppModel {
 
 			// If we're on the last key part, set the value if it's overridable
 			} elseif (empty($path) && !$current[$key]['locked']) {
-				if (preg_match('/_enabled$/', $key)) {
-					$value = (boolean) $value;
-				}
 				$current[$key] = array('value' => $value, 'locked' => $locked, 'source' => $source);
 			}
 

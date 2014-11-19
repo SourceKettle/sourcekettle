@@ -29,7 +29,7 @@ class SettingsController extends AppController {
 		$this->request->data = array('Setting' => array('UserInterface' => array('theme' => $settings['UserInterface']['theme']['value'])));
 	}
 
-	public function admin_set() {
+	public function admin_set($locked = false) {
 
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
@@ -37,7 +37,7 @@ class SettingsController extends AppController {
 
 		$code = 200;
 		$message = __("Settings updated.");
-		if (!$this->Setting->saveSettingsTree($this->request->data)) {
+		if (!$this->Setting->saveSettingsTree($this->request->data, $locked)) {
 			$code = 500;
 			$message = __("Failed to change settings");
 		}
@@ -54,40 +54,4 @@ class SettingsController extends AppController {
 		return $this->redirect (array ('action' => 'index'));
 	}
 
-	function admin_setLock() {
-		if (!$this->request->is('post')) {
-			throw new MethodNotAllowedException();
-		}
-
-		$code = 200;
-		$message = '';
-
-		foreach ($this->request->data as $name => $value) {
-			if (strtolower($value) == 'true') {
-				$value = 1;
-			} else {
-				$value = 0;
-			}
-
-			$name = preg_replace('/,/', '.', $name);
-			$this->Setting->id = $this->Setting->field('id', array('name' => $name));
-			if ($this->Setting->exists()) {
-				$this->Setting->set('locked', $value);
-				if (!$this->Setting->save()) {
-					$code = 500;
-					$message .= __('Failed to update setting "%s";', $name);
-				}
-			} else {
-				$code = 404;
-				$message .= __('Unknown setting "%s";', $name);
-			}
-		}
-
-		if (empty($message)) {
-			$message = __('Settings updated OK');
-		}
-
-		$this->set('data', array('code' => $code, 'message' => $message));
-		$this->render('/Elements/json');
-	}
 }

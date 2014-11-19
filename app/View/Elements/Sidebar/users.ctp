@@ -29,13 +29,6 @@
                     'controller' => 'users',
                 ),
             ),
-            __('Change Theme') => array(
-                'icon' => 'glass',
-                'url' => array(
-                    'action' => 'theme',
-                    'controller' => 'users',
-                ),
-            ),
             __('Delete Account') => array(
                 'icon' => 'remove',
                 'url' => array(
@@ -65,6 +58,15 @@
         ),
     );
 
+	if (!$sourcekettle_config['UserInterface']['theme']['locked']) {
+        $options[__('Your Account')][__('Change Theme')] = array(
+            'icon' => 'glass',
+            'url' => array(
+                'action' => 'theme',
+                'controller' => 'users',
+            ),
+        );
+	}
     // If we are logged in with a non-sourcekettle-managed account,
     // do not offer the 'delete account' link or 'change password' link.
     if (!$current_user['is_internal']) {

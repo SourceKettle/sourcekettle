@@ -50,7 +50,7 @@
 					array(
 						'name' => 'Setting.UserInterface.alias',
 						'label' => __('System alias'),
-						'description' => __("Change the system name, if you prefer not to call it 'SourceKettle'"),
+						'description' => __("Update the system name, if you prefer not to call it 'SourceKettle'"),
 						'value' => $sourcekettle_config['UserInterface']['alias']['value'],
 					),
 				),
