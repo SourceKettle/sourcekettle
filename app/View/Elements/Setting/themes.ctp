@@ -1,6 +1,16 @@
 <h3><?=__("Select your theme")?></h3>
 <?php
-$options = array('default' => __('%s default', $sourcekettle_config['UserInterface']['alias']['value']));
+
+// If the settings are system-wide, show the default as 'SourceKettle default' - we are referring to the software defaults
+if (isset($systemWide) && $systemWide) {
+	$alias = 'SourceKettle';
+
+// Otherwise it's the system default, so use the system alias
+} else {
+	$alias = $sourcekettle_config['UserInterface']['alias']['value'];
+}
+
+$options = array('default' => __('%s default', $alias));
 foreach ($this->TwitterBootswatch->getThemes() as $a => $theme) {
 
     $options[$a] = $this->Popover->popover(

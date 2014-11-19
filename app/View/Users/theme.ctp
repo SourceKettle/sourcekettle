@@ -36,7 +36,7 @@ echo $this->Bootstrap->page_header($username); ?>
         <p>
             <?=__("Well, as we didn't design them, we can't guarentee they will actually look perfect.")?>
             <?=__("Some of the gadgets, gizmos and thingymabobs may not look quite right.<br>")?>
-            <?=__("Want to help us make SourceKettle prettier? Tell us whats wrong, over on %s.", $this->Html->link('GitHub', 'https://github.com/SourceKettle/sourcekettle')) ?>
+            <?=__("Want to help us make SourceKettle prettier? Tell us what's wrong, over on %s.", $this->Html->link('GitHub', 'https://github.com/SourceKettle/sourcekettle')) ?>
         </p>
         <br>
         <h3><?=__("What do our developers think?")?></h3>

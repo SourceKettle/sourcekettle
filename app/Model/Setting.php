@@ -103,7 +103,7 @@ class Setting extends AppModel {
 			} elseif(!$id) {
 				$save['Setting']['locked'] = $defaults["$name.locked"];
 			}
-debug("Save setting:"); debug($save);
+
 			if (!$this->save($save)) {
 				$ok = false;
 			}
@@ -192,7 +192,6 @@ debug("Save setting:"); debug($save);
 
 	// Given an array of settings, a dotted-path name and a value, merge the value into the settings tree
 	private function mergeSetting($source, $currentSettings, $name, $value, $locked = false) {
-
 		// Make sure true/false strings are booleanised
 		if ($locked) {
 			$locked = (boolean) $locked;
@@ -204,14 +203,13 @@ debug("Save setting:"); debug($save);
 		
 		// Eat key parts one at a time
 		while(($key = array_shift($path))) {
-
 			// Not a valid setting - skip it
 			if(!isset($current[$key])) {
 				continue;
 
 			// If we're on the last key part, set the value if it's overridable
 			// NB if the value is 'default', simply ignore it and use the *system* default
-			} elseif (empty($path) && !$current[$key]['locked'] && $value != 'default') {
+			} elseif (empty($path) && !$current[$key]['locked'] && ($source == 'System settings' || $value != 'default')) {
 				$current[$key] = array('value' => $value, 'locked' => $locked, 'source' => $source);
 			}
 

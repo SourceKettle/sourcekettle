@@ -27,6 +27,7 @@ class SettingsController extends AppController {
 		// Slight hack to make theme form work properly...
 		$settings = $this->Setting->loadConfigSettings();
 		$this->request->data = array('Setting' => array('UserInterface' => array('theme' => $settings['UserInterface']['theme']['value'])));
+		$this->set('systemWide', true);
 	}
 
 	public function admin_set($locked = false) {
