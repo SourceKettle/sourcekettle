@@ -24,16 +24,12 @@ class ThemeHelper extends AppHelper {
  */
 	public $helpers = array('Html', 'TwitterBootswatch');
 
-	public function css() {
-		// System theme
+	public function css($sourcekettle_config) {
 		$theme = $sourcekettle_config['UserInterface']['theme']['value'];
-
-		// If theme is not locked and the user has specified a theme, use it
-		if (!$sourcekettle_config['UserInterface']['theme']['locked'] && isset($current_user['Settings']['theme'])) {
-			$theme = $current_user['Settings']['theme'];
+		if (!empty($theme) && $theme != 'default') {
+			return $this->TwitterBootswatch->cssForTheme($theme);
 		}
-
-		return $this->TwitterBootswatch->cssForTheme($theme);
+		return '';
 	}
 	
 }

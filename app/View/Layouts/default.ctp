@@ -21,13 +21,19 @@
         <?= h($sourcekettle_config['UserInterface']['alias']['value']) ?> - <?= h($title_for_layout) ?>
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
-    <?= $this->Html->charset('UTF-8') . "\n" ?>
+    
+	<?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
+    
+	<?= $this->Html->charset('UTF-8') ?>
+
     <?= $this->Html->css('bootstrap.min') ?>
-	<? //=$this->Theme->css() ?>
-    <?// =($current_user['theme'] != 'default') ? $this->TwitterBootswatch->cssForTheme($current_user['theme']) : '' ?>
+
+	<?= $this->Theme->css($sourcekettle_config) ?>
+
     <?= $this->Html->css('layout'); ?>
+
     <?= $this->Html->css('bootstrap-responsive.min') ?>
+
     <?= $this->fetch ('css') ?>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
