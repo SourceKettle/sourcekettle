@@ -210,7 +210,8 @@ debug("Save setting:"); debug($save);
 				continue;
 
 			// If we're on the last key part, set the value if it's overridable
-			} elseif (empty($path) && !$current[$key]['locked']) {
+			// NB if the value is 'default', simply ignore it and use the *system* default
+			} elseif (empty($path) && !$current[$key]['locked'] && $value != 'default') {
 				$current[$key] = array('value' => $value, 'locked' => $locked, 'source' => $source);
 			}
 
