@@ -637,7 +637,52 @@ class UsersControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testAdminIndex() {
+	public function testAdminIndexNotLoggedIn() {
+		$this->testAction('/admin/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminIndexNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/admin/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminIndexInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/admin/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminIndexInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/admin/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminIndexOK() {
+		$this->_fakeLogin(5);
+		$this->testAction('/admin/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
+
+	public function testAdminIndexUserRedirectFail() {
+		$this->_fakeLogin(5);
+		$postData = array('User' => array('name' => 'Foo Bar [foobar@xample.com]'));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('The specified user does not exist. Please try again.'), 'default', array(), 'error');
+		$this->testAction('/admin/users', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+	}
+
+	public function testAdminIndexUserRedirectOK() {
+		$this->_fakeLogin(5);
+		$postData = array('User' => array('name' => 'Foo Bar [ldap-user@xample.com]'));
+		$this->testAction('/admin/users', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
+		$this->assertAuthorized();
+		$this->assertRedirect('/admin/users/view/23');
 	}
 
 /**
@@ -645,7 +690,32 @@ class UsersControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testIndex() {
+	public function testIndexNotLoggedIn() {
+		$this->testAction('/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testIndexNormalUser() {
+		$this->_fakeLogin(2);
+		$this->testAction('/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRedirect('/account/details');
+	}
+	public function testIndexSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRedirect('/account/details');
+	}
+	public function testIndexInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+	public function testIndexInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/users', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
 	}
 
 /**
@@ -653,7 +723,33 @@ class UsersControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testAdminView() {
+	public function testAdminViewNotLoggedIn() {
+		$this->testAction('/admin/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminViewNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/admin/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminViewInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/admin/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminViewInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/admin/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminViewOK() {
+		$this->_fakeLogin(5);
+		$this->testAction('/admin/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
 	}
 
 /**
@@ -677,15 +773,68 @@ class UsersControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testAdminAdd() {
+	public function testAdminAddNotLoggedIn() {
+		$this->testAction('/admin/users/add', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
 	}
+
+	public function testAdminAddNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/admin/users/add', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminAddInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/admin/users/add', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminAddInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/admin/users/add', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminAddOK() {
+		$this->_fakeLogin(5);
+		$this->testAction('/admin/users/add', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
+
 
 /**
  * testAdminEdit method
  *
  * @return void
  */
-	public function testAdminEdit() {
+	public function testAdminEditNotLoggedIn() {
+		$this->testAction('/admin/users/edit/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminEditNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/admin/users/edit/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminEditInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/admin/users/edit/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminEditInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/admin/users/edit/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminEditOK() {
+		$this->_fakeLogin(5);
+		$this->testAction('/admin/users/edit/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
 	}
 
 /**
@@ -725,23 +874,33 @@ class UsersControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testAdminDelete() {
+	public function testAdminDeleteNotLoggedIn() {
+		$this->testAction('/admin/users/delete/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
 	}
 
-/**
- * testAdminPromote method
- *
- * @return void
- */
-	public function testAdminPromote() {
+	public function testAdminDeleteNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/admin/users/delete/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
 	}
 
-/**
- * testAdminDemote method
- *
- * @return void
- */
-	public function testAdminDemote() {
+	public function testAdminDeleteInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/admin/users/delete/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminDeleteInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/admin/users/delete/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminDeleteOK() {
+		$this->_fakeLogin(5);
+		$this->testAction('/admin/users/delete/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
 	}
 
 	private function __testChangeAdminLevel($loginAs, $userId, $setAdmin, $resultAdmin) {

@@ -260,14 +260,14 @@ class UsersController extends AppController {
 
 		// Save failed...
 		if (!$this->User->save($this->request->data)) {
-			$this->Session->setFlash("There was a problem resetting your password. Please try again.", 'default', array(), 'error');
+			$this->Session->setFlash(__("There was a problem resetting your password. Please try again."), 'default', array(), 'error');
 			$this->render("reset_password");
 			return;
 		}
 
 		// Delete the reset key and redirect to login page
 		$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
-		$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
+		$this->Session->setFlash(__("Your password has been reset. You can now login."), 'default', array(), 'success');
 		$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'sourcekettle');
 
 		return $this->redirect('/login');
@@ -281,7 +281,7 @@ class UsersController extends AppController {
 			if ($user = $this->User->findByEmail($this->Useful->extractEmail($user))) {
 				return $this->redirect(array('action' => 'view', $user['User']['id']));
 			} else {
-				$this->Flash->error('The specified user does not exist. Please try again.');
+				$this->Flash->error(__('The specified user does not exist. Please try again.'));
 			}
 		}
 		$this->User->recursive = 0;
