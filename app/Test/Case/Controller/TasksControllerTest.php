@@ -63,6 +63,18 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testIndexInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/private/tasks', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testIndexInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/private/tasks', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 
 	// Helper function - given a list of tasks, and a list of expected task IDs,
 	// check that the two are equivalent
@@ -176,6 +188,18 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testViewInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/private/tasks/view/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testViewInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/private/tasks/view/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testView() {
 		$this->_fakeLogin(2);
 
@@ -204,6 +228,18 @@ class TasksControllerTest extends AppControllerTest {
  */
 	public function testAddTaskNotLoggedIn() {
 		$ret = $this->testAction('/project/public/tasks/add', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/private/tasks/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/private/tasks/add', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}
 
@@ -246,6 +282,18 @@ class TasksControllerTest extends AppControllerTest {
  */
 	public function testEditTaskNotLoggedIn() {
 		$this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testEditInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/private/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testEditInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/private/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}
 
@@ -301,6 +349,18 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testStarttaskInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/starttask/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testStarttaskInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/starttask/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testStarttask() {
 		$this->_fakeLogin(2);
 		$this->__testStatusChanges('/project/public/tasks/starttask/1', 1, 'in progress');
@@ -315,10 +375,35 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testStoptaskInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/stoptask/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testStoptaskInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/stoptask/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testResolvetaskNotLoggedIn() {
 		$ret = $this->testAction('/project/public/tasks/resolve/1', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
+
+	public function testResolvetaskInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/resolve/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testResolvetaskInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/resolve/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testResolvetask() {
 		$this->_fakeLogin(2);
 		$this->__testStatusChanges('/project/public/tasks/resolve/1', 1, 'resolved');
@@ -328,6 +413,19 @@ class TasksControllerTest extends AppControllerTest {
 		$ret = $this->testAction('/project/public/tasks/unresolve/1', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
+
+	public function testUnresolvetaskInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/unresolve/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUnresolvetaskInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/unresolve/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testUnresolvetask() {
 		$this->_fakeLogin(2);
 		$this->__testStatusChanges('/project/public/tasks/unresolve/1', 1, 'open');
@@ -335,6 +433,18 @@ class TasksControllerTest extends AppControllerTest {
 
 	public function testOpentaskNotLoggedIn() {
 		$ret = $this->testAction('/project/public/tasks/opentask/1', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testOpentaskInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/opentask/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testOpentaskInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/opentask/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}
 	public function testOpentask() {
@@ -346,6 +456,18 @@ class TasksControllerTest extends AppControllerTest {
 		$ret = $this->testAction('/project/public/tasks/closetask/1', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
+	public function testClosetaskInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/closetask/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testClosetaskInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/closetask/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testClosetask() {
 		$this->_fakeLogin(2);
 		$this->__testStatusChanges('/project/public/tasks/closetask/1', 1, 'closed');
@@ -355,6 +477,18 @@ class TasksControllerTest extends AppControllerTest {
 		$ret = $this->testAction('/project/public/tasks/freeze/1', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
+	public function testFreezetaskInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/freeze/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testFreezetaskInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/freeze/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testFreezetask() {
 		$this->_fakeLogin(2);
 		$this->__testStatusChanges('/project/public/tasks/freeze/1', 1, 'dropped');
@@ -363,6 +497,17 @@ class TasksControllerTest extends AppControllerTest {
 
 	// Assigning tasks
 	public function testAssignTaskNotLoggedIn() {
+		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+	public function testAssigntaskInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAssigntaskInactiveAdmin() {
+		$this->_fakeLogin(22);
 		$this->testAction('/project/public/tasks/assign/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}
@@ -421,6 +566,17 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}
+	public function testCommentInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testCommentInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
 
 	public function testCommentGetRedirect() {
 		$this->_fakeLogin(2);
@@ -476,6 +632,18 @@ class TasksControllerTest extends AppControllerTest {
 
 	public function testUpdateCommentTaskNotLoggedIn() {
 		$this->testAction('/project/public/tasks/updateComment/2', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUpdateCommentInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/updateComment/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUpdateCommentInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/updateComment/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}
 
@@ -565,6 +733,17 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testDeleteCommentInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/tasks/deleteComment/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testDeleteCommentInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/tasks/deleteComment/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
 	public function testDeleteCommentGetRedirect() {
 		$this->_fakeLogin(2);
 		$this->testAction('/project/public/tasks/deleteComment/2', array('return' => 'view', 'method' => 'get'));
@@ -766,6 +945,17 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 		
 	}
+	public function testPersonalKanbanInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/kanban', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testPersonalKanbanInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/kanban', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
 
 	public function testPersonalKanban() {
 		
@@ -789,6 +979,17 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 		
+	}
+	public function testTeamKanbanInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testTeamKanbanInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
 	}
 
 	public function testTeamKanbanNotTeamMember() {

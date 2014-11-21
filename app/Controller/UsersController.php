@@ -317,8 +317,7 @@ class UsersController extends AppController {
 
 		if ($this->request->is('get')) {
 			$this->set('users', $this->User->getPendingApprovals());
-			$this->render('admin_approve');
-			return;
+			return $this->render('admin_approve');
 		}
 
 		if (!$this->request->is('post') || $key == null) {
@@ -670,7 +669,7 @@ class UsersController extends AppController {
 		}
 
 		// Safety net: do not allow a sysadmin to demote themself!
-		if ($currentUserData['User']['id'] == $userId) {
+		if ($this->Auth->user('id') == $userId) {
 			$this->Session->setFlash(__('Cannot demote yourself! Ask another admin to do it'), 'error', array(), '');
 			return $this->redirect(array('action' => 'admin_index'));
 		}

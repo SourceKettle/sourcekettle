@@ -20,14 +20,14 @@ class ProjectTestCase extends CakeTestCase {
      * fixtures - Populate the database with data of the following models
      */
     public $fixtures = array(
+		'core.cake_session',
+		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',
 		'app.collaborator',
-		'app.collaborating_team',
-		'app.project_group',
-		'app.project_groups_project',
-		'app.group_collaborating_team',
 		'app.user',
 		'app.task',
 		'app.task_type',
@@ -36,18 +36,21 @@ class ProjectTestCase extends CakeTestCase {
 		'app.task_status',
 		'app.task_priority',
 		'app.time',
-		'app.team',
-		'app.teams_user',
 		'app.attachment',
 		'app.source',
 		'app.milestone',
-		'app.setting',
 		'app.email_confirmation_key',
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
     /**

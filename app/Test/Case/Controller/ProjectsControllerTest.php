@@ -422,6 +422,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->will($this->returnValue(array(
 				'UserInterface' => array(
 					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
 				),
 				'SourceRepository' => array(
 					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
@@ -445,6 +446,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->will($this->returnValue(array(
 				'UserInterface' => array(
 					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
 				),
 				'SourceRepository' => array(
 					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Shoes'),
@@ -468,6 +470,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->will($this->returnValue(array(
 				'UserInterface' => array(
 					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
 				),
 				'SourceRepository' => array(
 				),

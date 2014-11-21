@@ -38,9 +38,9 @@ class Setting extends AppModel {
 	public static function flattenTree($data, $soFar = null, $output = array()) {
 
 		if (!is_array($data)) {
-			// Convert flags from true/false to 1/0
-			if (preg_match('/[_.]enabled$/', $soFar)) {
-				$data = ($data && strtolower($data) != 'false') ? 1 : 0;
+			// Flags for featuers etc. - convert to boolean from string true/false
+			if (preg_match('/[_.]enabled$/i', $soFar)) {
+				$data = ($data === true || strtolower($data) === 'true');
 			}
 			$output[$soFar] = $data;
 		} else {
@@ -59,11 +59,11 @@ class Setting extends AppModel {
 
 	public function saveSettingsTree($data, $locked = false) {
 
-		// Flatten out the settings tree into dot-separated key => value
 		if (!isset($data['Setting'])) {
 			return false;
 		}
 
+		// Flatten out the settings tree into dot-separated key => value
 		$settings = self::flattenTree($data['Setting']);
 
 		// Get defaults and flatten; note that it will also have the 'value', 'locked' etc. on the end...
@@ -73,10 +73,9 @@ class Setting extends AppModel {
 
 		// Save each setting in turn...
 		foreach ($settings as $name => $value) {
-
 			// Ensure true/false strings are booleanised
 			if ($locked) {
-				$value = ($value && strtolower($value) != 'false') ? 1 : 0;
+				$value = ($value === true || strtolower($value) === 'true');
 			}
 			// Default data to save
 			$save = array('Setting' => array('name' => $name, 'value' => $value));
@@ -89,9 +88,13 @@ class Setting extends AppModel {
 			// Find the setting's ID in the database, if present
 			$id = $this->findByName($name);
 
-
-			if ($id) {
+			if (!empty($id) && isset($id['Setting']['id'])) {
 				$save['Setting']['id'] = $id['Setting']['id'];
+
+			// No existing setting and we're trying to lock it: fail
+			} elseif ($locked) {
+				$ok = false;
+				continue;
 			}
 
 			// If we're just updating the lock status, set that
@@ -103,12 +106,11 @@ class Setting extends AppModel {
 			} elseif(!$id) {
 				$save['Setting']['locked'] = $defaults["$name.locked"];
 			}
-
+			unset($this->id);
 			if (!$this->save($save)) {
 				$ok = false;
 			}
 		}
-
 		return $ok;
 	}
 
@@ -117,7 +119,12 @@ class Setting extends AppModel {
  * Notify the system that the keys need to be sync'd
  */
 	public function syncRequired() {
-		return $this->save(array('Setting' => array('Status' => array('sync_required' => true))));
+		$id = $this->findByName('Status.sync_required');
+		$data = array('Setting' => array('name' => 'Status.sync_required', 'value' => true));
+		if (!empty($id) && isset($id['Setting']['id'])) {
+			$data['Setting']['id'] = $id['Setting']['id'];
+		}
+		return $this->save($data);
 	}
 
 	// Hard coded default settings, for when we don't have anything in the database
@@ -192,9 +199,10 @@ class Setting extends AppModel {
 
 	// Given an array of settings, a dotted-path name and a value, merge the value into the settings tree
 	private function mergeSetting($source, $currentSettings, $name, $value, $locked = false) {
+
 		// Make sure true/false strings are booleanised
 		if ($locked) {
-			$locked = (boolean) $locked;
+			$locked = ($locked === true || strtolower($locked) === 'true');
 		}
 
 		// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
@@ -216,7 +224,6 @@ class Setting extends AppModel {
 			// Keep track of progress through the settings array
 			$current = &$current[$key];
 		}
-
 		return $currentSettings;
 	}
 

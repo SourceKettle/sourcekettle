@@ -19,30 +19,38 @@ class UserTestCase extends CakeTestCase {
     /**
      * fixtures - Populate the database with data of the following models
      */
-    public $fixtures = array('app.user',
-        'app.collaborator',
-        'app.project',
-        'app.project_group',
-        'app.project_groups_project',
-        'app.project_history',
-        'app.task',
-        'app.task_type',
-        'app.task_status',
-        'app.task_priority',
-        'app.task_dependency',
-        'app.task_comment',
-        'app.team',
-        'app.teams_user',
-        'app.time',
-        'app.milestone',
+    public $fixtures = array(
+		'core.cake_session',
+		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
+		'app.project',
+		'app.project_history',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
+		'app.task',
+		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
+		'app.task_status',
+		'app.task_priority',
+		'app.time',
 		'app.attachment',
-        'app.repo_type',
-        'app.email_confirmation_key',
-        'app.lost_password_key',
-        'app.ssh_key',
-        'app.api_key',
+		'app.source',
+		'app.milestone',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
     );
 
     /**
@@ -199,7 +207,7 @@ class UserTestCase extends CakeTestCase {
 
 		$this->User->saveField('email', 'blah@example.com');
 
-        	$user = $this->User->findById(6);
+        $user = $this->User->findById(23);
 		$this->assertEquals($user['User']['email'], "ldap-user@example.com", "Incorrect email found after change");
 		
 	}

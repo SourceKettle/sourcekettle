@@ -175,42 +175,39 @@ class SettingsControllerTest extends AppControllerTest {
 		$this->assertFalse(true, "Exception not thrown");
 	}
 
-	public function testAdminLockNotLoggedIn() {
-		$result = $this->testAction('/admin/settings/setLock');
-		$this->assertNotAuthorized();
-	}
-
-	public function testAdminLockInactiveUser(){
-		$this->_fakeLogin(6);
-		$result = $this->testAction('/admin/settings/setLock');
-		$this->assertNotAuthorized();
-	}
-
-	public function testAdminLockInactiveAdmin(){
-		$this->_fakeLogin(22);
-		$result = $this->testAction('/admin/settings/setLock');
-		$this->assertNotAuthorized();
-	}
-
-	public function testAdminLockNotSystemAdmin() {
-		$this->_fakeLogin(1);
-		$result = $this->testAction('/admin/settings/setLock');
-		$this->assertNotAuthorized();
-	}
-
-	public function testAdminLockGetFail() {
+	public function testAdminSetLockedPost() {
 		$this->_fakeLogin(5);
-		try{
-			$result = $this->testAction('/admin/settings/setLock', array('method' => 'get'));
-		} catch(MethodNotAllowedException $e) {
-			$this->assertTrue(true);
-			return;
-		}
-		$this->assertFalse(true, "Exception not thrown");
-	}
-	public function testAdminLockSystemAdmin() {
-		$this->_fakeLogin(5);
-		$result = $this->testAction('/admin/settings/setLock');
+		$postData = array('Setting' => array(
+			'Features' => array('task_enabled' => 'true'),
+			'UserInterface' => array('theme' => 'true'),
+		));
+		$result = $this->testAction('/admin/settings/set/lock', array('method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
+
+		$settings = $this->controller->Setting->loadConfigSettings();
+		$this->assertTrue($settings['UserInterface']['theme']['locked']);
+		$this->assertTrue($settings['Features']['task_enabled']['locked']);
 	}
+
+	public function testAdminSetLockedAjax() {
+		$this->_fakeLogin(5);
+		$postData = array('Setting' => array(
+			'Features' => array('task_enabled' => 'true'),
+			'UserInterface' => array('theme' => 'true'),
+		));
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/settings/set/lock', array('method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+
+		$settings = $this->controller->Setting->loadConfigSettings();
+		$json = json_decode($this->view, true);
+		$this->assertEquals(array('code' => 200, 'message' => __('Settings updated.')), $json);
+
+		$settings = $this->controller->Setting->loadConfigSettings();
+		$this->assertTrue($settings['UserInterface']['theme']['locked']);
+		$this->assertTrue($settings['Features']['task_enabled']['locked']);
+	}
+
 }

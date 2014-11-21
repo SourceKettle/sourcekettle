@@ -115,7 +115,7 @@ class UsersControllerTest extends AppControllerTest {
 			'recursive' => -1,
 		));
 
-		$this->assertEquals($postData, $retrieved);
+		$this->assertNotEquals($postData, $retrieved);
 	}
 
 	public function testEditSettingsInternal() {
@@ -577,11 +577,13 @@ class UsersControllerTest extends AppControllerTest {
 
 
 	public function testAdminApproveForm() {
+		$this->_fakeLogin(5);
 		$this->testAction('/admin/users/approve', array('method' => 'get', 'return' => 'vars'));
 		$this->assertRegexp('|<form.*action=".*'.Router::url('/admin/users/approve/ba6f23c5ce588f16647fe32603fb1593').'"|', $this->view);
 	}
 
 	public function testAdminApproveNoKey() {
+		$this->_fakeLogin(5);
 		$this->testAction('/admin/users/approve', array('method' => 'post', 'return' => 'vars'));
 		$this->assertRedirect('/admin/users/approve');
 	}
@@ -592,6 +594,7 @@ class UsersControllerTest extends AppControllerTest {
 	}
 
 	public function testAdminApproveFailure() {
+		$this->_fakeLogin(5);
 		$this->controller->User = $this->getMockForModel('User', array('save'));
 		$this->controller->User
 			->expects($this->once())
@@ -615,6 +618,7 @@ class UsersControllerTest extends AppControllerTest {
 	}
 
 	public function testAdminApproveOK() {
+		$this->_fakeLogin(5);
 		$this->testAction('/admin/users/approve/ba6f23c5ce588f16647fe32603fb1593', array('method' => 'post', 'return' => 'vars'));
 		$this->assertRedirect('/admin/users/approve');
 

@@ -456,6 +456,7 @@ class TaskTest extends CakeTestCase {
 	}
 
 	public function testValidate() {
+		unset($this->Task->id);
 		$saved = $this->Task->save(array('Task' => array(
 			'subject' => 'flibble',
 			'assignee_id' => 999,

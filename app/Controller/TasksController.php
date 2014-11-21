@@ -105,6 +105,11 @@ class TasksController extends AppProjectController {
 		if ($this->action != 'team_kanban') {
 			return parent::isAuthorized($user);
 		}
+
+		if (!$user['is_active']) {
+			return false;
+		}
+
 		$teamId = $this->Team->field('id', array('name' => $this->params->params['team']));
 		if (empty($teamId) || $teamId < 1) {
 			throw new NotFoundException(__("Invalid team"));
