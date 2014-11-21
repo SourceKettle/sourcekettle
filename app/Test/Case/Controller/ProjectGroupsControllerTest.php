@@ -57,6 +57,12 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testViewInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project_groups/view/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testViewNormalUser() {
 		$this->_fakeLogin(3);
 		$this->testAction('/project_groups/view/1', array('return' => 'view', 'method' => 'get'));
@@ -152,6 +158,12 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testAdminIndexInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/admin/project_groups', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testAdminIndexNormalUser() {
 		$this->_fakeLogin(3);
 		$this->testAction('/admin/project_groups', array('return' => 'view', 'method' => 'get'));
@@ -174,6 +186,12 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 
 	public function testAdminAddInactiveUser() {
 		$this->_fakeLogin(6);
+		$this->testAction('/admin/project_groups/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminAddInactiveAdmin() {
+		$this->_fakeLogin(22);
 		$this->testAction('/admin/project_groups/add', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}
@@ -251,6 +269,12 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 
 	public function testAdminEditInactiveUser() {
 		$this->_fakeLogin(6);
+		$this->testAction('/admin/project_groups/edit/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminEditInactiveAdmin() {
+		$this->_fakeLogin(22);
 		$this->testAction('/admin/project_groups/edit/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
 	}
@@ -343,6 +367,12 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 
 	public function testAdminDeleteInactiveUser() {
 		$this->_fakeLogin(6);
+		$this->testAction('/admin/project_groups/delete/1', array('return' => 'view', 'method' => 'post'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminDeleteInactiveAdmin() {
+		$this->_fakeLogin(22);
 		$this->testAction('/admin/project_groups/delete/1', array('return' => 'view', 'method' => 'post'));
 		$this->assertNotAuthorized();
 	}

@@ -88,4 +88,29 @@ class TeamTest extends CakeTestCase {
 		$this->assertEquals(array(1), $done);
 	}
 
+	public function testIsMember() {
+		$this->assertTrue($this->Team->isMember(1, 13));
+		$this->assertTrue($this->Team->isMember(1, 16));
+		$this->assertTrue($this->Team->isMember(1, 17));
+		$this->assertTrue($this->Team->isMember(1, 19));
+		$this->assertTrue($this->Team->isMember(2, 14));
+		$this->assertTrue($this->Team->isMember(2, 17));
+		$this->assertTrue($this->Team->isMember(2, 18));
+		$this->assertTrue($this->Team->isMember(2, 19));
+		$this->assertTrue($this->Team->isMember(3, 15));
+		$this->assertTrue($this->Team->isMember(3, 16));
+		$this->assertTrue($this->Team->isMember(3, 18));
+		$this->assertTrue($this->Team->isMember(3, 19));
+		$this->assertTrue($this->Team->isMember(4, 20));
+		$this->assertTrue($this->Team->isMember(4, 21));
+		$this->assertTrue($this->Team->isMember(5, 2));
+
+
+		$this->assertFalse($this->Team->isMember(1, 14));
+		$this->assertFalse($this->Team->isMember(2, 13));
+		$this->assertFalse($this->Team->isMember(3, 17));
+		$this->assertFalse($this->Team->isMember(4, 18));
+		$this->assertFalse($this->Team->isMember(5, 1));
+	}
+
 }

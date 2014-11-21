@@ -15,6 +15,9 @@
  */
 
 $this->Html->css('pages/settings', null, array ('inline' => false));
+$this->Html->css('bootstrap-switch-2.0.1/build/css/bootstrap2/bootstrap-switch.min.css', null, array ('inline' => false));
+$this->Html->script('bootstrap-switch.min', array ('inline' => false));
+$this->Html->script('switches', array ('inline' => false));
 ?>
 
 <?= $this->Bootstrap->page_header('System-wide configuration') ?>
@@ -28,7 +31,10 @@ $this->Html->css('pages/settings', null, array ('inline' => false));
             <div class="span10">
                 <div class="row-fluid">
                     <?= $this->element('Setting/admin_global') ?>
+                    <?= $this->element('Setting/admin_ldap') ?>
                     <?= $this->element('Setting/admin_features') ?>
+                    <?= $this->element('Setting/admin_interface') ?>
+                    <?= $this->element('Setting/admin_repo') ?>
                 </div>
             </div>
         </div>

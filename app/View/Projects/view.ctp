@@ -41,6 +41,7 @@
 
 					<div class="row-fluid">
 						<div class="span4">
+						<? if ($sourcekettle_config['Features']['task_enabled']['value']) {?>
 						<?=$this->Bootstrap->icon('file')?>
                         <?= $this->Html->link(
                           __('Create a task'),
@@ -49,8 +50,10 @@
                             'controller' => 'tasks',
                             'action'     => 'add'
                         ))?>
+						<?}?>
 						</div>
 						<div class="span4">
+						<? if ($sourcekettle_config['Features']['task_enabled']['value']) {?>
 						<?=$this->Bootstrap->icon('road')?>
                         <?= $this->Html->link(
                           __('Create a milestone'),
@@ -59,8 +62,10 @@
                             'controller' => 'milestones',
                             'action'     => 'add'
                         ))?>
+						<?}?>
 						</div>
 						<div class="span4">
+						<? if ($sourcekettle_config['Features']['time_enabled']['value']) {?>
 						<?=$this->Bootstrap->icon('time')?>
                         <?= $this->Html->link(
                           __('Log time'),
@@ -69,6 +74,7 @@
                             'controller' => 'times',
                             'action'     => 'add'
                         ))?>
+						<?}?>
 						</div>
                     </div>
                 </div>

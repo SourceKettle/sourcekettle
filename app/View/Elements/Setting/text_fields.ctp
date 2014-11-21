@@ -1,31 +1,14 @@
-<?php /*
-$_ri0 = $this->Bootstrap->icon('remove');
-$_ri1 = $this->Bootstrap->icon('ok');
-$_ru0 = $this->Html->url(array('admin' => true, 'controller' => 'settings', 'action' => $action, 0), true);
-$_ru1 = $this->Html->url(array('admin' => true, 'controller' => 'settings', 'action' => $action, 1), true);
-$_ro0 = $_ro1 = array('escape' => false);
-
-if ($value) {
-    $_ri1 = $this->Bootstrap->icon('ok', 'white');
-    $_ro1['style'] = 'success';
-    $_ro1['class'] = 'disabled';
-    $_ON  = $this->Bootstrap->button($_ri1, $_ro1);
-    $_OFF = $this->Bootstrap->button_link($_ri0, $_ru0, $_ro0);
-} else {
-    $_ri0 = $this->Bootstrap->icon('remove', 'white');
-    $_ro0['style'] = 'danger';
-    $_ro0['class'] = 'disabled';
-    $_ON  = $this->Bootstrap->button_link($_ri1, $_ru1, $_ro1);
-    $_OFF = $this->Bootstrap->button($_ri0, $_ro0);
-}
-echo '<div class="btn-group">';
-echo $_ON;
-echo $_OFF;
-echo '</div>';*/?>
-
-<?= $this->Form->create('Settings', array('action'=>$action)) ?>
-    <div class="input-append">
-        <?= $this->Form->text($name, array('id' => 'appendedInputButton', 'class' => 'xlarge', "value" => $value)) ?>
-        <?= $this->Bootstrap->button("Update", array('escape' => false, 'style' => 'primary')) ?>
-    </div>
+<?= $this->Form->create('Setting', array('action'=>'set')) ?>
+	<? foreach ($items as $item) { ?>
+	<tr>
+		<th><h4><?=h($item['label'])?> <small><?=h($item['description'])?></small></h4></th>
+		<td>
+        <?= $this->Form->text($item['name'], array('id' => $item['name'], 'class' => 'xlarge', "value" => $item['value'])) ?>
+		</td>
+	</tr>
+	<? } ?>
+	<tr>
+	<td>&nbsp;</td>
+    <td><?= $this->Bootstrap->button(__("Update"), array('escape' => false, 'style' => 'primary')) ?></td>
+	</tr>
 <?= $this->Form->end() ?>

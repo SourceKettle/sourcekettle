@@ -13,13 +13,14 @@ class MilestoneTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'core.cake_session',
+		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
-		'app.project_group',
-		'app.project_groups_project',
 		'app.repo_type',
 		'app.collaborator',
-		'app.collaborating_team',
 		'app.user',
 		'app.task',
 		'app.task_type',
@@ -31,8 +32,18 @@ class MilestoneTest extends CakeTestCase {
 		'app.attachment',
 		'app.source',
 		'app.milestone',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 /**

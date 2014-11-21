@@ -14,7 +14,11 @@
 $cookie = Configure::read('Session.cookie');
 
 echo $this->Bootstrap->block(
-    "<strong>" . $sourcekettle_config['global']['alias'] . " uses cookies!</strong> SourceKettle requires cookies to work. We only set one cookie ('$cookie') which is required for you to use SourceKettle. If you do not accept this, then please delete the cookie manually and leave the site.",
+    __("<strong>%s uses cookies!</strong> This site requires cookies to work. We only set one cookie ('%s') which is required for you to use %s. If you do not accept this, then please delete the cookie manually and leave the site.",
+	$sourcekettle_config['UserInterface']['alias']['value'],
+	h($cookie),
+	$sourcekettle_config['UserInterface']['alias']['value']
+	),
     array(
         "style" => "info",
         "closable" => true

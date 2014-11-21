@@ -14,7 +14,10 @@ class SettingsControllerTest extends AppControllerTest {
  * @var array
  */
     public $fixtures = array(
+		'core.cake_session',
 		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',
@@ -34,6 +37,14 @@ class SettingsControllerTest extends AppControllerTest {
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	public function setUp() {
@@ -57,36 +68,146 @@ class SettingsControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testAdminIndex() {
+	public function testAdminIndexNotLoggedIn() {
 		$result = $this->testAction('/admin/settings/index');
+		$this->assertNotAuthorized();
 	}
-/**
- * testAdminView method
- *
- * @return void
- */
-	public function testAdminView() {
+
+	public function testAdminIndexInactiveUser(){
+		$this->_fakeLogin(6);
+		$result = $this->testAction('/admin/settings/index');
+		$this->assertNotAuthorized();
 	}
-/**
- * testAdminAdd method
- *
- * @return void
- */
-	public function testAdminAdd() {
+
+	public function testAdminIndexInactiveAdmin(){
+		$this->_fakeLogin(22);
+		$result = $this->testAction('/admin/settings/index');
+		$this->assertNotAuthorized();
 	}
-/**
- * testAdminEdit method
- *
- * @return void
- */
-	public function testAdminEdit() {
+
+	public function testAdminIndexNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		$result = $this->testAction('/admin/settings/index');
+		$this->assertNotAuthorized();
 	}
-/**
- * testAdminDelete method
- *
- * @return void
- */
-	public function testAdminDelete() {
+
+	public function testAdminIndexSystemAdmin() {
+		$this->_fakeLogin(5);
+		$result = $this->testAction('/admin/settings/index');
+		$this->assertAuthorized();
+	}
+
+	public function testAdminSetNotLoggedIn() {
+		$result = $this->testAction('/admin/settings/set');
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminSetInactiveUser(){
+		$this->_fakeLogin(6);
+		$result = $this->testAction('/admin/settings/set');
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminSetInactiveAdmin(){
+		$this->_fakeLogin(22);
+		$result = $this->testAction('/admin/settings/set');
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminSetNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		$result = $this->testAction('/admin/settings/set');
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminSetSystemAdmin() {
+		$this->_fakeLogin(5);
+		$result = $this->testAction('/admin/settings/set');
+		$this->assertAuthorized();
+	}
+
+	public function testAdminSetPost() {
+		$this->_fakeLogin(5);
+		$postData = array('Setting' => array(
+			'Users' => array('sysadmin_email' => 'sysadmin@example.com', 'send_email_from' => 'noreply@example.com'),
+			'Features' => array('task_enabled' => 'true', 'time_enabled' => 'false'),
+		));
+		$result = $this->testAction('/admin/settings/set', array('method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		$settings = $this->controller->Setting->loadConfigSettings();
+		$this->assertEquals('sysadmin@example.com', $settings['Users']['sysadmin_email']['value']);
+		$this->assertEquals('noreply@example.com', $settings['Users']['send_email_from']['value']);
+		$this->assertEquals(1, $settings['Features']['task_enabled']['value']);
+		$this->assertEquals(0, $settings['Features']['time_enabled']['value']);
+	}
+
+	public function testAdminSetAjax() {
+		$this->_fakeLogin(5);
+		$postData = array('Setting' => array(
+			'Users' => array('sysadmin_email' => 'sysadmin@example.com', 'send_email_from' => 'noreply@example.com'),
+			'Features' => array('task_enabled' => 'true', 'time_enabled' => 'false'),
+		));
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/settings/set', array('method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+
+		$json = json_decode($this->view, true);
+		$this->assertEquals(array('code' => 200, 'message' => __('Settings updated.')), $json);
+
+		$settings = $this->controller->Setting->loadConfigSettings();
+		$this->assertEquals('sysadmin@example.com', $settings['Users']['sysadmin_email']['value']);
+		$this->assertEquals('noreply@example.com', $settings['Users']['send_email_from']['value']);
+		$this->assertEquals(1, $settings['Features']['task_enabled']['value']);
+		$this->assertEquals(0, $settings['Features']['time_enabled']['value']);
+	}
+
+	public function testAdminSetGetFail() {
+		$this->_fakeLogin(5);
+		try{
+			$result = $this->testAction('/admin/settings/set', array('method' => 'get'));
+		} catch(MethodNotAllowedException $e) {
+			$this->assertTrue(true);
+			return;
+		}
+		$this->assertFalse(true, "Exception not thrown");
+	}
+
+	public function testAdminSetLockedPost() {
+		$this->_fakeLogin(5);
+		$postData = array('Setting' => array(
+			'Features' => array('task_enabled' => 'true'),
+			'UserInterface' => array('theme' => 'true'),
+		));
+		$result = $this->testAction('/admin/settings/set/lock', array('method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+
+		$settings = $this->controller->Setting->loadConfigSettings();
+		$this->assertTrue($settings['UserInterface']['theme']['locked']);
+		$this->assertTrue($settings['Features']['task_enabled']['locked']);
+	}
+
+	public function testAdminSetLockedAjax() {
+		$this->_fakeLogin(5);
+		$postData = array('Setting' => array(
+			'Features' => array('task_enabled' => 'true'),
+			'UserInterface' => array('theme' => 'true'),
+		));
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/settings/set/lock', array('method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+
+		$settings = $this->controller->Setting->loadConfigSettings();
+		$json = json_decode($this->view, true);
+		$this->assertEquals(array('code' => 200, 'message' => __('Settings updated.')), $json);
+
+		$settings = $this->controller->Setting->loadConfigSettings();
+		$this->assertTrue($settings['UserInterface']['theme']['locked']);
+		$this->assertTrue($settings['Features']['task_enabled']['locked']);
 	}
 
 }

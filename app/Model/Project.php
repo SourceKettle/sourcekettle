@@ -121,6 +121,11 @@ class Project extends AppModel {
 			'foreignKey' => 'project_id',
 			'dependent' => true,
 		),
+		'ProjectSetting' => array(
+			'className' => 'ProjectSetting',
+			'foreignKey' => 'project_id',
+			'dependent' => true,
+		),
 
 		// Has-many-through relationships here...
 
@@ -401,7 +406,7 @@ class Project extends AppModel {
 		try {
 			$this->Source->init();
 			array_unshift($_types, 'Source');
-		} catch (UnsupportedRepositoryType $e) {
+		} catch (Exception $e) {
 		}
 
 		// Iterate over all of the types of event

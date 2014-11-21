@@ -34,50 +34,251 @@ class Setting extends AppModel {
 		// NB values may be empty.
 	);
 
+	// Helper function to flatten out the settings tree into a flat 'foo.bar.baz' => 'quux' format
+	public static function flattenTree($data, $soFar = null, $output = array()) {
+
+		if (!is_array($data)) {
+			// Flags for featuers etc. - convert to boolean from string true/false
+			if (preg_match('/[_.]enabled$/i', $soFar)) {
+				$data = ($data === true || strtolower($data) === 'true');
+			}
+			$output[$soFar] = $data;
+		} else {
+			foreach($data as $key => $value) {
+				if($soFar) {
+					$newKey = "$soFar.$key";
+				} else {
+					$newKey = $key;
+				}
+				self::flattenTree($value, $newKey, &$output);
+			}
+		}
+
+		return $output;
+	}
+
+	public function saveSettingsTree($data, $locked = false) {
+
+		if (!isset($data['Setting'])) {
+			return false;
+		}
+
+		// Flatten out the settings tree into dot-separated key => value
+		$settings = self::flattenTree($data['Setting']);
+
+		// Get defaults and flatten; note that it will also have the 'value', 'locked' etc. on the end...
+		$defaults = self::flattenTree($this->getDefaultSettings());
+
+		$ok = true;
+
+		// Save each setting in turn...
+		foreach ($settings as $name => $value) {
+			// Ensure true/false strings are booleanised
+			if ($locked) {
+				$value = ($value === true || strtolower($value) === 'true');
+			}
+			// Default data to save
+			$save = array('Setting' => array('name' => $name, 'value' => $value));
+
+			// Not a valid setting (not in defaults) - skip it
+			if (!isset($defaults["$name.value"])) {
+				continue;
+			}
+
+			// Find the setting's ID in the database, if present
+			$id = $this->findByName($name);
+
+			if (!empty($id) && isset($id['Setting']['id'])) {
+				$save['Setting']['id'] = $id['Setting']['id'];
+
+			// No existing setting and we're trying to lock it: fail
+			} elseif ($locked) {
+				$ok = false;
+				continue;
+			}
+
+			// If we're just updating the lock status, set that
+			if ($locked) {
+				$save['Setting']['locked'] = $value;
+				unset($save['Setting']['value']);
+
+			// If it's not in the DB, get a locked status from the defaults
+			} elseif(!$id) {
+				$save['Setting']['locked'] = $defaults["$name.locked"];
+			}
+			unset($this->id);
+			if (!$this->save($save)) {
+				$ok = false;
+			}
+		}
+		return $ok;
+	}
+
 /**
  * syncRequired function.
  * Notify the system that the keys need to be sync'd
  */
 	public function syncRequired() {
-		$setting = $this->findByName('sync_required', array('id'));
-		$this->id = $setting['Setting']['id'];
-		$this->set('value', '1');
-		$this->save();
+		$id = $this->findByName('Status.sync_required');
+		$data = array('Setting' => array('name' => 'Status.sync_required', 'value' => true));
+		if (!empty($id) && isset($id['Setting']['id'])) {
+			$data['Setting']['id'] = $id['Setting']['id'];
+		}
+		return $this->save($data);
 	}
 
-/**
- * Merges any settings from our config files with settings from the database,
- * which take priority.
- */
-	public function loadConfigSettings() {
+	// Hard coded default settings, for when we don't have anything in the database
+	public function getDefaultSettings() {
+		return array(
 
-		// Load config file first
-		$settings = Configure::read('sourcekettle');
+			// User-related settings
+			'Users' => array(
+				// Can users register?
+				'register_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				// Contact address for problems
+				'sysadmin_email' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'sysadmin@example.com'),
+				// From: address for any emails sent by the system
+				'send_email_from' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'sysadmin@example.com'),
+			),
+
+			// LDAP authentication settings
+			'Ldap' => array(
+				// Use LDAP?
+				'enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '0'),
+				// ldap:// or ldaps:// URL to connect to the system
+				'url' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'ldaps://ldap.example.com'),
+				// Credentials for connecting to LDAP
+				'bind_dn' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'cn=some_user,ou=Users,dc=example,dc=com'),
+				'bind_pw' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'some_password'),
+				// Base DN for user accounts
+				'base_dn' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'ou=Users,dc=example,dc=com'),
+				// Filter for finding user accounts
+				'filter' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'mail=%USERNAME%'),
+			),
+
+			// Features that are enabled
+			'Features' => array(
+				// Allow time tracking/logging
+				'time_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				// Allow source code management repositories and browsing
+				'source_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				// Allow task tracking
+				'task_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				// Allow attachment uploads
+				'attachment_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+			),
+
+			// UI-related settings - appearance etc.
+			'UserInterface' => array(
+				// What to call the system, if you don't want to call it 'SourceKettle'
+				'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+				// The theme to use
+				'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				// Terminology for projects - e.g. do you call it a 'Milestone', a 'Sprint', a 'Timebox'...?
+				'terminology' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+			),
+
+			// Status flags
+			'Status' => array(
+				// Used to indicate that SSH keys should be updated, etc.
+				'sync_required' => array('source' => 'Defaults', 'locked' => 0, 'value' => '0'),
+			),
+
+			// Source code management settings
+			'SourceRepository' => array(
+				// User account for SSH repository access
+				'user' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'nobody'),
+				// Where repositories are stored
+				'base' => array('source' => 'Defaults', 'locked' => 0, 'value' => '/var/sourcekettle/repositories'),
+				// Default repository type
+				'default' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'Git'),
+			),
+		);
+	}
+
+
+	// Given an array of settings, a dotted-path name and a value, merge the value into the settings tree
+	private function mergeSetting($source, $currentSettings, $name, $value, $locked = false) {
+
+		// Make sure true/false strings are booleanised
+		if ($locked) {
+			$locked = ($locked === true || strtolower($locked) === 'true');
+		}
+
+		// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
+		$path = explode('.', $name);
+		$current = &$currentSettings;
+		
+		// Eat key parts one at a time
+		while(($key = array_shift($path))) {
+			// Not a valid setting - skip it
+			if(!isset($current[$key])) {
+				continue;
+
+			// If we're on the last key part, set the value if it's overridable
+			// NB if the value is 'default', simply ignore it and use the *system* default
+			} elseif (empty($path) && !$current[$key]['locked'] && ($source == 'System settings' || $value != 'default')) {
+				$current[$key] = array('value' => $value, 'locked' => $locked, 'source' => $source);
+			}
+
+			// Keep track of progress through the settings array
+			$current = &$current[$key];
+		}
+		return $currentSettings;
+	}
+
+	public function loadConfigSettings($userId = null, $project = null) {
+
+		// Start with the defaults - this also provides a complete list of all settings that are valid
+		$settings = $this->getDefaultSettings();
 
 		// Override with database settings
-		foreach ($this->find('list', array('fields' => array('Setting.name', 'Setting.value')))  as $name => $value) {
+		$dbSettings = $this->find('all', array('fields' => array('Setting.name', 'Setting.value', 'Setting.locked')));
+		foreach ($dbSettings as $dbSetting) {
+			$name = $dbSetting['Setting']['name'];
+			$value = $dbSetting['Setting']['value'];
+			$locked = $dbSetting['Setting']['locked'];
+			
+			$settings = $this->mergeSetting("System settings", $settings, $name, $value, $locked);
+		}
 
-			// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
-			$path = explode('.', $name);
-			$current = &$settings;
-
-			// Eat key parts one at a time
-			while(($key = array_shift($path))) {
-
-				// If we're on the last key part, set the value
-				if (empty($path)) {
-					$current[$key] = $value;
-
-				// Otherwise, make sure it maps to an array
-				} else {
-					$current[$key] = @$current[$key] ?: array();
+		// Now, find any overridden settings form the user's choices
+		if ($userId) {
+			$model = ClassRegistry::init('UserSetting');
+			$userSettings = $model->find('all', array('conditions' => array('user_id' => $userId), 'fields' => array('UserSetting.name', 'UserSetting.value')));
+			foreach ($userSettings as $dbSetting) {
+				$name = $dbSetting['UserSetting']['name'];
+				$value = $dbSetting['UserSetting']['value'];
+				
+				if (!$model->isValidName($name)){
+					continue;
 				}
-
-				// Keep track of progress through the settings array
-				$current = &$current[$key];
+				$settings = $this->mergeSetting("User preferences", $settings, $name, $value);
 			}
 		}
 
+		// Load any project settings - a bit messy...
+		if ($project) {
+			if (!is_numeric($project)) {
+				$project = ClassRegistry::init('Project')->findByName($project);
+				if (empty($project)) {
+					return $settings;
+				}
+				$project = $project['Project']['id'];
+			}
+			$model = ClassRegistry::init('ProjectSetting');
+			$projectSettings = $model->find('all', array('conditions' => array('project_id' => $project), 'fields' => array('ProjectSetting.name', 'ProjectSetting.value')));
+			foreach ($projectSettings as $dbSetting) {
+				$name = $dbSetting['ProjectSetting']['name'];
+				$value = $dbSetting['ProjectSetting']['value'];
+
+				if (!$model->isValidName($name)){
+					continue;
+				}
+				$settings = $this->mergeSetting("Project-specific settings", $settings, $name, $value);
+			}
+		}
 		return $settings;
+
 	}
 }

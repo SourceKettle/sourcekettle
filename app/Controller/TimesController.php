@@ -28,6 +28,13 @@ class TimesController extends AppProjectController {
 
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
+		if (!$this->sourcekettle_config['Features']['time_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['time_enabled']['source'] == 'Project settings') {
+				throw new ForbiddenException(__('This project does not have time tracking enabled. Please contact a project administrator to enable time tracking.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow time tracking. Please contact a system administrator to enable time tracking.'));
+			}
+		}
 		return array(
 			'add'  => 'write',
 			'delete'  => 'write',
