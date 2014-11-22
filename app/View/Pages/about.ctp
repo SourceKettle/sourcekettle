@@ -38,6 +38,7 @@
         <p><?=$this->Html->link('@twitter', 'https://github.com/twitter/')?></p>
         <p><?=$this->Html->link('jQuery', 'http://jquery.com/')?></p>
         <p><?=$this->Html->link('DataTables', 'http://datatables.net/')?></p>
+        <p><?=$this->Html->link('Bootstrap Switch', 'http://www.bootstrap-switch.org/')?></p>
     </div>
     <div class="span4" style="text-align:center">
         <h4>The SourceKettle Dev Team</h4>
