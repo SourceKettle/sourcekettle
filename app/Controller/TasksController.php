@@ -64,13 +64,6 @@ class TasksController extends AppProjectController {
 	}
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
-		if (!$this->sourcekettle_config['Features']['task_enabled']['value']) {
-			if ($this->sourcekettle_config['Features']['task_enabled']['source'] == 'Project settings') {
-				throw new ForbiddenException(__('This project does not have task tracking enabled. Please contact a project administrator to enable task tracking.'));
-			} else {
-				throw new ForbiddenException(__('This system does not allow task tracking. Please contact a system administrator to enable task tracking.'));
-			}
-		}
 
 		return array(
 			'index'  => 'read',
@@ -101,6 +94,14 @@ class TasksController extends AppProjectController {
 
 	// Special case for team kanban, requires team membership instead of project collaboration
 	public function isAuthorized($user) {
+
+		if (!$this->sourcekettle_config['Features']['task_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['task_enabled']['source'] == "Project-specific settings") {
+				throw new ForbiddenException(__('This project does not have task tracking enabled. Please contact a project administrator to enable task tracking.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow task tracking. Please contact a system administrator to enable task tracking.'));
+			}
+		}
 
 		if ($this->action != 'team_kanban') {
 			return parent::isAuthorized($user);

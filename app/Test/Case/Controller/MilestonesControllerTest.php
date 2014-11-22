@@ -56,6 +56,41 @@ class MilestonesControllerTest extends AppControllerTest {
  *
  * @return void
  */
+	public function testIndexFeatureDisabledOnSystem() {
+
+		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('task_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/milestones', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testIndexFeatureDisabledOnProject() {
+
+		ClassRegistry::init("ProjectSetting")->saveSettingsTree('private', array('ProjectSetting' => array('Features' => array('task_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/milestones', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
 	public function testIndexNotLoggedIn() {
 		$this->testAction('/project/public/milestones', array('method' => 'get', 'return' => 'contents'));
 		$this->assertNotAuthorized();

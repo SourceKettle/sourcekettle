@@ -39,6 +39,18 @@ class MilestonesController extends AppProjectController {
 			'delete'   => 'write',
 		);
 	}
+
+	public function isAuthorized($user) {
+		if (!$this->sourcekettle_config['Features']['task_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['task_enabled']['source'] == "Project-specific settings") {
+				throw new ForbiddenException(__('This project does not have task tracking enabled. Please contact a project administrator to enable task tracking.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow task tracking. Please contact a system administrator to enable task tracking.'));
+			}
+		}
+
+		return parent::isAuthorized($user);
+	}
 /**
  * beforeFilter function.
  *

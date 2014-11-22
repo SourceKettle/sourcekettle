@@ -56,6 +56,42 @@ class TasksControllerTest extends AppControllerTest {
  *
  * @return void
  */
+	public function testIndexFeatureDisabledOnSystem() {
+
+		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('task_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/tasks', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testIndexFeatureDisabledOnProject() {
+
+		ClassRegistry::init("ProjectSetting")->saveSettingsTree('private', array('ProjectSetting' => array('Features' => array('task_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/tasks', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
 	public function testIndexNotLoggedIn() {
 
 		// Cannot see the page when not logged in
@@ -178,11 +214,6 @@ class TasksControllerTest extends AppControllerTest {
 	}
 
 
-/**
- * testView method
- *
- * @return void
- */
 	public function testViewNotLoggedIn() {
 		$ret = $this->testAction('/project/public/tasks/view/1', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
@@ -221,14 +252,33 @@ class TasksControllerTest extends AppControllerTest {
 
 	}
 
-/**
- * testAdd method
- *
- * @return void
- */
 	public function testAddTaskNotLoggedIn() {
 		$ret = $this->testAction('/project/public/tasks/add', array('method' => 'get', 'return' => 'view'));
 		$this->assertNotAuthorized();
+	}
+
+	public function testAddTaskNotCollaborator() {
+		$this->_fakeLogin(23);
+		$ret = $this->testAction('/project/public/tasks/add', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddTaskProjectGuest() {
+		$this->_fakeLogin(8);
+		$ret = $this->testAction('/project/public/tasks/add', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddTaskProjectUser() {
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/public/tasks/add', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+	}
+
+	public function testAddTaskProjectAdmin() {
+		$this->_fakeLogin(2);
+		$ret = $this->testAction('/project/public/tasks/add', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
 	}
 
 	public function testAddInactiveUser() {
@@ -248,6 +298,14 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/tasks/add').'"|', $this->view);
+	}
+
+	public function testAddTaskFormPreselectMilestone() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/tasks/add?milestone=2', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/tasks/add').'|', $this->view);
+		$this->assertRegexp('|<option value="2" selected="selected">Sprint 2</option>|', $this->view);
 	}
 
 	public function testAddTask() {
@@ -275,14 +333,34 @@ class TasksControllerTest extends AppControllerTest {
 		// We should be redirected to the new task
 		$this->assertRedirect('/project/public/tasks/view/'.$id);
 	}
-/**
- * testEdit method
- *
- * @return void
- */
+
 	public function testEditTaskNotLoggedIn() {
 		$this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
 		$this->assertNotAuthorized();
+	}
+
+	public function testEditTaskNotCollaborator() {
+		$this->_fakeLogin(23);
+		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testEditTaskProjectGuest() {
+		$this->_fakeLogin(8);
+		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'get', 'return' => 'view'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testEditTaskProjectUser() {
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+	}
+
+	public function testEditTaskProjectAdmin() {
+		$this->_fakeLogin(2);
+		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
 	}
 
 	public function testEditInactiveUser() {
@@ -587,6 +665,15 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertRedirect('/project/public/tasks/view/1');
 	}
 
+	public function testCommentNoData() {
+		$this->_fakeLogin(2);
+		$this->testAction('/project/public/tasks/comment/1', array('return' => 'view', 'method' => 'post', 'data' => array()));
+		$this->assertAuthorized();
+
+		// We should be redirected to the task page
+		$this->assertRedirect('/project/public/tasks/view/1');
+	}
+
 	public function testComment() {
 		$this->_fakeLogin(2);
 		$postData = array(
@@ -700,7 +787,7 @@ class TasksControllerTest extends AppControllerTest {
 		} catch(NotFoundException $e) {
 			$this->assertTrue(true, "Correct exception thrown");
 		} catch(Exception $e) {
-			$this->assertFalse(true, "Incorrect exception thrown");
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
 		}
 		$this->assertAuthorized();
 	}
@@ -766,7 +853,7 @@ class TasksControllerTest extends AppControllerTest {
 		} catch(NotFoundException $e) {
 			$this->assertTrue(true, "Correct exception thrown");
 		} catch(Exception $e) {
-			$this->assertFalse(true, "Incorrect exception thrown");
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
 		}
 		$this->assertAuthorized();
 	}
@@ -980,22 +1067,60 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 		
 	}
+
+	public function testTeamKanbanInvalidTeam() {
+		
+		$this->_fakeLogin(5);
+		// This will break...
+		try{
+			$this->testAction('/team_kanban/java_developers_with_hats', array('return' => 'view', 'method' => 'get'));
+		} catch(Exception $e) {
+			debug($e->getMessage());
+		}
+
+		// This will actually check and throw an exception
+		try{
+			$this->assertNotAuthorized();
+		} catch(NotFoundException $e) {
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch(Exception $e) {
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+		
+	}
 	public function testTeamKanbanInactiveUser() {
 		$this->_fakeLogin(6);
-		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		try{
+			$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		} catch (Exception $e){}
 		$this->assertNotAuthorized();
 	}
 
 	public function testTeamKanbanInactiveAdmin() {
 		$this->_fakeLogin(22);
-		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		try{
+			$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		} catch (Exception $e){}
 		$this->assertNotAuthorized();
 	}
 
 	public function testTeamKanbanNotTeamMember() {
 		$this->_fakeLogin(2);
-		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		try{
+			$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		} catch (Exception $e){}
 		$this->assertNotAuthorized();
+	}
+
+	public function testTeamKanbanNotTeamMemberSystemAdmin() {
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
+		} catch (Exception $e){}
+		$this->assertAuthorized();
 	}
 
 	public function testTeamKanban() {

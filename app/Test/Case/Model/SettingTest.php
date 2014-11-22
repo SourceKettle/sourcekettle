@@ -127,11 +127,11 @@ class SettingTestCase extends CakeTestCase {
 			'Features' => array(
 				'task_enabled' => array('value' => true, 'source' => 'System settings', 'locked' => false),
 				'time_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
-				'source_enabled' => array('value' => '0', 'source' => 'System settings', 'locked' => true),
+				'source_enabled' => array('value' => false, 'source' => 'System settings', 'locked' => true),
 				'attachment_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
 			),
 			'Ldap' => array(
-				'enabled' => array('value' => '0', 'source' => 'Defaults', 'locked' => false),
+				'enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),
 				'url' => array('value' => 'ldaps://ldap.example.com', 'source' => 'Defaults', 'locked' => false),
 				'bind_dn' => array('value' => 'cn=some_user,ou=Users,dc=example,dc=com', 'source' => 'Defaults', 'locked' => false),
 				'bind_pw' => array('value' => 'some_password', 'source' => 'Defaults', 'locked' => false),
@@ -196,7 +196,7 @@ class SettingTestCase extends CakeTestCase {
 		$after = $this->Setting->findByName('UserInterface.alias');
 		$this->assertEquals('MooseKettle', $after['Setting']['value']);
 		$after = $this->Setting->findByName('Users.register_enabled');
-		$this->assertEquals(true, $after['Setting']['value']);
+		$this->assertEquals('1', $after['Setting']['value']);
 		$after = $this->Setting->findByName('Users.sysadmin_email');
 		$this->assertEquals('foo@bar.baz', $after['Setting']['value']);
 		$after = $this->Setting->findByName('Features.task_enabled');
@@ -219,9 +219,9 @@ class SettingTestCase extends CakeTestCase {
 		$this->assertTrue($this->Setting->saveSettingsTree($before, true));
 
 		$after = $this->Setting->findByName('UserInterface.theme');
-		$this->assertEquals(true, $after['Setting']['locked']);
+		$this->assertTrue($after['Setting']['locked']);
 		$after = $this->Setting->findByName('Features.task_enabled');
-		$this->assertEquals(true, $after['Setting']['locked']);
+		$this->assertTrue($after['Setting']['locked']);
 	}
 
 	public function testSaveSettingsTreeLockedUnknownSetting() {
@@ -255,27 +255,27 @@ class SettingTestCase extends CakeTestCase {
 	public function testLoadSettingsWithUserSettings() {
 		$settings = $this->Setting->loadConfigSettings(1);
 		$this->assertEquals('spruce', $settings['UserInterface']['theme']['value']);
-		$this->assertTrue((boolean)$settings['Features']['attachment_enabled']['value']);
+		$this->assertTrue($settings['Features']['attachment_enabled']['value']);
 	}
 
 	public function testLoadSettingsWithProjectSettings() {
 		$settings = $this->Setting->loadConfigSettings(null, 2);
 		$this->assertEquals('amelia', $settings['UserInterface']['theme']['value']);
-		$this->assertFalse((boolean)$settings['Features']['attachment_enabled']['value']);
+		$this->assertFalse($settings['Features']['attachment_enabled']['value']);
 	}
 
 	public function testLoadSettingsWithProjectSettingsNoProject() {
 		$settings = $this->Setting->loadConfigSettings(null, 'gribble');
 		$this->assertEquals('amelia', $settings['UserInterface']['theme']['value']);
-		$this->assertTrue((boolean)$settings['Features']['attachment_enabled']['value']);
+		$this->assertTrue($settings['Features']['attachment_enabled']['value']);
 	}
 
 	public function testLoadSettingsWithUserAndProjectSettings() {
 		$settings = $this->Setting->loadConfigSettings(1, 'public');
 		$this->assertEquals('spruce', $settings['UserInterface']['theme']['value']);
-		$this->assertFalse((boolean)$settings['Features']['attachment_enabled']['value']);
+		$this->assertFalse($settings['Features']['attachment_enabled']['value']);
 		$this->assertEquals('default', $settings['UserInterface']['terminology']['value']);
-		$this->assertEquals(0, $settings['Features']['source_enabled']['value']);
+		$this->assertFalse($settings['Features']['source_enabled']['value']);
 		$this->assertFalse(isset($settings['UserInterface']['goose']));
 		$this->assertFalse(isset($settings['Features']['moose_enabled']));
 	}

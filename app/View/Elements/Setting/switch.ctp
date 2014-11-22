@@ -20,4 +20,4 @@ if (isset($readOnly) && $readOnly) {
 	$offIcon = "<i class='icon-remove'></i>";
 }?>
 
-<input id="switch-<?=h($id)?>" class="switch" type="checkbox"<?=$sectionHide?> data-setting-name="<?=h($name)?>" data-setting-value="<?=h($value)?>" data-setting-url="<?=h($url)?>" data-on="<?=$onCol?>" data-on-label="<?=$onIcon?>" data-off-label="<?=$offIcon?>" <?=$value?' checked':''?><?=$ro?>>
+<input id="switch-<?=h($id)?>" class="switch" type="checkbox"<?=$sectionHide?> data-setting-name="<?=h($name)?>" data-setting-value="<?=h(($value?'true':'false'))?>" data-setting-url="<?=h($url)?>" data-on="<?=$onCol?>" data-on-label="<?=$onIcon?>" data-off-label="<?=$offIcon?>" <?=$value?' checked':''?><?=$ro?>>

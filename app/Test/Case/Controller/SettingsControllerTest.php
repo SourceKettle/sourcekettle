@@ -185,8 +185,8 @@ class SettingsControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		$settings = $this->controller->Setting->loadConfigSettings();
-		$this->assertTrue($settings['UserInterface']['theme']['locked']);
-		$this->assertTrue($settings['Features']['task_enabled']['locked']);
+		$this->assertEquals(1, $settings['UserInterface']['theme']['locked']);
+		$this->assertEquals(1, $settings['Features']['task_enabled']['locked']);
 	}
 
 	public function testAdminSetLockedAjax() {
@@ -206,8 +206,8 @@ class SettingsControllerTest extends AppControllerTest {
 		$this->assertEquals(array('code' => 200, 'message' => __('Settings updated.')), $json);
 
 		$settings = $this->controller->Setting->loadConfigSettings();
-		$this->assertTrue($settings['UserInterface']['theme']['locked']);
-		$this->assertTrue($settings['Features']['task_enabled']['locked']);
+		$this->assertEquals(1, $settings['UserInterface']['theme']['locked']);
+		$this->assertEquals(1, $settings['Features']['task_enabled']['locked']);
 	}
 
 }

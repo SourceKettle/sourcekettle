@@ -78,6 +78,7 @@ class ProjectSetting extends AppModel {
 				$save['ProjectSetting']['id'] = $id['ProjectSetting']['id'];
 			}
 
+			unset($this->id);
 			if (!$this->save($save)) {
 				$ok = false;
 			}

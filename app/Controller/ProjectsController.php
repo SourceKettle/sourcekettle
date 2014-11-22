@@ -41,7 +41,7 @@ class ProjectsController extends AppProjectController {
 			'delete' => 'write',
 			'burndown' => 'read',
 			'markupPreview'  => 'read',
-			'set' => 'admin',
+			'changeSetting' => 'admin',
 			'api_history' => 'read',
 			'api_autocomplete' => 'login',
 		);
@@ -449,7 +449,7 @@ class ProjectsController extends AppProjectController {
 
 	public function changeSetting($project) {
 		if (!$this->request->is('post')) {
-			throw new MethodNotAllowedException();
+			return $this->redirect(array('project' => $project, 'action' => 'edit'));
 		}
 
 		$code = 200;

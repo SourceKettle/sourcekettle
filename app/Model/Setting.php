@@ -40,7 +40,7 @@ class Setting extends AppModel {
 		if (!is_array($data)) {
 			// Flags for featuers etc. - convert to boolean from string true/false
 			if (preg_match('/[_.]enabled$/i', $soFar)) {
-				$data = ($data === true || strtolower($data) === 'true');
+				$data = self::boolify($data);
 			}
 			$output[$soFar] = $data;
 		} else {
@@ -75,7 +75,7 @@ class Setting extends AppModel {
 		foreach ($settings as $name => $value) {
 			// Ensure true/false strings are booleanised
 			if ($locked) {
-				$value = ($value === true || strtolower($value) === 'true');
+				$value = self::boolify($value);
 			}
 			// Default data to save
 			$save = array('Setting' => array('name' => $name, 'value' => $value));
@@ -134,75 +134,89 @@ class Setting extends AppModel {
 			// User-related settings
 			'Users' => array(
 				// Can users register?
-				'register_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				'register_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Contact address for problems
-				'sysadmin_email' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'sysadmin@example.com'),
+				'sysadmin_email' => array('source' => 'Defaults', 'locked' => false, 'value' => 'sysadmin@example.com'),
 				// From: address for any emails sent by the system
-				'send_email_from' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'sysadmin@example.com'),
+				'send_email_from' => array('source' => 'Defaults', 'locked' => false, 'value' => 'sysadmin@example.com'),
 			),
 
 			// LDAP authentication settings
 			'Ldap' => array(
 				// Use LDAP?
-				'enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '0'),
+				'enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
 				// ldap:// or ldaps:// URL to connect to the system
-				'url' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'ldaps://ldap.example.com'),
+				'url' => array('source' => 'Defaults', 'locked' => false, 'value' => 'ldaps://ldap.example.com'),
 				// Credentials for connecting to LDAP
-				'bind_dn' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'cn=some_user,ou=Users,dc=example,dc=com'),
-				'bind_pw' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'some_password'),
+				'bind_dn' => array('source' => 'Defaults', 'locked' => false, 'value' => 'cn=some_user,ou=Users,dc=example,dc=com'),
+				'bind_pw' => array('source' => 'Defaults', 'locked' => false, 'value' => 'some_password'),
 				// Base DN for user accounts
-				'base_dn' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'ou=Users,dc=example,dc=com'),
+				'base_dn' => array('source' => 'Defaults', 'locked' => false, 'value' => 'ou=Users,dc=example,dc=com'),
 				// Filter for finding user accounts
-				'filter' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'mail=%USERNAME%'),
+				'filter' => array('source' => 'Defaults', 'locked' => false, 'value' => 'mail=%USERNAME%'),
 			),
 
 			// Features that are enabled
 			'Features' => array(
 				// Allow time tracking/logging
-				'time_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				'time_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Allow source code management repositories and browsing
-				'source_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				'source_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Allow task tracking
-				'task_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				'task_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Allow attachment uploads
-				'attachment_enabled' => array('source' => 'Defaults', 'locked' => 0, 'value' => '1'),
+				'attachment_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 			),
 
 			// UI-related settings - appearance etc.
 			'UserInterface' => array(
 				// What to call the system, if you don't want to call it 'SourceKettle'
-				'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+				'alias' => array('source' => 'Defaults', 'locked' => false, 'value' => 'SourceKettle'),
 				// The theme to use
-				'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				'theme' => array('source' => 'Defaults', 'locked' => false, 'value' => 'default'),
 				// Terminology for projects - e.g. do you call it a 'Milestone', a 'Sprint', a 'Timebox'...?
-				'terminology' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				'terminology' => array('source' => 'Defaults', 'locked' => false, 'value' => 'default'),
 			),
 
 			// Status flags
 			'Status' => array(
 				// Used to indicate that SSH keys should be updated, etc.
-				'sync_required' => array('source' => 'Defaults', 'locked' => 0, 'value' => '0'),
+				'sync_required' => array('source' => 'Defaults', 'locked' => false, 'value' => '0'),
 			),
 
 			// Source code management settings
 			'SourceRepository' => array(
 				// User account for SSH repository access
-				'user' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'nobody'),
+				'user' => array('source' => 'Defaults', 'locked' => false, 'value' => 'nobody'),
 				// Where repositories are stored
-				'base' => array('source' => 'Defaults', 'locked' => 0, 'value' => '/var/sourcekettle/repositories'),
+				'base' => array('source' => 'Defaults', 'locked' => false, 'value' => '/var/sourcekettle/repositories'),
 				// Default repository type
-				'default' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'Git'),
+				'default' => array('source' => 'Defaults', 'locked' => false, 'value' => 'Git'),
 			),
 		);
 	}
 
+	// Ensures boolean values end up as 1 or 0 for compatibility with CakePHP
+	// Note that it won't automagically do this for us as the fields are free-text
+	private static function boolify($thing){
+		if (strtolower($thing) === 'true') {
+			return 1;
+		}
+		if (strtolower($thing) === 'false') {
+			return 0;
+		}
+		return ((bool)$thing)? 1: 0;
+	}
 
 	// Given an array of settings, a dotted-path name and a value, merge the value into the settings tree
 	private function mergeSetting($source, $currentSettings, $name, $value, $locked = false) {
 
 		// Make sure true/false strings are booleanised
 		if ($locked) {
-			$locked = ($locked === true || strtolower($locked) === 'true');
+			$locked = self::boolify($locked);
+		}
+		if (preg_match('/[_.]enabled$/i', $name)) {
+			$value = self::boolify($value);
 		}
 
 		// Key can be e.g. foo.bar.baz, corresponding to $settings['foo']['bar']['baz']
@@ -211,13 +225,14 @@ class Setting extends AppModel {
 		
 		// Eat key parts one at a time
 		while(($key = array_shift($path))) {
+
 			// Not a valid setting - skip it
 			if(!isset($current[$key])) {
 				continue;
 
 			// If we're on the last key part, set the value if it's overridable
 			// NB if the value is 'default', simply ignore it and use the *system* default
-			} elseif (empty($path) && !$current[$key]['locked'] && ($source == 'System settings' || $value != 'default')) {
+			} elseif (empty($path) && !$current[$key]['locked'] && ($source == 'System settings' || $value !== 'default')) {
 				$current[$key] = array('value' => $value, 'locked' => $locked, 'source' => $source);
 			}
 
