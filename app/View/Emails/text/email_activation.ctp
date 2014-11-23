@@ -13,14 +13,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-Dear <?= $User['User']['name'] ?>,
+<?=__("Dear %s,", $User['User']['name'])?>
 
-Thank you for registering with SourceKettle. 
-In order to use your account, we require you to activate your account using the link below:
+<?=__("Thank you for registering with %s.", $sourcekettle_config['UserInterface']['alias'])?>
+<?=__("In order to use your account, we require you to activate your account using the link below:")?>
 
 <?= $this->Html->url('/activate/'.$Key, true) ?>
 
-We hope you enjoy using SourceKettle!
+<?=__("We hope you enjoy using %s!", $sourcekettle_config['UserInterface']['alias'])?>
 
-Regards,
-  The SourceKettle Team
+<?=__("Regards,")?>
+  <?=__("The %s Team", $sourcekettle_config['UserInterface']['alias'])?>

@@ -1161,8 +1161,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$found = ClassRegistry::init('Setting')->loadConfigSettings(null, 2);
 		$this->assertNotEquals('BaconIpsum', $found['UserInterface']['alias']['value']);
-		$this->assertFalse($found['Features']['task_enabled']['value']);
-		$this->assertFalse($found['Features']['time_enabled']['value']);
+		$this->assertEquals(0, $found['Features']['task_enabled']['value']);
+		$this->assertEquals(0, $found['Features']['time_enabled']['value']);
 	}
 
 	public function testChangeSettingAjaxPostOK() {
@@ -1182,8 +1182,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$found = ClassRegistry::init('Setting')->loadConfigSettings(null, 2);
 		$this->assertNotEquals('BaconIpsum', $found['UserInterface']['alias']['value']);
-		$this->assertFalse($found['Features']['task_enabled']['value']);
-		$this->assertFalse($found['Features']['time_enabled']['value']);
+		$this->assertEquals(0, $found['Features']['task_enabled']['value']);
+		$this->assertEquals(0, $found['Features']['time_enabled']['value']);
 	}
 
 }

@@ -196,13 +196,13 @@ class SettingTestCase extends CakeTestCase {
 		$after = $this->Setting->findByName('UserInterface.alias');
 		$this->assertEquals('MooseKettle', $after['Setting']['value']);
 		$after = $this->Setting->findByName('Users.register_enabled');
-		$this->assertEquals('1', $after['Setting']['value']);
+		$this->assertEquals(1, $after['Setting']['value']);
 		$after = $this->Setting->findByName('Users.sysadmin_email');
 		$this->assertEquals('foo@bar.baz', $after['Setting']['value']);
 		$after = $this->Setting->findByName('Features.task_enabled');
-		$this->assertEquals(true, $after['Setting']['value']);
+		$this->assertEquals(1, $after['Setting']['value']);
 		$after = $this->Setting->findByName('Features.time_enabled');
-		$this->assertEquals(false, $after['Setting']['value']);
+		$this->assertEquals(0, $after['Setting']['value']);
 		$after = $this->Setting->findByName('Features.moose_enabled');
 		$this->assertEquals(array(), $after);
 	}
@@ -261,21 +261,21 @@ class SettingTestCase extends CakeTestCase {
 	public function testLoadSettingsWithProjectSettings() {
 		$settings = $this->Setting->loadConfigSettings(null, 2);
 		$this->assertEquals('amelia', $settings['UserInterface']['theme']['value']);
-		$this->assertFalse($settings['Features']['attachment_enabled']['value']);
+		$this->assertEquals(0, $settings['Features']['attachment_enabled']['value']);
 	}
 
 	public function testLoadSettingsWithProjectSettingsNoProject() {
 		$settings = $this->Setting->loadConfigSettings(null, 'gribble');
 		$this->assertEquals('amelia', $settings['UserInterface']['theme']['value']);
-		$this->assertTrue($settings['Features']['attachment_enabled']['value']);
+		$this->assertEquals(1, $settings['Features']['attachment_enabled']['value']);
 	}
 
 	public function testLoadSettingsWithUserAndProjectSettings() {
 		$settings = $this->Setting->loadConfigSettings(1, 'public');
 		$this->assertEquals('spruce', $settings['UserInterface']['theme']['value']);
-		$this->assertFalse($settings['Features']['attachment_enabled']['value']);
+		$this->assertEquals(0, $settings['Features']['attachment_enabled']['value']);
 		$this->assertEquals('default', $settings['UserInterface']['terminology']['value']);
-		$this->assertFalse($settings['Features']['source_enabled']['value']);
+		$this->assertEquals(0, $settings['Features']['source_enabled']['value']);
 		$this->assertFalse(isset($settings['UserInterface']['goose']));
 		$this->assertFalse(isset($settings['Features']['moose_enabled']));
 	}

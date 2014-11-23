@@ -113,7 +113,8 @@
     <div class="container">
         <div id="content">
             <span id="flashes">
-                <? echo $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
+                <?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
+				<?= $this->Session->flash('email'); ?>
             </span>
             <?= $content_for_layout ?>
         </div>

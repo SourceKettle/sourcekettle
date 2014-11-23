@@ -13,12 +13,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-Dear <?= $User['User']['name'] ?>,
+<?=__("Dear %s,", $User['User']['name'])?>
 
-One of the wonderful Administrators over at <?= $this->Html->url('/', true) ?> has given you an account!
-Head over to the following URL to change your password and get started:
+<?=__("One of the wonderful Administrators over at %s has given you an account!", $this->Html->link($sourcekettle_config['UserInterface']['alias'], array('/')))?>
+<?=__("Head over to the following URL to change your password and get started:")?>
 
 <?= $this->Html->url('/users/reset_password/'.$Key['LostPasswordKey']['key'], true) ?>
 
-Regards,
-  The SourceKettle Team
+<?=__("Regards,")?>
+  <?=__("The %s Team", $sourcekettle_config['UserInterface']['alias'])?>

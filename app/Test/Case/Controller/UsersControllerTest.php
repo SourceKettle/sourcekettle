@@ -168,11 +168,6 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertEquals($postData, $retrieved);
 	}
 
-/**
- * testRegister method
- *
- * @return void
- */
 	public function testRegisterRegistrationDisabled() {
 		$this->Setting->save(array(
 			'name' => 'Users.register_enabled',
@@ -292,11 +287,6 @@ class UsersControllerTest extends AppControllerTest {
 		)), true);
 	}
 
-/**
- * testActivate method
- *
- * @return void
- */
 	public function testActivateNoKey() {
 
 		$this->controller->Session
@@ -357,11 +347,6 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertTrue($retrieved['User']['is_active'], "Activation failed");
 	}
 
-/**
- * testLostPassword method
- *
- * @return void
- */
 	public function testLostPasswordForm() {
 		$this->testAction('/lost_password', array('method' => 'get', 'return' => 'vars'));
 		$this->assertRegexp('|<form action=".*'.Router::url('/lost_password').'"|', $this->view);
@@ -451,11 +436,6 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertRedirect('/login');
 	}
 
-/**
- * testResetPassword method
- *
- * @return void
- */
 	public function testResetPasswordNoKey() {
 		$this->testAction('/reset_password', array('method' => 'post', 'return' => 'vars'));
 		$this->assertRedirect('/lost_password');
@@ -632,11 +612,6 @@ class UsersControllerTest extends AppControllerTest {
 
 
 
-/**
- * testAdminIndex method
- *
- * @return void
- */
 	public function testAdminIndexNotLoggedIn() {
 		$this->testAction('/admin/users', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
@@ -679,17 +654,12 @@ class UsersControllerTest extends AppControllerTest {
 
 	public function testAdminIndexUserRedirectOK() {
 		$this->_fakeLogin(5);
-		$postData = array('User' => array('name' => 'Foo Bar [ldap-user@xample.com]'));
+		$postData = array('User' => array('name' => 'Foo Bar [ldap-user@example.com]'));
 		$this->testAction('/admin/users', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
 		$this->assertAuthorized();
 		$this->assertRedirect('/admin/users/view/23');
 	}
 
-/**
- * testIndex method
- *
- * @return void
- */
 	public function testIndexNotLoggedIn() {
 		$this->testAction('/users', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
@@ -718,11 +688,6 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
-/**
- * testAdminView method
- *
- * @return void
- */
 	public function testAdminViewNotLoggedIn() {
 		$this->testAction('/admin/users/view/3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
@@ -746,33 +711,93 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testAdminViewInvalidUser() {
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/admin/users/view/999', array('method' => 'get', 'return' => 'vars'));
+		} catch (NotFoundException $e) {
+			debug($e);
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e) {
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(true, "No exception thrown");
+	}
+
 	public function testAdminViewOK() {
 		$this->_fakeLogin(5);
 		$this->testAction('/admin/users/view/3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
-/**
- * testView method
- *
- * @return void
- */
-	public function testView() {
+	public function testViewNotLoggedIn() {
+		$this->testAction('/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
 	}
 
-/**
- * testAdd method
- *
- * @return void
- */
+	public function testViewInvalidUser() {
+		try{
+			$this->testAction('/users/view/999', array('method' => 'get', 'return' => 'vars'));
+		} catch(NotFoundException $e) {
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch(Exception $e) {
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testViewNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$projects = array_map(function($a) {return $a['Project']['id'];}, $this->vars['projects']);
+		$sharedProjects = array_map(function($a) {return $a['Project']['id'];}, $this->vars['shared_projects']);
+		$this->assertEquals(array(), $projects);
+		$this->assertEquals(array(1), $sharedProjects);
+	}
+
+	public function testViewOwnProfile() {
+		$this->_fakeLogin(3);
+		$this->testAction('/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$projects = array_map(function($a) {return $a['Project']['id'];}, $this->vars['projects']);
+		$sharedProjects = array_map(function($a) {return $a['Project']['id'];}, $this->vars['shared_projects']);
+		$this->assertEquals(array(), $projects);
+		$this->assertEquals(array(), $sharedProjects);
+	}
+
+	public function testViewSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/users/view/3', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$projects = array_map(function($a) {return $a['Project']['id'];}, $this->vars['projects']);
+		$sharedProjects = array_map(function($a) {return $a['Project']['id'];}, $this->vars['shared_projects']);
+		$this->assertEquals(array(), $projects);
+		$this->assertEquals(array(1), $sharedProjects);
+	}
+
+	public function testViewUserInTeams() {
+		$this->_fakeLogin(5);
+		$this->testAction('/users/view/19', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$projects = array_map(function($a) {return $a['Project']['id'];}, $this->vars['projects']);
+		$sharedProjects = array_map(function($a) {return $a['Project']['id'];}, $this->vars['shared_projects']);
+		$teams = array_map(function($a) {return $a['id'];}, $this->vars['user']['Team']);
+		$this->assertEquals(array(), $projects);
+		$this->assertEquals(array(), $sharedProjects);
+		$this->assertEquals(array(1, 2, 3), $teams);
+
+	}
+
 	public function testAdd() {
+		$this->testAction('/users/add', array('method' => 'get', 'return' => 'view'));
+		$this->assertRedirect('/users/register');
 	}
 
-/**
- * testAdminAdd method
- *
- * @return void
- */
 	public function testAdminAddNotLoggedIn() {
 		$this->testAction('/admin/users/add', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
@@ -796,18 +821,53 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
-	public function testAdminAddOK() {
+	public function testAdminAddFormOK() {
 		$this->_fakeLogin(5);
 		$this->testAction('/admin/users/add', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/admin/users/add').'"|', $this->view);
+	}
+
+	public function testAdminAddUserFail() {
+		$postData = array('User' => array(
+			'name' => 'Someone new',
+			'email' => 'newbie@example.com',
+		));
+		$this->_fakeLogin(5);
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("<h4 class='alert-heading'>".__("Error")."</h4>".__("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+
+		$this->testAction('/admin/users/add', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
+
+	public function testAdminAddUserOK() {
+		$postData = array('User' => array(
+			'name' => 'Someone new',
+			'email' => 'newbie@example.com',
+		));
+		$this->_fakeLogin(5);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("New User added successfully."));
+		$this->testAction('/admin/users/add', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRedirect("/admin/users/view/".$this->controller->User->getLastInsertId());
+
+		$user = $this->controller->User->findById($this->controller->User->getLastInsertId());
+		$this->assertEquals('Someone new', $user['User']['name']);
+		$this->assertEquals('newbie@example.com', $user['User']['email']);
 	}
 
 
-/**
- * testAdminEdit method
- *
- * @return void
- */
 	public function testAdminEditNotLoggedIn() {
 		$this->testAction('/admin/users/edit/3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
@@ -831,49 +891,174 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
-	public function testAdminEditOK() {
+	public function testAdminEditInvalidUser() {
+		try{
+			$this->testAction('/admin/users/edit/999', array('method' => 'get', 'return' => 'vars'));
+		} catch(NotFoundException $e) {
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch(Exception $e) {
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testAdminEditGetRedirect() {
 		$this->_fakeLogin(5);
 		$this->testAction('/admin/users/edit/3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
+		$this->assertRedirect("/admin/users/view/3");
 	}
 
-/**
- * testDetails method
- *
- * @return void
- */
+	public function testAdminEditUserFail() {
+		$postData = array('User' => array(
+			'id' => 3,
+			'name' => 'Someone new',
+			'email' => 'newbie@example.com',
+		));
+		$this->_fakeLogin(5);
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("User '<strong>%s</strong>' could not be updated. Please try again.", "Mrs Guest"));
+
+		$this->testAction('/admin/users/edit/3', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRedirect("/admin/users/view/3");
+
+		$user = $this->controller->User->findById(3);
+		$this->assertNotEquals('Someone new', $user['User']['name']);
+		$this->assertNotEquals('newbie@example.com', $user['User']['email']);
+	}
+
+	public function testAdminEditUserOK() {
+		$postData = array('User' => array(
+			'id' => 3,
+			'name' => 'Someone new',
+			'email' => 'newbie@example.com',
+		));
+		$this->_fakeLogin(5);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("User '<strong>%s</strong>' has been updated.", "Someone new"));
+		$this->testAction('/admin/users/edit/3', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRedirect("/admin/users");
+
+		$user = $this->controller->User->findById(3);
+		$this->assertEquals('Someone new', $user['User']['name']);
+		$this->assertEquals('newbie@example.com', $user['User']['email']);
+	}
+
 	public function testDetails() {
 	}
 
-/**
- * testSecurity method
- *
- * @return void
- */
-	public function testSecurity() {
+	public function testSecurityNotLoggedIn() {
+		try {
+			$this->testAction('/users/security', array('method' => 'get', 'return' => 'vars'));
+		// We're not logged in but the test bypasses auth, so ignore this error
+		} catch (Exception $e) {}
+
+		$this->assertNotAuthorized();
 	}
 
-/**
- * testTheme method
- *
- * @return void
- */
+	public function testSecurityNotSystemAdmin() {
+		$this->_fakeLogin(1);
+		debug("About to try, logged in");
+		$this->testAction('/users/security', array('method' => 'get', 'return' => 'vars'));
+		debug("Asserting auth'd");
+		$this->assertAuthorized();
+	}
+
+	public function testSecurityInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/users/security', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testSecurityInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/users/security', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testSecuritySystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/users/security', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
+
+	public function testSecurityGetForm() {
+		$this->_fakeLogin(1);
+		$this->testAction('/users/security', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/users/security').'"|', $this->view);
+
+	}
+
+	public function testSecurityIncorrectPassword() {
+		$postData = array('User' => array(
+			'password_current' => 'shoes',
+			'password_confirm' => 'fooBarBaz',
+			'password' => 'fooBarBaz',
+		));
+		$this->_fakeLogin(1);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your current password was incorrect. Please try again.'), 'default', array(), 'error');
+		$this->testAction('/users/security', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testSecurityMismatchedPassword() {
+		$this->controller->User->save(array('User' => array('id' => 1, 'password' => 'shoeBagsAndDog')));
+		$postData = array('User' => array(
+			'password_current' => 'shoeBagsAndDog',
+			'password_confirm' => 'fooBarBaz',
+			'password' => 'fooBarBazThud',
+		));
+		$this->_fakeLogin(1);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your passwords did not match. Please try again.'), 'default', array(), 'error');
+		$this->testAction('/users/security', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testSecurityResetPassword() {
+		$this->controller->User->save(array('User' => array('id' => 1, 'password' => 'shoeBagsAndDog')));
+		$postData = array('User' => array(
+			'password_current' => 'shoeBagsAndDog',
+			'password_confirm' => 'fooBarBaz',
+			'password' => 'fooBarBaz',
+		));
+		$this->_fakeLogin(1);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Your changes have been saved.'), 'default', array(), 'success');
+		$this->testAction('/users/security', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+
+	}
+
 	public function testTheme() {
 	}
 
-/**
- * testDelete method
- *
- * @return void
- */
 	public function testDelete() {
 	}
 
-/**
- * testAdminDelete method
- *
- * @return void
- */
 	public function testAdminDeleteNotLoggedIn() {
 		$this->testAction('/admin/users/delete/3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
@@ -936,6 +1121,25 @@ class UsersControllerTest extends AppControllerTest {
 		$this->assertNotAuthorized();
 	}
 
+	public function testAdminPromoteFail () {
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Account was not promoted'), 'default', array(), 'error');
+		$this->__testChangeAdminLevel(5, 1, true, false);
+		$this->assertRedirect("/admin/users");
+	}
+
+	public function testAdminPromoteGetRedirect () {
+		$this->testAction("/admin/users/promote/1", array('method' => 'get'));
+		$this->assertRedirect("/admin/users");
+	}
+
 	public function testAdminPromoteAlreadyAdmin () {
 		$this->__testChangeAdminLevel(5, 9, true, true);
 	}
@@ -973,6 +1177,25 @@ class UsersControllerTest extends AppControllerTest {
 		$this->_fakeLogin(22);
 		$ret = $this->testAction('/admin/users/demote/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
+	}
+
+	public function testAdminDemoteFail () {
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__('Account was not demoted'), 'default', array(), 'error');
+		$this->__testChangeAdminLevel(5, 9, false, true);
+		$this->assertRedirect("/admin/users");
+	}
+
+	public function testAdminDemoteGetRedirect () {
+		$this->testAction("/admin/users/demote/1", array('method' => 'get'));
+		$this->assertRedirect("/admin/users");
 	}
 
 	public function testAdminDemoteAlreadyNotAdmin () {

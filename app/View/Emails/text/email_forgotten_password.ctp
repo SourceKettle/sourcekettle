@@ -13,17 +13,17 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-Dear <?= $User['User']['name'] ?>,
+<?=__("Dear %s,", $User['User']['name'])?>
 
-A request to reset your password was made, if this was by you then please click the link below within the next 30 minutes.
+<?=__("A request to reset your password was made, if this was by you then please click the link below within the next 30 minutes.")?>
 
 <?= $this->Html->url('/users/reset_password/'.$Key['LostPasswordKey']['key'], true) ?>
 
-This definitely wasn't you?
-Then please ignore this email and the key will expire shortly.
+<?=__("This definitely wasn't you?")?>
+<?=__("Then please ignore this email and the key will expire shortly.")?>
 
-Not again?!
-If this keeps happening then please reply to this email accordingly.
+<?=__("Not again?!")?>
+<?=__("If this keeps happening then please reply to this email accordingly.")?>
 
-Regards,
-  The SourceKettle Team
+<?=__("Regards,")?>
+  <?=__("The %s Team", $sourcekettle_config['UserInterface']['alias'])?>

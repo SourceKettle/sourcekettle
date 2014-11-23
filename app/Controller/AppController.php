@@ -205,12 +205,12 @@ class AppController extends Controller {
 		$userId = null;
 
 		$this->User = ClassRegistry::init('User');
+
 		if ($this->Auth->loggedIn()) {
 			$userId = $this->Auth->user('id');
 
 			$current_user = $this->User->findById($userId);
 			$this->set('current_user', $current_user['User']);
-
 			// Pretty much nicked from http://bakery.cakephp.org/articles/alkemann/2008/10/21/logablebehavior
 			foreach ($this->uses as $class) {
 				if (@$this->{$class}->Behaviors && $this->{$class}->Behaviors->enabled('ProjectHistory')) {

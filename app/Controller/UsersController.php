@@ -47,6 +47,7 @@ class UsersController extends AppController {
 		// Registration and other "setting your password" actions cannot
 		// require a login
 		$this->Auth->allow(
+			'add',
 			'register',
 			'activate',
 			'lost_password',
@@ -277,11 +278,15 @@ class UsersController extends AppController {
  * Allows admins to see all users
  */
 	public function admin_index() {
+		// TODO nesting levels of doooom
 		if ($this->request->is('post') && isset($this->request->data['User']['name']) && $user = $this->request->data['User']['name']) {
-			if ($user = $this->User->findByEmail($this->Useful->extractEmail($user))) {
-				return $this->redirect(array('action' => 'view', $user['User']['id']));
-			} else {
-				$this->Flash->error(__('The specified user does not exist. Please try again.'));
+			if (preg_match('/[\[{\(](.+@.+)[\]}\)]/', $user, $matches)) {
+				if ($user = $this->User->findByEmail($matches[1])) {
+					return $this->redirect(array('action' => 'view', $user['User']['id']));
+				} else {
+					$this->Flash->error(__('The specified user does not exist. Please try again.'));
+				}
+				
 			}
 		}
 		$this->User->recursive = 0;
@@ -362,12 +367,13 @@ class UsersController extends AppController {
 		$them   = $this->User->id;
 		$joinProjects = array();
 
-		// TODO - Make one query
+		// Find projects you both collaborate on
 		if ($you != $them) {
 			$themProjects = array_values($this->User->Collaborator->find('list', array('conditions' => array('user_id' => $them), 'fields' => array('project_id'))));
 			$joinProjects = $this->User->Collaborator->find('all', array('conditions' => array('user_id' => $you, 'project_id' => $themProjects)));
 		}
 		$this->set('shared_projects', $joinProjects);
+		
 	}
 
 /**
@@ -384,7 +390,6 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) { // if data was posted therefore a submitted form
 			$this->User->create();
 			// Fudge in a random password to stop it looking like an external account
-			// TODO FUDGE FACTOR 15 until #273 is resolved and we have an is_internal flag
 			$this->request->data['User']['password'] = $this->__generateKey(25);
 
 			if ($this->User->save($this->request->data['User'])) {
@@ -403,7 +408,7 @@ class UsersController extends AppController {
 				$this->log("[UsersController.admin_add] user[" . $id . "] added by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
 				return $this->redirect(array('action' => 'view', $id));
 			} else {
-				$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+				$this->Session->setFlash("<h4 class='alert-heading'>".__("Error")."</h4>".__("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
 			}
 		}
 	}
@@ -623,13 +628,6 @@ class UsersController extends AppController {
 
 	public function admin_promote($userId) {
 
-		// Check user ID is numeric...
-		$userId = trim($userId);
-		if (!is_numeric($userId)) {
-			$this->Session->setFlash(__('Could not promote user - bad user ID was given'), 'error', array(), '');
-			return $this->redirect(array('action' => 'admin_index'));
-		}
-
 		if ($this->request->is('post')) {
 			$this->User->id = $userId;
 			$targetUserData = $this->User->read();
@@ -660,13 +658,6 @@ class UsersController extends AppController {
 	}
 
 	public function admin_demote($userId) {
-
-		// Check user ID is numeric...
-		$userId = trim($userId);
-		if (!is_numeric($userId)) {
-			$this->Session->setFlash(__('Could not promote user - bad user ID was given'), 'error', array(), '');
-			return $this->redirect(array('action' => 'admin_index'));
-		}
 
 		// Safety net: do not allow a sysadmin to demote themself!
 		if ($this->Auth->user('id') == $userId) {
