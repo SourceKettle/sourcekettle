@@ -11,6 +11,8 @@ class TimesControllerTestCase extends AppControllerTest {
     public $fixtures = array(
 		'core.cake_session',
 		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',
@@ -30,6 +32,14 @@ class TimesControllerTestCase extends AppControllerTest {
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	public function setUp() {

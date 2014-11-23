@@ -39,6 +39,18 @@ class MilestonesController extends AppProjectController {
 			'delete'   => 'write',
 		);
 	}
+
+	public function isAuthorized($user) {
+		if (!$this->sourcekettle_config['Features']['task_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['task_enabled']['source'] == "Project-specific settings") {
+				throw new ForbiddenException(__('This project does not have task tracking enabled. Please contact a project administrator to enable task tracking.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow task tracking. Please contact a system administrator to enable task tracking.'));
+			}
+		}
+
+		return parent::isAuthorized($user);
+	}
 /**
  * beforeFilter function.
  *
@@ -91,10 +103,10 @@ class MilestonesController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
-		$backlog = $this->Milestone->openTasksForMilestone($id);
-		$inProgress = $this->Milestone->inProgressTasksForMilestone($id);
-		$completed = $this->Milestone->closedOrResolvedTasksForMilestone($id);
-		$iceBox = $this->Milestone->droppedTasksForMilestone($id);
+		$backlog = $this->Milestone->tasksOfStatusForMilestone($id, 'open');
+		$inProgress = $this->Milestone->tasksOfStatusForMilestone($id, 'in progress');
+		$completed = $this->Milestone->tasksOfStatusForMilestone($id, array('resolved', 'closed'));
+		$iceBox = $this->Milestone->tasksOfStatusForMilestone($id, 'dropped');
 
 		// Final value is min size of the board
 		$max = max(count($backlog), count($inProgress), count($completed), 3);
@@ -128,10 +140,10 @@ class MilestonesController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
-		$mustHave   = $this->Milestone->blockerTasksForMilestone($id);
-		$shouldHave = $this->Milestone->urgentTasksForMilestone($id);
-		$couldHave  = $this->Milestone->majorTasksForMilestone($id);
-		$mightHave  = $this->Milestone->minorTasksForMilestone($id);
+		$mustHave   = $this->Milestone->tasksOfPriorityForMilestone($id, 'blocker');
+		$shouldHave = $this->Milestone->tasksOfPriorityForMilestone($id, 'urgent');
+		$couldHave  = $this->Milestone->tasksOfPriorityForMilestone($id, 'major');
+		$mightHave  = $this->Milestone->tasksOfPriorityForMilestone($id, 'minor');
 
 		$this->Project->id = $project['Project']['id'];
 		$wontHave   = $this->Project->getProjectBacklog();

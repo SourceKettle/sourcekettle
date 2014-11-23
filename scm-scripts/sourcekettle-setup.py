@@ -482,27 +482,6 @@ chmod_r(repo_dir, stat.S_IRWXU | stat.S_ISGID)
 
 print "Building SourceKettle config files..."
 
-config_template = './Config/sourcekettle.php.template'
-config_file     = './Config/sourcekettle.php'
-
-config_tpl = open(config_template, 'r')
-if not config_tpl:
-    print "Error reading config template from '%s'!" % config_template
-
-config = open(config_file, 'w')
-if not config:
-    print "Error writing to config file '%s'!" % config_file
-
-line = config_tpl.readline()
-while line:
-    line = line.replace('__SCM_USER__', scm_user)
-    line = line.replace('__REPO_DIR__', repo_dir)
-    config.write(line)
-    line = config_tpl.readline()
-
-config_tpl.close()
-config.close()
-
 db_template = './Config/database.php.template'
 db_file     = './Config/database.php'
 
@@ -571,6 +550,24 @@ if create_test_db:
     print "Creating SourceKettle test database..."
     c=dbc.cursor()
     c.execute('CREATE DATABASE `%s`' % test_db_name)
+
+# Now we will create repo settings etc.
+#c=dbc.cursor()
+#c.execute('INSERT INTO Settings ()' % test_db_name)
+
+#settings_cmd = './Console/cake settings set SourceRepository.base %s' % repo_dir
+#settings_cmd = './Console/cake settings set SourceRepository.user %s' % scm_user
+
+#try:
+#    # Oh dear, what a fudge :-(
+#    # It seems that the cake shell doesn't have a "don't ask questions" option.
+#    yes = subprocess.Popen(shlex.split("/bin/echo -ne 'y\\ny\\n'"), stdout=subprocess.PIPE)
+#    schema = subprocess.Popen(shlex.split(schema_cmd), stdin=yes.stdout, stdout=subprocess.PIPE)
+#    output = schema.communicate()[0]
+#
+#    print "Settings output: %s" % output
+#except subprocess.CalledProcessError:
+#    bail("Failed to load database schema")
 
 print "Setup complete!"
 print "Your auto-generated MySQL password is: '%s'" % db_pass

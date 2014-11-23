@@ -19,29 +19,38 @@ class UserTestCase extends CakeTestCase {
     /**
      * fixtures - Populate the database with data of the following models
      */
-    public $fixtures = array('app.user',
-        'app.collaborator',
-        'app.project',
-        'app.project_group',
-        'app.project_groups_project',
-        'app.project_history',
-        'app.task',
-        'app.task_type',
-        'app.task_status',
-        'app.task_priority',
-        'app.task_dependency',
-        'app.task_comment',
-        'app.team',
-        'app.time',
-        'app.milestone',
+    public $fixtures = array(
+		'core.cake_session',
+		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
+		'app.project',
+		'app.project_history',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
+		'app.task',
+		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
+		'app.task_status',
+		'app.task_priority',
+		'app.time',
 		'app.attachment',
-        'app.repo_type',
-        'app.email_confirmation_key',
-        'app.lost_password_key',
-        'app.ssh_key',
-        'app.api_key',
+		'app.source',
+		'app.milestone',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
     );
 
     /**
@@ -192,25 +201,25 @@ class UserTestCase extends CakeTestCase {
 
 	public function testFailToChangeEmailExternal() {
 		// Try a non-sourcekettle-managed user account, should fail
-		$this->User->id = 6;
+		$this->User->id = 23;
 		$user = $this->User->read();
-		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found before change");
+		$this->assertEquals($user['User']['email'], "ldap-user@example.com", "Incorrect email found before change");
 
 		$this->User->saveField('email', 'blah@example.com');
 
-        	$user = $this->User->findById(6);
-		$this->assertEquals($user['User']['email'], "snaitf@example.com", "Incorrect email found after change");
+        $user = $this->User->findById(23);
+		$this->assertEquals($user['User']['email'], "ldap-user@example.com", "Incorrect email found after change");
 		
 	}
 
 	public function testFailToChangePasswordExternal() {
-		$this->User->id = 6;
+		$this->User->id = 23;
 		$user = $this->User->read();
 		$this->assertEquals($user['User']['password'], "", "Incorrect password found before change");
 
 		$this->User->saveField('password', 'testTESTtest');
 
-        	$user = $this->User->findById(6);
+        	$user = $this->User->findById(23);
 		$this->assertEquals($user['User']['password'], "", "Incorrect password found after change");
 	}
 
@@ -295,7 +304,7 @@ class UserTestCase extends CakeTestCase {
 	}
 
 	public function testFailToDeleteExternal() {
-		$this->User->id = 6;
+		$this->User->id = 23;
 		$ok = $this->User->delete();
 		$this->assertFalse($ok, 'Erroneously deleted external user account');
 	}
@@ -367,5 +376,25 @@ class UserTestCase extends CakeTestCase {
 
 		$deadKey = $this->User->EmailConfirmationKey->findByKey('ba6f23c5ce588f16647fe32603fb1593');
 		$this->assertEquals(array(), $deadKey);
+	}
+
+	private function crunchTaskList($tasks) {
+		return array_map(function($a){return $a['Task']['id'];}, $tasks);
+	}
+
+	public function testTasksOfStatusForUser() {
+		$open = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'open'));
+		$inProgress = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'in progress'));
+		$resolved = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'resolved'));
+		$closed = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'closed'));
+		$dropped = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, 'dropped'));
+		$done = $this->crunchTaskList($this->User->tasksOfStatusForUser(2, array('resolved', 'closed')));
+
+		$this->assertEquals(array(), $open);
+		$this->assertEquals(array(4, 10, 11, 12, 13), $inProgress);
+		$this->assertEquals(array(1), $resolved);
+		$this->assertEquals(array(), $closed);
+		$this->assertEquals(array(), $dropped);
+		$this->assertEquals(array(1), $done);
 	}
 }

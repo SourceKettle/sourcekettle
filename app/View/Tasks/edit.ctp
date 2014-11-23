@@ -24,7 +24,6 @@ $this->Html->scriptBlock ("
         });
     });
 ", array ("inline" => false));
-
 ?>
 
 <?= $this->DT->pHeader(__("Edit a task")) ?>

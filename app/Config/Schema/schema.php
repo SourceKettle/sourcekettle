@@ -18,19 +18,19 @@ class AppSchema extends CakeSchema {
 					$setting = ClassRegistry::init('Setting');
 					$setting->create();
 					$setting->saveMany(array(
-						array('name' => 'register_enabled',           'value' => '1'),
-						array('name' => 'sysadmin_email',             'value' => 'sysadmin@example.com'),
-						array('name' => 'sync_required',              'value' => '0'),
-						array('name' => 'feature_time_enabled',       'value' => '1'),
-						array('name' => 'feature_source_enabled',     'value' => '1'),
-						array('name' => 'feature_task_enabled',       'value' => '1'),
-						array('name' => 'feature_attachment_enabled', 'value' => '0'),
-						array('name' => 'ldap_enabled',               'value' => '0'),
-						array('name' => 'ldap_url',                   'value' => ''),
-						array('name' => 'ldap_bind_dn',               'value' => ''),
-						array('name' => 'ldap_bind_pw',               'value' => ''),
-						array('name' => 'ldap_base_dn',               'value' => ''),
-						array('name' => 'ldap_filter',                'value' => 'mail=%USERNAME%'),
+						array('name' => 'Users.register_enabled',     'value' => '1'),
+						array('name' => 'Users.sysadmin_email',       'value' => 'sysadmin@example.com'),
+						array('name' => 'Status.sync_required',       'value' => '0'),
+						array('name' => 'Feature.time_enabled',       'value' => '1'),
+						array('name' => 'Feature.source_enabled',     'value' => '1'),
+						array('name' => 'Feature.task_enabled',       'value' => '1'),
+						array('name' => 'Feature.attachment_enabled', 'value' => '0'),
+						array('name' => 'Ldap.enabled',               'value' => '0'),
+						array('name' => 'Ldap.url',                   'value' => ''),
+						array('name' => 'Ldap.bind_dn',               'value' => ''),
+						array('name' => 'Ldap.bind_pw',               'value' => ''),
+						array('name' => 'Ldap.base_dn',               'value' => ''),
+						array('name' => 'Ldap.filter',                'value' => 'mail=%USERNAME%'),
 					));
 					break;
 
@@ -289,13 +289,13 @@ class AppSchema extends CakeSchema {
 	public $project_settings = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'unique', 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'value' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'name' => array('column' => 'name', 'unique' => 1),
+			'project_id_2' => array('column' => array('project_id', 'name'), 'unique' => 1),
 			'project_id' => array('column' => 'project_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
@@ -535,13 +535,13 @@ class AppSchema extends CakeSchema {
 	public $user_settings = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
-		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'unique', 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'value' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'name' => array('column' => 'name', 'unique' => 1),
+			'user_id_2' => array('column' => array('user_id', 'name'), 'unique' => 1),
 			'user_id' => array('column' => 'user_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')

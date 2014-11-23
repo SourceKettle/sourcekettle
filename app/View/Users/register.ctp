@@ -14,7 +14,7 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-echo $this->Bootstrap->page_header("Register with ".$sourcekettle_config['global']['alias']." <small>Hello! Bonjour! Willkommen!..</small>");
+echo $this->Bootstrap->page_header("Register with ".$sourcekettle_config['UserInterface']['alias']['value']." <small>Hello! Bonjour! Willkommen!..</small>");
 ?>
 <div class="row">
     <div class="span8">

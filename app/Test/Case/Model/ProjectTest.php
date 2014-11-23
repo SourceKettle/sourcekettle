@@ -20,14 +20,14 @@ class ProjectTestCase extends CakeTestCase {
      * fixtures - Populate the database with data of the following models
      */
     public $fixtures = array(
+		'core.cake_session',
+		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',
 		'app.collaborator',
-		'app.collaborating_team',
-		'app.project_group',
-		'app.project_groups_project',
-		'app.group_collaborating_team',
 		'app.user',
 		'app.task',
 		'app.task_type',
@@ -36,18 +36,21 @@ class ProjectTestCase extends CakeTestCase {
 		'app.task_status',
 		'app.task_priority',
 		'app.time',
-		'app.team',
-		'app.teams_user',
 		'app.attachment',
 		'app.source',
 		'app.milestone',
-		'app.setting',
 		'app.email_confirmation_key',
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
     /**
@@ -529,10 +532,10 @@ class ProjectTestCase extends CakeTestCase {
 
 	public function testFailToChangeName() {
 		$before = $this->Project->findById(1);
-		$saved = $this->Project->save(array('name' => 'shoes'));
+		$saved = $this->Project->save(array('Project' => array('id' => 1, 'name' => 'shoes')));
 		$this->assertNotContains('name', $saved['Project']);
 		$after = $this->Project->findById(1);
-		$this->assertEquals($before, $after);
+		$this->assertEquals($before['Project']['name'], $after['Project']['name']);
 	}
 
 	// Test that only the tasks with no milestone are returned
@@ -764,7 +767,7 @@ class ProjectTestCase extends CakeTestCase {
 	// Rename, but fail because a git repository exists in the new location
 	public function testRenameWithClashingGitRepository() {
 		$sourcekettleConfig = ClassRegistry::init('Setting')->loadConfigSettings();
-		$base = $sourcekettleConfig['repo']['base'];
+		$base = $sourcekettleConfig['SourceRepository']['base']['value'];
 		mkdir("$base/not_at_all_private.git");
 		$before = $this->Project->findById(1);
 		try{
@@ -792,15 +795,27 @@ class ProjectTestCase extends CakeTestCase {
 		$this->assertEquals($before, $after);
 	}
 
-	/*public function testRenameFail() {
-		$before = $this->Project->findById(1);
-		$this->Project->Folder = $this->getMock('Folder', array('move'))
+	public function testRenameFail() {
+		$folder = $this->getMock('Folder');
+		$folder
 			->expects($this->once())
 			->method('move')
 			->will($this->returnValue(false));
+		$folder->path = $this->Project->Source->getRepositoryLocation();
+	
+		$this->Project = $this->getMockForModel('Project', array('getFolder'));
+		$this->Project
+			->expects($this->once())
+			->method('getFolder')
+			->will($this->returnValue($folder));
+		$before = $this->Project->findById(1);
 		$repo = $this->Project->Source->getRepositoryLocation();
-		$this->assertTrue($this->Project->rename("private", 'not_at_all_private'));
-	}*/
+		try{
+			$this->Project->rename("private", 'not_at_all_private');
+		} catch (Exception $e) {
+			$this->assertEquals(__("A problem occurred when renaming the project repository"), $e->getMessage());
+		}
+	}
 
 	public function testListCollaborators() {
 		$this->Project->id = 1;

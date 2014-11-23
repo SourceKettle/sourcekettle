@@ -18,15 +18,22 @@
 <html>
 <head>
     <title>
-        <?= h($sourcekettle_config['global']['alias']) ?> - <?= h($title_for_layout) ?>
+        <?= h($sourcekettle_config['UserInterface']['alias']['value']) ?> - <?= h($title_for_layout) ?>
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
-    <?= $this->Html->charset('UTF-8') . "\n" ?>
+    
+	<?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
+    
+	<?= $this->Html->charset('UTF-8') ?>
+
     <?= $this->Html->css('bootstrap.min') ?>
-    <?= ($current_user['theme'] != 'default') ? $this->TwitterBootswatch->cssForTheme($current_user['theme']) : '' ?>
+
+	<?= $this->Theme->css($sourcekettle_config) ?>
+
     <?= $this->Html->css('layout'); ?>
+
     <?= $this->Html->css('bootstrap-responsive.min') ?>
+
     <?= $this->fetch ('css') ?>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -48,7 +55,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <?= $this->Html->link($sourcekettle_config['global']['alias'], '/', array('class' => 'brand')); ?>
+                    <?= $this->Html->link($sourcekettle_config['UserInterface']['alias']['value'], '/', array('class' => 'brand')); ?>
 
 
                     <ul class="nav pull-right">
@@ -106,7 +113,8 @@
     <div class="container">
         <div id="content">
             <span id="flashes">
-                <? echo $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
+                <?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
+				<?= $this->Session->flash('email'); ?>
             </span>
             <?= $content_for_layout ?>
         </div>

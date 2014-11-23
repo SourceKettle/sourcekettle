@@ -64,6 +64,7 @@ class TasksController extends AppProjectController {
 	}
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
+
 		return array(
 			'index'  => 'read',
 			'others'  => 'read',
@@ -87,9 +88,46 @@ class TasksController extends AppProjectController {
 			'api_all' => 'read',
 			'api_view' => 'read',
 			'api_update' => 'write',
+			'personal_kanban' => 'login',
 		);
 	}
 
+	// Special case for team kanban, requires team membership instead of project collaboration
+	public function isAuthorized($user) {
+
+		if (!$this->sourcekettle_config['Features']['task_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['task_enabled']['source'] == "Project-specific settings") {
+				throw new ForbiddenException(__('This project does not have task tracking enabled. Please contact a project administrator to enable task tracking.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow task tracking. Please contact a system administrator to enable task tracking.'));
+			}
+		}
+
+		if ($this->action != 'team_kanban') {
+			return parent::isAuthorized($user);
+		}
+
+		if (!$user['is_active']) {
+			return false;
+		}
+
+		$teamId = $this->Team->field('id', array('name' => $this->params->params['team']));
+		if (empty($teamId) || $teamId < 1) {
+			throw new NotFoundException(__("Invalid team"));
+		}
+
+		if ($user['is_admin']) {
+			return true;
+		}
+
+		if (!$this->Team->isMember($teamId, $user['id'])) {
+			$this->Auth->authError = __('You must be a team member to view the team kanban chart.');
+			return false;
+		} else {
+			return true;
+		}
+
+	}
 /**
  * index method
  *
@@ -271,15 +309,8 @@ class TasksController extends AppProjectController {
 
 	public function team_kanban($team = null) {
 
-		if (!is_numeric($team)) {
-			$team = $this->Team->findByName($team);
-		} else {
-			$team = $this->Team->findById($team);
-		}
-
-		if (empty($team)) {
-			throw new NotFoundException(__("Invalid team"));
-		}
+		// NB we check it's valid in the isAuthorized method, so no need to check again
+		$team = $this->Team->findByName($team);
 
 		$backlog = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), 'open');
 		$inProgress = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), 'in progress');
@@ -382,6 +413,7 @@ class TasksController extends AppProjectController {
 		$collabs[0] = "None";
 		ksort($collabs);
 		$this->set('collaborators', $collabs);
+
 	}
 
 	public function assign($project = null, $public_id = null) {
@@ -607,31 +639,38 @@ class TasksController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 
+		$milestones = $this->Milestone->listMilestoneOptions();
+
+		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
+
+		$availableTasks = $this->Task->find('list', array(
+			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
+			'fields' => array('Task.id', 'Task.subject'),
+		));
+
+		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$assignees[0] = "None";
+		ksort($assignees);
+
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 
-			unset($this->request->data['Task']['project_id']);
+			$this->request->data['Task']['project_id'] = $project['Project']['id'];
 			unset($this->request->data['Task']['owner_id']);
+
+			$this->request->data['Task']['id'] = $this->Task->id;
+
+			$saved = $this->Task->save($this->request->data);
+			$this->request->data['Task']['public_id'] = $public_id;
 
 			if ($this->Flash->u($this->Task->save($this->request->data))) {
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
+			} else {
+				$this->request->data = array_merge($task, $this->request->data);
 			}
 		} else {
 			$this->request->data = $task;
-
-			$milestones = $this->Milestone->listMilestoneOptions();
-
-			$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
-
-			$availableTasks = $this->Task->find('list', array(
-				'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
-				'fields' => array('Task.id', 'Task.subject'),
-			));
-
-			$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
-			$assignees[0] = "None";
-			ksort($assignees);
-
-			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
 	}
 
@@ -683,6 +722,7 @@ class TasksController extends AppProjectController {
 		$isAjax = $this->request->is("ajax");
 
 		$this->Task->set('task_status_id', $status);
+		$this->Task->project_id = $project['Project']['id'];
 		$success = $this->Task->save();
 
 		$messages = array();

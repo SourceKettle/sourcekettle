@@ -129,7 +129,7 @@ class Source extends AppModel {
  */
 	public function getRepositoryLocation() {
 		$sourcekettleConfig = ClassRegistry::init('Setting')->loadConfigSettings();
-		$base = $sourcekettleConfig['repo']['base'];
+		$base = $sourcekettleConfig['SourceRepository']['base']['value'];
 
 		if ($base[strlen($base) - 1] != '/') $base .= '/';
 

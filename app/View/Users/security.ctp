@@ -24,48 +24,48 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
     <div class="span6">
         <?php
         echo $this->Form->create('User', array('class' => 'well form-horizontal', 'type' => 'post'));
-        echo '<h3>Change your password</h3>';
+        echo '<h3>'.__("Change your password").'</h3>';
 
-        echo $this->Bootstrap->input("Current password", array(
+        echo $this->Bootstrap->input(__("Current password"), array(
             "input" => $this->Form->password("password_current"),
         ));
 
-        echo $this->Bootstrap->input("new password", array(
+        echo $this->Bootstrap->input(__("new password"), array(
             "input" => $this->Form->password("password"),
         ));
 
-        echo $this->Bootstrap->input("Confirm password", array(
+        echo $this->Bootstrap->input(__("Confirm password"), array(
             "input" => $this->Form->password("password_confirm"),
         ));
-        echo $this->Bootstrap->button("Save", array("style" => "primary", "size" => "large", 'class' => 'controls'));
+        echo $this->Bootstrap->button(__("Save"), array("style" => "primary", "size" => "large", 'class' => 'controls'));
 
         echo $this->Form->end();
         ?>
     </div>
     <div class="span4">
-        <h3>What makes a super s3cr3t_pa55W0rd?</h3>
+        <h3><?=__("What makes a super s3cr3t_pa55W0rd?")?></h3>
         <p>
-            Here at SourceKettle, we aren't your parents.<br>
-            However we do know a thing or two (maybe more) about what makes a secure password.
+            <?=__("Here at %s, we aren't your parents.", $sourcekettle_config['UserInterface']['alias']['value'])?><br>
+            <?=__("However we do know a thing or two (maybe more) about what makes a secure password.")?>
         </p>
         <p>
-            We also love the sound of our own voices, so we've put together some handy hints:
+            <?=__("We also love the sound of our own voices, so we've put together some handy hints:")?>
             <dl>
-                <dt>Avoid:</dt>
+                <dt><?=__("Avoid:")?></dt>
                 <dd>
                 <ul>
-                    <li>Dictionary words in any language.</li>
-                    <li>Words spelled backwards, common misspellings, and abbreviations.</li>
-                    <li>Sequences or repeated characters or adjacent letters on your keyboard.</li>
-                    <li>Personal information. Your name, birthday, driver's license, passport number, or similar information.</li>
+                    <li><?=__("Dictionary words in any language.")?></li>
+                    <li><?=__("Words spelled backwards, common misspellings, and abbreviations.")?></li>
+                    <li><?=__("Sequences or repeated characters or adjacent letters on your keyboard.")?></li>
+                    <li><?=__("Personal information. Your name, birthday, driver's license, passport number, or similar information.")?></li>
                 </ul>
                 </dd>
-                <dt>Most importantly</dt>
-                <dd>The longer a password is the harder it is to crack.</dd>
+                <dt><?=__("Most importantly")?></dt>
+                <dd><?=__("The longer a password is the harder it is to crack.")?></dd>
             </dl>
         </p>
         <p>
-            In summary, 'password' is not a good password.
+            <?=__("In summary, 'password' is not a good password.")?>
         </p>
     </div>
 </div>

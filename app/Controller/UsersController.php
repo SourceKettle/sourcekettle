@@ -26,8 +26,19 @@ class UsersController extends AppController {
 	public $uses = array('User', 'Setting');
 
 	public function isAuthorized($user) {
-		// Must be logged in
-		return (isset($user) && !empty($user));
+
+		// Must be logged in and active
+		if (!isset($user) || empty($user) || !$user['is_active']) {
+			return false;
+		}
+
+		// Sysadmins only for admin actions
+		if (preg_match('/^admin_/', $this->action) && !$user['is_admin']) {
+			return false;
+		}
+
+		// Anything else you just need to be logged in for
+		return true;
 	}
 
 	public function beforeFilter() {
@@ -36,6 +47,7 @@ class UsersController extends AppController {
 		// Registration and other "setting your password" actions cannot
 		// require a login
 		$this->Auth->allow(
+			'add',
 			'register',
 			'activate',
 			'lost_password',
@@ -51,7 +63,7 @@ class UsersController extends AppController {
 		$ok = true;
 
 		// Registration is disabled, render a message instead
-		if (!$this->Setting->field('value', array('name' => 'register_enabled'))) {
+		if (!$this->sourcekettle_config['Users']['register_enabled']['value']) {
 			$this->render('registration_disabled');
 			return;
 		}
@@ -162,14 +174,14 @@ class UsersController extends AppController {
 		
 		// Don't know them...
 		if (empty($user)) {
-			$this->Session->setFlash("A problem occurred when resetting your password - if the problem persists you should contact <a href='mailto:".$this->sourcekettle_config['sysadmin_email']."'>the system administrator</a>.", 'default', array(), 'error');
+			$this->Session->setFlash("A problem occurred when resetting your password - if the problem persists you should contact <a href='mailto:".$this->sourcekettle_config['Users']['sysadmin_email']['value']."'>the system administrator</a>.", 'default', array(), 'error');
 			return $this->redirect('/login');
 		}
 		// Check the user account is internally managed by SourceKettle
 		if (!@$user['User']['is_internal']) {
-			$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->sourcekettle_config['global']['alias'] . " - " .
+			$this->Session->setFlash("It looks like you're using an account that is not managed by " . $this->sourcekettle_config['UserInterface']['alias']['value'] . " - " .
 				"unfortunately, we can't help you reset your password. Try talking to " .
-				"<a href='mailto:" . $this->sourcekettle_config['sysadmin_email'] . "'>the system administrator</a>.", 'default', array(), 'error');
+				"<a href='mailto:" . $this->sourcekettle_config['Users']['sysadmin_email']['value'] . "'>the system administrator</a>.", 'default', array(), 'error');
 			return $this->redirect('/login');
 		}
 	
@@ -249,14 +261,14 @@ class UsersController extends AppController {
 
 		// Save failed...
 		if (!$this->User->save($this->request->data)) {
-			$this->Session->setFlash("There was a problem resetting your password. Please try again.", 'default', array(), 'error');
+			$this->Session->setFlash(__("There was a problem resetting your password. Please try again."), 'default', array(), 'error');
 			$this->render("reset_password");
 			return;
 		}
 
 		// Delete the reset key and redirect to login page
 		$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
-		$this->Session->setFlash("Your password has been reset. You can now login.", 'default', array(), 'success');
+		$this->Session->setFlash(__("Your password has been reset. You can now login."), 'default', array(), 'success');
 		$this->log("[UsersController.reset_password] password reset for user[" . $passwordkey['User']['id'] . "]", 'sourcekettle');
 
 		return $this->redirect('/login');
@@ -266,11 +278,15 @@ class UsersController extends AppController {
  * Allows admins to see all users
  */
 	public function admin_index() {
+		// TODO nesting levels of doooom
 		if ($this->request->is('post') && isset($this->request->data['User']['name']) && $user = $this->request->data['User']['name']) {
-			if ($user = $this->User->findByEmail($this->Useful->extractEmail($user))) {
-				return $this->redirect(array('action' => 'view', $user['User']['id']));
-			} else {
-				$this->Flash->error('The specified user does not exist. Please try again.');
+			if (preg_match('/[\[{\(](.+@.+)[\]}\)]/', $user, $matches)) {
+				if ($user = $this->User->findByEmail($matches[1])) {
+					return $this->redirect(array('action' => 'view', $user['User']['id']));
+				} else {
+					$this->Flash->error(__('The specified user does not exist. Please try again.'));
+				}
+				
 			}
 		}
 		$this->User->recursive = 0;
@@ -306,8 +322,7 @@ class UsersController extends AppController {
 
 		if ($this->request->is('get')) {
 			$this->set('users', $this->User->getPendingApprovals());
-			$this->render('admin_approve');
-			return;
+			return $this->render('admin_approve');
 		}
 
 		if (!$this->request->is('post') || $key == null) {
@@ -352,12 +367,13 @@ class UsersController extends AppController {
 		$them   = $this->User->id;
 		$joinProjects = array();
 
-		// TODO - Make one query
+		// Find projects you both collaborate on
 		if ($you != $them) {
 			$themProjects = array_values($this->User->Collaborator->find('list', array('conditions' => array('user_id' => $them), 'fields' => array('project_id'))));
 			$joinProjects = $this->User->Collaborator->find('all', array('conditions' => array('user_id' => $you, 'project_id' => $themProjects)));
 		}
 		$this->set('shared_projects', $joinProjects);
+		
 	}
 
 /**
@@ -374,7 +390,6 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) { // if data was posted therefore a submitted form
 			$this->User->create();
 			// Fudge in a random password to stop it looking like an external account
-			// TODO FUDGE FACTOR 15 until #273 is resolved and we have an is_internal flag
 			$this->request->data['User']['password'] = $this->__generateKey(25);
 
 			if ($this->User->save($this->request->data['User'])) {
@@ -393,7 +408,7 @@ class UsersController extends AppController {
 				$this->log("[UsersController.admin_add] user[" . $id . "] added by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
 				return $this->redirect(array('action' => 'view', $id));
 			} else {
-				$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+				$this->Session->setFlash("<h4 class='alert-heading'>".__("Error")."</h4>".__("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
 			}
 		}
 	}
@@ -490,27 +505,36 @@ class UsersController extends AppController {
  * Edit the current users theme
  */
 	public function theme() {
-		$this->User->id = $this->Auth->user('id'); //get the current user
-
+		$model = ClassRegistry::init("UserSetting");
+		$currentTheme = $model->findByNameAndUserId("UserInterface.theme", $this->Auth->user('id'));
 		if ($this->request->is('post')) {
-			$this->User->set('theme', (string)$this->request->data['User']['theme']);
 
-			if ($this->User->save()) {
+			$save = array('UserSetting' => array(
+				'user_id' => $this->Auth->user('id'),
+				'name' => 'UserInterface.theme',
+				'value' => (string)$this->request->data['Setting']['UserInterface']['theme']
+			));
 
+			if (!empty($currentTheme)) {
+				$save['UserSetting']['id'] = $currentTheme['UserSetting']['id'];
+			}
+
+			if ($model->save($save)) {
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
-				$this->log("[UsersController.theme] user[" . $this->Auth->user('id') . "] changed theme", 'sourcekettle');
-				$this->Session->write('Auth.User.theme', (string)$this->request->data['User']['theme']);
 				return $this->redirect(array('action' => 'theme'));
 			} else {
 				$this->Session->setFlash(__('There was a problem saving your changes. Please try again.'), 'default', array(), 'error');
 			}
 		}
 
-		$user = $this->Auth->user();
-		$this->set('user', $user);
-		$this->User->id = $user['id'];
-		$this->request->data = $this->User->read();
-		$this->request->data['User']['password'] = null; // We need to set the password to null, otherwise it get's changed!
+		if (!empty($currentTheme)) {
+			$currentTheme = $currentTheme['UserSetting']['value'];
+		} else {
+			$currentTheme = 'default';
+		}
+
+		$this->request->data['Setting'] = array('UserInterface' => array('theme' => $currentTheme));
+		$this->set('username', $this->Auth->user('name'));
 	}
 
 /**
@@ -604,24 +628,15 @@ class UsersController extends AppController {
 
 	public function admin_promote($userId) {
 
-		// Check we're logged in as an admin
-		$this->User->id = $this->Auth->user('id');
-		$currentUserData = $this->User->read();
-
-		if (!$currentUserData['User']['is_admin']) {
-			return $this->redirect('/');
-		}
-
-		// Check user ID is numeric...
-		$userId = trim($userId);
-		if (!is_numeric($userId)) {
-			$this->Session->setFlash(__('Could not promote user - bad user ID was given'), 'error', array(), '');
-			return $this->redirect(array('action' => 'admin_index'));
-		}
-
 		if ($this->request->is('post')) {
 			$this->User->id = $userId;
 			$targetUserData = $this->User->read();
+
+			// Never promote an inactive user account, just in case!
+			if (!$targetUserData['User']['is_active']) {
+				$this->Session->setFlash(__('Account was not promoted as it is inactive'), 'default', array(), 'error');
+				return $this->redirect(array('action' => 'admin_index'));
+			}
 
 			// Now promote the user
 			$targetUserData['User']['is_admin'] = 1;
@@ -644,16 +659,8 @@ class UsersController extends AppController {
 
 	public function admin_demote($userId) {
 
-		// Check we're logged in as an admin
-		$this->User->id = $this->Auth->user('id');
-		$currentUserData = $this->User->read();
-
-		if (!$currentUserData['User']['is_admin']) {
-			return $this->redirect('/');
-		}
-
 		// Safety net: do not allow a sysadmin to demote themself!
-		if ($currentUserData['User']['id'] == $userId) {
+		if ($this->Auth->user('id') == $userId) {
 			$this->Session->setFlash(__('Cannot demote yourself! Ask another admin to do it'), 'error', array(), '');
 			return $this->redirect(array('action' => 'admin_index'));
 		}
@@ -722,14 +729,14 @@ class UsersController extends AppController {
 			$this->Email->delivery = 'debug';
 		}
 		$User = $this->User->read(null,$id);
-		$Addr = $this->Setting->field('value', array('name' => 'sysadmin_email'));
+		$Addr = $this->sourcekettle_config['Users']['send_email_from']['value'];
 		$Key	= $this->User->EmailConfirmationKey->field('key', array('user_id' => $id));
 
 		$this->Email->to		= $User['User']['email'];
 		$this->Email->bcc		= array('secret@example.com');
-		$this->Email->subject	= 'Welcome to SourceKettle - Account activation';
+		$this->Email->subject	= __('Welcome to %s - Account activation', $this->sourcekettle_config['UserInterface']['alias']['value']);
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
+		$this->Email->from		= __('%s Admin <%s>', $this->sourcekettle_config['UserInterface']['alias']['value'], $Addr);
 		$this->Email->template	= 'email_activation';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
@@ -757,7 +764,7 @@ class UsersController extends AppController {
 		}
 		$User	= $this->User->read(null, $userId);
 		$Key	= $this->User->LostPasswordKey->read(null, $keyId);
-		$Addr	= $this->Setting->field('value', array('name' => 'sysadmin_email'));
+		$Addr = $this->sourcekettle_config['Users']['send_email_from']['value'];
 
 		// Couldn't find the user or the key for some reason, FAILURE.
 		if (!$User || !$Key) {
@@ -766,9 +773,9 @@ class UsersController extends AppController {
 		}
 
 		$this->Email->to		= $User['User']['email'];
-		$this->Email->subject	= 'SourceKettle - Forgotten Password';
+		$this->Email->subject	= __('%s - Forgotten Password', $this->sourcekettle_config['UserInterface']['alias']['value']);
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
+		$this->Email->from		= __('%s Admin <%s>', $this->sourcekettle_config['UserInterface']['alias']['value'], $Addr);
 		$this->Email->template	= 'email_forgotten_password';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
@@ -799,13 +806,12 @@ class UsersController extends AppController {
 		}
 		$User	= $this->User->read(null, $userId);
 		$Key	= $this->User->LostPasswordKey->read(null, $keyId);
-		$Addr	= $this->Setting->field('value', array('name' => 'sysadmin_email'));
+		$Addr = $this->sourcekettle_config['Users']['send_email_from']['value'];
 
 		$this->Email->to		= $User['User']['email'];
-		//$this->Email->bcc		= array('secret@example.com');
-		$this->Email->subject	= 'Welcome to SourceKettle - Suprise!';
+		$this->Email->subject	= __('Welcome to %s - Suprise!', $this->sourcekettle_config['UserInterface']['alias']['value']);
 		$this->Email->replyTo	= $Addr;
-		$this->Email->from		= 'SourceKettle Admin <' . $Addr . '>';
+		$this->Email->from		= __('%s Admin <%s>', $this->sourcekettle_config['UserInterface']['alias']['value'], $Addr);
 		$this->Email->template	= 'email_admin_create';
 
 		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
@@ -825,95 +831,6 @@ class UsersController extends AppController {
 	 *			 CAUTION: PUBLIC FACING					 *
 	 *													 *
 	 * ************************************************* */
-
-/**
- * Register a user via an API call
- * TODO Doesnt work
- */
-	public function api_register() {
-		$this->layout = 'ajax';
-
-		$this->User->recursive = -1;
-		$data = array();
-
-		$this->response->statusCode(405);
-		$data['error'] = 405;
-		$data['message'] = 'Function not yet supported.';
-
-		$this->set('data', $data);
-		$this->render('/Elements/json');
-	}
-
-/**
- * api_view function.
- *
- * @access public
- * @param mixed $id (default: null)
- * @return void
- */
-	public function api_view($id = null) {
-		$this->layout = 'ajax';
-
-		$this->User->recursive = -1;
-		$data = array();
-
-		if ($id == null) {
-			$this->response->statusCode(400);
-			$data['error']		= 400;
-			$data['message']	= 'Bad request, no user id specif ed.';
-		}
-
-		if ($id == 'all') {
-			$this->api_all();
-			return;
-		}
-
-		if (is_numeric($id)) {
-			$this->User->id = $id;
-
-			if (!$this->User->exists()) {
-				$this->response->statusCode(404);
-				$data['error']		= 404;
-				$data['message']	= 'No user found of that ID.';
-				$data['id']			= $id;
-			} else {
-				$user = $this->User->read();
-				$data = $user['User'];
-			}
-		}
-
-		$this->set('data',$data);
-		$this->render('/Elements/json');
-	}
-
-/**
- * api_all function.
- * ADMINS only
- *
- * @access public
- * @return void
- */
-	public function api_all() {
-		$this->layout = 'ajax';
-
-		$this->User->recursive = -1;
-		$data = array();
-
-		switch ($this->_apiAuthLevel()) {
-			case 1:
-				foreach ($this->User->find("all") as $user) {
-					$data[] = $user['User'];
-				}
-				break;
-			default:
-				$this->response->statusCode(403);
-				$data['error'] = 403;
-				$data['message'] = 'You are not authorised to access this.';
-		}
-
-		$this->set('data', $data);
-		$this->render('/Elements/json');
-	}
 
 /**
  * api_autocomplete function.

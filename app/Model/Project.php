@@ -121,6 +121,11 @@ class Project extends AppModel {
 			'foreignKey' => 'project_id',
 			'dependent' => true,
 		),
+		'ProjectSetting' => array(
+			'className' => 'ProjectSetting',
+			'foreignKey' => 'project_id',
+			'dependent' => true,
+		),
 
 		// Has-many-through relationships here...
 
@@ -159,6 +164,12 @@ class Project extends AppModel {
 		}
 	}
 
+	// This method exists simply to make testing easier... it means we can mock it out
+	// and return a Folder object that deliberately fails to move things.
+	public function getFolder($location) {
+		return new Folder($location);
+	}
+
 	public function rename($nameOrId, $newName) {
 		$project = $this->findByNameOrId($nameOrId, $nameOrId);
 		if (!isset($project) || empty($project)) {
@@ -192,7 +203,8 @@ class Project extends AppModel {
 		}
 
 		// Generate a new repository location
-		$folder = new Folder($location);
+		$folder = $this->getFolder($location);
+
 		$path = $folder->path;
 		$dirname = dirname($path);
 		$basename = basename($path);
@@ -206,7 +218,7 @@ class Project extends AppModel {
 
 		// Move the repo
 		if (!$folder->move(array('to' => $newpath))) {
-			throw new Exception("A problem occurred when renaming the project repository");
+			throw new Exception(__("A problem occurred when renaming the project repository"));
 		}
 
 		return ($this->save(array('name' => $newName), array('callbacks' => false)) != null);
@@ -229,7 +241,7 @@ class Project extends AppModel {
 		}
 
 		// We have a repo, delete it
-		$folder = new Folder($location);
+		$folder = $this->getFolder($location);
 		return $folder->delete();
 	}
 
@@ -394,7 +406,7 @@ class Project extends AppModel {
 		try {
 			$this->Source->init();
 			array_unshift($_types, 'Source');
-		} catch (UnsupportedRepositoryType $e) {
+		} catch (Exception $e) {
 		}
 
 		// Iterate over all of the types of event

@@ -221,5 +221,25 @@ class UserFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:50:08',
             'modified' => '2012-06-01 12:50:08'
         ),
+        array(
+            'id' => 22,
+            'name' => 'An inactive admin user',
+            'email' => 'inactive-admin@example.com',
+            'password' => 'Lorem ipsum dolor sit amet',
+            'is_admin' => 1,
+            'is_active' => 0,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
+        array(
+            'id' => 23,
+            'name' => 'An external account',
+            'email' => 'ldap-user@example.com',
+            'password' => '', // e.g. LDAP account
+            'is_admin' => 0,
+            'is_active' => 1,
+            'created' => '2012-06-01 12:50:08',
+            'modified' => '2012-06-01 12:50:08'
+        ),
     );
 }

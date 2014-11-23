@@ -41,6 +41,7 @@ class ProjectsController extends AppProjectController {
 			'delete' => 'write',
 			'burndown' => 'read',
 			'markupPreview'  => 'read',
+			'changeSetting' => 'admin',
 			'api_history' => 'read',
 			'api_autocomplete' => 'login',
 		);
@@ -233,8 +234,8 @@ class ProjectsController extends AppProjectController {
 
 		// Flip keys for values, then look up the ID of the default repo type name
 		$defaultRepo = array_flip($repoTypes);
-		if (isset($this->sourcekettle_config['repo']['default'])) {
-			$d = $this->sourcekettle_config['repo']['default'];
+		if (isset($this->sourcekettle_config['SourceRepository']['default']['value'])) {
+			$d = $this->sourcekettle_config['SourceRepository']['default']['value'];
 		} else {
 			$d = 'None';
 		}
@@ -444,8 +445,32 @@ class ProjectsController extends AppProjectController {
 		$log = array_map(function($a){return $a['ProjectBurndownLog'];}, $log);
 
 		$this->set(compact('project', 'log'));
-
 	}
+
+	public function changeSetting($project) {
+		if (!$this->request->is('post')) {
+			return $this->redirect(array('project' => $project, 'action' => 'edit'));
+		}
+
+		$code = 200;
+		$message = __("Settings updated.");
+		if (!$this->Project->ProjectSetting->saveSettingsTree($project, $this->request->data)) {
+			$code = 500;
+			$message = __("Failed to change settings");
+		}
+
+		if ($this->request->is('ajax')) {
+			$this->set('data', array('code' => $code, 'message' => $message));
+			$this->render('/Elements/json');
+			return;
+		} elseif($code == 200) {
+			$this->Flash->info(__('Settings updated.'));
+		} else {
+			$this->Flash->error(__('There was a problem updating the settings.'));
+		}
+		return $this->redirect (array ('action' => 'index'));
+	}
+
 	/* ************************************************ *
 	*													*
 	*			API SECTION OF CONTROLLER				*

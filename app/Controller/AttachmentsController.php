@@ -42,6 +42,19 @@ class AttachmentsController extends AppProjectController{
 			'delete' => 'write',
 		);
 	}
+
+	public function isAuthorized($user) {
+		if (!$this->sourcekettle_config['Features']['attachment_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['attachment_enabled']['source'] == 'Project settings') {
+				throw new ForbiddenException(__('This project does not have attachment uploads enabled. Please contact a project administrator to enable attachment uploads.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow attachment uploads. Please contact a system administrator to enable attachment uploads.'));
+			}
+		}
+
+		return parent::isAuthorized($user);
+	}
+
 /**
  * index function.
  *

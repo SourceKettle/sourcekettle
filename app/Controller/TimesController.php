@@ -39,6 +39,18 @@ class TimesController extends AppProjectController {
 		);
 	}
 
+	public function isAuthorized($user) {
+		if (!$this->sourcekettle_config['Features']['time_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['time_enabled']['source'] == "Project-specific settings") {
+				throw new ForbiddenException(__('This project does not have time tracking enabled. Please contact a project administrator to enable time tracking.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow time tracking. Please contact a system administrator to enable time tracking.'));
+			}
+		}
+
+		return parent::isAuthorized($user);
+	}
+
 /**
  * add
  * allows users to log time

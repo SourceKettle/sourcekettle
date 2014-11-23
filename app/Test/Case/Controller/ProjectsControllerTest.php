@@ -420,8 +420,16 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array('default' => 'Git'),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
@@ -436,8 +444,16 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array('default' => 'Shoes'),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Shoes'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
@@ -452,8 +468,15 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array(),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
@@ -872,7 +895,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
-			->with("Project '<strong>repoless</strong>' could not be updated. Please try again.");
+			->with(__("Project '<strong>%s</strong>' could not be updated. Please try again.", "repoless"));
 
 		$this->testAction('/project/repoless/add_repo', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
@@ -1036,6 +1059,18 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 	}
 
+	public function testApiAutocompleteInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/api/projects/autocomplete');
+		$this->assertNotAuthorized();
+	}
+
+	public function testApiAutocompleteInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/api/projects/autocomplete');
+		$this->assertNotAuthorized();
+	}
+
 	public function testApiAutocompleteTwoCharsAndBelow() {
 		$this->_fakeLogin(3);
 		$this->testAction('/api/projects/autocomplete?query=p');
@@ -1061,6 +1096,94 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 		$this->assertEquals(array('personal', 'personal_public'), $this->vars['data']['projects']);
 
+	}
+
+	public function testChangeSettingNotLoggedIn() {
+		$this->testAction('/project/public/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertAuthorized();
+	}
+
+	public function testChangeSettingProjectGuest() {
+		$this->_fakeLogin(8);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingProjectUser() {
+		$this->_fakeLogin(4);
+		$this->testAction('/project/private/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingNotCollaborator() {
+		$this->_fakeLogin(1);
+		$this->testAction('/project/personal/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingProjectAdmin() {
+		$this->_fakeLogin(9);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertAuthorized();
+	}
+
+	public function testChangeSettingInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingGetRedirect() {
+		$this->_fakeLogin(5);
+		$this->testAction('/project/public/changeSetting', array('method' => 'get'));
+		$this->assertRedirect("/project/public/edit");
+	}
+
+	public function testChangeSettingPostOK() {
+		$this->_fakeLogin(5);
+		$postData = array('ProjectSetting' => array(
+			'Features' => array('time_enabled' => false, 'task_enabled' => false),
+			'UserInterface' => array('alias' => 'BaconIpsum'),
+		));
+		$this->testAction('/project/public/changeSetting', array('method' => 'post', 'data' => $postData));
+
+		$found = ClassRegistry::init('Setting')->loadConfigSettings(null, 2);
+		$this->assertNotEquals('BaconIpsum', $found['UserInterface']['alias']['value']);
+		$this->assertEquals(0, $found['Features']['task_enabled']['value']);
+		$this->assertEquals(0, $found['Features']['time_enabled']['value']);
+	}
+
+	public function testChangeSettingAjaxPostOK() {
+		$this->_fakeLogin(5);
+		$postData = array('ProjectSetting' => array(
+			'Features' => array('time_enabled' => false, 'task_enabled' => false),
+			'UserInterface' => array('alias' => 'BaconIpsum'),
+		));
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->testAction('/project/public/changeSetting', array('method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+
+		$json = json_decode($this->view, true);
+		$this->assertEquals(array('code' => 200, 'message' => __('Settings updated.')), $json);
+
+		$found = ClassRegistry::init('Setting')->loadConfigSettings(null, 2);
+		$this->assertNotEquals('BaconIpsum', $found['UserInterface']['alias']['value']);
+		$this->assertEquals(0, $found['Features']['task_enabled']['value']);
+		$this->assertEquals(0, $found['Features']['time_enabled']['value']);
 	}
 
 }
