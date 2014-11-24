@@ -51,11 +51,6 @@ class TasksControllerTest extends AppControllerTest {
 		parent::setUp("Tasks");
 	}
 
-/**
- * testIndex method
- *
- * @return void
- */
 	public function testIndexFeatureDisabledOnSystem() {
 
 		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('task_enabled' => false))));
@@ -139,11 +134,11 @@ class TasksControllerTest extends AppControllerTest {
 	}
 
 	public function testIndexDefault() {
-		$this->__testTaskIndex(2, '/project/public/tasks', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13));
+		$this->__testTaskIndex(2, '/project/public/tasks', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19, 20));
 	}
 
 	public function testIndexAssignedAll() {
-		$this->__testTaskIndex(2, '/project/public/tasks?assignees=all', array(1, 4, 10, 13));
+		$this->__testTaskIndex(2, '/project/public/tasks?assignees=all', array(1, 4, 10, 13, 14, 15, 16, 17, 18, 19, 20));
 	}
 
 
@@ -156,7 +151,7 @@ class TasksControllerTest extends AppControllerTest {
 	}
 
 	public function testPriorityAll() {
-		$this->__testTaskIndex(2, '/project/public/tasks?priorities=all', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=all', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19, 20));
 	}
 	public function testPriorityMinorNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=1', array(2, 9));
@@ -165,10 +160,11 @@ class TasksControllerTest extends AppControllerTest {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=minor', array(2, 9));
 	}
 	public function testIndexPriorityMajorNum() {
-		$this->__testTaskIndex(2, '/project/public/tasks?priorities=2', array(1, 7, 10, 13));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=2', array(1, 7, 10, 13, 14, 15, 16, 17, 18, 19, 20));
 	}
 	public function testIndexPriorityMajorName() {
-		$this->__testTaskIndex(2, '/project/public/tasks?priorities=major', array(1, 7, 10, 13));
+		$this->__testTaskIndex(2, '/project/public/tasks?priorities=major', array(1, 7, 10, 13, 14, 15, 16, 17, 18, 19, 20));
+
 	}
 	public function testIndexPriorityUrgentNum() {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=3', array(3, 4, 5));
@@ -183,34 +179,34 @@ class TasksControllerTest extends AppControllerTest {
 		$this->__testTaskIndex(2, '/project/public/tasks?priorities=blocker', array(6, 8));
 	}
 	public function testIndexStatusOpenNum() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=1', array(2, 5));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=1', array(2, 5, 14, 15));
 	}
 	public function testIndexStatusOpenName() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=open', array(2, 5));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=open', array(2, 5, 14, 15));
 	}
 	public function testIndexStatusInProgressNum() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=2', array(3, 4, 6, 10, 13));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=2', array(3, 4, 6, 10, 13, 16, 17));
 	}
 	public function testIndexStatusInProgressName() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=in%20progress', array(3, 4, 6, 10, 13));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=in%20progress', array(3, 4, 6, 10, 13, 16, 17));
 	}
 	public function testIndexStatusResolvedNum() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=3', array(1, 7));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=3', array(1, 7, 18));
 	}
 	public function testIndexStatusResolvedName() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=resolved', array(1, 7));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=resolved', array(1, 7, 18));
 	}
 	public function testIndexStatusClosedNum() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=4', array(8));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=4', array(8, 19));
 	}
 	public function testIndexStatusClosedName() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=closed', array(8));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=closed', array(8, 19));
 	}
 	public function testIndexStatusDroppedNum() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=5', array(9));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=5', array(9, 20));
 	}
 	public function testIndexStatusDroppedName() {
-		$this->__testTaskIndex(2, '/project/public/tasks?statuses=dropped', array(9));
+		$this->__testTaskIndex(2, '/project/public/tasks?statuses=dropped', array(9, 20));
 	}
 
 
@@ -248,7 +244,7 @@ class TasksControllerTest extends AppControllerTest {
 		$others = array_keys($this->vars['tasks']['Others Tasks']);
 		sort($others);
 		$this->assertEquals(array(1, 4, 10, 11), $yours);
-		$this->assertEquals(array(2, 3, 5, 6, 7), $others);
+		$this->assertEquals(array(2, 3, 5, 6, 7, 12, 13, 14, 15, 16), $others);
 
 	}
 
@@ -1131,12 +1127,12 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 		
 		$backlog = array_map(function($a){return $a['Task']['id'];}, $this->vars['backlog']);
-		$this->assertEquals(array(5, 2), $backlog);
+		$this->assertEquals(array(14, 15), $backlog);
 
 		$inProgress = array_map(function($a){return $a['Task']['id'];}, $this->vars['inProgress']);
-		$this->assertEquals(array(6, 3), $inProgress);
+		$this->assertEquals(array(16, 17), $inProgress);
 
 		$completed = array_map(function($a){return $a['Task']['id'];}, $this->vars['completed']);
-		$this->assertEquals(array(8, 7), $completed);
+		$this->assertEquals(array(18, 19), $completed);
 	}
 }

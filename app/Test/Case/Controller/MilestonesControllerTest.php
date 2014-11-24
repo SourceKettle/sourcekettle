@@ -233,7 +233,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertNotNull($this->vars['mightHave']);
 		$this->assertEquals(2, count($this->vars['mightHave']));
 		$this->assertNotNull($this->vars['wontHave']);
-		$this->assertEquals(2, count($this->vars['wontHave']));
+		$this->assertEquals(7, count($this->vars['wontHave']));
 	}
 
 	public function testPlanProjectAdmin() {
@@ -252,7 +252,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertNotNull($this->vars['mightHave']);
 		$this->assertEquals(2, count($this->vars['mightHave']));
 		$this->assertNotNull($this->vars['wontHave']);
-		$this->assertEquals(2, count($this->vars['wontHave']));
+		$this->assertEquals(7, count($this->vars['wontHave']));
 	}
 
 	public function testPlanSystemAdmin() {
@@ -271,7 +271,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertNotNull($this->vars['mightHave']);
 		$this->assertEquals(2, count($this->vars['mightHave']));
 		$this->assertNotNull($this->vars['wontHave']);
-		$this->assertEquals(2, count($this->vars['wontHave']));
+		$this->assertEquals(7, count($this->vars['wontHave']));
 	}
 
 /**

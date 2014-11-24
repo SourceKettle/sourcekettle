@@ -312,9 +312,9 @@ class TasksController extends AppProjectController {
 		// NB we check it's valid in the isAuthorized method, so no need to check again
 		$team = $this->Team->findByName($team);
 
-		$backlog = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), 'open');
-		$inProgress = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), 'in progress');
-		$completed = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), array('resolved', 'closed'));
+		$backlog = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'open');
+		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
+		$completed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'));
 
 		$this->set(compact('team', 'backlog', 'inProgress', 'completed'));
 
