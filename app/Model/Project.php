@@ -167,7 +167,7 @@ class Project extends AppModel {
 	// This method exists simply to make testing easier... it means we can mock it out
 	// and return a Folder object that deliberately fails to move things.
 	public function getFolder($location) {
-		return new Folder($location);
+		return new Folder($location, false, 0775);
 	}
 
 	public function rename($nameOrId, $newName) {
