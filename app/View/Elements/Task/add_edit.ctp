@@ -72,8 +72,7 @@
             "label" => __('Story Points'),
         ));
 		
-
-        echo $this->Bootstrap->input("DependsOn.DependsOn", array(
+        echo $this->Bootstrap->input("DependsOn", array(
             "input" => $this->Form->input("DependsOn.DependsOn", array(
                 "label"    => false,
                 "class"    => "span9",
