@@ -28,15 +28,15 @@ echo $this->Bootstrap->page_header('Administration <small>organise your hackers<
 			echo $this->Form->input('id');
             echo '<h3>'.__('Update team details').'</h3>';
 
-            echo $this->Bootstrap->input("name", array(
+            echo $this->Bootstrap->input(__("name"), array(
                 "input" => $this->Form->text("name", array("class" => "span5")),
             ));
 
-            echo $this->Bootstrap->input("description", array(
+            echo $this->Bootstrap->input(__("description"), array(
                 "input" => $this->Form->text("description", array("class" => "span11")),
             ));
 
-            echo $this->Bootstrap->input("users", array(
+            echo $this->Bootstrap->input(__("members"), array(
 				"input" => $this->Form->input('User', array('label' => false, "size" => 20, "class" => "span11"))
 			));
 
