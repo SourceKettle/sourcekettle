@@ -21,7 +21,7 @@
 			<?=__('User registered')?>
 		</dt>
 		<dd>
-			<?= $this->Time->timeAgoInWords($user['User']['created'], 'Y-m-d') ?>
+			<?= $this->Time->timeAgoInWords($user['User']['created'])?>
 		</dd>
 		<dt>
 			<?= __("Teams") ?>

@@ -652,7 +652,6 @@ class TasksController extends AppProjectController {
 		$assignees[0] = "None";
 		ksort($assignees);
 
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 
@@ -672,6 +671,12 @@ class TasksController extends AppProjectController {
 		} else {
 			$this->request->data = $task;
 		}
+		$dependsOnTasks = array();
+		//array_map(function($a){return $a['id'];}, $this->request->data['DependsOn']);
+		foreach ($this->request->data['DependsOn'] as $dep) {
+			$dependsOnTasks[$dep['id']] = $dep['subject'];
+		}
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'dependsOnTasks', 'assignees'));
 	}
 
 /*

@@ -115,7 +115,7 @@ class ProjectGroupsController extends AppController {
 			$options = array('conditions' => array('ProjectGroup.' . $this->ProjectGroup->primaryKey => $id));
 			$this->request->data = $this->ProjectGroup->find('first', $options);
 		}
-		$projects = $this->ProjectGroup->Project->find('list');
+		$projects = $this->ProjectGroup->Project->find('list', array('order' => 'LOWER(name) DESC'));
 		$this->set(compact('projects'));
 	}
 

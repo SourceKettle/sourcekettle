@@ -274,13 +274,17 @@ class Setting extends AppModel {
 
 		// Load any project settings - a bit messy...
 		if ($project) {
-			if (!is_numeric($project)) {
-				$project = ClassRegistry::init('Project')->findByName($project);
-				if (empty($project)) {
-					return $settings;
-				}
-				$project = $project['Project']['id'];
+			$project = ClassRegistry::init('Project')->find('first', array(
+				'conditions' => array(
+					'OR' => array('name' => $project, 'id' => $project),
+				),
+				'recursive' => -1,
+			));
+			if (empty($project)) {
+				return $settings;
 			}
+
+			$project = $project['Project']['id'];
 			$model = ClassRegistry::init('ProjectSetting');
 			$projectSettings = $model->find('all', array('conditions' => array('project_id' => $project), 'fields' => array('ProjectSetting.name', 'ProjectSetting.value')));
 			foreach ($projectSettings as $dbSetting) {

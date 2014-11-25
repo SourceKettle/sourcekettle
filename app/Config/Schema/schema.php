@@ -20,17 +20,24 @@ class AppSchema extends CakeSchema {
 					$setting->saveMany(array(
 						array('name' => 'Users.register_enabled',     'value' => '1'),
 						array('name' => 'Users.sysadmin_email',       'value' => 'sysadmin@example.com'),
+						array('name' => 'Users.send_email_from',      'value' => 'sysadmin@example.com'),
 						array('name' => 'Status.sync_required',       'value' => '0'),
-						array('name' => 'Feature.time_enabled',       'value' => '1'),
-						array('name' => 'Feature.source_enabled',     'value' => '1'),
-						array('name' => 'Feature.task_enabled',       'value' => '1'),
-						array('name' => 'Feature.attachment_enabled', 'value' => '0'),
+						array('name' => 'Features.time_enabled',       'value' => '1'),
+						array('name' => 'Features.source_enabled',     'value' => '1'),
+						array('name' => 'Features.task_enabled',       'value' => '1'),
+						array('name' => 'Features.attachment_enabled', 'value' => '0'),
 						array('name' => 'Ldap.enabled',               'value' => '0'),
 						array('name' => 'Ldap.url',                   'value' => ''),
 						array('name' => 'Ldap.bind_dn',               'value' => ''),
 						array('name' => 'Ldap.bind_pw',               'value' => ''),
 						array('name' => 'Ldap.base_dn',               'value' => ''),
 						array('name' => 'Ldap.filter',                'value' => 'mail=%USERNAME%'),
+						array('name' => 'SourceRepository.user',      'value' => 'git'),
+						array('name' => 'SourceRepository.base',      'value' => '/var/sourcekettle/repositories'),
+						array('name' => 'SourceRepository.default',   'value' => 'Git'),
+						array('name' => 'UserInterface.alias',        'value' => 'SourceKettle'),
+						array('name' => 'UserInterface.theme',        'value' => 'default'),
+						array('name' => 'UserInterface.terminology',  'value' => 'default'),
 					));
 					break;
 
