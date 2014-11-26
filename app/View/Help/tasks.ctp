@@ -210,6 +210,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage tasks?</small>'
             <li><strong>Task ID and subject:</strong> Displayed as text</li>
             <li><strong>Priority:</strong> A black-and-white indicator with icon</li>
             <li><strong>Status:</strong> A coloured indicator showing the current status</li>
+            <li><strong>Milestone:</strong> A milestone icon (<span class="label"><i class="icon-road"></i></span>) appears if the task is attached to one, click the icon to view the milestone</li>
             <li><strong>Dependencies:</strong> A red 'D' indicates the task has incomplete dependencies, a green 'D' indicates all dependencies complete; no 'D' indicates no dependencies.</li>
             <li><strong>Assignee:</strong> Displayed as the user's gravatar image</li>
           </ul>
