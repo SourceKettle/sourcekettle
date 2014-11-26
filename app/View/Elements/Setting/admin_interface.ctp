@@ -38,7 +38,7 @@
                     <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'theme', 'name' => 'Setting.UserInterface.theme', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => true, 'lock')), 'value' => $sourcekettle_config['UserInterface']['theme']['locked'])) ?>
                 </td>
             </tr>
-			<?= $this->element('Setting/text_fields', array(
+			<?/*= $this->element('Setting/text_fields', array(
 				'items' => array(
 					array(
 						'name' => 'Setting.UserInterface.terminology',
@@ -47,7 +47,7 @@
 						'value' => $sourcekettle_config['UserInterface']['terminology']['value'],
 					),
 				)
-			))?>
+			))*/?>
 	</tr>
 <?= $this->Form->end() ?>
         </tbody>
