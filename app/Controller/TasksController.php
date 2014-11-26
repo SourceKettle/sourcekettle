@@ -561,6 +561,14 @@ class TasksController extends AppProjectController {
 			$selected_milestone_id = 0;
 		}
 
+		// Pre-selected priority
+		$selectedPriority = 0;
+		if (!empty($this->request->query['priority'])) {
+			$selectedPriority = $this->TaskPriority->nameToID($this->request->query['priority']);
+		} elseif (isset($this->request->data['Task']['task_priority_id'])) {
+			$selectedPriority = $this->TaskPriority->nameToID($this->request->data['Task']['task_priority_id']);
+		}
+
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
 
@@ -575,9 +583,6 @@ class TasksController extends AppProjectController {
 				$this->request->data['Task']['task_type_id'] = 3;
 			}
 
-			if (isset($this->request->data['Task']['task_priority_id']) && $this->request->data['Task']['task_priority_id'] == 0) {
-				$this->request->data['Task']['task_priority_id'] = 2;
-			}
 
 			if ($this->request->is('ajax')) {
 				$this->autoRender = false;
@@ -601,10 +606,15 @@ class TasksController extends AppProjectController {
 			}
 		} else {
 			// GET request: set default priority, type and assignment
-			// TODO define the defaults somewhere useful?
-			$this->request->data['Task']['task_priority_id'] = 2;
 			$this->request->data['Task']['task_type_id'] = 1;
 			$this->request->data['Task']['assignee_id'] = 0;
+
+			// TODO hard coded default, also clean this up and allow params to be passed for status/type etc.
+			if (!$selectedPriority) {
+				$selectedPriority = $this->TaskPriority->nameToID('major');
+			}
+
+			$this->request->data['Task']['task_priority_id'] = $selectedPriority;
 
 			if ($selected_milestone_id) {
 				$this->request->data['Task']['milestone_id'] = $selected_milestone_id;
