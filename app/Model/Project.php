@@ -216,13 +216,21 @@ class Project extends AppModel {
 			throw new InvalidArgumentException("Cannot rename project '".$project[$this->alias]['name']."' - repository cannot be moved as the directory already exists");
 		}
 
+		// Get the group of the folder, we'll need to make sure it stays owned by the group after moving...
+		$group = filegroup($folder->path);
+
 		// Move the repo
 		if (!$folder->move(array('to' => $newpath))) {
 			throw new Exception(__("A problem occurred when renaming the project repository"));
 		}
 
+		// Sort out group ownership and permissions in the new location
+		// TODO I feel dirty, why isn't this a thing in the Folder class?
+		system("chgrp -R " . escapeshellarg($group) . " " . escapeshellarg($folder->path));
+
 		return ($this->save(array('name' => $newName), array('callbacks' => false)) != null);
 	}
+
 
 	public function beforeDelete($cascade = true) {
 
