@@ -12,7 +12,9 @@ class AllModelTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'Model/CollaboratorTest.php');
 		$suite->addTestFile($path . 'Model/EmailConfirmationKeyTest.php');
 		$suite->addTestFile($path . 'Model/LostPasswordKeyTest.php');
+		$suite->addTestFile($path . 'Model/MilestoneBurndownLogTest.php');
 		$suite->addTestFile($path . 'Model/MilestoneTest.php');
+		$suite->addTestFile($path . 'Model/ProjectBurndownLogTest.php');
 		$suite->addTestFile($path . 'Model/ProjectHistoryTest.php');
 		$suite->addTestFile($path . 'Model/ProjectTest.php');
 		$suite->addTestFile($path . 'Model/RepoTypeTest.php');
@@ -24,6 +26,7 @@ class AllModelTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'Model/TaskStatusTest.php');
 		$suite->addTestFile($path . 'Model/TaskTest.php');
 		$suite->addTestFile($path . 'Model/TaskTypeTest.php');
+		$suite->addTestFile($path . 'Model/TeamTest.php');
 		$suite->addTestFile($path . 'Model/TimeTest.php');
 		$suite->addTestFile($path . 'Model/UserTest.php');
 		return $suite;

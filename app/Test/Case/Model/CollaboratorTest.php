@@ -162,4 +162,35 @@ class CollaboratorTestCase extends CakeTestCase {
         );
         $this->assertEquals($usersB, $usersA, json_encode($usersA));
     }
+
+	public function testLookupTable() {
+		$this->assertEqual(__('Guest'), $this->Collaborator->accessLevelIdToName(0));
+		$this->assertEqual(__('User'), $this->Collaborator->accessLevelIdToName(1));
+		$this->assertEqual(__('Admin'), $this->Collaborator->accessLevelIdToName(2));
+
+		$this->assertNull($this->Collaborator->accessLevelIdToName(-1));
+		$this->assertNull($this->Collaborator->accessLevelIdToName(3));
+		$this->assertNull($this->Collaborator->accessLevelIdToName('foo'));
+		$this->assertNull($this->Collaborator->accessLevelIdToName(5));
+		$this->assertNull($this->Collaborator->accessLevelIdToName(null));
+		$this->assertNull($this->Collaborator->accessLevelIdToName(true));
+		$this->assertNull($this->Collaborator->accessLevelIdToName(false));
+
+		$this->assertEqual(0, $this->Collaborator->accessLevelNameToId(__('Guest')));
+		$this->assertEqual(0, $this->Collaborator->accessLevelNameToId(__('guest')));
+		$this->assertEqual(0, $this->Collaborator->accessLevelNameToId(__('GUEST')));
+		$this->assertEqual(1, $this->Collaborator->accessLevelNameToId(__('User')));
+		$this->assertEqual(1, $this->Collaborator->accessLevelNameToId(__('user')));
+		$this->assertEqual(1, $this->Collaborator->accessLevelNameToId(__('USER')));
+		$this->assertEqual(2, $this->Collaborator->accessLevelNameToId(__('Admin')));
+		$this->assertEqual(2, $this->Collaborator->accessLevelNameToId(__('admin')));
+		$this->assertEqual(2, $this->Collaborator->accessLevelNameToId(__('ADMIN')));
+
+		$this->assertNull($this->Collaborator->accessLevelNameToId(__('MOOSE')));
+		$this->assertNull($this->Collaborator->accessLevelNameToId(5));
+		$this->assertNull($this->Collaborator->accessLevelNameToId(null));
+		$this->assertNull($this->Collaborator->accessLevelNameToId(true));
+		$this->assertNull($this->Collaborator->accessLevelNameToId(false));
+
+	}
 }

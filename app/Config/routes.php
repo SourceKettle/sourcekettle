@@ -42,6 +42,9 @@
          */
         Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'about'));
 
+		// User and Team kanban charts
+        Router::connect('/kanban/*', array('controller' => 'tasks', 'action' => 'personal_kanban'));
+        Router::connect('/team_kanban/:team/*', array('controller' => 'tasks', 'action' => 'team_kanban'), array('pass' => array('team'), 'team' => '[0-9a-zA-Z_-]+'));
         /*
          * The below routes allow all projects to be accessed at APP/project/project_name/[controller_to_use/]?[action/]?[params]?
          *
@@ -86,6 +89,7 @@
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
 		// Make sure our intended /projects/ links work, but you can also go to /projects/foo/edit as well as /project/foo/edit
+        Router::connect('/projects/team_projects/*', array('controller' => 'projects', 'action' => 'team_projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/public_projects/*', array('controller' => 'projects', 'action' => 'public_projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/add', array('controller' => 'projects', 'action' => 'add'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
@@ -122,6 +126,10 @@
 		// Approval links for new accounts
         Router::connect('/admin/users/approve', array('controller' => 'users', 'action' => 'approve', 'admin' => true));
         Router::connect('/admin/users/approve/:key', array('controller' => 'users', 'action' => 'approve', 'admin' => true), array ('pass' => array('key')));
+
+        Router::connect('/teams/:team', array('controller' => 'teams', 'action' => 'view', 'admin' => false), array('pass' => array('team')));
+        Router::connect('/project_groups/:group', array('controller' => 'project_groups', 'action' => 'view', 'admin' => false), array('pass' => array('group')));
+
 
 
 /**

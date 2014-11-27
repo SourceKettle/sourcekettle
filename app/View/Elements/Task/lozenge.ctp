@@ -24,13 +24,13 @@ if(isset($span) && $span){
 }
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
-		echo "<li class='draggable' data-taskid='".h($task['Task']['public_id'])."'>";
+		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."'>";
 	} else {
-		echo "<li>";
+		echo "<li class='$span'>";
 	}
 ?>
 <div id="task_<?= $task['Task']['public_id'] ?>" 
-  class="task-container<?=$span?>"
+  class="task-container"
   <?
   // If it's a draggable item in the milestone board, do NOT make the whole thing a click target...
   if(!$draggable){?>
@@ -45,11 +45,23 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                         <p>
                             <?= $this->Html->link('<strong>#'.$task['Task']['public_id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
                         </p>
-                        <?= $this->Task->priority($task['Task']['task_priority_id']) ?>
-                        <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
 
                         <?
-                        if (!empty($task['DependsOn'])){
+                        echo $this->Task->statusLabel($task['Task']['task_status_id']);
+                        if (isset($task['Milestone']['id'])){
+                            echo "<span class='label' title='".__('Milestone: %s', $task['Milestone']['subject'])."'>";
+							echo $this->Html->link($this->Bootstrap->icon("road", "white"), array(
+								'controller' => 'milestones',
+								'action' => 'view',
+								'project' => $task['Project']['name'],
+								$task['Milestone']['id'],
+							), array('escape' => false));
+							echo "</span>";
+                        }
+
+                        echo $this->Task->priority($task['Task']['task_priority_id']);
+                        
+						if (!empty($task['DependsOn'])){
                             if (!$task['Task']['dependenciesComplete']){
                                 echo "<span class='label label-important' title='Dependencies incomplete'>D</span>";
                             } else {
@@ -59,8 +71,11 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 
 						// Display story points or time estimate if we have one
 						if (!empty($task['Task']['story_points'])) {
-							echo "<span class='label' title='Story points'>";
+							echo "<span class='label hidden-phone hidden-tablet' title='Story points'>";
 							printf(ngettext("%d point", "%d points", $task['Task']['story_points']), $task['Task']['story_points']);
+							echo "</span>";
+							echo "<span class='label hidden-desktop' title='Story points'>";
+							echo $task['Task']['story_points'];
 							echo "</span>";
 						
 						} elseif (!empty($task['Task']['time_estimate']) && TimeString::parseTime($task['Task']['time_estimate']) > 0) {
@@ -70,8 +85,8 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						}
                         ?>
                     </div>
-                    <div class="span2">
-					  <?if(isset($task['Assignee']['id'])){?>
+                    <div class="span2 task-lozenge-assignee hidden-phone">
+					  <?if(isset($task['Assignee']['email'])){?>
                         <?= $this->Gravatar->image($task['Assignee']['email'], array(), array('alt' => $task['Assignee']['name'])) ?>
 					  <?} else {?>
                         <?= $this->Gravatar->image('', array('d' => 'mm'), array('alt' => $task['Assignee']['name'])) ?>

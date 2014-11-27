@@ -25,13 +25,14 @@ class ProjectsController extends AppProjectController {
  */
 	public $helpers = array('Time', 'Paginator', 'Markitup', 'History');
 
-	public $uses = array('Project', 'RepoType');
+	public $uses = array('Project', 'RepoType', 'Team', 'GroupCollaboratingTeam');
 
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
 		return array(
 			'history'  => 'read',
 			'index'  => 'login',
+			'team_projects'  => 'login',
 			'public_projects'  => 'login',
 			'view'   => 'read',
 			'add' => 'login',
@@ -40,8 +41,9 @@ class ProjectsController extends AppProjectController {
 			'delete' => 'write',
 			'burndown' => 'read',
 			'markupPreview'  => 'read',
+			'changeSetting' => 'admin',
 			'api_history' => 'read',
-			'api_autocomplete' => 'read',
+			'api_autocomplete' => 'login',
 		);
 	}
 
@@ -67,10 +69,75 @@ class ProjectsController extends AppProjectController {
 		$this->set('projects', $projects);
 	}
 
+	public function team_projects() {
+
+		// Teams the user is a member of
+		$teams = $this->Team->TeamsUser->find('list', array(
+			'conditions' => array(
+				'user_id' => $this->Auth->user('id'),
+			),
+			'fields' => array('team_id'),
+		));
+		$teams = array_values($teams);
+
+		// Nothing to do if they're not in any teams...
+		if (empty($teams)) {
+			$this->set('projects', array());
+			return;
+		}
+
+		// Project groups the user's teams have access to
+		$teamProjectGroups = $this->GroupCollaboratingTeam->find('list', array(
+			'conditions' => array(
+				'GroupCollaboratingTeam.team_id' => $teams,
+			),
+			'fields' => array('GroupCollaboratingTeam.project_group_id'),
+		));
+
+		$teamProjectGroups = array_values($teamProjectGroups);
+
+		if (empty($teamProjectGroups)) {
+			$conditions = array(
+				'CollaboratingTeam.team_id' => $teams,
+			);
+		} else {
+			$conditions = array(
+				'OR' => array(
+					'CollaboratingTeam.team_id' => $teams,
+					'ProjectGroupsProject.project_group_id' => $teamProjectGroups,
+				)
+			);
+		}
+
+		$projects = $this->Project->find('all', array(
+			'conditions' => $conditions,
+			'joins' => array(
+			 	array('table' => 'collaborating_teams',
+					'alias' => 'CollaboratingTeam',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'CollaboratingTeam.project_id = Project.id',
+					)
+				),
+			 	array('table' => 'project_groups_projects',
+					'alias' => 'ProjectGroupsProject',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'ProjectGroupsProject.project_id = Project.id',
+					)
+				),
+			),
+			'group' => array('Project.id'),
+		));
+
+		$this->set('projects', $projects);
+	}
+
 	public function public_projects() {
-		$this->Project->recursive = -1;
 		$this->paginate = array(
-			'conditions' => array('Project.public' => true),
+			'conditions' => array(
+				'Project.public' => true,
+			),
 			'limit' => 15,
 			'order' => 'Project.modified DESC'
 		);
@@ -167,8 +234,8 @@ class ProjectsController extends AppProjectController {
 
 		// Flip keys for values, then look up the ID of the default repo type name
 		$defaultRepo = array_flip($repoTypes);
-		if (isset($this->sourcekettle_config['repo']['default'])) {
-			$d = $this->sourcekettle_config['repo']['default'];
+		if (isset($this->sourcekettle_config['SourceRepository']['default']['value'])) {
+			$d = $this->sourcekettle_config['SourceRepository']['default']['value'];
 		} else {
 			$d = 'None';
 		}
@@ -378,110 +445,38 @@ class ProjectsController extends AppProjectController {
 		$log = array_map(function($a){return $a['ProjectBurndownLog'];}, $log);
 
 		$this->set(compact('project', 'log'));
-
 	}
+
+	public function changeSetting($project) {
+		if (!$this->request->is('post')) {
+			return $this->redirect(array('project' => $project, 'action' => 'edit'));
+		}
+
+		$code = 200;
+		$message = __("Settings updated.");
+		if (!$this->Project->ProjectSetting->saveSettingsTree($project, $this->request->data)) {
+			$code = 500;
+			$message = __("Failed to change settings");
+		}
+
+		if ($this->request->is('ajax')) {
+			$this->set('data', array('code' => $code, 'message' => $message));
+			$this->render('/Elements/json');
+			return;
+		} elseif($code == 200) {
+			$this->Flash->info(__('Settings updated.'));
+		} else {
+			$this->Flash->error(__('There was a problem updating the settings.'));
+		}
+		return $this->redirect (array ('action' => 'index'));
+	}
+
 	/* ************************************************ *
 	*													*
 	*			API SECTION OF CONTROLLER				*
 	*			 CAUTION: PUBLIC FACING					*
 	*													*
 	* ************************************************* */
-
-/**
- * api_view function.
- *
- * @access public
- * @param mixed $id (default: null)
- * @return void
- */
-	public function api_view($id = null) {
-		$this->layout = 'ajax';
-
-		$this->Project->recursive = -1;
-		$data = array();
-
-		if ($id == null) {
-			$this->response->statusCode(400);
-			$data['error'] = 400;
-			$data['message'] = 'Bad request, no project id specified.';
-		}
-
-		if ($id == 'all') {
-			$this->api_all();
-			return;
-		}
-
-		if (is_numeric($id)) {
-			$this->Project->id = $id;
-
-			if (!$this->Project->exists()) {
-				$this->response->statusCode(404);
-				$data['error'] = 404;
-				$data['message'] = 'No project found of that ID.';
-				$data['id'] = $id;
-			} else {
-				$project = $this->Project->read();
-
-				// Collaborators
-				$c = $this->Project->Collaborator->find('list', array('fields' => array('user_id'), 'conditions' => array('project_id' => $id)));
-				$project['Project']['collaborators'] = array_values($c);
-
-				// Repo Type
-				$project['Project']['repo_type'] = $this->Project->RepoType->field('name');
-
-				$partOfProject = $this->Project->hasRead();
-				$publicProject	= $this->Project->field('public');
-				$isAdmin = ($this->_apiAuthLevel() == 1);
-
-				if ($publicProject || $partOfProject || $isAdmin) {
-					$data = $project['Project'];
-				} else {
-					$data['error'] = 401;
-					$data['message'] = 'Project found, but is not public.';
-					$data['id'] = $id;
-				}
-			}
-		}
-
-		$this->set('data',$data);
-		$this->render('/Elements/json');
-	}
-
-/**
- * api_all function.
- * ADMINS only
- *
- * @access public
- * @return void
- */
-	public function api_all() {
-		$this->layout = 'ajax';
-
-		$this->Project->recursive = -1;
-		$data = array();
-
-		switch ($this->_apiAuthLevel()) {
-			case 1:
-				foreach ($this->Project->find("all") as $project) {
-					// Collaborators
-					$c = $this->Project->Collaborator->find('list', array('fields' => array('user_id'), 'conditions' => array('project_id' => $project['Project']['id'])));
-					$project['Project']['collaborators'] = array_values($c);
-
-					// Repo Type
-					$project['Project']['repo_type'] = $this->Project->RepoType->field('name', array('id' => $project['Project']['repo_type']));
-
-					$data[] = $project['Project'];
-				}
-				break;
-			default:
-				$this->response->statusCode(403);
-				$data['error'] = 403;
-				$data['message'] = 'You are not authorised to access this.';
-		}
-
-		$this->set('data',$data);
-		$this->render('/Elements/json');
-	}
 
 /**
  * api_history function.
@@ -507,7 +502,7 @@ class ProjectsController extends AppProjectController {
 				$number = 8;
 			}
 
-			$this->set('events', $this->Project->fetchEventsForProject($number));
+			$this->set('events', $this->Project->fetchEventsForProject($project, $number));
 			$this->render('/Elements/history');
 		}
 	}
@@ -521,7 +516,7 @@ class ProjectsController extends AppProjectController {
 	public function api_autocomplete() {
 		$this->layout = 'ajax';
 
-		$data = array('users' => array());
+		$data = array('projects' => array());
 
 		if (isset($this->request->query['query'])
 			&& $this->request->query['query'] != null
@@ -551,7 +546,7 @@ class ProjectsController extends AppProjectController {
 				)
 			);
 			foreach ($projects as $project) {
-				$data['users'][] = $project['Project']['name'];
+				$data['projects'][] = $project['Project']['name'];
 			}
 
 		}

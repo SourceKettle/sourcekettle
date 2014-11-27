@@ -129,7 +129,7 @@ class Source extends AppModel {
  */
 	public function getRepositoryLocation() {
 		$sourcekettleConfig = ClassRegistry::init('Setting')->loadConfigSettings();
-		$base = $sourcekettleConfig['repo']['base'];
+		$base = $sourcekettleConfig['SourceRepository']['base']['value'];
 
 		if ($base[strlen($base) - 1] != '/') $base .= '/';
 
@@ -144,7 +144,14 @@ class Source extends AppModel {
 			throw new UnsupportedRepositoryType(__("Repository type not supported"));
 		}
 
-		return "{$base}{$name}.{$type}/";
+		$location = "{$base}{$name}.{$type}/";
+
+		$f = new Folder($location);
+		if (!file_exists($f->path)) {
+			throw new NotFoundException(__("Could not find the source repository on disk"));
+		}
+
+		return $location;
 	}
 
 /**

@@ -165,7 +165,7 @@ class ProjectHistoryTest extends CakeTestCase {
 	public function testFetchHistory() {
 
 		$history = $this->ProjectHistory->fetchHistory(1, 10, 0, 0, 'collaborator');
-		$this->assertEquals($history, array(
+		$this->assertEquals(array(
 			array(
 				'modified' => '2014-07-23 15:02:12',
 				'Type' => 'Collaborator',
@@ -229,10 +229,66 @@ class ProjectHistoryTest extends CakeTestCase {
 					(int) 0 => '5'
 				)
 			),
-		), "Incorrect history data returned");
+		), $history, "Incorrect history data returned");
+
+
+		// NB task ID should be the public ID, 1, not the internal primary key, 11
+		$history = $this->ProjectHistory->fetchHistory(1, 10, 0, 0, 'task');
+
+		$this->assertEquals(array(
+			array(
+				'modified' => '2014-07-23 15:10:34',
+				'Type' => 'Task',
+				'Project' => array(
+					'id' => '1',
+					'name' => 'private'
+				),
+				'Actioner' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com',
+					'exists' => true
+				),
+				'Subject' => array(
+					'id' => '1',
+					'title' => '#1 (Task 1 for private project)',
+					'exists' => true
+				),
+				'Change' => array(
+					'field' => 'task_status_id',
+					'field_old' => '1',
+					'field_new' => '2'
+				),
+			),
+			array(
+				'modified' => '2014-07-23 15:01:12',
+				'Type' => 'Task',
+				'Project' => array(
+					'id' => '1',
+					'name' => 'private'
+				),
+				'Actioner' => array(
+					'id' => '1',
+					'name' => 'Mr Smith',
+					'email' => 'Mr.Smith@example.com',
+					'exists' => true
+				),
+				'Subject' => array(
+					'id' => '1',
+					'title' => '#1 (Task 1 for private project)',
+					'exists' => true
+				),
+				'Change' => array(
+					'field' => '+',
+					'field_old' => '',
+					'field_new' => ''
+				),
+			),
+		
+		), $history, "Incorrect history data returned");
 
 		$history = $this->ProjectHistory->fetchHistory(3, 10, 0, 0, 'time');
-		$this->assertEquals($history, array(
+		$this->assertEquals(array(
 			array(
 				'modified' => '2014-07-23 15:01:12',
 				'Type' => 'Time',
@@ -281,12 +337,12 @@ class ProjectHistoryTest extends CakeTestCase {
 					'field_new' => 'bar'
 				)
 			)
-		), "Incorrect history data returned");
+		), $history, "Incorrect history data returned");
 
 		$this->ProjectHistory->Project->id = null;
 		$history = $this->ProjectHistory->fetchHistory(null, 10, 0, 2, 'milestone');
 
-		$this->assertEquals($history, array(array(
+		$this->assertEquals(array(array(
 			'modified' => '2014-07-23 15:01:12',
 			'Type' => 'Milestone',
 			'Project' => array(
@@ -309,7 +365,7 @@ class ProjectHistoryTest extends CakeTestCase {
 				'field_old' => '1',
 				'field_new' => '0'
 			)
-		)), "Incorrect history data returned");
+		)), $history, "Incorrect history data returned");
 	}
 
 }

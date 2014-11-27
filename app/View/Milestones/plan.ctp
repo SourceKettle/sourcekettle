@@ -30,7 +30,7 @@ $api_base = $this->Html->url(array(
 $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
 ?>
 
-<?= $this->DT->pHeader(__("Milestone task planner")) ?>
+<?= $this->DT->pHeader(__("Milestone planner: '%s'", $milestone['Milestone']['subject'])) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -52,6 +52,7 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'title' => __('Project Backlog'),
 				'tooltip' => __('These tasks will not be completed during this milestone'),
 				'span' => '12',
+				'task_span' => '4',
 				'classes' => 'sprintboard-icebox'
 			)
         ) ?>
@@ -70,7 +71,9 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'title' => __('Minor'),
 				'tooltip' => __('These tasks are not important for the milestone, and can be easily dropped'),
 				'span' => '6',
-				'classes' => 'sprintboard-column'
+				'task_span' => '6',
+				'classes' => 'sprintboard-column',
+				'addLink' => true,
 			)
         ) ?>
         <?= $this->element('Task/Board/column',
@@ -81,7 +84,9 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'title' => __('Major'),
 				'tooltip' => __('These tasks will be completed if possible, but if time runs out they will be dropped'),
 				'span' => '6',
-				'classes' => 'sprintboard-column'
+				'task_span' => '6',
+				'classes' => 'sprintboard-column',
+				'addLink' => true,
 			)
         ) ?>	
 
@@ -100,7 +105,9 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'title' => __('Urgent'),
 				'tooltip' => __('These tasks are not vital to the milestone, but should not be dropped unless time is very short'),
 				'span' => '6',
-				'classes' => 'sprintboard-column'
+				'task_span' => '6',
+				'classes' => 'sprintboard-column',
+				'addLink' => true,
 			)
         ) ?>
         <?= $this->element('Task/Board/column',
@@ -111,7 +118,9 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'title' => __('Blocker'),
 				'tooltip' => __('The highest priority - these tasks MUST be completed for the milestone to be a success'),
 				'span' => '6',
-				'classes' => 'sprintboard-column'
+				'task_span' => '6',
+				'classes' => 'sprintboard-column',
+				'addLink' => true,
 			)
         ) ?>	
 

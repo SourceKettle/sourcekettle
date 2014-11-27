@@ -31,11 +31,11 @@ class TaskHelper extends AppHelper {
  * @param mixed $id
  * @return void
  */
-	public function priority($id) {
-		$label = $this->_View->viewVars['task_priorities'][$id]['label'];
+	public function priority($id, $textLabel = true) {
+		$label = $textLabel? '<span class="hidden-phone hidden-tablet">'.$this->_View->viewVars['task_priorities'][$id]['label'].'</span> ' : '';
 		$icon  = $this->_View->viewVars['task_priorities'][$id]['icon'];
 		$class = $this->_View->viewVars['task_priorities'][$id]['class'];
-		return $this->Bootstrap->label($label . ' ' . $this->Bootstrap->icon($icon, "white"), "inverse", array('class' => "taskpriority $class"));
+		return $this->Bootstrap->label($label . $this->Bootstrap->icon($icon, "white"), "inverse", array('class' => "taskpriority $class"));
 	}
 
 /**
@@ -59,6 +59,7 @@ class TaskHelper extends AppHelper {
 		$label = $this->_View->viewVars['task_statuses'][$id]['label'];
 		$class = $this->_View->viewVars['task_statuses'][$id]['class'];
 		return $this->Bootstrap->label($label, $class, array ("class" => "taskstatus"));
+
 	}
 
 /**

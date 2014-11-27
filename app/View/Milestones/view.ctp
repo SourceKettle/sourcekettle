@@ -31,7 +31,7 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 
 ?>
 
-<?= $this->DT->pHeader(__("Milestone board")) ?>
+<?= $this->DT->pHeader(__("Milestone board: '%s'", $milestone['Milestone']['subject'])) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -52,14 +52,14 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable, 'milestoneID' => $milestone['Milestone']['id'], 'addLink' => true)
         ) ?>
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
         ) ?>
         <?= $this->element('Task/Board/column',
-            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
         ) ?>
 
 	<!-- End primary columns -->
@@ -68,7 +68,7 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
     <!-- Icebox row -->
 	<div class="row-fluid span12">
         <?= $this->element('Task/Board/column',
-            array('tasks' => $iceBox, 'status' => 'dropped', 'title' => __('Ice Box'), 'span' => '12', 'classes' => 'sprintboard-icebox', 'draggable' => $draggable)
+            array('tasks' => $iceBox, 'status' => 'dropped', 'title' => __('Ice Box'), 'span' => '12', 'task_span' => 4, 'classes' => 'sprintboard-icebox', 'draggable' => $draggable)
         ) ?>
 
 	<!-- End icebox -->

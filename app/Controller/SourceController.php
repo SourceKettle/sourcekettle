@@ -32,6 +32,18 @@ class SourceController extends AppProjectController {
 			'tree'  => 'read',
 		);
 	}
+
+	public function isAuthorized($user) {
+		if (!$this->sourcekettle_config['Features']['source_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['source_enabled']['source'] == 'Project settings') {
+				throw new ForbiddenException(__('This project does not have source code management enabled. Please contact a project administrator to enable source code management.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow source code management. Please contact a system administrator to enable source code management.'));
+			}
+		}
+
+		return parent::isAuthorized($user);
+	}
 /**
  * __getPath function.
  *

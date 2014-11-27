@@ -34,6 +34,7 @@ class TasksController extends AppProjectController {
 		'User',
 		'Milestone',
 		'Collaborator',
+		'Team',
 	);
 
 /**
@@ -63,6 +64,7 @@ class TasksController extends AppProjectController {
 	}
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
+
 		return array(
 			'index'  => 'read',
 			'others'  => 'read',
@@ -86,9 +88,46 @@ class TasksController extends AppProjectController {
 			'api_all' => 'read',
 			'api_view' => 'read',
 			'api_update' => 'write',
+			'personal_kanban' => 'login',
 		);
 	}
 
+	// Special case for team kanban, requires team membership instead of project collaboration
+	public function isAuthorized($user) {
+
+		if (!$this->sourcekettle_config['Features']['task_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['task_enabled']['source'] == "Project-specific settings") {
+				throw new ForbiddenException(__('This project does not have task tracking enabled. Please contact a project administrator to enable task tracking.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow task tracking. Please contact a system administrator to enable task tracking.'));
+			}
+		}
+
+		if ($this->action != 'team_kanban') {
+			return parent::isAuthorized($user);
+		}
+
+		if (!$user['is_active']) {
+			return false;
+		}
+
+		$teamId = $this->Team->field('id', array('name' => $this->params->params['team']));
+		if (empty($teamId) || $teamId < 1) {
+			throw new NotFoundException(__("Invalid team"));
+		}
+
+		if ($user['is_admin']) {
+			return true;
+		}
+
+		if (!$this->Team->isMember($teamId, $user['id'])) {
+			$this->Auth->authError = __('You must be a team member to view the team kanban chart.');
+			return false;
+		} else {
+			return true;
+		}
+
+	}
 /**
  * index method
  *
@@ -258,6 +297,29 @@ class TasksController extends AppProjectController {
 
 	}
 
+	public function personal_kanban() {
+
+		$backlog = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'open');
+		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
+		$completed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'));
+
+		$this->set(compact('backlog', 'inProgress', 'completed'));
+
+	}
+
+	public function team_kanban($team = null) {
+
+		// NB we check it's valid in the isAuthorized method, so no need to check again
+		$team = $this->Team->findByName($team);
+
+		$backlog = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'open');
+		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
+		$completed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'));
+
+		$this->set(compact('team', 'backlog', 'inProgress', 'completed'));
+
+	}
+
 /**
  * view method
  *
@@ -351,6 +413,7 @@ class TasksController extends AppProjectController {
 		$collabs[0] = "None";
 		ksort($collabs);
 		$this->set('collaborators', $collabs);
+
 	}
 
 	public function assign($project = null, $public_id = null) {
@@ -498,6 +561,14 @@ class TasksController extends AppProjectController {
 			$selected_milestone_id = 0;
 		}
 
+		// Pre-selected priority
+		$selectedPriority = 0;
+		if (!empty($this->request->query['priority'])) {
+			$selectedPriority = $this->TaskPriority->nameToID($this->request->query['priority']);
+		} elseif (isset($this->request->data['Task']['task_priority_id'])) {
+			$selectedPriority = $this->TaskPriority->nameToID($this->request->data['Task']['task_priority_id']);
+		}
+
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
 
@@ -512,9 +583,6 @@ class TasksController extends AppProjectController {
 				$this->request->data['Task']['task_type_id'] = 3;
 			}
 
-			if (isset($this->request->data['Task']['task_priority_id']) && $this->request->data['Task']['task_priority_id'] == 0) {
-				$this->request->data['Task']['task_priority_id'] = 2;
-			}
 
 			if ($this->request->is('ajax')) {
 				$this->autoRender = false;
@@ -538,10 +606,15 @@ class TasksController extends AppProjectController {
 			}
 		} else {
 			// GET request: set default priority, type and assignment
-			// TODO define the defaults somewhere useful?
-			$this->request->data['Task']['task_priority_id'] = 2;
 			$this->request->data['Task']['task_type_id'] = 1;
 			$this->request->data['Task']['assignee_id'] = 0;
+
+			// TODO hard coded default, also clean this up and allow params to be passed for status/type etc.
+			if (!$selectedPriority) {
+				$selectedPriority = $this->TaskPriority->nameToID('major');
+			}
+
+			$this->request->data['Task']['task_priority_id'] = $selectedPriority;
 
 			if ($selected_milestone_id) {
 				$this->request->data['Task']['milestone_id'] = $selected_milestone_id;
@@ -576,32 +649,44 @@ class TasksController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 
+		$milestones = $this->Milestone->listMilestoneOptions();
+
+		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
+
+		$availableTasks = $this->Task->find('list', array(
+			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
+			'fields' => array('Task.id', 'Task.subject'),
+		));
+
+		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$assignees[0] = "None";
+		ksort($assignees);
+
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 
-			unset($this->request->data['Task']['project_id']);
+			$this->request->data['Task']['project_id'] = $project['Project']['id'];
 			unset($this->request->data['Task']['owner_id']);
+
+			$this->request->data['Task']['id'] = $this->Task->id;
+
+			$saved = $this->Task->save($this->request->data);
+			$this->request->data['Task']['public_id'] = $public_id;
 
 			if ($this->Flash->u($this->Task->save($this->request->data))) {
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
+			} else {
+				$this->request->data = array_merge($task, $this->request->data);
 			}
 		} else {
 			$this->request->data = $task;
-
-			$milestones = $this->Milestone->listMilestoneOptions();
-
-			$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
-
-			$availableTasks = $this->Task->find('list', array(
-				'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
-				'fields' => array('Task.id', 'Task.subject'),
-			));
-
-			$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
-			$assignees[0] = "None";
-			ksort($assignees);
-
-			$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 		}
+		$dependsOnTasks = array();
+		//array_map(function($a){return $a['id'];}, $this->request->data['DependsOn']);
+		foreach ($this->request->data['DependsOn'] as $dep) {
+			$dependsOnTasks[$dep['id']] = $dep['subject'];
+		}
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'dependsOnTasks', 'assignees'));
 	}
 
 /*
@@ -652,6 +737,7 @@ class TasksController extends AppProjectController {
 		$isAjax = $this->request->is("ajax");
 
 		$this->Task->set('task_status_id', $status);
+		$this->Task->project_id = $project['Project']['id'];
 		$success = $this->Task->save();
 
 		$messages = array();
@@ -709,72 +795,6 @@ class TasksController extends AppProjectController {
 	*													 *
 	* ************************************************** */
 
-/**
- * api_view function.
- *
- * @access public
- * @param mixed $id (default: null)
- * @return void
- */
-	public function api_view($id = null) {
-		$this->layout = 'ajax';
-
-		$this->Task->recursive = 0;
-
-		$data = array();
-
-		if ($id == null) {
-			$this->response->statusCode(400);
-			$data['error'] = 400;
-			$data['message'] = 'Bad request, no task id specified.';
-		}
-
-		if ($id == 'all') {
-			$this->api_all();
-			return;
-		}
-
-		if (is_numeric($id)) {
-			$this->Task->id = $id;
-
-			if (!$this->Task->exists()) {
-				$this->response->statusCode(404);
-				$data['error'] = 404;
-				$data['message'] = 'No task found of that ID.';
-				$data['id'] = $id;
-			} else {
-				$task = $this->Task->read();
-
-				$this->Task->Project->id = $task['Task']['project_id'];
-
-				$partOfProject = $this->Task->Project->hasRead($this->Auth->user('id'));
-				$publicProject	= $this->Task->Project->field('public');
-				$isAdmin = ($this->_apiAuthLevel() == 1);
-
-				if ($publicProject || $isAdmin || $partOfProject) {
-					//task_type_id
-					unset($task['Task']['task_type_id']);
-					$task['Task']['type'] = $task['TaskType']['name'];
-					//task_status_id
-					unset($task['Task']['task_status_id']);
-					$task['Task']['status'] = $task['TaskStatus']['name'];
-					//task_priority_id
-					unset($task['Task']['task_priority_id']);
-					$task['Task']['priority'] = $task['TaskPriority']['name'];
-
-					$data = $task['Task'];
-				} else {
-					$data['error'] = 401;
-					$data['message'] = 'Task found, but is not public.';
-					$data['id'] = $id;
-				}
-			}
-		}
-
-		$this->set('data',$data);
-		$this->render('/Elements/json');
-	}
-
 	function api_update($project_name = null, $public_id = null) {
 		$this->layout = 'ajax';
 		$data = array();
@@ -831,140 +851,5 @@ class TasksController extends AppProjectController {
 		$this->set('data',$data);
 		$this->render('/Elements/json');
 	}
-
-/**
- * api_all function.
- * ADMINS only
- *
- * @access public
- * @return void
- */
-	public function api_all() {
-		$this->layout = 'ajax';
-
-		$this->Task->recursive = 0;
-		$data = array();
-
-		switch ($this->_apiAuthLevel()) {
-			case 1:
-				foreach ($this->Task->find("all", array('conditions' => array('order' => 'task_priority_id DESC'))) as $task) {
-					//task_type_id
-					unset($task['Task']['task_type_id']);
-					$task['Task']['type'] = $task['TaskType']['name'];
-					//task_status_id
-					unset($task['Task']['task_status_id']);
-					$task['Task']['status'] = $task['TaskStatus']['name'];
-					//task_priority_id
-					unset($task['Task']['task_priority_id']);
-					$task['Task']['priority'] = $task['TaskPriority']['name'];
-
-					$data[] = $task['Task'];
-				}
-				break;
-			default:
-				$this->response->statusCode(403);
-				$data['error'] = 403;
-				$data['message'] = 'You are not authorised to access this.';
-		}
-
-		$this->set('data',$data);
-		$this->render('/Elements/json');
-	}
-
-/**
- * api_marshalled function.
- * THIS RETURNS HTML
- *
- * @access public
- * @return void
- */
-	public function api_marshalled() {
-		$this->layout = 'ajax';
-		$data = array();
-		$request = array();
-
-		// Fetch the request from the user
-		if (!is_null($this->request->query)) {
-			$request = $this->request->query;
-		}
-
-		$user = $this->Auth->user('id');
-
-		if (empty($request)) {
-			$this->response->statusCode(400);
-			$data['error'] = 400;
-			$data['message'] = 'Bad request, empty query specified.';
-		} else if (!array_key_exists('project', $request)) {
-			$this->response->statusCode(400);
-			$data['error'] = 400;
-			$data['message'] = 'Bad request, no project specified.';
-		} else if (is_null($user) || $user < 1 || !($project = $this->_getProject($request['project']))) {
-			$this->response->statusCode(403);
-			$data['error'] = 403;
-			$data['message'] = 'You are not authorised to access this.';
-		} else {
-			$conditions = array('Task.project_id' => $project['Project']['id']);
-
-			if (array_key_exists('milestone', $request) && is_numeric($request['milestone']) && $request['milestone'] > 0) {
-				$this->Task->Milestone->id = $request['milestone'];
-				if ($this->Task->Milestone->exists()) {
-					$conditions['milestone_id'] = $request['milestone'];
-				}
-			}
-
-			// Ive assumed the user is logged in
-			if (array_key_exists('requester', $request)) {
-				switch ($request['requester']) {
-					case 'index':
-						$conditions['assignee_id'] = $user;
-						break;
-					case 'nobody':
-						$conditions['assignee_id'] = array(null, 0);
-						break;
-					case 'all':
-						break;
-					default:
-						$conditions['assignee_id !='] = array($user, 0);
-				}
-			} else {
-				$conditions['assignee_id'] = $user;
-			}
-
-			// Ive assumed the user is logged in
-
-			// If they want one or more specific task statuses, add some conditions
-			if (array_key_exists('statuses', $request)) {
-				$or = array();
-
-				foreach (preg_split('/\s*,\s*/', trim($request['statuses'])) as $statusId) {
-
-					$status = $this->Task->TaskStatus->findById($statusId);
-
-					if ($status != null) {
-						$or[] = array('Task.task_status_id' => $status['TaskStatus']['id']);
-					}
-				}
-
-				if (!empty($or)) {
-					$conditions['OR'] = $or;
-				}
-			}
-
-			if (array_key_exists('types', $request) && $request['types'] != '' && $types = explode(',', $request['types'])) {
-				$conditions['task_type_id'] = array();
-				foreach ($types as $i) {
-					if (is_numeric($i) && $i > 0 && $i < 7) {
-						$conditions['task_type_id'][] = $i;
-					}
-				}
-			}
-
-			foreach ($this->Task->find("all", array('conditions' => $conditions, 'order' => array('task_status_id ASC', 'task_priority_id DESC'))) as $task) {
-				$data[] = $task;
-			}
-		}
-		$this->set('data',$data);
-	}
-
 
 }

@@ -17,6 +17,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
     public $fixtures = array(
 		'core.cake_session',
 		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',
@@ -38,6 +40,12 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	public function setUp() {
@@ -101,23 +109,17 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 1, "Incorrect number of projects returned");
+		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
 
-		// Check each project 
-		foreach ($this->vars['projects'] as $project) {
+		// Crunch to get the project ID, user ID and access level only
+		$ids = array_map(function($a) {return array('p' => $a['Project']['id'], 'u' => $a['User']['id'], 'l' => $a['Collaborator']['access_level']);}, $this->vars['projects']);
 
-			// We should be a collaborator
-			if (!isset($project['User']) || $project['User']['id'] != 3) {
-				$this->assertTrue(false, "A project for another collaborator was found");
-			}
+		// Should have two projects, guest on both
+		$this->assertEquals(array(
+			array('p' => 1, 'u' => 3, 'l' => 0),
+			array('p' => 12, 'u' => 3, 'l' => 0),
+		), $ids);
 
-			// We should only get one, and with the correct access level
-			if ($project['Project']['id'] == 1 && $project['Collaborator']['access_level'] == 0) {
-				$this->assertTrue(true, "Impossible to fail");
-			} else {
-				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or access level (".$project['Collaborator']['access_level'].") was retrieved");
-			}
-		}
 	}
 
 	public function testPublicIndexSystemAdmin() {
@@ -136,20 +138,9 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertNotNull($this->vars['projects']);
 		$this->assertEqual(count($this->vars['projects']), 3, "Incorrect number of projects returned");
 
-		// Check each project 
-		foreach ($this->vars['projects'] as $project) {
-
-			// We should only get one, and with the correct access level
-			if ($project['Project']['id'] == 2){
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 4){
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 5){
-				$this->assertTrue(true, "Impossible to fail");
-			} else {
-				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") was retrieved");
-			}
-		}
+		// Crunch down to just the project IDs
+		$ids = array_map(function($a){return $a['Project']['id'];}, $this->vars['projects']);
+		$this->assertEquals(array(2, 4, 5), $ids);
 	}
 
 	public function testPublicIndexProjectGuest() {
@@ -168,20 +159,67 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertNotNull($this->vars['projects']);
 		$this->assertEqual(count($this->vars['projects']), 3, "Incorrect number of projects returned");
 
-		// Check each project 
-		foreach ($this->vars['projects'] as $project) {
+		// Crunch down to just the project IDs
+		$ids = array_map(function($a){return $a['Project']['id'];}, $this->vars['projects']);
+		$this->assertEquals(array(2, 4, 5), $ids);
+		
+	}
 
-			// We should only get one, and with the correct access level
-			if ($project['Project']['id'] == 2){
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 4){
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 5){
-				$this->assertTrue(true, "Impossible to fail");
-			} else {
-				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") was retrieved");
-			}
-		}
+	public function testCollaboratingTeamProjectsNoTeams() {
+
+		// Log in as a non-team member
+		$this->_fakeLogin(1);
+
+		$this->testAction('/projects/team_projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertContains('<h1>Team Projects', $this->view);
+
+		// Check the project list looks sane and has only the right entries/access levels
+		$this->assertEmpty($this->vars['projects']);
+	}
+
+	public function testCollaboratingTeamProjects() {
+
+		// Log in as a team member
+		$this->_fakeLogin(20);
+
+		$this->testAction('/projects/team_projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertContains('<h1>Team Projects', $this->view);
+
+		$this->assertRegexp('/<a href=".*\/project\/perl-1\/." class="project-link">perl-1<\/a>/', $this->view);
+
+		// Check the project list looks sane and has only the right entries/access levels
+		$this->assertNotNull($this->vars['projects']);
+		$this->assertEqual(count($this->vars['projects']), 1, "Incorrect number of projects returned");
+
+		// Crunch down to just the project IDs
+		$ids = array_map(function($a){return $a['Project']['id'];}, $this->vars['projects']);
+		$this->assertEquals(array(12), $ids);
+	}
+
+	public function testCollaboratingTeamGroupProjects() {
+
+		// Log in as a team member who has access via a project group
+		// Member of team 2 (java devs), access to groups 2 and 3 (java and python projects)
+		$this->_fakeLogin(14);
+
+		$this->testAction('/projects/team_projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		$this->assertContains('<h1>Team Projects', $this->view);
+
+		$this->assertRegexp('/<a href=".*\/project\/python-1\/." class="project-link">python-1<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/python-2\/." class="project-link">python-2<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/java-1\/." class="project-link">java-1<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/java-2\/." class="project-link">java-2<\/a>/', $this->view);
+
+		// Check the project list looks sane and has only the right entries/access levels
+		$this->assertNotNull($this->vars['projects']);
+		$this->assertEqual(count($this->vars['projects']), 4, "Incorrect number of projects returned");
+
+		// Crunch down to just the project IDs
+		$ids = array_map(function($a){return $a['Project']['id'];}, $this->vars['projects']);
+		$this->assertEquals(array(8, 9, 10, 11), $ids);
 	}
 
 /**
@@ -382,8 +420,16 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array('default' => 'Git'),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
@@ -398,8 +444,16 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array('default' => 'Shoes'),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Shoes'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
@@ -414,8 +468,15 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			->expects($this->any())
 			->method('loadConfigSettings')
 			->will($this->returnValue(array(
-				'repo' => array(),
-				'global' => array('alias' => 'SourceKettle'),
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
 			)));
 		$this->_fakeLogin(3);
 		$this->testAction('/projects/add', array('return' => 'view', 'method' => 'get'));
@@ -435,7 +496,9 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			$this->testAction('/project/newproject/edit', array('return' => 'view', 'method' => 'post'));
 		} catch (NotFoundException $e) {
 			$this->assertTrue(true, "Correct exception thrown");
+			return;
 		}
+		$this->assertFalse(true, "Should have thrown an exception");
 
 	}
 
@@ -638,12 +701,24 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/admin/projects/personal/delete', array('return' => 'view', 'method' => 'post'));
 	}
 
+	public function testAdminIndexNotLoggedIn() {
+		$this->testAction('/admin/projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAdminIndexNonAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/admin/projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
 	public function testAdminIndexSystemAdmin() {
 
 		// Log in as a system administrator - we should still only see "my" projects, not everyone's
 		$this->_fakeLogin(5);
 
 		$this->testAction('/admin/projects', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
 		$this->assertContains('<h1>Administration <small>da vinci code locator</small>', $this->view);
@@ -654,26 +729,51 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 5, "Incorrect number of projects returned");
+		$this->assertEqual(12, count($this->vars['projects']), "Incorrect number of projects returned");
 
-		// Check each project 
-		foreach ($this->vars['projects'] as $project) {
+		$projects = array_map(function($a){return array('id' => $a['Project']['id'], 'repo_type' => $a['RepoType']['name']);}, $this->vars['projects']);
 
-			// We should get all 5 projects with correct repo types
-			if ($project['Project']['id'] == 1 && $project['RepoType']['name'] == 'Git') {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 2 && $project['RepoType']['name'] == 'None') {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 3 && $project['RepoType']['name'] == 'None') {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 4 && $project['RepoType']['name'] == 'None') {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 5 && $project['RepoType']['name'] == 'None') {
-				$this->assertTrue(true, "Impossible to fail");
-			} else {
-				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or repo type (".$project['RepoType']['name'].") was retrieved");
-			}
-		}
+		$this->assertEquals(array(
+			array('id' => 1, 'repo_type' => 'Git'),
+			array('id' => 2, 'repo_type' => 'None'),
+			array('id' => 3, 'repo_type' => 'None'),
+			array('id' => 4, 'repo_type' => 'None'),
+			array('id' => 5, 'repo_type' => 'None'),
+			array('id' => 6, 'repo_type' => 'None'),
+			array('id' => 7, 'repo_type' => 'None'),
+			array('id' => 8, 'repo_type' => 'None'),
+			array('id' => 9, 'repo_type' => 'None'),
+			array('id' => 10, 'repo_type' => 'None'),
+			array('id' => 11, 'repo_type' => 'None'),
+			array('id' => 12, 'repo_type' => 'None'),
+		), $projects);
+
+	}
+
+	public function testAdminIndexPostInvalidProject() {
+
+		// Log in as a system administrator - we should still only see "my" projects, not everyone's
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Project' => array(
+				'name' => 'not_a_real_project_lolz',
+			),
+		);
+		$this->testAction('/admin/projects', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+	}
+	public function testAdminIndexPostRedirect() {
+
+		// Log in as a system administrator - we should still only see "my" projects, not everyone's
+		$this->_fakeLogin(5);
+		$postData = array(
+			'Project' => array(
+				'name' => 'personal',
+			),
+		);
+		$this->testAction('/admin/projects', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$this->assertRedirect('/project/personal/view');
 	}
 
 	public function testHistory() {
@@ -795,7 +895,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->controller->Session
 			->expects($this->once())
 			->method('setFlash')
-			->with("Project '<strong>repoless</strong>' could not be updated. Please try again.");
+			->with(__("Project '<strong>%s</strong>' could not be updated. Please try again.", "repoless"));
 
 		$this->testAction('/project/repoless/add_repo', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
@@ -816,26 +916,274 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertEquals(2, $retrieved['Project']['repo_type']);
 	}
 
-/**
- * testAdminAdd method
- *
- * @return void
- */
-	public function testAdminAdd() {
+	// Crunch a set of history entries down into just a few fields for easy comparison
+	private function __crunchHistory($events){
+		return array_map(function($a){
+			return array(
+				'project' => $a['Project']['id'],
+				'actioner' => $a['Actioner']['id'],
+				'subject' => $a['Subject']['title'],
+				'field' => $a['Change']['field'],
+				'old' => $a['Change']['field_old'],
+				'new' => $a['Change']['field_new'],
+			);
+		}, $events);
 	}
-/**
- * testAdminEdit method
- *
- * @return void
- */
-	public function testAdminEdit() {
+	
+	public function testApiHistoryNotLoggedIn() {
+		$this->testAction('/api/project/perl-1/history/8');
+		$this->assertNotAuthorized();
 	}
-/**
- * testAdminDelete method
- *
- * @return void
- */
-	public function testAdminDelete() {
+
+	public function testApiHistoryNotCollaborator() {
+		$this->_fakeLogin(1);
+		$this->testAction('/api/project/perl-1/history/8');
+		$this->assertNotAuthorized();
+	}
+
+	public function testApiHistoryNoProject() {
+		$this->_fakeLogin(5);
+		$this->testAction('/api/projects/history');
+		$this->assertAuthorized();
+		$this->assertEquals(array('error' => 400, 'message' => __('Bad request, no project specified.')), json_decode($this->view, true));
+	}
+
+	public function testApiHistoryNoLimit() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/project/perl-1/history');
+		$this->assertAuthorized();
+		$events = $this->__crunchHistory($this->vars['events']);
+		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'first ever checkin', 'field' => '+', 'old' => null, 'new' => null),
+		), $events);
+	}
+
+	public function testApiHistoryLimit2() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/project/perl-1/history/2');
+		$this->assertAuthorized();
+		$events = $this->__crunchHistory($this->vars['events']);
+		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
+		), $events);
+	}
+
+	public function testApiHistoryProjectGuest() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/project/perl-1/history/8');
+		$this->assertAuthorized();
+		$events = $this->__crunchHistory($this->vars['events']);
+		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'first ever checkin', 'field' => '+', 'old' => null, 'new' => null),
+		), $events);
+	}
+
+	public function testApiHistoryProjectUser() {
+		$this->_fakeLogin(4);
+		$this->testAction('/api/project/perl-1/history/8');
+		$this->assertAuthorized();
+		$events = $this->__crunchHistory($this->vars['events']);
+		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'first ever checkin', 'field' => '+', 'old' => null, 'new' => null),
+		), $events);
+	}
+
+	public function testApiHistoryProjectAdmin() {
+		$this->_fakeLogin(2);
+		$this->testAction('/api/project/perl-1/history/8');
+		$this->assertAuthorized();
+		$events = $this->__crunchHistory($this->vars['events']);
+		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'first ever checkin', 'field' => '+', 'old' => null, 'new' => null),
+		), $events);
+	}
+
+	public function testApiHistorySystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/api/project/perl-1/history/8');
+		$this->assertAuthorized();
+		$events = $this->__crunchHistory($this->vars['events']);
+		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
+			array('project' => 12, 'actioner' => 1, 'subject' => 'first ever checkin', 'field' => '+', 'old' => null, 'new' => null),
+		), $events);
+	}
+
+	public function testBurndown() {
+		
+		$this->_fakeLogin(3);
+		$this->testAction('/project/public/burndown', array('method' => 'get', 'return' => 'contents'));
+		$this->assertAuthorized();
+		$this->assertEquals(array(
+			array(
+				'timestamp' => '2014-10-26 16:20:42',
+				'open_task_count' => '2',
+				'open_minutes_count' => '2',
+				'open_points_count' => '2',
+				'closed_task_count' => '2',
+				'closed_minutes_count' => '2',
+				'closed_points_count' => '2'
+			),
+		), $this->vars['log']);
+	}
+
+	public function testApiAutocompleteNotLoggedIn() {
+		$this->testAction('/api/projects/autocomplete');
+		$this->assertNotAuthorized();
+	}
+
+	public function testApiAutocompleteSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/api/projects/autocomplete');
+		$this->assertAuthorized();
+	}
+
+	public function testApiAutocompleteNotSystemAdmin() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/projects/autocomplete');
+		$this->assertAuthorized();
+	}
+
+	public function testApiAutocompleteInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/api/projects/autocomplete');
+		$this->assertNotAuthorized();
+	}
+
+	public function testApiAutocompleteInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/api/projects/autocomplete');
+		$this->assertNotAuthorized();
+	}
+
+	public function testApiAutocompleteTwoCharsAndBelow() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/projects/autocomplete?query=p');
+		$this->assertAuthorized();
+		$this->assertEquals(array('private', 'public', 'personal', 'personal_public', 'php-1', 'php-2', 'python-1', 'python-2', 'perl-1'), $this->vars['data']['projects']);
+
+		$this->testAction('/api/projects/autocomplete?query=py');
+		$this->assertAuthorized();
+		$this->assertEquals(array('python-1', 'python-2'), $this->vars['data']['projects']);
+
+		$this->testAction('/api/projects/autocomplete?query=er');
+		$this->assertAuthorized();
+		$this->assertEquals(array(), $this->vars['data']['projects']);
+	}
+
+	public function testApiAutocompleteThreeCharsAndAbove() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/projects/autocomplete?query=ers');
+		$this->assertAuthorized();
+		$this->assertEquals(array('personal', 'personal_public'), $this->vars['data']['projects']);
+
+		$this->testAction('/api/projects/autocomplete?query=ersonal');
+		$this->assertAuthorized();
+		$this->assertEquals(array('personal', 'personal_public'), $this->vars['data']['projects']);
+
+	}
+
+	public function testChangeSettingNotLoggedIn() {
+		$this->testAction('/project/public/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingSystemAdmin() {
+		$this->_fakeLogin(5);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertAuthorized();
+	}
+
+	public function testChangeSettingProjectGuest() {
+		$this->_fakeLogin(8);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingProjectUser() {
+		$this->_fakeLogin(4);
+		$this->testAction('/project/private/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingNotCollaborator() {
+		$this->_fakeLogin(1);
+		$this->testAction('/project/personal/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingProjectAdmin() {
+		$this->_fakeLogin(9);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertAuthorized();
+	}
+
+	public function testChangeSettingInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/changeSetting');
+		$this->assertNotAuthorized();
+	}
+
+	public function testChangeSettingGetRedirect() {
+		$this->_fakeLogin(5);
+		$this->testAction('/project/public/changeSetting', array('method' => 'get'));
+		$this->assertRedirect("/project/public/edit");
+	}
+
+	public function testChangeSettingPostOK() {
+		$this->_fakeLogin(5);
+		$postData = array('ProjectSetting' => array(
+			'Features' => array('time_enabled' => false, 'task_enabled' => false),
+			'UserInterface' => array('alias' => 'BaconIpsum'),
+		));
+		$this->testAction('/project/public/changeSetting', array('method' => 'post', 'data' => $postData));
+
+		$found = ClassRegistry::init('Setting')->loadConfigSettings(null, 2);
+		$this->assertNotEquals('BaconIpsum', $found['UserInterface']['alias']['value']);
+		$this->assertEquals(0, $found['Features']['task_enabled']['value']);
+		$this->assertEquals(0, $found['Features']['time_enabled']['value']);
+	}
+
+	public function testChangeSettingAjaxPostOK() {
+		$this->_fakeLogin(5);
+		$postData = array('ProjectSetting' => array(
+			'Features' => array('time_enabled' => false, 'task_enabled' => false),
+			'UserInterface' => array('alias' => 'BaconIpsum'),
+		));
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->testAction('/project/public/changeSetting', array('method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+
+		$json = json_decode($this->view, true);
+		$this->assertEquals(array('code' => 200, 'message' => __('Settings updated.')), $json);
+
+		$found = ClassRegistry::init('Setting')->loadConfigSettings(null, 2);
+		$this->assertNotEquals('BaconIpsum', $found['UserInterface']['alias']['value']);
+		$this->assertEquals(0, $found['Features']['task_enabled']['value']);
+		$this->assertEquals(0, $found['Features']['time_enabled']['value']);
 	}
 
 }

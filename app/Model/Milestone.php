@@ -131,88 +131,6 @@ class Milestone extends AppModel {
 	}
 
 /**
- * openTasksForMilestone function.
- * Return the open tasks for a given milestone
- *
- * @param mixed $id the id of the milestone
- */
-	public function openTasksForMilestone($id = null) {
-		return $this->tasksOfStatusForMilestone($id, 'open');
-	}
-
-/**
- * inProgressTasksForMilestone function.
- * Return the in progress tasks for a given milestone
- *
- * @param mixed $id the id of the milestone
- */
-	public function inProgressTasksForMilestone($id = null) {
-		return $this->tasksOfStatusForMilestone($id, 'in progress');
-	}
-
-/**
- * resolvedTasksForMilestone function.
- * Return the resolved tasks for a given milestone
- *
- * @param mixed $id the id of the milestone
- */
-	public function resolvedTasksForMilestone($id = null) {
-		return $this->tasksOfStatusForMilestone($id, 'resolved');
-	}
-
-/**
- * closedTasksForMilestone function.
- * Return the closed tasks for a given milestone
- *
- * @param mixed $id the id of the milestone
- */
-	public function closedTasksForMilestone($id = null) {
-		return $this->tasksOfStatusForMilestone($id, 'closed');
-	}
-
-/**
- * closedOrResolvedTasksForMilestone function.
- * Return the closed or resolved tasks for a given milestone
- *
- * @param mixed $id the id of the milestone
- */
-	public function closedOrResolvedTasksForMilestone($id = null) {
-		$this->id = $id;
-
-		if (!$this->exists()) return null;
-
-		$tasks = $this->Task->find(
-			'all',
-			array(
-				'field' => array('milestone_id'),
-				'conditions' => array(
-					'AND' => array(
-						array(
-							'OR' => array(
-								array('TaskStatus.name ' => 'resolved'),
-								array('TaskStatus.name ' => 'closed'),
-							),
-						),
-						'milestone_id =' => $id
-					)
-				),
-				'order' => 'TaskPriority.level DESC',
-			)
-		);
-		return $tasks;
-	}
-
-/**
- * droppedTasksForMilestone function.
- * Return the dropped tasks for a given milestone
- *
- * @param mixed $id the id of the milestone
- */
-	public function droppedTasksForMilestone($id = null) {
-		return $this->tasksOfStatusForMilestone($id, 'dropped');
-	}
-
-/**
  * tasksOfStatusForMilestone function.
  * Return the tasks for a given milestone
  *
@@ -220,45 +138,9 @@ class Milestone extends AppModel {
  * @param mixed $status the status
  */
 	public function tasksOfStatusForMilestone($id = null, $status = 'open') {
-		$this->id = $id;
-
-		if (!$this->exists()) return null;
-		$tasks = $this->Task->find(
-			'all',
-			array(
-				'fields' => array(
-					'Milestone.id',
-					'Task.*',
-					'TaskPriority.name',
-					'TaskStatus.name',
-					'TaskType.name',
-					'Assignee.email',
-					'Assignee.name',
-					'Project.name',
-				),
-				'conditions' => array(
-					'TaskStatus.name =' => $status,
-					'Milestone.id =' => $id
-				),
-				'order' => 'TaskPriority.level DESC',
-				'recursive' => 0,
-			)
-		);
-		return $tasks;
+		return $this->Task->listTasksOfStatusFor($status, 'Milestone', $id);
 	}
 
-	public function blockerTasksForMilestone($id = null) {
-		return $this->tasksOfPriorityForMilestone($id, 'blocker');
-	}
-	public function urgentTasksForMilestone($id = null) {
-		return $this->tasksOfPriorityForMilestone($id, 'urgent');
-	}
-	public function majorTasksForMilestone($id = null) {
-		return $this->tasksOfPriorityForMilestone($id, 'major');
-	}
-	public function minorTasksForMilestone($id = null) {
-		return $this->tasksOfPriorityForMilestone($id, 'minor');
-	}
 /**
  * tasksOfPriorityForMilestone function.
  * Return the tasks for a given milestone
@@ -267,23 +149,7 @@ class Milestone extends AppModel {
  * @param mixed $status the status
  */
 	public function tasksOfPriorityForMilestone($id = null, $priority = 'minor') {
-		$this->id = $id;
-
-		$priorityId = $this->Task->TaskPriority->nameToId($priority);
-
-		if (!$this->exists()) return null;
-
-		$tasks = $this->Task->find(
-			'all',
-			array(
-				'field' => array('milestone_id'),
-				'conditions' => array(
-					'task_priority_id =' => $priorityId,
-					'milestone_id =' => $id
-				),
-			)
-		);
-		return $tasks;
+		return $this->Task->listTasksOfPriorityFor($priority, 'Milestone', $id);
 	}
 
 	public function taskSummaryForMilestone($id = null) {
@@ -393,11 +259,10 @@ class Milestone extends AppModel {
 	// Helper to get a list of milestone options e.g. for selecting milestones to
 	// add a task to. This is a simplified set of data compared to listMilestones().
 	public function listMilestoneOptions() {
-		$milestones = array('open' => array(), 'closed' => array());
 
 		$milestones = array(
-			"No assigned milestone",
-			'Open' => $this->find('list', array(
+			__('No assigned milestone'),
+			__('Open') => $this->find('list', array(
 				'conditions' => array(
 					'project_id' => $this->Project->id,
 					'is_open' => 1,
@@ -409,7 +274,7 @@ class Milestone extends AppModel {
 				'recursive' => 0,
 			)),
 
-			'Closed' => $this->find('list', array(
+			__('Closed') => $this->find('list', array(
 				'conditions' => array(
 					'project_id' => $this->Project->id,
 					'is_open' => 0,

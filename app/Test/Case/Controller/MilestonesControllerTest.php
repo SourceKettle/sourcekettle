@@ -16,6 +16,8 @@ class MilestonesControllerTest extends AppControllerTest {
 	public $fixtures = array(
 		'core.cake_session',
 		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
 		'app.project_history',
 		'app.repo_type',
@@ -37,6 +39,12 @@ class MilestonesControllerTest extends AppControllerTest {
 		'app.lost_password_key',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	public function setUp() {
@@ -48,6 +56,41 @@ class MilestonesControllerTest extends AppControllerTest {
  *
  * @return void
  */
+	public function testIndexFeatureDisabledOnSystem() {
+
+		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('task_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/milestones', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testIndexFeatureDisabledOnProject() {
+
+		ClassRegistry::init("ProjectSetting")->saveSettingsTree('private', array('ProjectSetting' => array('Features' => array('task_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/milestones', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
 	public function testIndexNotLoggedIn() {
 		$this->testAction('/project/public/milestones', array('method' => 'get', 'return' => 'contents'));
 		$this->assertNotAuthorized();
@@ -144,7 +187,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/view/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>Milestone board</small></h1>', $this->view);
+		$this->assertContains('<h1>public <small>'.h(__("Milestone board: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['backlog']);
 		$this->assertEquals(2, count($this->vars['backlog']));
@@ -179,7 +222,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/plan/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>Milestone task planner</small></h1>', $this->view);
+		$this->assertContains('<h1>public <small>'.h(__("Milestone planner: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['mustHave']);
 		$this->assertEquals(2, count($this->vars['mustHave']));
@@ -190,7 +233,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertNotNull($this->vars['mightHave']);
 		$this->assertEquals(2, count($this->vars['mightHave']));
 		$this->assertNotNull($this->vars['wontHave']);
-		$this->assertEquals(2, count($this->vars['wontHave']));
+		$this->assertEquals(7, count($this->vars['wontHave']));
 	}
 
 	public function testPlanProjectAdmin() {
@@ -198,7 +241,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/plan/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>Milestone task planner</small></h1>', $this->view);
+		$this->assertContains('<h1>public <small>'.h(__("Milestone planner: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['mustHave']);
 		$this->assertEquals(2, count($this->vars['mustHave']));
@@ -209,7 +252,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertNotNull($this->vars['mightHave']);
 		$this->assertEquals(2, count($this->vars['mightHave']));
 		$this->assertNotNull($this->vars['wontHave']);
-		$this->assertEquals(2, count($this->vars['wontHave']));
+		$this->assertEquals(7, count($this->vars['wontHave']));
 	}
 
 	public function testPlanSystemAdmin() {
@@ -217,7 +260,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/plan/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>Milestone task planner</small></h1>', $this->view);
+		$this->assertContains('<h1>public <small>'.h(__("Milestone planner: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['mustHave']);
 		$this->assertEquals(2, count($this->vars['mustHave']));
@@ -228,7 +271,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertNotNull($this->vars['mightHave']);
 		$this->assertEquals(2, count($this->vars['mightHave']));
 		$this->assertNotNull($this->vars['wontHave']);
-		$this->assertEquals(2, count($this->vars['wontHave']));
+		$this->assertEquals(7, count($this->vars['wontHave']));
 	}
 
 /**
@@ -876,6 +919,26 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		// Check that tasks were not shifted
 		$this->assertEquals(7, count($milestone['Task']));
+	}
+
+
+	public function testBurndown() {
+		
+		$this->_fakeLogin(3);
+		$this->testAction('/project/public/milestones/burndown/1', array('method' => 'get', 'return' => 'contents'));
+		$this->assertAuthorized();
+
+		$this->assertEquals(array(
+			array(
+				'timestamp' => '2014-10-26 16:20:53',
+				'open_task_count' => '1',
+				'open_minutes_count' => '1',
+				'open_points_count' => '1',
+				'closed_task_count' => '1',
+				'closed_minutes_count' => '1',
+				'closed_points_count' => '1'
+			),
+		), $this->vars['log']);
 	}
 
 /**

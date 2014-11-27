@@ -33,15 +33,20 @@ echo $this->Bootstrap->page_header('Administration <small>search for persons of 
                     )
                 );
 
-                echo $this->element('components/user_typeahead_input',
+                echo $this->element('typeahead_input',
                     array(
                         'name' => 'name',
+						'jsonListName' => 'users',
+						'url' => array(
+							'api' => true,
+							'controller' => 'users',
+							'action' => 'autocomplete'
+						),
                         'properties' => array(
-                            'id' => 'appendedInputButton',
+                            'id' => 'userSearchBox',
                             'class' => 'span11',
                             "placeholder" => "john.smith@example.com",
                             'label' => false,
-							'autocomplete' => 'off'
                         )
                     )
                 );

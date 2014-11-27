@@ -17,14 +17,21 @@
     'left' => array(
         array(
             array(
-                'text' => __('My projects', array('action' => 'topbar')),
+                'text' => __('My projects'),
                 'url' => array(
                     'action' => '.',
                     'controller' => 'projects',
                 ),
             ),
             array(
-                'text' => __('Public projects', array('action' => 'topbar')),
+                'text' => __('Team projects'),
+                'url' => array(
+                    'action' => 'team_projects',
+                    'controller' => 'projects',
+                ),
+            ),
+            array(
+                'text' => __('Public projects'),
                 'url' => array(
                     'action' => 'public_projects',
                     'controller' => 'projects',
@@ -35,7 +42,7 @@
     'right' => array(
         array(
             array(
-                'text' => __('New Project', array('action' => 'topbar')),
+                'text' => __('New Project'),
                 'url' => array(
                     'action' => 'add',
                     'controller' => 'projects',

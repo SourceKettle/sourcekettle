@@ -20,12 +20,61 @@ class AdminController extends AppController {
 
 	public $useTable = false;
 
+	public $uses = array(
+		'Project',
+		'ProjectHistory',
+		'User',
+	);
+
 /**
  * index method
  *
  * @return void
  */
 	public function admin_index() {
+
+		// TODO move to config
+		// Staleness thresholds in days
+		$recentThreshold = 7;
+		$staleThreshold = 90;
+		$deadThreshold = 365;
+
+		// Total number of users and projects
+		$numUsers = $this->User->find('count');
+		$numProjects = $this->Project->find('count');
+
+		// Number of projects by activity: recent, active, stale, dead
+		$projectsByActivity = array(
+			'recent' => 0,
+			'active' => 0,
+			'stale' => 0,
+			'dead' => 0,
+			'unused' => 0,
+		);
+
+		$projects = $this->ProjectHistory->find('all', array(
+			'fields' => array('Project.id', 'Project.name', 'datediff(now(), max(date(ProjectHistory.created))) as latest'),
+			'group' => array('project_id'),
+			'order' => array('latest DESC'),
+		));
+		
+		foreach ($projects as $project) {
+			if ($project[0]['latest'] < $recentThreshold) {
+				$projectsByActivity['recent']++;
+			} elseif($project[0]['latest'] < $staleThreshold) {
+				$projectsByActivity['active']++;
+			} elseif($project[0]['latest'] < $deadThreshold) {
+				$projectsByActivity['stale']++;
+			} else {
+				$projectsByActivity['dead']++;
+			}
+		}
+
+		// Anything with no project history is 'unused'
+		$projectsByActivity['unused'] = $numProjects - array_sum(array_values($projectsByActivity));
+
+		$this->set(compact('numUsers', 'projectsByActivity'));
+
 	}
 
 	// This is the same as the ode in AppController, but we should make sure

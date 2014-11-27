@@ -14,8 +14,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
     $options = array(
-        'Features' => array(
-            'Overview' => array(
+        __('Features') => array(
+            __('Overview') => array(
                 'icon' => 'home',
                 'url' => array(
                     'action' => array('view','history'),
@@ -23,7 +23,7 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            'Time' => array(
+            __('Time') => array(
                 'icon' => 'time',
                 'url' => array(
                     'action' => array('*'),
@@ -31,7 +31,7 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            'Chart' => array(
+            __('Chart') => array(
                 'icon' => 'signal',
                 'url' => array(
                     'action' => array('burndown'),
@@ -39,7 +39,7 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            'Source' => array(
+            __('Source') => array(
                 'icon' => 'pencil',
                 'url' => array(
                     'action' => array('.', 'tree', 'gettingStarted', 'commits', 'commit', 'history'),
@@ -47,7 +47,7 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            'Tasks' => array(
+            __('Tasks') => array(
                 'icon' => 'file',
                 'url' => array(
                     'action' => array('*'),
@@ -55,16 +55,16 @@
                     'project' => $this->params['project'],
                 ),
 			),
-		    '-> My tasks' => array(
-                'icon' => 'file',
+		    __('My tasks') => array(
+                'icon' => 'heart',
 		        'url' => array(
 		            'action' => array('*'),
-					'?' => 'assignees='.urlencode($current_user['id']),
+					'?' => 'assignees='.urlencode($current_user['id']).'&statuses=open,in+progress',
 		            'controller' => 'tasks',
 		            'project' => $this->params['project'],
 		        ),
 		    ),
-            'Milestones' => array(
+            __('Milestones') => array(
                 'icon' => 'road',
                 'url' => array(
                     'action' => array('*'),
@@ -72,7 +72,7 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            'Attachments' => array(
+            __('Attachments') => array(
                 'icon' => 'download',
                 'url' => array(
                     'action' => array('*'),
@@ -87,8 +87,8 @@
     );
 
     if(isset($isAdmin) && $isAdmin) {
-        $options['Administration'] = array(
-            'Collaborators' => array(
+        $options[__('Administration')] = array(
+            __('Collaborators') => array(
                 'icon' => 'user',
                 'url' => array(
                     'action' => '.',
@@ -96,7 +96,7 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            'Settings' => array(
+            __('Settings') => array(
                 'icon' => 'cog',
                 'url' => array(
                     'action' => 'edit',
@@ -106,5 +106,25 @@
             ),
         );
     }
+
+	// Remove anything that's disabled
+	if (!$sourcekettle_config['Features']['time_enabled']['value']) {
+		unset($options[__('Features')][__('Time')]);
+	}
+
+	if (!$sourcekettle_config['Features']['task_enabled']['value']) {
+		unset($options[__('Features')][__('Tasks')]);
+		unset($options[__('Features')][__('My tasks')]);
+		unset($options[__('Features')][__('Chart')]);
+		unset($options[__('Features')][__('Milestones')]);
+	}
+
+	if (!$sourcekettle_config['Features']['source_enabled']['value']) {
+		unset($options[__('Features')][__('Source')]);
+	}
+
+	if (!$sourcekettle_config['Features']['attachment_enabled']['value']) {
+		unset($options[__('Features')][__('Attachments')]);
+	}
 
     echo $this->element('Sidebar/generic', array('options' => $options));

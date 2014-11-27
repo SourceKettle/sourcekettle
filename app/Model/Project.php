@@ -86,11 +86,6 @@ class Project extends AppModel {
  * hasMany associations
  */
 	public $hasMany = array(
-		'Collaborator' => array(
-			'className' => 'Collaborator',
-			'foreignKey' => 'project_id',
-			'dependent' => true,
-		),
 		'Task' => array(
 			'className' => 'Task',
 			'foreignKey' => 'project_id',
@@ -126,6 +121,38 @@ class Project extends AppModel {
 			'foreignKey' => 'project_id',
 			'dependent' => true,
 		),
+		'ProjectSetting' => array(
+			'className' => 'ProjectSetting',
+			'foreignKey' => 'project_id',
+			'dependent' => true,
+		),
+
+		// Has-many-through relationships here...
+
+		// The Collaborator mapping maps users to projects with an associated access level
+		'Collaborator' => array(
+			'className' => 'Collaborator',
+			'foreignKey' => 'project_id',
+			'dependent' => false,
+		),
+
+		// Collaborating teams are teams of users mapped to projects with an access level
+		'CollaboratingTeam' => array(
+			'className' => 'CollaboratingTeam',
+			'foreignKey' => 'project_id',
+			'dependent' => false,
+		),
+
+	);
+
+	// Projects can belong to any number of project groups
+	public $hasAndBelongsToMany = array(
+		'ProjectGroup' => array(
+			'className' => 'ProjectGroup',
+			'foreignKey' => 'project_id',
+			'associatedForeignKey' => 'project_group_id',
+			'dependent' => false,
+		),
 	);
 
 	public function beforeSave($options = array()) {
@@ -135,6 +162,12 @@ class Project extends AppModel {
 		if (isset($this->data[$this->alias]['name']) && isset($this->id) && $this->id != null) {
 			unset($this->data[$this->alias]['name']);
 		}
+	}
+
+	// This method exists simply to make testing easier... it means we can mock it out
+	// and return a Folder object that deliberately fails to move things.
+	public function getFolder($location) {
+		return new Folder($location, false, 0775);
 	}
 
 	public function rename($nameOrId, $newName) {
@@ -170,7 +203,8 @@ class Project extends AppModel {
 		}
 
 		// Generate a new repository location
-		$folder = new Folder($location);
+		$folder = $this->getFolder($location);
+
 		$path = $folder->path;
 		$dirname = dirname($path);
 		$basename = basename($path);
@@ -182,13 +216,21 @@ class Project extends AppModel {
 			throw new InvalidArgumentException("Cannot rename project '".$project[$this->alias]['name']."' - repository cannot be moved as the directory already exists");
 		}
 
+		// Get the group of the folder, we'll need to make sure it stays owned by the group after moving...
+		$group = filegroup($folder->path);
+
 		// Move the repo
 		if (!$folder->move(array('to' => $newpath))) {
-			throw new Exception("A problem occurred when renaming the project repository");
+			throw new Exception(__("A problem occurred when renaming the project repository"));
 		}
+
+		// Sort out group ownership and permissions in the new location
+		// TODO I feel dirty, why isn't this a thing in the Folder class?
+		system("chgrp -R " . escapeshellarg($group) . " " . escapeshellarg($folder->path));
 
 		return ($this->save(array('name' => $newName), array('callbacks' => false)) != null);
 	}
+
 
 	public function beforeDelete($cascade = true) {
 
@@ -207,7 +249,7 @@ class Project extends AppModel {
 		}
 
 		// We have a repo, delete it
-		$folder = new Folder($location);
+		$folder = $this->getFolder($location);
 		return $folder->delete();
 	}
 
@@ -236,6 +278,92 @@ class Project extends AppModel {
 		return $project;
 	}
 
+	// Check a user's access level to the project
+	public function checkAccessLevel($accessLevel = 0, $userId = null, $projectId = null) {
+		
+		// We currently do not allow access to non-logged-in users
+		if ($userId == null) {
+			return false;
+		}
+
+		// Default project ID if we have one already...
+		if ($this->id && !isset($projectId)) {
+			$projectId = $this->id;
+		}
+
+		// Public projects can be read by anybody who is logged in,
+		// so if only read access is needed, grant access
+		if ($this->field('public', array('Project.id' => $projectId)) && $accessLevel < 1) {
+			return true;
+		}
+
+		// Check to see if they are a collaborator on the project
+		$member = $this->Collaborator->find('first', array(
+			'conditions' => array(
+				'user_id' => $userId,
+				'project_id' => $projectId
+			),
+			'fields' => array('access_level')));
+
+		if (!empty($member) && $member['Collaborator']['access_level'] >= $accessLevel) {
+			return true;
+		}
+
+		// Direct SQL querying is the easiest way to do this due to the model complexity...
+		$db = $this->getDataSource();
+		$table_prefix = $db->config['prefix'];
+
+		// Check to see if the user is a member of any teams collaborating on the project
+		$members = $db->fetchAll(
+			"SELECT
+				max(access_level) AS access_level
+			FROM
+				${table_prefix}collaborating_teams
+			INNER JOIN
+				${table_prefix}teams ON ${table_prefix}teams.id = ${table_prefix}collaborating_teams.team_id
+			INNER JOIN
+				${table_prefix}teams_users ON ${table_prefix}teams.id = ${table_prefix}teams_users.team_id
+			WHERE
+				${table_prefix}teams_users.user_id = ?
+				AND
+				${table_prefix}collaborating_teams.project_id = ?",
+			array($userId, $projectId)
+		);
+
+		$hasAccessLevel = $members[0][0]['access_level'];
+
+		if ($hasAccessLevel !== null && $hasAccessLevel >= $accessLevel) {
+			return true;
+		}
+
+		// Check to see if the user is a member of any teams collaborating on
+		// any of the project's groups
+		$members = $db->fetchAll(
+			"SELECT
+				max(access_level) AS access_level
+			FROM
+				${table_prefix}group_collaborating_teams
+			INNER JOIN
+				${table_prefix}teams ON ${table_prefix}teams.id = ${table_prefix}group_collaborating_teams.team_id
+			INNER JOIN
+				${table_prefix}teams_users ON ${table_prefix}teams.id = ${table_prefix}teams_users.team_id
+			INNER JOIN
+				${table_prefix}project_groups_projects ON ${table_prefix}project_groups_projects.project_group_id = ${table_prefix}group_collaborating_teams.project_group_id
+			WHERE
+				${table_prefix}teams_users.user_id = ?
+				AND
+				${table_prefix}project_groups_projects.project_id = ?",
+			array($userId, $projectId)
+		);
+
+		$hasAccessLevel = $members[0][0]['access_level'];
+		if ($hasAccessLevel !== null && $hasAccessLevel >= $accessLevel) {
+			return true;
+		}
+		// Default: fail safe and deny access
+		return false;
+	}
+
 /**
  * Checks to see if a user has read access of this project
  *
@@ -243,23 +371,7 @@ class Project extends AppModel {
  * @return boolean true if read permissions
  */
 	public function hasRead($userId = null, $projectId = null) {
-		if ( $userId == null ) {
-			return false;
-		}
-
-		if ($this->id) $projectId = $this->id;
-
-		if ($this->field('public', array('Project.id' => $projectId))) {
-			return true;
-		}
-
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
-
-		if ( !empty($member) && $member['Collaborator']['access_level'] > -1 ) {
-			return true;
-		}
-
-		return false;
+		return $this->checkAccessLevel(-1, $userId, $projectId);
 	}
 
 /**
@@ -269,29 +381,7 @@ class Project extends AppModel {
  * @return boolean true if write permissions
  */
 	public function hasWrite($userId = null, $projectId = null) {
-		if ( $userId == null ) {
-			return false;
-		}
-
-		// System admins can write to any project
-		$isAdmin = $this->Collaborator->User->field('is_admin', array('id' => $userId));
-		if ( $isAdmin ) {
-			return true;
-		}
-
-		if ($this->id) {
-			$projectId = $this->id;
-		}
-
-
-		// Check whether user is a project admin
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
-		if ( !empty($member) && $member['Collaborator']['access_level'] > 0 ) {
-			return true;
-		}
-
-		// Fail safe, no write privilege
-		return false;
+		return $this->checkAccessLevel(1, $userId, $projectId);
 	}
 
 /**
@@ -301,20 +391,7 @@ class Project extends AppModel {
  * @return boolean true if admin
  */
 	public function isAdmin($userId = null, $projectId = null) {
-		if ( $userId == null ) {
-			return false;
-		}
-
-		if ($this->id) {
-			$projectId = $this->id;
-		}
-
-		$member = $this->Collaborator->find('first', array('conditions' => array('user_id' => $userId, 'project_id' => $projectId), 'fields' => array('access_level')));
-		if ( !empty($member) && $member['Collaborator']['access_level'] > 1 ) {
-			return true;
-		}
-
-		return false;
+		return $this->checkAccessLevel(2, $userId, $projectId);
 	}
 
 	// Sort function for events
@@ -325,10 +402,9 @@ class Project extends AppModel {
 		return -1;
 	}
 
-	public function fetchEventsForProject($number = 8) {
+	public function fetchEventsForProject($projectId, $number = 8) {
 
-		$this->recursive = 2;
-		$project = $this->getProject($this->id);
+		$project = $this->getProject($projectId);
 
 		$events = array();
 
@@ -337,8 +413,8 @@ class Project extends AppModel {
 
 		try {
 			$this->Source->init();
-			array_push($_types, 'Source');
-		} catch (UnsupportedRepositoryType $e) {
+			array_unshift($_types, 'Source');
+		} catch (Exception $e) {
 		}
 
 		// Iterate over all of the types of event

@@ -124,31 +124,47 @@ function initTaskDroplists(api_url_base) {
                 taskInfo.milestone_id = toMilestone;
             }
 
-            $.post(api_url_base  + '/' + taskID, taskInfo, function (data) {
-                if (data.error === "no_error") {
+            $.ajax(api_url_base  + '/' + taskID, {
+				"data" : taskInfo,
+				"dataType" : "json",
+                "type" : "post",
+				"success" : function (data) {
+	                if (data.error === "no_error") {
                     
-                    // Update task lozenge's status
-                    if (toPrio != null) {
-                        var icon = '<i class="icon-'+taskPriorityIcons[toPrio]+' icon-white"> </i>';
-                        prioLabel.html(taskPriorityLabels[toPrio]+' '+icon);
-                    }
+	                    // Update task lozenge's status
+	                    if (toPrio != null) {
+	                        var icon = '<i class="icon-'+taskPriorityIcons[toPrio]+' icon-white"> </i>';
+	                        prioLabel.html(taskPriorityLabels[toPrio]+' '+icon);
+	                    }
+	
+	                    if (toStatus != null) {
+	                        statusLabel.html(taskStatusLabels[toStatus]);
+	
+	                        // Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
+	                        statusLabel.removeClass(function(index, css){
+	                            return (css.match (/\blabel-\S+/g) || []).join(' ');
+	                        });
+	                        statusLabel.addClass(taskStatusLabelTypes[toStatus]);
 
-                    if (toStatus != null) {
-                        statusLabel.html(taskStatusLabels[toStatus]);
-
-                        // Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
-                        statusLabel.removeClass(function(index, css){
-                            return (css.match (/\blabel-\S+/g) || []).join(' ');
-                        });
-                        statusLabel.addClass(taskStatusLabelTypes[toStatus]);
-                        
-                    }
-
-                } else {
-                    alert("Problem: "+data.errorDescription);
-                    $(ui.sender).sortable('cancel');
-                }
-            }, "json");
+                            // Make sure the task is the correct span width for this column
+                            newspan = 'span' + $(taskLozenge).parent().attr('data-taskspan');
+	                        $(taskLozenge).removeClass(function(index, css){
+	                            return (css.match (/\bspan\d+/g) || []).join(' ');
+	                        });
+	                        $(taskLozenge).addClass(newspan);
+	                        
+	                    }
+	
+	                } else {
+	                    alert("Problem: "+data.errorDescription);
+	                    $(ui.sender).sortable('cancel');
+	                }
+	            },
+				"error" : function (data) {
+	                alert("Problem: "+data.statusText);
+	                $(ui.sender).sortable('cancel');
+				}
+			});
 
         }
 

@@ -59,24 +59,8 @@ class TaskTest extends CakeTestCase {
 		unset($details['Task']['created']);
 		unset($details['Task']['modified']);
 
-		$this->assertEquals(array(
-				'id' => '2',
-				'project_id' => '2',
-				'owner_id' => '3',
-				'task_type_id' => '1',
-				'task_status_id' => '1',
-				'task_priority_id' => '1',
-				'assignee_id' => '0',
-				'milestone_id' => '1',
-				'time_estimate' => '4h 0m',
-				'story_points' => '0',
-				'subject' => 'Open Minor Task 2 for milestone 1',
-				'description' => 'lorem ipsum dolor sit amet',
-				'deleted' => '0',
-				'deleted_date' => null,
-				'public_id' => '2',
-				'dependenciesComplete' => 0
-		), $details['Task']);
+		$this->assertEquals('2', $details['Task']['id']);
+		$this->assertEquals('0', $details['Task']['dependenciesComplete']);
 	}
 
 /**
@@ -139,8 +123,8 @@ class TaskTest extends CakeTestCase {
 		$this->assertEquals(null, $this->Task->getTitleForHistory());
 		$this->Task->id = 1;
 		$this->Task->read();
-		$this->assertEquals('#1', $this->Task->getTitleForHistory());
-		$this->assertEquals('#2', $this->Task->getTitleForHistory(2));
+		$this->assertEquals('#1 (Resolved Major Task 1 for milestone 2)', $this->Task->getTitleForHistory());
+		$this->assertEquals('#2 (Open Minor Task 2 for milestone 1)', $this->Task->getTitleForHistory(2));
 	}
 
 	public function testCreate() {
@@ -178,6 +162,7 @@ class TaskTest extends CakeTestCase {
 				'subject' => 'Do a thing',
 			)
 		));
+
 	}
 
 	public function testCreateForMilestone() {
@@ -311,6 +296,7 @@ class TaskTest extends CakeTestCase {
 		$saved = $this->Task->save(array(
 			'Task' => array(
 				'id' => 1,
+				'project_id' => 2,
 				'owner_id' => 2,
 				'type' => 'enhancement',
 				'status' => 'resolved',
@@ -334,6 +320,7 @@ class TaskTest extends CakeTestCase {
 		$this->assertEqual(array(
 			'Task' => array(
 				'id' => 1,
+				'project_id' => 2,
 				'owner_id' => 2,
 				'task_type_id' => $this->Task->TaskType->nameToID('enhancement'),
 				'task_status_id' => $this->Task->TaskStatus->nameToID('resolved'),
@@ -352,12 +339,7 @@ class TaskTest extends CakeTestCase {
 	}
 
 	public function testCreateEmptyData() {
-		$saved = $this->Task->save(array());
-		unset($saved['Task']['created']);
-		unset($saved['Task']['modified']);
-		$this->assertEquals(array('Task' => array(
-			'id' => $this->Task->getLastInsertID(),
-		)), $saved);
+		$this->assertFalse($this->Task->save(array()));
 	}
 
 /**
@@ -369,21 +351,26 @@ class TaskTest extends CakeTestCase {
 		$this->Task->Project->id = 2;
 		$tasks = $this->Task->fetchLoggableTasks(2);
 		$this->assertEquals($tasks, array(
-			0 => 'No Assigned Task',
-			'Your Tasks' => array(
+			0 => __('No Assigned Task'),
+			__('Your Tasks') => array(
 				1  => 'Resolved Major Task 1 for milestone 2',
 				4  => 'In progress Urgent Task 4 for milestone 1',
 				10 => 'In Progress Major Task 1 for milestone 2',
 				11 => 'Task with differing public ID',
 			),
-			'Others Tasks' => array(
+			__('Others Tasks') => array(
 				2 => 'Open Minor Task 2 for milestone 1',
 				3 => 'In Progress Urgent Task 3 for no milestone',
 				5 => 'Open Urgent Task 5 for milestone 1',
 				6 => 'In Progress Blocker Task 7 for milestone 1',
-				7 => 'Resolved Major Task 7 for milestone 1'
+				7 => 'Resolved Major Task 7 for milestone 1',
+				12 => 'Java dev task 1 open',
+				13 => 'Java dev task 2 open',
+				14 => 'Java dev task 3 in progress',
+				15 => 'Java dev task 4 in progress',
+				16 => 'Java dev task 5 resolved',
 			)
-		), "Incorrect task list returned");
+		), __('Incorrect task list returned'));
 	}
 
 	public function testOpenNull() {
@@ -411,6 +398,80 @@ class TaskTest extends CakeTestCase {
 	public function testOpenOK() {
 		$found = $this->Task->open(1);
 		$this->assertEquals($found['Task']['id'], 1);
+	}
+
+	private function crunchTaskList($tasks) {
+		return array_map(function($a){return $a['Task']['id'];}, $tasks);
+	}
+
+	public function testTasksOfStatusForAssignee() {
+		$open = $this->crunchTaskList($this->Task->listTasksOfStatusFor('open', 'Assignee', 2));
+		$inProgress = $this->crunchTaskList($this->Task->listTasksOfStatusFor('in progress', 'Assignee', 2));
+		$resolved = $this->crunchTaskList($this->Task->listTasksOfStatusFor('resolved', 'Assignee', 2));
+		$closed = $this->crunchTaskList($this->Task->listTasksOfStatusFor('closed', 'Assignee', 2));
+		$dropped = $this->crunchTaskList($this->Task->listTasksOfStatusFor('dropped', 'Assignee', 2));
+		$done = $this->crunchTaskList($this->Task->listTasksOfStatusFor(array('resolved', 'closed'), 'Assignee', 2));
+
+		$this->assertEquals(array(), $open);
+		$this->assertEquals(array(4, 10, 11, 12, 13), $inProgress);
+		$this->assertEquals(array(1), $resolved);
+		$this->assertEquals(array(), $closed);
+		$this->assertEquals(array(), $dropped);
+		$this->assertEquals(array(1), $done);
+	}
+
+	public function testTasksOfStatusForMilestone() {
+		$open = $this->crunchTaskList($this->Task->listTasksOfStatusFor('open', 'Milestone', 1));
+		$inProgress = $this->crunchTaskList($this->Task->listTasksOfStatusFor('in progress', 'Milestone', 1));
+		$resolved = $this->crunchTaskList($this->Task->listTasksOfStatusFor('resolved', 'Milestone', 1));
+		$closed = $this->crunchTaskList($this->Task->listTasksOfStatusFor('closed', 'Milestone', 1));
+		$dropped = $this->crunchTaskList($this->Task->listTasksOfStatusFor('dropped', 'Milestone', 1));
+		$done = $this->crunchTaskList($this->Task->listTasksOfStatusFor(array('resolved', 'closed'), 'Milestone', 1));
+
+		$this->assertEquals(array(5, 2), $open);
+		$this->assertEquals(array(6, 4), $inProgress);
+		$this->assertEquals(array(7), $resolved);
+		$this->assertEquals(array(8), $closed);
+		$this->assertEquals(array(9), $dropped);
+		$this->assertEquals(array(8, 7), $done);
+	}
+
+	public function testTasksOfPriorityForAssignee() {
+		$blocker = $this->crunchTaskList($this->Task->listTasksOfPriorityFor('blocker', 'Assignee', 2));
+		$urgent = $this->crunchTaskList($this->Task->listTasksOfPriorityFor('urgent', 'Assignee', 2));
+		$major = $this->crunchTaskList($this->Task->listTasksOfPriorityFor('major', 'Assignee', 2));
+		$minor = $this->crunchTaskList($this->Task->listTasksOfPriorityFor('minor', 'Assignee', 2));
+
+		$this->assertEquals(array(), $blocker);
+		$this->assertEquals(array(4), $urgent);
+		$this->assertEquals(array(1, 10, 11, 12, 13), $major);
+		$this->assertEquals(array(), $minor);
+	}
+
+	public function testTasksOfPriorityForMilestone() {
+		$blocker = $this->crunchTaskList($this->Task->listTasksOfPriorityFor('blocker', 'Milestone', 1));
+		$urgent = $this->crunchTaskList($this->Task->listTasksOfPriorityFor('urgent', 'Milestone', 1));
+		$major = $this->crunchTaskList($this->Task->listTasksOfPriorityFor('major', 'Milestone', 1));
+		$minor = $this->crunchTaskList($this->Task->listTasksOfPriorityFor('minor', 'Milestone', 1));
+
+		$this->assertEquals(array(6, 8), $blocker);
+		$this->assertEquals(array(4, 5), $urgent);
+		$this->assertEquals(array(7), $major);
+		$this->assertEquals(array(2, 9), $minor);
+	}
+
+	public function testValidate() {
+		unset($this->Task->id);
+		$saved = $this->Task->save(array('Task' => array(
+			'subject' => 'flibble',
+			'assignee_id' => 999,
+			'milestone_id' => 999,
+			'owner_id' => 999,
+			'task_status_id' => 999,
+			'task_priority_id' => 999,
+		)));
+
+		$this->assertFalse($saved);
 	}
 
 }

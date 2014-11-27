@@ -25,18 +25,23 @@
 <div class="row">
     <div class="span6">
       <h3>Assigned tasks</h3>
-      <? if (!empty($tasks)){
+	  <? if (!$sourcekettle_config['Features']['task_enabled']['value']) {?>
+		<div class='alert'><?=__('Task tracking is disabled on this system.')?></div>
+      <? } elseif (!empty($tasks)){
+	  	echo "<p>";
+		echo $this->Html->link(__("View kanban chart"), array('controller' => 'tasks', 'action' => 'personal_kanban'));
+	  	echo "</p>";
 	    echo "<ul class='sprintboard-droplist'>";
         foreach ($tasks as $task){
-          echo $this->element('Task/lozenge', array('task' => $task));
+          echo $this->element('Task/lozenge', array('task' => $task, 'span' => 6));
         }
 		echo "</ul>";
       } else {
-        ?><div class='alert alert-success'>You have no assigned tasks! Why don't you assign yourself one?</div><?
+        ?><div class='alert alert-success'><?=__("You have no assigned tasks! Why don't you assign yourself one?")?></div><?
       }?>
     </div>
     <div class="span6">
-        <h3>Most recent projects</h3>
+        <h3><?=__("Most recent projects")?></h3>
         <div class='row'>
           <?
              $options = array(
@@ -81,12 +86,12 @@
 
 <div class='row'>
     <div class='span10'>
-      <h3>Recent events</h3>
+      <h3><?=__("Recent events")?></h3>
         <? if (!empty($history)){
           ?><div class='alert alert-info'><strong>In progress!</strong> Source code events are not shown here yet.</div><?
           echo $this->element('history', array('context_global' => true, 'events' => $history));
         } else {
-          ?><div class='alert alert-info'><strong>No events!</strong> There is no activity related to your account.</div><?
+          ?><div class='alert alert-info'><strong><?=__("No events!")?></strong> <?=__("There is no activity related to your account.")?></div><?
         }?>
     </div>
 </div>

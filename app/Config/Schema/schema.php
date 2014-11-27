@@ -18,19 +18,26 @@ class AppSchema extends CakeSchema {
 					$setting = ClassRegistry::init('Setting');
 					$setting->create();
 					$setting->saveMany(array(
-						array('name' => 'register_enabled',           'value' => '1'),
-						array('name' => 'sysadmin_email',             'value' => 'sysadmin@example.com'),
-						array('name' => 'sync_required',              'value' => '0'),
-						array('name' => 'feature_time_enabled',       'value' => '1'),
-						array('name' => 'feature_source_enabled',     'value' => '1'),
-						array('name' => 'feature_task_enabled',       'value' => '1'),
-						array('name' => 'feature_attachment_enabled', 'value' => '0'),
-						array('name' => 'ldap_enabled',               'value' => '0'),
-						array('name' => 'ldap_url',                   'value' => ''),
-						array('name' => 'ldap_bind_dn',               'value' => ''),
-						array('name' => 'ldap_bind_pw',               'value' => ''),
-						array('name' => 'ldap_base_dn',               'value' => ''),
-						array('name' => 'ldap_filter',                'value' => 'mail=%USERNAME%'),
+						array('name' => 'Users.register_enabled',     'value' => '1'),
+						array('name' => 'Users.sysadmin_email',       'value' => 'sysadmin@example.com'),
+						array('name' => 'Users.send_email_from',      'value' => 'sysadmin@example.com'),
+						array('name' => 'Status.sync_required',       'value' => '0'),
+						array('name' => 'Features.time_enabled',       'value' => '1'),
+						array('name' => 'Features.source_enabled',     'value' => '1'),
+						array('name' => 'Features.task_enabled',       'value' => '1'),
+						array('name' => 'Features.attachment_enabled', 'value' => '0'),
+						array('name' => 'Ldap.enabled',               'value' => '0'),
+						array('name' => 'Ldap.url',                   'value' => ''),
+						array('name' => 'Ldap.bind_dn',               'value' => ''),
+						array('name' => 'Ldap.bind_pw',               'value' => ''),
+						array('name' => 'Ldap.base_dn',               'value' => ''),
+						array('name' => 'Ldap.filter',                'value' => 'mail=%USERNAME%'),
+						array('name' => 'SourceRepository.user',      'value' => 'git'),
+						array('name' => 'SourceRepository.base',      'value' => '/var/sourcekettle/repositories'),
+						array('name' => 'SourceRepository.default',   'value' => 'Git'),
+						array('name' => 'UserInterface.alias',        'value' => 'SourceKettle'),
+						array('name' => 'UserInterface.theme',        'value' => 'default'),
+						array('name' => 'UserInterface.terminology',  'value' => 'default'),
 					));
 					break;
 
@@ -120,6 +127,19 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
 
+	public $collaborating_teams = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'access_level' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'team_id' => array('column' => 'team_id', 'unique' => 0),
+			'project_id' => array('column' => 'project_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
 	public $collaborators = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
@@ -146,6 +166,19 @@ class AppSchema extends CakeSchema {
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'user_id' => array('column' => 'user_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $group_collaborating_teams = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'project_group_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'access_level' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'project_group_id' => array('column' => 'project_group_id', 'unique' => 0),
+			'team_id' => array('column' => 'team_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
@@ -215,6 +248,29 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
 
+	public $project_groups = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'unique', 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'description' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'name' => array('column' => 'name', 'unique' => 1)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $project_groups_projects = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'project_group_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'project_group_id' => array('column' => 'project_group_id', 'unique' => 0),
+			'project_id' => array('column' => 'project_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
 	public $project_histories = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
@@ -232,6 +288,21 @@ class AppSchema extends CakeSchema {
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'modified' => array('column' => 'modified', 'unique' => 0),
 			'created' => array('column' => 'modified', 'unique' => 0),
+			'project_id' => array('column' => 'project_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $project_settings = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'value' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'project_id_2' => array('column' => array('project_id', 'name'), 'unique' => 1),
 			'project_id' => array('column' => 'project_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
@@ -270,6 +341,7 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 4, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'unique', 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'value' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'locked' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
@@ -299,6 +371,21 @@ class AppSchema extends CakeSchema {
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'user_id' => array('column' => 'user_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $stories = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'description' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'creator_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'story_points' => array('type' => 'integer', 'null' => true, 'default' => null),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'creator_id' => array('column' => 'creator_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
@@ -337,7 +424,7 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'label' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
-		'level' => array('type' => 'integer', 'null' => false, 'default' => 0, 'length' => 10, 'key' => 'index'),
+		'level' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 10),
 		'icon' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
@@ -385,6 +472,7 @@ class AppSchema extends CakeSchema {
 		'task_priority_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'assignee_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'milestone_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'key' => 'index'),
+		'story_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'key' => 'index'),
 		'time_estimate' => array('type' => 'integer', 'null' => true, 'default' => null),
 		'story_points' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10),
 		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
@@ -401,7 +489,31 @@ class AppSchema extends CakeSchema {
 			'task_type_id' => array('column' => 'task_type_id', 'unique' => 0),
 			'assignee_id' => array('column' => 'assignee_id', 'unique' => 0),
 			'milestone_id' => array('column' => 'milestone_id', 'unique' => 0),
-			'task_priority_id' => array('column' => 'task_priority_id', 'unique' => 0)
+			'task_priority_id' => array('column' => 'task_priority_id', 'unique' => 0),
+			'story_id' => array('column' => 'story_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $teams = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'unique', 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'description' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'name' => array('column' => 'name', 'unique' => 1)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $teams_users = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'team_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'team_id' => array('column' => 'team_id', 'unique' => 0),
+			'user_id' => array('column' => 'user_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
@@ -423,6 +535,21 @@ class AppSchema extends CakeSchema {
 			'project_id' => array('column' => 'project_id', 'unique' => 0),
 			'user_id' => array('column' => 'user_id', 'unique' => 0),
 			'task_id' => array('column' => 'task_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $user_settings = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'value' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'user_id_2' => array('column' => array('user_id', 'name'), 'unique' => 1),
+			'user_id' => array('column' => 'user_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);

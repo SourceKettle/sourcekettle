@@ -22,15 +22,26 @@ class HistoryHelper extends AppHelper {
 
 	public function render ( $event, $showDate = false ) {
 
+		// Breaks MVC a little, but we want to use the lookup table functionality
+		// e.g. to convert task status IDs into names
+		App::import("Model", "TaskStatus");  
+		$taskStatus = new TaskStatus();
+		App::import("Model", "TaskType");  
+		$taskType = new TaskType();
+		App::import("Model", "TaskPriority");  
+		$taskPriority = new TaskPriority();
+		App::import("Model", "Collaborator");  
+		$collaborator = new Collaborator();
+
 		/*
 		 * Stores the display preferences for the activity blocks
 		 */
 		$prefs = array(
-			'Collaborator' => array('icon' => 'user', 'color' => 'warning'),
-			'Time'		   => array('icon' => 'time', 'color' => 'info'),
+			'Collaborator' => array('icon' => 'user',   'color' => 'warning'),
+			'Time'		   => array('icon' => 'time',   'color' => 'info'),
 			'Source'	   => array('icon' => 'pencil', 'color' => 'success'),
-			'Task'		   => array('icon' => 'file', 'color' => 'important'),
-			'Milestone'	   => array('icon' => 'road', 'color' => ''),
+			'Task'		   => array('icon' => 'file',   'color' => 'important'),
+			'Milestone'	   => array('icon' => 'road',   'color' => ''),
 		);
 		
 		// Optionally print the date. Usually we won't do this, we'll
@@ -100,6 +111,12 @@ class HistoryHelper extends AppHelper {
 		// Now work out how to phrase it in the log...
 		switch ( strtolower($event['Type']).'.'.$change_type ) {
 			case 'collaborator.update':
+
+				if ($field == 'access_level') {
+					$field = 'access level';
+					$old = $collaborator->accessLevelIdToName($old);
+					$new = $collaborator->accessLevelIdToName($new);
+				}
 				$log_string = __(
 					"%s updated %s's role &rarr; '%s' changed from '%s' to '%s'",
 					$actioner, $subject, $field, $old, $new
@@ -149,9 +166,22 @@ class HistoryHelper extends AppHelper {
 			break;
 
 			case 'task.update':
+				if ($field == 'task_status_id') {
+					$field = 'status';
+					$old = $taskStatus->idToName($old);
+					$new = $taskStatus->idToName($new);
+				} elseif ($field == 'task_priority_id') {
+					$field = 'priority';
+					$old = $taskPriority->idToName($old);
+					$new = $taskPriority->idToName($new);
+				} elseif ($field == 'task_type_id') {
+					$field = 'type';
+					$old = $taskType->idToName($old);
+					$new = $taskType->idToName($new);
+				}
 				$log_string  = __(
-					"%s updated task %s &rarr; '%s' was modified",
-					$actioner, $subject, $field
+					"%s updated task %s &rarr; '%s' changed from '%s' to '%s'",
+					$actioner, $subject, $field, $old, $new
 				);
 			break;
 
@@ -170,10 +200,24 @@ class HistoryHelper extends AppHelper {
 			break;
 
 			case 'milestone.update':
+				if ($field == 'is_open') {
+					if ($event['Change']['field_new'] == 1) {
+						$log_string  = __(
+							"%s re-opened milestone %s",
+							$actioner, $subject
+						);
+					} else {
+						$log_string  = __(
+							"%s closed milestone %s",
+							$actioner, $subject
+						);
+					}
+				} else {
 				$log_string  = __(
 					"%s updated milestone %s &rarr; '%s' was modified",
 					$actioner, $subject, $field
 				);
+				}
 			break;
 
 			case 'milestone.create':

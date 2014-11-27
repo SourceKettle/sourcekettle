@@ -60,7 +60,7 @@ $weekTimes = array(
 	'dates' => array(),
 	'tasks' => array(
 		array(
-			'Task' => array('id' => 0, 'subject' => null,),
+			'Task' => array('id' => 0, 'public_id' => 0, 'subject' => null,),
 			'users' => array(
 				array(
 					'User' => array('id' => 0, 'name' => 'Andy Newton', 'email' => 'andy@example.org'),
@@ -69,7 +69,7 @@ $weekTimes = array(
 			),
 		),
 		array(
-			'Task' => array('id' => 1, 'subject' => 'Create a new time tracking system',),
+			'Task' => array('id' => 1, 'public_id' => 2, 'subject' => 'Create a new time tracking system',),
 			'users' => array(
 				array(
 					'User' => array('id' => 0, 'name' => 'Phill Whittlesea', 'email' => 'phill@example.org'),
