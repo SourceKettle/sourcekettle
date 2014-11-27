@@ -374,6 +374,7 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 	}
 
 	public function testMakeAdminFail () {
+		$this->_fakeLogin(5);
 		$this->controller->Collaborator = $this->getMockForModel('Collaborator', array('save'));
 		$this->controller->Session
 			->expects($this->once())
@@ -540,6 +541,7 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 	}
 
 	public function testMakeTeamAdminFail () {
+		$this->_fakeLogin(5);
 		$this->controller->CollaboratingTeam = $this->getMockForModel('CollaboratingTeam', array('save'));
 		$this->controller->Session
 			->expects($this->once())

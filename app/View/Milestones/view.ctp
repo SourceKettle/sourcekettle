@@ -52,7 +52,7 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable, 'milestoneID' => $milestone['Milestone']['id'], 'addLink' => true)
         ) ?>
 
         <?= $this->element('Task/Board/column',

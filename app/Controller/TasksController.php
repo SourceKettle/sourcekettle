@@ -312,9 +312,9 @@ class TasksController extends AppProjectController {
 		// NB we check it's valid in the isAuthorized method, so no need to check again
 		$team = $this->Team->findByName($team);
 
-		$backlog = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), 'open');
-		$inProgress = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), 'in progress');
-		$completed = $this->Team->tasksOfStatusForTeam($this->Auth->user('id'), array('resolved', 'closed'));
+		$backlog = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'open');
+		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
+		$completed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'));
 
 		$this->set(compact('team', 'backlog', 'inProgress', 'completed'));
 
@@ -561,6 +561,14 @@ class TasksController extends AppProjectController {
 			$selected_milestone_id = 0;
 		}
 
+		// Pre-selected priority
+		$selectedPriority = 0;
+		if (!empty($this->request->query['priority'])) {
+			$selectedPriority = $this->TaskPriority->nameToID($this->request->query['priority']);
+		} elseif (isset($this->request->data['Task']['task_priority_id'])) {
+			$selectedPriority = $this->TaskPriority->nameToID($this->request->data['Task']['task_priority_id']);
+		}
+
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
 
@@ -575,9 +583,6 @@ class TasksController extends AppProjectController {
 				$this->request->data['Task']['task_type_id'] = 3;
 			}
 
-			if (isset($this->request->data['Task']['task_priority_id']) && $this->request->data['Task']['task_priority_id'] == 0) {
-				$this->request->data['Task']['task_priority_id'] = 2;
-			}
 
 			if ($this->request->is('ajax')) {
 				$this->autoRender = false;
@@ -601,10 +606,15 @@ class TasksController extends AppProjectController {
 			}
 		} else {
 			// GET request: set default priority, type and assignment
-			// TODO define the defaults somewhere useful?
-			$this->request->data['Task']['task_priority_id'] = 2;
 			$this->request->data['Task']['task_type_id'] = 1;
 			$this->request->data['Task']['assignee_id'] = 0;
+
+			// TODO hard coded default, also clean this up and allow params to be passed for status/type etc.
+			if (!$selectedPriority) {
+				$selectedPriority = $this->TaskPriority->nameToID('major');
+			}
+
+			$this->request->data['Task']['task_priority_id'] = $selectedPriority;
 
 			if ($selected_milestone_id) {
 				$this->request->data['Task']['milestone_id'] = $selected_milestone_id;
@@ -652,7 +662,6 @@ class TasksController extends AppProjectController {
 		$assignees[0] = "None";
 		ksort($assignees);
 
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 
@@ -672,6 +681,12 @@ class TasksController extends AppProjectController {
 		} else {
 			$this->request->data = $task;
 		}
+		$dependsOnTasks = array();
+		//array_map(function($a){return $a['id'];}, $this->request->data['DependsOn']);
+		foreach ($this->request->data['DependsOn'] as $dep) {
+			$dependsOnTasks[$dep['id']] = $dep['subject'];
+		}
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'dependsOnTasks', 'assignees'));
 	}
 
 /*

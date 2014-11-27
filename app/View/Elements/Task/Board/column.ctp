@@ -50,4 +50,17 @@ echo "<hr />\n";
 foreach ($tasks as $task) {
     echo $this->element('Task/lozenge', array('task' => $task, 'draggable' => $draggable, 'span' => $task_span));
 }
+if (isset($addLink)) {
+	$params = array();
+	if (isset($status)) {
+		$params['status'] = $status;
+	}
+	if (isset($priority)) {
+		$params['priority'] = $priority;
+	}
+	if (isset($milestoneID)) {
+		$params['milestone'] = $milestoneID;
+	}
+	echo $this->Html->link('add task', array('controller' => 'tasks', 'action' => 'add', 'project' => $project['Project']['name'], '?' => $params));
+}
 echo "</ul>\n";

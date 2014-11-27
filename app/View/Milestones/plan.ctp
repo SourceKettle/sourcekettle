@@ -72,7 +72,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'tooltip' => __('These tasks are not important for the milestone, and can be easily dropped'),
 				'span' => '6',
 				'task_span' => '6',
-				'classes' => 'sprintboard-column'
+				'classes' => 'sprintboard-column',
+				'addLink' => true,
 			)
         ) ?>
         <?= $this->element('Task/Board/column',
@@ -84,7 +85,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'tooltip' => __('These tasks will be completed if possible, but if time runs out they will be dropped'),
 				'span' => '6',
 				'task_span' => '6',
-				'classes' => 'sprintboard-column'
+				'classes' => 'sprintboard-column',
+				'addLink' => true,
 			)
         ) ?>	
 
@@ -104,7 +106,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'tooltip' => __('These tasks are not vital to the milestone, but should not be dropped unless time is very short'),
 				'span' => '6',
 				'task_span' => '6',
-				'classes' => 'sprintboard-column'
+				'classes' => 'sprintboard-column',
+				'addLink' => true,
 			)
         ) ?>
         <?= $this->element('Task/Board/column',
@@ -116,7 +119,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'tooltip' => __('The highest priority - these tasks MUST be completed for the milestone to be a success'),
 				'span' => '6',
 				'task_span' => '6',
-				'classes' => 'sprintboard-column'
+				'classes' => 'sprintboard-column',
+				'addLink' => true,
 			)
         ) ?>	
 

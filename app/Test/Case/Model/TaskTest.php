@@ -363,7 +363,12 @@ class TaskTest extends CakeTestCase {
 				3 => 'In Progress Urgent Task 3 for no milestone',
 				5 => 'Open Urgent Task 5 for milestone 1',
 				6 => 'In Progress Blocker Task 7 for milestone 1',
-				7 => 'Resolved Major Task 7 for milestone 1'
+				7 => 'Resolved Major Task 7 for milestone 1',
+				12 => 'Java dev task 1 open',
+				13 => 'Java dev task 2 open',
+				14 => 'Java dev task 3 in progress',
+				15 => 'Java dev task 4 in progress',
+				16 => 'Java dev task 5 resolved',
 			)
 		), __('Incorrect task list returned'));
 	}

@@ -109,9 +109,8 @@ class TeamsController extends AppController {
 			$options = array('conditions' => array('Team.' . $this->Team->primaryKey => $id));
 			$this->request->data = $this->Team->find('first', $options);
 		}
-		$users = $this->Team->User->find('list');
-		$this->set(compact('users'));
-		
+
+		$this->set('users', $this->Team->User->find('list', array('order' => array('name'))));
 	}
 
 	public function admin_delete($id = null) {
