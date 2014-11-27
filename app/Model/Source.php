@@ -144,7 +144,14 @@ class Source extends AppModel {
 			throw new UnsupportedRepositoryType(__("Repository type not supported"));
 		}
 
-		return "{$base}{$name}.{$type}/";
+		$location = "{$base}{$name}.{$type}/";
+
+		$f = new Folder($location);
+		if (!file_exists($f->path)) {
+			throw new NotFoundException(__("Could not find the source repository on disk"));
+		}
+
+		return $location;
 	}
 
 /**
