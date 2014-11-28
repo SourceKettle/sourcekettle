@@ -23,77 +23,75 @@ class GitShell extends AppShell {
 	 */
 	public function sync_keys() {
 
+		$sourcekettle_config = $this->getSourceKettleConfig();
+
 		// Don't bother unless a key's actually been changed...
-		$sync_required = $this->Setting->find('first', array('conditions' => array('name' => 'sync_required')));
-
-	    if ($sync_required['Setting']['value'] == 1) {
-
-			// Work out where to put the SSH keys (git user's homedir)
-			$sourcekettle_config = Configure::read('sourcekettle');
-
-			// Get username from config, and get info from the passwd file (or other entry)
-			$git_user	= $sourcekettle_config['repo']['user'];
-			$git_details = posix_getpwnam($git_user);
-			
-			// Sanity check #1, fail if the user doesn't exist...
-			if(!$git_details){
-				$this->err("Cannot sync keys - git user '$git_user' does not exist - have you set up SourceKettle properly?");
-                exit(1);
-			}
-
-			// Get their homedir
-			$git_homedir = $git_details['dir'];
-
-			// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
-			if(!is_dir($git_homedir.'/.ssh')){
-				$this->err("Cannot sync keys - $git_homedir/.ssh not found - have you set up SourceKettle properly?");
-                exit(1);
-			}
-
-			// Now we know where to write to...
-			$ssh_keyfile = $git_homedir.'/.ssh/authorized_keys';
-
-			// Get all of the SSH keys from the database
-			$keys = $this->SshKey->find('all');
-			$prepared_keys = array();
-
-			// We will auto-run out git serve command when the git user logs in, and we should disable any
-			// features that may be used for nefarious purposes
-			$template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
-
-			// This seems dubious... TODO
-			$app_path = App::path('Controller');
-			$app_path = $app_path[0];
-			$app_path = str_replace('/app/Controller', '', $app_path);
-
-			// This is the git-serve command that will be run when git logs in
-			$cmd = $app_path . 'scm-scripts/git-serve.py';
-
-			// Build up a list of SSH keys to write to file
-			// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...
-			$out = '';
-			foreach ($keys as $key) {
-				$sshkey = $key['SshKey']['key'];
-				$userid = $key['User']['id'];
-				if (!isset($userid) || $userid <= 0) {
-					$this->out("Bad key detected! ($sshkey has no userid $userid)");
-					continue;
-				}
-
-				// Sanity check the key
-				if (strlen($sshkey) > 40) {
-					$content = trim(str_replace(array("\n", "\r"), '', $sshkey));
-					$out .= sprintf($template, $cmd, $userid, $content) . "\n";
-				}
-			}
-
-			// Write to the file, making sure we get an exclusive lock to prevent corruption
-			file_put_contents($ssh_keyfile, $out, LOCK_EX);
-
-			// Don't sync again unless keys have changed
-			$sync_required['Setting']['value'] = 0;
-			$this->Setting->save($sync_required);
+	    if ($sourcekettle_config['Status']['sync_required']['value'] != 1) {
+			exit(0);
 		}
+
+
+		// Get username from config, and get info from the passwd file (or other entry)
+		$git_user	= $sourcekettle_config['SourceRepository']['user']['value'];
+		$git_details = posix_getpwnam($git_user);
+
+		// Sanity check #1, fail if the user doesn't exist...
+		if(!$git_details){
+			$this->err(__("Cannot sync keys - git user '$git_user' does not exist - have you set up SourceKettle properly?"));
+            exit(1);
+		}
+
+		// Get their homedir
+		$git_homedir = $git_details['dir'];
+
+		// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
+		if(!is_dir($git_homedir.'/.ssh')){
+			$this->err(__("Cannot sync keys - $git_homedir/.ssh not found - have you set up SourceKettle properly?"));
+            exit(1);
+		}
+
+		// Now we know where to write to...
+		$ssh_keyfile = $git_homedir.'/.ssh/authorized_keys';
+
+		// Get all of the SSH keys from the database
+		$keys = $this->SshKey->find('all');
+		$prepared_keys = array();
+
+		// We will auto-run out git serve command when the git user logs in, and we should disable any
+		// features that may be used for nefarious purposes
+		$template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
+
+		// This seems dubious... TODO
+		$app_path = App::path('Controller');
+		$app_path = $app_path[0];
+		$app_path = str_replace('/app/Controller', '', $app_path);
+
+		// This is the git-serve command that will be run when git logs in
+		$cmd = $app_path . 'scm-scripts/git-serve.py';
+
+		// Build up a list of SSH keys to write to file
+		// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...
+		$out = '';
+		foreach ($keys as $key) {
+			$sshkey = $key['SshKey']['key'];
+			$userid = $key['User']['id'];
+			if (!isset($userid) || $userid <= 0) {
+				$this->out("Bad key detected! ($sshkey has no userid $userid)");
+				continue;
+			}
+
+			// Sanity check the key
+			if (strlen($sshkey) > 40) {
+				$content = trim(str_replace(array("\n", "\r"), '', $sshkey));
+				$out .= sprintf($template, $cmd, $userid, $content) . "\n";
+			}
+		}
+
+		// Write to the file, making sure we get an exclusive lock to prevent corruption
+		file_put_contents($ssh_keyfile, $out, LOCK_EX);
+
+		// Don't sync again unless keys have changed
+		$this->Setting->syncRequired(false);
 	}
 
 	// Helper functions to validate git commands
@@ -211,12 +209,12 @@ class GitShell extends AppShell {
         ));
 
 		// Get the repository location
-		$sourcekettle_config = Configure::read('sourcekettle');
-		$repo_path = $sourcekettle_config['repo']['base'] . "/$_proj_name.git";
+		$sourcekettle_config = $this->getSourceKettleConfig();
+		$repo_path = $sourcekettle_config['SourceRepository']['base']['value'] . "/$_proj_name.git";
 
 		// Make sure there's actually a git repository for this project...
 		if (strtolower($rt['RepoType']['name']) != 'git' or !is_dir($repo_path)) {
-			$this->err("Error: You do not have the necessary permissions");
+			$this->err(__("Error: You do not have the necessary permissions"));
 			exit(1);
 		}
 
