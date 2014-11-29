@@ -118,9 +118,9 @@ class Setting extends AppModel {
  * syncRequired function.
  * Notify the system that the keys need to be sync'd
  */
-	public function syncRequired() {
+	public function syncRequired($required = true) {
 		$id = $this->findByName('Status.sync_required');
-		$data = array('Setting' => array('name' => 'Status.sync_required', 'value' => true));
+		$data = array('Setting' => array('name' => 'Status.sync_required', 'value' => $required));
 		if (!empty($id) && isset($id['Setting']['id'])) {
 			$data['Setting']['id'] = $id['Setting']['id'];
 		}

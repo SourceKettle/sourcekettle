@@ -147,9 +147,6 @@ class Source extends AppModel {
 		$location = "{$base}{$name}.{$type}/";
 
 		$f = new Folder($location);
-		if (!file_exists($f->path)) {
-			throw new NotFoundException(__("Could not find the source repository on disk"));
-		}
 
 		return $location;
 	}
