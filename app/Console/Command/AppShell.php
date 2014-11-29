@@ -29,6 +29,6 @@ App::uses('Shell', 'Console');
 class AppShell extends Shell {
 	public $uses = array('Setting');
 	protected function getSourceKettleConfig() {
-		$this->Setting->loadConfigSettings();
+		return $this->Setting->loadConfigSettings();
 	}
 }
