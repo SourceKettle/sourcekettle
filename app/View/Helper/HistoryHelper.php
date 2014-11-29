@@ -32,6 +32,8 @@ class HistoryHelper extends AppHelper {
 		$taskPriority = new TaskPriority();
 		App::import("Model", "Collaborator");  
 		$collaborator = new Collaborator();
+		App::import("Model", "User");  
+		$user = new User();
 
 		/*
 		 * Stores the display preferences for the activity blocks
@@ -166,7 +168,29 @@ class HistoryHelper extends AppHelper {
 			break;
 
 			case 'task.update':
-				if ($field == 'task_status_id') {
+				if ($field == 'assignee_id' && $new > 0) {
+					$assignee = $user->findById($new);
+					$image = $this->Gravatar->image($assignee['User']['email'], array('size' => 20), array('alt' => $assignee['User']['name']));
+					$assignee = $image . '&nbsp;' . $this->Html->link(
+						$assignee['User']['name'], array(
+							'controller' => 'users', 
+							'action' => 'view',
+							'api' => false,
+							$assignee['User']['id'],
+						)
+					);
+					$log_string = __(
+						"%s assigned %s to %s",
+						$actioner, $subject, $assignee
+					);
+					break;
+				} elseif ($field == 'assignee_id') {
+					$log_string = __(
+						"%s de-assigned %s",
+						$actioner, $subject
+					);
+					break;
+				} elseif ($field == 'task_status_id') {
 					$field = 'status';
 					$old = $taskStatus->idToName($old);
 					$new = $taskStatus->idToName($new);
