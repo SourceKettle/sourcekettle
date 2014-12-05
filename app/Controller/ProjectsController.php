@@ -128,6 +128,7 @@ class ProjectsController extends AppProjectController {
 				),
 			),
 			'group' => array('Project.id'),
+			'order' => array('Project.modified DESC'),
 		));
 
 		$this->set('projects', $projects);
