@@ -103,6 +103,8 @@ class MilestonesController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
+		$this->set('title_for_layout', $milestone['Milestone']['subject']);
+
 		$backlog = $this->Milestone->tasksOfStatusForMilestone($id, 'open');
 		$inProgress = $this->Milestone->tasksOfStatusForMilestone($id, 'in progress');
 		$completed = $this->Milestone->tasksOfStatusForMilestone($id, array('resolved', 'closed'));
@@ -139,6 +141,8 @@ class MilestonesController extends AppProjectController {
 	public function plan($project = null, $id = null) {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
+
+		$this->set('title_for_layout', $milestone['Milestone']['subject']);
 
 		$mustHave   = $this->Milestone->tasksOfPriorityForMilestone($id, 'blocker');
 		$shouldHave = $this->Milestone->tasksOfPriorityForMilestone($id, 'urgent');
