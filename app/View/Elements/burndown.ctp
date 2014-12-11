@@ -11,29 +11,35 @@ $this->Html->script ("burndown", array ('inline' => false));
 	<table>
 		<thead>
 		  <tr>
-		  	<th>Timestamp</th>
-		 	<th>Open tasks</th>
-		 	<th>Closed tasks</th>
-		 	<th>Open story points</th>
-		 	<th>Closed story points</th>
-		 	<th>Open time, estimated</th>
-		 	<th>Closed time, estimated</th>
+		  	<th><?=__("Date")?></th>
+		 	<th><?=__("Open tasks")?></th>
+		 	<th><?=__("Closed tasks")?></th>
+		 	<th><?=__("Open story points")?></th>
+		 	<th><?=__("Closed story points")?></th>
+		 	<th><?=__("Open time, estimated")?></th>
+		 	<th><?=__("Closed time, estimated")?></th>
 		  </tr>
 		</thead>
 		<tbody>
-		<? foreach($log as $event) {?>
+		<? foreach($log['days'] as $day) { ?>
 			<tr>
-				<td><?=$event['timestamp']?></td>
-				<td><?=$event['open_task_count']?></td>
-				<td><?=$event['closed_task_count']?></td>
-				<td><?=$event['open_points_count']?></td>
-				<td><?=$event['closed_points_count']?></td>
-				<td><?=$event['open_minutes_count']?></td>
-				<td><?=$event['closed_minutes_count']?></td>
+				<td><?=h($day)?></td>
+				<td><?=h($log['tasks']['open'][$day])?></td>
+				<td><?=h($log['tasks']['closed'][$day])?></td>
+				<td><?=h($log['points']['open'][$day])?></td>
+				<td><?=h($log['points']['closed'][$day])?></td>
+				<td><?=h($log['minutes']['open'][$day])?></td>
+				<td><?=h($log['minutes']['closed'][$day])?></td>
 			</tr>
 		<? } ?>
 		</tbody>
 	</table>
+
+	<ul>
+	  <li class="high-tasks"><?=__("Max open tasks:")?><strong><?=h($log['highs']['tasks'])?></strong></li>
+	  <li class="high-points"><?=__("Max open story points:")?><strong><?=h($log['highs']['points'])?></strong></li>
+	  <li class="high-time"><?=__("Max open time estimate:")?><strong><?=h($log['highs']['minutes'])?></strong></li>
+	</ul>
 </div>
 </div>
 <div class="span1">
@@ -47,4 +53,5 @@ $this->Html->script ("burndown", array ('inline' => false));
 	<input type="checkbox" name="show_finished" id="show_finished"></input>
 	<label for="show_finished"><?=__('Show finished tasks')?></label>
 </div>
+
 </div></div>
