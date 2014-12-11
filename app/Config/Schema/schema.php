@@ -218,6 +218,7 @@ class AppSchema extends CakeSchema {
 		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'index'),
 		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'description' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'starts' => array('type' => 'date', 'null' => false, 'default' => null),
 		'due' => array('type' => 'date', 'null' => false, 'default' => null),
 		'is_open' => array('type' => 'boolean', 'null' => false, 'default' => '1'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
