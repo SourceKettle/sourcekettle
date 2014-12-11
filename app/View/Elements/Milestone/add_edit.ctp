@@ -15,11 +15,27 @@
 
         echo "<br>";
 
+		// If we have a start date use it, otherwise default to today
+		$start_date = date('Y-m-d', time());
+		if(isset($this->data['Milestone']['starts']) && $this->data['Milestone']['starts'] != '0000-00-00'){
+			$start_date = $this->data['Milestone']['starts'];
+		}
+
 		// If we have a due date use it, otherwise default to 1 week in the future
 		$due_date = date('Y-m-d', time() + (7 * 24 * 60 * 60));
 		if(isset($this->data['Milestone']['due'])){
 			$due_date = $this->data['Milestone']['due'];
 		}
+
+        echo $this->Bootstrap->input("starts", array(
+            "input" => $this->Form->text("starts", array(
+                "class" => "dp1",
+				"value" => $start_date,
+                "data-date-format" => "yyyy-mm-dd")
+            ),
+            "label" => __("Start date"),
+            "help_block" => __("When work on the milestone will begin")
+        ));
 
         echo $this->Bootstrap->input("due", array(
             "input" => $this->Form->text("due", array(

@@ -210,6 +210,7 @@ class Milestone extends AppModel {
 				'Milestone.subject',
 				'Milestone.description',
 				'Milestone.is_open',
+				'Milestone.starts',
 				'Milestone.due',
 			),
 			'recursive' => 0,
