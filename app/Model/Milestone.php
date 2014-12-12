@@ -336,4 +336,89 @@ class Milestone extends AppModel {
 		$events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'milestone');
 		return $events;
 	}
+
+	// Find logged changes for a milestone between two dates
+	public function fetchBurndownLog($id, $start, $end) {
+
+		$log = array(
+			'days'    => array(),
+			'tasks'   => array('open' => array(), 'closed' => array()),
+			'minutes' => array('open' => array(), 'closed' => array()),
+			'points'  => array('open' => array(), 'closed' => array()),
+			'highs'   => array('tasks' => 0, 'minutes' => 0, 'points' => 0),
+		);
+
+		$entries = $this->MilestoneBurndownLog->find('all', array(
+			'conditions' => array(
+				'milestone_id' => $id,
+				'timestamp <=' => $end->format('Y-m-d 23:59:59'),
+				'timestamp >=' => $start->format('Y-m-d 00:00:00'),
+			),
+			'fields' => array(
+				'timestamp',
+				'DATE(timestamp) AS day',
+				'open_task_count',
+				'open_minutes_count',
+				'open_points_count',
+				'closed_task_count',
+				'closed_minutes_count',
+				'closed_points_count',
+			),
+			'order' => array('timestamp'),
+			'recursive' => -1,
+		));
+		
+		// Get the last entry for each day - so we're plotting the latest available info for the day
+		$day = $start->format('Y-m-d');
+		foreach ($entries as $entry) {
+			if ($entry[0]['day'] != $day) {
+				// Padding, so we catch days where nothing changed
+				$last = new DateTime($day, new DateTimeZone('UTC'));
+				$new  = new DateTime($entry[0]['day'], new DateTimeZone('UTC'));
+
+				// If padding is not needed, i.e. we got two consecutive days, $last is the same as $new now
+				$last->add(new DateInterval('P1D'));
+
+				// If not, keep incrementing $last until they match and copy the previous day's data
+				while ($new->diff($last)->d > 0) {
+					$str = $last->format('Y-m-d');
+					$log['days'][] = $str;
+					$log['tasks']['open'][$str]     = @$log['tasks']['open'][$day];
+					$log['minutes']['open'][$str]   = @$log['minutes']['open'][$day];
+					$log['points']['open'][$str]    = @$log['points']['open'][$day];
+					$log['tasks']['closed'][$str]   = @$log['tasks']['closed'][$day];
+					$log['minutes']['closed'][$str] = @$log['minutes']['closed'][$day];
+					$log['points']['closed'][$str]  = @$log['points']['closed'][$day];
+					$last->add(new DateInterval('P1D'));
+				}
+
+				// Finally, whether padding was added or not, add our new entry to the days list
+				$day = $entry[0]['day'];
+				$log['days'][] = $day;
+			}
+
+			// Add in all the counts - note that if we get multiple counts for a single day, we'll
+			// overwrite until we only have th elatest count for the day.
+			$log['tasks']['open'][$day]     = $entry['MilestoneBurndownLog']['open_task_count'];
+			$log['minutes']['open'][$day]   = $entry['MilestoneBurndownLog']['open_minutes_count'];
+			$log['points']['open'][$day]    = $entry['MilestoneBurndownLog']['open_points_count'];
+			$log['tasks']['closed'][$day]   = $entry['MilestoneBurndownLog']['closed_task_count'];
+			$log['minutes']['closed'][$day] = $entry['MilestoneBurndownLog']['closed_minutes_count'];
+			$log['points']['closed'][$day]  = $entry['MilestoneBurndownLog']['closed_points_count'];
+
+			// Find the "high point" to plot the ideal burndown line
+			if ($log['tasks']['open'][$day] > $log['highs']['tasks']) {
+				$log['highs']['tasks'] = $log['tasks']['open'][$day];
+			}
+			if ($log['minutes']['open'][$day] > $log['highs']['minutes']) {
+				$log['highs']['minutes'] = $log['minutes']['open'][$day];
+			}
+			if ($log['points']['open'][$day] > $log['highs']['points']) {
+				$log['highs']['points'] = $log['points']['open'][$day];
+			}
+		}
+	
+	return $log;
+
+	}
 }
