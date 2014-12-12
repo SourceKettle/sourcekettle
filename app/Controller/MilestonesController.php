@@ -409,29 +409,27 @@ class MilestonesController extends AppProjectController {
 		));
 		
 		// Get the last entry for each day - so we're plotting the latest available info for the day
-		$day = null;
+		$day = $start->format('Y-m-d');
 		foreach ($entries as $entry) {
 			if ($entry[0]['day'] != $day) {
-				if ($day) {
-					// Padding, so we catch days where nothing changed
-					$last = new DateTime($day, new DateTimeZone('UTC'));
-					$new  = new DateTime($entry[0]['day'], new DateTimeZone('UTC'));
+				// Padding, so we catch days where nothing changed
+				$last = new DateTime($day, new DateTimeZone('UTC'));
+				$new  = new DateTime($entry[0]['day'], new DateTimeZone('UTC'));
 
-					// If padding is not needed, i.e. we got two consecutive days, $last is the same as $new now
+				// If padding is not needed, i.e. we got two consecutive days, $last is the same as $new now
+				$last->add(new DateInterval('P1D'));
+
+				// If not, keep incrementing $last until they match and copy the previous day's data
+				while ($new->diff($last)->d > 0) {
+					$str = $last->format('Y-m-d');
+					$log['days'][] = $str;
+					$log['tasks']['open'][$str]     = @$log['tasks']['open'][$day];
+					$log['minutes']['open'][$str]   = @$log['minutes']['open'][$day];
+					$log['points']['open'][$str]    = @$log['points']['open'][$day];
+					$log['tasks']['closed'][$str]   = @$log['tasks']['closed'][$day];
+					$log['minutes']['closed'][$str] = @$log['minutes']['closed'][$day];
+					$log['points']['closed'][$str]  = @$log['points']['closed'][$day];
 					$last->add(new DateInterval('P1D'));
-
-					// If not, keep incrementing $last until they match and copy the previous day's data
-					while ($new->diff($last)->d > 0) {
-						$str = $last->format('Y-m-d');
-						$log['days'][] = $str;
-						$log['tasks']['open'][$str]     = $log['tasks']['open'][$day];
-						$log['minutes']['open'][$str]   = $log['minutes']['open'][$day];
-						$log['points']['open'][$str]    = $log['points']['open'][$day];
-						$log['tasks']['closed'][$str]   = $log['tasks']['closed'][$day];
-						$log['minutes']['closed'][$str] = $log['minutes']['closed'][$day];
-						$log['points']['closed'][$str]  = $log['points']['closed'][$day];
-						$last->add(new DateInterval('P1D'));
-					}
 				}
 
 				// Finally, whether padding was added or not, add our new entry to the days list

@@ -51,7 +51,7 @@ $this->Html->script ("burndown", array ('inline' => false));
 	<input type="radio" name="series" value="hours" id="hours"></input>
 	<label for="hours"><?=__('Show estimated time (hours)')?></label>
 	<input type="checkbox" name="show_finished" id="show_finished"></input>
-	<label for="show_finished"><?=__('Show finished tasks')?></label>
+	<label for="show_finished"><?=__('Include finished tasks')?></label>
 </div>
 
 </div></div>

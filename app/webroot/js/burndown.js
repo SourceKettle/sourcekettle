@@ -13,21 +13,22 @@ $('.burndown-outer').each(function(index, outer) {
 
 	// Pull the values to plot out of the list
 	open   = {
-		'tasks'  : {'label' : 'Pending tasks', 'data' : []},
-		'points' : {'label' : 'Pending story points', 'data' : []},
-		'hours'  : {'label' : 'Pending time (estimated hours)', 'data' : []}
+		'tasks'  : {'label' : 'Pending tasks', 'stack' : 'stack',  'lines' : {'show' : true, 'fill' : true}, 'points' : {'show' : true}, 'data' : []},
+		'points' : {'label' : 'Pending story points', 'stack' : 'stack',  'lines' : {'show' : true, 'fill' : true}, 'points' : {'show' : true}, 'data' : []},
+		'hours'  : {'label' : 'Pending time (estimated hours)', 'stack' : 'stack',  'lines' : {'show' : true, 'fill' : true}, 'points' : {'show' : true}, 'data' : []}
 	};
 	finished   = {
-		'tasks'  : {'label' : 'Finished tasks', 'data' : []},
-		'points' : {'label' : 'Finished story points', 'data' : []},
-		'hours'  : {'label' : 'Finished time (estimated hours)', 'data' : []}
+		'tasks'  : {'label' : 'Finished tasks', 'stack' : 'stack', 'lines' : {'show' : true, 'fill' : true}, 'points' : {'show' : true}, 'data' : []},
+		'points' : {'label' : 'Finished story points', 'stack' : 'stack', 'lines' : {'show' : true, 'fill' : true}, 'points' : {'show' : true}, 'data' : []},
+		'hours'  : {'label' : 'Finished time (estimated hours)', 'stack' : 'stack', 'lines' : {'show' : true, 'fill' : true}, 'points' : {'show' : true}, 'data' : []}
 	};
 	highs = {
-		"tasks" : $(chartbox).find('.high-tasks strong').text(),
+		"tasks"  : $(chartbox).find('.high-tasks strong').text(),
 		"points" : $(chartbox).find('.high-points strong').text(),
-		"hours" : $(chartbox).find('.high-times strong').text()
+		"hours"  : $(chartbox).find('.high-time strong').text()
 	};
-	
+
+
 	$(chartbox).find('table tbody tr').each(function(index, row) {
 		timestamp = $(row).find('td:eq(0)').text();
 		open['tasks']['data'].push([timestamp, $(row).find('td:eq(1)').text()]);
@@ -38,12 +39,38 @@ $('.burndown-outer').each(function(index, outer) {
 		finished['hours']['data'].push([timestamp, $(row).find('td:eq(6)').text()/60]);
 	});
 
+	high_steps = {
+		"tasks"  : highs.tasks / (open.tasks.data.length - 1),
+		"points"  : highs.points / (open.points.data.length - 1),
+		"hours"  : highs.hours / (open.hours.data.length - 1),
+	};
+
+	last = highs.tasks;
+	highs.tasks  = {"label" : "Ideal", 'points' : {'show' : false}, 'color' : '#000000', "data" : []};
+	for (i = 0; i < open.tasks.data.length; i++) {
+		highs.tasks.data.push([open.tasks.data[i][0], last]);
+		last -= high_steps.tasks;
+	}
+	
+	last = highs.points;
+	highs.points  = {"label" : "Ideal", 'points' : {'show' : false}, 'color' : '#000000', "data" : []};
+	for (i = 0; i < open.points.data.length; i++) {
+		highs.points.data.push([open.points.data[i][0], last]);
+		last -= high_steps.points;
+	}
+	
+	last = highs.hours;
+	highs.hours  = {"label" : "Ideal", 'points' : {'show' : false}, 'color' : '#000000', "data" : []};
+	for (i = 0; i < open.hours.data.length; i++) {
+		highs.hours.data.push([open.hours.data[i][0], last]);
+		last -= high_steps.hours;
+	}
 	
 
 	// Add tooltip placeholder
 	$("<div id='burndown-tooltip'></div>").css({
 		position: "absolute",
-		display: "none",
+		//display: "none",
 		border: "1px solid #fdd",
 		padding: "2px",
 		"background-color": "#fee",
@@ -83,12 +110,11 @@ function plotAccordingToChoices(outer) {
 	display = $(controls).find('input[name=series]:checked').val();
 	show_finished = $(controls).find('input[name=show_finished]:checked').val();
 
-	var data = [];
+	var data = [open[display]];
 	if (show_finished) {
-		data = [open[display], finished[display]];
-	} else {
-		data = [open[display]];
+		data.push(finished[display]);
 	}
+	data.push(highs[display]);
 
 	var plot = $.plot(chartbox, data, {
         'xaxis' : {
@@ -97,19 +123,6 @@ function plotAccordingToChoices(outer) {
         'yaxis' : {
 			'tickDecimals' : 0
 		},
-        'series' : {
-            'stack' : 'stack',
-            'lines' : {
-                'fill' : true,
-                'show' : true,
-            },
-			'points' : {
-				'show': true
-			},
-			'grid' : {
-				'hoverable' : true
-			}
-        },
     });
 	
 }
