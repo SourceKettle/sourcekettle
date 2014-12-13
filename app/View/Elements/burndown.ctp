@@ -21,24 +21,30 @@ $this->Html->script ("burndown", array ('inline' => false));
 		  </tr>
 		</thead>
 		<tbody>
-		<? foreach($log['days'] as $day) { ?>
+		<?
+		$start_tasks = $start_points = $start_minutes = 0;
+		foreach($log as $day => $entry) {
+			$start_tasks = $start_tasks ?: $entry['open']['tasks'];
+			$start_points = $start_points ?: $entry['open']['points'];
+			$start_minutes = $start_minutes ?: $entry['open']['minutes'];
+		?>
 			<tr>
 				<td><?=h($day)?></td>
-				<td><?=h($log['tasks']['open'][$day])?></td>
-				<td><?=h($log['tasks']['closed'][$day])?></td>
-				<td><?=h($log['points']['open'][$day])?></td>
-				<td><?=h($log['points']['closed'][$day])?></td>
-				<td><?=h($log['minutes']['open'][$day])?></td>
-				<td><?=h($log['minutes']['closed'][$day])?></td>
+				<td><?=h($entry['open']['tasks'])?></td>
+				<td><?=h($entry['closed']['tasks'])?></td>
+				<td><?=h($entry['open']['points'])?></td>
+				<td><?=h($entry['closed']['points'])?></td>
+				<td><?=h($entry['open']['minutes'])?></td>
+				<td><?=h($entry['closed']['minutes'])?></td>
 			</tr>
 		<? } ?>
 		</tbody>
 	</table>
 
 	<ul>
-	  <li class="high-tasks"><?=__("Max open tasks:")?><strong><?=h($log['highs']['tasks'])?></strong></li>
-	  <li class="high-points"><?=__("Max open story points:")?><strong><?=h($log['highs']['points'])?></strong></li>
-	  <li class="high-time"><?=__("Max open time estimate:")?><strong><?=h($log['highs']['minutes'])?></strong></li>
+	  <li class="start-tasks"><?=__("Starting open tasks:")?><strong><?=h($start_tasks)?></strong></li>
+	  <li class="start-points"><?=__("Starting open story points:")?><strong><?=h($start_points)?></strong></li>
+	  <li class="start-time"><?=__("Starting open time estimate:")?><strong><?=h($start_minutes)?></strong></li>
 	</ul>
 </div>
 </div>

@@ -22,10 +22,10 @@ $('.burndown-outer').each(function(index, outer) {
 		'points' : {'label' : 'Finished story points', 'stack' : 'stack', 'lines' : {'show' : true, 'fill' : true}, 'points' : {'show' : true}, 'data' : []},
 		'hours'  : {'label' : 'Finished time (estimated hours)', 'stack' : 'stack', 'lines' : {'show' : true, 'fill' : true}, 'points' : {'show' : true}, 'data' : []}
 	};
-	highs = {
-		"tasks"  : $(chartbox).find('.high-tasks strong').text(),
-		"points" : $(chartbox).find('.high-points strong').text(),
-		"hours"  : $(chartbox).find('.high-time strong').text()
+	starting = {
+		"tasks"  : $(chartbox).find('.start-tasks strong').text(),
+		"points" : $(chartbox).find('.start-points strong').text(),
+		"hours"  : $(chartbox).find('.start-time strong').text() / 60
 	};
 
 
@@ -39,38 +39,26 @@ $('.burndown-outer').each(function(index, outer) {
 		finished['hours']['data'].push([timestamp, $(row).find('td:eq(6)').text()/60]);
 	});
 
-	high_steps = {
-		"tasks"  : highs.tasks / (open.tasks.data.length - 1),
-		"points"  : highs.points / (open.points.data.length - 1),
-		"hours"  : highs.hours / (open.hours.data.length - 1),
+	ideal = {
+		"tasks" :  {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
+			[open.tasks.data[0][0], starting.tasks],
+			[open.tasks.data[open.tasks.data.length-1][0], 0]
+		]},
+		"points" : {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
+			[open.points.data[0][0], starting.points],
+			[open.points.data[open.points.data.length-1][0], 0]
+		]},
+		"hours" :  {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
+			[open.hours.data[0][0], starting.hours],
+			[open.hours.data[open.hours.data.length-1][0], 0]
+		]},
 	};
 
-	last = highs.tasks;
-	highs.tasks  = {"label" : "Ideal", 'points' : {'show' : false}, 'color' : '#000000', "data" : []};
-	for (i = 0; i < open.tasks.data.length; i++) {
-		highs.tasks.data.push([open.tasks.data[i][0], last]);
-		last -= high_steps.tasks;
-	}
-	
-	last = highs.points;
-	highs.points  = {"label" : "Ideal", 'points' : {'show' : false}, 'color' : '#000000', "data" : []};
-	for (i = 0; i < open.points.data.length; i++) {
-		highs.points.data.push([open.points.data[i][0], last]);
-		last -= high_steps.points;
-	}
-	
-	last = highs.hours;
-	highs.hours  = {"label" : "Ideal", 'points' : {'show' : false}, 'color' : '#000000', "data" : []};
-	for (i = 0; i < open.hours.data.length; i++) {
-		highs.hours.data.push([open.hours.data[i][0], last]);
-		last -= high_steps.hours;
-	}
-	
 
 	// Add tooltip placeholder
 	$("<div id='burndown-tooltip'></div>").css({
 		position: "absolute",
-		//display: "none",
+		display: "none",
 		border: "1px solid #fdd",
 		padding: "2px",
 		"background-color": "#fee",
@@ -114,7 +102,7 @@ function plotAccordingToChoices(outer) {
 	if (show_finished) {
 		data.push(finished[display]);
 	}
-	data.push(highs[display]);
+	data.push(ideal[display]);
 
 	var plot = $.plot(chartbox, data, {
         'xaxis' : {

@@ -340,13 +340,7 @@ class Milestone extends AppModel {
 	// Find logged changes for a milestone between two dates
 	public function fetchBurndownLog($id, $start, $end) {
 
-		$log = array(
-			'days'    => array(),
-			'tasks'   => array('open' => array(), 'closed' => array()),
-			'minutes' => array('open' => array(), 'closed' => array()),
-			'points'  => array('open' => array(), 'closed' => array()),
-			'highs'   => array('tasks' => 0, 'minutes' => 0, 'points' => 0),
-		);
+		$log = array();
 
 		$entries = $this->MilestoneBurndownLog->find('all', array(
 			'conditions' => array(
@@ -367,58 +361,85 @@ class Milestone extends AppModel {
 			'order' => array('timestamp'),
 			'recursive' => -1,
 		));
-		
-		// Get the last entry for each day - so we're plotting the latest available info for the day
-		$day = $start->format('Y-m-d');
+
 		foreach ($entries as $entry) {
-			if ($entry[0]['day'] != $day) {
-				// Padding, so we catch days where nothing changed
-				$last = new DateTime($day, new DateTimeZone('UTC'));
-				$new  = new DateTime($entry[0]['day'], new DateTimeZone('UTC'));
-
-				// If padding is not needed, i.e. we got two consecutive days, $last is the same as $new now
-				$last->add(new DateInterval('P1D'));
-
-				// If not, keep incrementing $last until they match and copy the previous day's data
-				while ($new->diff($last)->d > 0) {
-					$str = $last->format('Y-m-d');
-					$log['days'][] = $str;
-					$log['tasks']['open'][$str]     = @$log['tasks']['open'][$day];
-					$log['minutes']['open'][$str]   = @$log['minutes']['open'][$day];
-					$log['points']['open'][$str]    = @$log['points']['open'][$day];
-					$log['tasks']['closed'][$str]   = @$log['tasks']['closed'][$day];
-					$log['minutes']['closed'][$str] = @$log['minutes']['closed'][$day];
-					$log['points']['closed'][$str]  = @$log['points']['closed'][$day];
-					$last->add(new DateInterval('P1D'));
-				}
-
-				// Finally, whether padding was added or not, add our new entry to the days list
-				$day = $entry[0]['day'];
-				$log['days'][] = $day;
-			}
+			$day = $entry[0]['day'];
 
 			// Add in all the counts - note that if we get multiple counts for a single day, we'll
-			// overwrite until we only have th elatest count for the day.
-			$log['tasks']['open'][$day]     = $entry['MilestoneBurndownLog']['open_task_count'];
-			$log['minutes']['open'][$day]   = $entry['MilestoneBurndownLog']['open_minutes_count'];
-			$log['points']['open'][$day]    = $entry['MilestoneBurndownLog']['open_points_count'];
-			$log['tasks']['closed'][$day]   = $entry['MilestoneBurndownLog']['closed_task_count'];
-			$log['minutes']['closed'][$day] = $entry['MilestoneBurndownLog']['closed_minutes_count'];
-			$log['points']['closed'][$day]  = $entry['MilestoneBurndownLog']['closed_points_count'];
-
-			// Find the "high point" to plot the ideal burndown line
-			if ($log['tasks']['open'][$day] > $log['highs']['tasks']) {
-				$log['highs']['tasks'] = $log['tasks']['open'][$day];
-			}
-			if ($log['minutes']['open'][$day] > $log['highs']['minutes']) {
-				$log['highs']['minutes'] = $log['minutes']['open'][$day];
-			}
-			if ($log['points']['open'][$day] > $log['highs']['points']) {
-				$log['highs']['points'] = $log['points']['open'][$day];
-			}
+			// overwrite until we only have the latest count for the day.
+			$log[$day] = array(
+				'open' => array(
+					'points'  => $entry['MilestoneBurndownLog']['open_points_count'],
+					'tasks'   => $entry['MilestoneBurndownLog']['open_task_count'],
+					'minutes' => $entry['MilestoneBurndownLog']['open_minutes_count'],
+				),
+				'closed' => array(
+					'points'  => $entry['MilestoneBurndownLog']['closed_points_count'],
+					'tasks'   => $entry['MilestoneBurndownLog']['closed_task_count'],
+					'minutes' => $entry['MilestoneBurndownLog']['closed_minutes_count'],
+				),
+			);
 		}
 	
-	return $log;
+		// Pad out any missing days between the start and end date
+		// Note that there may (should!) be logged entries before the milestone start date
+		// (from the planning phase), so get the latest counts to start us off
+		$current = clone($start);
+
+		$startingLog = $this->MilestoneBurndownLog->find('first', array(
+			'conditions' => array(
+				'milestone_id' => $id,
+				'timestamp <' => $start->format('Y-m-d 00:00:00'),
+			),
+			'fields' => array(
+				'open_task_count',
+				'open_minutes_count',
+				'open_points_count',
+				'closed_task_count',
+				'closed_minutes_count',
+				'closed_points_count',
+			),
+			'order' => array('timestamp DESC'),
+			'recursive' => -1,
+		));
+
+		$startingLog = $startingLog['MilestoneBurndownLog'];
+		$last_open_tasks = $startingLog['open_task_count'];
+		$last_open_minutes = $startingLog['open_minutes_count'];
+		$last_open_points = $startingLog['open_points_count'];
+		$last_closed_tasks = $startingLog['closed_task_count'];
+		$last_closed_minutes = $startingLog['closed_minutes_count'];
+		$last_closed_points = $startingLog['closed_points_count'];
+
+		while ($end->diff($current)->d > 0) {
+			$day = $current->format('Y-m-d');
+			if (isset($log[$day])) {
+				$last_open_points = $log[$day]['open']['points'];
+				$last_open_tasks = $log[$day]['open']['tasks'];
+				$last_open_minutes = $log[$day]['open']['minutes'];
+				$last_closed_points = $log[$day]['closed']['points'];
+				$last_closed_tasks = $log[$day]['closed']['tasks'];
+				$last_closed_minutes = $log[$day]['closed']['minutes'];
+			} else {
+				$log[$day] = array(
+					'open' => array(
+						'points'  => $last_open_points,
+						'tasks'   => $last_open_tasks,
+						'minutes' => $last_open_minutes,
+					),
+					'closed' => array(
+						'points'  => $last_closed_points,
+						'tasks'   => $last_closed_tasks,
+						'minutes' => $last_closed_minutes,
+					),
+				);
+			}
+
+			$current->add(new DateInterval('P1D'));
+		}
+
+		ksort($log);
+		return $log;
 
 	}
 }
