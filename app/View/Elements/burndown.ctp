@@ -40,11 +40,11 @@ $this->Html->script ("burndown", array ('inline' => false));
 		<? } ?>
 		</tbody>
 	</table>
-
 	<ul>
-	  <li class="start-tasks"><?=__("Starting open tasks:")?><strong><?=h($start_tasks)?></strong></li>
-	  <li class="start-points"><?=__("Starting open story points:")?><strong><?=h($start_points)?></strong></li>
-	  <li class="start-time"><?=__("Starting open time estimate:")?><strong><?=h($start_minutes)?></strong></li>
+	  <li class="due-date"><?=__("Due date:")?> <strong><?=h($milestone['Milestone']['due'])?></strong></li>
+	  <li class="start-tasks"><?=__("Starting open tasks:")?> <strong><?=h($start_tasks)?></strong></li>
+	  <li class="start-points"><?=__("Starting open story points:")?> <strong><?=h($start_points)?></strong></li>
+	  <li class="start-time"><?=__("Starting open time estimate:")?> <strong><?=h($start_minutes)?></strong></li>
 	</ul>
 </div>
 </div>

@@ -8,6 +8,10 @@ $('.burndown-outer').each(function(index, outer) {
 	var chartbox = $(outer).find('.burndown-chart');
 	var controls = $(outer).find('.burndown-controls');
 
+	// Milestone end date and index for drawing markings
+	milestoneEnd = $(chartbox).find('.due-date strong').text();
+	milestoneEndIndex = 0;
+
 	// Hide the table of data
 	$(chartbox).find('table').hide();
 
@@ -28,7 +32,7 @@ $('.burndown-outer').each(function(index, outer) {
 		"hours"  : $(chartbox).find('.start-time strong').text() / 60
 	};
 
-
+	i = 0;
 	$(chartbox).find('table tbody tr').each(function(index, row) {
 		timestamp = $(row).find('td:eq(0)').text();
 		open['tasks']['data'].push([timestamp, $(row).find('td:eq(1)').text()]);
@@ -37,20 +41,26 @@ $('.burndown-outer').each(function(index, outer) {
 		finished['tasks']['data'].push([timestamp, $(row).find('td:eq(2)').text()]);
 		finished['points']['data'].push([timestamp, $(row).find('td:eq(4)').text()]);
 		finished['hours']['data'].push([timestamp, $(row).find('td:eq(6)').text()/60]);
+		if (timestamp == milestoneEnd) {
+			milestoneEndIndex = i;
+		}
+		i++;
 	});
+
+	chartEnd = finished.tasks.data[ finished.tasks.data.length-1 ][0];
 
 	ideal = {
 		"tasks" :  {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
 			[open.tasks.data[0][0], starting.tasks],
-			[open.tasks.data[open.tasks.data.length-1][0], 0]
+			[milestoneEnd, 0]
 		]},
 		"points" : {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
 			[open.points.data[0][0], starting.points],
-			[open.points.data[open.points.data.length-1][0], 0]
+			[milestoneEnd, 0]
 		]},
 		"hours" :  {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
 			[open.hours.data[0][0], starting.hours],
-			[open.hours.data[open.hours.data.length-1][0], 0]
+			[milestoneEnd, 0]
 		]},
 	};
 
@@ -103,6 +113,7 @@ function plotAccordingToChoices(outer) {
 		data.push(finished[display]);
 	}
 	data.push(ideal[display]);
+	chartEndIndex = open[display].data.length-1;
 
 	var plot = $.plot(chartbox, data, {
         'xaxis' : {
@@ -111,6 +122,12 @@ function plotAccordingToChoices(outer) {
         'yaxis' : {
 			'tickDecimals' : 0
 		},
+		'grid' : {
+			'markings' : [
+				{'color': '#ee1111', 'lineWidth': 2, 'xaxis' : {'from' : milestoneEndIndex, 'to' : milestoneEndIndex}},
+				{'color': '#ffcccc', 'xaxis' : {'from' : milestoneEndIndex, 'to' : chartEndIndex}},
+			]
+		}
     });
 	
 }
