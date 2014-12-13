@@ -550,7 +550,6 @@ class TasksController extends AppProjectController {
  */
 	public function add($project = null) {
 
-
 		$project = $this->_getProject($project);
 		$current_user = $this->viewVars['current_user'];
 
@@ -593,16 +592,13 @@ class TasksController extends AppProjectController {
 					echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not add task to the project. Please, try again.</div>';
 				}
 			} else if ($this->request->is('post')) {
+				// Do not redirect, allow them to save and add another task with the same details
 				if ($this->Flash->c($this->Task->saveAll($this->request->data))) {
-
-					// If they pre-selected a milestone, go back to that milestone
-					if ($selected_milestone_id) {
-						return $this->redirect(array('controller' => 'milestones', 'project' => $project['Project']['name'], 'action' => 'view', $selected_milestone_id));
-					} else {
-						// ...otherwise show the task.
-						return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Task->id));
-					}
+					unset($this->request->data['Task']['subject']);
+					unset($this->request->data['Task']['description']);
+					unset($this->request->data['DependsOn']);
 				}
+				debug($this->request->data);
 			}
 		} else {
 			// GET request: set default priority, type and assignment
