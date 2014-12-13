@@ -371,7 +371,9 @@ class MilestonesController extends AppProjectController {
 			$end = new DateTime($this->request->data['end']);
 		} elseif (isset($milestone['Milestone']['due']) ) {
 			$end = new DateTime($milestone['Milestone']['due']);
-			if ($end < $now) {
+
+			// If the milestone is late (i.e. still open), render up to the current date
+			if ($milestone['Milestone']['is_open'] && $end < $now) {
 				$end = $now;
 			}
 		} else {

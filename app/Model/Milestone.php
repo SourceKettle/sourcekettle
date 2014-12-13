@@ -384,8 +384,6 @@ class Milestone extends AppModel {
 		// Pad out any missing days between the start and end date
 		// Note that there may (should!) be logged entries before the milestone start date
 		// (from the planning phase), so get the latest counts to start us off
-		$current = clone($start);
-
 		$startingLog = $this->MilestoneBurndownLog->find('first', array(
 			'conditions' => array(
 				'milestone_id' => $id,
@@ -403,15 +401,23 @@ class Milestone extends AppModel {
 			'recursive' => -1,
 		));
 
-		$startingLog = $startingLog['MilestoneBurndownLog'];
-		$last_open_tasks = $startingLog['open_task_count'];
-		$last_open_minutes = $startingLog['open_minutes_count'];
-		$last_open_points = $startingLog['open_points_count'];
-		$last_closed_tasks = $startingLog['closed_task_count'];
-		$last_closed_minutes = $startingLog['closed_minutes_count'];
-		$last_closed_points = $startingLog['closed_points_count'];
+		if (!empty($startingLog)) {
+			$startingLog = $startingLog['MilestoneBurndownLog'];
+			$last_open_tasks = $startingLog['open_task_count'];
+			$last_open_minutes = $startingLog['open_minutes_count'];
+			$last_open_points = $startingLog['open_points_count'];
+			$last_closed_tasks = $startingLog['closed_task_count'];
+			$last_closed_minutes = $startingLog['closed_minutes_count'];
+			$last_closed_points = $startingLog['closed_points_count'];
+		}
 
-		while ($end->diff($current)->d > 0) {
+		// Start with 1 day before milestone start, and add a day at the start of the loop.
+		// This means we get everything from the start to the end date inclusive.
+		$current = clone($start);
+		$current->sub(new DateInterval('P1D'));
+
+		while ($end->diff($current)->days > 0) {
+			$current->add(new DateInterval('P1D'));
 			$day = $current->format('Y-m-d');
 			if (isset($log[$day])) {
 				$last_open_points = $log[$day]['open']['points'];
@@ -423,19 +429,18 @@ class Milestone extends AppModel {
 			} else {
 				$log[$day] = array(
 					'open' => array(
-						'points'  => $last_open_points,
-						'tasks'   => $last_open_tasks,
-						'minutes' => $last_open_minutes,
+						'points'  => $last_open_points ?: 0,
+						'tasks'   => $last_open_tasks ?: 0,
+						'minutes' => $last_open_minutes ?: 0,
 					),
 					'closed' => array(
-						'points'  => $last_closed_points,
-						'tasks'   => $last_closed_tasks,
-						'minutes' => $last_closed_minutes,
+						'points'  => $last_closed_points ?: 0,
+						'tasks'   => $last_closed_tasks ?: 0,
+						'minutes' => $last_closed_minutes ?: 0,
 					),
 				);
 			}
 
-			$current->add(new DateInterval('P1D'));
 		}
 
 		ksort($log);

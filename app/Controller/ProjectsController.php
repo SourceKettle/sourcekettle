@@ -399,7 +399,7 @@ class ProjectsController extends AppProjectController {
 	}
 
 	public function burndown($project = null) {
-
+throw new Exception("Temporarily unimplemented, gantt charts coming soon...");
 		$project = $this->_getProject($project);
 
 		$now = new DateTime();
