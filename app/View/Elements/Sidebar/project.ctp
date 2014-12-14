@@ -31,10 +31,10 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            __('Chart') => array(
+            __('Charts') => array(
                 'icon' => 'signal',
                 'url' => array(
-                    'action' => array('burndown'),
+                    'action' => array('schedule'),
                     'controller' => 'projects',
                     'project' => $this->params['project'],
                 ),

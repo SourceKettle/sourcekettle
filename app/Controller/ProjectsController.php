@@ -398,54 +398,59 @@ class ProjectsController extends AppProjectController {
 		$this->render('/Elements/Markitup/preview');
 	}
 
-	public function burndown($project = null) {
-throw new Exception("Temporarily unimplemented, gantt charts coming soon...");
+	public function schedule($project = null) {
+
 		$project = $this->_getProject($project);
 
-		$now = new DateTime();
-
-		// Start date: provided in GET or POST data, or use the project creation date
-		if (isset($this->request->query['start'])) {
-			$start = new DateTime($this->request->query['start']);
-		} elseif (isset($this->request->data['start'])) {
-			$start = new DateTime($this->request->data['start']);
-		} else {
-			$start = new DateTime($project['Project']['created']);
-		}
-
-		// End date: provided in GET or POST data,
-		// falling back to the current date
-		if (isset($this->request->query['end'])) {
-			$end = new DateTime($this->request->query['end']);
-		} elseif (isset($this->request->data['end'])) {
-			$end = new DateTime($this->request->data['end']);
-		} else {
-			$end = $now;
-		}
-
-		// Find logged changes between the start and end dates
-		$log = $this->Project->ProjectBurndownLog->find('all', array(
+		$milestones = $this->Project->Milestone->find('all', array(
 			'conditions' => array(
 				'project_id' => $project['Project']['id'],
-				'timestamp <=' => $end->format('Y-m-d 23:59:59'),
-				'timestamp >=' => $start->format('Y-m-d 00:00:00'),
 			),
-			'fields' => array(
-				'timestamp',
-				'open_task_count',
-				'open_minutes_count',
-				'open_points_count',
-				'closed_task_count',
-				'closed_minutes_count',
-				'closed_points_count',
+			'order' => array(
+				'Milestone.starts',
 			),
-			'order' => array('timestamp'),
 			'recursive' => -1,
 		));
 
-		$log = array_map(function($a){return $a['ProjectBurndownLog'];}, $log);
+		$this->set(compact('project', 'milestones'));
+	}
 
-		$this->set(compact('project', 'log'));
+	public function planner($project = null) {
+
+		$project = $this->_getProject($project);
+
+		$users = $this->Project->Collaborator->find('all', array(
+			'conditions' => array('Collaborator.project_id' => $project['Project']['id']),
+			'fields' => array('User.name', 'User.email', 'User.id'),
+			'order' => array('User.name'),
+		));
+
+		$schedule = array();
+
+		foreach ($users as $user) {
+			$milestones = array_map(function($a){return $a['Milestone'];}, $this->Project->Task->find('all', array(
+				'conditions' => array(
+					'Task.project_id' => $project['Project']['id'],
+					'Task.assignee_id' => $user['User']['id'],
+					'Task.milestone_id >' => 0,
+				),
+				'fields' => array('Milestone.id', 'Milestone.subject', 'Milestone.starts', 'Milestone.due'),
+				'order' => array('Milestone.starts'),
+			)));
+
+			$schedule[$user['User']['name']] = array();
+			
+			$seen = array();
+			foreach ($milestones as $milestone) {
+				if (in_array($milestone['id'], $seen)) {
+					continue;
+				}
+				$seen[] = $milestone['id'];
+				$schedule[$user['User']['name']][] = $milestone;
+			}
+		}
+
+		$this->set(compact('project', 'schedule'));
 	}
 
 	public function changeSetting($project) {
