@@ -59,8 +59,26 @@ class Milestone extends AppModel {
 		'is_open' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
-			)
-		)
+			),
+		),
+		'starts' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+			),
+			'checkRange' => array(
+				'rule' => array('checkRange'),
+				'message' => 'Start date must be before due date',
+			),
+		),
+		'due' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+			),
+			'checkRange' => array(
+				'rule' => array('checkRange'),
+				'message' => 'Due date must be after start date',
+			),
+		),
 	);
 
 /**
@@ -89,6 +107,11 @@ class Milestone extends AppModel {
 		),
 	);
 
+	// Checks that the start/end date are the correct way round
+	public function checkRange($value) {
+		return (strtotime($this->data['Milestone']['starts']) < strtotime($this->data['Milestone']['due']));
+	}
+
 /**
  * afterFind function.
  * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
@@ -105,6 +128,24 @@ class Milestone extends AppModel {
 		}
 		return $results;
 	}
+/*
+	public function beforeValidate($options = array()) {
+
+		// Need a start date
+		if (!isset($this->data['starts'])) {
+			return false;
+		}
+
+		// ...and a due date
+		if (!isset($this->data['due'])) {
+			return false;
+		}
+
+		// ...and it can't be due before it starts.
+		if (strtotime($this->data['starts']) >= strtotime($this->data['due'])) {
+			return false;
+		}
+	}*/
 
 /**
  * beforeDelete function.
@@ -210,6 +251,7 @@ class Milestone extends AppModel {
 				'Milestone.subject',
 				'Milestone.description',
 				'Milestone.is_open',
+				'Milestone.starts',
 				'Milestone.due',
 			),
 			'recursive' => 0,
@@ -334,5 +376,124 @@ class Milestone extends AppModel {
 	public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
 		$events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'milestone');
 		return $events;
+	}
+
+	// Find logged changes for a milestone between two dates
+	public function fetchBurndownLog($id, $start, $end) {
+
+		$log = array();
+
+		$entries = $this->MilestoneBurndownLog->find('all', array(
+			'conditions' => array(
+				'milestone_id' => $id,
+				'timestamp <=' => $end->format('Y-m-d 23:59:59'),
+				'timestamp >=' => $start->format('Y-m-d 00:00:00'),
+			),
+			'fields' => array(
+				'timestamp',
+				'DATE(timestamp) AS day',
+				'open_task_count',
+				'open_minutes_count',
+				'open_points_count',
+				'closed_task_count',
+				'closed_minutes_count',
+				'closed_points_count',
+			),
+			'order' => array('timestamp'),
+			'recursive' => -1,
+		));
+
+		foreach ($entries as $entry) {
+			$day = $entry[0]['day'];
+
+			// Add in all the counts - note that if we get multiple counts for a single day, we'll
+			// overwrite until we only have the latest count for the day.
+			$log[$day] = array(
+				'open' => array(
+					'points'  => $entry['MilestoneBurndownLog']['open_points_count'],
+					'tasks'   => $entry['MilestoneBurndownLog']['open_task_count'],
+					'minutes' => $entry['MilestoneBurndownLog']['open_minutes_count'],
+				),
+				'closed' => array(
+					'points'  => $entry['MilestoneBurndownLog']['closed_points_count'],
+					'tasks'   => $entry['MilestoneBurndownLog']['closed_task_count'],
+					'minutes' => $entry['MilestoneBurndownLog']['closed_minutes_count'],
+				),
+			);
+		}
+	
+		// Pad out any missing days between the start and end date
+		// Note that there may (should!) be logged entries before the milestone start date
+		// (from the planning phase), so get the latest counts to start us off
+		$startingLog = $this->MilestoneBurndownLog->find('first', array(
+			'conditions' => array(
+				'milestone_id' => $id,
+				'timestamp <' => $start->format('Y-m-d 00:00:00'),
+			),
+			'fields' => array(
+				'open_task_count',
+				'open_minutes_count',
+				'open_points_count',
+				'closed_task_count',
+				'closed_minutes_count',
+				'closed_points_count',
+			),
+			'order' => array('timestamp DESC'),
+			'recursive' => -1,
+		));
+
+		if (!empty($startingLog)) {
+			$startingLog = $startingLog['MilestoneBurndownLog'];
+			$last_open_tasks = $startingLog['open_task_count'];
+			$last_open_minutes = $startingLog['open_minutes_count'];
+			$last_open_points = $startingLog['open_points_count'];
+			$last_closed_tasks = $startingLog['closed_task_count'];
+			$last_closed_minutes = $startingLog['closed_minutes_count'];
+			$last_closed_points = $startingLog['closed_points_count'];
+		}
+
+		// Start with 2 days before milestone start, and add a day at the start of the loop.
+		// This means we get everything from the start to the end date inclusive.
+		// Note we also get the counts from before the milestone start date; the idea is
+		// that we spend some time planning in advance, and the totals show up as the start point.
+		$current = clone($start);
+		$current->sub(new DateInterval('P2D'));
+		$fakeEnd = clone $end;
+
+		// Go one day over the end too
+		$fakeEnd->add(new DateInterval('P1D'));
+		$hasMore = count($log);
+
+		while ($fakeEnd->diff($current)->days > 0) {
+			$current->add(new DateInterval('P1D'));
+			$day = $current->format('Y-m-d');
+			if (isset($log[$day])) {
+				$last_open_points = $log[$day]['open']['points'];
+				$last_open_tasks = $log[$day]['open']['tasks'];
+				$last_open_minutes = $log[$day]['open']['minutes'];
+				$last_closed_points = $log[$day]['closed']['points'];
+				$last_closed_tasks = $log[$day]['closed']['tasks'];
+				$last_closed_minutes = $log[$day]['closed']['minutes'];
+				$hasMore--;
+			} else { //if($hasMore > 0) {
+				$log[$day] = array(
+					'open' => array(
+						'points'  => @$last_open_points ?: 0,
+						'tasks'   => @$last_open_tasks ?: 0,
+						'minutes' => @$last_open_minutes ?: 0,
+					),
+					'closed' => array(
+						'points'  => @$last_closed_points ?: 0,
+						'tasks'   => @$last_closed_tasks ?: 0,
+						'minutes' => @$last_closed_minutes ?: 0,
+					),
+				);
+			}
+
+		}
+
+		ksort($log);
+		return $log;
+
 	}
 }

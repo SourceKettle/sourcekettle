@@ -1,4 +1,4 @@
-
+<? $now = new DateTime(); $due = new DateTime($milestone['Milestone']['due']); ?>
 <div class="span<?=$span?><?= (@$grey) ? ' greyOut':'' ?>">
 	<h3><?=__("Next Milestone")?></h3>
     <hr />
@@ -13,7 +13,7 @@
                 $milestone['Milestone']['id']
             )) ?></strong></li>
         <br>
-        <li>Due: <?= h($milestone['Milestone']['due']) ?></li>
+        <li><?=__("Due:")?> <?= h($milestone['Milestone']['due']) ?> <?=($due < $now) ? "<strong><em>".__("Overdue!")."</em></strong>" : ""?> </li>
         <?= $this->Bootstrap->progress(array("width" => (int) $milestone['Progress']['tasksPct'], "striped" => true)) ?>
         <? endif; ?>
     </ul>

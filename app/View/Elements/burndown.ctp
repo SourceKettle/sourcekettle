@@ -11,29 +11,42 @@ $this->Html->script ("burndown", array ('inline' => false));
 	<table>
 		<thead>
 		  <tr>
-		  	<th>Timestamp</th>
-		 	<th>Open tasks</th>
-		 	<th>Closed tasks</th>
-		 	<th>Open story points</th>
-		 	<th>Closed story points</th>
-		 	<th>Open time, estimated</th>
-		 	<th>Closed time, estimated</th>
+		  	<th><?=__("Date")?></th>
+		 	<th><?=__("Open tasks")?></th>
+		 	<th><?=__("Closed tasks")?></th>
+		 	<th><?=__("Open story points")?></th>
+		 	<th><?=__("Closed story points")?></th>
+		 	<th><?=__("Open time, estimated")?></th>
+		 	<th><?=__("Closed time, estimated")?></th>
 		  </tr>
 		</thead>
 		<tbody>
-		<? foreach($log as $event) {?>
+		<?
+		$start_tasks = $start_points = $start_minutes = 0;
+		foreach($log as $day => $entry) {
+			$start_tasks = $start_tasks ?: $entry['open']['tasks'];
+			$start_points = $start_points ?: $entry['open']['points'];
+			$start_minutes = $start_minutes ?: $entry['open']['minutes'];
+		?>
 			<tr>
-				<td><?=$event['timestamp']?></td>
-				<td><?=$event['open_task_count']?></td>
-				<td><?=$event['closed_task_count']?></td>
-				<td><?=$event['open_points_count']?></td>
-				<td><?=$event['closed_points_count']?></td>
-				<td><?=$event['open_minutes_count']?></td>
-				<td><?=$event['closed_minutes_count']?></td>
+				<td><?=h($day)?></td>
+				<td><?=h($entry['open']['tasks'])?></td>
+				<td><?=h($entry['closed']['tasks'])?></td>
+				<td><?=h($entry['open']['points'])?></td>
+				<td><?=h($entry['closed']['points'])?></td>
+				<td><?=h($entry['open']['minutes'])?></td>
+				<td><?=h($entry['closed']['minutes'])?></td>
 			</tr>
 		<? } ?>
 		</tbody>
 	</table>
+	<ul>
+	  <li class="start-date"><?=__("Start date:")?> <strong><?=h($milestone['Milestone']['starts'])?></strong></li>
+	  <li class="due-date"><?=__("Due date:")?> <strong><?=h($milestone['Milestone']['due'])?></strong></li>
+	  <li class="start-tasks"><?=__("Starting open tasks:")?> <strong><?=h($start_tasks)?></strong></li>
+	  <li class="start-points"><?=__("Starting open story points:")?> <strong><?=h($start_points)?></strong></li>
+	  <li class="start-time"><?=__("Starting open time estimate:")?> <strong><?=h($start_minutes)?></strong></li>
+	</ul>
 </div>
 </div>
 <div class="span1">
@@ -45,6 +58,7 @@ $this->Html->script ("burndown", array ('inline' => false));
 	<input type="radio" name="series" value="hours" id="hours"></input>
 	<label for="hours"><?=__('Show estimated time (hours)')?></label>
 	<input type="checkbox" name="show_finished" id="show_finished"></input>
-	<label for="show_finished"><?=__('Show finished tasks')?></label>
+	<label for="show_finished"><?=__('Include finished tasks')?></label>
 </div>
+
 </div></div>

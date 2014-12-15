@@ -64,13 +64,13 @@
             <?php
             foreach($task['DependsOn'] as $dep){
                 echo $this->Html->link(
-                    '<strong>#'.$dep['id'].'</strong> - '.$this->Text->truncate (h($dep['subject']), 30),
+                    '<strong>#'.$dep['public_id'].'</strong> - '.$this->Text->truncate (h($dep['subject']), 30),
                     array(
                         'api' => false,
                         'controller' => 'tasks',
                         'project' => $project['Project']['name'],
                         'action' => 'view',
-                        $dep['id']
+                        $dep['public_id']
                     ),
                     array('escape' => false)
                 );
@@ -113,13 +113,13 @@
             <?php
             foreach($task['DependedOnBy'] as $dep){
                 echo $this->Html->link(
-                    '<strong>#'.$dep['id'].'</strong> - '.$this->Text->truncate (h($dep['subject']), 30),
+                    '<strong>#'.$dep['public_id'].'</strong> - '.$this->Text->truncate (h($dep['subject']), 30),
                     array(
                         'api' => false,
                         'controller' => 'tasks',
                         'project' => $project['Project']['name'],
                         'action' => 'view',
-                        $dep['id']
+                        $dep['public_id']
                     ),
                     array('escape' => false)
                 );

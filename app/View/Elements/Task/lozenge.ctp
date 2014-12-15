@@ -43,7 +43,14 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                 <div>
                     <div class="span10">
                         <p>
-                            <?= $this->Html->link('<strong>#'.$task['Task']['public_id'].'</strong> - '.h($task['Task']['subject']), $url, array('escape' => false)) ?>
+                            <?= $this->Html->link(
+								'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
+								$url,
+								array(
+									'escape' => false,
+									'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
+								)
+							) ?>
                         </p>
 
                         <?

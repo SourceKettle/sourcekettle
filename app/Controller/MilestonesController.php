@@ -103,6 +103,8 @@ class MilestonesController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
+		$this->set('title_for_layout', $milestone['Milestone']['subject']);
+
 		$backlog = $this->Milestone->tasksOfStatusForMilestone($id, 'open');
 		$inProgress = $this->Milestone->tasksOfStatusForMilestone($id, 'in progress');
 		$completed = $this->Milestone->tasksOfStatusForMilestone($id, array('resolved', 'closed'));
@@ -139,6 +141,8 @@ class MilestonesController extends AppProjectController {
 	public function plan($project = null, $id = null) {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
+
+		$this->set('title_for_layout', $milestone['Milestone']['subject']);
 
 		$mustHave   = $this->Milestone->tasksOfPriorityForMilestone($id, 'blocker');
 		$shouldHave = $this->Milestone->tasksOfPriorityForMilestone($id, 'urgent');
@@ -353,6 +357,8 @@ class MilestonesController extends AppProjectController {
 			$start = new DateTime($this->request->query['start']);
 		} elseif (isset($this->request->data['start'])) {
 			$start = new DateTime($this->request->data['start']);
+		} elseif (isset($milestone['Milestone']['starts']) && $milestone['Milestone']['starts'] != '0000-00-00' ) {
+			$start = new DateTime($milestone['Milestone']['starts']);
 		} else {
 			$start = new DateTime($milestone['Milestone']['created']);
 		}
@@ -365,37 +371,20 @@ class MilestonesController extends AppProjectController {
 			$end = new DateTime($this->request->data['end']);
 		} elseif (isset($milestone['Milestone']['due']) ) {
 			$end = new DateTime($milestone['Milestone']['due']);
-			if ($end < $now) {
+
+			// If the milestone is late (i.e. still open), render up to the current date
+			if ($milestone['Milestone']['is_open'] && $end < $now) {
 				$end = $now;
 			}
 		} else {
 			$end = $now;
 		}
 
-		// Find logged changes between the start and end dates
-		$log = $this->Milestone->MilestoneBurndownLog->find('all', array(
-			'conditions' => array(
-				'milestone_id' => $id,
-				'timestamp <=' => $end->format('Y-m-d 23:59:59'),
-				'timestamp >=' => $start->format('Y-m-d 00:00:00'),
-			),
-			'fields' => array(
-				'timestamp',
-				'open_task_count',
-				'open_minutes_count',
-				'open_points_count',
-				'closed_task_count',
-				'closed_minutes_count',
-				'closed_points_count',
-			),
-			'order' => array('timestamp'),
-			'recursive' => -1,
-		));
 
-		$log = array_map(function($a){return $a['MilestoneBurndownLog'];}, $log);
+		// Find logged changes between the start and end dates
+		$log = $this->Milestone->fetchBurndownLog($id, $start, $end);
 
 		$this->set(compact('milestone', 'log'));
-
 	}
 
 }

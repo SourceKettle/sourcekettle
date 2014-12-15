@@ -311,7 +311,7 @@ class TasksControllerTest extends AppControllerTest {
 				'subject' => 'new task for public project',
 				'project_id' => 2,
 				'task_type_id' => 2,
-				'task_status_id' => 3,
+				'task_status_id' => 1,
 				'task_priority_id' => 2,
 				'assignee_id' => 3,
 				'milestone_id' => 1,
@@ -324,10 +324,11 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		$id = $this->controller->Task->getLastInsertID();
-
-		// We should be redirected to the new task
-		$this->assertRedirect('/project/public/tasks/view/'.$id);
+		// The subject and description should be removed, and we should end up with the "add a new task" form again
+		unset($postData['Task']['subject']);
+		unset($postData['Task']['description']);
+		$postData['Task']['owner_id'] = 2;
+		$this->assertEquals($postData, $this->controller->request->data);
 	}
 
 	public function testEditTaskNotLoggedIn() {

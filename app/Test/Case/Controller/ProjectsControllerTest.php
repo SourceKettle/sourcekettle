@@ -1024,22 +1024,12 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		), $events);
 	}
 
-	public function testBurndown() {
+	public function testSchedule() {
 		
 		$this->_fakeLogin(3);
-		$this->testAction('/project/public/burndown', array('method' => 'get', 'return' => 'contents'));
+		$this->testAction('/project/public/schedule', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
-		$this->assertEquals(array(
-			array(
-				'timestamp' => '2014-10-26 16:20:42',
-				'open_task_count' => '2',
-				'open_minutes_count' => '2',
-				'open_points_count' => '2',
-				'closed_task_count' => '2',
-				'closed_minutes_count' => '2',
-				'closed_points_count' => '2'
-			),
-		), $this->vars['log']);
+		$this->assertEquals(array(2, 1, 3), array_map(function($a){return $a['Milestone']['id'];}, $this->vars['milestones']));
 	}
 
 	public function testApiAutocompleteNotLoggedIn() {
