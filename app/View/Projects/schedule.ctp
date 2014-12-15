@@ -23,9 +23,9 @@ $this->Html->css('projects.index', null, array ('inline' => false));
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-		<div class="row">
+		<?/*<div class="row">
         <?= $this->element('Project/topbar_charts') ?>
-		</div>
+		</div>*/?>
         <div class="row">
 
             <div class="span10">
