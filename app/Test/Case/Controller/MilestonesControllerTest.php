@@ -305,6 +305,7 @@ class MilestonesControllerTest extends AppControllerTest {
 			'Milestone' => array(
 				'subject' => 'A new milestone',
 				'description' => 'A new milestone for the project',
+				'starts' => '2099-01-03',
 				'due' => '2099-02-03',
 			)
 		);
@@ -317,7 +318,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertRedirect('/project/public/milestones/view/'.$id);
 
 		// Check that it's been created properly
-		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'starts', 'due'), 'recursive' => -1));
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
@@ -327,6 +328,7 @@ class MilestonesControllerTest extends AppControllerTest {
 			'Milestone' => array(
 				'subject' => 'A new milestone',
 				'description' => 'A new milestone for the project',
+				'starts' => '2099-01-03',
 				'due' => '2099-02-03',
 			)
 		);
@@ -339,7 +341,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertRedirect('/project/private/milestones/view/'.$id);
 
 		// Check that it's been created properly
-		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'starts', 'due'), 'recursive' => -1));
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 
 	}
@@ -350,6 +352,7 @@ class MilestonesControllerTest extends AppControllerTest {
 			'Milestone' => array(
 				'subject' => 'A new milestone',
 				'description' => 'A new milestone for the project',
+				'starts' => '2099-01-03',
 				'due' => '2099-02-03',
 			)
 		);
@@ -362,7 +365,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertRedirect('/project/personal/milestones/view/'.$id);
 
 		// Check that it's been created properly
-		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'due'), 'recursive' => -1));
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'starts', 'due'), 'recursive' => -1));
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
 
@@ -372,6 +375,7 @@ class MilestonesControllerTest extends AppControllerTest {
 			'Milestone' => array(
 				'subject' => 'A new milestone',
 				'description' => 'A new milestone for the project',
+				'starts' => '2099-01-03',
 				'due' => '2099-02-03',
 			)
 		);
@@ -424,6 +428,7 @@ class MilestonesControllerTest extends AppControllerTest {
 				'id' => '1',
 				'subject' => 'Changed milestone',
 				'description' => 'This has changed',
+				'starts' => '2099-01-03',
 				'due' => '2099-02-03',
 			)
 		);
@@ -435,7 +440,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertRedirect('/project/public/milestones/view/1');
 
 		// Check that it's been updated
-		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 1), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 1), 'fields' => array('id', 'subject', 'description', 'starts', 'due'), 'recursive' => -1));
 		unset($milestone['Milestone']['percent']);
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
@@ -447,6 +452,7 @@ class MilestonesControllerTest extends AppControllerTest {
 				'id' => 4,
 				'subject' => 'Changed milestone',
 				'description' => 'This has changed',
+				'starts' => '2099-01-03',
 				'due' => '2099-02-03',
 			)
 		);
@@ -458,7 +464,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertRedirect('/project/private/milestones/view/4');
 
 		// Check that it's been updated
-		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'starts', 'due'), 'recursive' => -1));
 		unset($milestone['Milestone']['percent']);
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
@@ -470,6 +476,7 @@ class MilestonesControllerTest extends AppControllerTest {
 				'id' => '4',
 				'subject' => 'Changed milestone',
 				'description' => 'This has changed',
+				'starts' => '2099-01-03',
 				'due' => '2099-02-03',
 			)
 		);
@@ -481,7 +488,7 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertRedirect('/project/private/milestones/view/4');
 
 		// Check that it's been updated
-		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'due'), 'recursive' => -1));
+		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => 4), 'fields' => array('id', 'subject', 'description', 'starts', 'due'), 'recursive' => -1));
 		unset($milestone['Milestone']['percent']);
 		$this->assertEquals($postData['Milestone'], $milestone['Milestone']);
 	}
@@ -493,6 +500,7 @@ class MilestonesControllerTest extends AppControllerTest {
 				'id' => '4',
 				'subject' => 'Changed milestone',
 				'description' => 'This has changed',
+				'starts' => '2099-01-03',
 				'due' => '2099-02-03',
 			)
 		);
@@ -929,10 +937,11 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		$this->assertEquals(array(
+			'2012-12-01',
 			'2012-12-02', '2012-12-03', '2012-12-04', '2012-12-05', '2012-12-06', '2012-12-07', '2012-12-08', '2012-12-09',
 			'2012-12-10', '2012-12-11', '2012-12-12', '2012-12-13', '2012-12-14', '2012-12-15', '2012-12-16', '2012-12-17',
 			'2012-12-18', '2012-12-19', '2012-12-20', '2012-12-21', '2012-12-22', '2012-12-23', '2012-12-24', '2012-12-25',
-			'2012-12-26', '2012-12-27', '2012-12-28', '2012-12-29', '2012-12-30', '2012-12-31', '2013-01-01'
+			'2012-12-26', '2012-12-27', '2012-12-28', '2012-12-29', '2012-12-30', '2012-12-31', '2013-01-01', '2013-01-02',
 		),
 		array_keys($this->vars['log']));
 	}
