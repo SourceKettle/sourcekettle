@@ -56,15 +56,15 @@ $('.burndown-outer').each(function(index, outer) {
 
 	ideal = {
 		"tasks" :  {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
-			[open.tasks.data[0][0], starting.tasks],
+			[milestoneStart, starting.tasks],
 			[milestoneEnd, 0]
 		]},
 		"points" : {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
-			[open.points.data[0][0], starting.points],
+			[milestoneStart, starting.points],
 			[milestoneEnd, 0]
 		]},
 		"hours" :  {"label" : "Ideal", "points" : {"show" : false}, "color" : "#000000", "data" : [
-			[open.hours.data[0][0], starting.hours],
+			[milestoneStart, starting.hours],
 			[milestoneEnd, 0]
 		]},
 	};
