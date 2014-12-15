@@ -153,6 +153,7 @@ function plotAccordingToChoices(outer) {
 			'mode' : 'categories'
 		},
         'yaxis' : {
+			'min' : 0,
 			'tickDecimals' : 0
 		},
 		'grid' : {
