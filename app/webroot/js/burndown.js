@@ -9,8 +9,10 @@ $('.burndown-outer').each(function(index, outer) {
 	var controls = $(outer).find('.burndown-controls');
 
 	// Milestone end date and index for drawing markings
+	milestoneStart = $(chartbox).find('.start-date strong').text();
+	milestoneStartIndex = -1;
 	milestoneEnd = $(chartbox).find('.due-date strong').text();
-	milestoneEndIndex = 0;
+	milestoneEndIndex = -1;
 
 	// Hide the table of data
 	$(chartbox).find('table').hide();
@@ -41,6 +43,9 @@ $('.burndown-outer').each(function(index, outer) {
 		finished['tasks']['data'].push([timestamp, $(row).find('td:eq(2)').text()]);
 		finished['points']['data'].push([timestamp, $(row).find('td:eq(4)').text()]);
 		finished['hours']['data'].push([timestamp, $(row).find('td:eq(6)').text()/60]);
+		if (timestamp == milestoneStart) {
+			milestoneStartIndex = i;
+		}
 		if (timestamp == milestoneEnd) {
 			milestoneEndIndex = i;
 		}
@@ -124,10 +129,22 @@ function plotAccordingToChoices(outer) {
 		},
 		'grid' : {
 			'markings' : [
+				{'color': '#1111ee', 'lineWidth': 2, 'xaxis' : {'from' : milestoneStartIndex, 'to' : milestoneStartIndex}},
 				{'color': '#ee1111', 'lineWidth': 2, 'xaxis' : {'from' : milestoneEndIndex, 'to' : milestoneEndIndex}},
 				{'color': '#ffcccc', 'xaxis' : {'from' : milestoneEndIndex, 'to' : chartEndIndex}},
 			]
 		}
     });
+
+	// Annotate the start and end lines
+	var o;
+	if (milestoneStartIndex > -1) {
+		o = plot.pointOffset({ x: milestoneStartIndex, y: 0});
+		chartbox.append("<div style='position:absolute;left:" + (o.left + 4) + "px;top:" + plot.height()/2 + "px;color:#1111ee;font-size:smaller'>Milestone starts</div>");
+	}
+	if (milestoneEndIndex > -1) {
+		o = plot.pointOffset({ x: milestoneEndIndex, y: 0});
+		chartbox.append("<div style='position:absolute;left:" + (o.left + 4) + "px;top:" + plot.height()/2 + "px;color:#ee1111;font-size:smaller'>Overdue zone</div>");
+	}
 	
 }

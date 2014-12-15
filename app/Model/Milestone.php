@@ -411,12 +411,19 @@ class Milestone extends AppModel {
 			$last_closed_points = $startingLog['closed_points_count'];
 		}
 
-		// Start with 1 day before milestone start, and add a day at the start of the loop.
+		// Start with 2 days before milestone start, and add a day at the start of the loop.
 		// This means we get everything from the start to the end date inclusive.
+		// Note we also get the counts from before the milestone start date; the idea is
+		// that we spend some time planning in advance, and the totals show up as the start point.
 		$current = clone($start);
-		$current->sub(new DateInterval('P1D'));
+		$current->sub(new DateInterval('P2D'));
+		$fakeEnd = clone $end;
 
-		while ($end->diff($current)->days > 0) {
+		// Go one day over the end too
+		$fakeEnd->add(new DateInterval('P1D'));
+		$hasMore = count($log);
+
+		while ($fakeEnd->diff($current)->days > 0) {
 			$current->add(new DateInterval('P1D'));
 			$day = $current->format('Y-m-d');
 			if (isset($log[$day])) {
@@ -426,7 +433,8 @@ class Milestone extends AppModel {
 				$last_closed_points = $log[$day]['closed']['points'];
 				$last_closed_tasks = $log[$day]['closed']['tasks'];
 				$last_closed_minutes = $log[$day]['closed']['minutes'];
-			} else {
+				$hasMore--;
+			} else { //if($hasMore > 0) {
 				$log[$day] = array(
 					'open' => array(
 						'points'  => @$last_open_points ?: 0,
