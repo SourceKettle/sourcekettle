@@ -59,8 +59,26 @@ class Milestone extends AppModel {
 		'is_open' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
-			)
-		)
+			),
+		),
+		'starts' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+			),
+			'checkRange' => array(
+				'rule' => array('checkRange'),
+				'message' => 'Start date must be before due date',
+			),
+		),
+		'due' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+			),
+			'checkRange' => array(
+				'rule' => array('checkRange'),
+				'message' => 'Due date must be after start date',
+			),
+		),
 	);
 
 /**
@@ -89,6 +107,11 @@ class Milestone extends AppModel {
 		),
 	);
 
+	// Checks that the start/end date are the correct way round
+	public function checkRange($value) {
+		return (strtotime($this->data['Milestone']['starts']) < strtotime($this->data['Milestone']['due']));
+	}
+
 /**
  * afterFind function.
  * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
@@ -105,6 +128,24 @@ class Milestone extends AppModel {
 		}
 		return $results;
 	}
+/*
+	public function beforeValidate($options = array()) {
+
+		// Need a start date
+		if (!isset($this->data['starts'])) {
+			return false;
+		}
+
+		// ...and a due date
+		if (!isset($this->data['due'])) {
+			return false;
+		}
+
+		// ...and it can't be due before it starts.
+		if (strtotime($this->data['starts']) >= strtotime($this->data['due'])) {
+			return false;
+		}
+	}*/
 
 /**
  * beforeDelete function.
