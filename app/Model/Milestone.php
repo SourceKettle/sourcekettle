@@ -429,14 +429,14 @@ class Milestone extends AppModel {
 			} else {
 				$log[$day] = array(
 					'open' => array(
-						'points'  => $last_open_points ?: 0,
-						'tasks'   => $last_open_tasks ?: 0,
-						'minutes' => $last_open_minutes ?: 0,
+						'points'  => @$last_open_points ?: 0,
+						'tasks'   => @$last_open_tasks ?: 0,
+						'minutes' => @$last_open_minutes ?: 0,
 					),
 					'closed' => array(
-						'points'  => $last_closed_points ?: 0,
-						'tasks'   => $last_closed_tasks ?: 0,
-						'minutes' => $last_closed_minutes ?: 0,
+						'points'  => @$last_closed_points ?: 0,
+						'tasks'   => @$last_closed_tasks ?: 0,
+						'minutes' => @$last_closed_minutes ?: 0,
 					),
 				);
 			}

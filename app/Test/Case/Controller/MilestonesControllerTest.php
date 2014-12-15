@@ -925,20 +925,16 @@ class MilestonesControllerTest extends AppControllerTest {
 	public function testBurndown() {
 		
 		$this->_fakeLogin(3);
-		$this->testAction('/project/public/milestones/burndown/1', array('method' => 'get', 'return' => 'contents'));
+		$this->testAction('/project/public/milestones/burndown/2', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
 		$this->assertEquals(array(
-			array(
-				'timestamp' => '2014-10-26 16:20:53',
-				'open_task_count' => '1',
-				'open_minutes_count' => '1',
-				'open_points_count' => '1',
-				'closed_task_count' => '1',
-				'closed_minutes_count' => '1',
-				'closed_points_count' => '1'
-			),
-		), $this->vars['log']);
+			'2012-12-02', '2012-12-03', '2012-12-04', '2012-12-05', '2012-12-06', '2012-12-07', '2012-12-08', '2012-12-09',
+			'2012-12-10', '2012-12-11', '2012-12-12', '2012-12-13', '2012-12-14', '2012-12-15', '2012-12-16', '2012-12-17',
+			'2012-12-18', '2012-12-19', '2012-12-20', '2012-12-21', '2012-12-22', '2012-12-23', '2012-12-24', '2012-12-25',
+			'2012-12-26', '2012-12-27', '2012-12-28', '2012-12-29', '2012-12-30', '2012-12-31', '2013-01-01'
+		),
+		array_keys($this->vars['log']));
 	}
 
 /**

@@ -598,7 +598,6 @@ class TasksController extends AppProjectController {
 					unset($this->request->data['Task']['description']);
 					unset($this->request->data['DependsOn']);
 				}
-				debug($this->request->data);
 			}
 		} else {
 			// GET request: set default priority, type and assignment

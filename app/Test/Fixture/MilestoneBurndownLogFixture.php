@@ -26,7 +26,7 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'timestamp' => '2014-10-26 16:20:53',
+			'timestamp' => '2013-01-04 16:20:53',
 			'milestone_id' => 1,
 			'open_task_count' => 1,
 			'open_minutes_count' => 1,
