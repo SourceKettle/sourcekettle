@@ -59,8 +59,26 @@ class Milestone extends AppModel {
 		'is_open' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
-			)
-		)
+			),
+		),
+		'starts' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+			),
+			'checkRange' => array(
+				'rule' => array('checkRange'),
+				'message' => 'Start date must be before due date',
+			),
+		),
+		'due' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+			),
+			'checkRange' => array(
+				'rule' => array('checkRange'),
+				'message' => 'Due date must be after start date',
+			),
+		),
 	);
 
 /**
@@ -89,6 +107,11 @@ class Milestone extends AppModel {
 		),
 	);
 
+	// Checks that the start/end date are the correct way round
+	public function checkRange($value) {
+		return (strtotime($this->data['Milestone']['starts']) < strtotime($this->data['Milestone']['due']));
+	}
+
 /**
  * afterFind function.
  * See: http://book.cakephp.org/2.0/en/models/callback-methods.html
@@ -105,6 +128,24 @@ class Milestone extends AppModel {
 		}
 		return $results;
 	}
+/*
+	public function beforeValidate($options = array()) {
+
+		// Need a start date
+		if (!isset($this->data['starts'])) {
+			return false;
+		}
+
+		// ...and a due date
+		if (!isset($this->data['due'])) {
+			return false;
+		}
+
+		// ...and it can't be due before it starts.
+		if (strtotime($this->data['starts']) >= strtotime($this->data['due'])) {
+			return false;
+		}
+	}*/
 
 /**
  * beforeDelete function.
@@ -411,12 +452,19 @@ class Milestone extends AppModel {
 			$last_closed_points = $startingLog['closed_points_count'];
 		}
 
-		// Start with 1 day before milestone start, and add a day at the start of the loop.
+		// Start with 2 days before milestone start, and add a day at the start of the loop.
 		// This means we get everything from the start to the end date inclusive.
+		// Note we also get the counts from before the milestone start date; the idea is
+		// that we spend some time planning in advance, and the totals show up as the start point.
 		$current = clone($start);
-		$current->sub(new DateInterval('P1D'));
+		$current->sub(new DateInterval('P2D'));
+		$fakeEnd = clone $end;
 
-		while ($end->diff($current)->days > 0) {
+		// Go one day over the end too
+		$fakeEnd->add(new DateInterval('P1D'));
+		$hasMore = count($log);
+
+		while ($fakeEnd->diff($current)->days > 0) {
 			$current->add(new DateInterval('P1D'));
 			$day = $current->format('Y-m-d');
 			if (isset($log[$day])) {
@@ -426,7 +474,8 @@ class Milestone extends AppModel {
 				$last_closed_points = $log[$day]['closed']['points'];
 				$last_closed_tasks = $log[$day]['closed']['tasks'];
 				$last_closed_minutes = $log[$day]['closed']['minutes'];
-			} else {
+				$hasMore--;
+			} else { //if($hasMore > 0) {
 				$log[$day] = array(
 					'open' => array(
 						'points'  => @$last_open_points ?: 0,
