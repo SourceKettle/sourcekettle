@@ -109,6 +109,9 @@ class Milestone extends AppModel {
 
 	// Checks that the start/end date are the correct way round
 	public function checkRange($value) {
+		if (!isset($this->data['Milestone']['starts']) || !isset($this->data['Milestone']['due'])) {
+			return false;
+		}
 		return (strtotime($this->data['Milestone']['starts']) < strtotime($this->data['Milestone']['due']));
 	}
 
