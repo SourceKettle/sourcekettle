@@ -1,9 +1,6 @@
 [submodule "cakephp"]
 	path = cakephp
 	url = git://github.com/cakephp/cakephp.git
-[submodule "app/Plugin/GoogleChart"]
-	path = app/Plugin/GoogleChart
-	url = git://github.com/segy/GoogleChart.git
 [submodule "app/Plugin/TwitterBootstrap"]
 	path = app/Plugin/TwitterBootstrap
 	url = git://github.com/loadsys/twitter-bootstrap-helper.git
