@@ -13,6 +13,8 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+$this->Html->script(array('bootstrap-tooltip'), array('inline' => false));
+$this->Html->scriptBlock("$('.task-lozenge p.task-subject a').tooltip()", array('inline' => false));
 if (!isset($draggable)){
     $draggable = false;
 }
@@ -24,9 +26,9 @@ if(isset($span) && $span){
 }
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
-		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."'>";
+		echo "<li class='task-lozenge draggable$span' data-taskid='".h($task['Task']['public_id'])."'>";
 	} else {
-		echo "<li class='$span'>";
+		echo "<li class='task-lozenge $span'>";
 	}
 ?>
 <div id="task_<?= $task['Task']['public_id'] ?>" 
@@ -42,7 +44,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
             <div class="row-fluid">
                 <div>
                     <div class="span10">
-                        <p>
+                        <p class="task-subject">
                             <?= $this->Html->link(
 								'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
 								$url,

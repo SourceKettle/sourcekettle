@@ -152,7 +152,6 @@ Configure::load('sourcekettle');
  */
 
 CakePlugin::load('TwitterBootstrap');
-CakePlugin::load('GoogleChart');
 CakePlugin::load('GitCake');
 CakePlugin::load('TwitterBootswatch');
 CakePlugin::load('LDAPAuthCake');

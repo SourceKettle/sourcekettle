@@ -77,7 +77,10 @@ class Source extends AppModel {
 		$type = $this->getType();
 		$location = $this->getRepositoryLocation();
 
-		if ($type == RepoTypes::GIT) {
+		if (isset($data['cloneFrom'])) {
+			App::uses('SourceGit', 'GitCake.Model');
+			return SourceGit::create($location, 'g+rwX', 'group', $this->getRepositoryLocation($data['cloneFrom']));
+		} elseif ($type == RepoTypes::GIT) {
 			App::uses('SourceGit', 'GitCake.Model');
 			return SourceGit::create($location, 'g+rwX', 'group');
 		} else if ($type == RepoTypes::SVN) {
@@ -127,13 +130,16 @@ class Source extends AppModel {
  *
  * @throws UnsupportedRepositoryType
  */
-	public function getRepositoryLocation() {
+	public function getRepositoryLocation($name = null) {
 		$sourcekettleConfig = ClassRegistry::init('Setting')->loadConfigSettings();
 		$base = $sourcekettleConfig['SourceRepository']['base']['value'];
 
 		if ($base[strlen($base) - 1] != '/') $base .= '/';
 
-		$name = $this->Project->field('name');
+		if (empty($name)) {
+			$name = $this->Project->field('name');
+		}
+
 		$type = $this->getType();
 
 		if ($type == RepoTypes::GIT) {
