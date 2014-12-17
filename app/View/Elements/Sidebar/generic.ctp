@@ -15,14 +15,7 @@
  */
 ?>
 
-<ul id="sourcekettle-sidebar" class="well nav nav-list nav-collapse" style="padding: 8px 14px;">
- <!--<div class="navbar-inner">
- <a class="btn btn-navbar" data-toggle="collapse" data-target="#sourcekettle-sidebar">
- <span class="icon-bar"></span>
- <span class="icon-bar"></span>
- <span class="icon-bar"></span>
- </a>
- </div>-->
+<ul id="sourcekettle-sidebar" class="well nav nav-list" style="padding: 8px 14px;">
 <?php
     $c1 = $this->request['controller'];
     $a1 = $this->request['action'];
