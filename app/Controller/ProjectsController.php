@@ -36,6 +36,7 @@ class ProjectsController extends AppProjectController {
 			'public_projects'  => 'login',
 			'view'   => 'read',
 			'add' => 'login',
+			'fork' => 'read',
 			'edit'   => 'write',
 			'add_repo'   => 'admin',
 			'delete' => 'write',
@@ -253,7 +254,6 @@ class ProjectsController extends AppProjectController {
 			// Create the project object with its data
 			$this->Project->create();
 
-
 			// Lets vet the data coming in
 			$requestData = array(
 				'Project' => $this->request->data['Project'],
@@ -313,6 +313,61 @@ class ProjectsController extends AppProjectController {
 			}
 		}
 		$this->request->data = $project;
+	}
+
+	// NB this is called "clone" in the interface, but "clone" is a reserved word in PHP...
+	// TODO lots of copypasta from the add method, which should be consolidated in the Project model
+	public function fork($project = null) {
+		$project = $this->_getProject($project);
+
+		// Check the project has a git repo
+		if ($this->RepoType->idToName($project['Project']['repo_type']) != 'git') {
+			throw new Exception(__("Cannot clone %s: it does not have a git repository", $project['Project']['name']));
+		}
+
+		// Create the new project and redirect to it
+		if ($this->request->is('post') || $this->request->is('put')) {
+			$this->Project->create();
+
+			// Lets vet the data coming in
+			$requestData = array(
+				'Project' => $this->request->data['Project'],
+				'Collaborator' => array(
+					array(
+						'user_id' => $this->Auth->user('id'),
+						'access_level' => 2 // Project admin
+					)
+				)
+			);
+
+			$requestData['Project']['repo_type'] = $project['Project']['repo_type'];
+
+			if ($this->Project->saveAll($requestData)) {
+
+				// Create the actual repository, if required - if it fails, delete the database content
+				if (!$this->Project->Source->create(array('cloneFrom' => $requestData['Project']['cloneFrom']))) {
+					$this->log("[ProjectController.add] project[" . $this->Project->id . "] repository creation failed - automatically removing project data", 'sourcekettle');
+					$this->Project->delete();
+					$this->Flash->c(false);
+				} else {
+					$this->Flash->c(true);
+				}
+
+				return $this->redirect(array('project' => $requestData['Project']['name'], 'action' => 'view'));
+			} else {
+				$this->Flash->c(false);
+			}
+		}
+
+		// Add in the "cloneFrom" field if it's a fresh request
+		if (empty($this->request->data)) {
+			$this->request->data = $project;
+			$this->request->data['Project']['cloneFrom'] = $project['Project']['name'];
+		}
+
+		// Don't retain the original project name and ID!
+		unset($this->request->data['Project']['name']);
+		unset($this->request->data['Project']['id']);
 	}
 
 /**

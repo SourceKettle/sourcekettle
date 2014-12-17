@@ -53,4 +53,12 @@ class RepoType extends AppModel {
 		return $found['RepoType']['id'];
 	}
 
+	public function idToName($id) {
+		$found = $this->findById($id);
+		if(empty($found)){
+			return null;
+		}
+		return strtolower($found['RepoType']['name']);
+	}
+
 }
