@@ -20,9 +20,6 @@ class TaskShell extends AppShell {
 		$statuses = $this->TaskStatus->find('list');
 		$types = $this->TaskType->find('list');
 
-		$due = new DateTime();
-		$due->add(new DateInterval('P1M'));
-
 		$parser->addSubCommand('add', array(
 			'help' => __('Add a task to a project'),
 			'parser' => array(
@@ -81,6 +78,48 @@ class TaskShell extends AppShell {
 					'story-points' => array(
 						'short' => 'r',
 						'help' => __("How many story points the task is worth"),
+					),
+					// TODO dependencies? Maybe a separate function? Do we need it?
+					
+				)
+			)
+		));
+
+		$now = new DateTime();
+		$parser->addSubCommand('comment', array(
+			'help' => __('Add a comment to a task'),
+			'parser' => array(
+				'description' => array(
+					__("Use this command to add a new task to a project."),
+				),
+				'arguments' => array(
+					'project' => array(
+						'help' => __("The project name"),
+						'required' => true,
+					),
+					'user' => array(
+						'help'  => __("The user ID or email address of the user making the comment"),
+						'required' => true,
+					),
+					'id' => array(
+						'help'  => __("The task ID, as shown in the web interface"),
+						'required' => true,
+					),
+					'text' => array(
+						'help'  => __("The text of the comment"),
+						'required' => true,
+					),
+				),
+				'options' => array(
+					'ignore-fail' => array(
+						'short' => 'i',
+						'boolean' => true,
+						'help' => __("Exit successfully even if the comment could not be saved. Used by git update hook."),
+					),
+					'timestamp' => array(
+						'short' => 't',
+						'help' => __("When the comment was made (defaults to now)"),
+						'default' => $now->format('Y-m-d H:i:s'),
 					),
 					// TODO dependencies? Maybe a separate function? Do we need it?
 					
@@ -186,6 +225,88 @@ class TaskShell extends AppShell {
 		} else {
 			$this->out(__("Task '$subject' created."));
 		}
+	}
+
+	public function comment () {
+		list($projectName, $user, $id, $comment) = $this->args;
+
+		$timestamp = $this->params['timestamp'];
+
+		// Validate project...
+		$this->Task->Project->recursive = -1;
+		$project = $this->Task->Project->findByNameOrId($projectName, $projectName);
+
+		if (!$project) {
+			if ($this->params['ignore-fail']) {
+				exit(0);
+			}
+			$this->error(__("Unknown project '$projectName'"));
+			exit(1);
+		}
+
+		// Validate user...
+		$this->Task->Owner->recursive = -1;
+		$user = $this->Task->Owner->findByEmailOrId($user, $user);
+
+		if (!$user) {
+			if ($this->params['ignore-fail']) {
+				exit(0);
+			}
+			$this->error(__("Unknown user '$user'"));
+			exit(1);
+		}
+
+		// Validate task...
+		$this->Task->recursive = -1;
+		$task = $this->Task->findByProjectIdAndPublicId($project['Project']['id'], $id);
+
+		if (!$task) {
+			if ($this->params['ignore-fail']) {
+				exit(0);
+			}
+			$this->error(__("Unknown task #$id on project '$projectName'"));
+			exit(1);
+		}
+
+
+		// Check for duplicates
+		$this->Task->TaskComment->recursive = -1;
+		$existing = $this->Task->TaskComment->find('first', array(
+			'conditions' => array(
+				'task_id' => $task['Task']['id'],
+				'user_id' => $user['Owner']['id'],
+				'created' => $timestamp,
+				'comment' => $comment
+			)
+		));
+
+		if (!empty($existing)) {
+			if ($this->params['ignore-fail']) {
+				exit(0);
+			}
+			$this->error(__("Duplicate comment detected"));
+			exit(1);
+		}
+
+		// All good so far... create the comment!
+		$this->Task->TaskComment->create();
+		$ok = $this->Task->TaskComment->save(array(
+			'TaskComment' => array(
+				'task_id' => $task['Task']['id'],
+				'user_id' => $user['Owner']['id'],
+				'comment' => $comment,
+				'created' => $timestamp,
+			),
+		));
+debug($ok);
+		if (!$ok) {
+			if ($this->params['ignore-fail']) {
+				exit(0);
+			}
+			$this->error(__("Failed to comment on $projectName/#$id"));
+			exit(1);
+		}
+
 	}
 
 }
