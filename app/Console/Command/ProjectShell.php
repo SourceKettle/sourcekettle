@@ -8,7 +8,7 @@
  */
 class ProjectShell extends AppShell {
 
-	public $uses = array('User', 'Project', 'Collaborator', 'Security');
+	public $uses = array('User', 'Project', 'Collaborator', 'Security', 'Team', 'CollaboratingTeam');
 	// TODO this should be centralised somewhere?
 	private $accessLevels = array(
 		'guest' => 0,
@@ -37,7 +37,6 @@ class ProjectShell extends AppShell {
 			$defaultRepo = 'none';
 		}
 		// TODO end of copypasta
-
 
 		$parser->addSubCommand('add', array(
 			'help' => __('Create a new project'),
@@ -126,6 +125,52 @@ class ProjectShell extends AppShell {
 					),
 					'email' => array(
 						'help' => __("The user's email address"),
+						'required' => true,
+					),
+				),
+			),
+		));
+
+		$parser->addSubCommand('addTeam', array(
+			'help' => __('Grants a team access as project collaborators'),
+			'parser' => array(
+				'description' => array(
+					__("Use this command to add a team as collaborators. If the team is already collaborating, you can set their access level."),
+				),
+				'arguments' => array(
+					'name' => array(
+						'help' => __("The project name"),
+						'required' => true,
+					),
+					'team' => array(
+						'help' => __("The team name"),
+						'required' => true,
+					),
+				),
+				'options' => array(
+					'type' => array(
+						'short' => 't',
+						'help' => __("The team's access level"),
+						'choices' => array('guest', 'user', 'admin'),
+						'default' => 'user',
+					),
+				),
+			),
+		));
+
+		$parser->addSubCommand('removeTeam', array(
+			'help' => __('Revokes a team\'s access to the project'),
+			'parser' => array(
+				'description' => array(
+					__("Use this command to revoke a team's access to a project."),
+				),
+				'arguments' => array(
+					'name' => array(
+						'help' => __("The project name"),
+						'required' => true,
+					),
+					'team' => array(
+						'help' => __("The team name"),
 						'required' => true,
 					),
 				),
@@ -303,6 +348,81 @@ class ProjectShell extends AppShell {
 		}
 
 		$this->out(__("$userEmail is no longer collaborating on $projectName"));
+	}
+
+	public function addTeam() {
+
+		$projectName = $this->args[0];
+		$teamName = $this->args[1];
+
+		$this->Team->recursive = -1;
+		$projectDetails = $this->Project->findByName($projectName);
+		$teamDetails = $this->Team->findByName($teamName);
+
+		// Convert 'user', 'guest' or 'admin' to access level integer
+		$accessLevel = $this->accessLevels[$this->params['type']];
+
+		if (!$projectDetails) {
+			$this->error(__("Could not find a project named '$projectName'!"));
+		}
+
+		if (!$teamDetails) {
+			$this->error(__("Could not find a team named '$teamName'!"));
+		}
+
+		$teamId = $teamDetails['Team']['id'];
+
+		// Check existing collaborator list
+		foreach ($projectDetails['CollaboratingTeam'] as $collab) {
+
+			// Don't need to do anything :-)
+			if ($collab['team_id'] == $teamId && $collab['access_level'] == $accessLevel) {
+				$this->out(__("$teamName already has ".$this->params['type']." access to the project."));
+				return;
+
+			// Found them, wrong status, stop checking
+			} elseif ($collab['team_id'] == $teamId) {
+				$this->CollaboratingTeam->id = $collab['id'];
+				break;
+			}
+		}
+
+		// Need to add a new collaborator link
+		$ok = $this->CollaboratingTeam->save(array('CollaboratingTeam' => array(
+			'project_id' => $projectDetails['Project']['id'],
+			'team_id'    => $teamDetails['Team']['id'],
+			'access_level' => $accessLevel,
+		)), array('callbacks' => false));
+
+		if (!$ok) {
+			$this->error(__("Failed to add team!"));
+		}
+
+		$this->out(__("$teamName is now a ".$this->params['type']." on $projectName"));
+	}
+
+	public function removeTeam() {
+
+		$projectName = $this->args[0];
+		$teamName   = $this->args[1];
+
+		$collabDetails = $this->CollaboratingTeam->find('first', array('conditions' => array(
+			'Team.name' => $teamName,
+			'Project.name' => $projectName,
+		)));
+
+		if (!$collabDetails) {
+			$this->error(__("$teamName is not collaborating on $projectName!"));
+		}
+		$ok = $this->CollaboratingTeam->deleteAll(
+			array('CollaboratingTeam.id' => $collabDetails['CollaboratingTeam']['id']),
+		false, false);
+
+		if (!$ok) {
+			$this->error(__("Failed to remove collaborator!"));
+		}
+
+		$this->out(__("$teamName is no longer collaborating on $projectName"));
 	}
 
 
