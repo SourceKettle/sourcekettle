@@ -569,19 +569,29 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 	}
 
-	public function testEditNotProjectAdmin() {
-		$this->_fakeLogin(1);
+	public function testEditProjectUser() {
+		$this->_fakeLogin(4);
 		$postData = array(
 			'Project' => array(
-				'id' => '3',
-				'name' => 'personal',
 				'description' => 'Updated description of a project',
-				'repo_type' => '2',
-				'public' => false,
 			)
 		);
 		
-		$this->testAction('/project/personal/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->testAction('/project/perl-1/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertNotAuthorized();
+
+	}
+
+	public function testEditProjectGuest() {
+		$this->_fakeLogin(3);
+		$postData = array(
+			'Project' => array(
+				'id' => '12',
+				'description' => 'Updated description of a project',
+			)
+		);
+		
+		$this->testAction('/project/perl-1/edit', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertNotAuthorized();
 
 	}
