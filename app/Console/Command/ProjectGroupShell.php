@@ -19,6 +19,19 @@ class ProjectGroupShell extends AppShell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
+		$parser->addSubCommand('listGroups', array(
+			'help' => __('Lists all project groups'),
+			'parser' => array(
+				'description' => array(
+					__("Use this command to get a list of all the project groups in the system"),
+				),
+				'arguments' => array(
+				),
+				'options' => array(
+				)
+			)
+		));
+
 		$parser->addSubCommand('add', array(
 			'help' => __('Create a new project group'),
 			'parser' => array(
@@ -128,6 +141,14 @@ class ProjectGroupShell extends AppShell {
 		));
 
 		return $parser;
+	}
+
+	public function listGroups() {
+		$groups = $this->ProjectGroup->find('list', array('fields' => array('name', 'description'), 'order' => array('name')));
+
+		foreach ($groups as $name => $desc) {
+			$this->out("$name [description: $desc]");
+		}
 	}
 
 /**
@@ -300,7 +321,7 @@ class ProjectGroupShell extends AppShell {
 
 		// Need to add a new collaborator link
 		$ok = $this->GroupCollaboratingTeam->save(array('GroupCollaboratingTeam' => array(
-			'project_id' => $projectDetails['ProjectGroup']['id'],
+			'project_group_id' => $projectDetails['ProjectGroup']['id'],
 			'team_id'    => $teamDetails['Team']['id'],
 			'access_level' => $accessLevel,
 		)), array('callbacks' => false));
@@ -309,21 +330,21 @@ class ProjectGroupShell extends AppShell {
 			$this->error(__("Failed to add team!"));
 		}
 
-		$this->out(__("$teamName is now a ".$this->params['type']." on $projectName"));
+		$this->out(__("$teamName now has ".$this->params['type']." access to $projectName"));
 	}
 
 	public function removeTeam() {
 
-		$projectName = $this->args[0];
+		$projectGroupName = $this->args[0];
 		$teamName   = $this->args[1];
 
 		$collabDetails = $this->GroupCollaboratingTeam->find('first', array('conditions' => array(
 			'Team.name' => $teamName,
-			'ProjectGroup.name' => $projectName,
+			'ProjectGroup.name' => $projectGroupName,
 		)));
 
 		if (!$collabDetails) {
-			$this->error(__("$teamName is not collaborating on $projectName!"));
+			$this->error(__("$teamName is not collaborating on $projectGroupName!"));
 		}
 		$ok = $this->GroupCollaboratingTeam->deleteAll(
 			array('GroupCollaboratingTeam.id' => $collabDetails['GroupCollaboratingTeam']['id']),
@@ -333,7 +354,7 @@ class ProjectGroupShell extends AppShell {
 			$this->error(__("Failed to remove collaborator!"));
 		}
 
-		$this->out(__("$teamName is no longer collaborating on $projectName"));
+		$this->out(__("$teamName is no longer collaborating on $projectGroupName"));
 	}
 
 }

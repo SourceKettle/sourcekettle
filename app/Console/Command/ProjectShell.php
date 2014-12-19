@@ -38,6 +38,18 @@ class ProjectShell extends AppShell {
 		}
 		// TODO end of copypasta
 
+		$parser->addSubCommand('listProjects', array(
+			'help' => __('Lists all projects'),
+			'parser' => array(
+				'description' => array(
+					__("Use this command to get a list of all the projects in the system"),
+				),
+				'arguments' => array(
+				),
+				'options' => array(
+				)
+			)
+		));
 		$parser->addSubCommand('add', array(
 			'help' => __('Create a new project'),
 			'parser' => array(
@@ -183,6 +195,13 @@ class ProjectShell extends AppShell {
 		return $parser;
 	}
 
+	public function listProjects() {
+		$projects = $this->Project->find('list', array('fields' => array('name', 'description'), 'order' => array('name')));
+
+		foreach ($projects as $name => $desc) {
+			$this->out("$name [description: $desc]");
+		}
+	}
 /**
  * Adds a new project
  */

@@ -13,6 +13,18 @@ class TeamShell extends AppShell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
+		$parser->addSubCommand('listTeams', array(
+			'help' => __('Lists all teams'),
+			'parser' => array(
+				'description' => array(
+					__("Use this command to get a list of all the teams in the system"),
+				),
+				'arguments' => array(
+				),
+				'options' => array(
+				)
+			)
+		));
 		$parser->addSubCommand('add', array(
 			'help' => __('Create a new team'),
 			'parser' => array(
@@ -78,6 +90,13 @@ class TeamShell extends AppShell {
 		return $parser;
 	}
 
+	public function listTeams() {
+		$teams = $this->Team->find('list', array('fields' => array('name', 'description'), 'order' => array('name')));
+
+		foreach ($teams as $name => $desc) {
+			$this->out("$name [description: $desc]");
+		}
+	}
 /**
  * Adds a new team
  */
