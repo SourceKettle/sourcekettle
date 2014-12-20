@@ -72,18 +72,6 @@
             "label" => __('Story Points'),
         ));
 		
-        echo $this->Bootstrap->input("DependsOn", array(
-            "input" => $this->Form->input("DependsOn.DependsOn", array(
-                "label"    => false,
-                "class"    => "span9",
-                "multiple" => "multiple",
-				"size"     => 10,
-                "options"  => $availableTasks, 
-            )),
-            "label" => __('Depends on').' '.$this->Bootstrap->icon('tasks'),
-			"help_block" => "<a href='#' id='unselect-all'>".__("Unselect all")."</a>"
-        ));
-
 		echo $this->Bootstrap->input("description", array( 
 			"input" => $this->Markitup->editor("description", array(
 				"class" => "span8",
@@ -93,6 +81,17 @@
 			"label" => false,
 		));
 
+		echo '<div class="row">';
+		echo $this->element("linked_list", array(
+			"listSpan" => 4,
+			"itemSpan" => 12,
+			"lists" => array(
+				__("Subtasks") => array('id' => 'subtasks-list', 'items' => $subTasks, 'tooltip' => __('The new task will depend on anything in this list')),
+				__("Backlog") => array('id' => 'backlog-list', 'items' => $availableTasks, 'tooltip' => __('The new task will not depend on anything in this list')),
+				__("Parent tasks") => array('id' => 'parents-list', 'items' => $parentTasks, 'tooltip' => __('Anything in this list will depend on the new task')),
+			),
+		));
+		echo "</div>";
         echo $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls'));
         ?>
     </div>
@@ -119,3 +118,22 @@
     </div>
 </div>
 <?= $this->Form->end() ?>
+<?= $this->Html->script(array('bootstrap-tooltip'), array('inline' => false)); ?>
+<?= $this->Html->scriptBlock("
+	$('form').submit(function(){
+		$('#subtasks-list').sortable('toArray').forEach(function(taskId){
+			hidden = document.createElement('input');
+			hidden.type = 'hidden';
+			hidden.name = 'data[DependsOn][DependsOn][]';
+			hidden.value = taskId;
+			$('form').append(hidden);
+		});
+		$('#parents-list').sortable('toArray').forEach(function(taskId){
+			hidden = document.createElement('input');
+			hidden.type = 'hidden';
+			hidden.name = 'data[DependedOnBy][DependedOnBy][]';
+			hidden.value = taskId;
+			$('form').append(hidden);
+		});
+	});
+", array('inline' => false)); ?>

@@ -569,6 +569,8 @@ class TasksController extends AppProjectController {
 		}
 
 		if ($this->request->is('ajax') || $this->request->is('post')) {
+			debug($this->request->data);
+			exit(0);
 			$this->Task->create();
 
 			$this->request->data['Task']['project_id']		= $project['Project']['id'];
@@ -627,11 +629,14 @@ class TasksController extends AppProjectController {
 			'fields'     => array('Task.id', 'Task.subject'),
 		));
 
+		$subTasks = array();
+		$parentTasks = array();
+
 		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
 		$assignees[0] = "None";
 		ksort($assignees);
 
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'assignees'));
 	}
 
 /**
@@ -648,10 +653,27 @@ class TasksController extends AppProjectController {
 
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
-		$availableTasks = $this->Task->find('list', array(
+		$backlog = $this->Task->find('all', array(
 			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
-			'fields' => array('Task.id', 'Task.subject'),
+			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
+			'recursive' => -1,
 		));
+		$availableTasks = array();
+		foreach ($backlog as $t) {
+			$availableTasks[$t['Task']['id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
+		}
+
+		$subTasks = array();
+		foreach ($task['DependsOn'] as $subTask) {
+			$subTasks[$subTask['id']] = "#".$subTask['public_id']." ".$subTask['subject'];
+			unset($availableTasks[$subTask['id']]);
+		}
+
+		$parentTasks = array();
+		foreach ($task['DependedOnBy'] as $parentTask) {
+			$parentTasks[$parentTask['id']] = "#".$parentTask['public_id']." ".$parentTask['subject'];
+			unset($availableTasks[$parentTask['id']]);
+		}
 
 		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
 		$assignees[0] = "None";
@@ -681,7 +703,7 @@ class TasksController extends AppProjectController {
 		foreach ($this->request->data['DependsOn'] as $dep) {
 			$dependsOnTasks[$dep['id']] = $dep['subject'];
 		}
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'dependsOnTasks', 'assignees'));
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees'));
 	}
 
 /*
