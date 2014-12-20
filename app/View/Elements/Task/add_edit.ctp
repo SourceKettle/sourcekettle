@@ -81,7 +81,7 @@
 			"label" => false,
 		));
 
-		echo '<div class="row">';
+		echo '<div class="row-fluid span10 offset2">';
 		echo $this->element("linked_list", array(
 			"listSpan" => 4,
 			"itemSpan" => 12,
