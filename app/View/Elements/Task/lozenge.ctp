@@ -51,6 +51,12 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 									'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
 								)
 							) ?>
+							<?= $this->Html->link($this->Bootstrap->icon("pencil"), array(
+								'controller' => 'tasks',
+								'action' => 'edit',
+								'project' => $task['Project']['name'],
+								$task['Task']['public_id'],
+							), array('escape' => false)) ?>
                         </p>
 
                         <?
