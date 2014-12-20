@@ -108,7 +108,7 @@
             <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>
             <dt><?= __("Last updated") ?>:</dt>
             <dd><?= $this->Time->timeAgoInWords($task['Task']['modified']) ?></dd>
-            <dt><?= __("Parent tasks")?>:</dt>
+            <dt><?= __("Subtask of")?>:</dt>
             <dd>
             <?php
             foreach($task['DependedOnBy'] as $dep){
