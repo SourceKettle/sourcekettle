@@ -12,12 +12,25 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 
-.linkedList{
+.linkedList {
   list-style-type: none;
-  min-height: 20px;
+  min-height: 100px;
   max-height: 300px;
   overflow-y: scroll;
   border-radius: 5px 5px 5px 5px;
+  margin: 0px;
+}
+
+.linkedListContainer {
+  background: #e0e0e0;
+}
+
+.linkedListContainer hr {
+  color: #232323;
+}
+
+.linkedListContainer h4 {
+  text-align: center;
 }
 
 .linkedList li {

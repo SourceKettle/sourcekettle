@@ -70,7 +70,7 @@ foreach ($lists as $header => $list) {
 		$id = '';
 	}
 
-	echo "<div class='span$lspan'>\n";
+	echo "<div class='linkedListContainer span$lspan'>\n";
 	echo "<h4$tooltip>$header</h4>\n";
 	echo "<hr />\n";
 	echo "<ul$id class='$listSetName $lclasses' data-taskspan='$ispan'>\n";
