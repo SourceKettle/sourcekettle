@@ -14,42 +14,39 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-            echo '<h3>'.__('Project group details').'</h3>';
-
 			echo $this->Form->input('id');
+            echo '<h3>'.__('Update team details').'</h3>';
 
-            echo $this->Bootstrap->input("name", array(
+            echo $this->Bootstrap->input(__("name"), array(
                 "input" => $this->Form->text("name", array("class" => "span5")),
             ));
 
-            echo $this->Bootstrap->input("description", array(
+            echo $this->Bootstrap->input(__("description"), array(
                 "input" => $this->Form->text("description", array("class" => "span11")),
             ));
 
-		echo '<div class="row-fluid">';
-		echo $this->element("linked_list", array(
-			"listSpan" => 6,
-			"itemSpan" => 12,
-			"lists" => array(
-				__("Members") => array('id' => 'members-list', 'items' => $members, 'tooltip' => __('Projects that are part of the group')),
-				__("Non-members") => array('id' => 'non-members-list', 'items' => $nonMembers, 'tooltip' => __('Projects that are not part of the group')),
-			),
-		));
+			echo '<div class="row-fluid">';
+			echo $this->element("linked_list", array(
+				"listSpan" => 6,
+				"itemSpan" => 12,
+				"lists" => array(
+					__("Members") => array('id' => 'members-list', 'items' => $members, 'tooltip' => __('Users that are members of the team')),
+					__("Non-members") => array('id' => 'non-members-list', 'items' => $nonMembers, 'tooltip' => __('Users that are not members of the team')),
+				),
+			));
 		echo "</div>";
+
 
             echo $this->Bootstrap->button(__('Update'), array("style" => "primary", "size" => "large", 'class' => 'controls'));
 
-            echo $this->Form->end();
-            ?>
-
-<?= $this->Html->scriptBlock("
+echo $this->Html->scriptBlock("
 	$('form').submit(function(){
 		$('#members-list').sortable('toArray').forEach(function(id){
 			hidden = document.createElement('input');
 			hidden.type = 'hidden';
-			hidden.name = 'data[Project][]';
+			hidden.name = 'data[User][]';
 			hidden.value = id;
 			$('form').append(hidden);
 		});
 	});
-", array('inline' => false)); ?>
+", array('inline' => false));
