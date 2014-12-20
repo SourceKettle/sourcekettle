@@ -569,8 +569,6 @@ class TasksController extends AppProjectController {
 		}
 
 		if ($this->request->is('ajax') || $this->request->is('post')) {
-			debug($this->request->data);
-			exit(0);
 			$this->Task->create();
 
 			$this->request->data['Task']['project_id']		= $project['Project']['id'];
@@ -624,13 +622,28 @@ class TasksController extends AppProjectController {
 
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
-		$availableTasks = $this->Task->find('list', array(
-			'conditions' => array('project_id =' => $project['Project']['id']),
-			'fields'     => array('Task.id', 'Task.subject'),
+		$backlog = $this->Task->find('all', array(
+			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
+			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
+			'recursive' => -1,
 		));
+		$availableTasks = array();
+		foreach ($backlog as $t) {
+			$availableTasks[$t['Task']['id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
+		}
 
 		$subTasks = array();
 		$parentTasks = array();
+
+		// If the user wants to create a subtask, put the parent task(s) in the correct list instead
+		if (isset($this->request->query['parent'])) {
+			$parents = preg_split('/\s*,\s*/', trim(@$this->request->query['parent']),   null, PREG_SPLIT_NO_EMPTY);
+			$parents = array_filter($parents, function($a){return is_numeric($a);});
+			foreach ($parents as $parent) {
+				$parentTasks[$parent] = $availableTasks[$parent];
+				unset($availableTasks[$parent]);
+			}
+		}
 
 		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
 		$assignees[0] = "None";
