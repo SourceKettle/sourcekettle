@@ -89,8 +89,9 @@ class ProjectGroupsController extends AppController {
 				$this->Session->setFlash(__('The project group could not be saved. Please try again.'));
 			}
 		}
-		$projects = $this->ProjectGroup->Project->find('list');
-		$this->set(compact('projects'));
+		$members = array();
+		$nonMembers = $this->ProjectGroup->Project->find('list');
+		$this->set(compact('members', 'nonMembers'));
 	}
 
 /**
@@ -115,8 +116,14 @@ class ProjectGroupsController extends AppController {
 			$options = array('conditions' => array('ProjectGroup.' . $this->ProjectGroup->primaryKey => $id));
 			$this->request->data = $this->ProjectGroup->find('first', $options);
 		}
-		$projects = $this->ProjectGroup->Project->find('list', array('order' => 'LOWER(name) DESC'));
-		$this->set(compact('projects'));
+
+		$members = array();
+		$nonMembers = $this->ProjectGroup->Project->find('list');
+		foreach ($this->request->data['Project'] as $member) {
+			$members[$member['id']] = $nonMembers[$member['id']];
+			unset($nonMembers[$member['id']]);
+		}
+		$this->set(compact('members', 'nonMembers'));
 	}
 
 /**
