@@ -74,4 +74,25 @@ class TaskHelper extends AppHelper {
 		$class = $this->_View->viewVars['task_types'][$id]['class'];
 		return $this->Bootstrap->label($label, $class);
 	}
+
+	public function treeRender($projectName, $tree) {
+		echo "<ul>";
+		
+		echo "<li>";
+		echo $this->Html->link("#".$tree['public_id'].": ".$tree['subject'], array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => $projectName,
+			$tree['public_id']
+		));
+		if ($tree['loop']) {
+			echo __("*** Circular dependency detected! ***");
+		}
+		echo "</li>";
+	
+		foreach ($tree['subTasks'] as $subTask) {
+			$this->treeRender($projectName, $subTask);
+		}
+		echo "</ul>";
+	}
 }

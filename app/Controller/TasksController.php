@@ -664,10 +664,6 @@ class TasksController extends AppProjectController {
 
 		$milestones = $this->Milestone->listMilestoneOptions();
 
-		debug($this->Project->listCollaborators($project['Project']['id']));
-		debug($this->Project->listCollaborators($project['Project']['id']));
-		exit(0);
-
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
 		$backlog = $this->Task->find('all', array(
@@ -884,6 +880,12 @@ class TasksController extends AppProjectController {
 
 		$this->set('data',$data);
 		$this->render('/Elements/json');
+	}
+
+	public function tree($project = null, $public_id = null) {
+		$project = $this->_getProject($project);
+		$tree = $this->Task->getTree($project['Project']['id'], $public_id);
+		$this->set('tree', $tree);
 	}
 
 }

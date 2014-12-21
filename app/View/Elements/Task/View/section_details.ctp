@@ -129,6 +129,12 @@
                 echo '<span class="muted">n/a</span>';
             } ?>
             </dd>
+			<dd><?=$this->Html->link(__("View dependency tree"), array(
+				'controller' => 'tasks',
+				'action' => 'tree',
+				'project' => $project['Project']['name'],
+				$task['Task']['public_id'],
+			))?></dd>
         </dl>
     </div>
 </div>
