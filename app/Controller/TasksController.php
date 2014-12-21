@@ -409,7 +409,7 @@ class TasksController extends AppProjectController {
 		);
 		$this->set('times', $times);
 		$this->set('tasks', $this->Task->fetchLoggableTasks($this->Auth->user('id')));
-		$collabs = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$collabs = $this->Task->Project->listCollaborators($project['Project']['id']);
 		$collabs[0] = "None";
 		ksort($collabs);
 		$this->set('collaborators', $collabs);
@@ -645,7 +645,7 @@ class TasksController extends AppProjectController {
 			}
 		}
 
-		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$assignees = $this->Task->Project->listCollaborators($project['Project']['id']);
 		$assignees[0] = "None";
 		ksort($assignees);
 
@@ -663,6 +663,10 @@ class TasksController extends AppProjectController {
 		$task = $this->Task->open($public_id);
 
 		$milestones = $this->Milestone->listMilestoneOptions();
+
+		debug($this->Project->listCollaborators($project['Project']['id']));
+		debug($this->Project->listCollaborators($project['Project']['id']));
+		exit(0);
 
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
@@ -688,7 +692,7 @@ class TasksController extends AppProjectController {
 			unset($availableTasks[$parentTask['id']]);
 		}
 
-		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$assignees = $this->Task->Project->listCollaborators($project['Project']['id']);
 		$assignees[0] = "None";
 		ksort($assignees);
 
