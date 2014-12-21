@@ -7,6 +7,10 @@ App::uses('AppController', 'Controller');
  */
 class ProjectGroupsController extends AppController {
 
+	public $uses = array(
+		'ProjectGroup', 'Project', 'Team', 'GroupCollaboratingTeam'
+	);
+
 	public function isAuthorized($user) {
 
 		// No public pages here, must be logged in
@@ -91,7 +95,11 @@ class ProjectGroupsController extends AppController {
 		}
 		$members = array();
 		$nonMembers = $this->ProjectGroup->Project->find('list');
-		$this->set(compact('members', 'nonMembers'));
+		$admins = array();
+		$users = array();
+		$guests = array();
+		$otherTeams = $this->Team->find('list');
+		$this->set(compact('members', 'nonMembers', 'admins', 'users', 'guests', 'otherTeams'));
 	}
 
 /**
@@ -106,7 +114,16 @@ class ProjectGroupsController extends AppController {
 			throw new NotFoundException(__('Invalid project group'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->ProjectGroup->save($this->request->data)) {
+
+			// This is a fudge and a half... for anything where we're *changing* the level,
+			// there will be an existing entry in the database - retrieve the IDs.
+			foreach ($this->request->data['GroupCollaboratingTeam'] as $x => $gct) {
+				$gct = $this->GroupCollaboratingTeam->findByTeamIdAndProjectGroupId($gct['team_id'], $id);
+				if (isset($gct['GroupCollaboratingTeam'])) {
+					$this->request->data['GroupCollaboratingTeam'][$x]['id'] = $gct['GroupCollaboratingTeam']['id'];
+				}
+			}
+			if ($this->ProjectGroup->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('The project group has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -123,7 +140,22 @@ class ProjectGroupsController extends AppController {
 			$members[$member['id']] = $nonMembers[$member['id']];
 			unset($nonMembers[$member['id']]);
 		}
-		$this->set(compact('members', 'nonMembers'));
+
+		$admins = array();
+		$users = array();
+		$guests = array();
+		$otherTeams = $this->Team->find('list');
+		foreach ($this->request->data['GroupCollaboratingTeam'] as $team) {
+			if ($team['access_level'] == 0) {
+				$guests[$team['team_id']] = $otherTeams[$team['team_id']];
+			} elseif ($team['access_level'] == 1) {
+				$users[$team['team_id']] = $otherTeams[$team['team_id']];
+			} elseif ($team['access_level'] == 2) {
+				$admins[$team['team_id']] = $otherTeams[$team['team_id']];
+			}
+			unset($otherTeams[$team['team_id']]);
+		}
+		$this->set(compact('members', 'nonMembers', 'admins', 'users', 'guests', 'otherTeams'));
 	}
 
 /**

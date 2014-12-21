@@ -34,7 +34,7 @@ if (!isset($itemSpan)) {
 // If a page has multiple sets of linked lists, these need to be different
 // so that the different list sets don't all get linked together.
 if (!isset($listSetName)) {
-	$listSetName = 'linkedList';
+	$listSetName = 'listSet';
 }
 
 foreach ($lists as $header => $list) {
@@ -73,7 +73,7 @@ foreach ($lists as $header => $list) {
 	echo "<div class='linkedListContainer span$lspan'>\n";
 	echo "<h4$tooltip>$header</h4>\n";
 	echo "<hr />\n";
-	echo "<ul$id class='$listSetName $lclasses' data-taskspan='$ispan'>\n";
+	echo "<ul$id class='linkedList $listSetName $lclasses' data-taskspan='$ispan'>\n";
 	foreach ($list['items'] as $id => $item) {
 		echo "  <li id='$id' class='ui-state-default' data-item-id='$id'>$item</li>";
 	}

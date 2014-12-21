@@ -112,7 +112,6 @@ class Collaborator extends AppModel {
 		));
 
 		foreach ($collaborators as $collaborator) {
-			//$collaborator = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
 			$users[$collaborator['User']['id']] = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
 		}
 		return $users;
