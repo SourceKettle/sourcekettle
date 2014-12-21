@@ -173,3 +173,45 @@ function initTaskDroplists(api_url_base) {
 
 
 }
+
+function setStoryPoints(button, difference) {
+	taskLozenge = $(button).parents('li').eq(0);
+	taskId = parseInt($(taskLozenge).attr('data-taskid'), 10);
+	apiUrl = $(taskLozenge).attr('data-api-url');
+	pointsBox = $($(button).siblings('.disabled')[0]).find('.points');
+	points = parseInt($(pointsBox).text());
+	points += difference;
+	if (points <= 0) {return;}
+	var taskInfo = {
+		id : taskId,
+		story_points : points
+	};
+	$.ajax(apiUrl +'/' + taskId, {
+		"data" : taskInfo,
+		"dataType" : "json",
+		"type" : "post",
+		"success" : function (data) {
+			pointsBox.text(points);
+		},
+		"error" : function(data) {
+			alert("Story points update failed");
+		}
+	});
+}
+
+// Activate the +/- buttons for story points
+$(function(){
+	$('.btn-storypoints').each(function(index, button){
+		var type = $(button).text();
+		if (type == '+') {
+			$(button).on('click', function(event){
+				setStoryPoints(button, 1);
+			});
+		} else if (type == '-') {
+			$(button).on('click', function(event){
+				setStoryPoints(button, -1);
+			});
+		}
+
+	});
+});
