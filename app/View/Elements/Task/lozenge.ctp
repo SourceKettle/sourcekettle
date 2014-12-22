@@ -74,13 +74,13 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 
                         echo $this->Task->priority($task['Task']['task_priority_id']);
                         
-						if (!empty($task['DependsOn'])){
+						/*if (!empty($task['DependsOn'])){
                             if (!$task['Task']['dependenciesComplete']){
                                 echo "<span class='label label-important' title='Dependencies incomplete'>D</span>";
                             } else {
                                 echo "<span class='label label-success' title='Dependencies complete'>D</span>";
                             }
-                        }
+                        }*/
 
 						// Story points, with +/- buttons
                         ?>
