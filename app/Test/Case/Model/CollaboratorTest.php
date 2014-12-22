@@ -144,24 +144,6 @@ class CollaboratorTestCase extends CakeTestCase {
 		), "Incorrect history data returned");
 	}
 
-    /**
-     * test Collaborator->collaboratorsForProject function.
-     * Test that the correct array is returned.
-     *
-     * @access public
-     * @return void
-     */
-    public function testCollaboratorsForProject() {
-        $usersA = $this->Collaborator->collaboratorsForProject(1);
-        $usersB = array(
-            1 => "Mr Smith [Mr.Smith@example.com]",
-            3 => "Mrs Guest [mrs.guest@example.com]",
-            4 => "Mr User [mr.user@example.com]",
-            5 => "Mr Admin [mr.admin@example.com]",
-            10 => "Another user [another-user@example.com]",
-        );
-        $this->assertEquals($usersB, $usersA, json_encode($usersA));
-    }
 
 	public function testLookupTable() {
 		$this->assertEqual(__('Guest'), $this->Collaborator->accessLevelIdToName(0));

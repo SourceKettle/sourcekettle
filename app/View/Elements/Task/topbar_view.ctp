@@ -98,6 +98,16 @@ if ($task['TaskStatus']['name'] != 'closed') {
     'right' => array(
         array(
             array(
+                'text' => __('Create Subtask'),
+                'url' => array(
+                    'action' => 'add',
+                    'controller' => 'tasks',
+					'?' => array('parent' => $id),
+                ),
+            ),
+        ),
+        array(
+            array(
                 'text' => __('Create Task'),
                 'url' => array(
                     'action' => 'add',

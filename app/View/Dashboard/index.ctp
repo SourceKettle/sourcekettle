@@ -19,6 +19,7 @@
     echo $this->element('beta_warning'); // TODO show this for dev versions
   }*/
   $this->Html->css('tasks.index', null, array ('inline' => false));
+  $this->Html->script('milestones.droplist', array ('inline' => false));
 ?>
 
 

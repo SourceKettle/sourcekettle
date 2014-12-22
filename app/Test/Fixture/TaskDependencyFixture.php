@@ -45,6 +45,36 @@ class TaskDependencyFixture extends CakeTestFixture {
 			'created' => '2014-04-29 10:38:45',
 			'modified' => '2014-04-29 10:38:45'
 		),
+
+		// Dependency loop here...
+		array(
+			'id' => 4,
+			'child_task_id' => 21,
+			'parent_task_id' => 22,
+			'created' => '2014-04-29 10:38:45',
+			'modified' => '2014-04-29 10:38:45'
+		),
+		array(
+			'id' => 5,
+			'child_task_id' => 22,
+			'parent_task_id' => 23,
+			'created' => '2014-04-29 10:38:45',
+			'modified' => '2014-04-29 10:38:45'
+		),
+		array(
+			'id' => 6,
+			'child_task_id' => 23,
+			'parent_task_id' => 24,
+			'created' => '2014-04-29 10:38:45',
+			'modified' => '2014-04-29 10:38:45'
+		),
+		array(
+			'id' => 7,
+			'child_task_id' => 23,
+			'parent_task_id' => 21,
+			'created' => '2014-04-29 10:38:45',
+			'modified' => '2014-04-29 10:38:45'
+		),
 	);
 
 }

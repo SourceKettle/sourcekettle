@@ -71,8 +71,12 @@ class ProjectComponentBehavior extends ModelBehavior {
  * @return void
  */
 	public function afterSave(Model $Model, $created = false) {
-		$Model->Project->set('modified', date('Y-m-d H:i:s'));
-		$Model->Project->save();
+		// TODO this avoids creating spurious empty projects all over the place but sometimes won't update the project
+		// e.g. when saving tasks via api_update
+		if (isset($Model->Project->id) && $Model->Project->id != false) {
+			$Model->Project->set('modified', date('Y-m-d H:i:s'));
+			$Model->Project->save();
+		}
 		return true;
 	}
 

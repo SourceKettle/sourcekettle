@@ -7,10 +7,10 @@
             <div class="row-fluid">
                 <div class="span10">
                     <h4>
-                        <?= h($commit['subject']) ?>
+                        <?= $this->Source->linkStringToTasks($commit['subject'], $project['Project']['name']) ?>
                     </h4>
                     <h5>
-                        <small><?= h($commit['body']) ?></small>
+                        <small><?= $this->Source->linkStringToTasks($commit['body'], $project['Project']['name']) ?></small>
                     </h5>
                 </div>
                 <div class="span2">
