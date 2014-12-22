@@ -29,7 +29,7 @@ $apiUrl = $this->Html->url(array(
 ));
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
-		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
+		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl' data-taskStatus='".$task['TaskStatus']['name']."'>";
 	} else {
 		echo "<li class='$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
 	}
@@ -56,11 +56,10 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 								'action' => 'edit',
 								'project' => $task['Project']['name'],
 								$task['Task']['public_id'],
-							), array('escape' => false)) ?>
+							), array('escape' => false, 'title' => __("Edit task"))) ?>
                         </p>
 
                         <?
-                        echo $this->Task->statusLabel($task['Task']['task_status_id']);
                         if (isset($task['Milestone']['id'])){
                             echo "<span class='label' title='".__('Milestone: %s', $task['Milestone']['subject'])."'>";
 							echo $this->Html->link($this->Bootstrap->icon("road", "white"), array(
@@ -72,7 +71,6 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 							echo "</span>";
                         }
 
-                        echo $this->Task->priority($task['Task']['task_priority_id']);
                         
 						/*if (!empty($task['DependsOn'])){
                             if (!$task['Task']['dependenciesComplete']){
@@ -86,9 +84,12 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
                         ?>
 						<span class="btn-group btn-group-storypoints">
 						<?=$this->Bootstrap->button("-", array('class' => 'btn-inverse btn-storypoints'))?>
-						<?=$this->Bootstrap->button(__("<span class='points'>%d</span> SP", $task['Task']['story_points'] ?: 0), array('class' => 'disabled btn-inverse btn-storypoints'))?>
+						<?=$this->Bootstrap->button(__("<span class='points'>%d</span> SP", $task['Task']['story_points'] ?: 0), array('class' => 'disabled btn-inverse btn-storypoints', 'title' => __('Story points')))?>
 						<?=$this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints'))?>
 						</span>
+
+                        <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
+                        <?= $this->Task->priority($task['Task']['task_priority_id'], false) ?>
 						
                     </div>
                     <div class="span2 task-lozenge-assignee hidden-phone">
