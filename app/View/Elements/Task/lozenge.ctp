@@ -29,7 +29,7 @@ $apiUrl = $this->Html->url(array(
 ));
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
-		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
+		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl' data-taskStatus='".$task['TaskStatus']['name']."'>";
 	} else {
 		echo "<li class='$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
 	}

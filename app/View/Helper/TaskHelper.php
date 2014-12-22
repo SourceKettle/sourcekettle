@@ -32,10 +32,11 @@ class TaskHelper extends AppHelper {
  * @return void
  */
 	public function priority($id, $textLabel = true) {
-		$label = $textLabel? '<span class="hidden-phone hidden-tablet">'.$this->_View->viewVars['task_priorities'][$id]['label'].'</span> ' : '';
+		$tooltip = __("Priority: %s", h($this->_View->viewVars['task_priorities'][$id]['label']));
+		$label = $textLabel? '<span class="hidden-phone hidden-tablet">'.h($this->_View->viewVars['task_priorities'][$id]['label']).'</span> ' : '';
 		$icon  = $this->_View->viewVars['task_priorities'][$id]['icon'];
 		$class = $this->_View->viewVars['task_priorities'][$id]['class'];
-		return $this->Bootstrap->label($label . $this->Bootstrap->icon($icon, "white"), "inverse", array('class' => "taskpriority $class"));
+		return $this->Bootstrap->label($label . $this->Bootstrap->icon($icon, "white"), "inverse", array('class' => "taskpriority $class", "title" => $tooltip));
 	}
 
 /**
@@ -56,9 +57,10 @@ class TaskHelper extends AppHelper {
  * @return void
  */
 	public function statusLabel($id) {
+		$tooltip = __("Status: %s", h($this->_View->viewVars['task_statuses'][$id]['label']));
 		$label = $this->_View->viewVars['task_statuses'][$id]['label'];
 		$class = $this->_View->viewVars['task_statuses'][$id]['class'];
-		return $this->Bootstrap->label($label, $class, array ("class" => "taskstatus"));
+		return $this->Bootstrap->label($label, $class, array ("class" => "taskstatus", "title" => $tooltip));
 
 	}
 

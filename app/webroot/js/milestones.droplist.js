@@ -146,6 +146,7 @@ function initTaskDroplists(api_url_base) {
 	                            return (css.match (/\blabel-\S+/g) || []).join(' ');
 	                        });
 	                        statusLabel.addClass(taskStatusLabelTypes[toStatus]);
+							$(taskLozenge).attr('data-taskstatus', toStatus);
 
                             // Make sure the task is the correct span width for this column
                             newspan = 'span' + $(taskLozenge).parent().attr('data-taskspan');
@@ -200,6 +201,7 @@ function initTaskDroplists(api_url_base) {
 function setStoryPoints(button, difference) {
 	taskLozenge = $(button).parents('li').eq(0);
 	taskId = parseInt($(taskLozenge).attr('data-taskid'), 10);
+	taskStatus = $(taskLozenge).attr('data-taskstatus');
 	apiUrl = $(taskLozenge).attr('data-api-url');
 	pointsBox = $($(button).siblings('.disabled')[0]).find('.points');
 	points = parseInt($(pointsBox).text());
@@ -215,6 +217,13 @@ function setStoryPoints(button, difference) {
 		"type" : "post",
 		"success" : function (data) {
 			pointsBox.text(points);
+
+			if (taskStatus == 'closed' || taskStatus == 'resolved') {
+				$('#points_complete').text( parseInt($('#points_complete').text()) + difference );
+			}
+			if (taskStatus != 'dropped') {
+				$('#points_total').text( parseInt($('#points_total').text()) + difference );
+			}
 		},
 		"error" : function(data) {
 			alert("Story points update failed");
