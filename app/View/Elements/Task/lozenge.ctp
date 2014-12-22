@@ -24,23 +24,18 @@ if(isset($span) && $span){
 $apiUrl = $this->Html->url(array(
   	'controller' => 'tasks',
 	'action' => 'update',
-	'project' => $project['Project']['name'],
+	'project' => $task['Project']['name'],
 	'api' => true,
 ));
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
 		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
 	} else {
-		echo "<li class='$span'>";
+		echo "<li class='$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
 	}
 ?>
 <div id="task_<?= $task['Task']['public_id'] ?>" 
   class="task-container"
-  <?
-  // If it's a draggable item in the milestone board, do NOT make the whole thing a click target...
-  if(!$draggable){?>
-  onclick="location.href='<?= $this->Html->url($url) ?>';"
-  <?}?>
   data-taskid="<?= $task['Task']['public_id'] ?>">
     <div class="task">
         <div class="well type_bar_<?= h($task['TaskType']['name']) ?>">

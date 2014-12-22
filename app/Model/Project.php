@@ -508,16 +508,22 @@ class Project extends AppModel {
 
 		$teams = array_merge($gct, $teams);
 
-		// Now build a list of user details from all the collaborating teams
-		$members = $this->CollaboratingTeam->Team->TeamsUser->find('list', array(
-			'conditions' => array('team_id' => $teams),
-			'fields' => array('user_id'),
-		));
+		$members = array();
 
-		$members = $this->Collaborator->User->find('all', array(
-			'conditions' => array('id' => $members),
-			'fields' => array('User.id', 'User.name', 'User.email'),
-		));
+		if (!empty($teams)) {
+			// Now build a list of user details from all the collaborating teams
+			$members = $this->CollaboratingTeam->Team->TeamsUser->find('list', array(
+				'conditions' => array('team_id' => $teams),
+				'fields' => array('user_id'),
+			));
+
+			if (!empty($members)) {
+				$members = $this->Collaborator->User->find('all', array(
+					'conditions' => array('id' => $members),
+					'fields' => array('User.id', 'User.name', 'User.email'),
+				));
+			}
+		}
 
 		foreach ($members as $member) {
 			$users[$member['User']['id']] = "{$member['User']['name']} [{$member['User']['email']}]";
@@ -532,7 +538,7 @@ class Project extends AppModel {
 		foreach ($collaborators as $collaborator) {
 			$users[$collaborator['User']['id']] = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
 		}
-
+			
 		return $users;
 
 	}

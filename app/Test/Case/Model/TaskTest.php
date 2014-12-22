@@ -53,6 +53,7 @@ class TaskTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
+
 	public function testFindTaskWithDependencies() {
 		$details = $this->Task->findById(2);
 		// Ignore the modified/created dates on TaskStatus et al, we don't care...
@@ -63,11 +64,6 @@ class TaskTest extends CakeTestCase {
 		$this->assertEquals('0', $details['Task']['dependenciesComplete']);
 	}
 
-/**
- * testIsAssignee method
- *
- * @return void
- */
 	public function testIsAssignee() {
 		$this->Task->id = 1;
 		$this->assertTrue($this->Task->isAssignee(2));
@@ -75,11 +71,6 @@ class TaskTest extends CakeTestCase {
 		$this->assertFalse($this->Task->isAssignee(4));
 	}
 
-/**
- * testIsOpen method
- *
- * @return void
- */
 	public function testIsOpen() {
 		$this->Task->id = 1;
 		$this->Task->read();
@@ -89,11 +80,6 @@ class TaskTest extends CakeTestCase {
 		$this->assertEquals(true, $this->Task->isOpen());
 	}
 
-/**
- * testIsInProgress method
- *
- * @return void
- */
 	public function testIsInProgress() {
 		$this->Task->id = 1;
 		$this->Task->read();
@@ -103,22 +89,12 @@ class TaskTest extends CakeTestCase {
 		$this->assertEquals(true, $this->Task->isInProgress());
 	}
 
-/**
- * testFetchHistory method
- *
- * @return void
- */
 	public function testFetchHistory() {
 		$this->Task->Project->id = 2;
 		$history = $this->Task->fetchHistory(2, 10, 0, 0);
 		$this->assertEquals($history, array(), "Incorrect history data returned");
 	}
 
-/**
- * testGetTitleForHistory method
- *
- * @return void
- */
 	public function testGetTitleForHistory() {
 		$this->assertEquals(null, $this->Task->getTitleForHistory());
 		$this->Task->id = 1;
@@ -342,11 +318,6 @@ class TaskTest extends CakeTestCase {
 		$this->assertFalse($this->Task->save(array()));
 	}
 
-/**
- * testFetchLoggableTasks method
- *
- * @return void
- */
 	public function testFetchLoggableTasks() {
 		$this->Task->Project->id = 2;
 		$tasks = $this->Task->fetchLoggableTasks(2);
@@ -472,6 +443,35 @@ class TaskTest extends CakeTestCase {
 		)));
 
 		$this->assertFalse($saved);
+	}
+
+	public function testGetTreeInvalid() {
+		$this->assertEquals(array(), $this->Task->getTree(12, 1000));
+	}
+
+	public function testGetTree() {
+		$tree = $this->Task->getTree(12, 1);
+
+		$this->assertEquals(1, $tree['public_id']);
+		$this->assertEquals(21, $tree['id']);
+		$this->assertFalse($tree['loop']);
+
+		$this->assertEquals(2, $tree['subTasks'][0]['public_id']);
+		$this->assertEquals(22, $tree['subTasks'][0]['id']);
+		$this->assertFalse($tree['subTasks'][0]['loop']);
+
+		$this->assertEquals(3, $tree['subTasks'][0]['subTasks'][0]['public_id']);
+		$this->assertEquals(23, $tree['subTasks'][0]['subTasks'][0]['id']);
+		$this->assertFalse($tree['subTasks'][0]['subTasks'][0]['loop']);
+
+		$this->assertEquals(4, $tree['subTasks'][0]['subTasks'][0]['subTasks'][0]['public_id']);
+		$this->assertEquals(24, $tree['subTasks'][0]['subTasks'][0]['subTasks'][0]['id']);
+		$this->assertFalse($tree['subTasks'][0]['subTasks'][0]['subTasks'][0]['loop']);
+
+		$this->assertEquals(1, $tree['subTasks'][0]['subTasks'][0]['subTasks'][1]['public_id']);
+		$this->assertEquals(21, $tree['subTasks'][0]['subTasks'][0]['subTasks'][1]['id']);
+		$this->assertTrue($tree['subTasks'][0]['subTasks'][0]['subTasks'][1]['loop']);
+
 	}
 
 }

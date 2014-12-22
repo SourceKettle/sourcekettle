@@ -53,51 +53,22 @@ class ProjectTestCase extends CakeTestCase {
 		'app.project_groups_project',
 	);
 
-    /**
-     * setUp function.
-     * Run before each unit test.
-     * Corrrecly sets up the test environment.
-     *
-     * @access public
-     * @return void
-     */
     public function setUp() {
         parent::setUp();
         $this->Project = ClassRegistry::init('Project');
     }
 
-    /**
-     * tearDown function.
-     * Tear down all created data after the tests.
-     *
-     * @access public
-     * @return void
-     */
     public function tearDown() {
         unset($this->Project);
         parent::tearDown();
     }
 
-    /**
-     * test Project->getProject function.
-     * Tests that requesting a null project will return a null project.
-     *
-     * @access public
-     * @return void
-     */
+
     public function testGetProjectNull() {
         $project = $this->Project->getProject(null);
         $this->assertTrue($project == null, "Project is not null");
     }
 
-    /**
-     * test Project->getProject function.
-     * Tests that requesting a project that does not exist throws a
-     * NotFoundException.
-     *
-     * @access public
-     * @return void
-     */
     public function testGetProjectNonExistant() {
         try {
             $project = $this->Project->getProject('nonexistant');
@@ -109,27 +80,12 @@ class ProjectTestCase extends CakeTestCase {
         }
     }
 
-    /**
-     * test Project->getProject function.
-     * Tests that a project is correctly returned when a name
-     * reference is used.
-     *
-     * @access public
-     * @return void
-     */
     public function testGetProjectByName() {
         $project = $this->Project->getProject('private');
         $this->assertTrue($project != null, "Project is null");
         $this->assertEquals('private', $project['Project']['name'], "wrong project returned");
     }
 
-    /**
-     * test Project->getProject function..
-     * Tests that an invalid user is denied access to a project
-     *
-     * @access public
-     * @return void
-     */
     public function testGetProjectReadInvalidUser() {
         try {
             $project = $this->Project->getProject(1);
@@ -139,12 +95,6 @@ class ProjectTestCase extends CakeTestCase {
         }
     }
 
-    /**
-     * test Project->hasRead function.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasReadInvalidUser() {
         $hasRead = $this->Project->hasRead(null, 1);
         $this->assertFalse($hasRead, "user has incorrect privileges");
@@ -154,12 +104,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertFalse($hasRead, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasRead function.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasReadNotCollaboratorPrivate() {
         $hasRead = $this->Project->hasRead(2, 3);
         $this->assertFalse($hasRead, "user has incorrect privileges");
@@ -169,12 +113,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertFalse($hasRead, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasRead function.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasReadNotCollaboratorPublic() {
         $hasRead = $this->Project->hasRead(2, 4);
         $this->assertTrue($hasRead, "user has incorrect privileges");
@@ -184,13 +122,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasRead, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasRead function.
-     * Tests that a guest does not have write privileges.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasReadGuest() {
 		$this->Project->id = 1;
         $hasRead = $this->Project->hasRead(3);
@@ -200,13 +131,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasRead, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasRead function.
-     * Tests that a user has write privileges
-     *
-     * @access public
-     * @return void
-     */
     public function testHasReadUser() {
 		$this->Project->id = 1;
         $hasRead = $this->Project->hasRead(4);
@@ -216,13 +140,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasRead, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasRead function.
-     * Tests that a project admin has write privileges.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasReadAdmin() {
         $this->Project->id = 1;
         $hasRead = $this->Project->hasRead(5);
@@ -232,13 +149,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasRead, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasRead function.
-     * Tests that a system admin has write privileges to a project they have not been explicitly made admin for.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasReadSysAdmin() {
         $this->Project->id = 2;
         $hasRead = $this->Project->hasRead(5);
@@ -248,12 +158,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasRead, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasWrite function.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasWriteInvalidUser() {
         $hasWrite = $this->Project->hasWrite(null, 1);
         $this->assertFalse($hasWrite, "user has incorrect privileges");
@@ -263,13 +167,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertFalse($hasWrite, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasWrite function.
-     * Tests that a guest does not have write privileges.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasWriteGuest() {
 		$this->Project->id = 1;
         $hasWrite = $this->Project->hasWrite(3);
@@ -279,13 +176,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertFalse($hasWrite, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasWrite function.
-     * Tests that a user has write privileges
-     *
-     * @access public
-     * @return void
-     */
     public function testHasWriteUser() {
 		$this->Project->id = 1;
         $hasWrite = $this->Project->hasWrite(4);
@@ -295,13 +185,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasWrite, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasWrite function.
-     * Tests that a project admin has write privileges.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasWriteAdmin() {
         $this->Project->id = 1;
         $hasWrite = $this->Project->hasWrite(5);
@@ -311,13 +194,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasWrite, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->hasWrite function.
-     * Tests that a system admin has write privileges to a project they have not been explicitly made admin for.
-     *
-     * @access public
-     * @return void
-     */
     public function testHasWriteSysAdmin() {
         $this->Project->id = 2;
         $hasWrite = $this->Project->hasWrite(5);
@@ -327,13 +203,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertTrue($hasWrite, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->isAdmin function.
-     * Tests that an invalid user is not a project admin.
-     *
-     * @access public
-     * @return void
-     */
     public function testIsAdminInvalidUser() {
 		$this->Project->id = 1;
         $hasWrite = $this->Project->isAdmin();
@@ -343,13 +212,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertFalse($hasWrite, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->isAdmin function.
-     * Tests that a guest is not a project admin.
-     *
-     * @access public
-     * @return void
-     */
     public function testIsAdminGuest() {
 		$this->Project->id = 1;
         $hasWrite = $this->Project->isAdmin(3);
@@ -359,13 +221,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertFalse($hasWrite, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->isAdmin function.
-     * Tests that a user is not a project admin.
-     *
-     * @access public
-     * @return void
-     */
     public function testIsAdminUser() {
 		$this->Project->id = 1;
         $hasWrite = $this->Project->isAdmin(4);
@@ -375,13 +230,6 @@ class ProjectTestCase extends CakeTestCase {
         $this->assertFalse($hasWrite, "user has incorrect privileges");
     }
 
-    /**
-     * test Project->isAdmin function.
-     * Tests that an admin is a project admin.
-     *
-     * @access public
-     * @return void
-     */
     public function testIsAdminAdmin() {
         $this->Project->id = 1;
         $hasWrite = $this->Project->isAdmin(5);
@@ -817,15 +665,38 @@ class ProjectTestCase extends CakeTestCase {
 		}
 	}
 
-	public function testListCollaborators() {
+	public function testListCollaboratorsDirectOnly() {
 		$this->Project->id = 1;
 		$collabs = $this->Project->listCollaborators();
 		$this->assertEquals(array(
-			1 => 'Mr Smith',
-			3 => 'Mrs Guest',
-			4 => 'Mr User',
-			5 => 'Mr Admin',
-			10 => 'Another user',
+			1 => 'Mr Smith [Mr.Smith@example.com]',
+			3 => 'Mrs Guest [mrs.guest@example.com]',
+			4 => 'Mr User [mr.user@example.com]',
+			5 => 'Mr Admin [mr.admin@example.com]',
+			10 => 'Another user [another-user@example.com]',
+		), $collabs);
+	}
+
+	public function testListCollaboratorsDirectAndTeam() {
+		$collabs = $this->Project->listCollaborators(12);
+		$this->assertEquals(array(
+			2 => 'Mrs Smith [mrs.smith@example.com]',
+			3 => 'Mrs Guest [mrs.guest@example.com]',
+			4 => 'Mr User [mr.user@example.com]',
+			20 => 'A Perl developer [perl-dev@example.com]',
+			21 => 'Another Perl developer [another-perl-dev@example.com]',
+		), $collabs);
+	}
+
+	public function testListCollaboratorsTeamViaProjectGroup() {
+		$collabs = $this->Project->listCollaborators(6);
+		$this->assertEquals(array(
+			13 => 'A PHP developer [php-dev@example.com]',
+			15 => 'A Python developer [python-dev@example.com]',
+			16 => 'A PHP and Python developer [php-and-python-dev@example.com]',
+			17 => 'A PHP and Java developer [php-and-java-dev@example.com]',
+			18 => 'A Python and Java developer [python-and-java-dev@example.com]',
+			19 => 'A PHP, Python and Java developer [php-python-and-java-dev@example.com]',
 		), $collabs);
 	}
 }

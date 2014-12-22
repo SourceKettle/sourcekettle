@@ -88,7 +88,7 @@ class ProjectGroupsController extends AppController {
 			$this->ProjectGroup->create();
 			if ($this->ProjectGroup->save($this->request->data)) {
 				$this->Session->setFlash(__('The project group has been saved'));
-				$this->redirect(array('action' => 'index'));
+				return $this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The project group could not be saved. Please try again.'));
 			}
@@ -117,17 +117,22 @@ class ProjectGroupsController extends AppController {
 
 			// This is a fudge and a half... for anything where we're *changing* the level,
 			// there will be an existing entry in the database - retrieve the IDs.
-			foreach ($this->request->data['GroupCollaboratingTeam'] as $x => $gct) {
-				$gct = $this->GroupCollaboratingTeam->findByTeamIdAndProjectGroupId($gct['team_id'], $id);
-				if (isset($gct['GroupCollaboratingTeam'])) {
-					$this->request->data['GroupCollaboratingTeam'][$x]['id'] = $gct['GroupCollaboratingTeam']['id'];
+			if (isset($this->request->data['GroupCollaboratingTeam'])) {
+				foreach ($this->request->data['GroupCollaboratingTeam'] as $x => $gct) {
+					$gct = $this->GroupCollaboratingTeam->findByTeamIdAndProjectGroupId($gct['team_id'], $id);
+					if (isset($gct['GroupCollaboratingTeam'])) {
+						$this->request->data['GroupCollaboratingTeam'][$x]['id'] = $gct['GroupCollaboratingTeam']['id'];
+					}
 				}
 			}
 			if ($this->ProjectGroup->saveAll($this->request->data)) {
 				$this->Session->setFlash(__('The project group has been saved'));
-				$this->redirect(array('action' => 'index'));
+				return $this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The project group could not be saved. Please try again.'));
+				// TODO a bit of a fudge, we're probably passing the group list in a stupidly wrong format, this avoids the code below not getting a "proper" array of projects... blech
+				$this->request->data['Project'] = array();
+				$this->request->data['GroupCollaboratingTeam'] = array();
 			}
 		} else {
 			$options = array('conditions' => array('ProjectGroup.' . $this->ProjectGroup->primaryKey => $id));
@@ -137,8 +142,10 @@ class ProjectGroupsController extends AppController {
 		$members = array();
 		$nonMembers = $this->ProjectGroup->Project->find('list');
 		foreach ($this->request->data['Project'] as $member) {
-			$members[$member['id']] = $nonMembers[$member['id']];
-			unset($nonMembers[$member['id']]);
+			$member = $member['id'];
+			
+			$members[$member] = $nonMembers[$member];
+			unset($nonMembers[$member]);
 		}
 
 		$admins = array();
@@ -174,10 +181,10 @@ class ProjectGroupsController extends AppController {
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->ProjectGroup->delete()) {
 			$this->Session->setFlash(__('Project group deleted'));
-			$this->redirect(array('action' => 'index'));
+			return $this->redirect(array('action' => 'index'));
 		}
 		$this->Session->setFlash(__('Project group was not deleted'));
-		$this->redirect(array('action' => 'index'));
+		return $this->redirect(array('action' => 'index'));
 	}
 
 /**
