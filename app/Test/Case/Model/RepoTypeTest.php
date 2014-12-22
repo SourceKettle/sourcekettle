@@ -51,12 +51,7 @@ class RepoTypeTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
-/**
- * testNameToID method
- *
- * @return void
- */
-	public function testNameToID() {
+	public function testNameToId() {
 		$types = array(
 			$this->RepoType->nameToId('fail'),
 			$this->RepoType->nameToId('none'),
@@ -65,6 +60,17 @@ class RepoTypeTest extends CakeTestCase {
 		);
 
 		$this->assertEquals(array(0, 1, 2, 3), $types, "Incorrect ID(s) returned");
+	}
+
+	public function testIdToName() {
+		$types = array(
+			$this->RepoType->idToName(0),
+			$this->RepoType->idToName(1),
+			$this->RepoType->idToName(2),
+			$this->RepoType->idToName(3)
+		);
+
+		$this->assertEquals(array(null, 'none', 'git', 'svn'), $types, "Incorrect ID(s) returned");
 	}
 
 }

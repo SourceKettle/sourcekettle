@@ -82,6 +82,7 @@
         /*
          * If no other controller is to be used, use the projects controller
          */
+        Router::connect('/project/:project/clone/*', array('controller' => 'projects', 'action' => 'fork'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         //Router::connect('/projects/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));

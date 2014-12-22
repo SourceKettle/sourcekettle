@@ -481,22 +481,65 @@ class Project extends AppModel {
 	}
 
 	public function listCollaborators($projectId = null) {
+
 		if ($projectId == null) {
 			$projectId = $this->id;
 		}
 
-		$collabs = $this->Collaborator->find('list',
-			array(
-				'conditions' => array('project_id' => $projectId),
-				'fields' => array('user_id'),
-			)
-		);
+		$users = array();
 
-		return $this->Collaborator->User->find('list',
-			array(
-				'conditions' => array('id' => array_values($collabs)),
-			)
-		);
+
+		// Get a list of teams that are collaborating on any of our project groups
+		$groups = array_values($this->ProjectGroupsProject->find('list', array(
+			'conditions' => array('project_id' => $projectId),
+			'fields' => array('project_group_id'),
+		)));
+
+		$gct = array_values($this->ProjectGroup->GroupCollaboratingTeam->find('list', array(
+			'conditions' => array('project_group_id' => $groups),
+			'fields' => array('team_id'),
+		)));
+
+		// Now get a list of teams that are directly collaborating
+		$teams = array_values($this->CollaboratingTeam->find('list', array(
+			'conditions' => array('CollaboratingTeam.project_id' => $projectId),
+			'fields' => array('team_id'),
+		)));
+
+		$teams = array_merge($gct, $teams);
+
+		$members = array();
+
+		if (!empty($teams)) {
+			// Now build a list of user details from all the collaborating teams
+			$members = $this->CollaboratingTeam->Team->TeamsUser->find('list', array(
+				'conditions' => array('team_id' => $teams),
+				'fields' => array('user_id'),
+			));
+
+			if (!empty($members)) {
+				$members = $this->Collaborator->User->find('all', array(
+					'conditions' => array('id' => $members),
+					'fields' => array('User.id', 'User.name', 'User.email'),
+				));
+			}
+		}
+
+		foreach ($members as $member) {
+			$users[$member['User']['id']] = "{$member['User']['name']} [{$member['User']['email']}]";
+		}
+
+		// Now get a list of any direct collaborators
+		$collaborators = $this->Collaborator->find('all', array(
+			'conditions' => array('Collaborator.project_id' => $projectId),
+			'fields' => array('User.id', 'User.name', 'User.email'),
+		));
+
+		foreach ($collaborators as $collaborator) {
+			$users[$collaborator['User']['id']] = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
+		}
+			
+		return $users;
 
 	}
 

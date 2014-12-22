@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header('Administration <small>organise your codey things</small>'); ?>
+echo $this->Bootstrap->page_header('Administration <small>organise your code-y things</small>'); ?>
 
 <div class="row">
     <div class="span2">
@@ -24,23 +24,7 @@ echo $this->Bootstrap->page_header('Administration <small>organise your codey th
         <div class="row-fluid">
             <?php
             echo $this->Form->create('ProjectGroup', array('class' => 'span12 well form-horizontal', 'action' => 'admin_add'));
-
-            echo '<h3>'.__('New project group details').'</h3>';
-
-            echo $this->Bootstrap->input("name", array(
-                "input" => $this->Form->text("name", array("class" => "span5")),
-            ));
-
-            echo $this->Bootstrap->input("description", array(
-                "input" => $this->Form->text("description", array("class" => "span11")),
-            ));
-
-            echo $this->Bootstrap->input("projects", array(
-				"input" => $this->Form->input('Project', array('label' => false, "size" => 20, "class" => "span11"))
-			));
-
-            echo $this->Bootstrap->button(__('Create'), array("style" => "primary", "size" => "large", 'class' => 'controls'));
-
+			echo $this->element("ProjectGroup/admin_form");
             echo $this->Form->end();
             ?>
         </div>

@@ -16,26 +16,26 @@
 if (!isset($draggable)){
     $draggable = false;
 }
-
 if(isset($span) && $span){
 	$span=" span$span";
 } else {
 	$span="";
 }
+$apiUrl = $this->Html->url(array(
+  	'controller' => 'tasks',
+	'action' => 'update',
+	'project' => $task['Project']['name'],
+	'api' => true,
+));
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
-		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."'>";
+		echo "<li class='draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl' data-taskStatus='".$task['TaskStatus']['name']."'>";
 	} else {
-		echo "<li class='$span'>";
+		echo "<li class='$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
 	}
 ?>
 <div id="task_<?= $task['Task']['public_id'] ?>" 
   class="task-container"
-  <?
-  // If it's a draggable item in the milestone board, do NOT make the whole thing a click target...
-  if(!$draggable){?>
-  onclick="location.href='<?= $this->Html->url($url) ?>';"
-  <?}?>
   data-taskid="<?= $task['Task']['public_id'] ?>">
     <div class="task">
         <div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
@@ -51,10 +51,15 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 									'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
 								)
 							) ?>
+							<?= $this->Html->link($this->Bootstrap->icon("pencil"), array(
+								'controller' => 'tasks',
+								'action' => 'edit',
+								'project' => $task['Project']['name'],
+								$task['Task']['public_id'],
+							), array('escape' => false, 'title' => __("Edit task"))) ?>
                         </p>
 
                         <?
-                        echo $this->Task->statusLabel($task['Task']['task_status_id']);
                         if (isset($task['Milestone']['id'])){
                             echo "<span class='label' title='".__('Milestone: %s', $task['Milestone']['subject'])."'>";
 							echo $this->Html->link($this->Bootstrap->icon("road", "white"), array(
@@ -66,31 +71,26 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 							echo "</span>";
                         }
 
-                        echo $this->Task->priority($task['Task']['task_priority_id']);
                         
-						if (!empty($task['DependsOn'])){
+						/*if (!empty($task['DependsOn'])){
                             if (!$task['Task']['dependenciesComplete']){
                                 echo "<span class='label label-important' title='Dependencies incomplete'>D</span>";
                             } else {
                                 echo "<span class='label label-success' title='Dependencies complete'>D</span>";
                             }
-                        }
+                        }*/
 
-						// Display story points or time estimate if we have one
-						if (!empty($task['Task']['story_points'])) {
-							echo "<span class='label hidden-phone hidden-tablet' title='Story points'>";
-							printf(ngettext("%d point", "%d points", $task['Task']['story_points']), $task['Task']['story_points']);
-							echo "</span>";
-							echo "<span class='label hidden-desktop' title='Story points'>";
-							echo $task['Task']['story_points'];
-							echo "</span>";
-						
-						} elseif (!empty($task['Task']['time_estimate']) && TimeString::parseTime($task['Task']['time_estimate']) > 0) {
-							echo "<span class='label' title='Time estimate'>";
-							echo "Est. ".$task['Task']['time_estimate'];
-							echo "</span>";
-						}
+						// Story points, with +/- buttons
                         ?>
+						<span class="btn-group btn-group-storypoints">
+						<?=$this->Bootstrap->button("-", array('class' => 'btn-inverse btn-storypoints'))?>
+						<?=$this->Bootstrap->button(__("<span class='points'>%d</span> SP", $task['Task']['story_points'] ?: 0), array('class' => 'disabled btn-inverse btn-storypoints', 'title' => __('Story points')))?>
+						<?=$this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints'))?>
+						</span>
+
+                        <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
+                        <?= $this->Task->priority($task['Task']['task_priority_id'], false) ?>
+						
                     </div>
                     <div class="span2 task-lozenge-assignee hidden-phone">
 					  <?if(isset($task['Assignee']['email'])){?>

@@ -57,16 +57,13 @@
 					);
 					echo " ";
 
-					// NB no h() as truncate() does it for us
-                    $subject = $this->Text->truncate(
-						$file['updated']['subject'], 100, array('exact' => false, 'html' => false)
-					);
-					echo $this->Html->link($subject, array(
-						'controller' => 'source',
-						'action' => 'commit',
-						'project' => $project['Project']['name'],
-						$file['updated']['hash']
-					));
+                    echo $this->Text->truncate($this->Source->linkStringToTasks(
+						$file['updated']['subject'],
+						$project['Project']['name'],
+						array(
+							'project' => $project['Project']['name'], 'action' => 'commit', $file['updated']['hash']
+						)
+					), 100, array('exact' => false, 'html' => true));
                 ?>
             </td>
         </tr>

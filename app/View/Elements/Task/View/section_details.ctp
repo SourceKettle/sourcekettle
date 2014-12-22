@@ -58,7 +58,7 @@
                 <dd class="muted"><?= __("No story point estimate")?></dd>
             <? } ?>
 
-            <dt><?= __("Depends on")?>:</dt>
+            <dt><?= __("Subtasks")?>:</dt>
 
             <dd>
             <?php
@@ -108,7 +108,7 @@
             <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>
             <dt><?= __("Last updated") ?>:</dt>
             <dd><?= $this->Time->timeAgoInWords($task['Task']['modified']) ?></dd>
-            <dt><?= __("Depended on by")?>:</dt>
+            <dt><?= __("Subtask of")?>:</dt>
             <dd>
             <?php
             foreach($task['DependedOnBy'] as $dep){
@@ -129,6 +129,12 @@
                 echo '<span class="muted">n/a</span>';
             } ?>
             </dd>
+			<dd><?=$this->Html->link(__("View dependency tree"), array(
+				'controller' => 'tasks',
+				'action' => 'tree',
+				'project' => $project['Project']['name'],
+				$task['Task']['public_id'],
+			))?></dd>
         </dl>
     </div>
 </div>

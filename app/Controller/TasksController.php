@@ -409,7 +409,7 @@ class TasksController extends AppProjectController {
 		);
 		$this->set('times', $times);
 		$this->set('tasks', $this->Task->fetchLoggableTasks($this->Auth->user('id')));
-		$collabs = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$collabs = $this->Task->Project->listCollaborators($project['Project']['id']);
 		$collabs[0] = "None";
 		ksort($collabs);
 		$this->set('collaborators', $collabs);
@@ -622,16 +622,34 @@ class TasksController extends AppProjectController {
 
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
-		$availableTasks = $this->Task->find('list', array(
-			'conditions' => array('project_id =' => $project['Project']['id']),
-			'fields'     => array('Task.id', 'Task.subject'),
+		$backlog = $this->Task->find('all', array(
+			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
+			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
+			'recursive' => -1,
 		));
+		$availableTasks = array();
+		foreach ($backlog as $t) {
+			$availableTasks[$t['Task']['id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
+		}
 
-		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$subTasks = array();
+		$parentTasks = array();
+
+		// If the user wants to create a subtask, put the parent task(s) in the correct list instead
+		if (isset($this->request->query['parent'])) {
+			$parents = preg_split('/\s*,\s*/', trim(@$this->request->query['parent']),   null, PREG_SPLIT_NO_EMPTY);
+			$parents = array_filter($parents, function($a){return is_numeric($a);});
+			foreach ($parents as $parent) {
+				$parentTasks[$parent] = $availableTasks[$parent];
+				unset($availableTasks[$parent]);
+			}
+		}
+
+		$assignees = $this->Task->Project->listCollaborators($project['Project']['id']);
 		$assignees[0] = "None";
 		ksort($assignees);
 
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'assignees'));
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'assignees'));
 	}
 
 /**
@@ -648,12 +666,29 @@ class TasksController extends AppProjectController {
 
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
-		$availableTasks = $this->Task->find('list', array(
+		$backlog = $this->Task->find('all', array(
 			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
-			'fields' => array('Task.id', 'Task.subject'),
+			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
+			'recursive' => -1,
 		));
+		$availableTasks = array();
+		foreach ($backlog as $t) {
+			$availableTasks[$t['Task']['id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
+		}
 
-		$assignees = $this->Task->Project->Collaborator->collaboratorsForProject($project['Project']['id']);
+		$subTasks = array();
+		foreach ($task['DependsOn'] as $subTask) {
+			$subTasks[$subTask['id']] = "#".$subTask['public_id']." ".$subTask['subject'];
+			unset($availableTasks[$subTask['id']]);
+		}
+
+		$parentTasks = array();
+		foreach ($task['DependedOnBy'] as $parentTask) {
+			$parentTasks[$parentTask['id']] = "#".$parentTask['public_id']." ".$parentTask['subject'];
+			unset($availableTasks[$parentTask['id']]);
+		}
+
+		$assignees = $this->Task->Project->listCollaborators($project['Project']['id']);
 		$assignees[0] = "None";
 		ksort($assignees);
 
@@ -681,7 +716,7 @@ class TasksController extends AppProjectController {
 		foreach ($this->request->data['DependsOn'] as $dep) {
 			$dependsOnTasks[$dep['id']] = $dep['subject'];
 		}
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'dependsOnTasks', 'assignees'));
+		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees'));
 	}
 
 /*
@@ -845,6 +880,12 @@ class TasksController extends AppProjectController {
 
 		$this->set('data',$data);
 		$this->render('/Elements/json');
+	}
+
+	public function tree($project = null, $public_id = null) {
+		$project = $this->_getProject($project);
+		$tree = $this->Task->getTree($project['Project']['id'], $public_id);
+		$this->set('tree', $tree);
 	}
 
 }

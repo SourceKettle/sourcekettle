@@ -66,4 +66,48 @@ class SourceHelper extends AppHelper {
 		), $full);
 		return "{$url}/{$file}/page:$page";
 	}
+
+	// Given a string (such as a commit subject), find any occurrences of "#<number>"
+	// and turn them into a link to a task, and escape the rest of the string.
+	// Optionally, the rest of the string can be linked to $linkRest.
+	public function linkStringToTasks($string, $project, $linkRest = null) {
+
+		// Get anything that's not a hash followed by a number and escape those bits of the string
+		$escapedParts = array_map('h', preg_split('/#[0-9]+/s', $string));
+
+		if ($linkRest) {
+			for ($i = 0; $i < count($escapedParts); $i++) {
+				$escapedParts[$i] = $this->Html->link($escapedParts[$i], $linkRest, array('escape' => false));
+			}
+		}
+		$linked = '';
+
+		// Now loop over all occurrences of task links...
+		while(preg_match('/^.*(#([0-9]+))(.*)$/s', $string, $matches)){
+
+			// Pull out the task bit...
+			$linkText =$matches[1];
+			$taskId = $matches[2];
+
+			// Convert to a link...
+			$link = $this->Html->link($linkText, array(
+				'project' => $project,
+				'controller' => 'tasks',
+				'action' => 'view',
+				$taskId
+			));
+
+			// Replace the part before the link with its escaped equivalent,
+			// then add it and the link to our final string
+			$linked .= array_shift($escapedParts) . $link;
+
+			// Next time round the loop, process anything after the link
+			$string = $matches[3];
+		}
+
+		// If there's any escaped stuff left, add it on the end...
+		$linked .= join("", $escapedParts);
+
+		return $linked;
+	}
 }

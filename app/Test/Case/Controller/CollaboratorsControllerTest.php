@@ -282,6 +282,12 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 	}
 
+	public function testDeleteForm() {
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/private/collaborators/delete/10', array('method' => 'get', 'return' => 'view'));
+		$this->assertRegexp('/<form action=".*\/project\/private\/collaborators\/delete\/10"/', $this->view);
+	}
+
 	public function testDeleteSystemAdmin() {
 		$this->_fakeLogin(5);
 		$ret = $this->testAction('/project/private/collaborators/delete/10', array('method' => 'get', 'return' => 'view'));

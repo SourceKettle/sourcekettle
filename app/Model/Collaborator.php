@@ -99,25 +99,6 @@ class Collaborator extends AppModel {
 		}
 	}
 
-/**
- * collaboratorsForProject function.
- * Return the collaborators for the specified project.
- *
- * @param mixed $project the project
- */
-	public function collaboratorsForProject($project = null) {
-		$users = array();
-		$collaborators = $this->find('all', array(
-			'conditions' => array('Collaborator.project_id' => $project)
-		));
-
-		foreach ($collaborators as $collaborator) {
-			//$collaborator = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
-			$users[$collaborator['User']['id']] = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
-		}
-		return $users;
-	}
-
 	public function accessLevelIdToName($accessLevel) {
 		if (!is_numeric($accessLevel)) {
 			return null;

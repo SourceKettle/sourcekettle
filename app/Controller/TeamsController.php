@@ -88,8 +88,10 @@ class TeamsController extends AppController {
 				$this->Session->setFlash(__('The team could not be saved. Please try again.'));
 			}
 		}
-		$users = $this->Team->User->find('list');
-		$this->set(compact('users'));
+
+		$nonMembers = $this->Team->User->find('list', array('order' => array('name')));
+		$members = array();
+		$this->set(compact('members', 'nonMembers'));
 		
 	}
 
@@ -110,7 +112,15 @@ class TeamsController extends AppController {
 			$this->request->data = $this->Team->find('first', $options);
 		}
 
-		$this->set('users', $this->Team->User->find('list', array('order' => array('name'))));
+		$team = $this->Team->findById($id);
+		$nonMembers = $this->Team->User->find('list', array('order' => array('name')));
+		$members = array();
+		foreach ($team['User'] as $member) {
+			$members[$member['id']] = $nonMembers[$member['id']];
+			unset($nonMembers[$member['id']]);
+		}
+
+		$this->set(compact('members', 'nonMembers'));
 	}
 
 	public function admin_delete($id = null) {

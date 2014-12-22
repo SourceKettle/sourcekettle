@@ -8,10 +8,14 @@
                     </div>
                     <div class="span11">
                         <h4>
-                            <?= $this->Html->link(
-                                $this->Text->truncate($commit['subject'], 50, array('exact' => false, 'html' => false)),
-                                array('project' => $project['Project']['name'], 'action' => 'commit', $commit['hash'])
-                            ) ?>
+                            <?= $this->Text->truncate($this->Source->linkStringToTasks(
+									$commit['subject'],
+									$project['Project']['name'],
+									array(
+										'project' => $project['Project']['name'], 'action' => 'commit', $commit['hash']
+									)
+								), 50, array('exact' => false, 'html' => true)
+							)?>
                             <small> modified <?= $this->Time->timeAgoinWords($commit['date']) ?></small>
                         </h4>
                     </div>
