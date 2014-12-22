@@ -1,0 +1,43 @@
+/**
+*
+* CSS for linked lists
+*
+* Licensed under The MIT License
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     SourceKettle Development Team 2014
+* @link          http://github.com/SourceKettle/sourcekettle
+* @package       SourceKettle.webroot.css
+* @since         SourceKettle v 1.5
+* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+*/
+
+.linkedList {
+  list-style-type: none;
+  min-height: 100px;
+  max-height: 300px;
+  overflow-y: scroll;
+  border-radius: 5px 5px 5px 5px;
+  margin: 0px;
+}
+
+.linkedListContainer {
+  background: #e0e0e0;
+}
+
+.linkedListContainer hr {
+  color: #232323;
+}
+
+.linkedListContainer h4 {
+  text-align: center;
+}
+
+.linkedList li {
+	cursor: pointer;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid black;
+	padding: 2px;
+	margin: 2px;
+}
+

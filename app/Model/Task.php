@@ -28,7 +28,7 @@ class Task extends AppModel {
  */
 	public $actsAs = array(
 		'ProjectComponent',
-		'ProjectHistory'
+		'ProjectHistory',
 	);
 
 /**
@@ -518,5 +518,34 @@ class Task extends AppModel {
 				'recursive' => 0,
 			)
 		);
+	}
+
+	public function getTree($projectId, $publicId, $seen = array()) {
+		$primary = $this->find('first', array(
+			'conditions' => array('Task.project_id' => $projectId, 'Task.public_id' => $publicId),
+		));
+
+		if (empty($primary)) {
+			return array();
+		}
+	
+		$subTasks = $primary['DependsOn'];
+		$primary['Task']['subTasks'] = array();
+
+		// Loop detection - if the subtask has already been seen, just add it and mark it as a dupe
+		if (in_array($publicId, $seen)) {
+			$primary['Task']['loop'] = true;
+			return $primary['Task'];
+		}
+
+		// Otherwise remember we've seen this task, then add its subtree
+		$seen[] = $primary['Task']['public_id'];
+		$primary['Task']['loop'] = false;
+
+		foreach ($subTasks as $subTask) {
+			$primary['Task']['subTasks'][] = $this->getTree($projectId, $subTask['public_id'], $seen);
+		}
+
+		return $primary['Task'];
 	}
 }

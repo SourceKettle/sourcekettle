@@ -15,6 +15,7 @@
  */
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
+$this->Html->script('milestones.droplist', array ('inline' => false));
 echo $this->DT->pHeader(__('Things to Do...'));
 ?>
 <div class="row-fluid">

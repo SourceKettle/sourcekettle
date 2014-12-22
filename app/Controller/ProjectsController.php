@@ -37,7 +37,7 @@ class ProjectsController extends AppProjectController {
 			'view'   => 'read',
 			'add' => 'login',
 			'fork' => 'read',
-			'edit'   => 'write',
+			'edit'   => 'admin',
 			'add_repo'   => 'admin',
 			'delete' => 'write',
 			'schedule' => 'read',

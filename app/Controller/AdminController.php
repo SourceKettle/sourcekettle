@@ -41,7 +41,6 @@ class AdminController extends AppController {
 
 		// Total number of users and projects
 		$numUsers = $this->User->find('count');
-		$numProjects = $this->Project->find('count');
 
 		// Number of projects by activity: recent, active, stale, dead
 		$projectsByActivity = array(
@@ -58,6 +57,7 @@ class AdminController extends AppController {
 			'order' => array('latest DESC'),
 		));
 		
+		$numProjects = 0;
 		foreach ($projects as $project) {
 			if ($project[0]['latest'] < $recentThreshold) {
 				$projectsByActivity['recent']++;
@@ -68,6 +68,7 @@ class AdminController extends AppController {
 			} else {
 				$projectsByActivity['dead']++;
 			}
+			$numProjects++;
 		}
 
 		// Anything with no project history is 'unused'

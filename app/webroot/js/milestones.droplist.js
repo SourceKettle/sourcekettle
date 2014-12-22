@@ -103,6 +103,7 @@ function initTaskDroplists(api_url_base) {
             var taskLozenge = ui.item;
             var taskID      = parseInt(taskLozenge.attr("data-taskid"), 10);
             var toStatus    = $(this).attr('data-taskstatus');
+            var fromStatus  = $(ui.sender).attr('data-taskstatus');
             var toPrio      = $(this).attr('data-taskpriority');
             var toMilestone = $(this).attr('data-milestone');
 
@@ -145,6 +146,7 @@ function initTaskDroplists(api_url_base) {
 	                            return (css.match (/\blabel-\S+/g) || []).join(' ');
 	                        });
 	                        statusLabel.addClass(taskStatusLabelTypes[toStatus]);
+							$(taskLozenge).attr('data-taskstatus', toStatus);
 
                             // Make sure the task is the correct span width for this column
                             newspan = 'span' + $(taskLozenge).parent().attr('data-taskspan');
@@ -153,6 +155,28 @@ function initTaskDroplists(api_url_base) {
 	                        });
 	                        $(taskLozenge).addClass(newspan);
 	                        
+							// Number of story points for the task
+							taskPoints = parseInt($(taskLozenge).find('.points').text());
+
+							// If we resolved the task, update the "completed story points" count
+							if (toStatus == 'resolved') {
+								$('#points_complete').text( parseInt($('#points_complete').text()) + taskPoints );
+
+							// If we dropped it, update the total points count
+							} else if (toStatus == 'dropped') {
+								$('#points_total').text( parseInt($('#points_total').text()) - taskPoints );
+							}
+
+							// If we un-resolved the task, update the "completed story points" count
+							if (fromStatus == 'resolved') {
+								$('#points_complete').text( parseInt($('#points_complete').text()) - taskPoints );
+
+							// If we un-dropped it, update the total points count
+							} else if (fromStatus == 'dropped') {
+								$('#points_total').text( parseInt($('#points_total').text()) + taskPoints );
+							}
+
+							//$('#points-complete').text( $('#points-complete').text() - 1 );
 	                    }
 	
 	                } else {
@@ -173,3 +197,53 @@ function initTaskDroplists(api_url_base) {
 
 
 }
+
+function setStoryPoints(button, difference) {
+	taskLozenge = $(button).parents('li').eq(0);
+	taskId = parseInt($(taskLozenge).attr('data-taskid'), 10);
+	taskStatus = $(taskLozenge).attr('data-taskstatus');
+	apiUrl = $(taskLozenge).attr('data-api-url');
+	pointsBox = $($(button).siblings('.disabled')[0]).find('.points');
+	points = parseInt($(pointsBox).text());
+	points += difference;
+	if (points <= 0) {return;}
+	var taskInfo = {
+		id : taskId,
+		story_points : points
+	};
+	$.ajax(apiUrl +'/' + taskId, {
+		"data" : taskInfo,
+		"dataType" : "json",
+		"type" : "post",
+		"success" : function (data) {
+			pointsBox.text(points);
+
+			if (taskStatus == 'closed' || taskStatus == 'resolved') {
+				$('#points_complete').text( parseInt($('#points_complete').text()) + difference );
+			}
+			if (taskStatus != 'dropped') {
+				$('#points_total').text( parseInt($('#points_total').text()) + difference );
+			}
+		},
+		"error" : function(data) {
+			alert("Story points update failed");
+		}
+	});
+}
+
+// Activate the +/- buttons for story points
+$(function(){
+	$('.btn-storypoints').each(function(index, button){
+		var type = $(button).text();
+		if (type == '+') {
+			$(button).on('click', function(event){
+				setStoryPoints(button, 1);
+			});
+		} else if (type == '-') {
+			$(button).on('click', function(event){
+				setStoryPoints(button, -1);
+			});
+		}
+
+	});
+});

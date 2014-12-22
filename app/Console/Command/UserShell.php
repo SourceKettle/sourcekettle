@@ -16,6 +16,18 @@ class UserShell extends AppShell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
+		$parser->addSubCommand('listUsers', array(
+			'help' => __('Lists all users'),
+			'parser' => array(
+				'description' => array(
+					__("Use this command to get a list of all the users in the system"),
+				),
+				'arguments' => array(
+				),
+				'options' => array(
+				)
+			)
+		));
 		$parser->addSubCommand('add', array(
 			'help' => __('Add a user account to the system, bypassing the registration process'),
 			'parser' => array(
@@ -115,6 +127,13 @@ class UserShell extends AppShell {
 		return $parser;
 	}
 
+	public function listUsers() {
+		$users = $this->User->find('list', array('fields' => array('name', 'email'), 'order' => array('name')));
+
+		foreach ($users as $name => $email) {
+			$this->out("$name <$email>");
+		}
+	}
 /**
  * Adds a user account
  */
