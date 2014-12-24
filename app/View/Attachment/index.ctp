@@ -23,7 +23,7 @@
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Attachment/topbar_add') ?>
+            <?= $this->element('Attachment/topbar') ?>
             <div class="span10">
 
             <?php if (!empty($attachments)) {

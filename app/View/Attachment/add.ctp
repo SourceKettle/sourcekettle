@@ -37,7 +37,7 @@ $hover_conditions = $this->Popover->popover(
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Attachment/topbar_add') ?>
+            <?= $this->element('Attachment/topbar') ?>
             <div class="span10">
                 <div class="row-fluid">
                     <div class="well uploadBox">
