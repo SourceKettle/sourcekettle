@@ -13,6 +13,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+$action = $this->request->action;
+
 if ($task['Task']['assignee_id'] != null) {
     if ($task['TaskStatus']['name'] == 'open') {
         $progress = array(
@@ -73,16 +75,29 @@ if ($task['TaskStatus']['name'] != 'closed') {
     $resolve = '';
  }
 
+if ($action == 'view') {
+	$primary = array(
+		'text' => __('Edit'),
+		'url' => array(
+			'action' => 'edit',
+			'controller' => 'tasks',
+			$id
+		),
+	);
+} else {
+	$primary = array(
+		'text' => __('View'),
+		'url' => array(
+			'action' => 'view',
+			'controller' => 'tasks',
+			$id
+		),
+	);
+}
+
  $options = array(
     'links' => array(
-		array(
-			'text' => __('Edit'),
-			'url' => array(
-				'action' => 'edit',
-				'controller' => 'tasks',
-				$id
-			),
-		),
+		$primary,
 		array(
 			'text' => __('Assign'),
 			'url' => '#assignModal',
