@@ -2,6 +2,7 @@
 /**
  *
  * Element for displaying the milestone topbar for the SourceKettle system
+
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -13,16 +14,11 @@
  * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if(isset($name)){
-	$pl = $this->Text->truncate(h($name), 20);
-} else{
-	$pl = '';
-}
-
 $action = $this->request['action'];
+
 // Viewing/editing a Milestone: give options to change it
 if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'burndown'){
-	$left = array(
+	$links = array(
 		array(
 		   'text' => __('View'),
 		   'url' => array(
@@ -70,12 +66,13 @@ if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'bu
 			   'controller' => 'milestones',
 			   $id
 		   ),
-		   'props' => array('class' => 'btn-danger'),
+		   'props' => array('class' => 'danger'), // TODO fix this make it red and all that
 	   ),
 	);
 
 	if(!$milestone['Milestone']['is_open']) {
-		$left[3] = array(
+		array_slice($links, 3, 1);
+		$links[3] = array(
 		   'text' => __('Re-Open'),
 		   'url' => array(
 			   'action' => 'reopen',
@@ -85,44 +82,38 @@ if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'bu
 		);
 	}
 
-	if($action == 'edit') {
-		$right = array();
-	} else {
-		$right = array(
-			array(
-				'text' => __('Create task'),
-				'url' => array(
-					'action' => 'add',
-					'controller' => 'tasks',
-					'?' => array(
-						'milestone' => $id,
-					),
+	if($action != 'edit') {
+		$links[] = array(
+			'text' => __('Create task'),
+			'url' => array(
+				'action' => 'add',
+				'controller' => 'tasks',
+				'?' => array(
+					'milestone' => $id,
 				),
-				'props' => array('class' => 'btn-primary'),
-			 ),
+			),
+			'pull-right' => true,
+			'active' => true,
 		);
 	}
 
 // No specific milestone (index): filter open/closed milestones
 } else {
-	$left = array(
-	   array(
-		   'text' => __('Open milestones'),
-		   'url' => array(
-			   'action' => 'open',
-			   'controller' => 'milestones',
-		   ),
-	   ),
-	   array(
-		   'text' => __('Closed milestones'),
-		   'url' => array(
-			   'action' => 'closed',
-			   'controller' => 'milestones',
-		   ),
-	   ),
-	);
-
-	$right = array(
+	$links = array(
+		array(
+			'text' => __('Open milestones'),
+			'url' => array(
+				'action' => 'open',
+				'controller' => 'milestones',
+			),
+		),
+		array(
+			'text' => __('Closed milestones'),
+			'url' => array(
+				'action' => 'closed',
+				'controller' => 'milestones',
+			),
+		),
 		array(
 			'text' => __('Create milestone'),
 			'url' => array(
@@ -130,16 +121,9 @@ if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'bu
 				'controller' => 'milestones',
 			),
 			'props' => array('class' => 'btn-primary'),
+			'pull-right' => true,
 		 ),
 	);
 }
 
-
-
-
-$options = array(
-	'left' => array($left),
-	'right' => array($right),
-);
-
-echo $this->element('Topbar/button', array('options' => $options, 'pl' => $pl));
+echo $this->element('Topbar/pills', array('options' => array('links' => $links)));

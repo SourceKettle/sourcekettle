@@ -51,7 +51,7 @@ $this->Html->scriptBlock("
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="row">
-        <?= $this->element('Source/topbar_commit') ?>
+        <?= $this->element('Source/topbar') ?>
         <div class="span10">
             <?= $this->element('Source/tree_commit_header_extended') ?>
         </div>

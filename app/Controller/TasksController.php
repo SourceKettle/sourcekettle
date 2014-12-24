@@ -716,7 +716,7 @@ class TasksController extends AppProjectController {
 		foreach ($this->request->data['DependsOn'] as $dep) {
 			$dependsOnTasks[$dep['id']] = $dep['subject'];
 		}
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees'));
+		$this->set(compact('task', 'taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees'));
 	}
 
 /*

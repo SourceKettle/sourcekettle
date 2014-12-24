@@ -12,12 +12,13 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
- $pl = __('Task')." #$id";
+
+$action = $this->request->action;
 
 if ($task['Task']['assignee_id'] != null) {
     if ($task['TaskStatus']['name'] == 'open') {
         $progress = array(
-            'text' => 'Start progress',
+            'text' => __('Start progress'),
             'url' => array(
                 'action' => 'starttask',
                 'controller' => 'tasks',
@@ -26,7 +27,7 @@ if ($task['Task']['assignee_id'] != null) {
         );
     } else if ($task['TaskStatus']['name'] == 'in progress') {
         $progress = array(
-            'text' => 'Stop progress',
+            'text' => __('Stop progress'),
             'url' => array(
                 'action' => 'stoptask',
                 'controller' => 'tasks',
@@ -41,22 +42,22 @@ if ($task['Task']['assignee_id'] != null) {
 }
 if ($task['TaskStatus']['name'] != 'closed') {
      $state = array(
-         'text' => __('Close task'),
-         'url' => '#closeModal',
-         'props' => array("data-toggle" => "modal", "class" => "btn-success")
+        'text' => __('Close task'),
+        'url' => '#closeModal',
+        'props' => array("data-toggle" => "modal")
      );
  } else {
      $state =  array(
-         'text' => __('Re-open task'),
-         'url' => array(
+        'text' => __('Re-open task'),
+        'url' => array(
             'action' => 'opentask',
             'controller' => 'tasks',
             $id
-         ),
+        ),
 
-         'props' => array("class" => "btn-info")
-     );
- }
+        'props' => array("class" => "btn-info")
+    );
+}
 
  if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     $resolve = array(
@@ -71,52 +72,59 @@ if ($task['TaskStatus']['name'] != 'closed') {
         'props' => array('data-toggle' => 'modal')
     );
  } else {
-     $resolve = '';
+    $resolve = '';
  }
 
+if ($action == 'view') {
+	$primary = array(
+		'text' => __('Edit'),
+		'url' => array(
+			'action' => 'edit',
+			'controller' => 'tasks',
+			$id
+		),
+	);
+} else {
+	$primary = array(
+		'text' => __('View'),
+		'url' => array(
+			'action' => 'view',
+			'controller' => 'tasks',
+			$id
+		),
+	);
+}
+
  $options = array(
-    'left' => array(
-        array(
-            array(
-                'text' => __('Edit'),
-                'url' => array(
-                    'action' => 'edit',
-                    'controller' => 'tasks',
-                    $id
-                ),
-            ),
-            array(
-                'text' => __('Assign'),
-                'url' => '#assignModal',
-                'props' => array('data-toggle' => 'modal'),
-            ),
-            $progress,
-            $resolve,
-            $state,
-        ),
-    ),
-    'right' => array(
-        array(
-            array(
-                'text' => __('Create Subtask'),
-                'url' => array(
-                    'action' => 'add',
-                    'controller' => 'tasks',
-					'?' => array('parent' => $id),
-                ),
-            ),
-        ),
-        array(
-            array(
-                'text' => __('Create Task'),
-                'url' => array(
-                    'action' => 'add',
-                    'controller' => 'tasks',
-                ),
-                'props' => array('class' => 'btn-primary'),
-            ),
+    'links' => array(
+		$primary,
+		array(
+			'text' => __('Assign'),
+			'url' => '#assignModal',
+			'props' => array('data-toggle' => 'modal'),
+		),
+		$progress,
+		$resolve,
+		$state,
+		array(
+			'text' => __('Create Task'),
+			'url' => array(
+				'action' => 'add',
+				'controller' => 'tasks',
+			),
+			'active' => true,
+			'pull-right' => true,
+		),
+		array(
+			'text' => __('Create Subtask'),
+			'url' => array(
+				'action' => 'add',
+				'controller' => 'tasks',
+				'?' => array('parent' => $id),
+			),
+			'pull-right' => true,
         ),
     ),
 );
 
-echo $this->element('Topbar/button', array('options' => $options, 'pl' => $pl));
+echo $this->element('Topbar/pills', array('options' => $options));
