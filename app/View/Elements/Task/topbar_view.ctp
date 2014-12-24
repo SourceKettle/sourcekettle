@@ -17,7 +17,7 @@
 if ($task['Task']['assignee_id'] != null) {
     if ($task['TaskStatus']['name'] == 'open') {
         $progress = array(
-            'text' => 'Start progress',
+            'text' => __('Start progress'),
             'url' => array(
                 'action' => 'starttask',
                 'controller' => 'tasks',
@@ -26,7 +26,7 @@ if ($task['Task']['assignee_id'] != null) {
         );
     } else if ($task['TaskStatus']['name'] == 'in progress') {
         $progress = array(
-            'text' => 'Stop progress',
+            'text' => __('Stop progress'),
             'url' => array(
                 'action' => 'stoptask',
                 'controller' => 'tasks',
@@ -43,7 +43,7 @@ if ($task['TaskStatus']['name'] != 'closed') {
      $state = array(
          'text' => __('Close task'),
          'url' => '#closeModal',
-         'props' => array("data-toggle" => "modal", "class" => "btn-success")
+         'props' => array("data-toggle" => "modal")
      );
  } else {
      $state =  array(
@@ -75,7 +75,7 @@ if ($task['TaskStatus']['name'] != 'closed') {
  }
 
  $options = array(
-    'left' => array(
+    'links' => array(
         array(
             array(
                 'text' => __('Edit'),
@@ -94,8 +94,17 @@ if ($task['TaskStatus']['name'] != 'closed') {
             $resolve,
             $state,
         ),
-    ),
-    'right' => array(
+        array(
+            array(
+                'text' => __('Create Task'),
+                'url' => array(
+                    'action' => 'add',
+                    'controller' => 'tasks',
+                ),
+				'active' => true,
+				'pull-right' => true,
+            ),
+        ),
         array(
             array(
                 'text' => __('Create Subtask'),
@@ -104,19 +113,10 @@ if ($task['TaskStatus']['name'] != 'closed') {
                     'controller' => 'tasks',
 					'?' => array('parent' => $id),
                 ),
-            ),
-        ),
-        array(
-            array(
-                'text' => __('Create Task'),
-                'url' => array(
-                    'action' => 'add',
-                    'controller' => 'tasks',
-                ),
-                'props' => array('class' => 'btn-primary'),
+				'pull-right' => true,
             ),
         ),
     ),
 );
 
-echo $this->element('Topbar/button', array('options' => $options, 'pl' => $pl));
+echo $this->element('Topbar/pills', array('options' => $options, 'pl' => $pl));
