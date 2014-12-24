@@ -47,7 +47,10 @@
         if (isset($option['dropdown'])) echo ' dropdown ';
         if (isset($option['pull-right'])) echo ' pull-right ';
         echo "\">";
-        echo $this->Html->link($option['text'], $option['url'], $properties);
+		$icon = '';
+		if (isset($option['icon-white'])) $icon = $this->Bootstrap->icon($option['icon-white'], 'white').' ';
+		elseif (isset($option['icon'])) $icon = $this->Bootstrap->icon($option['icon']).' ';
+        echo $this->Html->link($icon.$option['text'], $option['url'], $properties);
 		echo "</li>";
 
     }

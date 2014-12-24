@@ -13,73 +13,62 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  $options = array(
-    'left' => array(
+    'links' => array(
         array(
-            array(
-                'text' => __('Project summary'),
-                'url' => array(
-                    'action' => 'users',
-                    'controller' => 'times',
-                ),
+            'text' => __('Project summary'),
+            'url' => array(
+                'action' => 'users',
+                'controller' => 'times',
             ),
-            array(
-                'text' => __('Timesheets'),
-                'url' => array(
-                    'action' => 'history',
-                    'controller' => 'times',
-                ),
-			),
         ),
+        array(
+            'text' => __('Timesheets'),
+            'url' => array(
+                'action' => 'history',
+                'controller' => 'times',
+            ),
+		),
     ),
-    'right' => array(),
 );
 
 $action = $this->request['action'];
 if ($action != 'add' && $action != 'edit') {
-   $options['right'] = array(
-   		array(
-            array(
-                'text' => $this->Bootstrap->icon('pencil', 'white').' '.__('Log time'),
-                'url' => array(
-                    'action' => 'add',
-                    'controller' => 'times',
-                ),
-                'props' => array(
-					'class' => 'btn-primary',
-					'escape' => false
-				),
-            ),
-        )
+
+   $logLink = array(
+        'text' => __('Log time'),
+		'icon-white' => 'pencil',
+        'url' => array(
+            'action' => 'add',
+            'controller' => 'times',
+        ),
+		'active' => true,
+		'pull-right' => true,
     );
 
 	// If we have a start date available, pass a date through to the 'log time' page
 	if(isset($startDate)){
-		$options['right'][0][0]['url']['?'] = array('date' => $startDate->format('Y-m-d'));
+		$logLink['url']['?'] = array('date' => $startDate->format('Y-m-d'));
 	}
 
-
+	$options['links'][] = $logLink;
 	// Timesheet view - add a download link
 	if(isset($thisYear) && isset($thisWeek)){
-		array_unshift(
-			$options['right'][0],
-	        array(
-	            'text' => $this->Bootstrap->icon('download').' '.__('Get CSV'),
-	            'url' => array(
-	                'controller' => 'times',
-	                'action' => 'history',
-					'year' => $thisYear,
-					'week' => $thisWeek,
-					'?' => array(
-						'format' => 'csv'
-					),
-	            ),
-				'props' => array(
-					'escape' => false
-				)
-	        )
-		);
-	
+		$options['links'][] = array(
+	        'text' => __('Get CSV'),
+			'icon' => 'download',
+	        'url' => array(
+	            'controller' => 'times',
+	            'action' => 'history',
+				'year' => $thisYear,
+				'week' => $thisWeek,
+				'?' => array(
+					'format' => 'csv'
+				),
+	        ),
+			'pull-right' => true,
+	    );
 	}
+
 }
 
-echo $this->element('Topbar/button', array('options' => $options));
+echo $this->element('Topbar/pills', array('options' => $options));
