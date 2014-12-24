@@ -46,6 +46,7 @@ foreach ($branches as $branch) {
 				'action' => 'gettingStarted',
 				'controller' => 'source',
 			),
+			'active' => true,
 			'pull-right' => true,
 		),
 	),
