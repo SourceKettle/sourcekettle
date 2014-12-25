@@ -14,7 +14,6 @@
  */
 
 $action = $this->request->action;
-
 if ($task['Task']['assignee_id'] != null) {
     if ($task['TaskStatus']['name'] == 'open') {
         $progress = array(
@@ -120,7 +119,7 @@ if ($action == 'view') {
 			'url' => array(
 				'action' => 'add',
 				'controller' => 'tasks',
-				'?' => array('parent' => $id),
+				'?' => array('parent' => $task['Task']['id']), // TODO use public ID
 			),
 			'pull-right' => true,
         ),

@@ -88,6 +88,7 @@
 			"lists" => array(
 				__("Subtasks") => array('id' => 'subtasks-list', 'items' => $subTasks, 'tooltip' => __('The new task will depend on anything in this list')),
 				__("Unrelated tasks") => array('id' => 'backlog-list', 'items' => $availableTasks, 'tooltip' => __('The new task will not depend on anything in this list')),
+				// TODO this does not use public IDs yet, needs some work
 				__("Subtask of") => array('id' => 'parents-list', 'items' => $parentTasks, 'tooltip' => __('Anything in this list will depend on the new task')),
 			),
 		));
