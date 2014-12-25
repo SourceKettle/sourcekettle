@@ -45,32 +45,34 @@
         <h3><?=__("Most recent projects")?></h3>
         <div class='row'>
           <?
-             $options = array(
-                'left' => array(
-                    array(
-                        array(
-                            'text' => __("View all your projects"),
-                            'url' => array(
-                                'action' => '.',
-                                'controller' => 'projects',
-                            ),
-                        ),
-                    ),
-                ),
-                'right' => array(
-                    array(
-                        array(
-                            'text' => __("New Project"),
-                            'url' => array(
-                                'action' => 'add',
-                                'controller' => 'projects',
-                            ),
-                            'props' => array('class' => 'btn-primary'),
-                        ),
-                    ),
-                ),
+			 $options = array(
+			 	'links' => array(
+					array(
+						'text' => __("My projects"),
+						'url' => array(
+							'action' => '.',
+							'controller' => 'projects',
+						),
+					),
+					array(
+						'text' => __("Team projects"),
+						'url' => array(
+							'action' => 'team_projects',
+							'controller' => 'projects',
+						),
+					),
+					array(
+						'text' => __("New Project"),
+						'url' => array(
+							'action' => 'add',
+							'controller' => 'projects',
+						),
+						'active' => true,
+						'pull-right' => true,
+					),
+				),
             );
-            echo $this->element('Topbar/button', array('options' => $options, 'span' => 4));
+            echo $this->element('Topbar/pills', array('options' => $options, 'span' => 4));
 
           ?>
         </div>
