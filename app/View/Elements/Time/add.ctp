@@ -13,9 +13,6 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->Html->script('bootstrap-datepicker', array('block' => 'scriptBottom'));
-$this->Html->scriptBlock("$('.dp1').datepicker()", array('inline' => false));
-$this->Html->css('datepicker', null, array ('inline' => false));
 
 if (!isset($span)) {
     $span = 9;
@@ -41,14 +38,16 @@ echo $this->Bootstrap->input("description", array(
     "help_inline" => __("(Optional)")
 ));
 
-echo $this->Bootstrap->input("date", array(
-    "input" => $this->Form->text("date", array(
-        "class" => "dp1 span{$span}",
-        "value" => isset($this->request->data['Time'])
-            ? $this->request->data['Time']['date']
-            : date('Y-m-d', time()),
-        "data-date-format" => "yyyy-mm-dd")
-    ),
-    "label" => __("Date")
+if (isset($this->request->data['Time'])) {
+    $date = $this->request->data['Time']['date'];
+} else {
+    $date = date('Y-m-d', time());
+}
+
+echo $this->element('datepicker', array(
+	'name' => 'date',
+	'value' => $date,
+	'label' => __("Date"),
+	'classes' => array("span$span"),
 ));
 

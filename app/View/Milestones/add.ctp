@@ -13,11 +13,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->Html->script('bootstrap-datepicker', array('block' => 'scriptBottom'));
-$this->Html->scriptBlock("$('.dp1').datepicker()", array('inline' => false));
-$this->Html->css('datepicker', null, array ('inline' => false));
 $this->Html->css('milestones.index', null, array ('inline' => false));
-
 ?>
 
 <?= $this->DT->pHeader(__("New Milestone")) ?>

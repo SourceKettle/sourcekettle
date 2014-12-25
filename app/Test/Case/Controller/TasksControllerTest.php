@@ -6,7 +6,7 @@ require_once(__DIR__ . DS . 'AppControllerTest.php');
  * TasksController Test Case
  *
  */
-class TasksControllerTest extends AppControllerTest {
+class TasksControllerTest extends AppControllerTestBase {
 
 /**
  * Fixtures
