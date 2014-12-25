@@ -112,7 +112,6 @@ $link_plan= $this->Html->link(
     array(
         'class' => 'close edit milestone-quicklink',
 		'title' => __('Plan the milestone'),
-		//'title' => __('Plan the milestone'),
         'escape' => false
     )
 );

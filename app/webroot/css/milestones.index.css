@@ -39,3 +39,9 @@ hr {
 .burndown-chart {
 	min-height: 500px;
 }
+
+a.milestone-quicklink {
+	padding-top: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
