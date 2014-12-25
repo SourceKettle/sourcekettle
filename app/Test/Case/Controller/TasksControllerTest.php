@@ -51,6 +51,8 @@ class TasksControllerTest extends AppControllerTest {
 		parent::setUp("Tasks");
 	}
 
+
+	
 	public function testIndexFeatureDisabledOnSystem() {
 
 		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('task_enabled' => false))));
@@ -1024,6 +1026,7 @@ class TasksControllerTest extends AppControllerTest {
 		
 	}*/
 
+
 	public function testPersonalKanbanNotLoggedIn() {
 		
 		$this->testAction('/kanban', array('return' => 'view', 'method' => 'get'));
@@ -1137,4 +1140,6 @@ class TasksControllerTest extends AppControllerTest {
 		$completed = array_map(function($a){return $a['Task']['id'];}, $this->vars['completed']);
 		$this->assertEquals(array(18, 19), $completed);
 	}
+
+	
 }

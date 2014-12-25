@@ -90,6 +90,7 @@ class TasksController extends AppProjectController {
 			'api_view' => 'read',
 			'api_update' => 'write',
 			'personal_kanban' => 'login',
+			'team_kanban' => 'login',
 		);
 	}
 
