@@ -2,7 +2,7 @@
 
 // Include CSS and JavaScript for the bootstrap datepicker
 $this->Html->script('/bootstrap-datepicker/js/bootstrap-datepicker.js', array('inline' => false, 'once' => true));
-$this->Html->script('activate-datepickers.js', array('inline' => false, 'once' => true));
+$this->Html->script('elements/datepicker.js', array('inline' => false, 'once' => true));
 $this->Html->css('/bootstrap-datepicker/css/datepicker.css', null, array('inline' => false, 'once' => true));
 
 // Set defaults
