@@ -188,6 +188,8 @@
 /* Line up the story points buttons nicely with the other labels */
 .btn-storypoints {
   padding: 1px;
+  padding-left: 4px;
+  padding-right: 4px;
   margin-bottom: 2px;
   font-size: 11px;
   line-height: 13px;
