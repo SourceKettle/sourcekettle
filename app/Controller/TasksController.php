@@ -71,6 +71,7 @@ class TasksController extends AppProjectController {
 			'nobody'  => 'read',
 			'all'  => 'read',
 			'view'   => 'read',
+			'tree'   => 'read',
 			'comment' => 'write',
 			'deleteComment' => 'write',
 			'updateComment' => 'write',
