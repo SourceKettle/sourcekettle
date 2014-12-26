@@ -72,7 +72,7 @@
 					),
 				),
             );
-            echo $this->element('Topbar/pills', array('options' => $options, 'span' => 4));
+            echo $this->element('Topbar/pills', array('options' => $options, 'span' => 6));
 
           ?>
         </div>
