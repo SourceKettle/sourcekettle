@@ -15,8 +15,8 @@
  */
 
 $this->Html->css('pages/source', null, array ('inline' => false));
-$this->Html->css('prettify/prettify', null, array ('inline' => false));
-$this->Html->script('prettify/prettify', array('block' => 'scriptBottom'));
+$this->Html->css('/prettify/prettify', null, array ('inline' => false));
+$this->Html->script('/prettify/prettify', array('block' => 'scriptBottom'));
 $this->Html->scriptBlock("prettyPrint()", array('inline' => false));
 
 // Base url for the view
