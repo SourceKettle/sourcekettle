@@ -16,8 +16,6 @@
 
 $this->Html->css('tasks.index', null, array ('inline' => false));
 $this->Html->css("milestones.index", null, array ('inline' => false));
-$this->Html->script("jquery-ui.min", array ('inline' => false));
-$this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
 $this->Html->script("milestones.droplist", array ('inline' => false));
 
 $draggable = true;

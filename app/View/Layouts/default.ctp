@@ -127,7 +127,9 @@
     </div>
 
     <!-- JavaScript! Placed at the end of the file for faster page loading -->
-    <?= $this->Html->script('jquery-1.11.0.min.js'); ?>
+    <?= $this->Html->script('/jquery/jquery-1.11.0.min.js'); ?>
+    <?= $this->Html->script('/jquery-ui/jquery-ui-1.10.4.min.js'); ?>
+	<?= $this->Html->script('/jquery-color/jquery.color-2.1.2.min', array('inline' => false)); ?>
     <?= $this->Html->script('/bootstrap/bootstrap.min') ?>
     <?= $this->Popover->requirements() ?>
     <?= $this->fetch('scriptBottom') ?>

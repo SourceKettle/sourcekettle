@@ -14,7 +14,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<?=$this->Html->script('jquery.color-2.1.2.min', array('inline' => false))?>
 <?=$this->Html->script('/flot/jquery.flot.min', array('inline' => false))?>
 <?=$this->Html->script('/flot/jquery.flot.pie.min', array('inline' => false))?>
 <?=$this->Html->css('projects.overview', null, array ('inline' => false));?>
