@@ -16,8 +16,8 @@
 
 
 $this->Html->css('time.tempo', null, array ('inline' => false));
-$this->Html->css('jquery.dataTables', null, array ('inline' => false));
-$this->Html->script('jquery.dataTables.min', array ('inline' => false));
+$this->Html->css('/datatables/jquery.datatables-1.9.4.css', null, array ('inline' => false));
+$this->Html->script('/datatables/jquery.datatables-1.9.4.min.js', array ('inline' => false));
 
 echo $this->element('Time/modal_add');
 
