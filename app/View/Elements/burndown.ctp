@@ -1,7 +1,7 @@
 <?php
-$this->Html->script('jquery.flot.min', array('inline' => false));
-$this->Html->script('jquery.flot.categories.min', array('inline' => false));
-$this->Html->script('jquery.flot.stack.min', array('inline' => false));
+$this->Html->script('/flot/jquery.flot.min', array('inline' => false));
+$this->Html->script('/flot/jquery.flot.categories.min', array('inline' => false));
+$this->Html->script('/flot/jquery.flot.stack.min', array('inline' => false));
 $this->Html->script ("burndown", array ('inline' => false));
 ?>
 

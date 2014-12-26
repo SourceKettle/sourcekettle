@@ -1,7 +1,7 @@
 
 <?=$this->Html->script('jquery.color-2.1.2.min', array('inline' => false))?>
-<?=$this->Html->script('jquery.flot.min', array('inline' => false))?>
-<?=$this->Html->script('jquery.flot.pie.min', array('inline' => false))?>
+<?=$this->Html->script('/flot/jquery.flot.min', array('inline' => false))?>
+<?=$this->Html->script('/flot/jquery.flot.pie.min', array('inline' => false))?>
 <?=$this->Html->script('times.breakdown', array('inline' => false))?>
 <?=$this->Html->css('time.breakdown', null, array('inline' => false))?>
 
