@@ -123,6 +123,12 @@ class AppControllerTestBase extends ControllerTestCase {
 	// account which can access everything, but in practice it doesn't work because it's
 	// not in the authorization map. Annoying.
 	public function testAuthorizationMappingsAreSetUpCorrectly() {
+
+		// This stops the AppControllerTestCase itself erroring out (it shouldn't run any tests anyway)
+		if (!isset($this->controller)) {
+			return true;
+		}
+
 		$reflector = new ReflectionClass($this->controller);
 		
 		// First check if the controller's an AppProjectController... if not, skip
