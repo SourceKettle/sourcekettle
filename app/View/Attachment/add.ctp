@@ -15,7 +15,7 @@
  */
 
 $this->Html->css('pages/attachments', null, array ('inline' => false));
-$this->Html->script('bootstrap-fileupload', array('block' => 'scriptBottom'));
+$this->Html->script('/bootstrap-fileupload/bootstrap-fileupload', array('block' => 'scriptBottom'));
 $this->Html->scriptBlock("$(function () { $('#fileupload').fileupload() });");
 
 $hover_conditions = $this->Popover->popover(

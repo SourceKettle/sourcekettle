@@ -13,7 +13,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->Html->script(array('bootstrap-tooltip'), array('inline' => false));
+$this->Html->script(array('/bootstrap-tooltip/bootstrap-tooltip'), array('inline' => false));
 $this->Html->scriptBlock("$('.task-lozenge p.task-subject a').tooltip()", array('inline' => false));
 if (!isset($draggable)){
     $draggable = false;

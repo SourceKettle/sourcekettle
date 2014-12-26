@@ -26,13 +26,13 @@
     
 	<?= $this->Html->charset('UTF-8') ?>
 
-    <?= $this->Html->css('bootstrap.min') ?>
+    <?= $this->Html->css('/bootstrap/bootstrap.min') ?>
 
 	<?= $this->Theme->css($sourcekettle_config) ?>
 
     <?= $this->Html->css('layout'); ?>
 
-    <?= $this->Html->css('bootstrap-responsive.min') ?>
+    <?= $this->Html->css('/bootstrap/bootstrap-responsive.min') ?>
 
     <?= $this->fetch ('css') ?>
 
@@ -128,7 +128,7 @@
 
     <!-- JavaScript! Placed at the end of the file for faster page loading -->
     <?= $this->Html->script('jquery-1.11.0.min.js'); ?>
-    <?= $this->Html->script('bootstrap.min') ?>
+    <?= $this->Html->script('/bootstrap/bootstrap.min') ?>
     <?= $this->Popover->requirements() ?>
     <?= $this->fetch('scriptBottom') ?>
     <?= $scripts_for_layout ?>
