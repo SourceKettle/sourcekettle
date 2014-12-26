@@ -26,8 +26,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'timestamp' => '2013-01-04 16:20:53',
-			'milestone_id' => 1,
+			'timestamp' => '2013-01-04 13:20:53',
+			'milestone_id' => 2,
 			'open_task_count' => 1,
 			'open_minutes_count' => 1,
 			'open_points_count' => 1,
@@ -37,7 +37,7 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 2,
-			'timestamp' => '2014-10-26 16:20:53',
+			'timestamp' => '2013-01-04 16:20:53',
 			'milestone_id' => 2,
 			'open_task_count' => 2,
 			'open_minutes_count' => 2,
@@ -48,8 +48,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 3,
-			'timestamp' => '2014-10-26 16:20:53',
-			'milestone_id' => 3,
+			'timestamp' => '2013-01-05 16:10:53',
+			'milestone_id' => 2,
 			'open_task_count' => 3,
 			'open_minutes_count' => 3,
 			'open_points_count' => 3,
@@ -59,8 +59,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 4,
-			'timestamp' => '2014-10-26 16:20:53',
-			'milestone_id' => 4,
+			'timestamp' => '2013-01-05 16:20:53',
+			'milestone_id' => 2,
 			'open_task_count' => 4,
 			'open_minutes_count' => 4,
 			'open_points_count' => 4,
@@ -70,8 +70,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 5,
-			'timestamp' => '2014-10-26 16:20:53',
-			'milestone_id' => 5,
+			'timestamp' => '2013-01-06 16:20:53',
+			'milestone_id' => 2,
 			'open_task_count' => 5,
 			'open_minutes_count' => 5,
 			'open_points_count' => 5,
@@ -81,8 +81,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 6,
-			'timestamp' => '2014-10-26 16:20:53',
-			'milestone_id' => 6,
+			'timestamp' => '2013-01-07 16:20:53',
+			'milestone_id' => 2,
 			'open_task_count' => 6,
 			'open_minutes_count' => 6,
 			'open_points_count' => 6,
@@ -92,8 +92,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 7,
-			'timestamp' => '2014-10-26 16:20:53',
-			'milestone_id' => 7,
+			'timestamp' => '2013-01-08 16:20:53',
+			'milestone_id' => 2,
 			'open_task_count' => 7,
 			'open_minutes_count' => 7,
 			'open_points_count' => 7,
@@ -103,8 +103,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 8,
-			'timestamp' => '2014-10-26 16:20:53',
-			'milestone_id' => 8,
+			'timestamp' => '2013-01-09 16:20:53',
+			'milestone_id' => 2,
 			'open_task_count' => 8,
 			'open_minutes_count' => 8,
 			'open_points_count' => 8,
@@ -114,8 +114,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 9,
-			'timestamp' => '2014-10-26 16:20:53',
-			'milestone_id' => 9,
+			'timestamp' => '2013-01-10 16:20:53',
+			'milestone_id' => 2,
 			'open_task_count' => 9,
 			'open_minutes_count' => 9,
 			'open_points_count' => 9,
@@ -125,8 +125,8 @@ class MilestoneBurndownLogFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 10,
-			'timestamp' => '2014-10-26 16:20:53',
-			'milestone_id' => 10,
+			'timestamp' => '2013-01-11 16:20:53',
+			'milestone_id' => 2,
 			'open_task_count' => 10,
 			'open_minutes_count' => 10,
 			'open_points_count' => 10,

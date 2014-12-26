@@ -137,11 +137,6 @@ class MilestoneTest extends CakeTestCase {
 		), $milestone['Tasks']);
 	}
 	
-/**
- * testOpenTasksForMilestone method
- *
- * @return void
- */
 	public function testOpenTasksForMilestone() {
 
 		$openTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'open');
@@ -160,11 +155,6 @@ class MilestoneTest extends CakeTestCase {
 
 	}
 
-/**
- * testInProgressTasksForMilestone method
- *
- * @return void
- */
 	public function testInProgressTasksForMilestone() {
 
 		$inProgressTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'in progress');
@@ -182,11 +172,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(6, 4), $inProgressTasks);
 	}
 
-/**
- * testResolvedTasksForMilestone method
- *
- * @return void
- */
 	public function testResolvedTasksForMilestone() {
 
 		$resolvedTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'resolved');
@@ -204,11 +189,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(7), $resolvedTasks);
 	}
 
-/**
- * testClosedTasksForMilestone method
- *
- * @return void
- */
 	public function testClosedTasksForMilestone() {
 
 		$closedTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'closed');
@@ -226,11 +206,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(8), $closedTasks);
 	}
 
-/**
- * testClosedOrResolvedTasksForMilestone method
- *
- * @return void
- */
 	public function testClosedOrResolvedTasksForMilestone() {
 
 		$closedOrResolvedTasks = $this->Milestone->tasksOfStatusForMilestone(1, array('closed', 'resolved'));
@@ -243,11 +218,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(8, 7), $closedOrResolvedTasks);
 	}
 
-/**
- * testDroppedTasksForMilestone method
- *
- * @return void
- */
 	public function testDroppedTasksForMilestone() {
 
 		$droppedTasks = $this->Milestone->tasksOfStatusForMilestone(1, 'dropped');
@@ -265,11 +235,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(9), $droppedTasks);
 	}
 
-/**
- * testBlockerTasksForMilestone method
- *
- * @return void
- */
 	public function testBlockerTasksForMilestone() {
 
 		$blockerTasks = $this->Milestone->tasksOfPriorityForMilestone(1, 'blocker');
@@ -287,11 +252,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(6, 8), $blockerTasks);
 	}
 
-/**
- * testUrgentTasksForMilestone method
- *
- * @return void
- */
 	public function testUrgentTasksForMilestone() {
 
 		$urgentTasks = $this->Milestone->tasksOfPriorityForMilestone(1, 'urgent');
@@ -309,11 +269,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(4, 5), $urgentTasks);
 	}
 
-/**
- * testMajorTasksForMilestone method
- *
- * @return void
- */
 	public function testMajorTasksForMilestone() {
 
 		$majorTasks = $this->Milestone->tasksOfPriorityForMilestone(1, 'major');
@@ -331,11 +286,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(7), $majorTasks);
 	}
 
-/**
- * testMinorTasksForMilestone method
- *
- * @return void
- */
 	public function testMinorTasksForMilestone() {
 
 		$minorTasks = $this->Milestone->tasksOfPriorityForMilestone(1, 'minor');
@@ -353,11 +303,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEqual(array(2, 9), $minorTasks);
 	}
 
-/**
- * testGetOpenMilestones method
- *
- * @return void
- */
 	public function testGetOpenMilestones() {
 		$this->Milestone->Project->id = 2;
 		$openMilestones = $this->Milestone->getOpenMilestones();
@@ -366,11 +311,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEquals(array(1, 3), $openMilestones);
 	}
 
-/**
- * testGetClosedMilestones method
- *
- * @return void
- */
 	public function testGetClosedMilestones() {
 		$this->Milestone->Project->id = 2;
 		$closedMilestones = $this->Milestone->getClosedMilestones();
@@ -379,11 +319,6 @@ class MilestoneTest extends CakeTestCase {
 		$this->assertEquals(array(2), $closedMilestones);
 	}
 
-/**
- * testShiftTasks method
- *
- * @return void
- */
 
  	public function testShiftTasksNull() {
 		$this->assertFalse($this->Milestone->shiftTasks(null));
@@ -514,11 +449,6 @@ class MilestoneTest extends CakeTestCase {
 	}
 
 
-/**
- * testFetchHistory method
- *
- * @return void
- */
 	public function testFetchHistory() {
 		$history = $this->Milestone->fetchHistory(2);
 		$this->assertEquals($history, array(array(
@@ -572,6 +502,109 @@ class MilestoneTest extends CakeTestCase {
 				2 => 'Sprint 2',
 			),
 		), $options);
+	}
+
+	public function testFetchBurndownLog() {
+		
+		// Pull out all logs for milestone 2 from before and after we actually have logs
+		$log = $this->Milestone->fetchBurndownLog(2, new DateTime('2012-12-30'), new DateTime('2013-01-12'));
+		$this->assertEquals(array(
+			'2012-12-29' => array(
+				'open'   => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+				'closed' => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+			),
+			'2012-12-30' => array(
+				'open'   => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+				'closed' => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+			),
+			'2012-12-31' => array(
+				'open'   => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+				'closed' => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+			),
+			'2013-01-01' => array(
+				'open'   => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+				'closed' => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+			),
+			'2013-01-02' => array(
+				'open'   => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+				'closed' => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+			),
+			'2013-01-03' => array(
+				'open'   => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+				'closed' => array('points' => 0, 'tasks' => 0, 'minutes' => 0,),
+			),
+			'2013-01-04' => array(
+				'open'   => array('points' => 2, 'tasks' => 2, 'minutes' => 2,),
+				'closed' => array('points' => 2, 'tasks' => 2, 'minutes' => 2,),
+			),
+			'2013-01-05' => array(
+				'open'   => array('points' => 4, 'tasks' => 4, 'minutes' => 4,),
+				'closed' => array('points' => 4, 'tasks' => 4, 'minutes' => 4,),
+			),
+			'2013-01-06' => array(
+				'open'   => array('points' => 5, 'tasks' => 5, 'minutes' => 5,),
+				'closed' => array('points' => 5, 'tasks' => 5, 'minutes' => 5,),
+			),
+			'2013-01-07' => array(
+				'open'   => array('points' => 6, 'tasks' => 6, 'minutes' => 6,),
+				'closed' => array('points' => 6, 'tasks' => 6, 'minutes' => 6,),
+			),
+			'2013-01-08' => array(
+				'open'   => array('points' => 7, 'tasks' => 7, 'minutes' => 7,),
+				'closed' => array('points' => 7, 'tasks' => 7, 'minutes' => 7,),
+			),
+			'2013-01-09' => array(
+				'open'   => array('points' => 8, 'tasks' => 8, 'minutes' => 8,),
+				'closed' => array('points' => 8, 'tasks' => 8, 'minutes' => 8,),
+			),
+			'2013-01-10' => array(
+				'open'   => array('points' => 9, 'tasks' => 9, 'minutes' => 9,),
+				'closed' => array('points' => 9, 'tasks' => 9, 'minutes' => 9,),
+			),
+			'2013-01-11' => array(
+				'open'   => array('points' => 10, 'tasks' => 10, 'minutes' => 10,),
+				'closed' => array('points' => 10, 'tasks' => 10, 'minutes' => 10,),
+			),
+			'2013-01-12' => array(
+				'open'   => array('points' => 10, 'tasks' => 10, 'minutes' => 10,),
+				'closed' => array('points' => 10, 'tasks' => 10, 'minutes' => 10,),
+			),
+			'2013-01-13' => array(
+				'open'   => array('points' => 10, 'tasks' => 10, 'minutes' => 10,),
+				'closed' => array('points' => 10, 'tasks' => 10, 'minutes' => 10,),
+			),
+		), $log);
+
+		// Now pull out a slice of the logs
+		$log = $this->Milestone->fetchBurndownLog(2, new DateTime('2013-01-05'), new DateTime('2013-01-08'));
+		$this->assertEquals(array(
+			'2013-01-04' => array(
+				'open'   => array('points' => 2, 'tasks' => 2, 'minutes' => 2,),
+				'closed' => array('points' => 2, 'tasks' => 2, 'minutes' => 2,),
+			),
+			'2013-01-05' => array(
+				'open'   => array('points' => 4, 'tasks' => 4, 'minutes' => 4,),
+				'closed' => array('points' => 4, 'tasks' => 4, 'minutes' => 4,),
+			),
+			'2013-01-06' => array(
+				'open'   => array('points' => 5, 'tasks' => 5, 'minutes' => 5,),
+				'closed' => array('points' => 5, 'tasks' => 5, 'minutes' => 5,),
+			),
+			'2013-01-07' => array(
+				'open'   => array('points' => 6, 'tasks' => 6, 'minutes' => 6,),
+				'closed' => array('points' => 6, 'tasks' => 6, 'minutes' => 6,),
+			),
+			'2013-01-08' => array(
+				'open'   => array('points' => 7, 'tasks' => 7, 'minutes' => 7,),
+				'closed' => array('points' => 7, 'tasks' => 7, 'minutes' => 7,),
+			),
+			// TODO I'm not sure this is quite right?
+			'2013-01-09' => array(
+				'open'   => array('points' => 7, 'tasks' => 7, 'minutes' => 7,),
+				'closed' => array('points' => 7, 'tasks' => 7, 'minutes' => 7,),
+			),
+		), $log);
+
 	}
 
 }

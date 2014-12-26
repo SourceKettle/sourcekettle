@@ -465,7 +465,6 @@ class Milestone extends AppModel {
 
 		// Go one day over the end too
 		$fakeEnd->add(new DateInterval('P1D'));
-		$hasMore = count($log);
 
 		while ($fakeEnd->diff($current)->days > 0) {
 			$current->add(new DateInterval('P1D'));
@@ -477,8 +476,7 @@ class Milestone extends AppModel {
 				$last_closed_points = $log[$day]['closed']['points'];
 				$last_closed_tasks = $log[$day]['closed']['tasks'];
 				$last_closed_minutes = $log[$day]['closed']['minutes'];
-				$hasMore--;
-			} else { //if($hasMore > 0) {
+			} else { 
 				$log[$day] = array(
 					'open' => array(
 						'points'  => @$last_open_points ?: 0,
