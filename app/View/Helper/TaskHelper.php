@@ -22,7 +22,7 @@ class TaskHelper extends AppHelper {
  * @var string
  * @access public
  */
-	public $helpers = array('Html', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'));
+	public $helpers = array('Html', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'Gravatar');
 
 /**
  * priority function.
@@ -85,6 +85,17 @@ class TaskHelper extends AppHelper {
 		$label .= $this->Bootstrap->button(__("<span class='points'>%d</span> SP", $task['Task']['story_points'] ?: 0), array('class' => 'disabled btn-inverse btn-storypoints', 'title' => __('Story points')));
 		$label .= $this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints'));
 		$label .= "</span>";
+		return $label;
+	}
+
+	public function assigneeLabel($task) {
+		$label = "<div class=\"span2 task-lozenge-assignee\">";
+		if(isset($task['Assignee']['email'])){
+			$label .= $this->Gravatar->image($task['Assignee']['email'], array(), array('alt' => $task['Assignee']['name']));
+		} else {
+			$label .= $this->Gravatar->image('', array('d' => 'mm'), array('alt' => $task['Assignee']['name']));
+		}
+		$label .= "</div>";
 		return $label;
 	}
 

@@ -7,16 +7,16 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     SourceKettle Development Team 2012
- * @link          http://github.com/SourceKettle/sourcekettle
- * @package       SourceKettle.View.Elements.Task
- * @since         SourceKettle v 0.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	 SourceKettle Development Team 2012
+ * @link		  http://github.com/SourceKettle/sourcekettle
+ * @package	   SourceKettle.View.Elements.Task
+ * @since		 SourceKettle v 0.1
+ * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 $this->Html->script(array('/bootstrap-tooltip/bootstrap-tooltip'), array('inline' => false));
 $this->Html->scriptBlock("$('.task-lozenge p.task-subject a').tooltip()", array('inline' => false));
 if (!isset($draggable)){
-    $draggable = false;
+	$draggable = false;
 }
 if(isset($span) && $span){
 	$span=" span$span";
@@ -39,13 +39,13 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 <div id="task_<?= $task['Task']['public_id'] ?>" 
   class="task-container"
   data-taskid="<?= $task['Task']['public_id'] ?>">
-    <div class="task">
-        <div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
-            <div class="row-fluid">
-                <div>
-                    <div class="span10">
-                        <p class="task-subject">
-                            <?= $this->Html->link(
+	<div class="task">
+		<div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
+			<div class="row-fluid">
+				<div>
+					<div class="span10">
+						<p class="task-subject">
+							<?= $this->Html->link(
 								'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
 								$url,
 								array(
@@ -59,24 +59,18 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 								'project' => $task['Project']['name'],
 								$task['Task']['public_id'],
 							), array('escape' => false, 'title' => __("Edit task"))) ?>
-                        </p>
+						</p>
 
-                        <?= $this->Task->storyPointsLabel($task) ?>
-                        <?= $this->Task->priority($task['Task']['task_priority_id'], false) ?>
-                        <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
-                        <?= $this->Task->milestoneLabel($task) ?>
+						<?= $this->Task->storyPointsLabel($task) ?>
+						<?= $this->Task->priority($task['Task']['task_priority_id'], false) ?>
+						<?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
+						<?= $this->Task->milestoneLabel($task) ?>
 						
-                    </div>
-                    <div class="span2 task-lozenge-assignee hidden-phone">
-					  <?if(isset($task['Assignee']['email'])){?>
-                        <?= $this->Gravatar->image($task['Assignee']['email'], array(), array('alt' => $task['Assignee']['name'])) ?>
-					  <?} else {?>
-                        <?= $this->Gravatar->image('', array('d' => 'mm'), array('alt' => $task['Assignee']['name'])) ?>
-					  <?}?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+					</div>
+					<?= $this->Task->assigneeLabel($task) ?>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 </li>
