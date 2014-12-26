@@ -31,7 +31,7 @@ echo $this->DT->pHeader(__('Things to Do...'));
             <hr />
 			<ul class="sprintboard-droplist">
 			  <? foreach ($tasks as $task) { ?>
-			  <?= $this->element('Task/lozenge', array('task' => $task, 'span' => 3)) ?>
+			  <?= $this->element('Task/lozenge', array('task' => $task, 'span' => 4)) ?>
 			  <? } ?>
 			</ul>
 		</div>
