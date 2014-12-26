@@ -7,7 +7,7 @@ App::uses('User', 'Model');
  * AppController Test Case
  * Holds common Fixture IDs and mocks for controllers
  */
-class AppControllerTestBase extends ControllerTestCase {
+class AppControllerTest extends ControllerTestCase {
 
     public $authUserId;
 
