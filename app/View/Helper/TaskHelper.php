@@ -64,6 +64,30 @@ class TaskHelper extends AppHelper {
 
 	}
 
+	public function milestoneLabel($task) {
+		$label = "";
+		if (isset($task['Milestone']['id'])){
+			$label .= "<span class='label' title='".__('Milestone: %s', $task['Milestone']['subject'])."'>";
+			$label .= $this->Html->link($this->Bootstrap->icon("road", "white"), array(
+				'controller' => 'milestones',
+				'action' => 'view',
+				'project' => $task['Project']['name'],
+				$task['Milestone']['id'],
+			), array('escape' => false));
+			$label .= "</span>";
+		}
+		return $label;
+	}
+
+	public function storyPointsLabel($task) {
+		$label = "<span class=\"btn-group btn-group-storypoints\">";
+		$label .= $this->Bootstrap->button("-", array('class' => 'btn-inverse btn-storypoints'));
+		$label .= $this->Bootstrap->button(__("<span class='points'>%d</span> SP", $task['Task']['story_points'] ?: 0), array('class' => 'disabled btn-inverse btn-storypoints', 'title' => __('Story points')));
+		$label .= $this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints'));
+		$label .= "</span>";
+		return $label;
+	}
+
 /**
  * type function.
  *

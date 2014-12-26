@@ -61,37 +61,10 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 							), array('escape' => false, 'title' => __("Edit task"))) ?>
                         </p>
 
-                        <?
-                        if (isset($task['Milestone']['id'])){
-                            echo "<span class='label' title='".__('Milestone: %s', $task['Milestone']['subject'])."'>";
-							echo $this->Html->link($this->Bootstrap->icon("road", "white"), array(
-								'controller' => 'milestones',
-								'action' => 'view',
-								'project' => $task['Project']['name'],
-								$task['Milestone']['id'],
-							), array('escape' => false));
-							echo "</span>";
-                        }
-
-                        
-						/*if (!empty($task['DependsOn'])){
-                            if (!$task['Task']['dependenciesComplete']){
-                                echo "<span class='label label-important' title='Dependencies incomplete'>D</span>";
-                            } else {
-                                echo "<span class='label label-success' title='Dependencies complete'>D</span>";
-                            }
-                        }*/
-
-						// Story points, with +/- buttons
-                        ?>
-						<span class="btn-group btn-group-storypoints">
-						<?=$this->Bootstrap->button("-", array('class' => 'btn-inverse btn-storypoints'))?>
-						<?=$this->Bootstrap->button(__("<span class='points'>%d</span> SP", $task['Task']['story_points'] ?: 0), array('class' => 'disabled btn-inverse btn-storypoints', 'title' => __('Story points')))?>
-						<?=$this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints'))?>
-						</span>
-
-                        <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
+                        <?= $this->Task->storyPointsLabel($task) ?>
                         <?= $this->Task->priority($task['Task']['task_priority_id'], false) ?>
+                        <?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
+                        <?= $this->Task->milestoneLabel($task) ?>
 						
                     </div>
                     <div class="span2 task-lozenge-assignee hidden-phone">
