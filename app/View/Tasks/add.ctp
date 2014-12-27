@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks.add', null, array ('inline' => false));
+$this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->scriptBlock ("
 		jQuery(function() {
 			$('#unselect-all').click (function() {

@@ -16,7 +16,7 @@
 
 $this->Html->css('time.tempo', null, array ('inline' => false));
 $this->Html->css('pages/help', null, array ('inline' => false));
-$this->Html->css('tasks.index', null, array ('inline' => false));
+$this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css("milestones.index", null, array ('inline' => false));
 $this->Html->script('help.milestones', array('inline' => false));
 $this->Html->script('help', array('inline' => false));

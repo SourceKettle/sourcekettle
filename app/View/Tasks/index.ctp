@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks.index', null, array ('inline' => false));
+$this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->script('milestones.droplist', array ('inline' => false));
 echo $this->DT->pHeader(__('Things to Do...'));
 ?>

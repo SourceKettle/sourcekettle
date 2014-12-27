@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks.index', null, array ('inline' => false));
+$this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css('projects.index', null, array ('inline' => false));
 ?>
 <?= $this->DT->pHeader(__("Milestone schedule")) ?>
