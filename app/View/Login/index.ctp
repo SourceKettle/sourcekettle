@@ -21,7 +21,7 @@
         <div class="row-fluid">
             <h1><?=__("Login to %s", $sourcekettle_config['UserInterface']['alias']['value'])?></h1>
 			<?php if($sourcekettle_config['Users']['register_enabled']['value']){?>
-            <p><?=__("Don't have an account?")?> <?= $this->Html->link(__('Register here'), '/register') ?></p>
+            <p><?=__("Don't have an account?")?> <?= $this->Html->link(__('Register here'), array('controller' => 'users', 'action' => 'register')) ?></p>
 			<?php } ?>
 
             <?php
@@ -31,7 +31,7 @@
 
             echo $this->Bootstrap->input(__("password"), array(
                 "input" => $this->Form->password("password", array('class'=>'span12', 'escape'=>false, 'tabindex'=>'2')),
-                "label" => __("Password (%s)", $this->Html->link(__('Forgot?'),'/users/lost_password')),
+                "label" => __("Password (%s)", $this->Html->link(__('Forgot?'), array('controller' => 'users', 'action' => 'lost_password'))),
             ));
 
             echo $this->Bootstrap->button(__("Login"), array("style" => "primary", "size" => "large", 'class' => 'controls', 'tabindex'=>'3'));

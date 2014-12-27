@@ -74,11 +74,6 @@
 								<li><?= $this->Html->link(__('Log Out'), array ('admin' => false, 'controller' => 'login', 'action' => 'logout')) ?></li>
 							</ul>
 						</li>
-					<? } else { ?>
-						<li>
-							<?= $this->Html->link('<i class="icon-user icon-white"></i> '.__('Login'), array ('controller' => 'login'), array('escape' => false, 'id' => 'login-button')) ?>
-						</li>
-					<? } ?>
 					</ul>
 					<div class="nav-collapse">
 						<ul class="nav">
@@ -106,6 +101,16 @@
 						?>
 						</ul>
 					</div>
+					<? } else { ?>
+						</ul>
+        				<?= $this->Form->create('User', array('url' => array('controller' => 'login', 'action' => 'index'))) ?>
+							<div class="form-group navbar-login">
+							<?=$this->Form->text("email", array("placeholder" => __("email address"), 'tabindex'=>'1', 'autofocus' => ''))?>
+							<?=$this->Form->password("password", array("placeholder" => __("password"), 'tabindex'=>'2'))?>
+							<?=$this->Form->button("Log in", array('type' => 'submit', 'class' => 'btn btn-primary', 'tabindex'=>'3'))?>
+							</div>
+						</form>
+					<? } ?>
 				</div>
 			</div>
 		</div>

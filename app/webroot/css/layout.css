@@ -89,3 +89,8 @@ h1, h2, h3 {
 color: #000000;
 background-color: #c50000;
 }
+
+.navbar-login input{
+	margin-top: 6px;
+	margin-bottom: 0px;
+}
