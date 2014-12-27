@@ -23,7 +23,7 @@
 ?>
 
 
-<div class="row">
+<div class="row-fluid">
     <div class="span6">
       <h3>Assigned tasks</h3>
 	  <? if (!$sourcekettle_config['Features']['task_enabled']['value']) {?>
@@ -34,7 +34,7 @@
 	  	echo "</p>";
 	    echo "<ul class='sprintboard-droplist'>";
         foreach ($tasks as $task){
-          echo $this->element('Task/lozenge', array('task' => $task, 'span' => 6));
+          echo $this->element('Task/lozenge', array('task' => $task, 'span' => 12));
         }
 		echo "</ul>";
       } else {
@@ -72,7 +72,7 @@
 					),
 				),
             );
-            echo $this->element('Topbar/pills', array('options' => $options, 'span' => 6));
+            echo $this->element('Topbar/pills', array('options' => $options, 'span' => 12));
 
           ?>
         </div>
