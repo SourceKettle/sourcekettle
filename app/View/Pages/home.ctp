@@ -14,7 +14,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->element('cookieInfo');
+if (!isset($_SESSION['sk-cookies-accepted'])) {
+	echo $this->element('cookieInfo');
+}
 
 // Load the sysadmin-configurable home page content out of the Config directory
 $basedir = realpath(dirname(__FILE__).'/../../');

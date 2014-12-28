@@ -34,9 +34,26 @@ class TaskHelper extends AppHelper {
 	public function priority($id, $textLabel = true) {
 		$tooltip = __("Priority: %s", h($this->_View->viewVars['task_priorities'][$id]['label']));
 		$label = $textLabel? '<span class="hidden-phone hidden-tablet">'.h($this->_View->viewVars['task_priorities'][$id]['label']).'</span> ' : '';
-		$icon  = $this->_View->viewVars['task_priorities'][$id]['icon'];
+		$icon  = $this->Bootstrap->icon(
+			$this->_View->viewVars['task_priorities'][$id]['icon'],
+			"white"
+		);
 		$class = $this->_View->viewVars['task_priorities'][$id]['class'];
-		return $this->Bootstrap->label($label . $this->Bootstrap->icon($icon, "white"), "inverse", array('class' => "taskpriority $class", "title" => $tooltip));
+
+		$button = '<span class="btn-group lozenge-dropdown" title="'.h($tooltip).'">';
+		$button .= '<button class="label label-'.$class.' dropdown-toggle" data-toggle="dropdown">'.$icon.' '.$label.'</button>';
+		$button .= '<ul class="dropdown-menu">';
+
+		foreach ($this->_View->viewVars['task_priorities'] as $priorityId => $priority) {
+			$priorityIcon = $this->Bootstrap->icon(
+				$priority['icon']
+			);
+			$button .= '<li><a class="label" title="'.$priority['label'].'" href="#" onclick="updateTaskPriority($taskId, $priorityId); return false;">'.$priorityIcon.' '.$priority['label'].'</a></li>';
+		}
+		$button .= '</ul>';
+		$button .= '</span>';
+
+		return $button;
 	}
 
 /**
@@ -56,11 +73,22 @@ class TaskHelper extends AppHelper {
  * @param mixed $id
  * @return void
  */
-	public function statusLabel($id) {
+	public function statusLabel($id, $taskId = 0) {
 		$tooltip = __("Status: %s", h($this->_View->viewVars['task_statuses'][$id]['label']));
 		$label = $this->_View->viewVars['task_statuses'][$id]['label'];
 		$class = $this->_View->viewVars['task_statuses'][$id]['class'];
-		return $this->Bootstrap->label($label, $class, array ("class" => "taskstatus", "title" => $tooltip));
+
+		$button = '<span class="btn-group lozenge-dropdown" title="'.h($tooltip).'">';
+		$button .= '<button class="label label-'.$class.' dropdown-toggle" data-toggle="dropdown">'.$label.'</button>';
+		$button .= '<ul class="dropdown-menu">';
+
+		foreach ($this->_View->viewVars['task_statuses'] as $statusId => $status) {
+			$button .= '<li><a class="label label-'.$status['class'].'" href="#" onclick="updateTaskStatus($taskId, $statusId); return false;">'.$status['label'].'</a></li>';
+		}
+		$button .= '</ul>';
+		$button .= '</span>';
+
+		return $button;
 
 	}
 

@@ -63,7 +63,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 
 						<?= $this->Task->storyPointsLabel($task) ?>
 						<?= $this->Task->priority($task['Task']['task_priority_id'], false) ?>
-						<?= $this->Task->statusLabel($task['Task']['task_status_id']) ?>
+						<?= $this->Task->statusLabel($task['Task']['task_status_id'], $task['Task']['public_id']) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
 						
 					</div>
