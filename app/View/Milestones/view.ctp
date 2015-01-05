@@ -26,8 +26,12 @@ $api_base = $this->Html->url(array(
 	'api' => true
 ));
 $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
-
 ?>
+
+<?= $this->Task->typeDropdownMenu() ?>
+<?= $this->Task->statusDropdownMenu() ?>
+<?= $this->Task->priorityDropdownMenu() ?>
+<?= $this->Task->assigneeDropdownMenu($milestone['Milestone']['project_id']) ?>
 
 <?= $this->DT->pHeader(__("Milestone board: '%s'", $milestone['Milestone']['subject'])) ?>
 <div class="row">

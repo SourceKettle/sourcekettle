@@ -16,10 +16,16 @@
 
 $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->script("tasks", array ('inline' => false));
+?>
 
-echo $this->element('Task/modal_close');
-echo $this->element('Task/modal_assign');
+<?= $this->Task->typeDropdownMenu() ?>
+<?= $this->Task->statusDropdownMenu() ?>
+<?= $this->Task->priorityDropdownMenu() ?>
+<?= $this->Task->assigneeDropdownMenu($task['Task']['project_id']) ?>
+<?= $this->element('Task/modal_close') ?>
+<?=  $this->element('Task/modal_assign') ?>
 
+<?
 if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     echo $this->element('Task/modal_resolve');
 } else if ($task['TaskStatus']['name'] == 'resolved'){

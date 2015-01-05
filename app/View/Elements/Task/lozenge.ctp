@@ -15,6 +15,7 @@
  */
 $this->Html->script(array('/bootstrap-tooltip/bootstrap-tooltip'), array('inline' => false));
 $this->Html->scriptBlock("$('.task-lozenge p.task-subject a').tooltip()", array('inline' => false));
+$this->Html->script("tasks", array ('inline' => false));
 if (!isset($draggable)){
 	$draggable = false;
 }
@@ -36,11 +37,12 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 		echo "<li class='task-lozenge $span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
 	}
 ?>
+
 <div id="task_<?= $task['Task']['public_id'] ?>" 
   class="task-container"
   data-taskid="<?= $task['Task']['public_id'] ?>">
 	<div class="task">
-		<div class="well type_bar_<?= h($task['TaskType']['name']) ?>">
+		<div class="well taskwell type_bar_<?= h($task['TaskType']['name']) ?>">
 			<div class="row-fluid">
 				<div>
 					<div class="span10">
@@ -62,8 +64,8 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						</p>
 
 						<?= $this->Task->storyPointsLabel($task) ?>
-						<?= $this->Task->priority($task['Task']['task_priority_id'], false) ?>
-						<?= $this->Task->statusLabel($task['Task']['task_status_id'], $task['Task']['public_id']) ?>
+						<?= $this->Task->priorityDropdownButton($task['Task']['public_id'], $task['Task']['task_priority_id'], false) ?>
+						<?= $this->Task->statusDropdownButton($task['Task']['public_id'], $task['Task']['task_status_id']) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
 						
 					</div>

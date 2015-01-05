@@ -44,7 +44,7 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
         <?php
 
         echo $this->Bootstrap->input("name", array(
-            "input" => $this->Form->text("name", array('autofocus' => '')),
+            "input" => $this->Form->text("name", array('class' => 'span3', 'autofocus' => '')),
             "help_block" => "The 'short' name your project will be known by<br>(must be a valid $hover_unix_name name)"
         ));
 

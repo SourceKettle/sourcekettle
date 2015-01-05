@@ -53,15 +53,17 @@
 
 .task {
   cursor: pointer;
+  position: relative;
 }
 
 .task > .well {
 	padding:3px 5px;
 
 	/* Fix the height so lozenges aren't irregular */
-	/*min-height: 2.5em;
-	max-height: 2.5em;*/
 	height: 2.5em;
+
+	/* Anything that doesn't fit in the lozenge, just hide it... */
+	overflow: hidden;
 	background: #d3d3d3; /* TODO: doesn't work properly with Bootswatch themes */
 
 	-webkit-border-radius:4px 0 0 4px;
@@ -284,27 +286,23 @@ form {
 	top: 100px;
 }
 
-/* Make sure dropdowns for status/priority on tasks are vertical */
-.lozenge-dropdown {
-	white-space: normal;
-}
-
 /* Make sure the dropdown items are one per line and the background looks roughly right */
-.lozenge-dropdown .dropdown-menu {
+.task-dropdown-menu {
 	background-color: #d3d3d3;
 	min-width: 0px;
 	padding-right: 3px;
 	padding-left: 1px;
 	padding-top: 2px;
 	padding-bottom: 1px;
+	width: auto;
 }
 
-.lozenge-dropdown .dropdown-menu li {
-	width: 100%;
+.task-dropdown-menu li {
+	display: block;
 }
 
 /* Make status/priority selectors look the same as the normal labels */
-.lozenge-dropdown .dropdown-menu a{
+.task-dropdown-menu li a{
 	color: #ffffff;
 	padding-left: 4px;
 	padding-right: 4px;

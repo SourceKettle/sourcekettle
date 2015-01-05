@@ -16,82 +16,105 @@
 class TaskHelper extends AppHelper {
 
 
-/**
- * helpers
- *
- * @var string
- * @access public
- */
 	public $helpers = array('Html', 'Bootstrap' => array('className' => 'TwitterBootstrap.TwitterBootstrap'), 'Gravatar');
 
-/**
- * priority function.
- *
- * @access public
- * @param mixed $id
- * @return void
- */
-	public function priority($id, $textLabel = true) {
-		$tooltip = __("Priority: %s", h($this->_View->viewVars['task_priorities'][$id]['label']));
-		$label = $textLabel? '<span class="hidden-phone hidden-tablet">'.h($this->_View->viewVars['task_priorities'][$id]['label']).'</span> ' : '';
-		$icon  = $this->Bootstrap->icon(
-			$this->_View->viewVars['task_priorities'][$id]['icon'],
-			"white"
-		);
-		$class = $this->_View->viewVars['task_priorities'][$id]['class'];
 
-		$button = '<span class="btn-group lozenge-dropdown" title="'.h($tooltip).'">';
-		$button .= '<button class="label label-'.$class.' dropdown-toggle" data-toggle="dropdown">'.$icon.' '.$label.'</button>';
-		$button .= '<ul class="dropdown-menu">';
+	// Renders a dropdown menu box for setting task priorities
+ 	public function priorityDropdownMenu() {
+		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_priority_dropdown">';
 
 		foreach ($this->_View->viewVars['task_priorities'] as $priorityId => $priority) {
 			$priorityIcon = $this->Bootstrap->icon(
-				$priority['icon']
+				$priority['icon'],
+				"white"
 			);
-			$button .= '<li><a class="label" title="'.$priority['label'].'" href="#" onclick="updateTaskPriority($taskId, $priorityId); return false;">'.$priorityIcon.' '.$priority['label'].'</a></li>';
+			$dropdown .= '<li><a class="label" title="'.__("Set priority: %s", h($priority['label'])).'" href="#">'.$priorityIcon.' '.$priority['label'].'</a></li>';
 		}
-		$button .= '</ul>';
-		$button .= '</span>';
+		$dropdown .= '</ul>';
+		return $dropdown;
+	}
 
+
+	// Renders a priority label/button that will activate the priority dropdown menu
+	// set $taskId to null to just render a label instead with no button
+	public function priorityDropdownButton($taskId, $priorityId, $textLabel = true) {
+
+		// Always add a nice tooltip on hover
+		$tooltip = __("Priority: %s", h($this->_View->viewVars['task_priorities'][$priorityId]['label']));
+		// If we're using a label, make it hidden on small displays
+		$label = $textLabel? '<span class="hidden-phone hidden-tablet">'.h($this->_View->viewVars['task_priorities'][$priorityId]['label']).'</span> ' : '';
+
+		// Always show the icon
+		$icon  = $this->Bootstrap->icon(
+			$this->_View->viewVars['task_priorities'][$priorityId]['icon'],
+			"white"
+		);
+
+		// Button class, if any
+		$class = $this->_View->viewVars['task_priorities'][$priorityId]['class'];
+
+		// If we've got no task ID, just render a label and no dropdown
+		if ($taskId == null) {
+			$button = '<span class="label label-'.h($class).'">'.$icon.' '.$label.'</span>';
+		} else {
+			$button = '<button class="label label-'.h($class).' task-dropdown" data-toggle="task_priority_dropdown">'.$icon.' '.$label.'</button>';
+		}
 		return $button;
 	}
 
-/**
- * status function.
- *
- * @access public
- * @param mixed $id
- * @return void
- */
-	public function status($id) {
-		return $this->_View->viewVars['task_statuses'][$id]['label'];
-	}
-
-/**
- * Get a label to show the status of a task
- * @access public
- * @param mixed $id
- * @return void
- */
-	public function statusLabel($id, $taskId = 0) {
-		$tooltip = __("Status: %s", h($this->_View->viewVars['task_statuses'][$id]['label']));
-		$label = $this->_View->viewVars['task_statuses'][$id]['label'];
-		$class = $this->_View->viewVars['task_statuses'][$id]['class'];
-
-		$button = '<span class="btn-group lozenge-dropdown" title="'.h($tooltip).'">';
-		$button .= '<button class="label label-'.$class.' dropdown-toggle" data-toggle="dropdown">'.$label.'</button>';
-		$button .= '<ul class="dropdown-menu">';
+	public function statusDropdownMenu() {
+		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_status_dropdown">';
 
 		foreach ($this->_View->viewVars['task_statuses'] as $statusId => $status) {
-			$button .= '<li><a class="label label-'.$status['class'].'" href="#" onclick="updateTaskStatus($taskId, $statusId); return false;">'.$status['label'].'</a></li>';
+			$dropdown .= '<li><a class="label label-'.$status['class'].'" title="'.__("Set status: %s", $status['label']).'" href="#">'.$status['label'].'</a></li>';
 		}
-		$button .= '</ul>';
-		$button .= '</span>';
+		$dropdown .= '</ul>';
 
+		return $dropdown;
+
+	}
+
+	public function statusDropdownButton($taskId, $statusId) {
+		$tooltip = __("Status: %s", h($this->_View->viewVars['task_statuses'][$statusId]['label']));
+		$label = $this->_View->viewVars['task_statuses'][$statusId]['label'];
+		$class = $this->_View->viewVars['task_statuses'][$statusId]['class'];
+
+		// If we've got no task ID, just render a label and no dropdown
+		if ($taskId == null) {
+			$button = '<span class="label label-'.h($class).'">'.h($label).'</span>';
+		} else {
+			$button = '<button class="label label-'.h($class).' task-dropdown" data-toggle="task_status_dropdown">'.h($label).'</button>';
+		}
 		return $button;
 
 	}
 
+	public function typeDropdownMenu() {
+		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_type_dropdown">';
+
+		foreach ($this->_View->viewVars['task_types'] as $typeId => $type) {
+			$dropdown .= '<li><a class="label label-'.$type['class'].'" title="'.__("Set type: %s", $type['label']).'" href="#">'.$type['label'].'</a></li>';
+		}
+		$dropdown .= '</ul>';
+
+		return $dropdown;
+
+	}
+
+	public function typeDropdownButton($taskId, $typeId) {
+		$tooltip = __("Type: %s", h($this->_View->viewVars['task_types'][$typeId]['label']));
+		$label = $this->_View->viewVars['task_types'][$typeId]['label'];
+		$class = $this->_View->viewVars['task_types'][$typeId]['class'];
+
+		// If we've got no task ID, just render a label and no dropdown
+		if ($taskId == null) {
+			$button = '<span class="label label-'.h($class).'">'.h($label).'</span>';
+		} else {
+			$button = '<button class="label label-'.h($class).' task-dropdown" data-toggle="task_type_dropdown">'.h($label).'</button>';
+		}
+		return $button;
+
+	}
 	public function milestoneLabel($task) {
 		$label = "";
 		if (isset($task['Milestone']['id'])){
@@ -108,9 +131,12 @@ class TaskHelper extends AppHelper {
 	}
 
 	public function storyPointsLabel($task) {
+		$points = $task['Task']['story_points'] ?: 0;
 		$label = "<span class=\"btn-group btn-group-storypoints\">";
 		$label .= $this->Bootstrap->button("-", array('class' => 'btn-inverse btn-storypoints'));
-		$label .= $this->Bootstrap->button(__("<span class='points'>%d</span> SP", $task['Task']['story_points'] ?: 0), array('class' => 'disabled btn-inverse btn-storypoints', 'title' => __('Story points')));
+		$label .= $this->Bootstrap->button(__("<span class='points'>%d</span>", $points), array(
+			'class' => 'disabled btn-inverse btn-storypoints',
+			'title' => __n('%d story point', '%d story points', $points, $points)));
 		$label .= $this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints'));
 		$label .= "</span>";
 		return $label;
@@ -125,19 +151,6 @@ class TaskHelper extends AppHelper {
 		}
 		$label .= "</div>";
 		return $label;
-	}
-
-/**
- * type function.
- *
- * @access public
- * @param mixed $id
- * @return void
- */
-	public function type($id) {
-		$label = $this->_View->viewVars['task_types'][$id]['label'];
-		$class = $this->_View->viewVars['task_types'][$id]['class'];
-		return $this->Bootstrap->label($label, $class);
 	}
 
 	public function treeRender($projectName, $tree) {
