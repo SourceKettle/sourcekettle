@@ -79,6 +79,9 @@ class TaskHelper extends AppHelper {
 		$label = $this->_View->viewVars['task_statuses'][$statusId]['label'];
 		$class = $this->_View->viewVars['task_statuses'][$statusId]['class'];
 
+		// TODO display full length status name if the lozenge is large enough
+		$label = strtoupper(substr($label, 0, 1));
+
 		// If we've got no task ID, just render a label and no dropdown
 		if ($taskId == null) {
 			$button = '<span class="label label-'.h($class).'">'.h($label).'</span>';
@@ -130,14 +133,18 @@ class TaskHelper extends AppHelper {
 		return $label;
 	}
 
-	public function storyPointsLabel($task) {
+	public function storyPointsControl($task, $full = false) {
 		$points = $task['Task']['story_points'] ?: 0;
 		$label = "<span class=\"btn-group btn-group-storypoints\">";
-		$label .= $this->Bootstrap->button("-", array('class' => 'btn-inverse btn-storypoints'));
+		$label .= $this->Bootstrap->button("-", array('title' => __('Decrease story points'), 'class' => 'btn-inverse btn-storypoints'));
 		$label .= $this->Bootstrap->button(__("<span class='points'>%d</span>", $points), array(
 			'class' => 'disabled btn-inverse btn-storypoints',
 			'title' => __n('%d story point', '%d story points', $points, $points)));
-		$label .= $this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints'));
+		$label .= $this->Bootstrap->button("+", array('title' => __('Increase story points'), 'class' => 'btn-inverse btn-storypoints'));
+
+		if ($full) {
+			$label .= __(" story points");
+		}
 		$label .= "</span>";
 		return $label;
 	}

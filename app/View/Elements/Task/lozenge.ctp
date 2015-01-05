@@ -63,7 +63,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 							), array('escape' => false, 'title' => __("Edit task"))) ?>
 						</p>
 
-						<?= $this->Task->storyPointsLabel($task) ?>
+						<?= $this->Task->storyPointsControl($task) ?>
 						<?= $this->Task->priorityDropdownButton($task['Task']['public_id'], $task['Task']['task_priority_id'], false) ?>
 						<?= $this->Task->statusDropdownButton($task['Task']['public_id'], $task['Task']['task_status_id']) ?>
 						<?= $this->Task->milestoneLabel($task) ?>

@@ -53,7 +53,7 @@
             <? } ?>
 
             <? if (isset($task['Task']['story_points'])) { ?>
-                <dd><?=$task['Task']['story_points']?> <?= __("points")?></dd>
+                <dd><?=$this->Task->storyPointsControl($task, true)?></dd>
             <? } else { ?>
                 <dd class="muted"><?= __("No story point estimate")?></dd>
             <? } ?>
