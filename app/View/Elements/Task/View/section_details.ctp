@@ -102,7 +102,7 @@
                 <dd class="muted">Not set</dd>
             <? } ?>
             <dt><?= __("Task status") ?>:</dt>
-			<dd><?= $this->Task->statusDropdownButton($task['Task']['public_id'], $task['Task']['task_status_id']) ?></dd>
+			<dd><?= $this->Task->statusDropdownButton($task['Task']['public_id'], $task['Task']['task_status_id'], true) ?></dd>
 
             <dt><?= __("Created") ?>:</dt>
             <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>

@@ -74,13 +74,15 @@ class TaskHelper extends AppHelper {
 
 	}
 
-	public function statusDropdownButton($taskId, $statusId) {
+	public function statusDropdownButton($taskId, $statusId, $full = false) {
 		$tooltip = __("Status: %s", h($this->_View->viewVars['task_statuses'][$statusId]['label']));
 		$label = $this->_View->viewVars['task_statuses'][$statusId]['label'];
 		$class = $this->_View->viewVars['task_statuses'][$statusId]['class'];
 
 		// TODO display full length status name if the lozenge is large enough
-		$label = strtoupper(substr($label, 0, 1));
+		if (!$full) {
+			$label = strtoupper(substr($label, 0, 1));
+		}
 
 		// If we've got no task ID, just render a label and no dropdown
 		if ($taskId == null) {

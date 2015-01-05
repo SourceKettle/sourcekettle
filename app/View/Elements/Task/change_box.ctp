@@ -38,7 +38,7 @@
             );
             break;
         case 'task_status_id':
-            $pop_over = 'status: '.$this->Task->statusDropdownButton(null, $old).' &rarr; '.$this->Task->statusDropdownButton(null, $new);
+            $pop_over = 'status: '.$this->Task->statusDropdownButton(null, $old, true).' &rarr; '.$this->Task->statusDropdownButton(null, $new, true);
             break;
         default:
             $old = ($old) ? $old : '<small>empty</small>';
