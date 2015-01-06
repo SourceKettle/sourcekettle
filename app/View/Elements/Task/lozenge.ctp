@@ -44,9 +44,10 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 	<div class="task">
 		<div class="well taskwell type_bar_<?= h($task['TaskType']['name']) ?>">
 			<div class="row-fluid">
-				<div>
-					<div class="span10">
-						<p class="task-subject">
+
+					<div class="span9 task-lozenge-main">
+						<span class="task-subject row-fluid">
+						<p class="span12">
 							<?= $this->Html->link(
 								'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
 								$url,
@@ -55,22 +56,23 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 									'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
 								)
 							) ?>
-							<?= $this->Html->link($this->Bootstrap->icon("pencil"), array(
-								'controller' => 'tasks',
-								'action' => 'edit',
-								'project' => $task['Project']['name'],
-								$task['Task']['public_id'],
-							), array('escape' => false, 'title' => __("Edit task"))) ?>
 						</p>
+						</span>
+
+						<span class="row-fluid">
+						<span class="span12 task-controls">
 
 						<?= $this->Task->storyPointsControl($task) ?>
 						<?= $this->Task->priorityDropdownButton($task['Task']['public_id'], $task['Task']['task_priority_id'], false) ?>
 						<?= $this->Task->statusDropdownButton($task['Task']['public_id'], $task['Task']['task_status_id']) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
-						
+						</span>
+						</span>
 					</div>
-					<?= $this->Task->assigneeLabel($task) ?>
-				</div>
+
+					<div class="span3 pull-right task-lozenge-assignee task-lozenge-main">
+					<?= $this->Task->assigneeDropdownButton($task) ?>
+					</div>
 			</div>
 		</div>
 	</div>

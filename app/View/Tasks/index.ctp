@@ -20,6 +20,7 @@ $this->Html->script('milestones.droplist', array ('inline' => false));
 <?= $this->Task->typeDropdownMenu() ?>
 <?= $this->Task->statusDropdownMenu() ?>
 <?= $this->Task->priorityDropdownMenu() ?>
+<?= $this->Task->assigneeDropdownMenu() ?>
 
 <?= $this->DT->pHeader(__('Things to Do...')) ?>
 <div class="row-fluid">
@@ -35,10 +36,10 @@ $this->Html->script('milestones.droplist', array ('inline' => false));
             <hr />
 			<ul class="sprintboard-droplist">
 			  <? foreach ($tasks as $task) { ?>
-			  <?= $this->Task->assigneeDropdownMenu($task['Task']['project_id']) ?>
 			  <?= $this->element('Task/lozenge', array('task' => $task, 'span' => 4)) ?>
 			  <? } ?>
 			</ul>
 		</div>
     </div>
 </div>
+

@@ -14,8 +14,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks', null, array ('inline' => false));
-$this->Html->css("milestones.index", null, array ('inline' => false));
+$this->Html->css('tasks', array ('inline' => false));
+$this->Html->css("milestones.index", array ('inline' => false));
 $this->Html->script("milestones.droplist", array ('inline' => false));
 
 // API base for updating tasks

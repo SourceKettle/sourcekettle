@@ -20,36 +20,109 @@
 .sidebarRight .control-group .controls {
     margin-left: 0px;
 }
-/**
-*
-* CSS for the tasks index page.
-*
-* Licensed under The MIT License
-* Redistributions of files must retain the above copyright notice.
-*
-* @copyright     SourceKettle Development Team 2012
-* @link          http://github.com/SourceKettle/sourcekettle
-* @package       SourceKettle.webroot.css
-* @since         SourceKettle v 0.1
-* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
-*/
-.col hr {
-	margin:0 0 20px 5px;
+
+.thumbnail img {
+    height: auto;
 }
 
-.col h2 {
+.hr-popover {
+    margin: 0px 0px 3px 0px;
+}
+
+.hr-h4 {
+    margin-top: 3px;
+}
+
+form {
+    margin-bottom: 0px;
+}
+
+/* Work around unusual modal dialog behaviour, this stops it from appearing offscreen */
+.modal {
+	margin: 0px;
+	position: absolute;
+	width: 60%;
+	left: 20%;
+	top: 100px;
+}
+
+.well {
+    padding: 15px;
+}
+
+.empty h3, .empty h4 {
+	text-align:center;
+}
+
+
+
+
+/* CSS for task lists e.g. milestone drag-and-drop board */
+.sprintboard-column {
+	min-height: 300px;
+  margin: 0px;
+}
+
+.sprintboard-column.over {
+	border-style: dashed;
+	border-color: #858585;
+}
+
+.sprintboard-droplist [class*="span"]{
+	margin: 0;
+}
+
+.sprintboard-droplist {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+  float: left;
+  margin: 0px;
+  width: 100%;
+  min-height: 20px;
+  overflow-x: hidden;
+  border-radius: 5px 5px 5px 5px;
+}
+
+.sprintboard-droplist h2 {
 	margin:0;
 	text-align:center;
 }
 
-.invisiblewell {
-	height:77px;
-/* 35px tall + 2px border + 20px bottom-margin + 20px padding */
+.sprintboard-droplist li {
+	cursor: pointer;
+	margin: 0px !important;
+	padding: 1px !important;
+	font-size: 1.2em;
+	border-radius: 3px 3px 3px 3px;
+	display: inline-block;
 }
 
-.empty h3,.empty h4 {
-	text-align:center;
+/* Hack to make span4 tasks take up the right amount of space */
+.sprintboard-droplist li.span4{
+	width: 33.33333333333%;
 }
+
+@media (max-width: 767px) {
+	.sprintboard-droplist li.span4{
+		width: auto;
+	}
+}
+
+.sprintboard-droplist li.span3 {
+	width: 25%;
+}
+
+@media (max-width: 767px) {
+	.sprintboard-droplist li.span3{
+		width: auto;
+	}
+}
+
+
+
+
+/* CSS for task lozenges */
 
 .task {
   cursor: pointer;
@@ -82,7 +155,6 @@
 	
 	margin-top:-2px;
 	margin-bottom:0;
-	padding-left: 5px;
 
 	/* Stop the text from overflowing and increasing the lozenge height */
 	max-height:1.5em;
@@ -95,8 +167,14 @@
 	color:#333;
 }
 
+/* Underline the task subject on hover to make it more obviously clickable */
 .task p > a:hover {
 	text-decoration:underline;
+}
+
+/* Remove spurious extra space from task lozenge subject/controls */
+.row-fluid .task-lozenge-main [class*="span"] {
+	min-height: 0px;
 }
 
 .type_bar_small {
@@ -160,131 +238,36 @@
 	border-right: 7px solid #468847;
 }
 
-.label, .lead {
+.label {
     margin-bottom: 2px;
 }
 
-.sprintboard-column {
-	min-height: 300px;
-  margin: 0px;
-}
-
-.sprintboard-column.over {
-	border-style: dashed;
-	border-color: #858585;
-}
-
-.sprintboard-droplist [class*="span"]{
-	margin: 0;
-}
-
-.sprintboard-droplist {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  float: left;
-  margin: 0px;
-  width: 100%;
-  min-height: 20px;
-  overflow-x: hidden;
-  border-radius: 5px 5px 5px 5px;
-}
-
-.sprintboard-droplist li {
-	cursor: pointer;
-	margin: 0px !important;
-	padding: 1px !important;
-	font-size: 1.2em;
-	border-radius: 3px 3px 3px 3px;
-	display: inline-block;
-}
-
-/* Hack to make span4 tasks take up the right amount of space */
-.sprintboard-droplist li.span4{
-	width: 33.33333333333%;
-}
-
-.sprintboard-droplist li.span3 {
-	width: 25%;
-}
+/* CSS for task lozenge dropdowns and controls */
 
 /* Line up the story points buttons nicely with the other labels */
 .btn-storypoints {
-  padding: 1px;
+  padding: 2px;
   padding-left: 4px;
   padding-right: 4px;
-  margin-bottom: 2px;
-  font-size: 11px;
-  line-height: 13px;
-}
-.btn-group-storypoints > .btn-storypoints{
+  margin-bottom: 1px;
   font-size: 12px;
+  line-height: 15px;
+}
+
+.btn-storypoints-control {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
 }
 
 .btn-group-storypoints {
+  position: static;
   padding: 0px;
-  margin-bottom: 2px;
-  font-size: 11px;
+  margin-bottom: 0px;
+  font-size: 12px;
   line-height: 13px;
-}
-/**
-*
-* CSS for the view index page.
-*
-* Licensed under The MIT License
-* Redistributions of files must retain the above copyright notice.
-*
-* @copyright     SourceKettle Development Team 2012
-* @link          http://github.com/SourceKettle/sourcekettle
-* @package       SourceKettle.webroot.css
-* @since         SourceKettle v 0.1
-* @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
-*/
-
-.col hr {
-    margin: 0px 0px 20px 0px;
+	display: inline-block;
 }
 
-.colchange hr {
-    margin: 0px 0px 0px 0px;
-}
-
-.col h3 {
-    margin: 0;
-}
-
-.well {
-    padding: 15px;
-}
-
-.thumbnail img {
-    height: auto;
-}
-
-.hr-popover {
-    margin: 0px 0px 3px 0px;
-}
-
-.hr-h4 {
-    margin-top: 3px;
-}
-
-form {
-    margin-bottom: 0px;
-}
-
-.section_title {
-    cursor: pointer;
-}
-
-/* Work around unusual modal dialog behaviour, this stops it from appearing offscreen */
-.modal {
-	margin: 0px;
-	position: absolute;
-	width: 60%;
-	left: 20%;
-	top: 100px;
-}
 
 /* Make sure the dropdown items are one per line and the background looks roughly right */
 .task-dropdown-menu {
@@ -306,4 +289,32 @@ form {
 	color: #ffffff;
 	padding-left: 4px;
 	padding-right: 4px;
+}
+
+/* Make sure labels without icons line up properly */
+.task-dropdown {
+	min-height: 23px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	border-radius: 5px;
+	margin-bottom: 0px;
+}
+
+.row-fluid [class*="span"] .task-controls {
+	display: inline;
+}
+
+.task-dropdown .caret {
+    margin-left: 0;
+    margin-top: 8px;
+	border-top-color: #ffffff;
+}
+
+.task-dropdown-assignee {
+	border: 0px;
+	padding: 0px;
+}
+
+.task-dropdown-assignee .caret {
+	margin-right: 2px;
 }

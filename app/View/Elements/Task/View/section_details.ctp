@@ -33,7 +33,7 @@
             <dt><?= __("Task type") ?>:</dt>
             <dd><?= $this->Task->typeDropdownButton($task['Task']['public_id'], $task['Task']['task_type_id']) ?></dd>
             <dt><?= __("Task priority") ?>:</dt>
-			<dd><?= $this->Task->priorityDropdownButton($task['Task']['public_id'], $task['Task']['task_priority_id'], false) ?></dd>
+			<dd><?= $this->Task->priorityDropdownButton($task['Task']['public_id'], $task['Task']['task_priority_id'], true) ?></dd>
             <dt><?= __("Fix milestone") ?>:</dt>
             <? if (isset($task['Milestone']['subject'])) { ?>
                 <dd>

@@ -21,7 +21,7 @@ $this->Html->script("tasks", array ('inline' => false));
 <?= $this->Task->typeDropdownMenu() ?>
 <?= $this->Task->statusDropdownMenu() ?>
 <?= $this->Task->priorityDropdownMenu() ?>
-<?= $this->Task->assigneeDropdownMenu($task['Task']['project_id']) ?>
+<?= $this->Task->assigneeDropdownMenu() ?>
 <?= $this->element('Task/modal_close') ?>
 <?=  $this->element('Task/modal_assign') ?>
 

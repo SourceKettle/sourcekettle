@@ -42,7 +42,7 @@ class TaskHelper extends AppHelper {
 		// Always add a nice tooltip on hover
 		$tooltip = __("Priority: %s", h($this->_View->viewVars['task_priorities'][$priorityId]['label']));
 		// If we're using a label, make it hidden on small displays
-		$label = $textLabel? '<span class="hidden-phone hidden-tablet">'.h($this->_View->viewVars['task_priorities'][$priorityId]['label']).'</span> ' : '';
+		$label = $textLabel? h($this->_View->viewVars['task_priorities'][$priorityId]['label']) : '';
 
 		// Always show the icon
 		$icon  = $this->Bootstrap->icon(
@@ -53,11 +53,15 @@ class TaskHelper extends AppHelper {
 		// Button class, if any
 		$class = $this->_View->viewVars['task_priorities'][$priorityId]['class'];
 
+		if (!empty($class)) {
+			$class = "label-".h($class);
+		}
+
 		// If we've got no task ID, just render a label and no dropdown
 		if ($taskId == null) {
-			$button = '<span class="label label-'.h($class).'">'.$icon.' '.$label.'</span>';
+			$button = '<span class="label '.$class.'">'.$icon.' '.$label.'</span>';
 		} else {
-			$button = '<button class="label label-'.h($class).' task-dropdown" data-toggle="task_priority_dropdown">'.$icon.' '.$label.'</button>';
+			$button = '<button class="label '.$class.' task-dropdown" data-toggle="task_priority_dropdown">'.$icon.' '.$label.' <span class="caret"></span></button>';
 		}
 		return $button;
 	}
@@ -79,6 +83,10 @@ class TaskHelper extends AppHelper {
 		$label = $this->_View->viewVars['task_statuses'][$statusId]['label'];
 		$class = $this->_View->viewVars['task_statuses'][$statusId]['class'];
 
+		if (!empty($class)) {
+			$class = "label-".h($class);
+		}
+
 		// TODO display full length status name if the lozenge is large enough
 		if (!$full) {
 			$label = strtoupper(substr($label, 0, 1));
@@ -86,9 +94,9 @@ class TaskHelper extends AppHelper {
 
 		// If we've got no task ID, just render a label and no dropdown
 		if ($taskId == null) {
-			$button = '<span class="label label-'.h($class).'">'.h($label).'</span>';
+			$button = '<span class="label '.$class.'">'.h($label).'</span>';
 		} else {
-			$button = '<button class="label label-'.h($class).' task-dropdown" data-toggle="task_status_dropdown">'.h($label).'</button>';
+			$button = '<button class="label '.$class.' task-dropdown" data-toggle="task_status_dropdown">'.h($label).' <span class="caret"></span></button>';
 		}
 		return $button;
 
@@ -111,11 +119,15 @@ class TaskHelper extends AppHelper {
 		$label = $this->_View->viewVars['task_types'][$typeId]['label'];
 		$class = $this->_View->viewVars['task_types'][$typeId]['class'];
 
+		if (!empty($class)) {
+			$class = "label-".h($class);
+		}
+
 		// If we've got no task ID, just render a label and no dropdown
 		if ($taskId == null) {
-			$button = '<span class="label label-'.h($class).'">'.h($label).'</span>';
+			$button = '<span class="label '.$class.'">'.h($label).'</span>';
 		} else {
-			$button = '<button class="label label-'.h($class).' task-dropdown" data-toggle="task_type_dropdown">'.h($label).'</button>';
+			$button = '<button class="label '.$class.' task-dropdown" data-toggle="task_type_dropdown">'.h($label).' <b class="caret"></b></button>';
 		}
 		return $button;
 
@@ -138,11 +150,11 @@ class TaskHelper extends AppHelper {
 	public function storyPointsControl($task, $full = false) {
 		$points = $task['Task']['story_points'] ?: 0;
 		$label = "<span class=\"btn-group btn-group-storypoints\">";
-		$label .= $this->Bootstrap->button("-", array('title' => __('Decrease story points'), 'class' => 'btn-inverse btn-storypoints'));
+		$label .= $this->Bootstrap->button("-", array('title' => __('Decrease story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
 		$label .= $this->Bootstrap->button(__("<span class='points'>%d</span>", $points), array(
 			'class' => 'disabled btn-inverse btn-storypoints',
 			'title' => __n('%d story point', '%d story points', $points, $points)));
-		$label .= $this->Bootstrap->button("+", array('title' => __('Increase story points'), 'class' => 'btn-inverse btn-storypoints'));
+		$label .= $this->Bootstrap->button("+", array('title' => __('Increase story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
 
 		if ($full) {
 			$label .= __(" story points");
@@ -151,15 +163,42 @@ class TaskHelper extends AppHelper {
 		return $label;
 	}
 
-	public function assigneeLabel($task) {
+	public function assigneeLabel($task, $size = 90) {
 		$label = "<div class=\"span2 task-lozenge-assignee\">";
 		if(isset($task['Assignee']['email'])){
-			$label .= $this->Gravatar->image($task['Assignee']['email'], array(), array('alt' => $task['Assignee']['name']));
+			$label .= $this->Gravatar->image($task['Assignee']['email'], array('size' => $size), array('alt' => $task['Assignee']['name']));
 		} else {
-			$label .= $this->Gravatar->image('', array('d' => 'mm'), array('alt' => $task['Assignee']['name']));
+			$label .= $this->Gravatar->image('', array('size' => $size, 'd' => 'mm'), array('alt' => $task['Assignee']['name']));
 		}
 		$label .= "</div>";
 		return $label;
+	}
+
+	// Assignee dropdown depends on the task (as we may have many tasks on the page from different projects).
+	// This will be initially empty, then populated via ajax.
+	public function assigneeDropdownMenu() {
+		return '<ul class="dropdown-menu task-dropdown-menu" id="task_assignee_dropdown"></ul>';
+	}
+
+	public function assigneeDropdownButton($task, $size = 90) {
+
+		if(isset($task['Assignee']['email'])){
+
+			$tooltip = __("Assigned to: %s", h($task['Assignee']['name']));
+			$label = $this->Gravatar->image($task['Assignee']['email'], array('size' => $size), array('alt' => $tooltip, 'title' => $tooltip));
+
+		} else {
+
+			$tooltip = __("Not assigned");
+			$label = $this->Gravatar->image('', array('size' => $size, 'd' => 'mm'), array('alt' => $tooltip, 'title' => $tooltip));
+
+		}
+
+		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_collaborators', 'api' => true, 'project' => $task['Project']['name']));
+
+		$button = '<button class="label task-dropdown task-dropdown-assignee" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
+
+		return $button;
 	}
 
 	public function treeRender($projectName, $tree) {
