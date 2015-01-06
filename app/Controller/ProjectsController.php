@@ -615,4 +615,22 @@ class ProjectsController extends AppProjectController {
 		$this->set('data',$data);
 		$this->render('/Elements/json');
 	}
+
+	public function api_list_collaborators($project = null) {
+			
+		if (!isset($project)  || !$project) {
+			$this->response->statusCode(400);
+			$data['error'] = 400;
+			$data['message'] = 'Bad request, no project specified.';
+
+			$this->layout = 'ajax';
+			$this->set('data',$data);
+			$this->render('/Elements/json');
+			return;
+		}
+
+		$project = $this->_getProject($project);
+		$this->set('data', $this->Project->listCollaborators($project['Project']['id']));
+		$this->render('/Elements/json');
+	}
 }
