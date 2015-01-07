@@ -293,6 +293,7 @@ form {
 
 /* Make sure labels without icons line up properly */
 .task-dropdown {
+	min-width: 37px;
 	min-height: 23px;
 	padding-top: 2px;
 	padding-bottom: 2px;
