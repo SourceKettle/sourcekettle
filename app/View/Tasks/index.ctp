@@ -15,7 +15,6 @@
  */
 
 $this->Html->css('tasks', null, array ('inline' => false));
-$this->Html->script('milestones.droplist', array ('inline' => false));
 ?>
 <?= $this->Task->typeDropdownMenu() ?>
 <?= $this->Task->statusDropdownMenu() ?>

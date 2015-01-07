@@ -63,8 +63,8 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						<span class="span12 task-controls">
 
 						<?= $this->Task->storyPointsControl($task) ?>
-						<?= $this->Task->priorityDropdownButton($task['Task']['public_id'], $task['Task']['task_priority_id'], false) ?>
-						<?= $this->Task->statusDropdownButton($task['Task']['public_id'], $task['Task']['task_status_id']) ?>
+						<?= $this->Task->priorityDropdownButton($task, false) ?>
+						<?= $this->Task->statusDropdownButton($task) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
 						</span>
 						</span>

@@ -16,16 +16,7 @@
 
 $this->Html->css('tasks', array ('inline' => false));
 $this->Html->css("milestones.index", array ('inline' => false));
-$this->Html->script("milestones.droplist", array ('inline' => false));
 
-// API base for updating tasks
-$api_base = $this->Html->url(array(
-	'controller' => 'tasks',
-	'project' => $milestone['Project']['name'],
-	'action' => 'update',
-	'api' => true
-));
-$this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
 ?>
 
 <?= $this->Task->typeDropdownMenu() ?>
@@ -55,7 +46,7 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'tooltip' => __('These tasks will not be completed during this milestone'),
 				'span' => '12',
 				'task_span' => '4',
-				'classes' => 'sprintboard-icebox'
+				'classes' => 'sprintboard-icebox',
 			)
         ) ?>
 

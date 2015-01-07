@@ -16,16 +16,6 @@
 
 $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css("milestones.index", null, array ('inline' => false));
-$this->Html->script("milestones.droplist", array ('inline' => false));
-
-// API base for updating tasks
-$api_base = $this->Html->url(array(
-	'controller' => 'tasks',
-	'project' => $milestone['Project']['name'],
-	'action' => 'update',
-	'api' => true
-));
-$this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
 ?>
 
 <?= $this->Task->typeDropdownMenu() ?>

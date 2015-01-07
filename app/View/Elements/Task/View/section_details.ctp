@@ -31,9 +31,9 @@
             </dd>
 	    <? } ?>
             <dt><?= __("Task type") ?>:</dt>
-            <dd><?= $this->Task->typeDropdownButton($task['Task']['public_id'], $task['Task']['task_type_id']) ?></dd>
+            <dd><?= $this->Task->typeDropdownButton($task) ?></dd>
             <dt><?= __("Task priority") ?>:</dt>
-			<dd><?= $this->Task->priorityDropdownButton($task['Task']['public_id'], $task['Task']['task_priority_id'], true) ?></dd>
+			<dd><?= $this->Task->priorityDropdownButton($task, true) ?></dd>
             <dt><?= __("Fix milestone") ?>:</dt>
             <? if (isset($task['Milestone']['subject'])) { ?>
                 <dd>
@@ -102,7 +102,7 @@
                 <dd class="muted">Not set</dd>
             <? } ?>
             <dt><?= __("Task status") ?>:</dt>
-			<dd><?= $this->Task->statusDropdownButton($task['Task']['public_id'], $task['Task']['task_status_id'], true) ?></dd>
+			<dd><?= $this->Task->statusDropdownButton($task, true) ?></dd>
 
             <dt><?= __("Created") ?>:</dt>
             <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>

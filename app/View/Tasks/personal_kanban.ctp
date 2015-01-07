@@ -16,7 +16,6 @@
 
 $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css("milestones.index", null, array ('inline' => false));
-$this->Html->script("milestones.droplist", array ('inline' => false));
 
 $draggable = true;
 

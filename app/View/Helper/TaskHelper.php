@@ -28,7 +28,7 @@ class TaskHelper extends AppHelper {
 				$priority['icon'],
 				"white"
 			);
-			$dropdown .= '<li><a class="label" title="'.__("Set priority: %s", h($priority['label'])).'" href="#">'.$priorityIcon.' '.$priority['label'].'</a></li>';
+			$dropdown .= '<li><a class="label" title="'.__("Set priority: %s", h($priority['label'])).'" data-id="'.h($priority['id']).'" href="#">'.$priorityIcon.' '.$priority['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 		return $dropdown;
@@ -36,8 +36,16 @@ class TaskHelper extends AppHelper {
 
 
 	// Renders a priority label/button that will activate the priority dropdown menu
-	// set $taskId to null to just render a label instead with no button
-	public function priorityDropdownButton($taskId, $priorityId, $textLabel = true) {
+	// set $task to null to just render a label instead with no button
+	public function priorityDropdownButton($task, $textLabel = true) {
+
+		if (is_numeric($task)) {
+			$priorityId = $task;
+			$task = null;
+		} else {
+			$priorityId = $task['Task']['task_priority_id'];
+		}
+
 
 		// Always add a nice tooltip on hover
 		$tooltip = __("Priority: %s", h($this->_View->viewVars['task_priorities'][$priorityId]['label']));
@@ -58,10 +66,11 @@ class TaskHelper extends AppHelper {
 		}
 
 		// If we've got no task ID, just render a label and no dropdown
-		if ($taskId == null) {
-			$button = '<span class="label '.$class.'">'.$icon.' '.$label.'</span>';
+		if ($task == null) {
+			$button = '<span class="taskpriority label '.$class.'">'.$icon.' '.$label.'</span>';
 		} else {
-			$button = '<button class="label '.$class.' task-dropdown" data-toggle="task_priority_dropdown">'.$icon.' '.$label.' <span class="caret"></span></button>';
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
+			$button = '<button class="taskpriority label '.$class.' task-dropdown" data-api-url="'.$apiUrl.'" data-change="priority" data-id="'.h($priorityId).'" data-toggle="task_priority_dropdown">'.$icon.' '.$label.' <span class="caret"></span></button>';
 		}
 		return $button;
 	}
@@ -70,7 +79,7 @@ class TaskHelper extends AppHelper {
 		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_status_dropdown">';
 
 		foreach ($this->_View->viewVars['task_statuses'] as $statusId => $status) {
-			$dropdown .= '<li><a class="label label-'.$status['class'].'" title="'.__("Set status: %s", $status['label']).'" href="#">'.$status['label'].'</a></li>';
+			$dropdown .= '<li><a class="label label-'.$status['class'].'" data-id="'.h($status['id']).'" title="'.__("Set status: %s", $status['label']).'" href="#">'.$status['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 
@@ -78,7 +87,15 @@ class TaskHelper extends AppHelper {
 
 	}
 
-	public function statusDropdownButton($taskId, $statusId, $full = false) {
+	public function statusDropdownButton($task, $full = false) {
+
+		if (is_numeric($task)) {
+			$statusId = $task;
+			$task = null;
+		} else {
+			$statusId = $task['Task']['task_status_id'];
+		}
+
 		$tooltip = __("Status: %s", h($this->_View->viewVars['task_statuses'][$statusId]['label']));
 		$label = $this->_View->viewVars['task_statuses'][$statusId]['label'];
 		$class = $this->_View->viewVars['task_statuses'][$statusId]['class'];
@@ -93,10 +110,11 @@ class TaskHelper extends AppHelper {
 		}
 
 		// If we've got no task ID, just render a label and no dropdown
-		if ($taskId == null) {
-			$button = '<span class="label '.$class.'">'.h($label).'</span>';
+		if ($task == null) {
+			$button = '<span class="taskstatus label '.$class.'">'.h($label).'</span>';
 		} else {
-			$button = '<button class="label '.$class.' task-dropdown" data-toggle="task_status_dropdown">'.h($label).' <span class="caret"></span></button>';
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
+			$button = '<button class="taskstatus label '.$class.' task-dropdown" data-api-url="'.$apiUrl.'" data-change="status" data-id="'.h($statusId).'" data-toggle="task_status_dropdown">'.h($label).' <span class="caret"></span></button>';
 		}
 		return $button;
 
@@ -106,7 +124,7 @@ class TaskHelper extends AppHelper {
 		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_type_dropdown">';
 
 		foreach ($this->_View->viewVars['task_types'] as $typeId => $type) {
-			$dropdown .= '<li><a class="label label-'.$type['class'].'" title="'.__("Set type: %s", $type['label']).'" href="#">'.$type['label'].'</a></li>';
+			$dropdown .= '<li><a class="label label-'.$type['class'].'" data-id="'.h($type['id']).'" title="'.__("Set type: %s", $type['label']).'" href="#">'.$type['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 
@@ -114,7 +132,14 @@ class TaskHelper extends AppHelper {
 
 	}
 
-	public function typeDropdownButton($taskId, $typeId) {
+	public function typeDropdownButton($task) {
+		if (is_numeric($task)) {
+			$typeId = $task;
+			$task = null;
+		} else {
+			$typeId = $task['Task']['task_type_id'];
+		}
+
 		$tooltip = __("Type: %s", h($this->_View->viewVars['task_types'][$typeId]['label']));
 		$label = $this->_View->viewVars['task_types'][$typeId]['label'];
 		$class = $this->_View->viewVars['task_types'][$typeId]['class'];
@@ -124,14 +149,16 @@ class TaskHelper extends AppHelper {
 		}
 
 		// If we've got no task ID, just render a label and no dropdown
-		if ($taskId == null) {
-			$button = '<span class="label '.$class.'">'.h($label).'</span>';
+		if ($task == null) {
+			$button = '<span class="tasktype label '.$class.'">'.h($label).'</span>';
 		} else {
-			$button = '<button class="label '.$class.' task-dropdown" data-toggle="task_type_dropdown">'.h($label).' <b class="caret"></b></button>';
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
+			$button = '<button class="tasktype label '.$class.' task-dropdown" data-api-url="'.$apiUrl.'" data-change="type" data-id="'.h($typeId).'" data-toggle="task_type_dropdown">'.h($label).' <b class="caret"></b></button>';
 		}
 		return $button;
 
 	}
+
 	public function milestoneLabel($task) {
 		$label = "";
 		if (isset($task['Milestone']['id'])){
@@ -196,7 +223,7 @@ class TaskHelper extends AppHelper {
 
 		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_collaborators', 'api' => true, 'project' => $task['Project']['name']));
 
-		$button = '<button class="label task-dropdown task-dropdown-assignee" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
+		$button = '<button class="label task-dropdown task-dropdown-assignee" data-api-url="'.$apiUrl.'" data-change="assignee" data-id="'.h($task['Task']['assignee_id']).'" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
 
 		return $button;
 	}

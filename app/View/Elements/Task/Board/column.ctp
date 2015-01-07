@@ -44,8 +44,14 @@ if (isset($tooltip)) {
 	$tooltip = "";
 }
 
+if (isset($icon)) {
+	$icon = '<i class="icon='.h($icon).'"></i> ';
+} else {
+	$icon = "";
+}
+
 echo "<ul class='well col sprintboard-droplist span$span$classes' data-taskspan='$task_span' $dtStatus $dtPriority $dtMilestone>\n";
-echo "<h2$tooltip>$title</h2>\n";
+echo "<h2$tooltip>$icon$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {
     echo $this->element('Task/lozenge', array('task' => $task, 'draggable' => $draggable, 'span' => $task_span));

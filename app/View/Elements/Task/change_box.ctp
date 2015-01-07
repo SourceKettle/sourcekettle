@@ -19,10 +19,10 @@
 
     switch ( $field ) {
         case 'task_type_id':
-            $pop_over = 'type: '.$this->Task->typeDropdownButton(null, $old).' &rarr; '.$this->Task->typeDropdownButton(null, $new);
+            $pop_over = 'type: '.$this->Task->typeDropdownButton($old).' &rarr; '.$this->Task->typeDropdownButton($new);
             break;
         case 'task_priority_id':
-            $pop_over = 'priority: '.$this->Task->priorityDropdownButton(null, $old).' &rarr; '.$this->Task->priorityDropdownButton(null, $new);
+            $pop_over = 'priority: '.$this->Task->priorityDropdownButton($old).' &rarr; '.$this->Task->priorityDropdownButton($new);
             break;
         case 'assignee_id':
             $old = ($old) ? $this->Gravatar->image($change_users[$old][1], array('d' => 'mm', 's' => 24)).' '.h($change_users[$old][0]) : '<small>No-one assigned</small>';
@@ -38,7 +38,7 @@
             );
             break;
         case 'task_status_id':
-            $pop_over = 'status: '.$this->Task->statusDropdownButton(null, $old, true).' &rarr; '.$this->Task->statusDropdownButton(null, $new, true);
+            $pop_over = 'status: '.$this->Task->statusDropdownButton($old, true).' &rarr; '.$this->Task->statusDropdownButton($new, true);
             break;
         default:
             $old = ($old) ? $old : '<small>empty</small>';
