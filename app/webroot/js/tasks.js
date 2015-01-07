@@ -75,10 +75,10 @@ $('.task-dropdown').click(function(event) {
 				"dataType" : "json",
                 "type" : "get",
 				"success" : function (data) {
-					menu.append('<li class="label"><a class="" href="#" data-id="0">(Remove assignee)</a></li>');
+					menu.append('<li class="label"><a class="" href="#" data-value="0">(Remove assignee)</a></li>');
 					for (var id in data) {
 						collaborator = data[id];
-						menu.append('<li class="label"><a class="" href="#" data-id="'+id+'">'+collaborator+'</a></li>');
+						menu.append('<li class="label"><a class="" href="#" data-value="'+id+'">'+collaborator+'</a></li>');
 					}
 					activateLinksAndShow(menu, button);
 				},
@@ -148,7 +148,6 @@ function updateTask(taskLozenge, taskInfo) {
 			
             if (data.error === "no_error") {
             
-                    
 				// Priority changed, fairly straightforward
                 if (taskInfo.priority != null) {
 
@@ -198,6 +197,15 @@ function updateTask(taskLozenge, taskInfo) {
 					// It's a status change, so make sure we update the story point totals
 					refreshStoryPointTotals();
                 }
+
+				// Assignee changed - we need to change the gravatar image
+				// Note that it can be set to zero for "unassigned"...
+				if (typeof taskInfo.assignee_id !== 'undefined') {
+					assigneeBox = $('.task-dropdown-assignee', taskLozenge);
+					gravatarImage = $('img', assigneeBox);
+					gravatarImage.attr('src', data.assignee_gravatar+'&size='+gravatarImage.attr('width'));
+					assigneeBox.attr('title', 'Assigned to: '+data.assignee_name);
+				}
 
             } else {
                 alert("Problem: "+data.errorDescription);

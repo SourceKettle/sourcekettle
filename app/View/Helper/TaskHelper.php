@@ -189,17 +189,6 @@ class TaskHelper extends AppHelper {
 		return $label;
 	}
 
-	public function assigneeLabel($task, $size = 90) {
-		$label = "<div class=\"span2 task-lozenge-assignee\">";
-		if(isset($task['Assignee']['email'])){
-			$label .= $this->Gravatar->image($task['Assignee']['email'], array('size' => $size), array('alt' => $task['Assignee']['name']));
-		} else {
-			$label .= $this->Gravatar->image('', array('size' => $size, 'd' => 'mm'), array('alt' => $task['Assignee']['name']));
-		}
-		$label .= "</div>";
-		return $label;
-	}
-
 	// Assignee dropdown depends on the task (as we may have many tasks on the page from different projects).
 	// This will be initially empty, then populated via ajax.
 	public function assigneeDropdownMenu() {
@@ -222,7 +211,7 @@ class TaskHelper extends AppHelper {
 
 		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_collaborators', 'api' => true, 'project' => $task['Project']['name']));
 
-		$button = '<button class="label task-dropdown task-dropdown-assignee" data-api-url="'.$apiUrl.'" data-change="assignee" data-id="'.h($task['Task']['assignee_id']).'" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
+		$button = '<button class="label task-dropdown task-dropdown-assignee" title="'.h($tooltip).'" data-api-url="'.$apiUrl.'" data-change="assignee_id" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
 
 		return $button;
 	}

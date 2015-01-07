@@ -15,6 +15,7 @@
  */
 
 App::uses('AppProjectController', 'Controller');
+App::uses("Gravatar", "Gravatar");
 
 class TasksController extends AppProjectController {
 
@@ -884,6 +885,12 @@ class TasksController extends AppProjectController {
 			$this->response->statusCode(200);
 			$data = $task['Task'];
 			unset($data['id']);
+			// Add in any extra data here... at the moment just used for refreshing the assignee gravatar easily
+			if (isset($data['assignee_id']) && $data['assignee_id'] != 0) {
+				$data['assignee_email'] = $this->Task->Assignee->field('email', array('id' => $data['assignee_id']));
+				$data['assignee_name'] = $this->Task->Assignee->field('name', array('id' => $data['assignee_id']));
+				$data['assignee_gravatar'] = Gravatar::url($data['assignee_email'], array('url_only' => true));
+			}
 			$data['error'] = 'no_error';
 
 		} else {
