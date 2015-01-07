@@ -96,11 +96,15 @@ $('.task-dropdown').click(function(event) {
 
 // Show a dropdown menu, first making sure all its links do the Right Thing(tm)
 function activateLinksAndShow(menu, button) {
+	$('a', menu).unbind('click');
 	$('a', menu).click(function(event){
-	
-		var changeField = button.attr("data-change")+"_id";
-		var newId = $(event.currentTarget).attr("data-id");
-		var apiUrl = button.attr("data-api-url");
+		var change = button.attr("data-change");
+		var newValue = $(event.currentTarget).attr("data-value");
+		var taskLozenge = button.closest('li.task-lozenge');
+		var taskInfo = {};
+		taskInfo[change] = newValue;
+		updateTask(taskLozenge, taskInfo);
+		menu.hide();
 	});
 	menu.show();
 }
@@ -111,7 +115,7 @@ function equaliseColumns(column) {
     var maxHeight = 0;
 
     // This is a bit of a faff, build a jQuery object for 'this column and its siblings'
-    var row = $(column).siblings().toArray().concat(column);
+    var row = $(column).siblings('.sprintboard-droplist').toArray().concat(column);
 
     // Set all heights to "best fit", then calculate max height and resize all columns in the row
     $(row).height("");
@@ -137,8 +141,15 @@ function updateTask(taskLozenge, taskInfo) {
 		"dataType" : "json",
         "type" : "post",
 		"success" : function (data) {
+			
+			// Which column is the lozenge sat in? (it may have been just dragged here
+			// or it may have been updated via a dropdown)
+			var currentColumn = taskLozenge.parent();
+			
             if (data.error === "no_error") {
             
+                    
+				// Priority changed, fairly straightforward
                 if (taskInfo.priority != null) {
 
 					// Update lozenge to reflect the new priority
@@ -146,9 +157,17 @@ function updateTask(taskLozenge, taskInfo) {
                     prioLabel.html(icon + ' <b class="caret"></b>');
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
-					// TODO
+					if (currentColumn.attr('data-taskpriority') != taskInfo.priority) {
+						toColumn = $('.sprintboard-droplist[data-taskpriority="'+taskInfo.priority+'"]');
+						if (toColumn.size() == 1) {
+							taskLozenge.appendTo(toColumn);
+            				equaliseColumns(toColumn);
+							currentColumn = toColumn;
+						}
+					}
                 }
 
+				// Status changed, more fiddly due to the CSS class change...
                 if (taskInfo.status != null) {
                     statusLabel.html(taskStatusLabels[taskInfo.status].charAt(0) + ' <b class="caret"></b>');
 
@@ -157,37 +176,27 @@ function updateTask(taskLozenge, taskInfo) {
                         return (css.match (/\blabel-\S+/g) || []).join(' ');
                     });
                     statusLabel.addClass(taskStatusLabelTypes[taskInfo.status]);
-					$(taskLozenge).attr('data-taskstatus', taskInfo.status);
+					taskLozenge.attr('data-taskstatus', taskInfo.status);
 
-                    // Make sure the task is the correct span width for this column
-                    newspan = 'span' + $(taskLozenge).parent().attr('data-taskspan');
-                    $(taskLozenge).removeClass(function(index, css){
-                        return (css.match (/\bspan\d+/g) || []).join(' ');
-                    });
-                    $(taskLozenge).addClass(newspan);
-                    
-					// Number of story points for the task
-					taskPoints = parseInt($(taskLozenge).find('.points').text());
-
-					// If we resolved the task, update the "completed story points" count
-					if (taskInfo.status == 'resolved') {
-						$('#points_complete').text( parseInt($('#points_complete').text()) + taskPoints );
-
-					// If we dropped it, update the total points count
-					} else if (taskInfo.status == 'dropped') {
-						$('#points_total').text( parseInt($('#points_total').text()) - taskPoints );
+					// If there's a droplist for this status and the lozenge isn't in it, move it into place
+					if (currentColumn.attr('data-taskstatus') != taskInfo.status) {
+						toColumn = $('.sprintboard-droplist[data-taskstatus="'+taskInfo.status+'"]');
+						if (toColumn.size() == 1) {
+							taskLozenge.appendTo(toColumn);
+            				equaliseColumns(toColumn);
+							currentColumn = toColumn;
+						}
 					}
 
-					// If we un-resolved the task, update the "completed story points" count
-					if (fromStatus == 'resolved') {
-						$('#points_complete').text( parseInt($('#points_complete').text()) - taskPoints );
+                	// Make sure the task is the correct span width for this column
+                	newspan = 'span' + currentColumn.attr('data-taskspan');
+                	taskLozenge.removeClass(function(index, css){
+                    	return (css.match (/\bspan\d+/g) || []).join(' ');
+               		});
+                	taskLozenge.addClass(newspan);
 
-					// If we un-dropped it, update the total points count
-					} else if (fromStatus == 'dropped') {
-						$('#points_total').text( parseInt($('#points_total').text()) + taskPoints );
-					}
-
-					//$('#points-complete').text( $('#points-complete').text() - 1 );
+					// It's a status change, so make sure we update the story point totals
+					refreshStoryPointTotals();
                 }
 
             } else {
@@ -302,18 +311,44 @@ function setStoryPoints(button, difference) {
 		"type" : "post",
 		"success" : function (data) {
 			pointsBox.text(points);
-
-			if (taskStatus == 'closed' || taskStatus == 'resolved') {
-				$('#points_complete').text( parseInt($('#points_complete').text()) + difference );
-			}
-			if (taskStatus != 'dropped') {
-				$('#points_total').text( parseInt($('#points_total').text()) + difference );
-			}
+			refreshStoryPointTotals();
 		},
 		"error" : function(data) {
 			alert("Story points update failed");
 		}
 	});
+}
+
+// Updates the total number of story points and the total points completed
+// Triggered when task statuses or point counts change.
+function refreshStoryPointTotals() {
+	
+	totalBox = $('#points_total');
+	completeBox = $('#points_complete');
+
+	// Skip if we have no points boxes
+	if (!totalBox || !completeBox) {
+		return;
+	}
+
+	total = 0;
+	complete = 0;
+
+	$.each($('li.task-lozenge .points'), function(idx, points){
+		status = $(points).closest('li.task-lozenge').attr('data-taskstatus');
+		points = parseInt($(points).text(), 10);
+		if (status == 'closed' || status == 'resolved') {
+			complete += points;
+		}
+
+		if (status != 'dropped') {
+			total += points;
+		}
+	});
+
+	totalBox.text(total);
+	completeBox.text(complete);
+
 }
 
 // Activate the +/- buttons for story points

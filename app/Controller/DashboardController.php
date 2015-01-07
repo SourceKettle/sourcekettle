@@ -31,8 +31,8 @@ class DashboardController extends AppController {
 
 	public function index() {
 		$this->set('projects', $this->__getRecentProjects());
-		$this->set('tasks', $this->__getUserTasks());
 		$this->set('history', $this->__getProjectsHistory());
+		$this->set('tasks', $this->__getUserTasks());
 	}
 
 	private function __getRecentProjects() {

@@ -305,7 +305,13 @@ class TasksController extends AppProjectController {
 		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
 		$completed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'));
 
-		$this->set(compact('backlog', 'inProgress', 'completed'));
+		// Calculate number of points complete/total for the milestone
+		$points_todo = array_reduce($backlog, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_todo = array_reduce($inProgress, function($v, $t){return $v + $t['Task']['story_points'];}, $points_todo);
+		$points_complete = array_reduce($completed, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_total = $points_todo + $points_complete;
+
+		$this->set(compact('backlog', 'inProgress', 'completed', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 
@@ -318,7 +324,12 @@ class TasksController extends AppProjectController {
 		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
 		$completed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'));
 
-		$this->set(compact('team', 'backlog', 'inProgress', 'completed'));
+		// Calculate number of points complete/total for the milestone
+		$points_todo = array_reduce($backlog, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_todo = array_reduce($inProgress, function($v, $t){return $v + $t['Task']['story_points'];}, $points_todo);
+		$points_complete = array_reduce($completed, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_total = $points_todo + $points_complete;
+		$this->set(compact('team', 'backlog', 'inProgress', 'completed', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 

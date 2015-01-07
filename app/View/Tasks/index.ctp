@@ -16,10 +16,7 @@
 
 $this->Html->css('tasks', null, array ('inline' => false));
 ?>
-<?= $this->Task->typeDropdownMenu() ?>
-<?= $this->Task->statusDropdownMenu() ?>
-<?= $this->Task->priorityDropdownMenu() ?>
-<?= $this->Task->assigneeDropdownMenu() ?>
+<?= $this->Task->allDropdownMenus() ?>
 
 <?= $this->DT->pHeader(__('Things to Do...')) ?>
 <div class="row-fluid">
@@ -33,7 +30,7 @@ $this->Html->css('tasks', null, array ('inline' => false));
 		<div class="row-fluid well col">
             <h2><?=__("Task list")?></h2>
             <hr />
-			<ul class="sprintboard-droplist">
+			<ul class="sprintboard-droplist" data-taskspan="4">
 			  <? foreach ($tasks as $task) { ?>
 			  <?= $this->element('Task/lozenge', array('task' => $task, 'span' => 4)) ?>
 			  <? } ?>

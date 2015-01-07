@@ -22,6 +22,7 @@
   $this->Html->script('tasks', array ('inline' => false));
 ?>
 
+<?= $this->Task->allDropdownMenus() ?>
 
 <div class="row-fluid">
     <div class="span6">

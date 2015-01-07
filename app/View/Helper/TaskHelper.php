@@ -22,13 +22,12 @@ class TaskHelper extends AppHelper {
 	// Renders a dropdown menu box for setting task priorities
  	public function priorityDropdownMenu() {
 		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_priority_dropdown">';
-
 		foreach ($this->_View->viewVars['task_priorities'] as $priorityId => $priority) {
 			$priorityIcon = $this->Bootstrap->icon(
 				$priority['icon'],
 				"white"
 			);
-			$dropdown .= '<li><a class="label" title="'.__("Set priority: %s", h($priority['label'])).'" data-id="'.h($priority['id']).'" href="#">'.$priorityIcon.' '.$priority['label'].'</a></li>';
+			$dropdown .= '<li><a class="label" title="'.__("Set priority: %s", h($priority['label'])).'" data-value="'.h($priority['name']).'" href="#">'.$priorityIcon.' '.$priority['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 		return $dropdown;
@@ -79,7 +78,7 @@ class TaskHelper extends AppHelper {
 		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_status_dropdown">';
 
 		foreach ($this->_View->viewVars['task_statuses'] as $statusId => $status) {
-			$dropdown .= '<li><a class="label label-'.$status['class'].'" data-id="'.h($status['id']).'" title="'.__("Set status: %s", $status['label']).'" href="#">'.$status['label'].'</a></li>';
+			$dropdown .= '<li><a class="label label-'.$status['class'].'" data-value="'.h($status['name']).'" title="'.__("Set status: %s", $status['label']).'" href="#">'.$status['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 
@@ -124,7 +123,7 @@ class TaskHelper extends AppHelper {
 		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_type_dropdown">';
 
 		foreach ($this->_View->viewVars['task_types'] as $typeId => $type) {
-			$dropdown .= '<li><a class="label label-'.$type['class'].'" data-id="'.h($type['id']).'" title="'.__("Set type: %s", $type['label']).'" href="#">'.$type['label'].'</a></li>';
+			$dropdown .= '<li><a class="label label-'.$type['class'].'" data-value="'.h($type['name']).'" title="'.__("Set type: %s", $type['label']).'" href="#">'.$type['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 
@@ -247,5 +246,14 @@ class TaskHelper extends AppHelper {
 			$this->treeRender($projectName, $subTask);
 		}
 		echo "</ul>";
+	}
+
+	// Wrapper function to return all of the different dropdown menus
+	// in one call, cos we probably want them all!
+	public function allDropdownMenus() {
+		return $this->typeDropdownMenu() .
+			$this->statusDropdownMenu() .
+			$this->priorityDropdownMenu() .
+			$this->assigneeDropdownMenu();
 	}
 }

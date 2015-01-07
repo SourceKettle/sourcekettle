@@ -18,17 +18,9 @@ $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css("milestones.index", null, array ('inline' => false));
 
 $draggable = true;
-
-// API base for updating tasks - note we have to generate a link per task as the projects are different...
-$api_base = $this->Html->link(array(
-	'controller' => 'tasks',
-	'action' => 'update',
-	'api' => true
-));
-// TODO fix up the javascript to work across projects//$this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
-
 ?>
 
+<?= $this->Task->allDropdownMenus() ?>
 <?= $this->DT->pHeader(__("Team kanban chart: %s", $team['Team']['name'])) ?>
 <div class="row">
 
@@ -36,6 +28,10 @@ $api_base = $this->Html->link(array(
     <div class="span12">
 	
 	<div class="row"><div class="span2 offset4">
+	</div></div>
+
+	<div class="row"><div class="span2 offset4">
+	<span class="label">Story points complete: <span id="points_complete"><?=$points_complete?></span> / <span id="points_total"><?=$points_total?></span></span>
 	</div></div>
 
 	<div class="row">

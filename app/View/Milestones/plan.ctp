@@ -18,11 +18,7 @@ $this->Html->css('tasks', array ('inline' => false));
 $this->Html->css("milestones.index", array ('inline' => false));
 
 ?>
-
-<?= $this->Task->typeDropdownMenu() ?>
-<?= $this->Task->statusDropdownMenu() ?>
-<?= $this->Task->priorityDropdownMenu() ?>
-<?= $this->Task->assigneeDropdownMenu($milestone['Milestone']['project_id']) ?>
+<?= $this->Task->allDropdownMenus() ?>
 <?= $this->DT->pHeader(__("Milestone planner: '%s'", $milestone['Milestone']['subject'])) ?>
 <div class="row">
     <div class="span2">
