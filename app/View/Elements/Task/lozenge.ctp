@@ -16,6 +16,7 @@
 $this->Html->script(array('/bootstrap-tooltip/bootstrap-tooltip'), array('inline' => false));
 $this->Html->scriptBlock("$('.task-lozenge p.task-subject a').tooltip()", array('inline' => false));
 $this->Html->script("tasks", array ('inline' => false));
+$this->Html->script("/jquery-ui/jquery.ui.touch-punch.min", array ('inline' => false));
 if (!isset($draggable)){
 	$draggable = false;
 }
@@ -62,9 +63,9 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						<span class="row-fluid">
 						<span class="span12 task-controls">
 
+						<?= $this->Task->statusDropdownButton($task) ?>
 						<?= $this->Task->storyPointsControl($task) ?>
 						<?= $this->Task->priorityDropdownButton($task, false) ?>
-						<?= $this->Task->statusDropdownButton($task) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
 						</span>
 						</span>
