@@ -35,31 +35,36 @@ if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'bu
 			   $id
 		   ),
 	   	),
-	   array(
+	);
+	
+	// Don't give the user links to edit etc. if they don't have write access
+	if ($hasWrite) {
+	   $links[] = array(
 		   'text' => __('Edit'),
 		   'url' => array(
 			   'action' => 'edit',
 			   'controller' => 'milestones',
 			   $id
 		   ),
-	   ),
-	   array(
+	   );
+
+	   $links[] = array(
 		   'text' => __('Plan'),
 		   'url' => array(
 			   'action' => 'plan',
 			   'controller' => 'milestones',
 			   $id
 		   ),
-	   ),
-	   array(
+	   );
+	   $links[] = array(
 		   'text' => __('Close'),
 		   'url' => array(
 			   'action' => 'close',
 			   'controller' => 'milestones',
 			   $id
 		   ),
-	   ),
-	   array(
+	   );
+	   $links[] = array(
 		   'text' => __('Delete'),
 		   'url' => array(
 			   'action' => 'delete',
@@ -67,8 +72,8 @@ if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'bu
 			   $id
 		   ),
 		   'props' => array('class' => 'danger'), // TODO fix this make it red and all that
-	   ),
-	);
+	   );
+	}
 
 	if(!$milestone['Milestone']['is_open']) {
 		array_slice($links, 3, 1);

@@ -249,9 +249,10 @@ form {
   padding: 2px;
   padding-left: 4px;
   padding-right: 4px;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
   font-size: 12px;
   line-height: 15px;
+  min-height: 23px;
 }
 
 .btn-storypoints-control {

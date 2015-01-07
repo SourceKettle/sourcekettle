@@ -26,6 +26,11 @@ class TimesController extends AppProjectController {
 		'Time'
 	);
 
+	public $uses = array(
+		'Time',
+		'Project',
+	);
+
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
 		return array(

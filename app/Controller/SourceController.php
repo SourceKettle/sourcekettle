@@ -20,6 +20,11 @@ class SourceController extends AppProjectController {
 
 	public $helpers = array('Time', 'Source');
 
+	public $uses = array(
+		'Source',
+		'Project',
+	);
+
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
 		return array(

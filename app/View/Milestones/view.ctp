@@ -40,14 +40,14 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable, 'milestoneID' => $milestone['Milestone']['id'], 'addLink' => true)
+            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite, 'milestoneID' => $milestone['Milestone']['id'], 'addLink' => true)
         ) ?>
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite)
         ) ?>
         <?= $this->element('Task/Board/column',
-            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite)
         ) ?>
 
 	<!-- End primary columns -->
@@ -56,7 +56,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
     <!-- Icebox row -->
 	<div class="row-fluid span12">
         <?= $this->element('Task/Board/column',
-            array('tasks' => $iceBox, 'status' => 'dropped', 'title' => __('Ice Box'), 'span' => '12', 'task_span' => 4, 'classes' => 'sprintboard-icebox', 'draggable' => $draggable)
+            array('tasks' => $iceBox, 'status' => 'dropped', 'title' => __('Ice Box'), 'span' => '12', 'task_span' => 4, 'classes' => 'sprintboard-icebox', 'draggable' => $hasWrite)
         ) ?>
 
 	<!-- End icebox -->
