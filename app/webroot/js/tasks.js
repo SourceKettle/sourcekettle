@@ -30,6 +30,32 @@ var taskPriorityIcons = {
      minor:   "download"
 };
 
+var taskTypeLabels = {
+	bug: "Bug",
+	duplicate: "Duplicate",
+	enhancement: "Enhancement",
+	invalid: "Invalid",
+	question: "Question",
+	wontfix: "Won't Fix",
+	documentation: "Documentation",
+	meeting: "Meeting",
+	maintenance: "Maintenance Work",
+	testing: "Testing",
+};
+
+var taskTypeClasses = {
+	bug: "important",
+	duplicate: "warning",
+	enhancement: "success",
+	invalid: "",
+	question: "info",
+	wontfix: "inverse",
+	documentation: "info",
+	meeting: "info",
+	maintenance: "warning",
+	testing: "success",
+};
+
 
 // Comment edit buttons
 $('.comment').find(':button.edit').bind('click', function() {
@@ -100,7 +126,7 @@ function activateLinksAndShow(menu, button) {
 	$('a', menu).click(function(event){
 		var change = button.attr("data-change");
 		var newValue = $(event.currentTarget).attr("data-value");
-		var taskLozenge = button.closest('li.task-lozenge');
+		var taskLozenge = button.closest('.task-lozenge');
 		var taskInfo = {};
 		taskInfo[change] = newValue;
 		updateTask(taskLozenge, taskInfo);
@@ -134,6 +160,7 @@ function updateTask(taskLozenge, taskInfo) {
 	taskInfo.id = parseInt(taskLozenge.attr("data-taskid"), 10);
     var urlBase = taskLozenge.attr("data-api-url");
     var prioLabel = taskLozenge.find(".taskpriority");
+    var typeLabel = taskLozenge.find(".tasktype");
     var statusLabel = taskLozenge.find(".taskstatus");
 
     $.ajax(urlBase  + '/' + taskInfo.id, {
@@ -148,6 +175,17 @@ function updateTask(taskLozenge, taskInfo) {
 			
             if (data.error === "no_error") {
             
+				// Task type changed
+                if (taskInfo.type != null && typeLabel.size() == 1) {
+
+					// Update lozenge to reflect the new type
+                    typeLabel.html(taskTypeLabels[taskInfo.type] + ' <b class="caret"></b>');
+                    typeLabel.removeClass(function(index, css){
+                        return (css.match (/\blabel-\S+/g) || []).join(' ');
+                    });
+                    typeLabel.addClass('label-' + taskTypeClasses[taskInfo.type]);
+
+                }
 				// Priority changed, fairly straightforward
                 if (taskInfo.priority != null) {
 

@@ -12,10 +12,12 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+ 
+$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 'api' => true, 'project' => $task['Project']['name']));
 ?>
 <h3><?= __("Task details") ?></h3>
 <div>
-    <div class="span12">
+    <div class="span12 task-lozenge" data-taskid="<?=h($task['Task']['public_id'])?>" data-api-url="<?=$apiUrl?>">
         <dl class="dl-horizontal span6">
             <dt><?= __("Created by:") ?></dt>
             <? if (isset($task['Owner']['id'])) {?>
