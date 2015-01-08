@@ -2,6 +2,7 @@
 // Heavily cribbed from Joshua Paling's answer to http://stackoverflow.com/questions/19455540/mocking-an-authed-user-in-cakephp
 
 App::uses('User', 'Model');
+App::uses('AppProjectController', 'Controller');
 
 /**
  * AppController Test Case
