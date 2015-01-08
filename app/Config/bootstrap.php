@@ -103,7 +103,6 @@ CakeLog::config('error', array(
  *	));
  */
 Cache::config('default', array('engine' => 'Apc'));
-Configure::load('sourcekettle');
 
 
 /**
