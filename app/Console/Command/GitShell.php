@@ -90,6 +90,9 @@ class GitShell extends AppShell {
 		// Write to the file, making sure we get an exclusive lock to prevent corruption
 		file_put_contents($ssh_keyfile, $out, LOCK_EX);
 
+		// Make sure it's only readable/writable by the git user
+		chmod($ssh_keyfile, 0600);
+
 		// Don't sync again unless keys have changed
 		$this->Setting->syncRequired(false);
 	}
