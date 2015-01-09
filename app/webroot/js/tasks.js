@@ -1,33 +1,33 @@
 // Labels for the various statuses - TODO should be loaded from database
 var taskStatusLabels = {
-    open: "Open",
-    'in progress': "In Progress",
-    resolved: "Resolved",
-    dropped: "Dropped"
+	open: "Open",
+	'in progress': "In Progress",
+	resolved: "Resolved",
+	dropped: "Dropped"
 };
 
 // Classes to apply to the status label
 var taskStatusLabelTypes = {
-    open: "label-important",
-    'in progress': "label-warning",
-    resolved: "label-success",
-    dropped: "",
-    closed: "label-info"
+	open: "label-important",
+	'in progress': "label-warning",
+	resolved: "label-success",
+	dropped: "",
+	closed: "label-info"
 };
 
 // Priority labels and icons
 var taskPriorityLabels = {
-     blocker: "Blocker",
-     urgent:  "Urgent",
-     major:   "Major",
-     minor:   "Minor"
+	 blocker: "Blocker",
+	 urgent:  "Urgent",
+	 major:   "Major",
+	 minor:   "Minor"
 };
 
 var taskPriorityIcons = {
-     blocker: "ban-circle",
-     urgent:  "exclamation-sign",
-     major:   "upload",
-     minor:   "download"
+	 blocker: "ban-circle",
+	 urgent:  "exclamation-sign",
+	 major:   "upload",
+	 minor:   "download"
 };
 
 var taskTypeLabels = {
@@ -60,9 +60,9 @@ var taskTypeClasses = {
 // Comment edit buttons
 $('.comment').find(':button.edit').bind('click', function() {
 	$('.comment form').hide();
-    var p = $(this).parent('.comment');
-    p.find('p').hide();
-    p.find('form').show();
+	var p = $(this).parent('.comment');
+	p.find('p').hide();
+	p.find('form').show();
 });
 
 // Comment delete buttons
@@ -99,7 +99,7 @@ $('.task-dropdown').click(function(event) {
 			menu.empty();
 			$.ajax(source, {
 				"dataType" : "json",
-                "type" : "get",
+				"type" : "get",
 				"success" : function (data) {
 					menu.append('<li class="label"><a class="" href="#" data-value="0">(Remove assignee)</a></li>');
 					for (var id in data) {
@@ -138,17 +138,17 @@ function activateLinksAndShow(menu, button) {
 // Given a column of tasks, equalise the heights of all columns in its row.
 // (keeps the kanban view/planning view nice and tidy when we move things around)
 function equaliseColumns(column) {
-    var maxHeight = 0;
+	var maxHeight = 0;
 
-    // This is a bit of a faff, build a jQuery object for 'this column and its siblings'
-    var row = $(column).siblings('.sprintboard-droplist').toArray().concat(column);
+	// This is a bit of a faff, build a jQuery object for 'this column and its siblings'
+	var row = $(column).siblings('.sprintboard-droplist').toArray().concat(column);
 
-    // Set all heights to "best fit", then calculate max height and resize all columns in the row
-    $(row).height("");
-    $(row).each(function (index, droplist) {
-        var height = $(droplist).height();
-        maxHeight = height > maxHeight ? height : maxHeight;
-    }).height(maxHeight + "px");
+	// Set all heights to "best fit", then calculate max height and resize all columns in the row
+	$(row).height("");
+	$(row).each(function (index, droplist) {
+		var height = $(droplist).height();
+		maxHeight = height > maxHeight ? height : maxHeight;
+	}).height(maxHeight + "px");
 }
 
 
@@ -158,61 +158,61 @@ function equaliseColumns(column) {
 function updateTask(taskLozenge, taskInfo) {
 
 	taskInfo.id = parseInt(taskLozenge.attr("data-taskid"), 10);
-    var urlBase = taskLozenge.attr("data-api-url");
-    var prioLabel = taskLozenge.find(".taskpriority");
-    var typeLabel = taskLozenge.find(".tasktype");
-    var statusLabel = taskLozenge.find(".taskstatus");
+	var urlBase = taskLozenge.attr("data-api-url");
+	var prioLabel = taskLozenge.find(".taskpriority");
+	var typeLabel = taskLozenge.find(".tasktype");
+	var statusLabel = taskLozenge.find(".taskstatus");
 
-    $.ajax(urlBase  + '/' + taskInfo.id, {
+	$.ajax(urlBase  + '/' + taskInfo.id, {
 		"data" : taskInfo,
 		"dataType" : "json",
-        "type" : "post",
+		"type" : "post",
 		"success" : function (data) {
 			
 			// Which column is the lozenge sat in? (it may have been just dragged here
 			// or it may have been updated via a dropdown)
 			var currentColumn = taskLozenge.parent();
 			
-            if (data.error === "no_error") {
-            
+			if (data.error === "no_error") {
+			
 				// Task type changed
-                if (taskInfo.type != null && typeLabel.size() == 1) {
+				if (taskInfo.type != null && typeLabel.size() == 1) {
 
 					// Update lozenge to reflect the new type
-                    typeLabel.html(taskTypeLabels[taskInfo.type] + ' <b class="caret"></b>');
-                    typeLabel.removeClass(function(index, css){
-                        return (css.match (/\blabel-\S+/g) || []).join(' ');
-                    });
-                    typeLabel.addClass('label-' + taskTypeClasses[taskInfo.type]);
+					typeLabel.html(taskTypeLabels[taskInfo.type] + ' <b class="caret"></b>');
+					typeLabel.removeClass(function(index, css){
+						return (css.match (/\blabel-\S+/g) || []).join(' ');
+					});
+					typeLabel.addClass('label-' + taskTypeClasses[taskInfo.type]);
 
-                }
+				}
 				// Priority changed, fairly straightforward
-                if (taskInfo.priority != null) {
+				if (taskInfo.priority != null) {
 
 					// Update lozenge to reflect the new priority
-                    var icon = '<i class="icon-'+taskPriorityIcons[ taskInfo.priority ]+' icon-white"> </i>';
-                    prioLabel.html(icon + ' <b class="caret"></b>');
+					var icon = '<i class="icon-'+taskPriorityIcons[ taskInfo.priority ]+' icon-white"> </i>';
+					prioLabel.html(icon + ' <b class="caret"></b>');
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
 					if (currentColumn.attr('data-taskpriority') != taskInfo.priority) {
 						toColumn = $('.sprintboard-droplist[data-taskpriority="'+taskInfo.priority+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
-            				equaliseColumns(toColumn);
+							equaliseColumns(toColumn);
 							currentColumn = toColumn;
 						}
 					}
-                }
+				}
 
 				// Status changed, more fiddly due to the CSS class change...
-                if (taskInfo.status != null) {
-                    statusLabel.html(taskStatusLabels[taskInfo.status].charAt(0) + ' <b class="caret"></b>');
+				if (taskInfo.status != null) {
+					statusLabel.html(taskStatusLabels[taskInfo.status].charAt(0) + ' <b class="caret"></b>');
 
-                    // Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
-                    statusLabel.removeClass(function(index, css){
-                        return (css.match (/\blabel-\S+/g) || []).join(' ');
-                    });
-                    statusLabel.addClass(taskStatusLabelTypes[taskInfo.status]);
+					// Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
+					statusLabel.removeClass(function(index, css){
+						return (css.match (/\blabel-\S+/g) || []).join(' ');
+					});
+					statusLabel.addClass(taskStatusLabelTypes[taskInfo.status]);
 					taskLozenge.attr('data-taskstatus', taskInfo.status);
 
 					// If there's a droplist for this status and the lozenge isn't in it, move it into place
@@ -220,21 +220,21 @@ function updateTask(taskLozenge, taskInfo) {
 						toColumn = $('.sprintboard-droplist[data-taskstatus="'+taskInfo.status+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
-            				equaliseColumns(toColumn);
+							equaliseColumns(toColumn);
 							currentColumn = toColumn;
 						}
 					}
 
-                	// Make sure the task is the correct span width for this column
-                	newspan = 'span' + currentColumn.attr('data-taskspan');
-                	taskLozenge.removeClass(function(index, css){
-                    	return (css.match (/\bspan\d+/g) || []).join(' ');
-               		});
-                	taskLozenge.addClass(newspan);
+					// Make sure the task is the correct span width for this column
+					newspan = 'span' + currentColumn.attr('data-taskspan');
+					taskLozenge.removeClass(function(index, css){
+						return (css.match (/\bspan\d+/g) || []).join(' ');
+			   		});
+					taskLozenge.addClass(newspan);
 
 					// It's a status change, so make sure we update the story point totals
 					refreshStoryPointTotals();
-                }
+				}
 
 				// Assignee changed - we need to change the gravatar image
 				// Note that it can be set to zero for "unassigned"...
@@ -245,14 +245,14 @@ function updateTask(taskLozenge, taskInfo) {
 					assigneeBox.attr('title', 'Assigned to: '+data.assignee_name);
 				}
 
-            } else {
-                alert("Problem: "+data.errorDescription);
-                $(ui.sender).sortable('cancel');
-            }
-        },
+			} else {
+				alert("Problem: "+data.errorDescription);
+				$(ui.sender).sortable('cancel');
+			}
+		},
 		"error" : function (data) {
-            alert("Problem: "+data.statusText);
-            $(ui.sender).sortable('cancel');
+			alert("Problem: "+data.statusText);
+			$(ui.sender).sortable('cancel');
 		}
 	});
 }
@@ -260,81 +260,81 @@ function updateTask(taskLozenge, taskInfo) {
 // Initialise the drag and drop task lists on this page
 function initTaskDroplists() {
 
-    $('.sprintboard-droplist').each(function(index, column){equaliseColumns(column);});
+	$('.sprintboard-droplist').each(function(index, column){equaliseColumns(column);});
 
-    // Make all columns and the icebox connected sortable lists
+	// Make all columns and the icebox connected sortable lists
 	w = $($('.sprintboard-droplist')[1]).width();
 
-    $( ".sprintboard-droplist" ).sortable({
-        cursor: "move",
+	$( ".sprintboard-droplist" ).sortable({
+		cursor: "move",
 
-        //cursorAt: {left: 20, top: 20},
+		//cursorAt: {left: 20, top: 20},
 		cursorAt: {
 			left: Math.floor(w / 2),
 		},
 
-        connectWith: ".sprintboard-droplist",
+		connectWith: ".sprintboard-droplist",
 
-        items: "li.draggable",
+		items: "li.draggable",
 
-        // Allow dropping on empty lists
-        dropOnEmpty: true,
+		// Allow dropping on empty lists
+		dropOnEmpty: true,
 
-        // Nicely animate when returning from invalid drop targets
-        revert: 200,
+		// Nicely animate when returning from invalid drop targets
+		revert: 200,
 
-        // Rotate by 2 degrees while being dragged
-        start: function(event, ui){
+		// Rotate by 2 degrees while being dragged
+		start: function(event, ui){
 
 			// Set the lozenge width to the sprintboard column width
 			// Avoids dragging a massive lozenge from the icebox
 			ui.item.width(w);
 
 			// Rotate, because it looks nifty
-            ui.item.css('transform', 'rotate(2deg)');
+			ui.item.css('transform', 'rotate(2deg)');
 
 			// Glowy edges on all valid drop targets
 			$('.sprintboard-droplist').addClass('highlight-droptarget');
-        },
+		},
 
-        // Unrotate when dropped, also stop the click event from
-        // happening so we don't click through to the task
-        stop: function(event, ui){
-            ui.item.css('transform', '');
+		// Unrotate when dropped, also stop the click event from
+		// happening so we don't click through to the task
+		stop: function(event, ui){
+			ui.item.css('transform', '');
 			$('.sprintboard-droplist').removeClass('highlight-droptarget');
-            $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
-            equaliseColumns(event.target);
-            equaliseColumns(ui.item.parent()[0]);
-        },
+			$( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
+			equaliseColumns(event.target);
+			equaliseColumns(ui.item.parent()[0]);
+		},
 
-        // When the item is dropped onto a different task list, do an AJAX call to update the status
-        receive: function(event, ui){
-            var taskLozenge = ui.item;
-            var toStatus    = $(this).attr('data-taskstatus');
-            //var fromStatus  = $(ui.sender).attr('data-taskstatus');
-            var toPrio      = $(this).attr('data-taskpriority');
-            var toMilestone = $(this).attr('data-milestone');
+		// When the item is dropped onto a different task list, do an AJAX call to update the status
+		receive: function(event, ui){
+			var taskLozenge = ui.item;
+			var toStatus	= $(this).attr('data-taskstatus');
+			//var fromStatus  = $(ui.sender).attr('data-taskstatus');
+			var toPrio	  = $(this).attr('data-taskpriority');
+			var toMilestone = $(this).attr('data-milestone');
 
-            var taskInfo = {};
+			var taskInfo = {};
 
-            if(typeof toPrio != 'undefined'){
-                taskInfo.priority = toPrio;
-            }
+			if(typeof toPrio != 'undefined'){
+				taskInfo.priority = toPrio;
+			}
 
-            if(typeof toStatus != 'undefined'){
-                taskInfo.status = toStatus;
-            }
+			if(typeof toStatus != 'undefined'){
+				taskInfo.status = toStatus;
+			}
 
-            if(typeof toMilestone != 'undefined'){
-                taskInfo.milestone_id = toMilestone;
-            }
+			if(typeof toMilestone != 'undefined'){
+				taskInfo.milestone_id = toMilestone;
+			}
 
 			updateTask(taskLozenge, taskInfo);
 
-        }
+		}
 
-    // Stop text selection while dragging
-    }).disableSelection();
+	// Stop text selection while dragging
+	}).disableSelection();
 
 }
 
