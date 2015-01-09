@@ -138,7 +138,7 @@ class CollaboratorsController extends AppProjectController {
 		} elseif (preg_match('/^(.+@.+)$/', $this->request->data['Collaborator']['name'], $_matches)) {
 			$_email = $_matches[1];
 		} else {
-			$this->Flash->error(__('Failed to find an email address in your query('.$this->request->data['Collaborator']['name'].'). Please try again.'));
+			$this->Flash->error(__('Failed to find an email address in your query. Please try again.'));
 			return $this->redirect(array('project' => $project['Project']['name'], 'action' => '*'));
 		}
 

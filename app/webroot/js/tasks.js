@@ -184,6 +184,7 @@ function updateTask(taskLozenge, taskInfo) {
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
 					typeLabel.addClass('label-' + taskTypeClasses[taskInfo.type]);
+					typeLabel.attr('title', 'Type: ' + taskInfo.type);
 
 				}
 				// Priority changed, fairly straightforward
@@ -192,6 +193,7 @@ function updateTask(taskLozenge, taskInfo) {
 					// Update lozenge to reflect the new priority
 					var icon = '<i class="icon-'+taskPriorityIcons[ taskInfo.priority ]+' icon-white"> </i>';
 					prioLabel.html(icon + ' <b class="caret"></b>');
+					prioLabel.attr('title', 'Priority: ' + taskInfo.priority);
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
 					if (currentColumn.attr('data-taskpriority') != taskInfo.priority) {
@@ -213,6 +215,7 @@ function updateTask(taskLozenge, taskInfo) {
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
 					statusLabel.addClass(taskStatusLabelTypes[taskInfo.status]);
+					statusLabel.attr('title', 'Status: ' + taskInfo.status);
 					taskLozenge.attr('data-taskstatus', taskInfo.status);
 
 					// If there's a droplist for this status and the lozenge isn't in it, move it into place
@@ -357,6 +360,7 @@ function setStoryPoints(button, difference) {
 		"type" : "post",
 		"success" : function (data) {
 			pointsBox.text(points);
+			pointsBox.parent().attr('title', points+' story points');
 			refreshStoryPointTotals();
 		},
 		"error" : function(data) {

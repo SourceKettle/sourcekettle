@@ -21,6 +21,7 @@ class TaskHelper extends AppHelper {
 
 	// Renders a dropdown menu box for setting task priorities
  	public function priorityDropdownMenu() {
+
 		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_priority_dropdown">';
 		foreach ($this->_View->viewVars['task_priorities'] as $priorityId => $priority) {
 			$priorityIcon = $this->Bootstrap->icon(
@@ -66,10 +67,10 @@ class TaskHelper extends AppHelper {
 
 		// If we've got no task ID, just render a label and no dropdown
 		if ($task == null) {
-			$button = '<span class="taskpriority label '.$class.'">'.$icon.' '.$label.'</span>';
+			$button = '<span class="taskpriority label '.$class.'" title="'.$tooltip.'">'.$icon.' '.$label.'</span>';
 		} else {
 			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
-			$button = '<button class="taskpriority label '.$class.' task-dropdown" data-api-url="'.$apiUrl.'" data-change="priority" data-id="'.h($priorityId).'" data-toggle="task_priority_dropdown">'.$icon.' '.$label.' <span class="caret"></span></button>';
+			$button = '<button class="taskpriority label '.$class.' task-dropdown" title="'.$tooltip.'" data-api-url="'.$apiUrl.'" data-change="priority" data-id="'.h($priorityId).'" data-toggle="task_priority_dropdown">'.$icon.' '.$label.' <span class="caret"></span></button>';
 		}
 		return $button;
 	}
@@ -110,10 +111,10 @@ class TaskHelper extends AppHelper {
 
 		// If we've got no task ID, just render a label and no dropdown
 		if ($task == null) {
-			$button = '<span class="taskstatus label '.$class.'">'.h($label).'</span>';
+			$button = '<span class="taskstatus label '.$class.'" title="'.$tooltip.'">'.h($label).'</span>';
 		} else {
 			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
-			$button = '<button class="taskstatus label '.$class.' task-dropdown" data-api-url="'.$apiUrl.'" data-change="status" data-id="'.h($statusId).'" data-toggle="task_status_dropdown">'.h($label).' <span class="caret"></span></button>';
+			$button = '<button class="taskstatus label '.$class.' task-dropdown" title="'.$tooltip.'" data-api-url="'.$apiUrl.'" data-change="status" data-id="'.h($statusId).'" data-toggle="task_status_dropdown">'.h($label).' <span class="caret"></span></button>';
 		}
 		return $button;
 
@@ -174,18 +175,34 @@ class TaskHelper extends AppHelper {
 	}
 
 	public function storyPointsControl($task, $full = false) {
-		$points = $task['Task']['story_points'] ?: 0;
-		$label = "<span class=\"btn-group btn-group-storypoints\">";
-		$label .= $this->Bootstrap->button("-", array('title' => __('Decrease story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
-		$label .= $this->Bootstrap->button(__("<span class='points'>%d</span>", $points), array(
+		if (is_numeric($task)) {
+			$points = $task ?: 0;
+			$task = null;
+		} else {
+			$points = $task['Task']['story_points'] ?: 0;
+		}
+
+		$label = '';
+
+		if ($task) {
+			$label .= $this->Bootstrap->button("-", array('title' => __('Decrease story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
+		}
+
+		$label .= $this->Bootstrap->button(__("<span class='points'>%d%s</span>", $points, $task?"":" SP"), array(
 			'class' => 'disabled btn-inverse btn-storypoints',
 			'title' => __n('%d story point', '%d story points', $points, $points)));
-		$label .= $this->Bootstrap->button("+", array('title' => __('Increase story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
+		
+		if ($task) {
+			$label .= $this->Bootstrap->button("+", array('title' => __('Increase story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
+		}
 
 		if ($full) {
 			$label .= __(" story points");
 		}
-		$label .= "</span>";
+
+		if ($task) {
+			$label = "<span class=\"btn-group btn-group-storypoints\">$label</span>";
+		}
 		return $label;
 	}
 

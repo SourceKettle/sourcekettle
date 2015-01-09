@@ -63,9 +63,9 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						<span class="row-fluid">
 						<span class="span12 task-controls">
 
-						<?= $this->Task->statusDropdownButton($task) ?>
-						<?= $this->Task->storyPointsControl($task) ?>
-						<?= $this->Task->priorityDropdownButton($task, false) ?>
+						<?= $this->Task->statusDropdownButton($hasWrite? $task: $task['Task']['task_status_id']) ?>
+						<?= $this->Task->storyPointsControl($hasWrite? $task: $task['Task']['story_points']) ?>
+						<?= $this->Task->priorityDropdownButton($hasWrite? $task: $task['Task']['task_priority_id'], false) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
 						</span>
 						</span>
