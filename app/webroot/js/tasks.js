@@ -3,6 +3,7 @@ var taskStatusLabels = {
 	open: "Open",
 	'in progress': "In Progress",
 	resolved: "Resolved",
+	closed: "Closed",
 	dropped: "Dropped"
 };
 
@@ -11,8 +12,8 @@ var taskStatusLabelTypes = {
 	open: "label-important",
 	'in progress': "label-warning",
 	resolved: "label-success",
-	dropped: "",
-	closed: "label-info"
+	closed: "label-info",
+	dropped: ""
 };
 
 // Priority labels and icons

@@ -36,9 +36,12 @@ class AppProjectController extends AppController {
 
 		// If the user has write access, they can drag and drop tasks, etc.
 		// Otherwise we'll disable controls and remove links to things they won't be able to do
-		$project = $this->Project->findByName($this->request->params['project']);
-		$this->set('hasWrite', $this->Project->hasWrite($this->Auth->user('id'), $project['Project']['id']));
-
+		if (isset($this->request->params['project'])) {
+			$project = $this->Project->findByName($this->request->params['project']);
+			if (isset($project) && $project) {
+				$this->set('hasWrite', $this->Project->hasWrite($this->Auth->user('id'), $project['Project']['id']));
+			}
+		}
 	}
 
 	// Returns a hash of action name => access level required (read, write, admin).
