@@ -43,6 +43,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 				'span' => '12',
 				'task_span' => '4',
 				'classes' => 'sprintboard-icebox',
+				'draggable' => $hasWrite,
 			)
         ) ?>
 
@@ -62,7 +63,8 @@ $this->Html->css("milestones.index", array ('inline' => false));
 				'span' => '6',
 				'task_span' => '6',
 				'classes' => 'sprintboard-column',
-				'addLink' => true,
+				'addLink' => false,
+				'draggable' => $hasWrite,
 			)
         ) ?>
         <?= $this->element('Task/Board/column',
@@ -75,7 +77,8 @@ $this->Html->css("milestones.index", array ('inline' => false));
 				'span' => '6',
 				'task_span' => '6',
 				'classes' => 'sprintboard-column',
-				'addLink' => true,
+				'addLink' => false,
+				'draggable' => $hasWrite,
 			)
         ) ?>	
 
@@ -96,7 +99,8 @@ $this->Html->css("milestones.index", array ('inline' => false));
 				'span' => '6',
 				'task_span' => '6',
 				'classes' => 'sprintboard-column',
-				'addLink' => true,
+				'addLink' => false,
+				'draggable' => $hasWrite,
 			)
         ) ?>
         <?= $this->element('Task/Board/column',
@@ -109,7 +113,8 @@ $this->Html->css("milestones.index", array ('inline' => false));
 				'span' => '6',
 				'task_span' => '6',
 				'classes' => 'sprintboard-column',
-				'addLink' => true,
+				'addLink' => false,
+				'draggable' => $hasWrite,
 			)
         ) ?>	
 

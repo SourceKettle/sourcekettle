@@ -189,7 +189,12 @@ class CollaboratorsController extends AppProjectController {
 
 		$_name = $this->request->data['Collaborator']['name'];
 
-		$team = $this->CollaboratingTeam->Team->findByName($_name, array('Team.id', 'Team.name'));
+		// Auto-completed entries look like 'foo [a team of people]'
+		if (preg_match('/^(\S+)\s*\[(.*)\]$/', $_name, $_matches)) {
+			$team = $this->CollaboratingTeam->Team->findByName($_matches[1], array('Team.id', 'Team.name'));
+		} else {
+			$team = $this->CollaboratingTeam->Team->findByName($_name, array('Team.id', 'Team.name'));
+		}
 
 		if (empty($team)) {
 			$this->Flash->error('The team specified does not exist. Please try again.');

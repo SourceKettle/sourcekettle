@@ -26,13 +26,13 @@
 	
 	<?= $this->Html->charset('UTF-8') ?>
 
-	<?= $this->Html->css('/bootstrap/bootstrap.min') ?>
+	<?= $this->Html->css('/bootstrap/css/bootstrap.min') ?>
 
 	<?= $this->Theme->css($sourcekettle_config) ?>
 
 	<?= $this->Html->css('layout'); ?>
 
-	<?= $this->Html->css('/bootstrap/bootstrap-responsive.min') ?>
+	<?= $this->Html->css('/bootstrap/css/bootstrap-responsive.min') ?>
 
 	<?//= $this->fetch ('css') ?>
 
@@ -135,7 +135,7 @@
 	<?= $this->Html->script('/jquery/jquery-1.11.0.min.js'); ?>
 	<?= $this->Html->script('/jquery-ui/jquery-ui-1.10.4.min.js'); ?>
 	<?= $this->Html->script('/jquery-color/jquery.color-2.1.2.min', array('inline' => false)); ?>
-	<?= $this->Html->script('/bootstrap/bootstrap.min') ?>
+	<?= $this->Html->script('/bootstrap/js/bootstrap.min') ?>
 	<?= $this->Popover->requirements() ?>
 	<?= $this->fetch('scriptBottom') ?>
 	<?= $scripts_for_layout ?>

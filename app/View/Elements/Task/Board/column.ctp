@@ -56,7 +56,7 @@ echo "<hr />\n";
 foreach ($tasks as $task) {
     echo $this->element('Task/lozenge', array('task' => $task, 'draggable' => $draggable, 'span' => $task_span));
 }
-if (isset($addLink)) {
+if (isset($addLink) && $addLink) {
 	$params = array();
 	if (isset($status)) {
 		$params['status'] = $status;

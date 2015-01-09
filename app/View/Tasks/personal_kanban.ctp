@@ -17,7 +17,6 @@
 $this->Html->css('tasks', array ('inline' => false));
 $this->Html->css("milestones.index", array ('inline' => false));
 
-$draggable = true;
 ?>
 
 <?= $this->Task->allDropdownMenus() ?>
@@ -37,7 +36,7 @@ $draggable = true;
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => false)
         ) ?>
 
         <?= $this->element('Task/Board/column',

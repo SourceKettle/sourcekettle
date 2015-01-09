@@ -51,19 +51,6 @@ class MilestonesController extends AppProjectController {
 
 		return parent::isAuthorized($user);
 	}
-/**
- * beforeFilter function.
- *
- * @access public
- * @return void
- */
-	public function beforeFilter() {
-		parent::beforeFilter();
-		// If the user has write access, they can drag and drop tasks, etc.
-		$hasWrite = $this->Milestone->Project->hasWrite($this->Auth->user('id'));
-		$this->set('hasWrite', $hasWrite);
-
-	}
 
 /**
  * index method

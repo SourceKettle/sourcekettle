@@ -20,9 +20,10 @@ class AppProjectController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
+		$this->loadModel('Project');
+
 		// Redirect urls that use the id of a project to the name of the project
 		if (isset($this->request->params['project']) && is_numeric($this->request->params['project'])) {
-			$this->loadModel('Project');
 			$project = $this->Project->findById($this->request->params['project']);
 			if (isset($project) && !empty($project)) {
 				return $this->redirect(array(
@@ -35,8 +36,8 @@ class AppProjectController extends AppController {
 
 		// If the user has write access, they can drag and drop tasks, etc.
 		// Otherwise we'll disable controls and remove links to things they won't be able to do
-		$draggable = $this->Project->hasWrite($this->Auth->user('id'));
-		$this->set('draggable', $draggable);
+		$project = $this->Project->findByName($this->request->params['project']);
+		$this->set('hasWrite', $this->Project->hasWrite($this->Auth->user('id'), $project['Project']['id']));
 
 	}
 
