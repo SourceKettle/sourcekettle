@@ -19,7 +19,7 @@ App::uses('AppProjectController', 'Controller');
 
 class CollaboratorsController extends AppProjectController {
 
-	public $uses = array("Collaborator", "CollaboratingTeam", "GroupCollaboratingTeam", "ProjectGroup");
+	public $uses = array("Collaborator", "Project", "CollaboratingTeam", "GroupCollaboratingTeam", "ProjectGroup");
 
 /**
  * Project helpers
@@ -130,13 +130,18 @@ class CollaboratorsController extends AppProjectController {
 			return $this->redirect(array('project' => $project['Project']['name'], 'action' => '*'));
 		}
 
-		// Look for [foo@shoes.org] i.e. some form of email address wrapped in square brackets
-		if (!preg_match('/\[(.+@.+)\]/', $this->request->data['Collaborator']['name'], $_matches)) {
-			$this->Flash->error(__('Failed to find an email address in your query. Please try again.'));
+		// Look for [foo@shoes.org] i.e. some form of email address wrapped in square brackets anywhere in the string
+		if (preg_match('/\[(.+@.+)\]/', $this->request->data['Collaborator']['name'], $_matches)) {
+			$_email = $_matches[1];
+		// Check and see if the whole string looks email-address-like (NB email validation isn't as simple as you think,
+		// let's be fairly permissive here)
+		} elseif (preg_match('/^(.+@.+)$/', $this->request->data['Collaborator']['name'], $_matches)) {
+			$_email = $_matches[1];
+		} else {
+			$this->Flash->error(__('Failed to find an email address in your query('.$this->request->data['Collaborator']['name'].'). Please try again.'));
 			return $this->redirect(array('project' => $project['Project']['name'], 'action' => '*'));
 		}
 
-		$_email = $_matches[1];
 		$user = $this->Collaborator->User->findByEmail($_email, array('User.id', 'User.name'));
 
 		if (empty($user)) {

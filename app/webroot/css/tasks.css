@@ -68,10 +68,6 @@ form {
 	border-color: #858585;
 }
 
-.sprintboard-droplist [class*="span"]{
-	margin: 0;
-}
-
 .sprintboard-droplist {
   list-style-type: none;
   margin: 0px;

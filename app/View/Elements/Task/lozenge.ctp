@@ -71,7 +71,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						</span>
 					</div>
 
-					<div class="span3 pull-right task-lozenge-assignee task-lozenge-main">
+					<div class="span3 task-lozenge-assignee task-lozenge-main">
 					<?= $this->Task->assigneeDropdownButton($task) ?>
 					</div>
 			</div>
