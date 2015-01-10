@@ -131,7 +131,8 @@ class AppControllerTest extends ControllerTestCase {
 		}
 
 		$reflector = new ReflectionClass($this->controller);
-		
+		$controllerName = $reflector->getName();
+
 		// First check if the controller's an AppProjectController... if not, skip
 		if (!$reflector->isSubclassOf("AppProjectController")) {
 			$this->assertTrue(true, "Controller is not an AppProjectController");
@@ -150,24 +151,22 @@ class AppControllerTest extends ControllerTestCase {
 		$mapping = $mappingMethod->invoke($this->controller);
 
 		// List public methods of the controller (any non-actions should be private/protected)
-		$methods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
-		$methods = array_filter($methods, function($method){
-			return (
-				$method->getDeclaringClass()->getName() == 'TasksController'
-				&& !preg_match('/^(before|after|isAuthorized)/', $method->getName()));
-		});
-		$methods = array_map(function($method) {return $method->getName();}, $methods);
-
+		$_methods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
+		$methods = array();
 		$bad = array();
-		foreach ($methods as $method) {
-			if (!isset($mapping[$method])) {
-				$bad[] = $method;
+		foreach ($_methods as $method) {
+			if (
+			$method->getDeclaringClass()->getName() == $this->controller->name.'Controller'
+			&& !preg_match('/^(admin_|before|after|isAuthorized)/', $method->getName())) {
+				$method = $method->getName();
+				if (!isset($mapping[$method])) {
+					$bad[] = $method;
+				}
 			}
 		}
 
 		if (!empty($bad)) {
 			$this->assertTrue(false, "Please add authorization mappings for: ".implode(",", $bad));
 		}
-
 	}
 }
