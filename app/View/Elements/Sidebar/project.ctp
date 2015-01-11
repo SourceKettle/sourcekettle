@@ -105,6 +105,15 @@
                 ),
             ),
         );
+    } else {
+        $options[__('Features')][__('Collaborators')] = array(
+            'icon' => 'user',
+            'url' => array(
+                'action' => '.',
+                'controller' => 'collaborators',
+                'project' => $this->params['project'],
+            ),
+        );
     }
 
 	// Remove anything that's disabled

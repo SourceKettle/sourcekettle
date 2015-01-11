@@ -93,7 +93,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
         </dl>
         <dl class="dl-horizontal span6">
             <dt><?= __("Assigned to") ?>:</dt>
-	    <dd><?=$this->Task->assigneeDropdownButton($task, 23, true)?></dd>
+	    <dd><?=$this->Task->assigneeDropdownButton($task, 23, true, true)?></dd>
             <dt><?= __("Task status") ?>:</dt>
 			<dd><?= $this->Task->statusDropdownButton($task, true) ?></dd>
 

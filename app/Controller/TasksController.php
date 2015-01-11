@@ -371,7 +371,7 @@ class TasksController extends AppProjectController {
 		}
 
 		// Fetch any additional users that may be needed
-		$changeUsers = array();
+		$changeUsers = array(0 => array('(Not assigned)', null));
 		$this->Task->Assignee->recursive = -1;
 		foreach ($changes as $change) {
 			if ($change['ProjectHistory']['row_field'] == 'assignee_id') {

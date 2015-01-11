@@ -212,8 +212,7 @@ class TaskHelper extends AppHelper {
 		return '<ul class="dropdown-menu task-dropdown-menu" id="task_assignee_dropdown"></ul>';
 	}
 
-	public function assigneeDropdownButton($task, $size = 90, $textLabel = false) {
-
+	public function assigneeDropdownButton($task, $size = 90, $hasWrite = true, $textLabel = false) {
 		if(isset($task['Assignee']['email'])){
 			$tooltip = __("Assigned to: %s", h($task['Assignee']['name']));
 			$label = $this->Gravatar->image($task['Assignee']['email'], array('size' => $size), array('alt' => $tooltip, 'title' => $tooltip));
@@ -224,7 +223,11 @@ class TaskHelper extends AppHelper {
 		}
 
 		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_collaborators', 'api' => true, 'project' => $task['Project']['name']));
-		$button = '<button class="label task-dropdown task-dropdown-assignee" title="'.h($tooltip).'" data-api-url="'.$apiUrl.'" data-change="assignee_id" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
+		if ($hasWrite) {
+			$button = '<button class="label task-dropdown task-dropdown-assignee" title="'.h($tooltip).'" data-api-url="'.$apiUrl.'" data-change="assignee_id" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
+		} else {
+			$button = $label;
+		}
 
 		if ($textLabel) {
 			$button .= ' <span class="assignee-full-label">'.$this->Html->link(
@@ -232,7 +235,7 @@ class TaskHelper extends AppHelper {
 				array(
 					'controller' => 'users',
 					'action' => 'view',
-					$task['Task']['assignee_id']
+					$task['Assignee']['id']
 				)
 			).'</span>';
 		}
@@ -242,7 +245,7 @@ class TaskHelper extends AppHelper {
 	public function treeRender($projectName, $tree) {
 		echo "<ul>";
 		
-		echo "<li>";
+		echo '<li>';
 		echo $this->Html->link("#".$tree['public_id'].": ".$tree['subject'], array(
 			'controller' => 'tasks',
 			'action' => 'view',
