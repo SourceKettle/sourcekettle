@@ -246,7 +246,11 @@ function updateTask(taskLozenge, taskInfo) {
 					assigneeBox = $('.task-dropdown-assignee', taskLozenge);
 					gravatarImage = $('img', assigneeBox);
 					gravatarImage.attr('src', data.assignee_gravatar+'&size='+gravatarImage.attr('width'));
-					assigneeBox.attr('title', 'Assigned to: '+data.assignee_name);
+					if (taskInfo.assignee_id == 0) {
+						assigneeBox.attr('title', 'Not assigned');
+					} else {
+						assigneeBox.attr('title', 'Assigned to: '+data.assignee_name);
+					}
 				}
 
 			} else {

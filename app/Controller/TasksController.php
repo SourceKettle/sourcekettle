@@ -891,6 +891,10 @@ class TasksController extends AppProjectController {
 				$data['assignee_email'] = $this->Task->Assignee->field('email', array('id' => $data['assignee_id']));
 				$data['assignee_name'] = $this->Task->Assignee->field('name', array('id' => $data['assignee_id']));
 				$data['assignee_gravatar'] = Gravatar::url($data['assignee_email'], array('url_only' => true));
+			} else {
+				$data['assignee_email'] = '';
+				$data['assignee_name'] = '';
+				$data['assignee_gravatar'] = Gravatar::url(null, array('url_only' => true, 'd' => 'mm'));
 			}
 			$data['error'] = 'no_error';
 

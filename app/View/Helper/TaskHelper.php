@@ -215,15 +215,12 @@ class TaskHelper extends AppHelper {
 	public function assigneeDropdownButton($task, $size = 90) {
 
 		if(isset($task['Assignee']['email'])){
-
 			$tooltip = __("Assigned to: %s", h($task['Assignee']['name']));
 			$label = $this->Gravatar->image($task['Assignee']['email'], array('size' => $size), array('alt' => $tooltip, 'title' => $tooltip));
 
 		} else {
-
 			$tooltip = __("Not assigned");
 			$label = $this->Gravatar->image('', array('size' => $size, 'd' => 'mm'), array('alt' => $tooltip, 'title' => $tooltip));
-
 		}
 
 		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_collaborators', 'api' => true, 'project' => $task['Project']['name']));
