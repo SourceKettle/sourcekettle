@@ -35,7 +35,7 @@
 	  	echo "</p>";
 	    echo "<ul class='sprintboard-droplist'>";
         foreach ($tasks as $task){
-          echo $this->element('Task/lozenge', array('task' => $task, 'span' => 12));
+          echo $this->element('Task/lozenge', array('task' => $task, 'span' => 12, 'hasWrite' => $task['__hasWrite']));
         }
 		echo "</ul>";
       } else {

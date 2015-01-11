@@ -45,6 +45,7 @@ class ProjectsController extends AppProjectController {
 			'markupPreview'  => 'read',
 			'changeSetting' => 'admin',
 			'api_history' => 'read',
+			'api_list_collaborators' => 'read',
 			'api_autocomplete' => 'login',
 		);
 	}

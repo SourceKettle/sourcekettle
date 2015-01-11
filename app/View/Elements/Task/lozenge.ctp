@@ -19,6 +19,9 @@ $this->Html->script("tasks", array ('inline' => false));
 $this->Html->script("/jquery-ui/jquery.ui.touch-punch.min", array ('inline' => false));
 if (!isset($draggable)){
 	$draggable = false;
+	if (isset($task['__hasWrite'])) {
+		$draggable = $task['__hasWrite'];
+	}
 }
 if(isset($span) && $span){
 	$span=" span$span";
@@ -63,9 +66,9 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						<span class="row-fluid">
 						<span class="span12 task-controls">
 
-						<?= $this->Task->statusDropdownButton($hasWrite? $task: $task['Task']['task_status_id']) ?>
-						<?= $this->Task->storyPointsControl($hasWrite? $task: $task['Task']['story_points']) ?>
-						<?= $this->Task->priorityDropdownButton($hasWrite? $task: $task['Task']['task_priority_id'], false) ?>
+						<?= $this->Task->statusDropdownButton($draggable? $task: $task['Task']['task_status_id']) ?>
+						<?= $this->Task->storyPointsControl($draggable? $task: $task['Task']['story_points']) ?>
+						<?= $this->Task->priorityDropdownButton($draggable? $task: $task['Task']['task_priority_id'], false) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
 						</span>
 						</span>

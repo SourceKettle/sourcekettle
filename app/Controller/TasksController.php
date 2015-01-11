@@ -281,6 +281,7 @@ class TasksController extends AppProjectController {
 		$tasks = $this->Task->find('all', array(
 			'conditions' => $conditions,
 		));
+		
 		$this->set('tasks', $tasks);
 
 

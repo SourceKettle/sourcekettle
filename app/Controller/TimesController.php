@@ -41,6 +41,7 @@ class TimesController extends AppProjectController {
 			'index'   => 'read',
 			'users'   => 'read',
 			'view' => 'read',
+			'userlog' => 'read',
 		);
 	}
 

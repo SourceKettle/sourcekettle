@@ -50,7 +50,7 @@ class DashboardController extends AppController {
 
 	private function __getUserTasks() {
 		$current_user = $this->viewVars['current_user'];
-		return $this->Task->find('all', array(
+		$_tasks = $this->Task->find('all', array(
 			'conditions' => array(
 				'Task.assignee_id' => $current_user['id'],
 				'TaskStatus.name <>' => array('closed', 'resolved', 'dropped')
@@ -59,6 +59,13 @@ class DashboardController extends AppController {
 			'order' => array('task_priority_id DESC', 'task_status_id ASC'),
 			'limit' => 7
 		));
+		// Mark individual tasks that the current user can modify
+		$tasks = array();
+		foreach ($_tasks as $task) {
+			$task['__hasWrite'] = $this->Task->hasWrite($this->Auth->user('id'), $task);
+			$tasks[] = $task;
+		}
+		return $tasks;
 	}
 
 	private function __getProjectsHistory() {
