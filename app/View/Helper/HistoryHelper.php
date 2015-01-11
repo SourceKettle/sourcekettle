@@ -196,11 +196,39 @@ class HistoryHelper extends AppHelper {
 					$oldMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $old), 'recursive' => -1));
 					$newMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $new), 'recursive' => -1));
 					if (empty($newMilestone)) {
-						$log_string = __("%s removed task '%s' from milestone '%s'", $actioner, $subject, $oldMilestone['Milestone']['subject']);
+						$oldMilestone = $this->Html->link($oldMilestone['Milestone']['subject'], array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$old
+						));
+						$log_string = __("%s removed task '%s' from milestone '%s'", $actioner, $subject, $oldMilestone);
 					} elseif (empty($oldMilestone)) {
-						$log_string = __("%s added task '%s' to milestone '%s'", $actioner, $subject, $newMilestone['Milestone']['subject']);
+						$newMilestone = $this->Html->link($newMilestone['Milestone']['subject'], array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$new
+						));
+						$log_string = __("%s added task '%s' to milestone '%s'", $actioner, $subject, $newMilestone);
 					} else {
-						$log_string = __("%s moved task '%s' from milestone '%s' to milestone '%s'", $actioner, $subject, $oldMilestone['Milestone']['subject'], $newMilestone['Milestone']['subject']);
+						$oldMilestone = $this->Html->link($oldMilestone['Milestone']['subject'], array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$old
+						));
+						$newMilestone = $this->Html->link($newMilestone['Milestone']['subject'], array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$new
+						));
+						$log_string = __("%s moved task '%s' from milestone '%s' to milestone '%s'", $actioner, $subject, $oldMilestone, $newMilestone);
 					}
 					break;
 					
