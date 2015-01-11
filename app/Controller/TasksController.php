@@ -864,6 +864,8 @@ class TasksController extends AppProjectController {
 
 		}
 
+		$project = $this->_getProject($project_name);
+
 		$task = $this->Task->find('first', array('conditions' => array(
 			'Task.public_id' => $public_id,
 			'Project.name' => $project_name,
