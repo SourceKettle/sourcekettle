@@ -27,8 +27,8 @@ var taskPriorityLabels = {
 var taskPriorityIcons = {
 	 blocker: "ban-circle",
 	 urgent:  "exclamation-sign",
-	 major:   "upload",
-	 minor:   "download"
+	 major:   "arrow-up",
+	 minor:   "arrow-down"
 };
 
 var taskTypeLabels = {
@@ -119,6 +119,7 @@ $('.task-dropdown').click(function(event) {
 			activateLinksAndShow(menu, button);
 		}
 	}
+
 });
 
 // Show a dropdown menu, first making sure all its links do the Right Thing(tm)
@@ -132,6 +133,8 @@ function activateLinksAndShow(menu, button) {
 		taskInfo[change] = newValue;
 		updateTask(taskLozenge, taskInfo);
 		menu.hide();
+		// Prevent the click from taking us to th etop of the page
+		return false;
 	});
 	menu.show();
 }
@@ -161,6 +164,7 @@ function updateTask(taskLozenge, taskInfo) {
 	taskInfo.id = parseInt(taskLozenge.attr("data-taskid"), 10);
 	var urlBase = taskLozenge.attr("data-api-url");
 	var prioLabel = taskLozenge.find(".taskpriority");
+	var prioTextLabel = prioLabel.find(".textlabel");
 	var typeLabel = taskLozenge.find(".tasktype");
 	var statusLabel = taskLozenge.find(".taskstatus");
 
@@ -193,7 +197,11 @@ function updateTask(taskLozenge, taskInfo) {
 
 					// Update lozenge to reflect the new priority
 					var icon = '<i class="icon-'+taskPriorityIcons[ taskInfo.priority ]+' icon-white"> </i>';
-					prioLabel.html(icon + ' <b class="caret"></b>');
+					if (prioTextLabel.size() > 0) {
+						prioLabel.html(icon + ' <span class="textlabel">'+taskPriorityLabels[taskInfo.priority]+'</span> <b class="caret"></b>');
+					} else {
+						prioLabel.html(icon + ' <b class="caret"></b>');
+					}
 					prioLabel.attr('title', 'Priority: ' + taskInfo.priority);
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
@@ -244,12 +252,16 @@ function updateTask(taskLozenge, taskInfo) {
 				// Note that it can be set to zero for "unassigned"...
 				if (typeof taskInfo.assignee_id !== 'undefined') {
 					assigneeBox = $('.task-dropdown-assignee', taskLozenge);
+					assigneeLabel = assigneeBox.next();
 					gravatarImage = $('img', assigneeBox);
 					gravatarImage.attr('src', data.assignee_gravatar+'&size='+gravatarImage.attr('width'));
 					if (taskInfo.assignee_id == 0) {
 						assigneeBox.attr('title', 'Not assigned');
 					} else {
 						assigneeBox.attr('title', 'Assigned to: '+data.assignee_name);
+					}
+					if (assigneeLabel.hasClass('assignee-full-label')) {
+						assigneeLabel.text(data.assignee_name);
 					}
 				}
 
@@ -263,6 +275,7 @@ function updateTask(taskLozenge, taskInfo) {
 			$(ui.sender).sortable('cancel');
 		}
 	});
+
 }
 
 // Initialise the drag and drop task lists on this page
@@ -347,7 +360,7 @@ function initTaskDroplists() {
 }
 
 function setStoryPoints(button, difference) {
-	taskLozenge = $(button).parents('li').eq(0);
+	taskLozenge = $(button).parents('.task-lozenge').eq(0);
 	taskId = parseInt($(taskLozenge).attr('data-taskid'), 10);
 	taskStatus = $(taskLozenge).attr('data-taskstatus');
 	apiUrl = $(taskLozenge).attr('data-api-url');
@@ -413,10 +426,12 @@ $(function(){
 		if (type == '+') {
 			$(button).on('click', function(event){
 				setStoryPoints(button, 1);
+				return false;
 			});
 		} else if (type == '-') {
 			$(button).on('click', function(event){
 				setStoryPoints(button, -1);
+				return false;
 			});
 		}
 

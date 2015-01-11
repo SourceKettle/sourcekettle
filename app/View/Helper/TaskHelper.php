@@ -50,7 +50,7 @@ class TaskHelper extends AppHelper {
 		// Always add a nice tooltip on hover
 		$tooltip = __("Priority: %s", h($this->_View->viewVars['task_priorities'][$priorityId]['label']));
 		// If we're using a label, make it hidden on small displays
-		$label = $textLabel? h($this->_View->viewVars['task_priorities'][$priorityId]['label']) : '';
+		$label = $textLabel? '<span class="textlabel">'.h($this->_View->viewVars['task_priorities'][$priorityId]['label']).'</span>' : '';
 
 		// Always show the icon
 		$icon  = $this->Bootstrap->icon(
@@ -212,7 +212,7 @@ class TaskHelper extends AppHelper {
 		return '<ul class="dropdown-menu task-dropdown-menu" id="task_assignee_dropdown"></ul>';
 	}
 
-	public function assigneeDropdownButton($task, $size = 90) {
+	public function assigneeDropdownButton($task, $size = 90, $textLabel = false) {
 
 		if(isset($task['Assignee']['email'])){
 			$tooltip = __("Assigned to: %s", h($task['Assignee']['name']));
@@ -224,9 +224,18 @@ class TaskHelper extends AppHelper {
 		}
 
 		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_collaborators', 'api' => true, 'project' => $task['Project']['name']));
-
 		$button = '<button class="label task-dropdown task-dropdown-assignee" title="'.h($tooltip).'" data-api-url="'.$apiUrl.'" data-change="assignee_id" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
 
+		if ($textLabel) {
+			$button .= ' <span class="assignee-full-label">'.$this->Html->link(
+				$task['Assignee']['name'],
+				array(
+					'controller' => 'users',
+					'action' => 'view',
+					$task['Task']['assignee_id']
+				)
+			).'</span>';
+		}
 		return $button;
 	}
 

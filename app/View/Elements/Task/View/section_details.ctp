@@ -93,7 +93,8 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
         </dl>
         <dl class="dl-horizontal span6">
             <dt><?= __("Assigned to") ?>:</dt>
-            <? if (isset($task['Assignee']['name'])) { ?>
+	    <dd><?=$this->Task->assigneeDropdownButton($task, 20, true)?></dd>
+            <?/* if (isset($task['Assignee']['name'])) { ?>
                 <dd>
                     <?= $this->Html->link(
                         $task['Assignee']['name'],
@@ -102,7 +103,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
                 </dd>
             <? } else { ?>
                 <dd class="muted">Not set</dd>
-            <? } ?>
+            <? } */?>
             <dt><?= __("Task status") ?>:</dt>
 			<dd><?= $this->Task->statusDropdownButton($task, true) ?></dd>
 
