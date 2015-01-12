@@ -65,11 +65,12 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
           </p>
 		</div>
 	</div>
+
 	<div class="span10 offset2">
 		<div class="well">
           <h3>Collaborating teams</h3>
 		  <p>
-		    If you have a large number of users, they may be divided up into teams to make administration easier. System administrators have control over which users are in which teams.
+		    If you have a larger number of users, they may be divided up into teams to make administration easier. System administrators have control over which users are in which teams.
 		  </p>
 		  <p>
 		    Teams can be given the same access levels (guest/user/admin) as ordinary users, except that the access level will be granted to <strong>all the members of the team</strong>.
@@ -77,6 +78,33 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
 		  <p>
 		    When a user attempts to do something with the project (such as adding a task), <strong>all the user's roles</strong> are taken into account, and the highest access level is granted - so for example, if Bob is given "user" access, Jane is given "guest" access, and the "developers" team is given "admin" access, Bob will have "user" access and Jane will have "guest" access. However, if Jane is put into the "developers" team, Jane will now have "admin" access.
 		  </p>
+		</div>
+
+		<div class="well">
+		<p>These tables show the effective permissions of some users on a project based on their roles/teams.</p>
+
+		<table id="team-roles" class="table table-striped">
+		<thead><tr><th>Team</th><th>Role on project</th><th>Role on project group</th></tr></thead>
+		<tbody>
+			<tr><td>Developers</td><td>Admin</td><td>(None)</td></tr>
+			<tr><td>ProjectManagers</td><td>(None)</td><td>Admin</td></tr>
+			<tr><td>Testers</td><td>User</td><td>(None)</td></tr>
+			<tr><td>Observers</td><td>(None)</td><td>Guest</td></tr>
+		</tbody>
+		</table>
+
+		<table id="users" class="table table-striped">
+		<thead><tr><th>User</th><th>Role on project</th><th>Teams</th><th>Effective role</th><th>Why?</th></tr></thead>
+		<tbody>
+			<tr><td>Alice</td><td>Guest</td><td>(None)</td><td>Guest</td><td>Direct guest access to project</td></tr>
+			<tr><td>Bob</td><td>User</td><td>Observers</td><td>User</td><td>Guest access from 'Observers' group overridden by direct User access</td></tr>
+			<tr><td>Carol</td><td>(None)</td><td>Developers</td><td>Admin</td><td>Admin access granted on the project to Developers team</td></tr>
+			<tr><td>Dave</td><td>(None)</td><td>Observers</td><td>Guest</td><td>Guest access granted on the project group to Observers team</td></tr>
+			<tr><td>Eve</td><td>Guest</td><td>ProjectManagers</td><td>Admin</td><td>Guest access overridden by Admin access granted on the project group to ProjectManagers team</td></tr>
+			<tr><td>Frank</td><td>(None)</td><td>Observers,ProjectManagers</td><td>Admin</td><td>Guest access to Observers team overridden by Admin access granted on the project group to ProjectManagers team</td></tr>
+		</tbody>
+		</table>
+
 		</div>
 
 		<div class="well">
@@ -88,19 +116,26 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
 		  <p>
 		    Teams (but NOT individual users) may be granted access to entire project groups by a system administrator. From the project's point of view, this works as if the team is now collaborating on the project.
 		  </p>
+
+		  <p>
+		  
+		  </p>
 		</div>
 
 		<div class="well">
-          <h3>Collaborating teams</h3>
+          <h3>Good practice for assigning permissions</h3>
 		  <p>
 		    <strong>CAUTION:</strong> It is possible to grant permissions in 3 different ways here - individual collaborator, team collaborating on project, or team collaborating on project group. If you are not careful you may end up in a mess.
 		  </p>
-		  <p>
-		    If your organisation is small (or you have a lot of users but they work on completely unrelated projects), it is recommended that you <strong>only</strong> select individual collaborators and collaborating teams, and leave the permissions up to the project administrator.
-		  </p>
+		  <p>We recommend:</p>
+		  <ul>
+		    <li><strong>If your organisation is very small (~5 people or less):</strong> Select individual collaborators only</li>
+		    <li><strong>If your organisation is small to medium (~20-50 people):</strong> Create teams; grant teams access to projects, and add individual collaborators where needed</li>
+		    <li><strong>If your organisation is larger:</strong> Create teams, and make sure every user is in at least one team; Create project groups, and make sure every project is in at least one group; grant teams access to project groups; avoid adding teams or individuals to projects directly</li>
+		  </ul>
 
 		  <p>
-		    If you have a large number of projects, and many users will be working on many projects, it is recommended that you put the users into teams and the projects into groups. Then, simply make the teams collaborate on appropriate project groups, and <strong>never make individuals or teams collaborators on specific projects</strong>. This means that you will only ever need to move users in and out of teams, and projects in and out of groups, and all the permissions will stay correct.
+		  The sizes here are approximate; you should use your judgment. If in doubt, create teams, it may save you some effort later!
 		  </p>
 
 		</div>
