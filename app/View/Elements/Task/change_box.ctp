@@ -41,18 +41,6 @@
 			);
 			$old = $this->Task->assigneeDropdownButton($oldAssignee, 23, false, true);
 			$new = $this->Task->assigneeDropdownButton($newAssignee, 23, false, true);
-			/*$old = ($old) ? $this->Gravatar->image($change_users[$old][1], array('d' => 'mm', 's' => 24)).' '.h($change_users[$old][0]) : '<small>No-one assigned</small>';
-			$new = ($new) ? $this->Gravatar->image($change_users[$new][1], array('d' => 'mm', 's' => 24)).' '.h($change_users[$new][0]) : '<small>No-one assigned</small>';*/
-			/*$pop_over = $this->Popover->popover(
-				'assignee',
-				'Tasks \'Assignee\' changed',
-				"<h4 class='hr-h4'>Before</h4>
-				 <p>${old}</p>
-				 <hr class='hr-popover'>
-				 <h4 class='hr-h4'>After</h4>
-				 <p>${new}</p>"
-			);*/
-			/*$pop_over = __('assignee: %s &rarr; %s', $old, $new);*/
 			break;
 		case 'task_status_id':
 			$title = 'status';
@@ -63,17 +51,6 @@
 			$title = $field;
 			$old = ($old) ? $old : '<small>empty</small>';
 			$new = ($new) ? $new : '<small>empty</small>';
-			/*$pop_over = $this->Popover->popover(
-				$field,
-				'Tasks \''.$field.'\' changed',
-				"<h4 class='hr-h4'>Before</h4>
-				 <hr class='hr-popover'>
-				 <p>${old}</p>
-
-				 <h4 class='hr-h4'>After</h4>
-				 <hr class='hr-popover'>
-				 <p>${new}</p>"
-			);*/
 			break;
 	}
 	$pop_over = __("$title: %s &rarr; %s", $old, $new);
