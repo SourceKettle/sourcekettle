@@ -119,7 +119,6 @@
     </div>
 </div>
 <?= $this->Form->end() ?>
-<?= $this->Html->script(array('/bootstrap-tooltip/bootstrap-tooltip'), array('inline' => false)); ?>
 <?= $this->Html->scriptBlock("
 	$('form').submit(function(){
 		$('#subtasks-list').sortable('toArray').forEach(function(taskId){
