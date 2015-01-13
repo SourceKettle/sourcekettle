@@ -40,10 +40,10 @@ class MarkitupHelper extends AppHelper {
 		);
 		$settings = array_merge($default, $settings);
 
-		$this->Html->script('markitup/jquery.markitup', array('inline' => false));
-		$this->Html->css("markitup/skins/{$settings['skin']}/style", null, array('inline' => false));
-		$this->Html->css("markitup/sets/{$settings['set']}/style", null, array('inline' => false));
-		$this->Html->script("markitup/{$settings['set']}", array('inline' => false));
+		$this->Html->script('/markitup/jquery.markitup', array('inline' => false));
+		$this->Html->css("/markitup/skins/{$settings['skin']}/style", null, array('inline' => false));
+		$this->Html->css("/markitup/sets/{$settings['set']}/style", null, array('inline' => false));
+		$this->Html->script("/markitup/{$settings['set']}", array('inline' => false));
 
 		$id = "MarkItUp_{$name}";
 
