@@ -86,7 +86,6 @@ class TasksController extends AppProjectController {
 			'resolve' => 'write',
 			'unresolve' => 'write',
 			'freeze' => 'write',
-			'api_marshalled' => 'read',
 			'api_all' => 'read',
 			'api_view' => 'read',
 			'api_update' => 'write',
