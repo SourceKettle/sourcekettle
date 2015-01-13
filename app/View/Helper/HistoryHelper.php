@@ -195,7 +195,10 @@ class HistoryHelper extends AppHelper {
 				} elseif ($field == 'milestone_id') {
 					$oldMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $old), 'recursive' => -1));
 					$newMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $new), 'recursive' => -1));
-					if (empty($newMilestone)) {
+					if (empty($oldMilestone) && empty($newMilestone)) {
+						$log_string = __("%s changed the milestone ID from %d to %d - no milestone info is available, one or both may have been deleted since then",
+							$actioner, $old, $new);
+					} elseif (empty($newMilestone)) {
 						$oldMilestone = $this->Html->link($oldMilestone['Milestone']['subject'], array(
 							'controller' => 'milestones',
 							'action' => 'view',
