@@ -31,6 +31,8 @@
 			break;
 		case 'assignee_id':
 			$title = 'assignee';
+			$old = $old ?: 0;
+			$new = $new ?: 0;
 			$oldAssignee = array(
 				'Assignee' => array('id' => $old, 'name' => $change_users[$old][0], 'email' => $change_users[$old][1]),
 				'Project' => array('name' => $change['Project']['name']),
