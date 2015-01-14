@@ -1,8 +1,8 @@
 <?php
-$this->Html->script('jquery.flot.min', array('inline' => false));
-$this->Html->script('jquery.flot.time.min', array('inline' => false));
-$this->Html->script('jquery.flot.categories.min', array('inline' => false));
-$this->Html->script('JUMFlot.min', array('inline' => false));
+$this->Html->script('/flot/jquery.flot.min', array('inline' => false));
+$this->Html->script('/flot/jquery.flot.time.min', array('inline' => false));
+$this->Html->script('/flot/jquery.flot.categories.min', array('inline' => false));
+$this->Html->script('/JUMFlot/JUMFlot.min', array('inline' => false));
 $this->Html->script ("gantt", array ('inline' => false));
 ?>
 

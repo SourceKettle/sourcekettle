@@ -2,6 +2,7 @@
 // Heavily cribbed from Joshua Paling's answer to http://stackoverflow.com/questions/19455540/mocking-an-authed-user-in-cakephp
 
 App::uses('User', 'Model');
+App::uses('AppProjectController', 'Controller');
 
 /**
  * AppController Test Case
@@ -115,5 +116,57 @@ class AppControllerTest extends ControllerTestCase {
 		$this->assertNotNull($this->headers, "Expected a redirect, but we have no headers");
 		$this->assertNotNull(@$this->headers['Location'], "Expected a redirect, but we did not get one");
 		$this->assertEquals(Router::url($url, true), $this->headers['Location']);
+	}
+
+
+	// A test to make sure that all controller actions are listed in the authorization map
+	// This avoids the case where a new action has been added, and tested with an admin
+	// account which can access everything, but in practice it doesn't work because it's
+	// not in the authorization map. Annoying.
+	public function testAuthorizationMappingsAreSetUpCorrectly() {
+
+		// This stops the AppControllerTestCase itself erroring out (it shouldn't run any tests anyway)
+		if (!isset($this->controller)) {
+			return true;
+		}
+
+		$reflector = new ReflectionClass($this->controller);
+		$controllerName = $reflector->getName();
+
+		// First check if the controller's an AppProjectController... if not, skip
+		if (!$reflector->isSubclassOf("AppProjectController")) {
+			$this->assertTrue(true, "Controller is not an AppProjectController");
+			return;
+		}
+
+		// Make sure _getAuthorizationMapping has been implemented
+		try {
+			$mappingMethod = $reflector->getMethod('_getAuthorizationMapping');
+		} catch (ReflectionException $e) {
+			$this->assertTrue(false, "Controller does not have _getAuthorizationMapping()");
+		}
+
+		// Call the method to get the authorization mapping list...
+		$mappingMethod->setAccessible(true);
+		$mapping = $mappingMethod->invoke($this->controller);
+
+		// List public methods of the controller (any non-actions should be private/protected)
+		$_methods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
+		$methods = array();
+		$bad = array();
+		foreach ($_methods as $method) {
+			if (
+			$method->getDeclaringClass()->getName() == $this->controller->name.'Controller'
+			&& !preg_match('/^(admin_|before|after|isAuthorized)/', $method->getName())) {
+				$method = $method->getName();
+				if (!isset($mapping[$method])) {
+					$bad[] = $method;
+				}
+			}
+		}
+
+		if (!empty($bad)) {
+			$this->assertTrue(false, "Please add authorization mappings for: ".implode(",", $bad));
+		}
 	}
 }

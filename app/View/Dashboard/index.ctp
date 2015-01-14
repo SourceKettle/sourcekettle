@@ -18,12 +18,13 @@
   /*if ($DEBUG) {
     echo $this->element('beta_warning'); // TODO show this for dev versions
   }*/
-  $this->Html->css('tasks.index', null, array ('inline' => false));
-  $this->Html->script('milestones.droplist', array ('inline' => false));
+  $this->Html->css('tasks', null, array ('inline' => false));
+  $this->Html->script('tasks', array ('inline' => false));
 ?>
 
+<?= $this->Task->allDropdownMenus() ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span6">
       <h3>Assigned tasks</h3>
 	  <? if (!$sourcekettle_config['Features']['task_enabled']['value']) {?>
@@ -34,7 +35,7 @@
 	  	echo "</p>";
 	    echo "<ul class='sprintboard-droplist'>";
         foreach ($tasks as $task){
-          echo $this->element('Task/lozenge', array('task' => $task, 'span' => 6));
+          echo $this->element('Task/lozenge', array('task' => $task, 'span' => 12, 'hasWrite' => $task['__hasWrite']));
         }
 		echo "</ul>";
       } else {
@@ -45,32 +46,34 @@
         <h3><?=__("Most recent projects")?></h3>
         <div class='row'>
           <?
-             $options = array(
-                'left' => array(
-                    array(
-                        array(
-                            'text' => __("View all your projects"),
-                            'url' => array(
-                                'action' => '.',
-                                'controller' => 'projects',
-                            ),
-                        ),
-                    ),
-                ),
-                'right' => array(
-                    array(
-                        array(
-                            'text' => __("New Project"),
-                            'url' => array(
-                                'action' => 'add',
-                                'controller' => 'projects',
-                            ),
-                            'props' => array('class' => 'btn-primary'),
-                        ),
-                    ),
-                ),
+			 $options = array(
+			 	'links' => array(
+					array(
+						'text' => __("My projects"),
+						'url' => array(
+							'action' => '.',
+							'controller' => 'projects',
+						),
+					),
+					array(
+						'text' => __("Team projects"),
+						'url' => array(
+							'action' => 'team_projects',
+							'controller' => 'projects',
+						),
+					),
+					array(
+						'text' => __("New Project"),
+						'url' => array(
+							'action' => 'add',
+							'controller' => 'projects',
+						),
+						'active' => true,
+						'pull-right' => true,
+					),
+				),
             );
-            echo $this->element('Topbar/button', array('options' => $options, 'span' => 4));
+            echo $this->element('Topbar/pills', array('options' => $options, 'span' => 12));
 
           ?>
         </div>

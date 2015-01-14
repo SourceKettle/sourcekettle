@@ -34,7 +34,7 @@
 					echo " ";
 		
 					if ($time['Task']['id'] != 0) {
-						echo __("on task");
+						echo __("on task #%d", $time['Task']['public_id']);
 						echo " ";
 						echo $this->Html->link(
 							$time['Task']['subject'], array(

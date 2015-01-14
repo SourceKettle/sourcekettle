@@ -27,6 +27,7 @@
  * @copyright	Copyright (c) 2011 Signified (http://signified.com.au)
  * @license		http://www.opensource.org/licenses/bsd-license	New BSD License
  */
+App::uses("Gravatar", "Gravatar");
 class GravatarHelper extends AppHelper {
 
 /**
@@ -48,15 +49,11 @@ class GravatarHelper extends AppHelper {
  * @link http://gravatar.com/site/implement/images/
  */
 	public function image($email = null, $options = array(), $attributes = array()) {
+
+		$path = Gravatar::url($email, $options);
+
 		$attributes['height'] = 80;
-
 		$attributes['width'] = 80;
-
-		$hash = md5(strtolower(trim($email)));
-
-		$query = null;
-
-		$url = 'http://www.gravatar.com/avatar/';
 
 		if (isset($options['s'])) {
 			$attributes['height'] = $options['s'];
@@ -65,20 +62,6 @@ class GravatarHelper extends AppHelper {
 			$attributes['height'] = $options['size'];
 			$attributes['width'] = $options['size'];
 		}
-
-		if (!isset($options['d'])) {
-			$options['d'] = 'retro';
-		}
-
-		if (!empty($options)) {
-			$query = '?' . http_build_query($options);
-		}
-
-		if (env('HTTPS')) {
-			$url = 'https://secure.gravatar.com/avatar/';
-		}
-
-		$path = $url . $hash . '.jpg' . $query;
 
 		return $this->Html->image($path, $attributes);
 	}

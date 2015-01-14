@@ -14,22 +14,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks.index', null, array ('inline' => false));
-$this->Html->css("milestones.index", null, array ('inline' => false));
-$this->Html->script("jquery-ui.min", array ('inline' => false));
-$this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
-$this->Html->script("milestones.droplist", array ('inline' => false));
+$this->Html->css('tasks', array ('inline' => false));
+$this->Html->css("milestones.index", array ('inline' => false));
 
-// API base for updating tasks
-$api_base = $this->Html->url(array(
-	'controller' => 'tasks',
-	'project' => $milestone['Project']['name'],
-	'action' => 'update',
-	'api' => true
-));
-$this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
 ?>
-
+<?= $this->Task->allDropdownMenus() ?>
 <?= $this->DT->pHeader(__("Milestone planner: '%s'", $milestone['Milestone']['subject'])) ?>
 <div class="row">
     <div class="span2">
@@ -53,7 +42,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'tooltip' => __('These tasks will not be completed during this milestone'),
 				'span' => '12',
 				'task_span' => '4',
-				'classes' => 'sprintboard-icebox'
+				'classes' => 'sprintboard-icebox',
+				'draggable' => $hasWrite,
 			)
         ) ?>
 
@@ -73,7 +63,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'span' => '6',
 				'task_span' => '6',
 				'classes' => 'sprintboard-column',
-				'addLink' => true,
+				'addLink' => false,
+				'draggable' => $hasWrite,
 			)
         ) ?>
         <?= $this->element('Task/Board/column',
@@ -86,7 +77,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'span' => '6',
 				'task_span' => '6',
 				'classes' => 'sprintboard-column',
-				'addLink' => true,
+				'addLink' => false,
+				'draggable' => $hasWrite,
 			)
         ) ?>	
 
@@ -107,7 +99,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'span' => '6',
 				'task_span' => '6',
 				'classes' => 'sprintboard-column',
-				'addLink' => true,
+				'addLink' => false,
+				'draggable' => $hasWrite,
 			)
         ) ?>
         <?= $this->element('Task/Board/column',
@@ -120,7 +113,8 @@ $this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' =
 				'span' => '6',
 				'task_span' => '6',
 				'classes' => 'sprintboard-column',
-				'addLink' => true,
+				'addLink' => false,
+				'draggable' => $hasWrite,
 			)
         ) ?>	
 

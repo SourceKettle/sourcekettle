@@ -29,9 +29,9 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
     <?= $this->Html->charset('UTF-8') . "\n" ?>
-    <?= $this->Html->css('bootstrap.min') ?>
+    <?= $this->Html->css('/bootstrap/bootstrap.min') ?>
     <?= $this->Html->css('layout'); ?>
-    <?= $this->Html->css('bootstrap-responsive.min') ?>
+    <?= $this->Html->css('/bootstrap/bootstrap-responsive.min') ?>
     <?= $this->fetch ('css') ?>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -106,7 +106,7 @@ try {
     </div>
 
     <!-- JavaScript! Placed at the end of the file for faster page loading -->
-    <?= $this->Html->script('jquery.min.js'); ?>
-    <?= $this->Html->script('bootstrap.min') ?>
+    <?= $this->Html->script('/jquery/jquery-1.11.0.min.js'); ?>
+    <?= $this->Html->script('/bootstrap/bootstrap.min') ?>
 </body>
 </html>

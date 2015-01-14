@@ -14,24 +14,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks.index', null, array ('inline' => false));
+$this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css("milestones.index", null, array ('inline' => false));
-$this->Html->script("jquery-ui.min", array ('inline' => false));
-$this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
-$this->Html->script("milestones.droplist", array ('inline' => false));
-
-$draggable = true;
-
-// API base for updating tasks - note we have to generate a link per task as the projects are different...
-$api_base = $this->Html->link(array(
-	'controller' => 'tasks',
-	'action' => 'update',
-	'api' => true
-));
-// TODO fix up the javascript to work across projects//$this->Html->scriptBlock("$(initTaskDroplists('$api_base'));", array ('inline' => false));
 
 ?>
 
+<?= $this->Task->allDropdownMenus() ?>
 <?= $this->DT->pHeader(__("Team kanban chart: %s", $team['Team']['name'])) ?>
 <div class="row">
 
@@ -41,20 +29,24 @@ $api_base = $this->Html->link(array(
 	<div class="row"><div class="span2 offset4">
 	</div></div>
 
+	<div class="row"><div class="span2 offset4">
+	<span class="label">Story points complete: <span id="points_complete"><?=$points_complete?></span> / <span id="points_total"><?=$points_total?></span></span>
+	</div></div>
+
 	<div class="row">
 
     <!-- Primary columns -->
 	<div class="row-fluid span12">
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => false)
         ) ?>
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => false)
         ) ?>
         <?= $this->element('Task/Board/column',
-            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $draggable)
+            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => false)
         ) ?>
 
 	<!-- End primary columns -->

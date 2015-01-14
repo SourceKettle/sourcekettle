@@ -13,8 +13,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 $this->Html->css('glowtip', null, array('inline' => false));
-$this->Html->script(array('bootstrap-tooltip'), array('inline' => false));
-$this->Html->scriptBlock("$('.milestone-quicklink').tooltip()", array('inline' => false));
 
 $o = @$milestone['Tasks']['open']['numTasks'];
 $i = @$milestone['Tasks']['in progress']['numTasks'];
@@ -112,7 +110,6 @@ $link_plan= $this->Html->link(
     array(
         'class' => 'close edit milestone-quicklink',
 		'title' => __('Plan the milestone'),
-		//'title' => __('Plan the milestone'),
         'escape' => false
     )
 );

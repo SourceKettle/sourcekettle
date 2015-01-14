@@ -548,4 +548,15 @@ class Task extends AppModel {
 
 		return $primary['Task'];
 	}
+
+	// Does a user ID have write access to a task?
+	// Basically the same as "do they have write access to the project", except they
+	// can also modify tasks they created or they are assigned to (so guests can do more things)
+	public function hasWrite($userId, $task) {
+		return (
+			$task['Task']['owner_id'] == $userId ||
+			$task['Task']['assignee_id'] == $userId ||
+			$this->Project->hasWrite($userId, $task['Task']['project_id'])
+		);
+	}
 }

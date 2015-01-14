@@ -1,5 +1,6 @@
 <?php
 App::uses('ProjectGroupsController', 'Controller');
+App::uses('AppProjectController', 'Controller');
 require_once(__DIR__ . DS . 'AppControllerTest.php');
 
 /**
@@ -313,6 +314,10 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 			'Project' => array('Project' => array(
 				1, 2
 			)),
+			'GroupCollaboratingTeam' => array(
+				array('team_id' => 1, 'access_level' => 1),
+				array('team_id' => 2, 'access_level' => 0),
+			),
 		);
 		$this->testAction('/admin/project_groups/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
@@ -323,7 +328,7 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 
 		// TODO use names instead when the model pulls them in
 		$projects = array_map(function($a){return $a['id'];}, $projectGroup['Project']);
-		$teams = array_map(function($a){return $a['team_id'];}, $projectGroup['GroupCollaboratingTeam']);
+		$teams = array_map(function($a){return array($a['team_id'], $a['access_level']);}, $projectGroup['GroupCollaboratingTeam']);
 		sort($projects); sort($teams);
 
 		$this->assertEquals(array(
@@ -332,8 +337,9 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 		), $projects);
 
 		$this->assertEquals(array(
-			1,
-			3,
+			array(1, 1),
+			array(2, 0),
+			array(3, 1),
 		), $teams);
 	}
 

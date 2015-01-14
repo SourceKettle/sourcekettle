@@ -51,15 +51,6 @@ class MilestonesController extends AppProjectController {
 
 		return parent::isAuthorized($user);
 	}
-/**
- * beforeFilter function.
- *
- * @access public
- * @return void
- */
-	public function beforeFilter() {
-		parent::beforeFilter();
-	}
 
 /**
  * index method
@@ -113,10 +104,6 @@ class MilestonesController extends AppProjectController {
 		// Final value is min size of the board
 		$max = max(count($backlog), count($inProgress), count($completed), 3);
 
-		// If the user has write access, they can drag and drop tasks
-		$draggable = $this->Milestone->Project->hasWrite($this->Auth->user('id'));
-		$this->set('draggable', $draggable);
-
 		// Calculate number of points complete/total for the milestone
 		$points_total = 0;
 		foreach ($milestone['Tasks'] as $k => $v){
@@ -153,10 +140,6 @@ class MilestonesController extends AppProjectController {
 		$wontHave   = $this->Project->getProjectBacklog();
 
 		$this->set('milestone', $milestone);
-
-		// If the user has write access, they can drag and drop tasks
-		$draggable = $this->Milestone->Project->hasWrite($this->Auth->user('id'));
-		$this->set('draggable', $draggable);
 
 		$this->set(compact('mustHave', 'shouldHave', 'couldHave', 'mightHave', 'wontHave'));
 	}

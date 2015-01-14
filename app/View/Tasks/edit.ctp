@@ -14,7 +14,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks.add', null, array ('inline' => false));
+$this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->scriptBlock ("
     jQuery(function() {
         $('#unselect-all').click (function() {
@@ -33,7 +33,7 @@ $this->Html->scriptBlock ("
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar_edit', array('id' => $this->request->data['Task']['public_id'])) ?>
+            <?= $this->element('Task/topbar', array('id' => $this->request->data['Task']['public_id'])) ?>
             <div class="span10">
 				<?= $this->element('Task/add_edit') ?>
             </div>

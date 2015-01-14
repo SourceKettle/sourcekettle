@@ -84,8 +84,8 @@ class AppSchema extends CakeSchema {
 					$prio = ClassRegistry::init('TaskPriority');
 					$prio->create();
 					$prio->saveMany( array(
-						array('name' => 'minor',   'level' => 1, 'label' => 'Minor',   'icon' => 'download',         'class' => ''),
-						array('name' => 'major',   'level' => 2, 'label' => 'Major',   'icon' => 'upload',           'class' => ''),
+						array('name' => 'minor',   'level' => 1, 'label' => 'Minor',   'icon' => 'arrow-down',       'class' => ''),
+						array('name' => 'major',   'level' => 2, 'label' => 'Major',   'icon' => 'arrow-up',         'class' => ''),
 						array('name' => 'urgent',  'level' => 3, 'label' => 'Urgent',  'icon' => 'exclamation-sign', 'class' => ''),
 						array('name' => 'blocker', 'level' => 4, 'label' => 'Blocker', 'icon' => 'ban-circle',       'class' => '')
 					));

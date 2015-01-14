@@ -14,8 +14,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks.view', null, array ('inline' => false));
-$this->Html->script("tasks.view", array ('inline' => false));
+$this->Html->css('tasks', null, array ('inline' => false));
+$this->Html->script("tasks", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader(__("Task dependency tree")) ?>

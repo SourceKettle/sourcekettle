@@ -13,9 +13,6 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$this->Html->css('bootstrap-switch-2.0.1/build/css/bootstrap2/bootstrap-switch.min.css', null, array ('inline' => false));
-$this->Html->script('bootstrap-switch.min', array ('inline' => false));
-$this->Html->script('switches', array ('inline' => false));
 $smallText = " <small>Edit Project</small>";
 echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
 

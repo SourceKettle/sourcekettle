@@ -15,7 +15,7 @@
  */
 
 $this->Html->css('pages/attachments', null, array ('inline' => false));
-$this->Html->script('bootstrap-fileupload', array('block' => 'scriptBottom'));
+$this->Html->script('/bootstrap-fileupload/bootstrap-fileupload', array('block' => 'scriptBottom'));
 $this->Html->scriptBlock("$(function () { $('#fileupload').fileupload() });");
 
 $hover_conditions = $this->Popover->popover(
@@ -37,7 +37,7 @@ $hover_conditions = $this->Popover->popover(
     </div>
     <div class="span10">
         <div class="row">
-            <?= $this->element('Attachment/topbar_add') ?>
+            <?= $this->element('Attachment/topbar') ?>
             <div class="span10">
                 <div class="row-fluid">
                     <div class="well uploadBox">

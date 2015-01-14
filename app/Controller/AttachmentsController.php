@@ -28,6 +28,11 @@ class AttachmentsController extends AppProjectController{
 
 	public $helpers = array('Time');
 
+	public $uses = array(
+		'Attachment',
+		'Project',
+	);
+
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
 		return array(

@@ -14,10 +14,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks.index', null, array ('inline' => false));
-$this->Html->script('milestones.droplist', array ('inline' => false));
-echo $this->DT->pHeader(__('Things to Do...'));
+$this->Html->css('tasks', null, array ('inline' => false));
 ?>
+<?= $this->Task->allDropdownMenus() ?>
+
+<?= $this->DT->pHeader(__('Things to Do...')) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -29,11 +30,12 @@ echo $this->DT->pHeader(__('Things to Do...'));
 		<div class="row-fluid well col">
             <h2><?=__("Task list")?></h2>
             <hr />
-			<ul class="sprintboard-droplist">
+			<ul class="sprintboard-droplist" data-taskspan="4">
 			  <? foreach ($tasks as $task) { ?>
-			  <?= $this->element('Task/lozenge', array('task' => $task, 'span' => 3)) ?>
+			  <?= $this->element('Task/lozenge', array('task' => $task, 'span' => 4)) ?>
 			  <? } ?>
 			</ul>
 		</div>
     </div>
 </div>
+

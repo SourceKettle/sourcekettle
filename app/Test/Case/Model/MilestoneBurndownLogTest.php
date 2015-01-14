@@ -93,13 +93,13 @@ class MilestoneBurndownLogTest extends CakeTestCase {
 
 	public function testSaveNoChanges() {
 		$data = array('MilestoneBurndownLog' => array(
-			'milestone_id' => 1,
-			'open_task_count' => 1,
-			'open_minutes_count' => 1,
-			'open_points_count' => 1,
-			'closed_task_count' => 1,
-			'closed_minutes_count' => 1,
-			'closed_points_count' => 1,
+			'milestone_id' => 2,
+			'open_task_count' => 10,
+			'open_minutes_count' => 10,
+			'open_points_count' => 10,
+			'closed_task_count' => 10,
+			'closed_minutes_count' => 10,
+			'closed_points_count' => 10,
 		));
 
 		$saved = $this->MilestoneBurndownLog->save($data);

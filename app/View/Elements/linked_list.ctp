@@ -14,8 +14,6 @@
  */
 
 $this->Html->css("linked_list", null, array ('inline' => false));
-$this->Html->script("jquery-ui.min", array ('inline' => false));
-$this->Html->script("jquery.ui.touch-punch.min", array ('inline' => false));
 echo $this->Html->script("linked_list", array ('inline' => false));
 
 if (!isset($classes)) {

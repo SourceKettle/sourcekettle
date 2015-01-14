@@ -12,10 +12,12 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+ 
+$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 'api' => true, 'project' => $task['Project']['name']));
 ?>
 <h3><?= __("Task details") ?></h3>
 <div>
-    <div class="span12">
+    <div class="span12 task-lozenge" data-taskid="<?=h($task['Task']['public_id'])?>" data-api-url="<?=$apiUrl?>">
         <dl class="dl-horizontal span6">
             <dt><?= __("Created by:") ?></dt>
             <? if (isset($task['Owner']['id'])) {?>
@@ -31,9 +33,9 @@
             </dd>
 	    <? } ?>
             <dt><?= __("Task type") ?>:</dt>
-            <dd><?= $this->Task->type($task['Task']['task_type_id']) ?></dd>
+            <dd><?= $this->Task->typeDropdownButton($task) ?></dd>
             <dt><?= __("Task priority") ?>:</dt>
-            <dd><?= $this->Task->priority($task['Task']['task_priority_id']) ?></dd>
+			<dd><?= $this->Task->priorityDropdownButton($task, true) ?></dd>
             <dt><?= __("Fix milestone") ?>:</dt>
             <? if (isset($task['Milestone']['subject'])) { ?>
                 <dd>
@@ -53,7 +55,7 @@
             <? } ?>
 
             <? if (isset($task['Task']['story_points'])) { ?>
-                <dd><?=$task['Task']['story_points']?> <?= __("points")?></dd>
+                <dd><?=$this->Task->storyPointsControl($task, true)?></dd>
             <? } else { ?>
                 <dd class="muted"><?= __("No story point estimate")?></dd>
             <? } ?>
@@ -91,18 +93,9 @@
         </dl>
         <dl class="dl-horizontal span6">
             <dt><?= __("Assigned to") ?>:</dt>
-            <? if (isset($task['Assignee']['name'])) { ?>
-                <dd>
-                    <?= $this->Html->link(
-                        $task['Assignee']['name'],
-                        array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
-                    ) ?>
-                </dd>
-            <? } else { ?>
-                <dd class="muted">Not set</dd>
-            <? } ?>
+	    <dd><?=$this->Task->assigneeDropdownButton($task, 23, true, true)?></dd>
             <dt><?= __("Task status") ?>:</dt>
-            <dd><?= $this->Task->status($task['Task']['task_status_id']) ?></dd>
+			<dd><?= $this->Task->statusDropdownButton($task, true) ?></dd>
 
             <dt><?= __("Created") ?>:</dt>
             <dd><?= $this->Time->timeAgoInWords($task['Task']['created']) ?></dd>

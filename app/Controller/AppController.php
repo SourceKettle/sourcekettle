@@ -49,8 +49,8 @@ class AppController extends Controller {
 		'Auth' => array(
 			'actionPath' => 'controllers/',
 			'loginAction' => array(
-				'controller' => 'login',
-				'action' => 'index',
+				'controller' => 'pages',
+				'action' => 'home',
 				'plugin' => false,
 				'admin' => false,
 			),
@@ -246,7 +246,7 @@ class AppController extends Controller {
 
 		// Set config and version
 		$this->set('sourcekettle_config', $this->sourcekettle_config);
-		$this->set('sourcekettleVersion', 'v1.5.4');
+		$this->set('sourcekettleVersion', 'v1.5.5');
 
 
 	}

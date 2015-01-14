@@ -15,6 +15,7 @@
  */
 
 App::uses('AppProjectController', 'Controller');
+App::uses("Gravatar", "Gravatar");
 
 class TasksController extends AppProjectController {
 
@@ -71,6 +72,7 @@ class TasksController extends AppProjectController {
 			'nobody'  => 'read',
 			'all'  => 'read',
 			'view'   => 'read',
+			'tree'   => 'read',
 			'comment' => 'write',
 			'deleteComment' => 'write',
 			'updateComment' => 'write',
@@ -84,11 +86,11 @@ class TasksController extends AppProjectController {
 			'resolve' => 'write',
 			'unresolve' => 'write',
 			'freeze' => 'write',
-			'api_marshalled' => 'read',
 			'api_all' => 'read',
 			'api_view' => 'read',
 			'api_update' => 'write',
 			'personal_kanban' => 'login',
+			'team_kanban' => 'login',
 		);
 	}
 
@@ -278,6 +280,7 @@ class TasksController extends AppProjectController {
 		$tasks = $this->Task->find('all', array(
 			'conditions' => $conditions,
 		));
+		
 		$this->set('tasks', $tasks);
 
 
@@ -303,7 +306,13 @@ class TasksController extends AppProjectController {
 		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
 		$completed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'));
 
-		$this->set(compact('backlog', 'inProgress', 'completed'));
+		// Calculate number of points complete/total for the milestone
+		$points_todo = array_reduce($backlog, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_todo = array_reduce($inProgress, function($v, $t){return $v + $t['Task']['story_points'];}, $points_todo);
+		$points_complete = array_reduce($completed, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_total = $points_todo + $points_complete;
+
+		$this->set(compact('backlog', 'inProgress', 'completed', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 
@@ -316,7 +325,12 @@ class TasksController extends AppProjectController {
 		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
 		$completed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'));
 
-		$this->set(compact('team', 'backlog', 'inProgress', 'completed'));
+		// Calculate number of points complete/total for the milestone
+		$points_todo = array_reduce($backlog, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_todo = array_reduce($inProgress, function($v, $t){return $v + $t['Task']['story_points'];}, $points_todo);
+		$points_complete = array_reduce($completed, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_total = $points_todo + $points_complete;
+		$this->set(compact('team', 'backlog', 'inProgress', 'completed', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 
@@ -356,7 +370,7 @@ class TasksController extends AppProjectController {
 		}
 
 		// Fetch any additional users that may be needed
-		$changeUsers = array();
+		$changeUsers = array(0 => array('(Not assigned)', null));
 		$this->Task->Assignee->recursive = -1;
 		foreach ($changes as $change) {
 			if ($change['ProjectHistory']['row_field'] == 'assignee_id') {
@@ -716,7 +730,7 @@ class TasksController extends AppProjectController {
 		foreach ($this->request->data['DependsOn'] as $dep) {
 			$dependsOnTasks[$dep['id']] = $dep['subject'];
 		}
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees'));
+		$this->set(compact('task', 'taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees'));
 	}
 
 /*
@@ -849,6 +863,8 @@ class TasksController extends AppProjectController {
 
 		}
 
+		$project = $this->_getProject($project_name);
+
 		$task = $this->Task->find('first', array('conditions' => array(
 			'Task.public_id' => $public_id,
 			'Project.name' => $project_name,
@@ -871,6 +887,16 @@ class TasksController extends AppProjectController {
 			$this->response->statusCode(200);
 			$data = $task['Task'];
 			unset($data['id']);
+			// Add in any extra data here... at the moment just used for refreshing the assignee gravatar easily
+			if (isset($data['assignee_id']) && $data['assignee_id'] != 0) {
+				$data['assignee_email'] = $this->Task->Assignee->field('email', array('id' => $data['assignee_id']));
+				$data['assignee_name'] = $this->Task->Assignee->field('name', array('id' => $data['assignee_id']));
+				$data['assignee_gravatar'] = Gravatar::url($data['assignee_email'], array('url_only' => true));
+			} else {
+				$data['assignee_email'] = '';
+				$data['assignee_name'] = '';
+				$data['assignee_gravatar'] = Gravatar::url(null, array('url_only' => true, 'd' => 'mm'));
+			}
 			$data['error'] = 'no_error';
 
 		} else {

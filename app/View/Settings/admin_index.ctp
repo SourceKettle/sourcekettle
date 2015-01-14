@@ -15,9 +15,6 @@
  */
 
 $this->Html->css('pages/settings', null, array ('inline' => false));
-$this->Html->css('bootstrap-switch-2.0.1/build/css/bootstrap2/bootstrap-switch.min.css', null, array ('inline' => false));
-$this->Html->script('bootstrap-switch.min', array ('inline' => false));
-$this->Html->script('switches', array ('inline' => false));
 ?>
 
 <?= $this->Bootstrap->page_header('System-wide configuration') ?>

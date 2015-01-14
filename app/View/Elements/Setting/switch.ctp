@@ -1,4 +1,10 @@
-<? if (isset($sectionHide)) {
+<?php
+
+$this->Html->css('/bootstrap-switch/bootstrap-switch.min', array ('inline' => false));
+$this->Html->script('/bootstrap-switch/bootstrap-switch.min', array ('inline' => false, 'once' => true));
+$this->Html->script('elements/switch', array ('inline' => false, 'once' => true));
+
+if (isset($sectionHide)) {
 	$sectionHide = ' data-section-hide="'.h($sectionHide).'"';
 } else {
 	$sectionHide = '';

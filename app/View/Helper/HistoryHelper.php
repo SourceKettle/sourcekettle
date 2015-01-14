@@ -34,6 +34,8 @@ class HistoryHelper extends AppHelper {
 		$collaborator = new Collaborator();
 		App::import("Model", "User");  
 		$user = new User();
+		App::import("Model", "Milestone");  
+		$milestone = new Milestone();
 
 		/*
 		 * Stores the display preferences for the activity blocks
@@ -190,6 +192,49 @@ class HistoryHelper extends AppHelper {
 						$actioner, $subject
 					);
 					break;
+				} elseif ($field == 'milestone_id') {
+					$oldMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $old), 'recursive' => -1));
+					$newMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $new), 'recursive' => -1));
+					if (empty($oldMilestone) && empty($newMilestone)) {
+						$log_string = __("%s changed the milestone ID from %d to %d - no milestone info is available, one or both may have been deleted since then",
+							$actioner, $old, $new);
+					} elseif (empty($newMilestone)) {
+						$oldMilestone = $this->Html->link($oldMilestone['Milestone']['subject'], array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$old
+						));
+						$log_string = __("%s removed task '%s' from milestone '%s'", $actioner, $subject, $oldMilestone);
+					} elseif (empty($oldMilestone)) {
+						$newMilestone = $this->Html->link($newMilestone['Milestone']['subject'], array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$new
+						));
+						$log_string = __("%s added task '%s' to milestone '%s'", $actioner, $subject, $newMilestone);
+					} else {
+						$oldMilestone = $this->Html->link($oldMilestone['Milestone']['subject'], array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$old
+						));
+						$newMilestone = $this->Html->link($newMilestone['Milestone']['subject'], array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$new
+						));
+						$log_string = __("%s moved task '%s' from milestone '%s' to milestone '%s'", $actioner, $subject, $oldMilestone, $newMilestone);
+					}
+					break;
+					
 				} elseif ($field == 'task_status_id') {
 					$field = 'status';
 					$old = $taskStatus->idToName($old);
