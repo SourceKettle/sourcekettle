@@ -39,9 +39,9 @@ class LoginController extends AppController{
 			return $this->redirect($this->Auth->redirect());
 		}
 
-		// Only POST requests are authenticated
+		// Only POST requests are authenticated, otherwise bounce to the homepage
 		if (!$this->request->is('post')) {
-			return;
+			return $this->redirect(array('controller' => 'pages', 'action' => 'home', 'api' => false, 'admin' => false));
 		}
 
 		// First, try to authenticate them
