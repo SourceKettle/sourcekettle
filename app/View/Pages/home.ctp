@@ -25,6 +25,13 @@ if(file_exists("$basedir/Config/homepage.php")){
     include("$basedir/Config/homepage.php");
 } else{?>
    <h1><?=__("Welcome to %s!", $sourcekettle_config['UserInterface']['alias']['value'])?></h1>
-   <?= __("%s to get started.", $this->Html->link(__('Click here'), array('controller' => 'login')))?>
+
+   <p>
+     <?=__("%s is an agile project management system, providing simple task tracking and source code management.", $sourcekettle_config['UserInterface']['alias']['value'])?>
+   </p>
+
+   <p>
+   <?= __("Please log in to get started.")?>
+   </p>
 <?}
 

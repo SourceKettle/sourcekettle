@@ -49,8 +49,8 @@ class AppController extends Controller {
 		'Auth' => array(
 			'actionPath' => 'controllers/',
 			'loginAction' => array(
-				'controller' => 'login',
-				'action' => 'index',
+				'controller' => 'pages',
+				'action' => 'home',
 				'plugin' => false,
 				'admin' => false,
 			),
