@@ -134,8 +134,10 @@
 	<!-- JavaScript! Placed at the end of the file for faster page loading -->
 	<?= $this->Html->script('/jquery/jquery-1.11.0.min.js'); ?>
 	<?= $this->Html->script('/jquery-ui/jquery-ui-1.10.4.min.js'); ?>
-	<?= $this->Html->script('/jquery-color/jquery.color-2.1.2.min', array('inline' => false)); ?>
+	<?= $this->Html->script('/jquery-color/jquery.color-2.1.2.min'); ?>
 	<?= $this->Html->script('/bootstrap/js/bootstrap.min') ?>
+	<?= $this->Html->script('/bootstrap-tooltip/bootstrap-tooltip');?>
+	<?= $this->Html->script('sourcekettle');?>
 	<?= $this->Popover->requirements() ?>
 	<?= $this->fetch('scriptBottom') ?>
 	<?= $scripts_for_layout ?>

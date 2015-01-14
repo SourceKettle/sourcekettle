@@ -907,7 +907,14 @@ class TasksControllerTest extends AppControllerTest {
 		
 		$returned = json_decode($this->view, true);
 		unset($returned['modified']);
-		$this->assertEquals($returned, array('task_status_id' => 3, 'task_priority_id' => 4, 'error' => 'no_error'));
+		$this->assertEquals($returned, array(
+			'task_status_id' => 3,
+			'task_priority_id' => 4,
+			'assignee_email' => '',
+			'assignee_name' => '',
+			'assignee_gravatar' => 'https://secure.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e.jpg?url_only=1&d=mm',
+			'error' => 'no_error'
+		));
 	}
 
 	public function testApiUpdateProjectAdminOK() {
@@ -918,7 +925,14 @@ class TasksControllerTest extends AppControllerTest {
 		
 		$returned = json_decode($this->view, true);
 		unset($returned['modified']);
-		$this->assertEquals($returned, array('task_status_id' => 3, 'task_priority_id' => 4, 'error' => 'no_error'));
+		$this->assertEquals($returned, array(
+			'task_status_id' => 3,
+			'task_priority_id' => 4,
+			'assignee_email' => '',
+			'assignee_name' => '',
+			'assignee_gravatar' => 'https://secure.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e.jpg?url_only=1&d=mm',
+			'error' => 'no_error'
+		));
 		
 	}
 
@@ -930,7 +944,14 @@ class TasksControllerTest extends AppControllerTest {
 		
 		$returned = json_decode($this->view, true);
 		unset($returned['modified']);
-		$this->assertEquals($returned, array('task_status_id' => 3, 'task_priority_id' => 4, 'error' => 'no_error'));
+		$this->assertEquals($returned, array(
+			'task_status_id' => 3,
+			'task_priority_id' => 4,
+			'assignee_email' => '',
+			'assignee_name' => '',
+			'assignee_gravatar' => 'https://secure.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e.jpg?url_only=1&d=mm',
+			'error' => 'no_error'
+		));
 		
 	}
 	public function testApiUpdateProjectGuestFail() {
@@ -1140,6 +1161,5 @@ class TasksControllerTest extends AppControllerTest {
 		$completed = array_map(function($a){return $a['Task']['id'];}, $this->vars['completed']);
 		$this->assertEquals(array(18, 19), $completed);
 	}
-
 	
 }

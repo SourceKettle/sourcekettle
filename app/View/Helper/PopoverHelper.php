@@ -39,7 +39,7 @@ class PopoverHelper extends AppHelper {
  */
 	public function requirements() {
 		if ($this->__hasBeenCalled) {
-			return $this->Html->script(array('/bootstrap-tooltip/bootstrap-tooltip', '/bootstrap-popover/bootstrap-popover')) . $this->Html->scriptBlock("$('.popover-sourcekettle').popover()");
+			return $this->Html->script(array('/bootstrap-popover/bootstrap-popover')) . $this->Html->scriptBlock("$('.popover-sourcekettle').popover()");
 		}
 	}
 

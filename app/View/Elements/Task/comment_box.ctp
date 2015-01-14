@@ -14,14 +14,7 @@
  */
 ?>
 <div class="row-fluid">
-    <div class="span1">
-        <?= $this->Html->link(
-            $this->Gravatar->image($comment['User']['email'], array('d' => 'mm')),
-            array('controller' => 'users', 'action' => 'view', $comment['User']['id']),
-            array('escape' => false, 'class' => 'thumbnail')
-        ) ?>
-    </div>
-    <div class="span11">
+    <div class="span12">
         <div class="well col comment" id="<?= $comment['TaskComment']['id'] ?>">
             <?php if ($current_user['is_admin'] == 1 || $current_user['id'] == $comment['User']['id']): ?>
             	<button type="button" class="close delete"><?= $this->Bootstrap->icon('remove-circle'); ?></button>
@@ -30,7 +23,15 @@
 				<?= $this->Form->hidden ('id', array ('value' => $comment['TaskComment']['id'])); ?>
 				<?= $this->Form->end(); ?>
             <?php endif; ?>
-            <h5><?= $this->Bootstrap->icon('comment') ?><small> <?= h($comment['User']['name']) ?> <?= __('commented') ?> <?= $this->Time->timeAgoInWords($comment['TaskComment']['created']) ?></small></h5>
+
+	<h5>
+        <?= $this->Bootstrap->icon('comment') ?>
+        <?= $this->Html->link(
+            $this->Gravatar->image($comment['User']['email'], array('d' => 'mm', 'size' => 20)),
+            array('controller' => 'users', 'action' => 'view', $comment['User']['id']),
+            array('escape' => false,) 
+        ) ?>
+	<small> <?= h($comment['User']['name']) ?> <?= __('commented') ?> <?= $this->Time->timeAgoInWords($comment['TaskComment']['created']) ?></small></h5>
             <hr />
             <p><?= $this->Markitup->parse($comment['TaskComment']['comment']) ?></p>
 			<?= $this->Form->create('TaskCommentEdit', array ('class' => 'hide', 'url' => array('controller' => 'tasks', 'action' => 'updateComment', 'project' => $project['Project']['name'], $comment['TaskComment']['id']))); ?>

@@ -465,7 +465,7 @@ class CollaboratorsController extends AppProjectController {
 
 		$this->set('object', array(
 			'name' => $collaborator['Team']['name'],
-			'id'	=> $collaborator['CollaboratingTeam']['id']
+			'id'	=> $collaborator['Team']['id']
 		));
 		$this->set('objects', array());
 		$this->render('/Elements/Project/delete');

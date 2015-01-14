@@ -45,18 +45,15 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
 
                 <div class="row-fluid">
 
-                    <div class="span1">
-                        <?= $this->Html->link(
-                            $this->Gravatar->image($task['Owner']['email'], array('d' => 'mm')),
-                            array('controller' => 'users', 'action' => 'view', $task['Owner']['id']),
-                            array('escape' => false, 'class' => 'thumbnail')
-                        ) ?>
-                    </div>
-                    <div class="span11">
+                    <div class="span12">
                         <div class="well col">
                             <div class="row-fluid">
                                 <h5>
-                                    <?= $this->Bootstrap->icon('pencil') ?>
+        			<?= $this->Html->link(
+			            $this->Gravatar->image($task['Owner']['email'], array('d' => 'mm', 'size' => 30)),
+			            array('controller' => 'users', 'action' => 'view', $task['Owner']['id']),
+			            array('escape' => false,) 
+			        ) ?>
                                     <small>
                                         <?= h($task['Owner']['name']) ?>
                                         <?= __("created this task") ?>
@@ -132,14 +129,7 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
 
                  <div class="row-fluid">
 
-                    <div class="span1">
-                        <?= $this->Html->link(
-                            $this->Gravatar->image($current_user['email'], array('d' => 'mm')),
-                            array('controller' => 'users', 'action' => 'view', $current_user['id']),
-                            array('escape' => false, 'class' => 'thumbnail')
-                        ) ?>
-                    </div>
-                    <div class="span11">
+                    <div class="span12">
                         <div class="well col">
                             <?php
                             echo $this->Form->create('TaskComment', array('class' => 'form', 'url' => array('controller' => 'tasks', 'action' => 'comment', 'project' => $project['Project']['name'], $task['Task']['public_id'])));

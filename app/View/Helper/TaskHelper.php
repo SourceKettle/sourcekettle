@@ -230,14 +230,20 @@ class TaskHelper extends AppHelper {
 		}
 
 		if ($textLabel) {
-			$button .= ' <span class="assignee-full-label">'.$this->Html->link(
-				$task['Assignee']['name'],
-				array(
-					'controller' => 'users',
-					'action' => 'view',
-					$task['Assignee']['id']
-				)
-			).'</span>';
+			$button .= ' <span class="assignee-full-label">';
+			if ($task['Assignee']['id'] > 0) {
+				$button .= $this->Html->link(
+					$task['Assignee']['name'],
+					array(
+						'controller' => 'users',
+						'action' => 'view',
+						$task['Assignee']['id']
+					)
+				);
+			} else {
+				$button .= h($task['Assignee']['name']);
+			}
+			$button .= '</span>';
 		}
 		return $button;
 	}
