@@ -69,6 +69,7 @@
 								) ?> <?= h($current_user['name']) ?>
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
+								<li><?= $this->Html->link(__('View profile'), array ('admin' => false, 'controller' => 'users', 'action' => 'view', $current_user['id'])) ?></li>
 								<li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users', 'action' => 'index')) ?></li>
 								<li class="divider"></li>
 								<li><?= $this->Html->link(__('Log Out'), array ('admin' => false, 'controller' => 'login', 'action' => 'logout')) ?></li>

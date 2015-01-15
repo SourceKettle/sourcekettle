@@ -23,6 +23,9 @@
 		<dd>
 			<?= $this->Time->timeAgoInWords($user['User']['created'])?>
 		</dd>
+		<? if ($user['User']['id'] == $current_user['id']) { ?>
+			<dd><?= $this->Html->link(__('View kanban chart'), array('controller' => 'tasks', 'action' => 'personal_kanban'))?></dd>
+		<? } ?>
 		<dt>
 			<?= __("Teams") ?>
 		</dt>
