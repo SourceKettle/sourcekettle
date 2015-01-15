@@ -467,7 +467,17 @@ class Task extends AppModel {
 		);
 	}
 
-	public function listTasksOfStatusFor($status = 'open', $relatedClass = 'Milestone', $id = null) {
+	public function listTasksOfStatusFor($status = 'open', $relatedClass = 'Milestone', $id = null, $maxAgeDays = null) {
+
+		$conditions = array(
+			'TaskStatus.name =' => $status,
+			$relatedClass.'.id =' => $id
+		);
+
+		if ($maxAgeDays != null) {
+			$minDate = new DateTime("$maxAgeDays days ago");
+			$conditions['Task.modified >'] = $minDate->format('Y-m-d');
+		}
 
 		return $this->find(
 			'all',
@@ -483,10 +493,7 @@ class Task extends AppModel {
 					'Assignee.name',
 					'Project.name',
 				),
-				'conditions' => array(
-					'TaskStatus.name =' => $status,
-					$relatedClass.'.id =' => $id
-				),
+				'conditions' => $conditions,
 				'order' => 'TaskPriority.level DESC',
 				'recursive' => 0,
 			)

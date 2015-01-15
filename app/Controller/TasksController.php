@@ -302,9 +302,12 @@ class TasksController extends AppProjectController {
 
 	public function personal_kanban() {
 
+		// TODO a way to select/control the max age/size of the "completed" list
+		$maxAgeDays = 30;
+
 		$backlog = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'open');
 		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
-		$completed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'));
+		$completed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'), $maxAgeDays);
 
 		// Calculate number of points complete/total for the milestone
 		$points_todo = array_reduce($backlog, function($v, $t){return $v + $t['Task']['story_points'];});
@@ -318,12 +321,15 @@ class TasksController extends AppProjectController {
 
 	public function team_kanban($team = null) {
 
+		// TODO a way to select/control the max age/size of the "completed" list
+		$maxAgeDays = 30;
+
 		// NB we check it's valid in the isAuthorized method, so no need to check again
 		$team = $this->Team->findByName($team);
 
 		$backlog = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'open');
 		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
-		$completed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'));
+		$completed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'), $maxAgeDays);
 
 		// Calculate number of points complete/total for the milestone
 		$points_todo = array_reduce($backlog, function($v, $t){return $v + $t['Task']['story_points'];});

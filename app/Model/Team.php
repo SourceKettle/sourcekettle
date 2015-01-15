@@ -59,7 +59,7 @@ class Team extends AppModel {
 		)
 	);
 
-	public function tasksOfStatusForTeam($teamId = null, $status = 'open') {
+	public function tasksOfStatusForTeam($teamId = null, $status = 'open', $maxAgeDays = null) {
 
 		$teamMembers = $this->TeamsUser->find('list', array(
 			'conditions' => array('team_id' => $teamId),
@@ -71,7 +71,7 @@ class Team extends AppModel {
 			$teamMembers = array_shift($teamMembers);
 		}
 
-		return $this->CollaboratingTeam->Project->Task->listTasksOfStatusFor($status, 'Assignee', $teamMembers);
+		return $this->CollaboratingTeam->Project->Task->listTasksOfStatusFor($status, 'Assignee', $teamMembers, $maxAgeDays);
 	}
 
 	public function isMember($teamId, $userId) {
