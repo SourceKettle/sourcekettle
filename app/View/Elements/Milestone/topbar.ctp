@@ -20,7 +20,7 @@ $action = $this->request['action'];
 if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'burndown'){
 	$links = array(
 		array(
-		   'text' => __('View'),
+		   'text' => __('Kanban'),
 		   'url' => array(
 			   'action' => 'view',
 			   'controller' => 'milestones',
@@ -28,7 +28,7 @@ if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'bu
 		   ),
 		),
 	   	array(
-		   'text' => __('Chart'),
+		   'text' => __('Burn-down'),
 		   'url' => array(
 			   'action' => 'burndown',
 			   'controller' => 'milestones',
@@ -40,6 +40,14 @@ if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'bu
 	// Don't give the user links to edit etc. if they don't have write access
 	if ($hasWrite) {
 	   $links[] = array(
+		   'text' => __('Priority planner'),
+		   'url' => array(
+			   'action' => 'plan',
+			   'controller' => 'milestones',
+			   $id
+		   ),
+	   );
+	   $links[] = array(
 		   'text' => __('Edit'),
 		   'url' => array(
 			   'action' => 'edit',
@@ -48,14 +56,6 @@ if($action == 'view' || $action == 'plan' || $action == 'edit' || $action == 'bu
 		   ),
 	   );
 
-	   $links[] = array(
-		   'text' => __('Plan'),
-		   'url' => array(
-			   'action' => 'plan',
-			   'controller' => 'milestones',
-			   $id
-		   ),
-	   );
 	   $links[] = array(
 		   'text' => __('Close'),
 		   'url' => array(
