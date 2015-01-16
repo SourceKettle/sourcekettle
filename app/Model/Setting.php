@@ -166,6 +166,8 @@ class Setting extends AppModel {
 				'task_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Allow attachment uploads
 				'attachment_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
+				// Use 4-column kanban chart?
+				'4col_kanban_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
 			),
 
 			// UI-related settings - appearance etc.

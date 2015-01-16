@@ -75,6 +75,14 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
             </tr>
             <tr>
                 <td>
+                    <h4><?= __('4-column Kanban chart') ?> <small>- <?= __('Do you want to use a 4-column kanban chart (resolved and closed states seperate), or the simplified 3-column chart (open/in progress/completed)?') ?></small></h4>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => '4col-kanban-enabled', 'name' => 'ProjectSetting.Features.4col_kanban_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'value' => $sourcekettle_config['Features']['4col_kanban_enabled']['value'], 'readOnly' => false)) ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <h4><?= __('Source code management') ?> <small>- <?= __('allow creation of a source code repository for a project') ?></small></h4>
                 </td>
                 <td>

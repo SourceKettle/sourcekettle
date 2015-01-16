@@ -96,13 +96,23 @@ class MilestonesController extends AppProjectController {
 
 		$this->set('title_for_layout', $milestone['Milestone']['subject']);
 
-		$backlog = $this->Milestone->tasksOfStatusForMilestone($id, 'open');
+		$open = $this->Milestone->tasksOfStatusForMilestone($id, 'open');
 		$inProgress = $this->Milestone->tasksOfStatusForMilestone($id, 'in progress');
-		$completed = $this->Milestone->tasksOfStatusForMilestone($id, array('resolved', 'closed'));
-		$iceBox = $this->Milestone->tasksOfStatusForMilestone($id, 'dropped');
+		if ($this->sourcekettle_config['Features']['4col_kanban_enabled']['value']) {
+			$resolved = $this->Milestone->tasksOfStatusForMilestone($id, 'resolved');
+			$closed = $this->Milestone->tasksOfStatusForMilestone($id, 'closed');
+			$this->set('closed', $closed);
+			
+		} else {
+			$resolved = $this->Milestone->tasksOfStatusForMilestone($id, array('resolved', 'closed'));
+		}
+		$dropped = $this->Milestone->tasksOfStatusForMilestone($id, 'dropped');
 
 		// Final value is min size of the board
-		$max = max(count($backlog), count($inProgress), count($completed), 3);
+		$max = max(count($open), count($inProgress), count($resolved), 3);
+		if ($this->sourcekettle_config['Features']['4col_kanban_enabled']['value']) {
+			$max = max($max, count($closed));
+		}
 
 		// Calculate number of points complete/total for the milestone
 		$points_total = 0;
@@ -114,10 +124,7 @@ class MilestonesController extends AppProjectController {
 		$points_complete = $points_total - $points_todo;
 
 		$this->set('milestone', $milestone);
-		$this->set('backlog_empty', $max - count($backlog));
-		$this->set('inProgress_empty', $max - count($inProgress));
-		$this->set('completed_empty', $max - count($completed));
-		$this->set(compact('backlog', 'inProgress', 'completed', 'iceBox', 'points_complete', 'points_todo', 'points_total'));
+		$this->set(compact('open', 'inProgress', 'resolved', 'dropped', 'points_complete', 'points_todo', 'points_total'));
 	}
 
 /**
