@@ -31,7 +31,7 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            __('Charts') => array(
+            __('Schedule') => array(
                 'icon' => 'signal',
                 'url' => array(
                     'action' => array('schedule'),
