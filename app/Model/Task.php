@@ -258,6 +258,37 @@ class Task extends AppModel {
 		}
 		return true;
 	}
+
+	// Given a list of tasks' public IDs, convert to private IDs, remove duplicates
+	// and remove the current task's ID if present.
+	private function __sanitiseDependencies($taskId, $projectId, $depList) {
+
+		// First get unique values only...
+		$depList = array_unique(array_values($depList));
+
+		// Find query doesn't work with an array of length 1 for some reason
+		if (count($depList) < 2) {
+			$depList = $depList[0];
+		}
+
+		// Convert public IDs to real IDs
+		$depList = array_keys($this->find('list', array(
+			'conditions' => array(
+				'project_id' => $projectId,
+				'public_id' => $depList
+			)
+		)));
+
+		// Make sure the task doesn't depend on itself!
+		foreach ($depList as $key => $id) {
+			if (isset($taskId) && $id == $taskId) {
+				unset ($depList[$key]);
+			}
+		}
+
+		return $depList;
+	}
+
 /**
  * beforeSave function
  *
@@ -269,17 +300,6 @@ class Task extends AppModel {
 
 	public function beforeSave($options = array()) {
 
-		// Update dependency list
-		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
-
-			foreach ($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
-				if (isset($this->id) && $dependsOn == $this->id) {
-					unset ($this->data['DependsOn']['DependsOn'][$key]);
-				}
-			}
-			$this->data['DependsOn']['DependsOn'] = array_unique(array_values($this->data['DependsOn']['DependsOn']));
-		}
-
 		// Find the existing task if there is one
 		$task = $this->find('first', array(
 			'conditions' => array('Task.id' => $this->id),
@@ -290,23 +310,32 @@ class Task extends AppModel {
 		// Creating the task...
 		// TODO I have a horrible feeling that this is a terrible idea - what happens with saveMany()?
 		if (empty($task)) {
-			$task_id = 0;
-			$project_id = $this->data['Task']['project_id'];
-			$milestone_id = @$this->data['Task']['milestone_id'];
+			$taskId = 0;
+			$projectId = $this->data['Task']['project_id'];
+			$milestoneId = @$this->data['Task']['milestone_id'];
 		
 		// Updating the task...
 		} else {
-			$task_id = $this->id;
-			$project_id = $task['Task']['project_id'];
-			$milestone_id = @$task['Task']['milestone_id'];
+			$taskId = $this->id;
+			$projectId = $task['Task']['project_id'];
+			$milestoneId = @$task['Task']['milestone_id'];
 		}
 
 		// Remember the milestone and project ID for our burndown logging
 		// NB this is because the milestone ID may have changed by the time we log it!
-		$this->__burndownLog[$task_id] = array(
-			'milestone_id' => $milestone_id, 
-			'project_id' => $project_id, 
+		$this->__burndownLog[$taskId] = array(
+			'milestone_id' => $milestoneId, 
+			'project_id' => $projectId, 
 		);
+
+		// Update dependency list
+		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
+			$this->data['DependsOn']['DependsOn'] = $this->__sanitiseDependencies($taskId, $projectId, $this->data['DependsOn']['DependsOn']);
+		}
+		if (isset($this->data['DependedOnBy']['DependedOnBy']) && is_array($this->data['DependedOnBy']['DependedOnBy'])) {
+			$this->data['DependedOnBy']['DependedOnBy'] = $this->__sanitiseDependencies($taskId, $projectId, $this->data['DependedOnBy']['DependedOnBy']);
+		}
+
 		return true;
 	}
 

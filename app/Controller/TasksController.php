@@ -613,10 +613,19 @@ class TasksController extends AppProjectController {
 				}
 			} else if ($this->request->is('post')) {
 				// Do not redirect, allow them to save and add another task with the same details
-				if ($this->Flash->c($this->Task->saveAll($this->request->data))) {
+				if ($this->Task->saveAll($this->request->data)) {
+					$task = $this->Task->findById($this->Task->getLastInsertID());
 					unset($this->request->data['Task']['subject']);
 					unset($this->request->data['Task']['description']);
 					unset($this->request->data['DependsOn']);
+					$this->Flash->info(__("Task '%s' has been created", '<a href="'.Router::url(array(
+						'controller' => 'tasks',
+						'action' => 'view',
+						'project' => $task['Project']['name'],
+						$task['Task']['public_id']
+					)).'">'.h($task['Task']['subject'])."</a>"));
+				} else {
+					$this->Flash->error(__("The task could not be saved. Please try again."));
 				}
 			}
 		} else {
@@ -649,7 +658,7 @@ class TasksController extends AppProjectController {
 		));
 		$availableTasks = array();
 		foreach ($backlog as $t) {
-			$availableTasks[$t['Task']['id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
+			$availableTasks[$t['Task']['public_id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
 		}
 
 		$subTasks = array();
@@ -693,19 +702,19 @@ class TasksController extends AppProjectController {
 		));
 		$availableTasks = array();
 		foreach ($backlog as $t) {
-			$availableTasks[$t['Task']['id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
+			$availableTasks[$t['Task']['public_id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
 		}
 
 		$subTasks = array();
 		foreach ($task['DependsOn'] as $subTask) {
-			$subTasks[$subTask['id']] = "#".$subTask['public_id']." ".$subTask['subject'];
-			unset($availableTasks[$subTask['id']]);
+			$subTasks[$subTask['public_id']] = "#".$subTask['public_id']." ".$subTask['subject'];
+			unset($availableTasks[$subTask['public_id']]);
 		}
 
 		$parentTasks = array();
 		foreach ($task['DependedOnBy'] as $parentTask) {
-			$parentTasks[$parentTask['id']] = "#".$parentTask['public_id']." ".$parentTask['subject'];
-			unset($availableTasks[$parentTask['id']]);
+			$parentTasks[$parentTask['public_id']] = "#".$parentTask['public_id']." ".$parentTask['subject'];
+			unset($availableTasks[$parentTask['public_id']]);
 		}
 
 		$assignees = $this->Task->Project->listCollaborators($project['Project']['id']);
