@@ -182,21 +182,44 @@ class MilestonesControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testView() {
+	public function testView3Column() {
 		$this->_fakeLogin(3);
 		$this->testAction('/project/public/milestones/view/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
 		$this->assertContains('<h1>public <small>'.h(__("Milestone board: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
-		$this->assertNotNull($this->vars['backlog']);
-		$this->assertEquals(2, count($this->vars['backlog']));
+		$this->assertNotNull($this->vars['open']);
+		$this->assertEquals(2, count($this->vars['open']));
 		$this->assertNotNull($this->vars['inProgress']);
 		$this->assertEquals(2, count($this->vars['inProgress']));
-		$this->assertNotNull($this->vars['completed']);
-		$this->assertEquals(2, count($this->vars['completed']));
-		$this->assertNotNull($this->vars['iceBox']);
-		$this->assertEquals(1, count($this->vars['iceBox']));
+		$this->assertNotNull($this->vars['resolved']);
+		$this->assertEquals(2, count($this->vars['resolved']));
+		$this->assertArrayNotHasKey('closed', $this->vars);
+		$this->assertNotNull($this->vars['dropped']);
+		$this->assertEquals(1, count($this->vars['dropped']));
+
+	}
+
+	public function testView4Column() {
+		ClassRegistry::init("ProjectSetting")->saveSettingsTree('public', array('ProjectSetting' => array('Features' => array('4col_kanban_enabled' => true))));
+		$this->_fakeLogin(3);
+		$this->testAction('/project/public/milestones/view/1', array('method' => 'get', 'return' => 'contents'));
+		$this->assertAuthorized();
+
+		$this->assertContains('<h1>public <small>'.h(__("Milestone board: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
+
+		$this->assertNotNull($this->vars['open']);
+		$this->assertEquals(2, count($this->vars['open']));
+		$this->assertNotNull($this->vars['inProgress']);
+		$this->assertEquals(2, count($this->vars['inProgress']));
+		$this->assertNotNull($this->vars['resolved']);
+		$this->assertEquals(1, count($this->vars['resolved']));
+		$this->assertArrayHasKey('closed', $this->vars);
+		$this->assertNotNull($this->vars['closed']);
+		$this->assertEquals(1, count($this->vars['closed']));
+		$this->assertNotNull($this->vars['dropped']);
+		$this->assertEquals(1, count($this->vars['dropped']));
 
 	}
 
