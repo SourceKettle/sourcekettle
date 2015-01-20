@@ -32,8 +32,8 @@ class MarkitupHelper extends AppHelper {
 			'skin' => 'simple',
 			'settings' => 'mySettings',
 			'parser' => array(
-				'controller' => 'projects',
-				'action' => 'markupPreview',
+				'controller' => 'markups',
+				'action' => 'preview',
 				'admin' => false,
 				'api' => false,
 			)
@@ -43,7 +43,7 @@ class MarkitupHelper extends AppHelper {
 		$this->Html->script('/markitup/jquery.markitup', array('inline' => false));
 		$this->Html->css("/markitup/skins/{$settings['skin']}/style", null, array('inline' => false));
 		$this->Html->css("/markitup/sets/{$settings['set']}/style", null, array('inline' => false));
-		$this->Html->script("/markitup/{$settings['set']}", array('inline' => false));
+		$this->Html->script("/markitup/sets/{$settings['set']}/set", array('inline' => false));
 
 		$id = "MarkItUp_{$name}";
 

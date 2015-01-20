@@ -446,16 +446,6 @@ class ProjectsController extends AppProjectController {
 		$this->render('/Elements/Project/delete');
 	}
 
-	public function markupPreview() {
-		$this->layout = 'ajax';
-		$content = '';
-		if (isset($this->request->query['data'])) {
-			$content = $this->request->query['data'];
-		}
-		$this->set(compact('content'));
-		$this->render('/Elements/Markitup/preview');
-	}
-
 	public function schedule($project = null) {
 
 		$project = $this->_getProject($project);
