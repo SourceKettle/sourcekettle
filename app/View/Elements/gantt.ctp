@@ -4,10 +4,13 @@ $this->Html->script('/flot/jquery.flot.time.min', array('inline' => false));
 $this->Html->script('/flot/jquery.flot.categories.min', array('inline' => false));
 $this->Html->script('/JUMFlot/JUMFlot.min', array('inline' => false));
 $this->Html->script ("gantt", array ('inline' => false));
+
+$milestoneUrl = $this->Html->url(array('controller' => 'milestones', 'project' => $project['Project']['name'], 'action' => 'view'));
+$apiUrl = "";
 ?>
 
 <div class="row-fluid gantt-outer">
-<div class="span12"><div class="gantt-chart">
+<div class="span12"><div class="gantt-chart" data-milestone-url="<?=$milestoneUrl?>" data-api-url="<?=$apiUrl?>">
 	<!-- Note that this table will be replaced with a graph, if JavaScript is working properly! -->
 	<table>
 		<thead>
@@ -48,7 +51,7 @@ $this->Html->script ("gantt", array ('inline' => false));
 			$milestone = $milestone['Milestone'];
 		?>
 			<tr>
-				<td><?=h($milestone['subject'])?></td>
+				<td data-milestone-id="<?=h($milestone['id'])?>"><?=h($milestone['subject'])?></td>
 				<td><?=h($milestone['is_open']? 'true':'false')?></td>
 				<td><?=h($milestone['starts'])?></td>
 				<td><?=h($milestone['due'])?></td>
