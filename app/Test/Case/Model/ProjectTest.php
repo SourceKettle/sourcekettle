@@ -669,34 +669,34 @@ class ProjectTestCase extends CakeTestCase {
 		$this->Project->id = 1;
 		$collabs = $this->Project->listCollaborators();
 		$this->assertEquals(array(
-			1 => 'Mr Smith [Mr.Smith@example.com]',
-			3 => 'Mrs Guest [mrs.guest@example.com]',
-			4 => 'Mr User [mr.user@example.com]',
-			5 => 'Mr Admin [mr.admin@example.com]',
-			10 => 'Another user [another-user@example.com]',
+			array('id' => 1, 'title' => 'Mr Smith [Mr.Smith@example.com]'),
+			array('id' => 3, 'title' => 'Mrs Guest [mrs.guest@example.com]'),
+			array('id' => 4, 'title' => 'Mr User [mr.user@example.com]'),
+			array('id' => 5, 'title' => 'Mr Admin [mr.admin@example.com]'),
+			array('id' => 10, 'title' => 'Another user [another-user@example.com]'),
 		), $collabs);
 	}
 
 	public function testListCollaboratorsDirectAndTeam() {
 		$collabs = $this->Project->listCollaborators(12);
 		$this->assertEquals(array(
-			2 => 'Mrs Smith [mrs.smith@example.com]',
-			3 => 'Mrs Guest [mrs.guest@example.com]',
-			4 => 'Mr User [mr.user@example.com]',
-			20 => 'A Perl developer [perl-dev@example.com]',
-			21 => 'Another Perl developer [another-perl-dev@example.com]',
+			array('id' => 2, 'title' => 'Mrs Smith [mrs.smith@example.com]'),
+			array('id' => 3, 'title' => 'Mrs Guest [mrs.guest@example.com]'),
+			array('id' => 4, 'title' => 'Mr User [mr.user@example.com]'),
+			array('id' => 20, 'title' => 'A Perl developer [perl-dev@example.com]'),
+			array('id' => 21, 'title' => 'Another Perl developer [another-perl-dev@example.com]'),
 		), $collabs);
 	}
 
 	public function testListCollaboratorsTeamViaProjectGroup() {
 		$collabs = $this->Project->listCollaborators(6);
 		$this->assertEquals(array(
-			13 => 'A PHP developer [php-dev@example.com]',
-			15 => 'A Python developer [python-dev@example.com]',
-			16 => 'A PHP and Python developer [php-and-python-dev@example.com]',
-			17 => 'A PHP and Java developer [php-and-java-dev@example.com]',
-			18 => 'A Python and Java developer [python-and-java-dev@example.com]',
-			19 => 'A PHP, Python and Java developer [php-python-and-java-dev@example.com]',
+			array('id' => 13, 'title' => 'A PHP developer [php-dev@example.com]'),
+			array('id' => 15, 'title' => 'A Python developer [python-dev@example.com]'),
+			array('id' => 16, 'title' => 'A PHP and Python developer [php-and-python-dev@example.com]'),
+			array('id' => 17, 'title' => 'A PHP and Java developer [php-and-java-dev@example.com]'),
+			array('id' => 18, 'title' => 'A Python and Java developer [python-and-java-dev@example.com]'),
+			array('id' => 19, 'title' => 'A PHP, Python and Java developer [php-python-and-java-dev@example.com]'),
 		), $collabs);
 	}
 }

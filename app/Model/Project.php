@@ -526,7 +526,7 @@ class Project extends AppModel {
 		}
 
 		foreach ($members as $member) {
-			$users[$member['User']['id']] = "{$member['User']['name']} [{$member['User']['email']}]";
+			$users[] = array("id" => $member['User']['id'], "title" => "{$member['User']['name']} [{$member['User']['email']}]");
 		}
 
 		// Now get a list of any direct collaborators
@@ -538,7 +538,9 @@ class Project extends AppModel {
 		foreach ($collaborators as $collaborator) {
 			$users[] = array("id" => $collaborator['User']['id'], "title" => "{$collaborator['User']['name']} [{$collaborator['User']['email']}]");
 		}
-			
+		
+		// Sort in ID order
+		usort($users, function($a, $b) {return ($a['id'] < $b['id']? -1: 1);});
 		return $users;
 
 	}

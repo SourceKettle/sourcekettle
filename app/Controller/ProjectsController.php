@@ -46,6 +46,7 @@ class ProjectsController extends AppProjectController {
 			'changeSetting' => 'admin',
 			'api_history' => 'read',
 			'api_list_collaborators' => 'read',
+			'api_list_milestones' => 'read',
 			'api_autocomplete' => 'login',
 		);
 	}

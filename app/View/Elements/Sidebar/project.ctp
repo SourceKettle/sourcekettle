@@ -58,10 +58,8 @@
 		    __('My tasks') => array(
                 'icon' => 'heart',
 		        'url' => array(
-		            'action' => array('*'),
-					'?' => 'assignees='.urlencode($current_user['id']).'&statuses=open,in+progress',
+		            'action' => array('personal_kanban'),
 		            'controller' => 'tasks',
-		            'project' => $this->params['project'],
 		        ),
 		    ),
             __('Milestones') => array(

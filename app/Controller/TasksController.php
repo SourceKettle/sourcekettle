@@ -300,43 +300,37 @@ class TasksController extends AppProjectController {
 
 	}
 
-	public function personal_kanban() {
+	public function personal_kanban($maxAgeDays=30) {
 
-		// TODO a way to select/control the max age/size of the "completed" list
-		$maxAgeDays = 30;
-
-		$backlog = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'open');
+		$open = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'open');
 		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
-		$completed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'), $maxAgeDays);
+		$resolved = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'), $maxAgeDays);
 
 		// Calculate number of points complete/total for the milestone
-		$points_todo = array_reduce($backlog, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_todo = array_reduce($open, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_todo = array_reduce($inProgress, function($v, $t){return $v + $t['Task']['story_points'];}, $points_todo);
-		$points_complete = array_reduce($completed, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_complete = array_reduce($resolved, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_total = $points_todo + $points_complete;
 
-		$this->set(compact('backlog', 'inProgress', 'completed', 'points_total', 'points_todo', 'points_complete'));
+		$this->set(compact('open', 'inProgress', 'resolved', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 
-	public function team_kanban($team = null) {
-
-		// TODO a way to select/control the max age/size of the "completed" list
-		$maxAgeDays = 30;
+	public function team_kanban($team = null, $maxAgeDays=30) {
 
 		// NB we check it's valid in the isAuthorized method, so no need to check again
 		$team = $this->Team->findByName($team);
 
-		$backlog = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'open');
+		$open = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'open');
 		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
-		$completed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'), $maxAgeDays);
+		$resolved = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'), $maxAgeDays);
 
 		// Calculate number of points complete/total for the milestone
-		$points_todo = array_reduce($backlog, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_todo = array_reduce($open, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_todo = array_reduce($inProgress, function($v, $t){return $v + $t['Task']['story_points'];}, $points_todo);
-		$points_complete = array_reduce($completed, function($v, $t){return $v + $t['Task']['story_points'];});
+		$points_complete = array_reduce($resolved, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_total = $points_todo + $points_complete;
-		$this->set(compact('team', 'backlog', 'inProgress', 'completed', 'points_total', 'points_todo', 'points_complete'));
+		$this->set(compact('team', 'open', 'inProgress', 'resolved', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 

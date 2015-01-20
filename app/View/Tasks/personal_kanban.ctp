@@ -35,14 +35,14 @@ $this->Html->css("milestones.index", array ('inline' => false));
     <!-- Primary columns -->
 	<div class="row-fluid span12">
         <?= $this->element('Task/Board/column',
-            array('tasks' => $backlog, 'status' => 'open', 'title' => __('Backlog'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
+            array('tasks' => $open, 'status' => 'open', 'title' => __('Open'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
         ) ?>
 
         <?= $this->element('Task/Board/column',
             array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
         ) ?>
         <?= $this->element('Task/Board/column',
-            array('tasks' => $completed, 'status' => 'resolved', 'title' => __('Completed'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
+            array('tasks' => $resolved, 'status' => 'resolved', 'title' => __('Resolved'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
         ) ?>
 
 	<!-- End primary columns -->
