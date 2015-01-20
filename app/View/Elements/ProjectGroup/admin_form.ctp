@@ -27,6 +27,10 @@
             ));
 
 		echo '<div class="row-fluid">';
+		echo '<h3>'.__('Projects').'</h3>';
+		echo '</div>';
+
+		echo '<div class="row-fluid">';
 		echo $this->element("linked_list", array(
 			"listSetName" => "member-selection",
 			"listSpan" => 6,
@@ -38,6 +42,9 @@
 		));
 		echo "</div><hr/>";
 
+		echo '<div class="row-fluid">';
+		echo '<h3>'.__('People').'</h3>';
+		echo '</div>';
 		echo '<div class="row-fluid">';
 		echo $this->element("linked_list", array(
 			"listSetName" => "permission-selection",
