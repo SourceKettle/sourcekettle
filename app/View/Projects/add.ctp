@@ -38,32 +38,29 @@ $hover_waffle = $this->Popover->popover(
 
 echo $this->Bootstrap->page_header("New Project <small>where baby projects are made</small>"); ?>
 
-<div class="row">
-    <div class="span6">
-        <?php echo $this->Form->create('Project', array('class' => 'well form-horizontal')); ?>
-        <?php
-
-        echo $this->Bootstrap->input("name", array(
-            "input" => $this->Form->text("name", array('class' => 'span3', 'autofocus' => '')),
+<div class="row-fluid">
+    <div class="span8">
+        <?= $this->Form->create('Project', array('class' => 'well form-horizontal')); ?>
+        <?= $this->Bootstrap->input("name", array(
+            "input" => $this->Form->text("name", array('class' => 'span12', 'autofocus' => '')),
             "help_block" => "The 'short' name your project will be known by<br>(must be a valid $hover_unix_name name)"
-        ));
+        ))?>
 
-        echo $this->Bootstrap->input("description", array(
-            "input" => $this->Form->textarea("description"),
+        <?= $this->Bootstrap->input("description", array(
+            "input" => $this->Form->textarea("description", array("class" => "span12")),
             "help_block" => "The 'long' $hover_waffle explaining your projects intent"
-        ));
+        ))?>
 
-        echo $this->Bootstrap->input("public", array(
+        <?= $this->Bootstrap->input("public", array(
             "input" => $this->Form->checkbox("public"),
-        ));
+        ))?>
 
-        echo $this->Bootstrap->input("repositoryType", array(
-            "input" => $this->Form->select('repo_type', $repoTypes, array('empty'=>false, 'value' => $defaultRepo)),
-        ));
-        ?>
+        <?= $this->Bootstrap->input("repositoryType", array(
+            "input" => $this->Form->select('repo_type', $repoTypes, array("class" => "span12", 'empty'=>false, 'value' => $defaultRepo)),
+        ))?>
     </div>
 
-    <div class="span6">
+    <div class="span4">
         <h3>All SourceKettle projects include...</h3>
         <div>
             <h4>Dynamic Task Tracking</h4>
