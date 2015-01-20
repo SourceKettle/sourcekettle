@@ -36,17 +36,10 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
             <dd><?= $this->Task->typeDropdownButton($task) ?></dd>
             <dt><?= __("Task priority") ?>:</dt>
 			<dd><?= $this->Task->priorityDropdownButton($task, true) ?></dd>
+
             <dt><?= __("Fix milestone") ?>:</dt>
-            <? if (isset($task['Milestone']['subject'])) { ?>
-                <dd>
-                    <?= $this->Html->link(
-                        $task['Milestone']['subject'],
-                        array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
-                    ) ?>
-                </dd>
-            <? } else { ?>
-                <dd class="muted"><?= __("Not set")?></dd>
-            <? } ?>
+	    <dd><?=$this->Task->milestoneDropdownButton($task, 23, true, true)?></dd>
+
             <dt><?=__('Estimate')?>:</dt>
             <? if (isset($task['Task']['time_estimate'])) { ?>
                 <dd><?=$task['Task']['time_estimate']?></dd>

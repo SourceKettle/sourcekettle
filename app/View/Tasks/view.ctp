@@ -14,25 +14,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$this->Html->css('tasks', null, array ('inline' => false));
+$this->Html->css('tasks', array ('inline' => false));
 $this->Html->script("tasks", array ('inline' => false));
+$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 'api' => true, 'project' => $task['Project']['name']));
 ?>
 
-<?= $this->Task->typeDropdownMenu() ?>
-<?= $this->Task->statusDropdownMenu() ?>
-<?= $this->Task->priorityDropdownMenu() ?>
-<?= $this->Task->assigneeDropdownMenu() ?>
-<?= $this->element('Task/modal_close') ?>
-<?=  $this->element('Task/modal_assign') ?>
+<?= $this->Task->allDropdownMenus() ?>
 
-<?
-if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
-    echo $this->element('Task/modal_resolve');
-} else if ($task['TaskStatus']['name'] == 'resolved'){
-    echo $this->element('Task/modal_unresolve');
-}?>
-
-<?= $this->DT->pHeader(__("A task for the Project")) ?>
+<?= $this->DT->pHeader(__("Task card and log")) ?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
@@ -40,83 +29,93 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
     <div class="row">
     <div class="span10">
         <div class="row">
-            <?= $this->element('Task/topbar', array('id' => $task['Task']['public_id'], 'dependenciesComplete' => $task['Task']['dependenciesComplete'])) ?>
-            <div class="span10">
+            <div class="span10 well task-lozenge task-card" data-taskid="<?=h($task['Task']['public_id'])?>" data-api-url="<?=$apiUrl?>">
 
-                <div class="row-fluid">
+                <div class="row-fluid task-view-top">
+			<div class="span3 task-view-priority">
+            		<h5><?= __("Priority") ?></h5>
+			<?= $this->Task->priorityDropdownButton($task, true) ?>
+			</div>
 
-                    <div class="span12">
-                        <div class="well col">
-                            <div class="row-fluid">
-                                <h5>
+			<div class="span6 task-view-subject">
+			<h3>#<?=$task['Task']['public_id']?>:
+
+				<span class="task-subject-text"><?= $task['Task']['subject'] ?></span>
+
+				<span class="edit-form input-append hide">
+				<?= $this->Form->create('Task', array ('url' => array('controller' => 'tasks', 'action' => 'edit', 'project' => $project['Project']['name'], $task['Task']['public_id']))); ?>
+    				<?= $this->Form->textarea("subject", array("value" => $task['Task']['subject'], "rows" => 1)); ?>
+				<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
+				<?= $this->Form->end(); ?>
+
+				</span>
+
+                	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
+			</h3>
+
+                        <small>
         			<?= $this->Html->link(
-			            $this->Gravatar->image($task['Owner']['email'], array('d' => 'mm', 'size' => 30)),
+			            $this->Gravatar->image($task['Owner']['email'], array('d' => 'mm', 'size' => 16)),
 			            array('controller' => 'users', 'action' => 'view', $task['Owner']['id']),
 			            array('escape' => false,) 
 			        ) ?>
-                                    <small>
-                                        <?= h($task['Owner']['name']) ?>
-                                        <?= __("created this task") ?>
-                                        <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
-                                    </small>
-                                    <span class="pull-right">
-                                        <? if (!is_null($task['Assignee']['id'])) : ?>
-                                            <?= __("Assigned to:") ?>
-                                            <?= $this->Html->link(
-                                                $task['Assignee']['name'],
-                                                array('controller' => 'users', 'action' => 'view', $task['Assignee']['id'])
-                                            ) ?>
-                                            <?= $this->Html->link(
-                                                $this->Gravatar->image($task['Assignee']['email'], array('d' => 'mm', 's' => 24)),
-                                                array('controller' => 'users', 'action' => 'view', $task['Assignee']['id']),
-                                                array('escape' => false, 'class' => '')
-                                            ) ?>
-                                        <? else : ?>
-                                            <?= __("No-one currently assigned") ?>
-                                        <? endif; ?>
-                                    </span>
-                                </h5>
-                            </div>
-                            <div class="row-fluid">
-                                <div class="span9">
-                                    <h3><?= h($task['Task']['subject']) ?></h3>
-                                </div>
+                		<?= $this->Html->link(
+                    		$task['Owner']['name'],
+                    		array('controller' => 'users', 'action' => 'view', $task['Owner']['id'])
+                		) ?>
+                            <?= __("created this task") ?>
+                            <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
+                        </small>
+			</div>
+			<div class="span3 task-view-assignee">
+            		<h5><?= __("Assigned to") ?></h5>
+	    		<?=$this->Task->assigneeDropdownButton($task, 23, true, true, true)?>
+			</div>
+		</div>
 
-                                <div class="span3">
-									  <h5>
-                                        <? if (!is_null($task['Milestone']['id'])) : ?>
-                                            <?= _("Milestone:") ?>
-                                            <?= $this->Html->link(
-                                                $task['Milestone']['subject'],
-												array('controller' => 'milestones', 'action' => 'view', 'project' => $task['Project']['name'], $task['Milestone']['id'])
-                                            ) ?>
-                                        <? else : ?>
-                                            <?= __("No milestone") ?>
-                                        <? endif; ?>
-									  </h5>
-                            	</div>
-                            </div>
-                            <hr />
+                <div class="row-fluid task-view-middle">
+			<div class="span6 offset3 task-view-description">
+			<h4><?=__("Description")?></h4>
+                	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
+            		<div class="task-description-text"><?= $this->Markitup->parse($task['Task']['description']) ?></div>
+			
+			<span class="edit-form hide">
+				<?= $this->Form->create('Task', array ('url' => array('controller' => 'tasks', 'action' => 'edit', 'project' => $project['Project']['name'], $task['Task']['public_id']))); ?>
+    				<?= $this->Form->textarea("description", array("value" => $task['Task']['description'], "class" => "task-description-input", "rows" => 10)); ?>
+				<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
+				<?= $this->Form->end(); ?>
+				</span>
+			</div>
+		</div>
 
-                            <?= $this->element('Task/View/section_details') ?>
-
-                            <div class="row-fluid">
-                                <?php
-                                if ($task['Task']['description'] != '') {
-                                    echo '<div class="span6">';
-                                    echo $this->element('Task/View/section_description');
-                                    echo '</div>';
-                                }
-                                ?>
-                                <div class="span6">
-                                    <?= $this->element('Task/View/section_time') ?>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
+                <div class="row-fluid task-view-bottom">
+			<div class="span3 task-view-points">
+			<h5><?=__("Estimate")?></h5>
+                	<?=$this->Task->storyPointsControl($task, true)?></dd>
+			</div>
+			<div class="span6 task-view-selectors">
+			<h5><?=__("Attributes")?></h5>
+            		<?= $this->Task->typeDropdownButton($task) ?>
+	    		<?= $this->Task->milestoneDropdownButton($task, 23, true, true)?>
+			<?= $this->Task->statusDropdownButton($task, true) ?>
+			</div>
+			<div class="span3 task-view-time-logged">
+			<h5><?=__("Time logged")?></h5>
+			<?= TimeString::renderTime($totalTime, 's') ?>
+			<?= $this->Html->link(
+				'<i class="icon-plus" title="'.__("Log time").'"></i> '.__("Log time"), array(
+				"controller" => "times",
+				"action" => "add",
+				"project" => $project['Project']['name'],
+				"?" => array("task_id" => $task['Task']['public_id']),
+			), array("escape" => false))?>
+			</div>
+		</div>
+	</div>
+	</div>
+	<div class="row-fluid">
+	<div class="span12 task-history">
+		<h3><?=__("Task history")?></h3>
                 <?php
                     foreach ($changes as $change) {
                         if ( isset($change['ProjectHistory']) ) {
@@ -129,19 +128,19 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
 
                  <div class="row-fluid">
 
-                    <div class="span12">
+                    <div class="span8 offset2">
                         <div class="well col">
                             <?php
                             echo $this->Form->create('TaskComment', array('class' => 'form', 'url' => array('controller' => 'tasks', 'action' => 'comment', 'project' => $project['Project']['name'], $task['Task']['public_id'])));
 
-							echo $this->Bootstrap->input("comment", array(
-								"input" => $this->Markitup->editor("comment", array(
-									"class" => "span11",
-									"label" => false,
-									"placeholder" => __("Add a new comment to this task...")
-								)),
-								"label" => false,
-							));
+				echo $this->Bootstrap->input("comment", array(
+					"input" => $this->Markitup->editor("comment", array(
+						"class" => "span11",
+						"label" => false,
+						"placeholder" => __("Add a new comment to this task...")
+					)),
+					"label" => false,
+				));
 
                             echo $this->Bootstrap->button(__("Comment"), array("style" => "primary", 'class' => 'controls'));
                             echo $this->Form->end();
@@ -150,7 +149,7 @@ if (in_array($task['TaskStatus']['name'], array('open', 'in progress'))) {
                     </div>
 
                 </div>
-
+	
             </div>
         </div>
     </div>

@@ -536,11 +536,26 @@ class Project extends AppModel {
 		));
 
 		foreach ($collaborators as $collaborator) {
-			$users[$collaborator['User']['id']] = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
+			$users[] = array("id" => $collaborator['User']['id'], "title" => "{$collaborator['User']['name']} [{$collaborator['User']['email']}]");
 		}
 			
 		return $users;
 
 	}
 
+	public function listMilestones($projectId) {
+		$milestones = array();
+		foreach ($this->Milestone->find('list', array(
+			'conditions' => array('Milestone.project_id' => $projectId),
+			'fields' => array('Milestone.id', 'Milestone.subject', 'Milestone.is_open'),
+			'order' => array('Milestone.is_open DESC', 'Milestone.starts'),
+			
+		)) as $isOpen => $list) {
+			foreach ($list as $id => $milestone) {
+				$milestones[] = array('id' => $id, "title" => __("(%s): %s", ($isOpen? "Open": "Closed"), $milestone));
+			}
+		}
+		
+		return $milestones;
+	}
 }

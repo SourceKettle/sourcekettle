@@ -428,6 +428,7 @@ class TasksController extends AppProjectController {
 			)
 		);
 		$this->set('times', $times);
+		$this->set('totalTime', $this->Task->Time->field('SUM(mins) AS totalMins', array('Time.task_id' => $this->Task->id)));
 		$this->set('tasks', $this->Task->fetchLoggableTasks($this->Auth->user('id')));
 		$collabs = $this->Task->Project->listCollaborators($project['Project']['id']);
 		$collabs[0] = "None";
@@ -674,7 +675,10 @@ class TasksController extends AppProjectController {
 			}
 		}
 
-		$assignees = $this->Task->Project->listCollaborators($project['Project']['id']);
+		$assignees = array();
+		foreach ($this->Task->Project->listCollaborators($project['Project']['id']) as $assignee) {
+			$assignees[$assignee['id']] = $assignee['title'];
+		}
 		$assignees[0] = "None";
 		ksort($assignees);
 
@@ -914,6 +918,20 @@ class TasksController extends AppProjectController {
 			}
 			$data['error'] = 'no_error';
 
+			if (isset($data['milestone_id']) && $data['milestone_id'] != 0) {
+				$data['milestone_subject'] = $this->Task->Milestone->field('subject', array('id' => $data['milestone_id']));
+				$data['milestone_url'] = Router::url(array(
+					"controller" => "milestones",
+					"action" => "view",
+					"project" => $project['Project']['name'],
+					"api" => false,
+					$data['milestone_id']
+				));
+				$data['milestone_isopen'] = $this->Task->Milestone->field('is_open', array('id' => $data['milestone_id']));
+			} else {
+				$data['milestone_subject'] = '(No milestone)';
+				$data['milestone_isopen'] = 0;
+			}
 		} else {
 			$this->response->statusCode(500);
 			$data = array('error' => 500, 'message' => __('Task update failed'));

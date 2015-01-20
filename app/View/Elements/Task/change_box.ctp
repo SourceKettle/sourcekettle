@@ -60,7 +60,7 @@
 
 <div class="row-fluid">
 
-	<div class="span12">
+	<div class="span8 offset2">
 		<div class="colchange">
 			<p>
 				<?= $this->Bootstrap->label($this->Bootstrap->icon('pencil', 'white').' Update') ?>

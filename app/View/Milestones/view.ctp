@@ -57,7 +57,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
         ) ?>
 	<? if ($sourcekettle_config['Features']['4col_kanban_enabled']['value']) {
 		echo $this->element('Task/Board/column', array(
-			'tasks' => $closed, 'status' => 'closed', 'title' => __('Closed'), 'tooltip' => __('Tasks that are finished'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite)
+			'tasks' => $closed, 'status' => 'closed', 'title' => __('Closed'), 'tooltip' => __('Tasks that have been tested and signed off'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite)
         	);
 	} ?>
 

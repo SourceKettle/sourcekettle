@@ -74,12 +74,28 @@ $('.comment').find (':button.delete').click (function() {
 	}
 });
 
+// Task subject edit button
+$('.task-view-subject').find(':button.edit').bind('click', function() {
+	var subject = $(this).parent();
+	subject.find('.task-subject-text').hide();
+	subject.find('.edit-form').show();
+	$(this).hide();
+});
+
+// Task description edit button
+$('.task-view-description').find(':button.edit').bind('click', function() {
+	var description = $(this).parent();
+	description.find('.task-description-text').hide();
+	description.find('.edit-form').show();
+	$(this).hide();
+});
 // Task dropdown menus - DIY dropdowns...
 // Why? Because lozenges have overflow:hidden which hides the dropdown
 // menu part of a "normal" bootstrap dropdown, and removing overflow:hidden
 // means the innards spill all over the place on smaller screens :-(
 $('.task-dropdown').click(function(event) {
 	var button = $(event.currentTarget);
+	var dataType = button.attr('data-type');
 	var menu = button.attr('data-toggle');
 	menu = $('#'+menu);
 
@@ -102,15 +118,15 @@ $('.task-dropdown').click(function(event) {
 				"dataType" : "json",
 				"type" : "get",
 				"success" : function (data) {
-					menu.append('<li class="label"><a class="" href="#" data-value="0">(Remove assignee)</a></li>');
-					for (var id in data) {
-						collaborator = data[id];
-						menu.append('<li class="label"><a class="" href="#" data-value="'+id+'">'+collaborator+'</a></li>');
+					menu.append('<li class="label"><a class="" href="#" data-value="0">(Remove '+dataType+')</a></li>');
+					for (var idx in data) {
+						dataItem = data[idx];
+						menu.append('<li class="label"><a class="" href="#" data-value="'+dataItem.id+'">'+dataItem.title+'</a></li>');
 					}
 					activateLinksAndShow(menu, button);
 				},
 				"error" : function () {
-					alert("Failed to load collaborator list!");
+					alert("Failed to load "+dataType+" list!");
 				}
 			});
 
@@ -167,6 +183,7 @@ function updateTask(taskLozenge, taskInfo) {
 	var prioTextLabel = prioLabel.find(".textlabel");
 	var typeLabel = taskLozenge.find(".tasktype");
 	var statusLabel = taskLozenge.find(".taskstatus");
+	var milestoneLabel = taskLozenge.find(".task-dropdown-milestone");
 
 	$.ajax(urlBase  + '/' + taskInfo.id, {
 		"data" : taskInfo,
@@ -189,7 +206,7 @@ function updateTask(taskLozenge, taskInfo) {
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
 					typeLabel.addClass('label-' + taskTypeClasses[taskInfo.type]);
-					typeLabel.attr('title', 'Type: ' + taskInfo.type);
+					typeLabel.attr('title', 'Type: ' + taskInfo.type).tooltip();
 
 				}
 				// Priority changed, fairly straightforward
@@ -202,7 +219,7 @@ function updateTask(taskLozenge, taskInfo) {
 					} else {
 						prioLabel.html(icon + ' <b class="caret"></b>');
 					}
-					prioLabel.attr('title', 'Priority: ' + taskInfo.priority);
+					prioLabel.attr('title', 'Priority: ' + taskInfo.priority).tooltip();
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
 					if (currentColumn.attr('data-taskpriority') != taskInfo.priority) {
@@ -217,14 +234,18 @@ function updateTask(taskLozenge, taskInfo) {
 
 				// Status changed, more fiddly due to the CSS class change...
 				if (taskInfo.status != null) {
-					statusLabel.html(taskStatusLabels[taskInfo.status].charAt(0) + ' <b class="caret"></b>');
+					labelText = taskStatusLabels[taskInfo.status];
+					if (!statusLabel.attr('data-fulltext')) {
+						labelText = labelText.charAt(0);
+					}
+					statusLabel.html(labelText + ' <b class="caret"></b>');
 
 					// Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
 					statusLabel.removeClass(function(index, css){
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
 					statusLabel.addClass(taskStatusLabelTypes[taskInfo.status]);
-					statusLabel.attr('title', 'Status: ' + taskInfo.status);
+					statusLabel.attr('title', 'Status: ' + taskInfo.status).tooltip();
 					taskLozenge.attr('data-taskstatus', taskInfo.status);
 
 					// If there's a droplist for this status and the lozenge isn't in it, move it into place
@@ -238,12 +259,13 @@ function updateTask(taskLozenge, taskInfo) {
 					}
 
 					// Make sure the task is the correct span width for this column
-					newspan = 'span' + currentColumn.attr('data-taskspan');
-					taskLozenge.removeClass(function(index, css){
-						return (css.match (/\bspan\d+/g) || []).join(' ');
-			   		});
-					taskLozenge.addClass(newspan);
-
+					newspan = currentColumn.attr('data-taskspan');
+					if (typeof newspan !== 'undefined') {
+						taskLozenge.removeClass(function(index, css){
+							return (css.match (/\bspan\d+/g) || []).join(' ');
+				   		});
+						taskLozenge.addClass('span'+newspan);
+					}
 					// It's a status change, so make sure we update the story point totals
 					refreshStoryPointTotals();
 				}
@@ -252,17 +274,29 @@ function updateTask(taskLozenge, taskInfo) {
 				// Note that it can be set to zero for "unassigned"...
 				if (typeof taskInfo.assignee_id !== 'undefined') {
 					assigneeBox = $('.task-dropdown-assignee', taskLozenge);
-					assigneeLabel = assigneeBox.next();
+					assigneeLabel = assigneeBox.siblings('.assignee-full-label');
 					gravatarImage = $('img', assigneeBox);
 					gravatarImage.attr('src', data.assignee_gravatar+'&size='+gravatarImage.attr('width'));
 					if (taskInfo.assignee_id == 0) {
-						assigneeBox.attr('title', 'Not assigned');
+						assigneeBox.attr('title', 'Not assigned').tooltip();
 					} else {
-						assigneeBox.attr('title', 'Assigned to: '+data.assignee_name);
+						assigneeBox.attr('title', 'Assigned to: '+data.assignee_name).tooltip();
 					}
 					if (assigneeLabel.hasClass('assignee-full-label')) {
 						assigneeLabel.text(data.assignee_name);
 					}
+				}
+
+				// Milestone changed
+				if (typeof taskInfo.milestone_id !== 'undefined' && milestoneLabel.length > 0) {
+					milestoneLink = $(document.createElement('a'));
+					milestoneLink.attr('title',  "Milestone: "+data.milestone_subject).tooltip();
+					milestoneLink.attr('href', data.milestone_url);
+					milestoneLink.text(data.milestone_subject);
+					label = milestoneLabel.siblings(".milestone-label");
+					label.empty();
+					label.append(milestoneLink);
+					milestoneLabel.attr("title", "Milestone: "+data.milestone_subject).tooltip();
 				}
 
 			} else {

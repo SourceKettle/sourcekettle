@@ -318,3 +318,61 @@ form {
 .task-dropdown-assignee .caret {
 	margin-right: 2px;
 }
+
+.task-view-priority {
+	border-right: 1px solid black;
+	padding: 10px;
+	height: 100%;
+}
+
+.task-view-assignee {
+	border-left: 1px solid black;
+	padding: 10px;
+	height: 100%;
+}
+
+.task-view-points {
+	border-right: 1px solid black;
+	padding: 10px;
+	height: 100%;
+}
+.task-view-time-logged {
+	border-left: 1px solid black;
+	padding: 10px;
+	height: 100%;
+}
+
+.task-view-top {
+	border-bottom: 1px solid black;
+}
+
+.task-view-middle {
+}
+
+.task-view-bottom {
+	border-top: 1px solid black;
+}
+
+.task-view-subject {
+	text-align: center;
+}
+
+.task-view-description {
+	min-height: 150px !important;
+	text-align: center;
+}
+.task-view-selectors {
+	text-align: center;
+}
+
+.task-card {
+	padding: 0px;
+}
+
+.task-history h3{
+	text-align: center;
+}
+
+.task-description-input {
+	width: 100%;
+}

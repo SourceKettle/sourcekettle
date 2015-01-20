@@ -7,6 +7,10 @@ class TimeString{
 	// Given a time in minutes, render it as
 	// a nicely formatted time interval e.g. "2h 6m"
 	function renderTime($minutes, $field = 'all'){
+		if ($minutes == null) {
+			$minutes = 0;
+		}
+
 		if (!is_numeric($minutes)) {
 			throw new InvalidArgumentException("Minutes must be an integer: ${minutes} given");
 		}
