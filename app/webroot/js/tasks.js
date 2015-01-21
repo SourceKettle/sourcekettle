@@ -235,7 +235,7 @@ function updateTask(taskLozenge, taskInfo) {
 				// Status changed, more fiddly due to the CSS class change...
 				if (taskInfo.status != null) {
 					labelText = taskStatusLabels[taskInfo.status];
-					if (!statusLabel.attr('data-fulltext')) {
+					if (!statusLabel.attr('data-fulltext') || statusLabel.attr("data-fulltext") == "0") {
 						labelText = labelText.charAt(0);
 					}
 					statusLabel.html(labelText + ' <b class="caret"></b>');
@@ -452,6 +452,29 @@ function refreshStoryPointTotals() {
 	completeBox.text(complete);
 
 }
+
+
+function linkDependencyLists(form, subtasksList, parentsList) {
+        form.submit(function(){
+                subtasksList.sortable('toArray').forEach(function(taskId){
+                        hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = 'data[DependsOn][DependsOn][]';
+                        hidden.value = taskId;
+                        $('form').append(hidden);
+                });
+
+                parentsList.sortable('toArray').forEach(function(taskId){
+                        hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = 'data[DependedOnBy][DependedOnBy][]';
+                        hidden.value = taskId;
+                        $('form').append(hidden);
+                });
+        });
+}
+
+
 
 // Activate the +/- buttons for story points
 $(function(){
