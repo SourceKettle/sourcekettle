@@ -116,21 +116,19 @@
 			</div>
 		</div>
 	</header>
-	<div class="container">
-		<div id="content">
-			<span id="flashes">
-				<?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
-				<?= $this->Session->flash('email'); ?>
-			</span>
-			<?= $content_for_layout ?>
-		</div>
-		<div id='footer'>
-			<hr>
-			<?=$this->Html->link("About SourceKettle $sourcekettleVersion", '/about');?>
-			<?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
-			<?//=$this->Html->link('SVN help', '/svn_help');?>
-		</div>
+	<div class="container" id="content-wrapper">
+		<span id="flashes">
+			<?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
+			<?= $this->Session->flash('email'); ?>
+		</span>
+		<?= $content_for_layout ?>
 	</div>
+	<footer>
+		<hr>
+		<?=$this->Html->link("About SourceKettle $sourcekettleVersion", '/about');?>
+		<?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
+		<?//=$this->Html->link('SVN help', '/svn_help');?>
+	</footer>
 
 	<!-- JavaScript! Placed at the end of the file for faster page loading -->
 	<?= $this->Html->script('/jquery/jquery-1.11.0.min.js'); ?>
