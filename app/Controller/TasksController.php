@@ -427,6 +427,31 @@ class TasksController extends AppProjectController {
 		$collabs = $this->Task->Project->listCollaborators($project['Project']['id']);
 		$collabs[0] = "None";
 		ksort($collabs);
+
+		$backlog = $this->Task->find('all', array(
+			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
+			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
+			'recursive' => -1,
+		));
+		$availableTasks = array();
+		foreach ($backlog as $t) {
+			$availableTasks[$t['Task']['public_id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
+		}
+
+		$subTasks = array();
+		foreach ($task['DependsOn'] as $subTask) {
+			$subTasks[$subTask['public_id']] = "#".$subTask['public_id']." ".$subTask['subject'];
+			unset($availableTasks[$subTask['public_id']]);
+		}
+		$this->set('subTasks', $subTasks);
+
+		$parentTasks = array();
+		foreach ($task['DependedOnBy'] as $parentTask) {
+			$parentTasks[$parentTask['public_id']] = "#".$parentTask['public_id']." ".$parentTask['subject'];
+			unset($availableTasks[$parentTask['public_id']]);
+		}
+		$this->set('parentTasks', $parentTasks);
+		$this->set('availableTasks', $availableTasks);
 		$this->set('collaborators', $collabs);
 
 	}
@@ -686,64 +711,42 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function edit($project = null, $public_id = null) {
+
+		// There is no separate edit form
+		if (!$this->request->is('post') && !$this->request->is('put')) {
+			throw new MethodNotAllowedException();
+		}
+
+		// Retrieve the projcet and task
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 
-		$milestones = $this->Milestone->listMilestoneOptions();
+		// Force the project ID to be correct
+		$this->request->data['Task']['project_id'] = $project['Project']['id'];
 
-		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
+		// Ensure we never change the owner ID
+		unset($this->request->data['Task']['owner_id']);
 
-		$backlog = $this->Task->find('all', array(
-			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
-			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
-			'recursive' => -1,
-		));
-		$availableTasks = array();
-		foreach ($backlog as $t) {
-			$availableTasks[$t['Task']['public_id']] = "#".$t['Task']['public_id']." ".$t['Task']['subject'];
-		}
+		// Set the real task ID
+		$this->request->data['Task']['id'] = $this->Task->id;
 
-		$subTasks = array();
-		foreach ($task['DependsOn'] as $subTask) {
-			$subTasks[$subTask['public_id']] = "#".$subTask['public_id']." ".$subTask['subject'];
-			unset($availableTasks[$subTask['public_id']]);
-		}
+		$saved = $this->Task->save($this->request->data);
+debug($saved); exit(0);
+		// Make sure we pass back th epublic ID for rendering
+		$this->request->data['Task']['public_id'] = $public_id;
 
-		$parentTasks = array();
-		foreach ($task['DependedOnBy'] as $parentTask) {
-			$parentTasks[$parentTask['public_id']] = "#".$parentTask['public_id']." ".$parentTask['subject'];
-			unset($availableTasks[$parentTask['public_id']]);
-		}
-
-		$assignees = $this->Task->Project->listCollaborators($project['Project']['id']);
-		$assignees[0] = "None";
-		ksort($assignees);
+		// Show a message on save and redirect back to the task
+		$this->Flash->u($saved);
+		return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
 
 
-		if ($this->request->is('post') || $this->request->is('put')) {
-
-			$this->request->data['Task']['project_id'] = $project['Project']['id'];
-			unset($this->request->data['Task']['owner_id']);
-
-			$this->request->data['Task']['id'] = $this->Task->id;
-
-			$saved = $this->Task->save($this->request->data);
-			$this->request->data['Task']['public_id'] = $public_id;
-
-			if ($this->Flash->u($this->Task->save($this->request->data))) {
-				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
-			} else {
-				$this->request->data = array_merge($task, $this->request->data);
-			}
-		} else {
-			$this->request->data = $task;
-		}
+/*
 		$dependsOnTasks = array();
 		//array_map(function($a){return $a['id'];}, $this->request->data['DependsOn']);
 		foreach ($this->request->data['DependsOn'] as $dep) {
 			$dependsOnTasks[$dep['id']] = $dep['subject'];
 		}
-		$this->set(compact('task', 'taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees'));
+		$this->set(compact('task', 'taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees')); */
 	}
 
 /*
@@ -894,9 +897,10 @@ class TasksController extends AppProjectController {
 		// Make sure we're operating  on the correct task ID...
 		$this->request->data['id'] = $task['Task']['id'];
 
-		$task = $this->Task->save($this->request->data);
-
+		$task = $this->Task->saveAll($this->request->data);
 		if ($task) {
+			$task = $this->Task->findAllById($this->request->data['id']);
+debug(array_map(function($a){ return $a['public_id'];}, $task[0]['DependsOn']));
 			$this->response->statusCode(200);
 			$data = $task['Task'];
 			unset($data['id']);

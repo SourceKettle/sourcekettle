@@ -268,6 +268,40 @@ class TaskTest extends CakeTestCase {
 		
 	}
 
+	public function testUpdateWithDependencies() {
+		$saved = $this->Task->save(array(
+			'Task' => array(
+				'id' => 13,
+				'subject' => 'updated subject and dependencies',
+			),
+			'DependsOn' => array(
+				'DependsOn' => array(
+					14, 15
+				),
+			),
+		));
+
+		// Check the modify date is sane
+		$this->assertNotNull($saved['Task']['modified'], "Modify date was null");
+		unset($saved['Task']['modified']);
+
+		debug($this->Task->findById(13));
+
+		$this->assertEqual($saved, array(
+			'Task' => array(
+				'id' => 13,
+				'subject' => 'updated subject and dependencies',
+			),
+			'DependsOn' => array(
+				// Note that this list should be real task IDs - 16 and 17
+				'DependsOn' => array(
+					16, 17
+				),
+			),
+		));
+		
+	}
+
 	public function testCreateWithDependenciesIncludingSelf() {
 		$saved = $this->Task->save(array(
 			'Task' => array(

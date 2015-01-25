@@ -22,14 +22,14 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
 <?= $this->Task->allDropdownMenus() ?>
 
 <?= $this->DT->pHeader(__("Task card and log")) ?>
-<div class="row">
+<?= $this->Form->create('Task', array ('url' => array('controller' => 'tasks', 'action' => 'edit', 'project' => $project['Project']['name'], $task['Task']['public_id']))); ?>
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
     <div class="span10">
-        <div class="row">
-            <div class="span10 well task-lozenge task-card" data-taskid="<?=h($task['Task']['public_id'])?>" data-api-url="<?=$apiUrl?>">
+        <div class="row-fluid">
+            <div class="span12 well task-lozenge task-card" data-taskid="<?=h($task['Task']['public_id'])?>" data-api-url="<?=$apiUrl?>">
 
                 <div class="row-fluid task-view-top">
 			<div class="span3 task-view-priority">
@@ -43,10 +43,8 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
 				<span class="task-subject-text"><?= $task['Task']['subject'] ?></span>
 
 				<span class="edit-form input-append hide">
-				<?= $this->Form->create('Task', array ('url' => array('controller' => 'tasks', 'action' => 'edit', 'project' => $project['Project']['name'], $task['Task']['public_id']))); ?>
     				<?= $this->Form->textarea("subject", array("value" => $task['Task']['subject'], "rows" => 1)); ?>
 				<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
-				<?= $this->Form->end(); ?>
 
 				</span>
 
@@ -80,10 +78,8 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
             		<div class="task-description-text"><?= $this->Markitup->parse($task['Task']['description']) ?></div>
 			
 			<span class="edit-form hide">
-				<?= $this->Form->create('Task', array ('url' => array('controller' => 'tasks', 'action' => 'edit', 'project' => $project['Project']['name'], $task['Task']['public_id']))); ?>
     				<?= $this->Form->textarea("description", array("value" => $task['Task']['description'], "class" => "task-description-input", "rows" => 10)); ?>
 				<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
-				<?= $this->Form->end(); ?>
 				</span>
 			</div>
 		</div>
@@ -112,7 +108,28 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
 			</div>
 		</div>
 	</div>
+
+	<?= $this->Form->end(); ?>
+
+	<div class="row-fluid text-center">
+	<h3><?=__("Dependencies")?></h3>
+	<?=$this->Html->link(__("View dependency tree"), array('controller' => 'tasks', 'action' => 'tree', 'project' => $project['Project']['name'], $task['Task']['public_id']))?>
 	</div>
+	
+        <div class="row-fluid">
+        <?= $this->element("linked_list", array(
+                        "listSpan" => 4,
+                        "itemSpan" => 12,
+                        "lists" => array(
+                                __("Subtasks/blocked by") => array('id' => 'subtasks-list', 'items' => $subTasks, 'tooltip' => __('The new task will depend on anything in this list')),
+                                __("Unrelated tasks") => array('id' => 'backlog-list', 'items' => $availableTasks, 'tooltip' => __('The new task will not depend on anything in this list'), 'hidden' => false),
+                                __("Subtask of/blocks") => array('id' => 'parents-list', 'items' => $parentTasks, 'tooltip' => __('Anything in this list will depend on the new task')),
+                        ),
+        )) ?>
+	<?= $this->Html->scriptBlock("ajaxDependencyLists(".h($task['Task']['public_id']).", $('#subtasks-list'), $('#backlog-list'), $('#parents-list'));", array("inline" => false)) ?>
+        </div>
+
+
 	<div class="row-fluid">
 	<div class="span12 task-history">
 		<h3><?=__("Task history")?></h3>

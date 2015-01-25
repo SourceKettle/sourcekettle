@@ -453,7 +453,7 @@ function refreshStoryPointTotals() {
 
 }
 
-
+// Links the task dependency lists such that on form submit it picks up the new valules
 function linkDependencyLists(form, subtasksList, parentsList) {
         form.submit(function(){
                 subtasksList.sortable('toArray').forEach(function(taskId){
@@ -474,7 +474,32 @@ function linkDependencyLists(form, subtasksList, parentsList) {
         });
 }
 
+// Adds callbacks to the dependency lists to change task dependencies via AJAX
+function ajaxDependencyLists(taskId, subtasksList, othersList, parentsList) {
+	callback = function(event, ui) {
+		newSubtaskList = subtasksList.sortable('toArray');
+		newParentList = parentsList.sortable('toArray');
+		newTaskData = {Task: {}, DependsOn: {}, DependedOnBy: {}};
+		newTaskData['Task']['id'] = taskId;
+		newTaskData['DependsOn']['DependsOn'] = newSubtaskList;
+		newTaskData['DependedOnBy']['DependedOnBy'] = newParentList;
+		//TODO
+		apiUrl = '/api/tasks/bluedog/update';
 
+		$.ajax(apiUrl +'/' + taskId, {
+		"data" : newTaskData,
+		"dataType" : "json",
+		"type" : "post",
+		"error" : function(data) {
+			alert("FAILED");
+			$(ui.sender).sortable('cancel');
+		}
+	});
+	};
+	subtasksList.sortable({receive: callback}).disableSelection();
+	othersList.sortable({receive: callback}).disableSelection();
+	parentsList.sortable({receive: callback}).disableSelection();
+}
 
 // Activate the +/- buttons for story points
 $(function(){
