@@ -59,8 +59,8 @@ form {
 
 /* CSS for task lists e.g. milestone drag-and-drop board */
 .sprintboard-column {
-	min-height: 300px;
-  margin: 0px;
+	min-height: 300px !important;
+	margin: 0px;
 }
 
 .sprintboard-column.over {
@@ -76,9 +76,9 @@ form {
   margin: 0px;
   width: 100%;
   min-height: 20px;
-  max-height: 600px;
+  max-height: 400px;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   border-radius: 5px 5px 5px 5px;
 }
 
@@ -117,6 +117,17 @@ form {
 	}
 }
 
+.highlight-droptarget {
+	outline: none;
+	border-color: #9ecaed;
+	box-shadow: 0 0 10px #9ecaed;
+}
+
+.highlight-droptarget.sprintboard-icebox{
+	outline: none;
+	border-color: #cc3333;
+	box-shadow: 0 0 10px #cc3333;
+}
 
 
 
@@ -375,4 +386,8 @@ form {
 
 .task-description-input {
 	width: 100%;
+}
+
+.nav-pills {
+	margin: 0px;
 }
