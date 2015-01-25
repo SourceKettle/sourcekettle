@@ -53,7 +53,7 @@ class MarkitupHelper extends AppHelper {
 		$textarea = array_diff_key($settings, $default);
 		$textarea = array_merge($textarea, array('type' => 'textarea'));
 
-		$this->Html->scriptBlock("
+		/*$this->Html->scriptBlock("
 			jQuery(function() {
 				$('.{$id}').markItUp(
 					{$settings['settings']},
@@ -65,7 +65,7 @@ class MarkitupHelper extends AppHelper {
 					}
 				);
 			});
-		", array ("inline" => false));
+		", array ("inline" => false));*/
 
 		$html = '
 		<div class="tabbable tabs-below">
