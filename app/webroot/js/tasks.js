@@ -146,11 +146,11 @@ function activateLinksAndShow(menu, button) {
 		var change = button.attr("data-change");
 		var newValue = $(event.currentTarget).attr("data-value");
 		var taskLozenge = button.closest('.task-lozenge');
-		var taskInfo = {};
-		taskInfo[change] = newValue;
+		var taskInfo = {'Task' : {}};
+		taskInfo['Task'][change] = newValue;
 		updateTask(taskLozenge, taskInfo);
 		menu.hide();
-		// Prevent the click from taking us to th etop of the page
+		// Prevent the click from taking us to the top of the page
 		return false;
 	});
 	menu.show();

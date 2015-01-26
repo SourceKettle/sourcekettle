@@ -69,7 +69,7 @@ class TaskHelper extends AppHelper {
 		if ($task == null) {
 			$button = '<span class="taskpriority label '.$class.'" title="'.$tooltip.'">'.$icon.' '.$label.'</span>';
 		} else {
-			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
 			$button = '<button class="taskpriority label '.$class.' task-dropdown" title="'.$tooltip.'" data-api-url="'.$apiUrl.'" data-change="priority" data-id="'.h($priorityId).'" data-toggle="task_priority_dropdown">'.$icon.' '.$label.' <span class="caret"></span></button>';
 		}
 		return $button;
@@ -115,7 +115,7 @@ class TaskHelper extends AppHelper {
 		if ($task == null) {
 			$button = '<span class="taskstatus label '.$class.'" title="'.$tooltip.'">'.h($label).'</span>';
 		} else {
-			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
 			$button = '<button '.$attr.'class="taskstatus label '.$class.' task-dropdown" title="'.$tooltip.'" data-api-url="'.$apiUrl.'" data-change="status" data-id="'.h($statusId).'" data-toggle="task_status_dropdown">'.h($label).' <span class="caret"></span></button>';
 		}
 		return $button;
@@ -154,7 +154,7 @@ class TaskHelper extends AppHelper {
 		if ($task == null) {
 			$button = '<span class="tasktype label '.$class.'">'.h($label).'</span>';
 		} else {
-			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
 			$button = '<button class="tasktype label '.$class.' task-dropdown" data-api-url="'.$apiUrl.'" data-change="type" data-id="'.h($typeId).'" data-toggle="task_type_dropdown" title="'.h($label).'">'.h($label).' <b class="caret"></b></button>';
 		}
 		return $button;
