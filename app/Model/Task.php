@@ -281,13 +281,14 @@ class Task extends AppModel {
 		// Convert public IDs to real IDs
 		$depList = array_keys($this->find('list', array(
 			'conditions' => array(
-				'project_id' => $projectId,
-				'public_id' => $depList
-			)
+				'Task.project_id' => $projectId,
+				'Task.public_id' => $depList
+			),
 		)));
 
 		return $depList;
 	}
+
 
 /**
  * beforeSave function
@@ -299,12 +300,11 @@ class Task extends AppModel {
  	private $__burndownLog = array('milestone' => array(), 'project' => array());
 
 	public function beforeSave($options = array()) {
-
 		// Find the existing task if there is one
 		$task = $this->find('first', array(
 			'conditions' => array('Task.id' => $this->id),
 			'fields' => array('Task.project_id', 'Task.milestone_id'),
-			'recursive' => -1,
+			//'recursive' => -1,
 		));
 
 		// Creating the task...
@@ -329,11 +329,11 @@ class Task extends AppModel {
 		);
 
 		// Update dependency list
-		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
-			$this->data['DependsOn']['DependsOn'] = $this->__sanitiseDependencies($taskId, $projectId, $this->data['DependsOn']['DependsOn']);
+		if (isset($this->data['DependsOn']) && is_array($this->data['DependsOn'])) {
+			$this->data['DependsOn'] = $this->__sanitiseDependencies($taskId, $projectId, $this->data['DependsOn']);
 		}
-		if (isset($this->data['DependedOnBy']['DependedOnBy']) && is_array($this->data['DependedOnBy']['DependedOnBy'])) {
-			$this->data['DependedOnBy']['DependedOnBy'] = $this->__sanitiseDependencies($taskId, $projectId, $this->data['DependedOnBy']['DependedOnBy']);
+		if (isset($this->data['DependedOnBy']) && is_array($this->data['DependedOnBy'])) {
+			$this->data['DependedOnBy'] = $this->__sanitiseDependencies($taskId, $projectId, $this->data['DependedOnBy']);
 		}
 
 		return true;

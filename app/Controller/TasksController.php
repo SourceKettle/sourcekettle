@@ -345,8 +345,8 @@ class TasksController extends AppProjectController {
 		$task = $this->Task->open($public_id);
 		$current_user = $this->Auth->user();
 
-		// Re-read to pick up changes
-		$this->set('task', $this->Task->open($public_id));
+		$this->set('task', $task);
+		$this->request->data = $task;
 
 		// Fetch the changes that will have happened
 		$changes	= $this->Task->Project->ProjectHistory->find(
@@ -710,6 +710,29 @@ class TasksController extends AppProjectController {
  * @param string $id
  * @return void
  */
+	// Converts a dependency list from private task IDs to public task IDs
+	private function __publiciseDependencies($task) {
+		
+		if (isset($task['DependsOn'])) {
+			$task['DependsOn'] = array_values($this->Task->find('list', array(
+				'conditions' => array(
+					'Task.id' => $task['DependsOn']
+				),
+				'fields' => array('Task.public_id'),
+			)));
+		}
+
+		if (isset($task['DependedOnBy'])) {
+			$task['DependedOnBy'] = array_values($this->Task->find('list', array(
+				'conditions' => array(
+					'Task.id' => $task['DependedOnBy']
+				),
+				'fields' => array('Task.public_id'),
+			)));
+		}
+		return $task;
+	}
+
 	public function edit($project = null, $public_id = null) {
 
 		// There is no separate edit form
@@ -729,24 +752,29 @@ class TasksController extends AppProjectController {
 
 		// Set the real task ID
 		$this->request->data['Task']['id'] = $this->Task->id;
+		unset($this->request->data['Task']['public_id']);
+		unset($this->request->data['Task']['project_id']);
+
 
 		$saved = $this->Task->save($this->request->data);
-debug($saved); exit(0);
+
+		$saved = $this->__publiciseDependencies($saved);
+
 		// Make sure we pass back th epublic ID for rendering
 		$this->request->data['Task']['public_id'] = $public_id;
 
 		// Show a message on save and redirect back to the task
 		$this->Flash->u($saved);
-		return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
+		if ($this->request->is('ajax')) {
+			$this->layout = 'ajax';
+			$this->set('data', $saved);
+			$this->render('/Elements/json');
+			return;
+		} else {
 
-
-/*
-		$dependsOnTasks = array();
-		//array_map(function($a){return $a['id'];}, $this->request->data['DependsOn']);
-		foreach ($this->request->data['DependsOn'] as $dep) {
-			$dependsOnTasks[$dep['id']] = $dep['subject'];
+			return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
 		}
-		$this->set(compact('task', 'taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'dependsOnTasks', 'assignees')); */
+
 	}
 
 /*
@@ -900,7 +928,6 @@ debug($saved); exit(0);
 		$task = $this->Task->saveAll($this->request->data);
 		if ($task) {
 			$task = $this->Task->findAllById($this->request->data['id']);
-debug(array_map(function($a){ return $a['public_id'];}, $task[0]['DependsOn']));
 			$this->response->statusCode(200);
 			$data = $task['Task'];
 			unset($data['id']);

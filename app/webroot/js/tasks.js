@@ -135,7 +135,8 @@ $('.task-dropdown').click(function(event) {
 			activateLinksAndShow(menu, button);
 		}
 	}
-
+	// Do not propagate click event through
+	return false;
 });
 
 // Show a dropdown menu, first making sure all its links do the Right Thing(tm)
@@ -459,7 +460,7 @@ function linkDependencyLists(form, subtasksList, parentsList) {
                 subtasksList.sortable('toArray').forEach(function(taskId){
                         hidden = document.createElement('input');
                         hidden.type = 'hidden';
-                        hidden.name = 'data[DependsOn][DependsOn][]';
+                        hidden.name = 'data[DependsOn][]';
                         hidden.value = taskId;
                         $('form').append(hidden);
                 });
@@ -467,7 +468,7 @@ function linkDependencyLists(form, subtasksList, parentsList) {
                 parentsList.sortable('toArray').forEach(function(taskId){
                         hidden = document.createElement('input');
                         hidden.type = 'hidden';
-                        hidden.name = 'data[DependedOnBy][DependedOnBy][]';
+                        hidden.name = 'data[DependedOnBy][]';
                         hidden.value = taskId;
                         $('form').append(hidden);
                 });
@@ -475,26 +476,26 @@ function linkDependencyLists(form, subtasksList, parentsList) {
 }
 
 // Adds callbacks to the dependency lists to change task dependencies via AJAX
-function ajaxDependencyLists(taskId, subtasksList, othersList, parentsList) {
+function ajaxDependencyLists(projectId, taskPublicId, subtasksList, othersList, parentsList) {
 	callback = function(event, ui) {
 		newSubtaskList = subtasksList.sortable('toArray');
 		newParentList = parentsList.sortable('toArray');
-		newTaskData = {Task: {}, DependsOn: {}, DependedOnBy: {}};
-		newTaskData['Task']['id'] = taskId;
-		newTaskData['DependsOn']['DependsOn'] = newSubtaskList;
-		newTaskData['DependedOnBy']['DependedOnBy'] = newParentList;
-		//TODO
-		apiUrl = '/api/tasks/bluedog/update';
+		newTaskData = {Task: {}, DependsOn: [], DependedOnBy: []};
+		newTaskData['Task']['public_id'] = taskPublicId;
+		newTaskData['Task']['project_id'] = projectId;
+		newTaskData['DependsOn'] = newSubtaskList;
+		newTaskData['DependedOnBy'] = newParentList;
+		apiUrl = ui.sender.parents('[data-api-url]').attr('data-api-url');
 
-		$.ajax(apiUrl +'/' + taskId, {
-		"data" : newTaskData,
-		"dataType" : "json",
-		"type" : "post",
-		"error" : function(data) {
-			alert("FAILED");
-			$(ui.sender).sortable('cancel');
-		}
-	});
+		$.ajax(apiUrl +'/' + taskPublicId, {
+			"data" : newTaskData,
+			"dataType" : "json",
+			"type" : "post",
+			"error" : function(data) {
+				$(ui.sender).sortable('cancel');
+				alert("Failed to update dependencies");
+			}
+		});
 	};
 	subtasksList.sortable({receive: callback}).disableSelection();
 	othersList.sortable({receive: callback}).disableSelection();
