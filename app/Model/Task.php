@@ -266,13 +266,6 @@ class Task extends AppModel {
 		// First get unique values only...
 		$depList = array_unique(array_values($depList));
 
-		// Make sure the task doesn't depend on itself!
-		foreach ($depList as $key => $id) {
-			if (isset($taskId) && $id == $taskId) {
-				unset ($depList[$key]);
-			}
-		}
-
 		// Find query doesn't work with an array of length 1 for some reason
 		if (count($depList) < 2) {
 			$depList = $depList[0];
@@ -285,6 +278,13 @@ class Task extends AppModel {
 				'Task.public_id' => $depList
 			),
 		)));
+
+		// Make sure the task doesn't depend on itself!
+		foreach ($depList as $key => $id) {
+			if (isset($taskId) && $id == $taskId) {
+				unset ($depList[$key]);
+			}
+		}
 
 		return $depList;
 	}
