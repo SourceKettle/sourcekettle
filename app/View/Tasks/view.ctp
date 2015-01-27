@@ -106,7 +106,12 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 			</div>
 			<div class="span3 task-view-time-logged">
 			<h5><?=__("Time logged")?></h5>
-			<?= TimeString::renderTime($totalTime, 's') ?>
+			<?=$this->Html->link(TimeString::renderTime($totalTime, 's'), array(
+				'controller' => 'times',
+				'action' => 'tasklog',
+				'project' => $task['Project']['name'],
+				$task['Task']['public_id']
+			))?>
 			<?= $this->Html->link(
 				'<i class="icon-plus" title="'.__("Log time").'"></i> '.__("Log time"), array(
 				"controller" => "times",

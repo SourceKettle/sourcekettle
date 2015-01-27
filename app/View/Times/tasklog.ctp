@@ -12,14 +12,20 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<?= $this->DT->pHeader(__("Task time log")) ?>
+<?= $this->DT->pHeader(__("Task time log"))?>
+<? $taskLink = $this->Html->link(__("#%s: %s", $task['Task']['public_id'], $task['Task']['subject']), array(
+	'controller' => 'tasks',
+	'action' => 'view',
+	'project' => $task['Project']['name'],
+	$task['Task']['public_id']
+))?>
 <div class="row">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
 	<div class="span10">
 		<div class="well">
-		<h3><?=__("Time logged for task #%s: %s", $task['Task']['public_id'], $task['Task']['subject'])?></h3>
+		<h3><?=__("Time logged for task %s", $taskLink)?></h3>
 		  <ul>
 		    <? foreach ($times as $time) {
 			$timeLink = $this->Html->link($time['Time']['minutes']['s'], array(
