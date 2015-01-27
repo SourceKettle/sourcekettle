@@ -750,7 +750,7 @@ class TasksController extends AppProjectController {
 		// Ensure we never change the owner ID
 		unset($this->request->data['Task']['owner_id']);
 
-		// Set the real task ID
+		// Set the real task ID for saving
 		$this->request->data['Task']['id'] = $this->Task->id;
 		unset($this->request->data['Task']['public_id']);
 		unset($this->request->data['Task']['project_id']);
@@ -758,20 +758,79 @@ class TasksController extends AppProjectController {
 
 		$saved = $this->Task->save($this->request->data);
 
-		$saved = $this->__publiciseDependencies($saved);
+		// Re-load all info about the task to return
+		$task = $this->Task->findById($saved['Task']['id']);
+
+		// Add in links to assignee, task, milestone...
+		$task['Task']['uri'] = Router::url(array(
+			'controller' => 'tasks',
+			'action' => 'view',
+			'project' => $task['Project']['name'],
+			$task['Task']['public_id']));
+
+		$task['Project']['uri'] = Router::url(array(
+			'controller' => 'projects',
+			'action' => 'view',
+			'project' => $task['Project']['name']));
+
+		$task['Milestone']['uri'] = Router::url(array(
+			'controller' => 'milestones',
+			'action' => 'view',
+			'project' => $task['Project']['name'],
+			$task['Milestone']['id']));
+
+		$task['Assignee']['uri'] = Router::url(array(
+			'controller' => 'users',
+			'action' => 'view',
+			$task['Assignee']['id']));
+
+		$task['Owner']['uri'] = Router::url(array(
+			'controller' => 'users',
+			'action' => 'view',
+			$task['Owner']['id']));
+
+		foreach ($task['Time'] as $idx => $time) {
+			$task['Time'][$idx]['uri'] = Router::url(array(
+				'controller' => 'times',
+				'action' => 'view',
+				'project' => $task['Project']['name'],
+				$time['id']));
+		}
+
+		foreach ($task['DependsOn'] as $idx => $depon) {
+			$task['DependsOn'][$idx]['uri'] = Router::url(array(
+				'controller' => 'tasks',
+				'action' => 'view',
+				'project' => $task['Project']['name'],
+				$depon['public_id']));
+		}
+
+		foreach ($task['DependedOnBy'] as $idx => $depon) {
+			$task['DependedOnBy'][$idx]['uri'] = Router::url(array(
+				'controller' => 'tasks',
+				'action' => 'view',
+				'project' => $task['Project']['name'],
+				$depon['public_id']));
+		}
+		$this->request->data = $task;
+
+		// Convert dependency IDs from internal to public IDs
+		//$saved = $this->__publiciseDependencies($saved);
 
 		// Make sure we pass back th epublic ID for rendering
-		$this->request->data['Task']['public_id'] = $public_id;
+		//$this->request->data['Task']['public_id'] = $public_id;
 
 		// Show a message on save and redirect back to the task
-		$this->Flash->u($saved);
 		if ($this->request->is('ajax')) {
 			$this->layout = 'ajax';
-			$this->set('data', $saved);
+			$this->request->data['error'] = 'no_error';
+			$this->request->data['Assignee']['gravatar'] = Gravatar::url($this->request->data['Assignee']['email'], array('url_only' => true));
+			$this->set('data', $this->request->data);
 			$this->render('/Elements/json');
 			return;
 		} else {
 
+			$this->Flash->u($saved);
 			return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $public_id));
 		}
 

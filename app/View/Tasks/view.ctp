@@ -16,7 +16,7 @@
 
 $this->Html->css('tasks', array ('inline' => false));
 $this->Html->script("tasks", array ('inline' => false));
-$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 'api' => true, 'project' => $task['Project']['name']));
+$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
 ?>
 
 <?= $this->Task->allDropdownMenus() ?>
@@ -41,16 +41,36 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
 			<h3>#<?=$task['Task']['public_id']?>:
 
 				<span class="task-subject-text"><?= $task['Task']['subject'] ?></span>
+                		<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
 
 				<span class="edit-form input-append hide">
-    				<?= $this->Form->textarea("subject", array("value" => $task['Task']['subject'], "rows" => 1)); ?>
+    				<?= $this->Form->textarea("subject", array("rows" => 1)); ?>
 				<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
-
 				</span>
 
-                	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
+				<p class="task-milestone"><small class="milestone-label">
+				<?=isset($task['Milestone']['subject'])? __("Milestone: %s", $this->Html->link(
+					$task['Milestone']['subject'], array(
+						'controller' => 'milestones',
+						'project' => $task['Project']['name'],
+						'action' => 'view',
+						$task['Milestone']['id']
+				))): __("No milestone")?>
+				</small>
+	    			<?= $this->Task->milestoneDropdownButton($task, 23, true, true)?>
+				</p>
+
 			</h3>
 
+			</div>
+			<div class="span3 task-view-assignee">
+            		<h5><?= __("Assigned to") ?></h5>
+	    		<?=$this->Task->assigneeDropdownButton($task, 23, true, true, true)?>
+			</div>
+		</div>
+
+                <div class="row-fluid task-view-middle">
+			<div class="span6 offset3 task-view-description">
                         <small>
         			<?= $this->Html->link(
 			            $this->Gravatar->image($task['Owner']['email'], array('d' => 'mm', 'size' => 16)),
@@ -64,26 +84,16 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
                             <?= __("created this task") ?>
                             <?= $this->Time->timeAgoInWords($task['Task']['created']) ?>
                         </small>
-			</div>
-			<div class="span3 task-view-assignee">
-            		<h5><?= __("Assigned to") ?></h5>
-	    		<?=$this->Task->assigneeDropdownButton($task, 23, true, true, true)?>
-			</div>
-		</div>
-
-                <div class="row-fluid task-view-middle">
-			<div class="span6 offset3 task-view-description">
 			<h4><?=__("Description")?></h4>
                 	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
             		<div class="task-description-text"><?= $this->Markitup->parse($task['Task']['description']) ?></div>
 			
 			<span class="edit-form hide">
-    				<?= $this->Form->textarea("description", array("value" => $task['Task']['description'], "class" => "task-description-input", "rows" => 10)); ?>
+    				<?= $this->Form->textarea("description", array("class" => "task-description-input", "rows" => 10)); ?>
 				<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
 				</span>
 			</div>
 		</div>
-
                 <div class="row-fluid task-view-bottom">
 			<div class="span3 task-view-points">
 			<h5><?=__("Estimate")?></h5>
@@ -92,7 +102,6 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
 			<div class="span6 task-view-selectors">
 			<h5><?=__("Attributes")?></h5>
             		<?= $this->Task->typeDropdownButton($task) ?>
-	    		<?= $this->Task->milestoneDropdownButton($task, 23, true, true)?>
 			<?= $this->Task->statusDropdownButton($task, true) ?>
 			</div>
 			<div class="span3 task-view-time-logged">
@@ -116,7 +125,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
 	<?=$this->Html->link(__("View dependency tree"), array('controller' => 'tasks', 'action' => 'tree', 'project' => $project['Project']['name'], $task['Task']['public_id']))?>
 	</div>
 	
-        <div class="row-fluid">
+        <div class="row-fluid" data-api-url="<?=$apiUrl?>">
         <?= $this->element("linked_list", array(
                         "listSpan" => 4,
                         "itemSpan" => 12,
@@ -126,7 +135,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'update', 
                                 __("Subtask of/blocks") => array('id' => 'parents-list', 'items' => $parentTasks, 'tooltip' => __('Anything in this list will depend on the new task')),
                         ),
         )) ?>
-	<?= $this->Html->scriptBlock("ajaxDependencyLists(".h($task['Task']['public_id']).", $('#subtasks-list'), $('#backlog-list'), $('#parents-list'));", array("inline" => false)) ?>
+	<?= $this->Html->scriptBlock("ajaxDependencyLists(".h($task['Task']['project_id']).", ".h($task['Task']['public_id']).", $('#subtasks-list'), $('#backlog-list'), $('#parents-list'));", array("inline" => false)) ?>
         </div>
 
 

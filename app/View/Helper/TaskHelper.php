@@ -201,7 +201,6 @@ class TaskHelper extends AppHelper {
 		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_milestones', 'api' => true, 'project' => $task['Project']['name']));
 		if ($hasWrite) {
 			$button = '<button class="label task-dropdown task-dropdown-milestone" title="'.h($tooltip).'" data-type="milestone" data-api-url="'.$apiUrl.'" data-change="milestone_id" data-toggle="task_milestone_dropdown" data-source="'.$apiUrl.'">'.$icon.' <b class="caret"></b></button>';
-			$button .= " $label";
 		} else {
 			$button = "$icon$label";
 		}

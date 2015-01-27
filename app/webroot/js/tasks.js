@@ -1,62 +1,3 @@
-// Labels for the various statuses - TODO should be loaded from database
-var taskStatusLabels = {
-	open: "Open",
-	'in progress': "In Progress",
-	resolved: "Resolved",
-	closed: "Closed",
-	dropped: "Dropped"
-};
-
-// Classes to apply to the status label
-var taskStatusLabelTypes = {
-	open: "label-important",
-	'in progress': "label-warning",
-	resolved: "label-success",
-	closed: "label-info",
-	dropped: ""
-};
-
-// Priority labels and icons
-var taskPriorityLabels = {
-	 blocker: "Blocker",
-	 urgent:  "Urgent",
-	 major:   "Major",
-	 minor:   "Minor"
-};
-
-var taskPriorityIcons = {
-	 blocker: "ban-circle",
-	 urgent:  "exclamation-sign",
-	 major:   "arrow-up",
-	 minor:   "arrow-down"
-};
-
-var taskTypeLabels = {
-	bug: "Bug",
-	duplicate: "Duplicate",
-	enhancement: "Enhancement",
-	invalid: "Invalid",
-	question: "Question",
-	wontfix: "Won't Fix",
-	documentation: "Documentation",
-	meeting: "Meeting",
-	maintenance: "Maintenance Work",
-	testing: "Testing",
-};
-
-var taskTypeClasses = {
-	bug: "important",
-	duplicate: "warning",
-	enhancement: "success",
-	invalid: "",
-	question: "info",
-	wontfix: "inverse",
-	documentation: "info",
-	meeting: "info",
-	maintenance: "warning",
-	testing: "success",
-};
-
 
 // Comment edit buttons
 $('.comment').find(':button.edit').bind('click', function() {
@@ -197,34 +138,35 @@ function updateTask(taskLozenge, taskInfo) {
 			var currentColumn = taskLozenge.parent();
 			
 			if (data.error === "no_error") {
-			
+				taskInfo = data;
+
 				// Task type changed
-				if (taskInfo.type != null && typeLabel.size() == 1) {
+				if (taskInfo.TaskType != null && typeLabel.size() == 1) {
 
 					// Update lozenge to reflect the new type
-					typeLabel.html(taskTypeLabels[taskInfo.type] + ' <b class="caret"></b>');
+					typeLabel.html(taskInfo.TaskType.label+ ' <b class="caret"></b>');
 					typeLabel.removeClass(function(index, css){
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
-					typeLabel.addClass('label-' + taskTypeClasses[taskInfo.type]);
-					typeLabel.attr('title', 'Type: ' + taskInfo.type).tooltip();
+					typeLabel.addClass('label-' + taskInfo.TaskType.class);
+					typeLabel.attr('title', 'Type: ' + taskInfo.TaskType.name).tooltip();
 
 				}
 				// Priority changed, fairly straightforward
-				if (taskInfo.priority != null) {
+				if (taskInfo.TaskPriority != null) {
 
 					// Update lozenge to reflect the new priority
-					var icon = '<i class="icon-'+taskPriorityIcons[ taskInfo.priority ]+' icon-white"> </i>';
+					var icon = '<i class="icon-'+taskInfo.TaskPriority.icon+' icon-white"> </i>';
 					if (prioTextLabel.size() > 0) {
-						prioLabel.html(icon + ' <span class="textlabel">'+taskPriorityLabels[taskInfo.priority]+'</span> <b class="caret"></b>');
+						prioLabel.html(icon + ' <span class="textlabel">'+taskInfo.TaskPriority.label+'</span> <b class="caret"></b>');
 					} else {
 						prioLabel.html(icon + ' <b class="caret"></b>');
 					}
-					prioLabel.attr('title', 'Priority: ' + taskInfo.priority).tooltip();
+					prioLabel.attr('title', 'Priority: ' + taskInfo.TaskPriority.name).tooltip();
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
-					if (currentColumn.attr('data-taskpriority') != taskInfo.priority) {
-						toColumn = $('.sprintboard-droplist[data-taskpriority="'+taskInfo.priority+'"]');
+					if (currentColumn.attr('data-taskpriority') != taskInfo.TaskPriority.name) {
+						toColumn = $('.sprintboard-droplist[data-taskpriority="'+taskInfo.TaskPriority.name+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
 							equaliseColumns(toColumn);
@@ -234,8 +176,8 @@ function updateTask(taskLozenge, taskInfo) {
 				}
 
 				// Status changed, more fiddly due to the CSS class change...
-				if (taskInfo.status != null) {
-					labelText = taskStatusLabels[taskInfo.status];
+				if (taskInfo.TaskStatus != null) {
+					labelText = taskInfo.TaskStatus.label;
 					if (!statusLabel.attr('data-fulltext') || statusLabel.attr("data-fulltext") == "0") {
 						labelText = labelText.charAt(0);
 					}
@@ -245,13 +187,13 @@ function updateTask(taskLozenge, taskInfo) {
 					statusLabel.removeClass(function(index, css){
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
-					statusLabel.addClass(taskStatusLabelTypes[taskInfo.status]);
-					statusLabel.attr('title', 'Status: ' + taskInfo.status).tooltip();
-					taskLozenge.attr('data-taskstatus', taskInfo.status);
+					statusLabel.addClass('label-'+taskInfo.TaskStatus.class);
+					statusLabel.attr('title', 'Status: ' + taskInfo.TaskStatus.label).tooltip();
+					taskLozenge.attr('data-taskstatus', taskInfo.TaskStatus.name);
 
 					// If there's a droplist for this status and the lozenge isn't in it, move it into place
-					if (currentColumn.attr('data-taskstatus') != taskInfo.status) {
-						toColumn = $('.sprintboard-droplist[data-taskstatus="'+taskInfo.status+'"]');
+					if (currentColumn.attr('data-taskstatus') != taskInfo.TaskStatus.name) {
+						toColumn = $('.sprintboard-droplist[data-taskstatus="'+taskInfo.TaskStatus.name+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
 							equaliseColumns(toColumn);
@@ -273,31 +215,38 @@ function updateTask(taskLozenge, taskInfo) {
 
 				// Assignee changed - we need to change the gravatar image
 				// Note that it can be set to zero for "unassigned"...
-				if (typeof taskInfo.assignee_id !== 'undefined') {
+				if (typeof taskInfo.Assignee.id !== 'undefined') {
 					assigneeBox = $('.task-dropdown-assignee', taskLozenge);
 					assigneeLabel = assigneeBox.siblings('.assignee-full-label');
 					gravatarImage = $('img', assigneeBox);
-					gravatarImage.attr('src', data.assignee_gravatar+'&size='+gravatarImage.attr('width'));
-					if (taskInfo.assignee_id == 0) {
-						assigneeBox.attr('title', 'Not assigned').tooltip();
+					gravatarImage.attr('src', taskInfo.Assignee.gravatar+'&size='+gravatarImage.attr('width'));
+					if (taskInfo.Assignee.id > 0) {
+						assigneeBox.attr('title', 'Assigned to: '+taskInfo.Assignee.name).tooltip();
+						gravatarImage.attr('alt', 'Assigned to: '+taskInfo.Assignee.name);
 					} else {
-						assigneeBox.attr('title', 'Assigned to: '+data.assignee_name).tooltip();
+						assigneeBox.attr('title', 'Not assigned').tooltip();
+						gravatarImage.attr('alt', 'Not assigned');
 					}
 					if (assigneeLabel.hasClass('assignee-full-label')) {
-						assigneeLabel.text(data.assignee_name);
+						assigneeLabel.text(taskInfo.Assignee.name);
 					}
 				}
 
 				// Milestone changed
-				if (typeof taskInfo.milestone_id !== 'undefined' && milestoneLabel.length > 0) {
-					milestoneLink = $(document.createElement('a'));
-					milestoneLink.attr('title',  "Milestone: "+data.milestone_subject).tooltip();
-					milestoneLink.attr('href', data.milestone_url);
-					milestoneLink.text(data.milestone_subject);
+				if (typeof taskInfo.Milestone.id !== 'undefined' && milestoneLabel.length > 0) {
 					label = milestoneLabel.siblings(".milestone-label");
 					label.empty();
-					label.append(milestoneLink);
-					milestoneLabel.attr("title", "Milestone: "+data.milestone_subject).tooltip();
+					if (taskInfo.Milestone.id > 0) {
+						milestoneLink = $(document.createElement('a'));
+						milestoneLink.attr('title',  "Milestone: "+taskInfo.Milestone.subject).tooltip();
+						milestoneLink.attr('href', taskInfo.Milestone.uri);
+						milestoneLink.text(taskInfo.Milestone.subject);
+						label.append("Milestone: ");
+						label.append(milestoneLink);
+					} else {
+						label.append("No milestone");
+					}
+					milestoneLabel.attr("title", "Milestone: "+taskInfo.Milestone.subject).tooltip();
 				}
 
 			} else {
@@ -371,18 +320,18 @@ function initTaskDroplists() {
 			var toPrio	  = $(this).attr('data-taskpriority');
 			var toMilestone = $(this).attr('data-milestone');
 
-			var taskInfo = {};
+			var taskInfo = {'Task' : {}};
 
 			if(typeof toPrio != 'undefined'){
-				taskInfo.priority = toPrio;
+				taskInfo.Task.priority = toPrio;
 			}
 
 			if(typeof toStatus != 'undefined'){
-				taskInfo.status = toStatus;
+				taskInfo.Task.status = toStatus;
 			}
 
 			if(typeof toMilestone != 'undefined'){
-				taskInfo.milestone_id = toMilestone;
+				taskInfo.Task.milestone_id = toMilestone;
 			}
 
 			updateTask(taskLozenge, taskInfo);
@@ -403,10 +352,10 @@ function setStoryPoints(button, difference) {
 	points = parseInt($(pointsBox).text());
 	points += difference;
 	if (points <= 0) {return;}
-	var taskInfo = {
+	var taskInfo = { 'Task' : {
 		id : taskId,
 		story_points : points
-	};
+	}};
 	$.ajax(apiUrl +'/' + taskId, {
 		"data" : taskInfo,
 		"dataType" : "json",
