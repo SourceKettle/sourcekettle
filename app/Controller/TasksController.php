@@ -983,13 +983,13 @@ class TasksController extends AppProjectController {
 
 		// Make sure we're operating  on the correct task ID...
 		$this->request->data['id'] = $task['Task']['id'];
+		$task = $this->Task->save($this->request->data);
 
-		$task = $this->Task->saveAll($this->request->data);
 		if ($task) {
-			$task = $this->Task->findAllById($this->request->data['id']);
 			$this->response->statusCode(200);
 			$data = $task['Task'];
 			unset($data['id']);
+
 			// Add in any extra data here... at the moment just used for refreshing the assignee gravatar easily
 			if (isset($data['assignee_id']) && $data['assignee_id'] != 0) {
 				$data['assignee_email'] = $this->Task->Assignee->field('email', array('id' => $data['assignee_id']));
