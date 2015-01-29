@@ -41,7 +41,6 @@ class ProjectsController extends AppProjectController {
 			'add_repo'   => 'admin',
 			'delete' => 'write',
 			'schedule' => 'read',
-			'planner' => 'read',
 			'markupPreview'  => 'read',
 			'changeSetting' => 'admin',
 			'api_history' => 'read',
@@ -467,44 +466,6 @@ class ProjectsController extends AppProjectController {
 		));
 
 		$this->set(compact('project', 'milestones'));
-	}
-
-	public function planner($project = null) {
-
-		$project = $this->_getProject($project);
-
-		$users = $this->Project->Collaborator->find('all', array(
-			'conditions' => array('Collaborator.project_id' => $project['Project']['id']),
-			'fields' => array('User.name', 'User.email', 'User.id'),
-			'order' => array('User.name'),
-		));
-
-		$schedule = array();
-
-		foreach ($users as $user) {
-			$milestones = array_map(function($a){return $a['Milestone'];}, $this->Project->Task->find('all', array(
-				'conditions' => array(
-					'Task.project_id' => $project['Project']['id'],
-					'Task.assignee_id' => $user['User']['id'],
-					'Task.milestone_id >' => 0,
-				),
-				'fields' => array('Milestone.id', 'Milestone.subject', 'Milestone.starts', 'Milestone.due'),
-				'order' => array('Milestone.starts'),
-			)));
-
-			$schedule[$user['User']['name']] = array();
-			
-			$seen = array();
-			foreach ($milestones as $milestone) {
-				if (in_array($milestone['id'], $seen)) {
-					continue;
-				}
-				$seen[] = $milestone['id'];
-				$schedule[$user['User']['name']][] = $milestone;
-			}
-		}
-
-		$this->set(compact('project', 'schedule'));
 	}
 
 	public function changeSetting($project) {
