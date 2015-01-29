@@ -30,19 +30,24 @@ foreach (explode('/',$path) as $crumb) {
 }
 ?>
 <?= $this->DT->pHeader(__("Source code")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
+    <div class="span10">
+    	<div class="row-fluid">
         <?= $this->element('Source/topbar') ?>
+		</div>
+		<div class="row-fluid">
+
 		<?// TODO This is a quick and dirty git-specific hack, should really have a way to specify a git or svn URL ?>
-        <div class="span10">
 			<code><?=__("Checkout URI")?>: <?= $sourcekettle_config['SourceRepository']['user']['value'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= h($project['Project']['name']) ?>.git</code>
         </div>
-        <div class="span10">
+
+        <div class="row-fluid">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
         </div>
+		<div class="row-fluid">
         <?php
             if ($tree['type'] == 'tree') {
                 if ($tree['path'] == '.') {
@@ -54,5 +59,6 @@ foreach (explode('/',$path) as $crumb) {
                 echo $this->element('Source/tree_blob_content');
             }
         ?>
+		</div>
     </div>
 </div>

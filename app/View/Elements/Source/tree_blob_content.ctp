@@ -3,7 +3,7 @@
     $fileContent = preg_split("/\015\012|\015|\012/", $tree['content']);
     $size = sizeof($fileContent);
 ?>
-<div class="span10">
+<div class="row-fluid">
     <div class="well codewell">
         <div class="prettyprintheader row-fluid">
             <div class="span6">
@@ -55,3 +55,4 @@
 		<? } ?>
     </div>
 </div>
+
