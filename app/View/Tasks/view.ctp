@@ -112,6 +112,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 				'project' => $task['Project']['name'],
 				$task['Task']['public_id']
 			))?>
+			<span class="btn btn-small">
 			<?= $this->Html->link(
 				'<i class="icon-plus" title="'.__("Log time").'"></i> '.__("Log time"), array(
 				"controller" => "times",
@@ -119,6 +120,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 				"project" => $project['Project']['name'],
 				"?" => array("task_id" => $task['Task']['public_id']),
 			), array("escape" => false))?>
+			</span>
 			</div>
 		</div>
 	</div>
