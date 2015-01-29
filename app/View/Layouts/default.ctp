@@ -82,6 +82,7 @@
 							$navItems = array(
 								'dashboard' => __('Dashboard'),
 								'projects' => __('Projects'),
+								'kanban' => __('My Kanban'),
 								'help' => __('Help'),
 							);
 							if($current_user && $current_user['is_admin'] == 1){
