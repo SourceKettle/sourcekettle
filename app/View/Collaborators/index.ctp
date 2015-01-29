@@ -39,13 +39,13 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
 ?>
 
 <?= $this->DT->pHeader(__("Collaborators working on the project")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-        <div class="row">
-            <div class="span6">
+		<div class="row-fluid">
+            <div class="span7">
                 <div class="well">
                     <h3><?= __("Users collaborating on this project") ?></h3>
                     <table class="table table-striped">
@@ -101,7 +101,7 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
                     </table>
                 </div>
             </div>
-            <div class="span4">
+            <div class="span5 well">
             <?php if ($isAdmin) {
                 echo $this->Form->create('Collaborator',
                     array(
@@ -109,7 +109,7 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
                             'action' => 'add',
                             'project' => $project['Project']['name']
                         ),
-                        'class' => 'form-inline well input-append'
+                        'class' => 'form-inline input-append'
                     )
                 );
 
@@ -126,7 +126,6 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
 						'jsonListName' => 'users',
                         'properties' => array(
                             'id' => 'userSearchBox',
-                            'class' => 'span3',
                             'placeholder' => 'john.smith@example.com',
                             'label' => false,
                         )
@@ -138,8 +137,8 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
             } ?>
             </div>
         </div>
-        <div class="row">
-            <div class="span6">
+        <div class="row-fluid">
+            <div class="span7">
                 <div class="well">
                     <h3><?= __("Teams collaborating on this project") ?></h3>
                     <table class="table table-striped">
@@ -194,7 +193,7 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
                     </table>
                 </div>
             </div>
-            <div class="span4">
+            <div class="well span5">
             <?php if ($isAdmin) {
                 echo $this->Form->create('Collaborator',
                     array(
@@ -202,7 +201,7 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
                             'action' => 'team_add',
                             'project' => $project['Project']['name']
                         ),
-                        'class' => 'form-inline well input-append'
+                        'class' => 'form-inline input-append'
                     )
                 );
 
@@ -219,7 +218,6 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
 						),
                         'properties' => array(
                             'id' => 'teamSearchBox',
-                            'class' => 'span3',
                             "placeholder" => __("Start typing to search..."),
                             'label' => false,
                         )
@@ -234,7 +232,7 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
         </div>
 
 		<? if (!empty($group_collaborating_teams[0]) || !empty($group_collaborating_teams[1]) || !empty($group_collaborating_teams[2])) { ?>
-        <div class="row">
+        <div class="row-fluid">
 		<?=__("The following teams have access via project groups - you must ask a system administrator to change these permissions:")?>
 
 		<ul>
