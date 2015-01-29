@@ -133,14 +133,14 @@ class Project extends AppModel {
 		'Collaborator' => array(
 			'className' => 'Collaborator',
 			'foreignKey' => 'project_id',
-			'dependent' => false,
+			'dependent' => true,
 		),
 
 		// Collaborating teams are teams of users mapped to projects with an access level
 		'CollaboratingTeam' => array(
 			'className' => 'CollaboratingTeam',
 			'foreignKey' => 'project_id',
-			'dependent' => false,
+			'dependent' => true,
 		),
 
 	);
