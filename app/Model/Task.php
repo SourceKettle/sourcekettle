@@ -261,13 +261,21 @@ class Task extends AppModel {
 
 	// Given a list of tasks' public IDs, convert to private IDs, remove duplicates
 	// and remove the current task's ID if present.
+	// TODO a horrible, horrible fudge that should not exist.
 	private function __sanitiseDependencies($taskId, $projectId, $depList) {
 
-		// First get unique values only...
+		// If it's a full on list of task "objects" instead of just IDs, crunch that a bit
+		if (isset($depList[0]['public_id'])) {
+			$depList = array_map(function($a) {return $a['public_id'];}, $depList);
+		} elseif (isset($depList[0]['id'])) {
+			$depList = array_map(function($a) {return $a['id'];}, $depList);
+		}
+
+		// Now get unique values only...
 		$depList = array_unique(array_values($depList));
 
 		// Find query doesn't work with an array of length 1 for some reason
-		if (count($depList) < 2) {
+		if (count($depList) == 1) {
 			$depList = $depList[0];
 		}
 
