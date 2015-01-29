@@ -335,10 +335,34 @@ class ProjectTestCase extends CakeTestCase {
 
 	public function testDelete() {
 		$this->Project->id = 3;
+
 		$ok = $this->Project->delete();
 		$this->assertTrue($ok, "Failed to delete project");
+
 		$project_data = $this->Project->findById(3);
-		$this->assertEqual($project_data, array(), "Project data retrieved after deletion");
+		$this->assertEqual(array(), $project_data, "Project data retrieved after deletion");
+
+		$tasks = $this->Project->Task->findByProjectId(3);
+		$this->assertEqual(array(), $tasks, "Tasks retrieved after deletion");
+
+		$milestones = $this->Project->Milestone->findByProjectId(3);
+		$this->assertEqual(array(), $milestones, "Milestones retrieved after deletion");
+
+		$times = $this->Project->Time->findByProjectId(3);
+		$this->assertEqual(array(), $times, "Times retrieved after deletion");
+
+		$collaborators = $this->Project->Collaborator->findByProjectId(3);
+		$this->assertEqual(array(), $collaborators, "Collaborators retrieved after deletion");
+	}
+
+	public function testDeleteWithCollaboratingTeams() {
+		$this->Project->id = 12;
+
+		$ok = $this->Project->delete();
+		$this->assertTrue($ok, "Failed to delete project");
+		$collaboratingteams = $this->Project->CollaboratingTeam->findByProjectId(12);
+		$this->assertEqual(array(), $collaboratingteams, "CollaboratingTeams retrieved after deletion");
+
 	}
 
 	public function testDeleteWithGitRepository() {
