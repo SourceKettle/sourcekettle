@@ -63,6 +63,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function index() {
+		$this->set('title', __("My Projects <small>all the projects you care about</small>"));
 		$this->Project->Collaborator->recursive = 0;
 		$projects = $this->Project->Collaborator->find(
 			'all', array(
@@ -74,6 +75,8 @@ class ProjectsController extends AppProjectController {
 	}
 
 	public function team_projects() {
+
+		$this->set('title', __("Team Projects <small>we do what we must because we can</small>"));
 
 		// Teams the user is a member of
 		$teams = $this->Team->TeamsUser->find('list', array(
@@ -87,7 +90,7 @@ class ProjectsController extends AppProjectController {
 		// Nothing to do if they're not in any teams...
 		if (empty($teams)) {
 			$this->set('projects', array());
-			return;
+			return $this->render("index");
 		}
 
 		// Project groups the user's teams have access to
@@ -136,9 +139,11 @@ class ProjectsController extends AppProjectController {
 		));
 
 		$this->set('projects', $projects);
+		return $this->render("index");
 	}
 
 	public function public_projects() {
+		$this->set('title', __("Public Projects <small>projects people have shared</small>"));
 		$this->paginate = array(
 			'conditions' => array(
 				'Project.public' => true,
@@ -149,6 +154,7 @@ class ProjectsController extends AppProjectController {
 		$projects = $this->paginate('Project');
 
 		$this->set('projects', $projects);
+		return $this->render("index");
 	}
 
 /**

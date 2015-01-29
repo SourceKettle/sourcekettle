@@ -58,6 +58,8 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
         <?= $this->Bootstrap->input("repositoryType", array(
             "input" => $this->Form->select('repo_type', $repoTypes, array("class" => "span12", 'empty'=>false, 'value' => $defaultRepo)),
         ))?>
+
+        <?php echo $this->Bootstrap->button("Create Project", array("style" => "primary", "size" => "large", 'class' => 'controls')); ?>
     </div>
 
     <div class="span4">
@@ -77,9 +79,4 @@ echo $this->Bootstrap->page_header("New Project <small>where baby projects are m
     </div>
 </div>
 
-<div class="row">
-    <div class="span12" style="text-align:center">
-        <?php echo $this->Bootstrap->button("Create Project", array("style" => "primary", "size" => "large", 'class' => 'controls')); ?>
-    </div>
-</div>
 <?php echo $this->Form->end(); ?>
