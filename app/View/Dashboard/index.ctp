@@ -44,7 +44,7 @@
     </div>
     <div class="span6">
         <h3><?=__("Most recent projects")?></h3>
-        <div class='row'>
+        <div class='row-fluid'>
           <?
 			 $options = array(
 			 	'links' => array(
@@ -77,7 +77,7 @@
 
           ?>
         </div>
-
+		<div class="row-fluid">
         <? if (!empty($projects)){
     		foreach ($projects as $project){
 				echo $this->Element('Project/block', array('project' => $project, 'nospan' => true));
@@ -85,11 +85,12 @@
         } else {
           echo $this->element('Project/noprojectsalert');
         }?>
+		</div>
     </div>
 </div>
 
-<div class='row'>
-    <div class='span10'>
+<div class='row-fluid'>
+    <div class='span12'>
       <h3><?=__("Recent events")?></h3>
         <? if (!empty($history)){
           ?><div class='alert alert-info'><strong>In progress!</strong> Source code events are not shown here yet.</div><?
