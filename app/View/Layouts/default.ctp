@@ -116,7 +116,7 @@
 			</div>
 		</div>
 	</header>
-	<div class="container" id="content-wrapper">
+	<div class="container-fluid" id="content-wrapper">
 		<span id="flashes">
 			<?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
 			<?= $this->Session->flash('email'); ?>
