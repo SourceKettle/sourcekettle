@@ -19,7 +19,7 @@
 	'project' => $task['Project']['name'],
 	$task['Task']['public_id']
 ))?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>

@@ -17,13 +17,16 @@ $this->Html->script("times.history", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader(__("Timesheets")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
+    <div class="span10">
+		<div class="row-fluid">
         <?= $this->element('Time/topbar_history') ?>
-        <div class="span10">
+		</div>
+		<div class="row-fluid">
+        <div class="span12">
 			<? if (isset($user)) {
 				echo __("Showing time log for $userName");
 				echo " ";
