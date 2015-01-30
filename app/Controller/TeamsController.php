@@ -83,7 +83,7 @@ class TeamsController extends AppController {
 			$this->Team->create();
 			if ($this->Team->save($this->request->data)) {
 				$this->Session->setFlash(__('The team has been saved'));
-				$this->redirect(array('action' => 'index'));
+				return $this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The team could not be saved. Please try again.'));
 			}
@@ -103,7 +103,7 @@ class TeamsController extends AppController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Team->save($this->request->data)) {
 				$this->Session->setFlash(__('The team has been saved'));
-				$this->redirect(array('action' => 'index'));
+				return $this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The team could not be saved. Please try again.'));
 			}
@@ -131,10 +131,10 @@ class TeamsController extends AppController {
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->Team->delete()) {
 			$this->Session->setFlash(__('Team deleted'));
-			$this->redirect(array('action' => 'index'));
+			return $this->redirect(array('action' => 'index'));
 		}
 		$this->Session->setFlash(__('Team was not deleted'));
-		$this->redirect(array('action' => 'index'));
+		return $this->redirect(array('action' => 'index'));
 		
 	}
 
