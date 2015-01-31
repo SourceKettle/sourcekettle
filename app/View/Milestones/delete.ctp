@@ -19,13 +19,14 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
 
 <?= $this->Bootstrap->page_header(__("Delete milestone")) ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
 
-    <div class="row">
-        <div class="well span8 offset1">
+    <div class="span10">
+		<div class="row-fluid">
+        <div class="well span8 offset2">
 
 			<h4><?=__("Are you sure you want to delete")?> '<?=h($milestone['Milestone']['subject'])?>'? <?=__("This action is irreversible!")?></h4>
         	<?=$this->Form->create('Milestone', array('type' => 'post'))?>
@@ -42,10 +43,11 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
 			<?}?>
         <?=$this->Bootstrap->button(
 			__("I'm sure. Delete that milestone")."!",
-			array("style" => "danger", "size" => "large", 'class' => 'deleteButton span7')
+			array("style" => "danger", "size" => "large", 'class' => 'deleteButton span8')
 		);?>
 
         <?=$this->Form->end()?>
+        </div>
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<div class="span10">
+<div class="row-fluid">
     <table class="well table table-striped">
         <tr>
             <th><?= $this->Bootstrap->icon(null) ?> <?=__("name")?></th>

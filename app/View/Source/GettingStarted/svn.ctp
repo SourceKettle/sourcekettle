@@ -30,12 +30,12 @@ $public_key = $this->Popover->popover(
 );
 
 ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span9">
-        <div class="row">
+        <div class="row-fluid">
 
             <div class="well span9">
                 <h3><?= $this->Bootstrap->label('1', 'info', array('style'=>'font-size:18px')) ?> Getting started:</h3>

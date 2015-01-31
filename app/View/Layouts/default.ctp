@@ -49,7 +49,7 @@
 		<div class="navbar navbar-inverse navbar-fixed-top">
 		<?}?>
 			<div class="navbar-inner">
-				<div class="container">
+				<div class="container-fluid">
 					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -82,6 +82,7 @@
 							$navItems = array(
 								'dashboard' => __('Dashboard'),
 								'projects' => __('Projects'),
+								'kanban' => __('My Kanban'),
 								'help' => __('Help'),
 							);
 							if($current_user && $current_user['is_admin'] == 1){
@@ -116,7 +117,7 @@
 			</div>
 		</div>
 	</header>
-	<div class="container" id="content-wrapper">
+	<div class="container-fluid" id="content-wrapper">
 		<span id="flashes">
 			<?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
 			<?= $this->Session->flash('email'); ?>

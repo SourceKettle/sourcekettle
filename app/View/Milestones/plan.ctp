@@ -20,19 +20,17 @@ $this->Html->css("milestones.index", array ('inline' => false));
 ?>
 <?= $this->Task->allDropdownMenus() ?>
 <?= $this->DT->pHeader(__("Milestone planner: '%s'", $milestone['Milestone']['subject'])) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
 
+	<div class="span10">
+		<div class="row-fluid">
+    	<?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
+		</div>
 
-    <?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
-
-    <!-- Planner board -->
-    <div class="span10">  <div class="row">
-
-    <!-- Unattached row -->
-	<div class="row-fluid span12">
+		<div class="row-fluid">
         <?= $this->element('Task/Board/column',
             array(
 				'tasks' => $wontHave,
@@ -47,11 +45,9 @@ $this->Html->css("milestones.index", array ('inline' => false));
 			)
         ) ?>
 
-	<!-- End project backlog -->
-	</div>
+		</div>
 
-    <!-- Could-have, might-have -->
-	<div class="row-fluid span12">
+		<div class="row-fluid">
 
         <?= $this->element('Task/Board/column',
             array(
@@ -112,13 +108,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 			)
         ) ?>	
 
-
-	<!-- End must-have/should-have -->
 	</div>
 
-
-
-    <!-- End milestone board -->
-	</div> </div>
 </div>
 

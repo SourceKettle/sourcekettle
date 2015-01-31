@@ -13,6 +13,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+ // DEPRECATED remove
 $details = array(
     '2' => array(
         'icon' => 'wrench',
@@ -33,7 +34,7 @@ $details = array(
 
 echo $this->Bootstrap->page_header('Administration <small>what does this bit do</small>'); ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin') ?>
     </div>

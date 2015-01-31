@@ -15,39 +15,34 @@
  $pl = __('Time')." #$id";
 
  $options = array(
-    'left' => array(
+    'links' => array(
         array(
-            array(
-                'text' => __('Edit'),
-                'url' => array(
-                    'action' => 'edit',
-                    'controller' => 'times',
-                    $id
-                ),
-            ),
-            array(
-                'text' => __('Delete'),
-                'url' => array(
-                    'action' => 'delete',
-                    'controller' => 'times',
-                    $id
-                ),
-                'props' => array('style' => 'danger'),
+            'text' => __('Edit'),
+            'url' => array(
+                'action' => 'edit',
+                'controller' => 'times',
+                $id
             ),
         ),
-    ),
-    'right' => array(
         array(
-            array(
-                'text' => __('Log Time'),
-                'url' => array(
-                    'action' => 'add',
-                    'controller' => 'times',
-                ),
-                'props' => array('class' => 'btn-primary'),
+            'text' => __('Delete'),
+            'url' => array(
+                'action' => 'delete',
+                'controller' => 'times',
+                $id
             ),
+            'props' => array('style' => 'danger'),
+        ),
+        array(
+            'text' => __('Log Time'),
+            'url' => array(
+                'action' => 'add',
+                'controller' => 'times',
+            ),
+            'props' => array('class' => 'btn-primary'),
+			'pull-right' => true,
         ),
     ),
 );
 
-echo $this->element('Topbar/button', array('options' => $options, 'pl' => $pl));
+echo $this->element('Topbar/pills', array('options' => $options, 'pl' => $pl));

@@ -26,24 +26,25 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 <?= $this->Task->allDropdownMenus() ?>
 
 <?= $this->DT->pHeader(__("Milestone board: '%s'", $milestone['Milestone']['subject'])) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
 
-    <?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
+	<div class="span10">
 
-    <!-- Milestone board -->
-    <div class="span10">
+		<div class="row-fluid">
+ 	   <?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
+		</div>
+
 	
-	<div class="row"><div class="span2 offset4">
-	<span class="label">Story points complete: <span id="points_complete"><?=$points_complete?></span> / <span id="points_total"><?=$points_total?></span></span>
-	</div></div>
+		<div class="row-fluid">
+			<div class="span2 offset5">
+			<span class="label">Story points complete: <span id="points_complete"><?=$points_complete?></span> / <span id="points_total"><?=$points_total?></span></span>
+			</div>
+		</div>
 
-	<div class="row">
-
-    <!-- Primary columns -->
-	<div class="row-fluid span12">
+		<div class="row-fluid">
 
         <?= $this->element('Task/Board/column',
             array('tasks' => $open, 'status' => 'open', 'title' => __('Open'), 'tooltip' => __('Tasks that are not complete'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite, 'milestoneID' => $milestone['Milestone']['id'], 'addLink' => false)
@@ -61,20 +62,15 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
         	);
 	} ?>
 
-	<!-- End primary columns -->
 	</div>
 
-    <!-- Icebox row -->
-	<div class="row-fluid span12">
+	<div class="row-fluid">
         <?= $this->element('Task/Board/column',
             array('tasks' => $dropped, 'status' => 'dropped', 'title' => __('Dropped tasks'), 'tooltip' => __('Tasks that we did not have time for, they will not be worked on in this milestone'), 'span' => '12', 'task_span' => 4, 'classes' => 'sprintboard-icebox', 'draggable' => $hasWrite)
         ) ?>
 
-	<!-- End icebox -->
 	</div>
 
-    <!-- End milestone board -->
-	</div> </div>
 
 </div>
 

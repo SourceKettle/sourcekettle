@@ -22,14 +22,15 @@ $status = preg_replace('/^view_/', '', $this->request['action']);
 ?>
 
 <?= $this->DT->pHeader(__(ucfirst($status)." Milestones")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-        <div class="row">
+        <div class="row-fluid">
             <?= $this->element('Milestone/topbar') ?>
-            <div class="span10">
+		</div>
+        <div class="row-fluid">
                 <?php
                 if (empty($milestones)) {
                     echo '<div class="span10" style="text-align:center"><h1>'.__("No $status milestones").'</h1></div>';
@@ -39,7 +40,6 @@ $status = preg_replace('/^view_/', '', $this->request['action']);
                     }
                 }
                 ?>
-            </div>
         </div>
     </div>
 </div>

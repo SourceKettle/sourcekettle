@@ -15,14 +15,13 @@
 $this->Html->css('deletable', null, array ('inline' => false));
 ?>
 
-<?= $this->Bootstrap->page_header('Are you sure you want to delete?') ?>
-<div class="row">
+<?= $this->Bootstrap->page_header(__('Are you sure you want to delete "%s"?', $object['name'])) ?>
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
-        <div class="span10">
-            <div class="row-fluid">
+    <div class="span10">
+        <div class="row-fluid">
                 <div class="well span8 offset2 deletable">
                     <?php
                         echo "<h4>";

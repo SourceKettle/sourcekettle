@@ -21,19 +21,16 @@ $this->Html->css("milestones.index", array ('inline' => false));
 
 <?= $this->Task->allDropdownMenus() ?>
 <?= $this->DT->pHeader(__("My kanban chart")) ?>
-<div class="row">
 
-    <!-- Milestone board -->
-    <div class="span12">
 	
-	<div class="row"><div class="span2 offset4">
+<div class="row-fluid">
+	<div class="span2 offset5">
 	<span class="label">Story points complete: <span id="points_complete"><?=$points_complete?></span> / <span id="points_total"><?=$points_total?></span></span>
-	</div></div>
+	</div>
+</div>
+	
 
-	<div class="row">
-
-    <!-- Primary columns -->
-	<div class="row-fluid span12">
+<div class="row-fluid">
         <?= $this->element('Task/Board/column',
             array('tasks' => $open, 'status' => 'open', 'title' => __('Open'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
         ) ?>
@@ -45,11 +42,6 @@ $this->Html->css("milestones.index", array ('inline' => false));
             array('tasks' => $resolved, 'status' => 'resolved', 'title' => __('Resolved'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
         ) ?>
 
-	<!-- End primary columns -->
-	</div>
-
-    <!-- End milestone board -->
-	</div> </div>
-
 </div>
+
 

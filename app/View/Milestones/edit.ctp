@@ -17,18 +17,16 @@ $this->Html->css('milestones.index', null, array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader(__("Edit a Milestone")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-        <div class="row">
+        <div class="row-fluid">
             <?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
-            <div class="span10">
-
-                <?= $this->element('Milestone/add_edit') ?>
-
-            </div>
+		</div>
+		<div class="row-fluid">
+            <?= $this->element('Milestone/add_edit') ?>
         </div>
     </div>
 </div>

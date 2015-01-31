@@ -19,14 +19,14 @@ $pname = $project['Project']['name'];
 echo $this->Bootstrap->page_header($pname . $smallText);
 
 ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="span9">
-        <div class="row">
+    <div class="span10">
+        <div class="row-fluid">
 
-                <div class="hero-unit span9">
+                <div class="hero-unit span10 offset1">
                   <h1>Nothing to see here</h1>
                   <p>Unfortunately this project was created repository-less and as such, there is no source to view.</p>
 				  <? if ($isAdmin) {?>

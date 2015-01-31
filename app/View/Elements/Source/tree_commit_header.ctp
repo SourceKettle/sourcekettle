@@ -1,4 +1,3 @@
-<div class="span10">
     <div class="row-fluid">
         <div class="span12">
             <div class="well well-small">
@@ -23,4 +22,3 @@
             </div>
         </div>
     </div>
-</div>

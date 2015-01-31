@@ -32,7 +32,7 @@ $public = array('Project' => array(
 ));
 ?>
 
-<div class="row">
+<div class="row-fluid">
 	<div class="span2">
 		<?= $this->element('Sidebar/help') ?>
 	</div>

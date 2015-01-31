@@ -18,7 +18,7 @@ $this->layout = 'error';
 <div class="page-header">
   <h1>Error, Will Robinson, ERROR!</h1>
 </div>
-<div class="row">
+<div class="row-fluid">
     <div class="span12">
         <div class="well error">
             <h2><?=h($name)?></h2>

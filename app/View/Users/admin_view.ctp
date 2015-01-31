@@ -16,7 +16,7 @@
 
 echo $this->Bootstrap->page_header('Administration <small>single out the stragglers</small>'); ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin') ?>
     </div>
@@ -66,18 +66,7 @@ echo $this->Bootstrap->page_header('Administration <small>single out the straggl
             </div>
         </div>
         <div class="row-fluid">
-            <?php
-            // Loop through all the projects that a user has access to
-                foreach ($projects as $project): ?>
-                    <div class="span4">
-                        <div class="well project-well">
-                            <h3 class="project-title"><?= $this->Html->link($project['Project']['name'], array('controller' => 'projects', 'action' => 'admin_view', 'project' => $project['Project']['name']), array('class' => 'project-link')) ?>
-                                <span style="float: right;"><?= $this->Bootstrap->icon((($project['Project']['public']) ? 'globe' : 'lock'), 'black') ?></span></h3>
-                            <p class="project-desc"><?= h($project['Project']['description']) ?></p>
-                            <p class="project-time">Last Modified: <?= $this->Time->timeAgoInWords($project['Project']['modified']) ?></p>
-                        </div>
-                    </div>
-            <? endforeach; ?>
+			<?= $this->Element("Project/projectgrid") ?>
         </div>
     </div>
 </div>

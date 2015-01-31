@@ -13,7 +13,7 @@
  */
 ?>
 <?= $this->DT->pHeader(__("Where was your time spent?")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>

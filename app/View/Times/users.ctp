@@ -16,14 +16,16 @@
 ?>
 
 <?= $this->DT->pHeader(__("Project time summary")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
+    <div class="span10">
+		<div class="row-fluid">
         <?= $this->element('Time/topbar_history') ?>
-        <div class="span10">
-            <div class="row-fluid">
+		</div>
+        <div class="row-fluid">
+        	<div class="span12">
             <?php
                 if (empty($users)) {
                     echo $this->element('Time/breakdown_empty');

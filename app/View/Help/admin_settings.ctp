@@ -16,14 +16,12 @@
 
 echo $this->Bootstrap->page_header('Help: System settings'); ?>
 	
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin_help') ?>
     </div>
     <div class="span10">
         <div class="well">
-            <div class="row">
-			<div class="span10">
 			  At SourceKettle, we try to keep things as simple as possible, so there aren't many settings
 			  to change!
 			  <h3>System-wide configuration</h3>
@@ -69,8 +67,6 @@ echo $this->Bootstrap->page_header('Help: System settings'); ?>
 			    <li><strong>Repository location: </strong>The location on disk where your source repositories are stored</li>
 			    <li><strong>SSH user: </strong>The username for remote SSH access to source repositories</li>
 			  </ul>
-			</div>
-            </div>
         </div>
     </div>
 </div>

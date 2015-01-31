@@ -16,14 +16,12 @@
 
 echo $this->Bootstrap->page_header('HELP!'); ?>
 	
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin_help') ?>
     </div>
     <div class="span10">
         <div class="well">
-            <div class="row">
-			<div class="span10">
 			SourceKettle system administrators have more options available to them
 			in the admin section of the site. As an admin, you are able to:
 
@@ -36,8 +34,6 @@ echo $this->Bootstrap->page_header('HELP!'); ?>
 			  <li>Create new users</li>
 			  <li>Change any user's details, enable/disable accounts and grant/revoke admin status</li>
 			</ul>
-			</div>
-            </div>
         </div>
     </div>
 </div>

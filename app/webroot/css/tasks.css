@@ -70,7 +70,8 @@ form {
 
 .sprintboard-droplist {
   list-style-type: none;
-  margin: 0px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   padding: 0px;
   float: left;
   margin: 0px;

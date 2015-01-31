@@ -358,7 +358,7 @@ class UsersController extends AppController {
 			throw new NotFoundException(__('Invalid user'));
 		}
 
-		//Find the users public projects or public projects they are working on
+		// Find the users public projects or public projects they are working on
 		$this->User->Collaborator->Project->Collaborator->recursive = 0;
 		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
 		$this->set('user', $this->User->read(null, $id));

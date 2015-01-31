@@ -30,14 +30,13 @@ $public_key = $this->Popover->popover(
 );
 
 ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="span9">
-        <div class="row">
-
-            <div class="well span9">
+    <div class="span10">
+        <div class="row-fluid">
+            <div class="well span10 offset1">
                 <h2>Getting started:</h2>
                 <h3><?= $this->Bootstrap->label('1', 'info', array('style'=>'font-size:18px')) ?> Global setup:</h3>
     
@@ -46,8 +45,11 @@ git config --global user.email <?= h($user['email']) ?></pre>
     
                 <p><?= $this->Bootstrap->label('Why?', 'warning') ?> If you don't set up Git properly on your local machine when you commit, not only will Git complain, your team mates will!</p>
             </div>
+		</div>
 
-            <div class="well span9">
+		<div class="row-fluid">
+
+            <div class="well span10 offset1">
                 <h3><?= $this->Bootstrap->label('2', 'info', array('style'=>'font-size:18px')) ?> Get the code flowing:</h3>
                 <p><?= $this->Bootstrap->label('Whoa there!', 'important') ?> Have you <?=$this->Html->link('uploaded',array('controller'=>'sshKeys','action'=>'add'))?> your <?=$public_key?>? Step 2 wont work if you haven't!</p>
                 <h4><?= $this->Bootstrap->label('2a', 'info', array('style'=>'font-size:14px')) ?> Fresh Start?</h4>
@@ -96,8 +98,9 @@ git push -u origin master</pre>
 				<pre>git clone <?= $sourcekettle_config['SourceRepository']['user']['value'] ?>@<?= $_SERVER['SERVER_NAME'] ?>:projects/<?= h($project['Project']['name']) ?>.git</pre>
 				</p>
             </div>
-
-            <div class="well span9">
+		</div>
+		<div class="row-fluid">
+            <div class="well span10 offset1">
                 <h3><?= $this->Bootstrap->label('3', 'info', array('style'=>'font-size:18px')) ?> When you're done:</h3>
                 <?= $this->Bootstrap->button_link('Press this unnecessarily large, green button', array('project' => $project['Project']['name'], 'action' => 'tree'), array("style" => "success", "size" => "large")) ?>
             </div>

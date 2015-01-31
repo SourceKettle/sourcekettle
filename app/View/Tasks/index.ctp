@@ -27,7 +27,8 @@ $this->Html->css('tasks', null, array ('inline' => false));
         <div class="row-fluid">
             <?= $this->element('Task/topbar_filter') ?>
         </div>
-		<div class="row-fluid well col">
+		<div class="row-fluid">
+			<div class="well span12">
             <h2><?=__("Task list")?></h2>
             <hr />
 			<ul class="sprintboard-droplist" data-taskspan="4">
@@ -35,6 +36,7 @@ $this->Html->css('tasks', null, array ('inline' => false));
 			  <?= $this->element('Task/lozenge', array('task' => $task, 'span' => 4)) ?>
 			  <? } ?>
 			</ul>
+			</div>
 		</div>
     </div>
 </div>

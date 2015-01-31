@@ -18,17 +18,18 @@ $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css('milestones.index', null, array ('inline' => false));
 ?>
 <?= $this->DT->pHeader(__("Milestone burn-down chart")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-        <div class="row">
-    <?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
+        <div class="row-fluid">
+    	<?= $this->element('Milestone/topbar', array('name' => $milestone['Milestone']['subject'], 'id' => $milestone['Milestone']['id'])) ?>
+		</div>
 
-            <div class="span10">
-				<?=$this->element('burndown')?>
-            </div>
+        <div class="row-fluid">
+			<?=$this->element('burndown')?>
+        </div>
         </div>
     </div>
 </div>

@@ -18,45 +18,41 @@
 <?=$this->Html->script('/flot/jquery.flot.pie.min', array('inline' => false))?>
 <?=$this->Bootstrap->page_header('Administration <small>system overview</small>')?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin') ?>
     </div>
-    <div class="span9">
-        <div class="row">
-            <div class="well span9">
-			    <div class="row-fluid">
-			        <div class="span6">
-			            <ul id="projectcounts" class="unstyled">
-			                <li class="recent-projects" data-numprojects="<?=h($projectsByActivity['recent'])?>" data-projectstatus="<?=h(__('Recently updated'))?>">
-			                   <?=h($projectsByActivity['recent']).' '.__("recently updated projects")?>
-			                </li>
-			
-			                <li class="active-projects" data-numprojects="<?=h($projectsByActivity['active'])?>" data-projectstatus="<?=h(__('Active'))?>">
-			                   <?=h($projectsByActivity['active']).' '.__("active projects")?>
-			                </li>
-			
-			                <li class="stale-projects" data-numprojects="<?=h($projectsByActivity['stale'])?>" data-projectstatus="<?=h(__('Stale'))?>">
-			                   <?=h($projectsByActivity['stale']).' '.__("stale projects")?>
-			                </li>
-			
-			                <li class="dead-projects" data-numprojects="<?=h($projectsByActivity['dead'])?>" data-projectstatus="<?=h(__('Dead'))?>">
-			                   <?=h($projectsByActivity['dead']).' '.__("dead projects")?>
-			                </li>
-			
-			                <li class="unused-projects" data-numprojects="<?=h($projectsByActivity['unused'])?>" data-projectstatus="<?=h(__('Unused'))?>">
-			                   <?=h($projectsByActivity['unused']).' '.__("unused projects")?>
-			                </li>
-			
-						</ul>
-			            </div>
+    <div class="span10">
+	    <div class="row-fluid">
+	        <div class="well span6">
+	            <ul id="projectcounts" class="unstyled">
+	                <li class="recent-projects" data-numprojects="<?=h($projectsByActivity['recent'])?>" data-projectstatus="<?=h(__('Recently updated'))?>">
+	                   <?=h($projectsByActivity['recent']).' '.__("recently updated projects")?>
+	                </li>
+	
+	                <li class="active-projects" data-numprojects="<?=h($projectsByActivity['active'])?>" data-projectstatus="<?=h(__('Active'))?>">
+	                   <?=h($projectsByActivity['active']).' '.__("active projects")?>
+	                </li>
+	
+	                <li class="stale-projects" data-numprojects="<?=h($projectsByActivity['stale'])?>" data-projectstatus="<?=h(__('Stale'))?>">
+	                   <?=h($projectsByActivity['stale']).' '.__("stale projects")?>
+	                </li>
+	
+	                <li class="dead-projects" data-numprojects="<?=h($projectsByActivity['dead'])?>" data-projectstatus="<?=h(__('Dead'))?>">
+	                   <?=h($projectsByActivity['dead']).' '.__("dead projects")?>
+	                </li>
+	
+	                <li class="unused-projects" data-numprojects="<?=h($projectsByActivity['unused'])?>" data-projectstatus="<?=h(__('Unused'))?>">
+	                   <?=h($projectsByActivity['unused']).' '.__("unused projects")?>
+	                </li>
+	
+				</ul>
+	            </div>
 
-						<div class="span6">
-						<?=h($numUsers).' '.__("users in the system")?>
-						</div>
-			        </div>
+				<div class="well span6">
+				<?=h($numUsers).' '.__("users in the system")?>
 				</div>
-    		</div>
+	        </div>
 		</div>
     </div>
 </div>

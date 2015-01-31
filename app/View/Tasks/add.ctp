@@ -25,13 +25,13 @@ $this->Html->scriptBlock ("
 
 ?>
 <?= $this->DT->pHeader(__("Create a task")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-        <div class="row">
-            <div class="span10">
+        <div class="row-fluid">
+            <div class="span10 offset1">
 
 <?= $this->Form->create('Task', array('class' => 'well form-horizontal')) ?>
 <div class="row-fluid">

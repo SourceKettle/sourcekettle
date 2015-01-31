@@ -19,7 +19,7 @@
 	echo "<div class='span" . $span . "'>";
 } else {
 	?>
-	<div class="span10">
+	<div class="span12">
 	<?
 } ?>
 	<ul class="nav nav-pills">

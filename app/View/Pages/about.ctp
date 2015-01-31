@@ -26,10 +26,12 @@
     </p>
 </div>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span12" style="text-align:center">
         <h2>Many Thanks To</h2>
     </div>
+</div>
+<div class="row-fluid">
     <div class="span4" style="text-align:center">
         <h4>Those Lovely Open-Source Folk</h4>
         <h4><small>who share our passion</small></h4>
@@ -55,6 +57,8 @@
         <p><?=$this->Html->link('@bitbucket', 'https://bitbucket.org/')?></p>
         <p><?=$this->Html->link('@github', 'https://github.com/')?></p>
     </div>
+</div>
+<div class="row-fluid">
     <div class="span12" style="text-align:center">
         <h5><small>and to whoever made us tea, we salute you!</small></h5>
     </div>

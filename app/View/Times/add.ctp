@@ -16,19 +16,21 @@
 ?>
 
 <?= $this->DT->pHeader(__("Log time for the project")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
+    <div class="span10">
+		<div class="row-fluid">
         <?= $this->element('Time/topbar_history') ?>
-        <div class="span10">
-            <?= $this->Form->create('Time', array('project' => $project['Project']['id'], 'class' => 'form-horizontal')) ?>
-            <div class="well times form">
-                <?= $this->element('Time/add', array('span' => 4)) ?>
+		</div>
+		<div class="row-fluid">
+            <div class="well times form span8 offset2">
+            	<?= $this->Form->create('Time', array('project' => $project['Project']['id'], 'class' => 'form-horizontal')) ?>
+                <?= $this->element('Time/add', array('span' => 12)) ?>
                 <?= $this->Bootstrap->button("Submit", array("style" => "primary", 'class' => 'controls')) ?>
+                <?= $this->Form->end() ?>
             </div>
-            <?= $this->Form->end() ?>
-        </div>
+		</div>
     </div>
 </div>

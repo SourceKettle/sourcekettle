@@ -14,15 +14,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+// DEPRECATED remove
 echo $this->Bootstrap->page_header('HELP!'); ?>
 	
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin_help') ?>
     </div>
     <div class="span10">
         <div class="well">
-            <div class="row">
+            <div class="row-fluid">
             </div>
         </div>
     </div>
