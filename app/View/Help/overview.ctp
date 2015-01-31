@@ -51,7 +51,7 @@ $milestone = array(
 
 echo $this->Bootstrap->page_header('Help!<small> the project overview page...</small>'); ?>
 
-<div class="row">
+<div class="row-fluid">
 	<div class="span2">
 		<?= $this->element('Sidebar/help') ?>
 	</div>

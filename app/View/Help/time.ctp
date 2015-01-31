@@ -95,7 +95,7 @@ $nextYear = (int)$start->format('Y') + 1;
 
 echo $this->Bootstrap->page_header('Help! <small>How do I log time?</small>'); ?>
 
-<div class="row">
+<div class="row-fluid">
 	<div class="span2">
 		<?= $this->element('Sidebar/help') ?>
 	</div>

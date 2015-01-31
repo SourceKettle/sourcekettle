@@ -19,11 +19,13 @@ $this->Html->css('pages/help', null, array ('inline' => false));
 
 echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?</small>'); ?>
 
-<div class="row">
+<div class="row-fluid">
 	<div class="span2">
 		<?= $this->element('Sidebar/help') ?>
 	</div>
 	<div class="span10">
+
+		<div class="row-fluid">
 		<div class="well">
           <h3>Project collaborators</h3>
           <p>
@@ -66,7 +68,7 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
 		</div>
 	</div>
 
-	<div class="span10 offset2">
+	<div class="row-fluid">
 		<div class="well">
           <h3>Collaborating teams</h3>
 		  <p>
@@ -80,6 +82,8 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
 		  </p>
 		</div>
 
+	</div>
+	<div class="row-fluid">
 		<div class="well">
 		<p>These tables show the effective permissions of some users on a project based on their roles/teams.</p>
 
@@ -107,6 +111,8 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
 
 		</div>
 
+	</div>
+	<div class="row-fluid">
 		<div class="well">
           <h3>Project groups and team access</h3>
 		  <p>
@@ -122,6 +128,8 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
 		  </p>
 		</div>
 
+	</div>
+	<div class="row-fluid">
 		<div class="well">
           <h3>Good practice for assigning permissions</h3>
 		  <p>
@@ -139,6 +147,6 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?<
 		  </p>
 
 		</div>
-
+	</div>
 	</div>
 </div>

@@ -18,7 +18,7 @@ $this->Html->css('pages/help', null, array ('inline' => false));
 
 echo $this->Bootstrap->page_header('Help! <small>Source code for your project</small>'); ?>
 
-<div class="row">
+<div class="row-fluid">
 	<div class="span2">
 		<?= $this->element('Sidebar/help') ?>
 	</div>
