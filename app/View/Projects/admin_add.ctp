@@ -14,9 +14,10 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+// DEPRECATED remove
 echo $this->Bootstrap->page_header('Administration <small>add another nugget of knowledge</small>'); ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin') ?>
     </div>

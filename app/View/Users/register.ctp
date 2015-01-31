@@ -16,7 +16,7 @@
 
 echo $this->Bootstrap->page_header("Register with ".$sourcekettle_config['UserInterface']['alias']['value']." <small>Hello! Bonjour! Willkommen!..</small>");
 ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span8">
         <?php
         echo $this->Form->create('User', array('class' => 'well form-horizontal'));

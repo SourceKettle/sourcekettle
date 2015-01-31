@@ -17,14 +17,15 @@
 ?>
 
 <?= $this->DT->pHeader(__("Files uploaded to the project")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-        <div class="row">
+        <div class="row-fluid">
             <?= $this->element('Attachment/topbar') ?>
-            <div class="span10">
+		</div>
+        <div class="row-fluid">
 
             <?php if (!empty($attachments)) {
                       echo $this->element('Attachment/full');
@@ -33,7 +34,6 @@
                   }
             ?>
 
-            </div>
         </div>
     </div>
 </div>

@@ -1,6 +1,6 @@
  <?= $this->Bootstrap->page_header('Administration <small>who\'s working together?</small>'); ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin') ?>
     </div>

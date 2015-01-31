@@ -22,21 +22,4 @@ echo $this->Html->css('projects.index', null, array ('inline' => false));
     <?= $this->Element("Project/topbar") ?>
 </div>
 
-<div class="row-fluid">
-    <? if (!empty($projects)){
-		$count = 0;
-		echo "<div class=\"row-fluid\">\n";
-    	foreach ($projects as $project){
-			// TODO spurious extra row but meh, don't think I care
-			if ($count % 3 == 0) {
-				echo "</div>";
-				echo "<div class=\"row-fluid\">\n";
-			}
-			echo $this->Element('Project/block', array('project' => $project));
-			$count++;
-		}
-		echo "</div>\n";
-      } else {
-        echo $this->element('Project/noprojectsalert', array('span' => true));
-      }?>
-</div>
+<?= $this->Element("Project/projectgrid") ?>

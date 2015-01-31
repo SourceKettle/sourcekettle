@@ -17,7 +17,7 @@
 echo $this->Bootstrap->page_header('Ello Ello Ello<small> whats going on ere\' then?</small>');
 
 ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span12">
         <div class="well">
             <h2>Darn!</h2>
