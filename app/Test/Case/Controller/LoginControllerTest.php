@@ -58,6 +58,13 @@ class LoginControllerTest extends AppControllerTest {
 		$this->assertRedirect(array('controller' => 'pages', 'action' => 'home'));
 	}
 
+	public function testIndexInvalidUser() {
+		
+		$postData = array('User' => array('email' => 'moose@example.org', 'password' => 'SomePassword'));
+		$ret = $this->testAction('/login', array('method' => 'post', 'return' => 'view', 'data' => $postData));
+debug($ret);
+		$this->assertRedirect(array('controller' => 'pages', 'action' => 'home'));
+	}
 /**
  * testLogout method
  *
