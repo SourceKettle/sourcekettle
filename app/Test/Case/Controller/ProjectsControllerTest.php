@@ -57,7 +57,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Cannot see the page when not logged in
 		$this->testAction('/projects', array('method' => 'get', 'return' => 'vars'));
-		$this->assertEquals($this->vars['projects'], array());
+		$this->assertNotAuthorized();
 	}
 
 	public function testIndexSystemAdmin() {
@@ -74,26 +74,9 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertRegexp('/<a href=".*\/project\/private\/." class="project-link">private<\/a>/', $this->view);
 
 		// Check the project list looks sane and has only the right entries/access levels
-		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
-
-		// Check each project 
-		foreach ($this->vars['projects'] as $project) {
-
-			// We should be a collaborator
-			if (!isset($project['User']) || $project['User']['id'] != 5) {
-				$this->assertTrue(false, "A project for another collaborator was found");
-			}
-
-			// We should only get these two, and with the correct access levels
-			if ($project['Project']['id'] == 1 && $project['Collaborator']['access_level'] == 2) {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 2 && $project['Collaborator']['access_level'] == 1) {
-				$this->assertTrue(true, "Impossible to fail");
-			} else {
-				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or access level (".$project['Collaborator']['access_level'].") was retrieved");
-			}
-		}
+		$ids = array_map(function($a) {return $a['Project']['id'];}, $this->vars['projects']);
+		sort($ids);
+		$this->assertEqual(array(1, 2), $ids);
 	}
 
 	public function testIndexProjectGuest() {
@@ -106,19 +89,10 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		
 		$this->assertContains('<h1>My Projects', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/private\/." class="project-link">private<\/a>/', $this->view);
-
-		// Check the project list looks sane and has only the right entries/access levels
-		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
-
-		// Crunch to get the project ID, user ID and access level only
-		$ids = array_map(function($a) {return array('p' => $a['Project']['id'], 'u' => $a['User']['id'], 'l' => $a['Collaborator']['access_level']);}, $this->vars['projects']);
-
+		$ids = array_map(function($a) {return $a['Project']['id'];}, $this->vars['projects']);
+		sort($ids);
 		// Should have two projects, guest on both
-		$this->assertEquals(array(
-			array('p' => 1, 'u' => 3, 'l' => 0),
-			array('p' => 12, 'u' => 3, 'l' => 0),
-		), $ids);
+		$this->assertEquals(array(1, 12), $ids);
 
 	}
 

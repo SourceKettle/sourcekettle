@@ -27,6 +27,8 @@ class ProjectsController extends AppProjectController {
 
 	public $uses = array('Project', 'RepoType', 'Team', 'GroupCollaboratingTeam');
 
+	public $components = array("Paginator");
+
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
 		return array(
@@ -63,17 +65,25 @@ class ProjectsController extends AppProjectController {
  */
 	public function index() {
 		$this->set('title', __("My Projects <small>all the projects you care about</small>"));
-		$this->Project->Collaborator->recursive = 0;
-		$projects = $this->Project->Collaborator->find(
-			'all', array(
+		$this->Paginator->settings = array(
 			'conditions' => array('Collaborator.user_id' => $this->Auth->user('id')),
+			'joins' => array(
+			 	array('table' => 'collaborators',
+						'alias' => 'Collaborator',
+						'type' => 'INNER',
+						'conditions' => array(
+							'Collaborator.project_id = Project.id',
+						)
+					),
+			),
+			'limit' => 15,
 			'order' => array('Project.modified DESC')
-			)
 		);
+		$projects = $this->paginate('Project');
 		$this->set('projects', $projects);
 	}
 
-	public function team_projects() {
+	public function team_projects($page = 1) {
 
 		$this->set('title', __("Team Projects <small>we do what we must because we can</small>"));
 
@@ -115,7 +125,7 @@ class ProjectsController extends AppProjectController {
 			);
 		}
 
-		$projects = $this->Project->find('all', array(
+		$this->Paginator->settings = array(
 			'conditions' => $conditions,
 			'joins' => array(
 			 	array('table' => 'collaborating_teams',
@@ -133,17 +143,20 @@ class ProjectsController extends AppProjectController {
 					)
 				),
 			),
+			'limit' => 15,
 			'group' => array('Project.id'),
 			'order' => array('Project.modified DESC'),
-		));
+		);
 
+		$projects = $this->paginate('Project');
 		$this->set('projects', $projects);
 		return $this->render("index");
 	}
 
 	public function public_projects() {
 		$this->set('title', __("Public Projects <small>projects people have shared</small>"));
-		$this->paginate = array(
+
+		$this->Paginator->settings = array(
 			'conditions' => array(
 				'Project.public' => true,
 			),
