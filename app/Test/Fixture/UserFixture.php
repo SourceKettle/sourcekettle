@@ -1,4 +1,5 @@
 <?php
+App::uses('Security', 'Utility');
 
 class UserFixture extends CakeTestFixture {
 
@@ -242,4 +243,10 @@ class UserFixture extends CakeTestFixture {
             'modified' => '2012-06-01 12:50:08'
         ),
     );
+
+	public function init() {
+		$this->records[] = array('id' => 24, 'name' => 'Account with real password', 'email' => 'realperson@example.com', 'password' => Security::hash('RealGoodPassword', 'sha256', true), 'is_admin' => 0, 'is_active' => 1, 'created' => '2012-06-01 12:50:08', 'modified' => '2012-06-01 12:50:08');
+		$this->records[] = array('id' => 25, 'name' => 'Inactive account with real password', 'email' => 'inactiverealperson@example.com', 'password' => Security::hash('RealGoodPassword', 'sha256', true), 'is_admin' => 0, 'is_active' => 0, 'created' => '2012-06-01 12:50:08', 'modified' => '2012-06-01 12:50:08');
+		parent::init();
+	}
 }

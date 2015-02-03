@@ -87,7 +87,6 @@ class AppController extends Controller {
  * Configures the auth component to use the email column as the user name
  */
 	public function beforeFilter() {
-
 		parent::beforeFilter();
 
 		// There are various database models that are simple lists - we will simply load them here
@@ -191,7 +190,7 @@ class AppController extends Controller {
 		$this->Auth->userModel = 'User';
 
 		//Customise the login error
-		$this->Auth->loginError = 'The credentials you entered were incorrect. Please try again, or have you <a href="lost_password">lost your password</a>?';
+		$this->Auth->loginError = __('The credentials you entered were incorrect. Please try again, or have you <a href="%s">lost your password</a>?', Router::url('/lost_password'));
 
 		//Customise thge auth error (when they try to access a protected part of the site)
 		$this->Auth->authError = 'You need to login to view that page';
@@ -225,7 +224,7 @@ class AppController extends Controller {
 		// if admin pages are being requested
 		if (isset($this->params['admin'])) {
 			// check the admin is logged in
-			if ( !isset($userId) || empty($userId) ) return $this->redirect('/login');
+			if ( !isset($userId) || empty($userId) ) return $this->redirect('/');
 			if ( $this->Auth->user('is_admin') == 0 ) return $this->redirect('/');
 		}
 		if (isset($this->params['api'])) {
