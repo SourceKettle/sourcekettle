@@ -16,7 +16,7 @@
  
 echo $this->Bootstrap->page_header($this->request->data['User']['name']) ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/users') ?>
     </div>
@@ -25,12 +25,12 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']) ?>
         echo $this->Form->create('User', array('class' => 'well form-horizontal', 'type' => 'post'));
         echo '<h3>Edit your details</h3>';
         echo $this->Bootstrap->input("name", array(
-            "input" => $this->Form->text("name"),
+            "input" => $this->Form->text("name", array("class" => "span12")),
         ));
 
         if ($current_user['is_internal']) {
             echo $this->Bootstrap->input("email", array(
-                "input" => $this->Form->text("email"),
+                "input" => $this->Form->text("email", array("class" => "span12")),
             ));
         }
         echo $this->Bootstrap->button("Update", array("style" => "primary", "size" => "large", 'class' => 'controls'));

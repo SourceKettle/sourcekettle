@@ -31,7 +31,7 @@
                     'project' => $this->params['project'],
                 ),
             ),
-            __('Charts') => array(
+            __('Schedule') => array(
                 'icon' => 'signal',
                 'url' => array(
                     'action' => array('schedule'),
@@ -59,11 +59,12 @@
                 'icon' => 'heart',
 		        'url' => array(
 		            'action' => array('*'),
-					'?' => 'assignees='.urlencode($current_user['id']).'&statuses=open,in+progress',
 		            'controller' => 'tasks',
-		            'project' => $this->params['project'],
+				'project' => $this->params['project'],
+				'?' => 'assignees='.urlencode($current_user['id']).'&statuses=open,in+progress',
 		        ),
 		    ),
+
             __('Milestones') => array(
                 'icon' => 'road',
                 'url' => array(

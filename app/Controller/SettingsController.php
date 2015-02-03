@@ -38,7 +38,10 @@ class SettingsController extends AppController {
 
 		$code = 200;
 		$message = __("Settings updated.");
-		if (!$this->Setting->saveSettingsTree($this->request->data, $locked)) {
+
+		// saveSettingsTree does its own sanity checking
+		$data = array('Setting' => @$this->request->data['Setting']);
+		if (!$this->Setting->saveSettingsTree($data, $locked)) {
 			$code = 500;
 			$message = __("Failed to change settings");
 		}

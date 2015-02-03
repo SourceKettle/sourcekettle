@@ -39,7 +39,7 @@ $hover_waffle = $this->Popover->popover(
 
 echo $this->Bootstrap->page_header(__("Clone Project <small>Stand on the shoulders of giants</small>")); ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span6">
         <?php echo $this->Form->create('Project', array('class' => 'well form-horizontal')); ?>
 		<?=__("Cloning from project: <strong>%s</strong>", $this->data['Project']['cloneFrom'])?>
@@ -80,7 +80,7 @@ echo $this->Bootstrap->page_header(__("Clone Project <small>Stand on the shoulde
     </div>
 </div>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span12" style="text-align:center">
         <?php echo $this->Bootstrap->button("Create Project", array("style" => "primary", "size" => "large", 'class' => 'controls')); ?>
     </div>

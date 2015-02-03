@@ -41,11 +41,11 @@ class ProjectsController extends AppProjectController {
 			'add_repo'   => 'admin',
 			'delete' => 'write',
 			'schedule' => 'read',
-			'planner' => 'read',
 			'markupPreview'  => 'read',
 			'changeSetting' => 'admin',
 			'api_history' => 'read',
 			'api_list_collaborators' => 'read',
+			'api_list_milestones' => 'read',
 			'api_autocomplete' => 'login',
 		);
 	}
@@ -62,6 +62,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function index() {
+		$this->set('title', __("My Projects <small>all the projects you care about</small>"));
 		$this->Project->Collaborator->recursive = 0;
 		$projects = $this->Project->Collaborator->find(
 			'all', array(
@@ -73,6 +74,8 @@ class ProjectsController extends AppProjectController {
 	}
 
 	public function team_projects() {
+
+		$this->set('title', __("Team Projects <small>we do what we must because we can</small>"));
 
 		// Teams the user is a member of
 		$teams = $this->Team->TeamsUser->find('list', array(
@@ -86,7 +89,7 @@ class ProjectsController extends AppProjectController {
 		// Nothing to do if they're not in any teams...
 		if (empty($teams)) {
 			$this->set('projects', array());
-			return;
+			return $this->render("index");
 		}
 
 		// Project groups the user's teams have access to
@@ -135,9 +138,11 @@ class ProjectsController extends AppProjectController {
 		));
 
 		$this->set('projects', $projects);
+		return $this->render("index");
 	}
 
 	public function public_projects() {
+		$this->set('title', __("Public Projects <small>projects people have shared</small>"));
 		$this->paginate = array(
 			'conditions' => array(
 				'Project.public' => true,
@@ -148,6 +153,7 @@ class ProjectsController extends AppProjectController {
 		$projects = $this->paginate('Project');
 
 		$this->set('projects', $projects);
+		return $this->render("index");
 	}
 
 /**
@@ -156,7 +162,8 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_index() {
-		if ($this->request->is('post') && isset($this->request->data['Project']['name']) && $project = $this->request->data['Project']['name']) {
+		$data = $this->_cleanPost(array("Project.name"));
+		if ($this->request->is('post') && isset($data['Project']['name']) && $project = $data['Project']['name']) {
 			if ($project = $this->Project->findByName($project)) {
 				return $this->redirect(array(
 					'controller' => 'projects',
@@ -256,8 +263,9 @@ class ProjectsController extends AppProjectController {
 			$this->Project->create();
 
 			// Lets vet the data coming in
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
 			$requestData = array(
-				'Project' => $this->request->data['Project'],
+				'Project' => $data['Project'],
 				'Collaborator' => array(
 					array(
 						'user_id' => $current_user['id'],
@@ -307,7 +315,8 @@ class ProjectsController extends AppProjectController {
 		$current_user = $this->Auth->user();
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$saved = $this->Project->save($this->request->data);
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
+			$saved = $this->Project->save($data);
 			if ($this->Flash->u($saved)) {
 				$this->log("[ProjectController.edit] user[" . $current_user['id'] . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
 				return $this->redirect(array('project' => $this->Project->field('name'), 'action' => '*'));
@@ -331,8 +340,9 @@ class ProjectsController extends AppProjectController {
 			$this->Project->create();
 
 			// Lets vet the data coming in
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
 			$requestData = array(
-				'Project' => $this->request->data['Project'],
+				'Project' => $data['Project'],
 				'Collaborator' => array(
 					array(
 						'user_id' => $this->Auth->user('id'),
@@ -383,7 +393,8 @@ class ProjectsController extends AppProjectController {
 		$current_user = $this->Auth->user();
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$saved = $this->Project->rename($this->Project->id, $this->request->data['Project']['name']);
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
+			$saved = $this->Project->rename($this->Project->id, $data['Project']['name']);
 			if ($this->Flash->u($saved)) {
 				$this->log("[ProjectController.rename] user[" . $current_user['id'] . "] renamed project[" . $this->Project->id . "]", 'sourcekettle');
 				return $this->redirect(array('project' => $this->Project->id, 'action' => 'view', 'admin' => false));
@@ -411,8 +422,9 @@ class ProjectsController extends AppProjectController {
 
 
 		if ($this->request->is('post') || $this->request->is('put')) {
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
 			// TODO transactions for great justice, this is just lazy
-			$saved = $this->Project->save($this->request->data);
+			$saved = $this->Project->save($data);
 			if ($this->Flash->u($saved)) {
 				$this->Project->Source->create();
 				$this->log("[ProjectController.add_repo] user[" . $current_user['id'] . "] added a repository to project[" . $this->Project->id . "]", 'sourcekettle');
@@ -445,16 +457,6 @@ class ProjectsController extends AppProjectController {
 		$this->render('/Elements/Project/delete');
 	}
 
-	public function markupPreview() {
-		$this->layout = 'ajax';
-		$content = '';
-		if (isset($this->request->query['data'])) {
-			$content = $this->request->query['data'];
-		}
-		$this->set(compact('content'));
-		$this->render('/Elements/Markitup/preview');
-	}
-
 	public function schedule($project = null) {
 
 		$project = $this->_getProject($project);
@@ -472,44 +474,6 @@ class ProjectsController extends AppProjectController {
 		$this->set(compact('project', 'milestones'));
 	}
 
-	public function planner($project = null) {
-
-		$project = $this->_getProject($project);
-
-		$users = $this->Project->Collaborator->find('all', array(
-			'conditions' => array('Collaborator.project_id' => $project['Project']['id']),
-			'fields' => array('User.name', 'User.email', 'User.id'),
-			'order' => array('User.name'),
-		));
-
-		$schedule = array();
-
-		foreach ($users as $user) {
-			$milestones = array_map(function($a){return $a['Milestone'];}, $this->Project->Task->find('all', array(
-				'conditions' => array(
-					'Task.project_id' => $project['Project']['id'],
-					'Task.assignee_id' => $user['User']['id'],
-					'Task.milestone_id >' => 0,
-				),
-				'fields' => array('Milestone.id', 'Milestone.subject', 'Milestone.starts', 'Milestone.due'),
-				'order' => array('Milestone.starts'),
-			)));
-
-			$schedule[$user['User']['name']] = array();
-			
-			$seen = array();
-			foreach ($milestones as $milestone) {
-				if (in_array($milestone['id'], $seen)) {
-					continue;
-				}
-				$seen[] = $milestone['id'];
-				$schedule[$user['User']['name']][] = $milestone;
-			}
-		}
-
-		$this->set(compact('project', 'schedule'));
-	}
-
 	public function changeSetting($project) {
 		if (!$this->request->is('post')) {
 			return $this->redirect(array('project' => $project, 'action' => 'edit'));
@@ -517,7 +481,9 @@ class ProjectsController extends AppProjectController {
 
 		$code = 200;
 		$message = __("Settings updated.");
-		if (!$this->Project->ProjectSetting->saveSettingsTree($project, $this->request->data)) {
+		// Note that we don't do much cleaning here, saveSettingsTree already checks for known settings
+		$data = array('ProjectSetting' => @$this->request->data['ProjectSetting']);
+		if (!$this->Project->ProjectSetting->saveSettingsTree($project, $data)) {
 			$code = 500;
 			$message = __("Failed to change settings");
 		}
@@ -632,6 +598,24 @@ class ProjectsController extends AppProjectController {
 
 		$project = $this->_getProject($project);
 		$this->set('data', $this->Project->listCollaborators($project['Project']['id']));
+		$this->render('/Elements/json');
+	}
+
+	public function api_list_milestones($project = null) {
+			
+		if (!isset($project)  || !$project) {
+			$this->response->statusCode(400);
+			$data['error'] = 400;
+			$data['message'] = 'Bad request, no project specified.';
+
+			$this->layout = 'ajax';
+			$this->set('data',$data);
+			$this->render('/Elements/json');
+			return;
+		}
+
+		$project = $this->_getProject($project);
+		$this->set('data', $this->Project->listMilestones($project['Project']['id']));
 		$this->render('/Elements/json');
 	}
 }

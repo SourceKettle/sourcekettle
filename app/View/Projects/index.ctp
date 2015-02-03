@@ -14,18 +14,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header("My Projects <small>all the projects you care about</small>"); 
+echo $this->Bootstrap->page_header($title);
 echo $this->Html->css('projects.index', null, array ('inline' => false));
 ?>
 
-<div class="row">
+<div class="row-fluid">
     <?= $this->Element("Project/topbar") ?>
-
-    <? if (!empty($projects)){
-    	foreach ($projects as $project){
-			echo $this->Element('Project/block', array('project' => $project));
-		}
-      } else {
-        echo $this->element('Project/noprojectsalert', array('span' => true));
-      }?>
 </div>
+
+<?= $this->Element("Project/projectgrid") ?>

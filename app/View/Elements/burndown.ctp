@@ -6,7 +6,7 @@ $this->Html->script ("burndown", array ('inline' => false));
 ?>
 
 <div class="row-fluid burndown-outer">
-<div class="span11"><div class="burndown-chart">
+<div class="span9"><div class="burndown-chart">
 	<!-- Note that this table will be replaced with a graph, if JavaScript is working properly! -->
 	<table>
 		<thead>
@@ -49,7 +49,7 @@ $this->Html->script ("burndown", array ('inline' => false));
 	</ul>
 </div>
 </div>
-<div class="span1">
+<div class="span3">
 <div class="burndown-controls">
 	<input type="radio" name="series" value="points" checked="checked" id="points"></input>
 	<label for="points"><?=__('Show story points')?></label>

@@ -59,8 +59,8 @@ form {
 
 /* CSS for task lists e.g. milestone drag-and-drop board */
 .sprintboard-column {
-	min-height: 300px;
-  margin: 0px;
+	min-height: 300px !important;
+	margin: 0px;
 }
 
 .sprintboard-column.over {
@@ -70,13 +70,16 @@ form {
 
 .sprintboard-droplist {
   list-style-type: none;
-  margin: 0px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   padding: 0px;
   float: left;
   margin: 0px;
   width: 100%;
   min-height: 20px;
+  max-height: 400px;
   overflow-x: hidden;
+  overflow-y: auto;
   border-radius: 5px 5px 5px 5px;
 }
 
@@ -115,6 +118,17 @@ form {
 	}
 }
 
+.highlight-droptarget {
+	outline: none;
+	border-color: #9ecaed;
+	box-shadow: 0 0 10px #9ecaed;
+}
+
+.highlight-droptarget.sprintboard-icebox{
+	outline: none;
+	border-color: #cc3333;
+	box-shadow: 0 0 10px #cc3333;
+}
 
 
 
@@ -315,4 +329,66 @@ form {
 
 .task-dropdown-assignee .caret {
 	margin-right: 2px;
+}
+
+.task-view-priority {
+	border-right: 1px solid black;
+	padding: 10px;
+	height: 100%;
+}
+
+.task-view-assignee {
+	border-left: 1px solid black;
+	padding: 10px;
+	height: 100%;
+}
+
+.task-view-points {
+	border-right: 1px solid black;
+	padding: 10px;
+	height: 100%;
+}
+.task-view-time-logged {
+	border-left: 1px solid black;
+	padding: 10px;
+	height: 100%;
+}
+
+.task-view-top {
+	border-bottom: 1px solid black;
+}
+
+.task-view-middle {
+}
+
+.task-view-bottom {
+	border-top: 1px solid black;
+}
+
+.task-view-subject {
+	text-align: center;
+}
+
+.task-view-description {
+	min-height: 150px !important;
+	text-align: center;
+}
+.task-view-selectors {
+	text-align: center;
+}
+
+.task-card {
+	padding: 0px;
+}
+
+.task-history h3{
+	text-align: center;
+}
+
+.task-description-input {
+	width: 100%;
+}
+
+.nav-pills {
+	margin: 0px;
 }

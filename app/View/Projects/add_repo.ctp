@@ -17,7 +17,7 @@ $smallText = " <small>Add a repository</small>";
 
 echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText); ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>

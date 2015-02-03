@@ -16,7 +16,7 @@
 $smallText = " <small>Edit Project</small>";
 echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
@@ -48,49 +48,46 @@ echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
                 <div class="well">
                     <h3><?=__("Features")?></h3>
 					<p><?=__("Please note that some features may be locked system-wide, meaning you will not be able to enable/disable them.")?></p>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th width="70%"><?= __('Description') ?></th>
-                <th><?= __('Options') ?></th>
-            </tr>
-        </thead>
-        <tbody>
-
-            <tr>
-                <td>
+            <dl>
+                <dt>
                     <h4><?= __('Time tracking') ?> <small>- <?= __('allow logging of time to projects and tasks') ?></small></h4>
-                </td>
-                <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'time-enabled', 'name' => 'ProjectSetting.Features.time_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'timeSection', 'value' => $sourcekettle_config['Features']['time_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['time_enabled']['locked'])) ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <h4><?= __('Task management') ?> <small>- <?= __('allow users to add tasks and milestones to track progress') ?></small></h4>
-                </td>
-                <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'task-enabled', 'name' => 'ProjectSetting.Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                </dt>
+                <dd>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'time-enabled', 'name' => 'ProjectSetting.Features.time_enabled', 'url' => $this->Html->url(array('condloller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'timeSection', 'value' => $sourcekettle_config['Features']['time_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['time_enabled']['locked'])) ?>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    <h4><?= __('Task management') ?> <small>- <?= __('allow users to add tasks and milestones to dlack progress') ?></small></h4>
+                </dt>
+                <dd>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'task-enabled', 'name' => 'ProjectSetting.Features.task_enabled', 'url' => $this->Html->url(array('condloller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    <h4><?= __('4-column Kanban chart') ?> <small>- <?= __('Do you want to use a 4-column kanban chart (resolved and closed states seperate), or the simplified 3-column chart (open/in progress/completed)?') ?></small></h4>
+                </dt>
+                <dd>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => '4col-kanban-enabled', 'name' => 'ProjectSetting.Features.4col_kanban_enabled', 'url' => $this->Html->url(array('condloller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'value' => $sourcekettle_config['Features']['4col_kanban_enabled']['value'], 'readOnly' => false)) ?>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
                     <h4><?= __('Source code management') ?> <small>- <?= __('allow creation of a source code repository for a project') ?></small></h4>
-                </td>
-                <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'source-enabled', 'name' => 'ProjectSetting.Features.source_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['source_enabled']['locked'])) ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                </dt>
+                <dd>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'source-enabled', 'name' => 'ProjectSetting.Features.source_enabled', 'url' => $this->Html->url(array('condloller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['source_enabled']['locked'])) ?>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
                     <h4><?= __('File uploads') ?> <small>- <?= __('allow users to upload files to projects') ?></small></h4>
-                </td>
-                <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'attachment-enabled', 'name' => 'ProjectSetting.Features.attachment_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['attachment_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['attachment_enabled']['locked'])) ?>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                </dt>
+                <dd>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'attachment-enabled', 'name' => 'ProjectSetting.Features.attachment_enabled', 'url' => $this->Html->url(array('condloller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['attachment_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['attachment_enabled']['locked'])) ?>
+                </dd>
+            </dl>
 
                 </div>
 

@@ -29,9 +29,9 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->Html->meta('favicon.ico', $this->Html->url('/favicon.ico'), array('type' => 'icon')) ?>
     <?= $this->Html->charset('UTF-8') . "\n" ?>
-    <?= $this->Html->css('/bootstrap/bootstrap.min') ?>
+    <?= $this->Html->css('/bootstrap/css/bootstrap.min') ?>
     <?= $this->Html->css('layout'); ?>
-    <?= $this->Html->css('/bootstrap/bootstrap-responsive.min') ?>
+    <?= $this->Html->css('/bootstrap/css/bootstrap-responsive.min') ?>
     <?= $this->fetch ('css') ?>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -43,7 +43,7 @@ try {
     <header>
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
-                <div class="container">
+                <div class="container-fluid">
                     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -107,6 +107,6 @@ try {
 
     <!-- JavaScript! Placed at the end of the file for faster page loading -->
     <?= $this->Html->script('/jquery/jquery-1.11.0.min.js'); ?>
-    <?= $this->Html->script('/bootstrap/bootstrap.min') ?>
+    <?= $this->Html->script('/bootstrap/js/bootstrap.min') ?>
 </body>
 </html>

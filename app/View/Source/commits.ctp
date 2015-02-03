@@ -27,17 +27,18 @@ foreach (explode('/',$path) as $crumb) {
 }
 ?>
 <?= $this->DT->pHeader(__("Source code")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
+    <div class="span10">
+		<div class="row-fluid">
         <?= $this->element('Source/topbar') ?>
-        <div class="span10">
+		</div>
+        <div class="row-fluid">
             <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
         </div>
-        <div class="span10">
-            <div class="row-fluid">
+        <div class="row-fluid">
                 <?php
                     $date = null;
                     foreach ($commits as $commit) {
@@ -53,7 +54,6 @@ foreach (explode('/',$path) as $crumb) {
                         echo $this->element('Source/commits_row', array('commit' => $commit));
                     }
                 ?>
-            </div>
             <ul class="pager">
                 <? if ($page > 1) : ?>
                 <li class="previous">

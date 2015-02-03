@@ -16,26 +16,6 @@ hr {
     margin-top: 0px;
     margin-bottom: 5px;
 }
-
-.sprintboard-column {
-	min-height: 300px !important; /* A bit of a hack :-( */
-}
-.sprintboard-icebox {
-	margin-top: 10px;
-}
-
-.highlight-droptarget {
-	outline: none;
-	border-color: #9ecaed;
-	box-shadow: 0 0 10px #9ecaed;
-}
-
-.highlight-droptarget.sprintboard-icebox{
-	outline: none;
-	border-color: #cc3333;
-	box-shadow: 0 0 10px #cc3333;
-}
-
 .burndown-chart {
 	min-height: 500px;
 }

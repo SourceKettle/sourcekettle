@@ -258,6 +258,52 @@ class Task extends AppModel {
 		}
 		return true;
 	}
+
+	// Given a list of tasks' public IDs, convert to private IDs, remove duplicates
+	// and remove the current task's ID if present.
+	// TODO a horrible, horrible fudge that should not exist.
+	private function __sanitiseDependencies($taskId, $projectId, $depList) {
+		
+		// We'll normally have a list of public IDs, but if we get a list of objects,
+		// crunch them down
+		$depList = array_map(function($a) {
+			if (is_numeric($a)) {
+				return $a;
+			} elseif (is_array($a) && isset($a['public_id'])) {
+				return $a['public_id'];
+			} elseif (is_array($a) && isset($a['id'])) {
+				return $a['id'];
+			}
+			return null;
+		}, $depList);
+
+		// Now get unique values only...
+		$depList = array_unique(array_values($depList));
+
+		// Find query doesn't work with an array of length 1 for some reason
+		if (count($depList) == 1) {
+			$depList = $depList[0];
+		}
+
+		// Convert public IDs to real IDs
+		$depList = array_keys($this->find('list', array(
+			'conditions' => array(
+				'Task.project_id' => $projectId,
+				'Task.public_id' => $depList
+			),
+		)));
+
+		// Make sure the task doesn't depend on itself!
+		foreach ($depList as $key => $id) {
+			if (isset($taskId) && $id == $taskId) {
+				unset ($depList[$key]);
+			}
+		}
+
+		return $depList;
+	}
+
+
 /**
  * beforeSave function
  *
@@ -268,45 +314,42 @@ class Task extends AppModel {
  	private $__burndownLog = array('milestone' => array(), 'project' => array());
 
 	public function beforeSave($options = array()) {
-
-		// Update dependency list
-		if (isset($this->data['DependsOn']['DependsOn']) && is_array($this->data['DependsOn']['DependsOn'])) {
-
-			foreach ($this->data['DependsOn']['DependsOn'] as $key => $dependsOn) {
-				if (isset($this->id) && $dependsOn == $this->id) {
-					unset ($this->data['DependsOn']['DependsOn'][$key]);
-				}
-			}
-			$this->data['DependsOn']['DependsOn'] = array_unique(array_values($this->data['DependsOn']['DependsOn']));
-		}
-
 		// Find the existing task if there is one
 		$task = $this->find('first', array(
 			'conditions' => array('Task.id' => $this->id),
 			'fields' => array('Task.project_id', 'Task.milestone_id'),
-			'recursive' => -1,
+			//'recursive' => -1,
 		));
 
 		// Creating the task...
 		// TODO I have a horrible feeling that this is a terrible idea - what happens with saveMany()?
 		if (empty($task)) {
-			$task_id = 0;
-			$project_id = $this->data['Task']['project_id'];
-			$milestone_id = @$this->data['Task']['milestone_id'];
+			$taskId = 0;
+			$projectId = $this->data['Task']['project_id'];
+			$milestoneId = @$this->data['Task']['milestone_id'];
 		
 		// Updating the task...
 		} else {
-			$task_id = $this->id;
-			$project_id = $task['Task']['project_id'];
-			$milestone_id = @$task['Task']['milestone_id'];
+			$taskId = $this->id;
+			$projectId = $task['Task']['project_id'];
+			$milestoneId = @$task['Task']['milestone_id'];
 		}
 
 		// Remember the milestone and project ID for our burndown logging
 		// NB this is because the milestone ID may have changed by the time we log it!
-		$this->__burndownLog[$task_id] = array(
-			'milestone_id' => $milestone_id, 
-			'project_id' => $project_id, 
+		$this->__burndownLog[$taskId] = array(
+			'milestone_id' => $milestoneId, 
+			'project_id' => $projectId, 
 		);
+
+		// Update dependency list
+		if (isset($this->data['DependsOn']) && is_array($this->data['DependsOn'])) {
+			$this->data['DependsOn'] = $this->__sanitiseDependencies($taskId, $projectId, $this->data['DependsOn']);
+		}
+		if (isset($this->data['DependedOnBy']) && is_array($this->data['DependedOnBy'])) {
+			$this->data['DependedOnBy'] = $this->__sanitiseDependencies($taskId, $projectId, $this->data['DependedOnBy']);
+		}
+
 		return true;
 	}
 
@@ -467,7 +510,17 @@ class Task extends AppModel {
 		);
 	}
 
-	public function listTasksOfStatusFor($status = 'open', $relatedClass = 'Milestone', $id = null) {
+	public function listTasksOfStatusFor($status = 'open', $relatedClass = 'Milestone', $id = null, $maxAgeDays = null) {
+
+		$conditions = array(
+			'TaskStatus.name =' => $status,
+			$relatedClass.'.id =' => $id
+		);
+
+		if ($maxAgeDays != null) {
+			$minDate = new DateTime("$maxAgeDays days ago");
+			$conditions['Task.modified >'] = $minDate->format('Y-m-d');
+		}
 
 		return $this->find(
 			'all',
@@ -483,10 +536,7 @@ class Task extends AppModel {
 					'Assignee.name',
 					'Project.name',
 				),
-				'conditions' => array(
-					'TaskStatus.name =' => $status,
-					$relatedClass.'.id =' => $id
-				),
+				'conditions' => $conditions,
 				'order' => 'TaskPriority.level DESC',
 				'recursive' => 0,
 			)

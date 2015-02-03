@@ -74,16 +74,19 @@ class UsersController extends AppController {
 			return;
 		}
 
+		$data = $this->_cleanPost(array("User.name", "User.email", "User.password", "User.password_confirm", "User.ssh_key"));
+		$data['User']['is_admin'] = false;
+
 		// At this point, we've got a form submission, so process it...
 		// Check passwords match
-		if ($this->data['User']['password'] != $this->data['User']['password_confirm']) {
+		if ($data['User']['password'] != $data['User']['password_confirm']) {
 			$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>The passwords do not match. Please try again."), 'default', array(), 'error');
 			$this->render('register');
 			return;
 		}
 
 		// Check for a particularly silly password...
-		if (strtolower($this->data['User']['password']) == 'password') {
+		if (strtolower($data['User']['password']) == 'password') {
 			$this->Session->setFlash(__("<h4 class='alert-heading'>Oh Dear...</h4>I see what you did there. 'password' is not a good password. Be more original!"), 'default', array(), 'error');
 			$this->render('register');
 			return;
@@ -91,7 +94,7 @@ class UsersController extends AppController {
 
 		// Attempt to save the new user account
 		$this->User->create();
-		if (!$this->User->save($this->request->data['User'])) {
+		if (!$this->User->save($data)) {
 			$this->Session->setFlash(__("<h4 class='alert-heading'>Error</h4>One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
 			$this->render('register');
 			return;
@@ -101,13 +104,13 @@ class UsersController extends AppController {
 		$this->log("[UsersController.register] user[${id}] created", 'sourcekettle');
 
 		// Check to see if an SSH key was added and save it
-		if (!empty($this->data['User']['ssh_key'])) {
+		if (!empty($data['User']['ssh_key'])) {
 			$this->User->SshKey->create();
-			$data = array('SshKey');
-			$data['SshKey']['user_id'] = $id;
-			$data['SshKey']['key'] = $this->request->data['User']['ssh_key'];
-			$data['SshKey']['comment'] = 'Default key';
-			$this->User->SshKey->save($data);
+			$sshdata = array('SshKey');
+			$sshdata['SshKey']['user_id'] = $id;
+			$sshdata['SshKey']['key'] = $data['User']['ssh_key'];
+			$sshdata['SshKey']['comment'] = 'Default key';
+			$this->User->SshKey->save($sshdata);
 
 			// Update the sync required flag
 			$this->Setting->syncRequired();
@@ -239,15 +242,16 @@ class UsersController extends AppController {
 			return;
 		}
 
+		$data = $this->_cleanPost(array("User.password", "User.password_confirm"));
 		// Passwords don't match, re-render password form
-		if (@$this->request->data['User']['password'] != @$this->request->data['User']['password_confirm']) {
+		if (@$data['User']['password'] != @$data['User']['password_confirm']) {
 			$this->Session->setFlash("Your passwords do not match. Please try again.", 'default', array(), 'error');
 			$this->render('reset_password');
 			return;
 		}
 
 		// Check for a particularly silly password...
-		if (strtolower($this->data['User']['password']) == 'password') {
+		if (strtolower($data['User']['password']) == 'password') {
 			$this->Session->setFlash(__("<h4 class='alert-heading'>Oh Dear...</h4>I see what you did there. 'password' is not a good password. Be more original!"), 'default', array(), 'error');
 			$this->render('reset_password');
 			return;
@@ -260,7 +264,7 @@ class UsersController extends AppController {
 		$this->User->id = $passwordkey['User']['id'];
 
 		// Save failed...
-		if (!$this->User->save($this->request->data)) {
+		if (!$this->User->save($data)) {
 			$this->Session->setFlash(__("There was a problem resetting your password. Please try again."), 'default', array(), 'error');
 			$this->render("reset_password");
 			return;
@@ -358,7 +362,7 @@ class UsersController extends AppController {
 			throw new NotFoundException(__('Invalid user'));
 		}
 
-		//Find the users public projects or public projects they are working on
+		// Find the users public projects or public projects they are working on
 		$this->User->Collaborator->Project->Collaborator->recursive = 0;
 		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
 		$this->set('user', $this->User->read(null, $id));
@@ -389,10 +393,11 @@ class UsersController extends AppController {
 	public function admin_add() {
 		if ($this->request->is('post')) { // if data was posted therefore a submitted form
 			$this->User->create();
-			// Fudge in a random password to stop it looking like an external account
-			$this->request->data['User']['password'] = $this->__generateKey(25);
 
-			if ($this->User->save($this->request->data['User'])) {
+			$data = $this->_cleanPost(array("User.name", "User.email", "User.is_admin", "User.is_active"));
+			// Fudge in a random password to stop it looking like an external account
+			$data['User']['password'] = $this->__generateKey(25);
+			if ($this->User->save($data)) {
 				$id = $this->User->getLastInsertID();
 				$this->log("[UsersController.admin_add] user[${id}] created by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
 
@@ -426,7 +431,10 @@ class UsersController extends AppController {
 		}
 
 		if ($this->request->is('post')) {
-			if ($this->Flash->u($this->User->save($this->request->data))) {
+			// Admins may change admin/active status
+			$data = $this->_cleanPost(array("User.name", "User.email", "User.is_admin", "User.is_active"));
+			$data['User']['id'] = $id;
+			if ($this->Flash->u($this->User->save($data))) {
 				$this->log("[UsersController.admin_edit] user[" . $this->Auth->user('id') . "] edited details of user[" . $this->User->id . "]", 'sourcekettle');
 				return $this->redirect(array('action' => 'index'));
 			}
@@ -441,7 +449,8 @@ class UsersController extends AppController {
 		$this->User->id = $this->Auth->user('id'); //get the current user
 
 		if ($this->request->is('post')) {
-			if ($this->User->save($this->request->data)) {
+			$data = $this->_cleanPost(array("User.name", "User.email"));
+			if ($this->User->save($data)) {
 				$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
 				$this->log("[UsersController.details] user[" . $this->User->id . "] edited details", 'sourcekettle');
 
@@ -472,10 +481,11 @@ class UsersController extends AppController {
 		$user = $this->User->read(null, $this->User->id);
 		$user = $user['User'];
 		if ($this->request->is('post')) {
+			$data = $this->_cleanPost(array("User.password_current", "User.password", "User.password_confirm"));
 			if ($user['password'] == $this->Auth->password($this->request->data['User']['password_current'])) { //check their current password
-				if ($this->request->data['User']['password'] == $this->request->data['User']['password_confirm']) { //check passwords match
+				if ($data['User']['password'] == $data['User']['password_confirm']) { //check passwords match
 
-					if ($this->User->save($this->request->data)) {
+					if ($this->User->save($data)) {
 						$this->Session->setFlash(__('Your changes have been saved.'), 'default', array(), 'success');
 						$this->log("[UsersController.security] user[" . $this->Auth->user('id') . "] changed password", 'sourcekettle');
 					} else {
@@ -509,10 +519,11 @@ class UsersController extends AppController {
 		$currentTheme = $model->findByNameAndUserId("UserInterface.theme", $this->Auth->user('id'));
 		if ($this->request->is('post')) {
 
+			$data = $this->_cleanPost(array("Setting.UserInterface.theme"));
 			$save = array('UserSetting' => array(
 				'user_id' => $this->Auth->user('id'),
 				'name' => 'UserInterface.theme',
-				'value' => (string)$this->request->data['Setting']['UserInterface']['theme']
+				'value' => (string)$data['Setting']['UserInterface']['theme']
 			));
 
 			if (!empty($currentTheme)) {

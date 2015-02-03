@@ -233,9 +233,7 @@ class TaskTest extends CakeTestCase {
 				'subject' => 'Do a thing that depends on other things',
 			),
 			'DependsOn' => array(
-				'DependsOn' => array(
-					2, 3, 4
-				),
+				2, 3, 4
 			),
 		));
 
@@ -260,9 +258,36 @@ class TaskTest extends CakeTestCase {
 				'subject' => 'Do a thing that depends on other things',
 			),
 			'DependsOn' => array(
-				'DependsOn' => array(
-					2, 3, 4
-				),
+				2, 3, 4
+			),
+		));
+		
+	}
+
+	public function testUpdateWithDependencies() {
+		$saved = $this->Task->save(array(
+			'Task' => array(
+				'id' => 13,
+				'subject' => 'updated subject and dependencies',
+			),
+			'DependsOn' => array(
+				14, 15
+			),
+		));
+
+		// Check the modify date is sane
+		$this->assertNotNull($saved['Task']['modified'], "Modify date was null");
+		unset($saved['Task']['modified']);
+
+		debug($this->Task->findById(13));
+
+		$this->assertEqual($saved, array(
+			'Task' => array(
+				'id' => 13,
+				'subject' => 'updated subject and dependencies',
+			),
+			'DependsOn' => array(
+				16, 17 # NOTE the real IDs instead of public IDs because the model backend is still shit
 			),
 		));
 		
@@ -282,9 +307,7 @@ class TaskTest extends CakeTestCase {
 				'subject' => 'Do a thing that depends on other things',
 			),
 			'DependsOn' => array(
-				'DependsOn' => array(
-					1, 2, 3, 4
-				),
+				1, 2, 3, 4 # The model save function accepts PUBLIC IDs, but returns private ones, because what could POSSIBLY GO WRONG??
 			),
 		));
 
@@ -292,25 +315,21 @@ class TaskTest extends CakeTestCase {
 		$this->assertNotNull($saved['Task']['modified'], "Modify date was null");
 
 		unset($saved['Task']['modified']);
-
 		$this->assertEqual(array(
-			'Task' => array(
-				'id' => 1,
-				'project_id' => 2,
-				'owner_id' => 2,
-				'task_type_id' => $this->Task->TaskType->nameToID('enhancement'),
-				'task_status_id' => $this->Task->TaskStatus->nameToID('resolved'),
-				'task_priority_id' => $this->Task->TaskPriority->nameToID('major'),
-				'time_estimate' => 125,
-				'story_points' => '20',
-				'subject' => 'Do a thing that depends on other things',
-			),
-			'DependsOn' => array(
-				'DependsOn' => array(
-					2, 3, 4
-				),
-			),
-		), $saved);
+			'id' => 1,
+			'project_id' => 2,
+			'owner_id' => 2,
+			'task_type_id' => $this->Task->TaskType->nameToID('enhancement'),
+			'task_status_id' => $this->Task->TaskStatus->nameToID('resolved'),
+			'task_priority_id' => $this->Task->TaskPriority->nameToID('major'),
+			'time_estimate' => 125,
+			'story_points' => '20',
+			'subject' => 'Do a thing that depends on other things',
+		), $saved['Task']);
+		
+		$this->assertEqual(array(
+			2, 3, 4
+		), array_values($saved['DependsOn']));
 		
 	}
 

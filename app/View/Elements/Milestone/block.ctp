@@ -116,7 +116,12 @@ $link_plan= $this->Html->link(
 ?>
 <div class="row-fluid">
     <div class="span12">
-        <div class="well">
+        <div class="well" onclick="location.href='<?=$this->Html->url(array(
+		"controller" => "milestones",
+		"project" => $project['Project']['name'],
+		"action" => "view",
+		$milestone['Milestone']['id']
+	))?>'">
         <div class="row-fluid overview">
             <div class="span5">
                 <h3><?= $link_title ?></h3>

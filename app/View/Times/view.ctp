@@ -16,13 +16,15 @@
 ?>
 
 <?= $this->DT->pHeader(__("Time logged for the project")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
+    <div class="span10">
+		<div class="row-fluid">
         <?= $this->element('Time/topbar_view', array('id' => $time['Time']['id'])) ?>
-        <div class="span10">
+		</div>
+		<div class="row-fluid">
             <div class="well times form form-horizontal">
                 <dl class="dl-horizontal">
                     <dt><?= __('Time Logged') ?></dt>

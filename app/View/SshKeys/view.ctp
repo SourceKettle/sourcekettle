@@ -18,11 +18,11 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']);
 
 ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/users') ?>
     </div>
-    <div class="span6">
+    <div class="span10">
             <table class="well table table-striped">
                 <thead>
                     <tr>
@@ -50,28 +50,4 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']);
                 </tbody>
             </table>
     </div>
-    <div class="span4">
-        <h3>What be all the hype about SSH keys?</h3>
-        <p>
-            Here at SourceKettle, we think the world of computers moves pretty fast! It's hard for us to keep up with all the lastest and greatest tech, and as such,
-            if you would like to know about SSH keys and how they work on your device, please head over to Google.
-        </p>
-        <p>
-            You'll get far with a search such as:<br>'How to setup SSH Keys on [operating system here]'<br>
-        </p>
-        <p>
-            We can however tell you the following:
-            <dl>
-                <dt>Public keys only</dt>
-                <dd>Please don't give us your private keys! That's like giving out the PIN for your credit card!</dd>
-                <dt>Public keys look somthing like this</dt>
-                <dd>
-                ssh-rsa AAAAB3NzaC1yc2EZ2bddNdMm0UB/uEFZa
-                tasKgDQrOEvJ9LQjMq2qolTBzROgdg6Mo9DsWZCq4
-                Q48p06JyQLbMx7hKuZkBH0d5jxeTGEGW4utk3E/==
-                <br>
-                But longer...
-            </dd>
-            </dl>
-        </p>
 </div>

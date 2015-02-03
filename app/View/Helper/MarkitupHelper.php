@@ -32,8 +32,8 @@ class MarkitupHelper extends AppHelper {
 			'skin' => 'simple',
 			'settings' => 'mySettings',
 			'parser' => array(
-				'controller' => 'projects',
-				'action' => 'markupPreview',
+				'controller' => 'markups',
+				'action' => 'preview',
 				'admin' => false,
 				'api' => false,
 			)
@@ -43,7 +43,7 @@ class MarkitupHelper extends AppHelper {
 		$this->Html->script('/markitup/jquery.markitup', array('inline' => false));
 		$this->Html->css("/markitup/skins/{$settings['skin']}/style", null, array('inline' => false));
 		$this->Html->css("/markitup/sets/{$settings['set']}/style", null, array('inline' => false));
-		$this->Html->script("/markitup/{$settings['set']}", array('inline' => false));
+		$this->Html->script("/markitup/sets/{$settings['set']}/set", array('inline' => false));
 
 		$id = "MarkItUp_{$name}";
 
@@ -53,7 +53,7 @@ class MarkitupHelper extends AppHelper {
 		$textarea = array_diff_key($settings, $default);
 		$textarea = array_merge($textarea, array('type' => 'textarea'));
 
-		$this->Html->scriptBlock("
+		/*$this->Html->scriptBlock("
 			jQuery(function() {
 				$('.{$id}').markItUp(
 					{$settings['settings']},
@@ -65,7 +65,7 @@ class MarkitupHelper extends AppHelper {
 					}
 				);
 			});
-		", array ("inline" => false));
+		", array ("inline" => false));*/
 
 		$html = '
 		<div class="tabbable tabs-below">

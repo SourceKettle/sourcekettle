@@ -49,7 +49,7 @@
 		<div class="navbar navbar-inverse navbar-fixed-top">
 		<?}?>
 			<div class="navbar-inner">
-				<div class="container">
+				<div class="container-fluid">
 					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -69,6 +69,7 @@
 								) ?> <?= h($current_user['name']) ?>
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
+								<li><?= $this->Html->link(__('View profile'), array ('admin' => false, 'controller' => 'users', 'action' => 'view', $current_user['id'])) ?></li>
 								<li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users', 'action' => 'index')) ?></li>
 								<li class="divider"></li>
 								<li><?= $this->Html->link(__('Log Out'), array ('admin' => false, 'controller' => 'login', 'action' => 'logout')) ?></li>
@@ -81,6 +82,7 @@
 							$navItems = array(
 								'dashboard' => __('Dashboard'),
 								'projects' => __('Projects'),
+								'kanban' => __('My Kanban'),
 								'help' => __('Help'),
 							);
 							if($current_user && $current_user['is_admin'] == 1){
@@ -115,21 +117,19 @@
 			</div>
 		</div>
 	</header>
-	<div class="container">
-		<div id="content">
-			<span id="flashes">
-				<?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
-				<?= $this->Session->flash('email'); ?>
-			</span>
-			<?= $content_for_layout ?>
-		</div>
-		<div id='footer'>
-			<hr>
-			<?=$this->Html->link("About SourceKettle $sourcekettleVersion", '/about');?>
-			<?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
-			<?//=$this->Html->link('SVN help', '/svn_help');?>
-		</div>
+	<div class="container-fluid" id="content-wrapper">
+		<span id="flashes">
+			<?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
+			<?= $this->Session->flash('email'); ?>
+		</span>
+		<?= $content_for_layout ?>
 	</div>
+	<footer>
+		<hr>
+		<?=$this->Html->link("About SourceKettle $sourcekettleVersion", '/about');?>
+		<?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>
+		<?//=$this->Html->link('SVN help', '/svn_help');?>
+	</footer>
 
 	<!-- JavaScript! Placed at the end of the file for faster page loading -->
 	<?= $this->Html->script('/jquery/jquery-1.11.0.min.js'); ?>

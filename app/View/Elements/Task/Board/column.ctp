@@ -50,7 +50,7 @@ if (isset($icon)) {
 	$icon = "";
 }
 
-echo "<ul class='well col sprintboard-droplist span$span$classes' data-taskspan='$task_span' $dtStatus $dtPriority $dtMilestone>\n";
+echo "<ul class='well span$span sprintboard-droplist $classes' data-taskspan='$task_span' $dtStatus $dtPriority $dtMilestone>\n";
 echo "<h2$tooltip>$icon$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {

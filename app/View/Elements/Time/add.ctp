@@ -38,7 +38,7 @@ echo $this->Bootstrap->input("description", array(
     "help_inline" => __("(Optional)")
 ));
 
-if (isset($this->request->data['Time'])) {
+if (isset($this->request->data['Time']) && isset($this->request->data['Time']['date'])) {
     $date = $this->request->data['Time']['date'];
 } else {
     $date = date('Y-m-d', time());

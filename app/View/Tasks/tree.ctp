@@ -19,21 +19,11 @@ $this->Html->script("tasks", array ('inline' => false));
 ?>
 
 <?= $this->DT->pHeader(__("Task dependency tree")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
     <div class="span10">
-        <div class="row">
-            <?//= $this->element('Task/topbar_view', array('id' => $tree['public_id'], 'dependenciesComplete' => $tree['dependenciesComplete'])) ?>
-            <div class="span10">
-
-                <div class="row-fluid">
-				<?=$this->Task->treeRender($project['Project']['name'], $tree)?>
-                </div>
-
-            </div>
-        </div>
+		<?=$this->Task->treeRender($project['Project']['name'], $tree)?>
     </div>
 </div>

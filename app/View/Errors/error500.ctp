@@ -17,7 +17,7 @@ $this->layout = 'error';
 
 ?>
 <h1>Oh Crikey, Batman! <small>An Internal Error Has Occurred!</small></h1>
-<div class="row">
+<div class="row-fluid">
     <div class="span12">
         <div class="well">
             <h2>Darn! This is horribly embarrassing...</h2>

@@ -31,16 +31,16 @@ $hover_conditions = $this->Popover->popover(
 ?>
 
 <?= $this->DT->pHeader(__("Attach a file to the project")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
     <div class="span10">
-        <div class="row">
+        <div class="row-fluid">
             <?= $this->element('Attachment/topbar') ?>
-            <div class="span10">
-                <div class="row-fluid">
-                    <div class="well uploadBox">
+		</div>
+        <div class="row-fluid">
+            <div class="well uploadBox">
             <?= $this->Form->create('Attachment', array('type' => 'file')) ?>
                 <h3><?= __("Select a file to upload") ?></h3>
                 <div class="fileupload fileupload-new" data-provides="fileupload">
@@ -59,9 +59,7 @@ $hover_conditions = $this->Popover->popover(
                 </div>
                 <p>(<?= $hover_conditions ?>)</p>
             <?= $this->Form->end() ?>
-                    </div>
                 </div>
-            </div>
         </div>
     </div>
 </div>

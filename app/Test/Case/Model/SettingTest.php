@@ -129,6 +129,7 @@ class SettingTestCase extends CakeTestCase {
 				'time_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
 				'source_enabled' => array('value' => false, 'source' => 'System settings', 'locked' => true),
 				'attachment_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
+				'4col_kanban_enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),
 			),
 			'Ldap' => array(
 				'enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),

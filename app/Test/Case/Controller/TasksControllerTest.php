@@ -237,7 +237,7 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
-		$this->assertContains('<h1>public <small>A task for the Project</small></h1>', $this->view);
+		$this->assertContains('<h1>public <small>Task card and log</small></h1>', $this->view);
 
 		// Check we've got the right stuff back
 		$this->assertEquals($this->vars['task']['Task']['id'], 1);
@@ -317,7 +317,7 @@ class TasksControllerTest extends AppControllerTest {
 				'task_priority_id' => 2,
 				'assignee_id' => 3,
 				'milestone_id' => 1,
-				'time_estimate' => 145,
+				'time_estimate' => '2h 25m',
 				'story_points' => 4,
 				'description' => 'Look ma, I created a task!',
 			)
@@ -326,59 +326,94 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// The subject and description should be removed, and we should end up with the "add a new task" form again
-		unset($postData['Task']['subject']);
-		unset($postData['Task']['description']);
 		$postData['Task']['owner_id'] = 2;
-		$this->assertEquals($postData, $this->controller->request->data);
+		$postData['Task']['story_id'] = null;
+		$postData['Task']['id'] = $this->controller->Task->getLastInsertId();
+		$postData['Task']['deleted_date'] = null;
+		$postData['Task']['deleted'] = 0;
+		$task = $this->controller->Task->findById($this->controller->Task->getLastInsertId());
+		unset($task['Task']['modified']);
+		unset($task['Task']['created']);
+		unset($task['Task']['public_id']);
+		unset($task['Task']['dependenciesComplete']);
+		$this->assertEquals($postData['Task'], $task['Task']);
+	}
+
+	public function testAddTaskWithDependencies() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Task' => array(
+				'subject' => 'new task for public project',
+				'project_id' => 2,
+				'task_type_id' => 2,
+				'task_status_id' => 1,
+				'task_priority_id' => 2,
+				'assignee_id' => 3,
+				'milestone_id' => 1,
+				'time_estimate' => "2h 25m",
+				'story_points' => 4,
+				'description' => 'Look ma, I created a task!',
+			),
+			'DependsOn' => array(2, 4, 11),
+			'DependedOnBy' => array(3, 6, 7),
+		);
+
+		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$postData['Task']['owner_id'] = 2;
+		$postData['Task']['story_id'] = null;
+		$postData['Task']['id'] = $this->controller->Task->getLastInsertId();
+		$postData['Task']['deleted_date'] = null;
+		$postData['Task']['deleted'] = 0;
+		$task = $this->controller->Task->findById($this->controller->Task->getLastInsertId());
+		unset($task['Task']['modified']);
+		unset($task['Task']['created']);
+		unset($task['Task']['public_id']);
+		unset($task['Task']['dependenciesComplete']);
+		$this->assertEquals($postData['Task'], $task['Task']);
+		$this->assertEquals($postData['DependsOn'], array_map(function($a) {return $a['public_id'];}, $task['DependsOn']));
+		$this->assertEquals($postData['DependedOnBy'], array_map(function($a) {return $a['public_id'];}, $task['DependedOnBy']));
 	}
 
 	public function testEditTaskNotLoggedIn() {
-		$this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
+		$this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testEditTaskNotCollaborator() {
 		$this->_fakeLogin(23);
-		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testEditTaskProjectGuest() {
 		$this->_fakeLogin(8);
-		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testEditTaskProjectUser() {
 		$this->_fakeLogin(1);
-		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertAuthorized();
 	}
 
 	public function testEditTaskProjectAdmin() {
 		$this->_fakeLogin(2);
-		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/public/tasks/edit/1', array('method' => 'post', 'return' => 'view'));
 		$this->assertAuthorized();
 	}
 
 	public function testEditInactiveUser() {
 		$this->_fakeLogin(6);
-		$this->testAction('/project/private/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
+		$this->testAction('/project/private/tasks/edit/1', array('return' => 'view', 'method' => 'post'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testEditInactiveAdmin() {
 		$this->_fakeLogin(22);
-		$this->testAction('/project/private/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
+		$this->testAction('/project/private/tasks/edit/1', array('return' => 'view', 'method' => 'post'));
 		$this->assertNotAuthorized();
-	}
-
-	public function testEditTaskForm() {
-		$this->_fakeLogin(2);
-		$this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'get'));
-		$this->assertAuthorized();
-		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/tasks/edit/1').'"|', $this->view);
 	}
 
 	public function testEditTask() {
@@ -402,6 +437,89 @@ class TasksControllerTest extends AppControllerTest {
 
 		// We should be redirected to the task page
 		$this->assertRedirect('/project/public/tasks/view/1');
+	}
+
+	// Ensure tasks can be updated via AJAX, using the status/priority/task names
+	public function testEditTaskAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Task' => array(
+				'subject' => 'updated task for public project',
+				'type' => 'enhancement',
+				'status' => 'closed',
+				'priority' => 'blocker',
+				'assignee_id' => 3,
+				'milestone_id' => 1,
+				'time_estimate' => 145,
+				'story_points' => 4,
+				'description' => 'Look ma, I updated a task!',
+			)
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(
+			'id' => '1',
+			'project_id' => '2',
+			'owner_id' => '2',
+			'task_type_id' => '3',
+			'task_status_id' => '4',
+			'task_priority_id' => '4',
+			'assignee_id' => '3',
+			'milestone_id' => '1',
+			'story_id' => null,
+			'time_estimate' => '2h 25m',
+			'story_points' => '4',
+			'subject' => 'updated task for public project',
+			'description' => 'Look ma, I updated a task!',
+			'deleted' => '0',
+			'deleted_date' => null,
+			'public_id' => '1',
+			'dependenciesComplete' => '1',
+			'uri' => '/project/public/tasks/view/1'	,
+		), $returned['Task']);
+	}
+
+	// Ensure task dependencies can be updated via AJAX
+	public function testEditTaskDependsOnAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'DependsOn' => array(2, 3, 11),
+			'DependedOnBy' => array(5, 6, 7),
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(2, 3, 11), array_map(function($a) {return $a['public_id'];}, $returned['DependsOn']));
+	}
+
+	public function testEditTaskDependedOnByAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'DependedOnBy' => array(5, 6, 11),
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(5, 6, 11), array_map(function($a) {return $a['public_id'];}, $returned['DependedOnBy']));
 	}
 
 
@@ -913,6 +1031,8 @@ class TasksControllerTest extends AppControllerTest {
 			'assignee_email' => '',
 			'assignee_name' => '',
 			'assignee_gravatar' => 'https://secure.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e.jpg?url_only=1&d=mm',
+			'milestone_subject' => '(No milestone)',
+			'milestone_isopen' => 0,
 			'error' => 'no_error'
 		));
 	}
@@ -931,6 +1051,8 @@ class TasksControllerTest extends AppControllerTest {
 			'assignee_email' => '',
 			'assignee_name' => '',
 			'assignee_gravatar' => 'https://secure.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e.jpg?url_only=1&d=mm',
+			'milestone_subject' => '(No milestone)',
+			'milestone_isopen' => 0,
 			'error' => 'no_error'
 		));
 		
@@ -950,6 +1072,8 @@ class TasksControllerTest extends AppControllerTest {
 			'assignee_email' => '',
 			'assignee_name' => '',
 			'assignee_gravatar' => 'https://secure.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e.jpg?url_only=1&d=mm',
+			'milestone_subject' => '(No milestone)',
+			'milestone_isopen' => 0,
 			'error' => 'no_error'
 		));
 		
@@ -1072,15 +1196,32 @@ class TasksControllerTest extends AppControllerTest {
 
 		$this->testAction('/kanban', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		
-		$backlog = array_map(function($a){return $a['Task']['id'];}, $this->vars['backlog']);
-		$this->assertEquals(array(), $backlog);
+
+		$open = array_map(function($a){return $a['Task']['id'];}, $this->vars['open']);
+		$this->assertEquals(array(), $open);
 
 		$inProgress = array_map(function($a){return $a['Task']['id'];}, $this->vars['inProgress']);
 		$this->assertEquals(array(4, 10, 11, 12, 13), $inProgress);
 
-		$completed = array_map(function($a){return $a['Task']['id'];}, $this->vars['completed']);
-		$this->assertEquals(array(1), $completed);
+		$resolved = array_map(function($a){return $a['Task']['id'];}, $this->vars['resolved']);
+		$this->assertEquals(array(), $resolved);
+	}
+
+	public function testPersonalKanbanHugeMaxAge() {
+		
+		$this->_fakeLogin(2);
+
+		$this->testAction('/kanban/9000000000', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+
+		$open = array_map(function($a){return $a['Task']['id'];}, $this->vars['open']);
+		$this->assertEquals(array(), $open);
+
+		$inProgress = array_map(function($a){return $a['Task']['id'];}, $this->vars['inProgress']);
+		$this->assertEquals(array(4, 10, 11, 12, 13), $inProgress);
+
+		$resolved = array_map(function($a){return $a['Task']['id'];}, $this->vars['resolved']);
+		$this->assertEquals(array(1), $resolved);
 	}
 
 	public function testTeamKanbanNotLoggedIn() {
@@ -1152,14 +1293,31 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/team_kanban/java_developers', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 		
-		$backlog = array_map(function($a){return $a['Task']['id'];}, $this->vars['backlog']);
-		$this->assertEquals(array(14, 15), $backlog);
+		$open = array_map(function($a){return $a['Task']['id'];}, $this->vars['open']);
+		$this->assertEquals(array(14, 15), $open);
 
 		$inProgress = array_map(function($a){return $a['Task']['id'];}, $this->vars['inProgress']);
 		$this->assertEquals(array(16, 17), $inProgress);
 
-		$completed = array_map(function($a){return $a['Task']['id'];}, $this->vars['completed']);
-		$this->assertEquals(array(18, 19), $completed);
+		$resolved = array_map(function($a){return $a['Task']['id'];}, $this->vars['resolved']);
+		$this->assertEquals(array(), $resolved);
+	}
+	
+	public function testTeamKanbanHugeMaxAge() {
+		
+		$this->_fakeLogin(14);
+
+		$this->testAction('/team_kanban/java_developers/9000000000', array('return' => 'view', 'method' => 'get'));
+		$this->assertAuthorized();
+		
+		$open = array_map(function($a){return $a['Task']['id'];}, $this->vars['open']);
+		$this->assertEquals(array(14, 15), $open);
+
+		$inProgress = array_map(function($a){return $a['Task']['id'];}, $this->vars['inProgress']);
+		$this->assertEquals(array(16, 17), $inProgress);
+
+		$resolved = array_map(function($a){return $a['Task']['id'];}, $this->vars['resolved']);
+		$this->assertEquals(array(18, 19), $resolved);
 	}
 	
 }

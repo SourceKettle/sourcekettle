@@ -37,6 +37,7 @@ class ProjectSetting extends AppModel {
 		'Features.task_enabled',
 		'Features.source_enabled',
 		'Features.attachment_enabled',
+		'Features.4col_kanban_enabled',
 		'UserInterface.terminology',
 	);
 
@@ -79,7 +80,8 @@ class ProjectSetting extends AppModel {
 			}
 
 			unset($this->id);
-			if (!$this->save($save)) {
+			$ok = $this->save($save);
+			if (!$ok) {
 				$ok = false;
 			}
 		}

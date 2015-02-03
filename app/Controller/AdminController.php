@@ -53,7 +53,7 @@ class AdminController extends AppController {
 
 		$projects = $this->ProjectHistory->find('all', array(
 			'fields' => array('Project.id', 'Project.name', 'datediff(now(), max(date(ProjectHistory.created))) as latest'),
-			'group' => array('project_id'),
+			'group' => array('Project.id'),
 			'order' => array('latest DESC'),
 		));
 		
@@ -70,7 +70,6 @@ class AdminController extends AppController {
 			}
 			$numProjects++;
 		}
-
 		// Anything with no project history is 'unused'
 		$projectsByActivity['unused'] = $numProjects - array_sum(array_values($projectsByActivity));
 

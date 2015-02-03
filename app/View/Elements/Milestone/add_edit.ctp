@@ -29,6 +29,7 @@
 
 		echo $this->element('datepicker', array(
 			'name' => 'starts',
+			'classes' => array('span12'),
 			'value' => $startDate,
 			'label' => __("Start date"),
 			'helpBlock' => __("When work on the milestone will begin"),
@@ -36,6 +37,7 @@
 
 		echo $this->element('datepicker', array(
 			'name' => 'due',
+			'classes' => array('span12'),
 			'value' => $dueDate,
 			'label' => __("Completion date"),
 			'helpBlock' => __("When work on the milestone will end"),
@@ -50,11 +52,11 @@
     <div class="span4">
         <h3><?=__("What is a 'Milestone'?")?></h3>
         <div>
-            <p><?=__('At SourceKettle, we define a Milestone as a target. It guides us in what work should be done by a certain time. A Milestone can help to prevent you, and your team mates, from straying from the path of progress.')?></p>
+            <p><?=__('A Milestone (or "sprint", or "timebox") is a period of time during which a set of tasks will be completed. A Milestone can help to prevent you, and your team mates, from straying from the path of progress.')?></p>
 			<ul>
             <li><strong><?=__('Step 1)')?></strong> <?=__('Pick a date to start work, and a target date for completion')?></li>
             <li><strong><?=__('Step 2)')?></strong> <?=__('Plan your milestone before the start date: add tasks that you want to get done')?></li>
-            <li><strong><?=__('Step 3)')?></strong> <?=__('Prioritise your tasks in the "plan" view')?></li>
+            <li><strong><?=__('Step 3)')?></strong> <?=__('Prioritise your tasks in the "plan" view and assign work to your team')?></li>
             <li><strong><?=__('Step 4)')?></strong> <?=__('Stick to your target completion date: drop lower-priority tasks if you need to')?></li>
 			</ul>
         </div>

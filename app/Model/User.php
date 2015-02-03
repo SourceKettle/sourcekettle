@@ -296,8 +296,8 @@ class User extends AppModel {
 		return true;
 	}
 
-	public function tasksOfStatusForUser($userId = null, $status = 'open') {
-		return $this->Collaborator->Project->Task->listTasksOfStatusFor($status, 'Assignee', $userId);
+	public function tasksOfStatusForUser($userId = null, $status = 'open', $maxAgeDays = null) {
+		return $this->Collaborator->Project->Task->listTasksOfStatusFor($status, 'Assignee', $userId, $maxAgeDays);
 	}
 
 }

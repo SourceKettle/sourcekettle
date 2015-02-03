@@ -1,62 +1,3 @@
-// Labels for the various statuses - TODO should be loaded from database
-var taskStatusLabels = {
-	open: "Open",
-	'in progress': "In Progress",
-	resolved: "Resolved",
-	closed: "Closed",
-	dropped: "Dropped"
-};
-
-// Classes to apply to the status label
-var taskStatusLabelTypes = {
-	open: "label-important",
-	'in progress': "label-warning",
-	resolved: "label-success",
-	closed: "label-info",
-	dropped: ""
-};
-
-// Priority labels and icons
-var taskPriorityLabels = {
-	 blocker: "Blocker",
-	 urgent:  "Urgent",
-	 major:   "Major",
-	 minor:   "Minor"
-};
-
-var taskPriorityIcons = {
-	 blocker: "ban-circle",
-	 urgent:  "exclamation-sign",
-	 major:   "arrow-up",
-	 minor:   "arrow-down"
-};
-
-var taskTypeLabels = {
-	bug: "Bug",
-	duplicate: "Duplicate",
-	enhancement: "Enhancement",
-	invalid: "Invalid",
-	question: "Question",
-	wontfix: "Won't Fix",
-	documentation: "Documentation",
-	meeting: "Meeting",
-	maintenance: "Maintenance Work",
-	testing: "Testing",
-};
-
-var taskTypeClasses = {
-	bug: "important",
-	duplicate: "warning",
-	enhancement: "success",
-	invalid: "",
-	question: "info",
-	wontfix: "inverse",
-	documentation: "info",
-	meeting: "info",
-	maintenance: "warning",
-	testing: "success",
-};
-
 
 // Comment edit buttons
 $('.comment').find(':button.edit').bind('click', function() {
@@ -74,12 +15,28 @@ $('.comment').find (':button.delete').click (function() {
 	}
 });
 
+// Task subject edit button
+$('.task-view-subject').find(':button.edit').bind('click', function() {
+	var subject = $(this).parent();
+	subject.find('.task-subject-text').hide();
+	subject.find('.edit-form').show();
+	$(this).hide();
+});
+
+// Task description edit button
+$('.task-view-description').find(':button.edit').bind('click', function() {
+	var description = $(this).parent();
+	description.find('.task-description-text').hide();
+	description.find('.edit-form').show();
+	$(this).hide();
+});
 // Task dropdown menus - DIY dropdowns...
 // Why? Because lozenges have overflow:hidden which hides the dropdown
 // menu part of a "normal" bootstrap dropdown, and removing overflow:hidden
 // means the innards spill all over the place on smaller screens :-(
 $('.task-dropdown').click(function(event) {
 	var button = $(event.currentTarget);
+	var dataType = button.attr('data-type');
 	var menu = button.attr('data-toggle');
 	menu = $('#'+menu);
 
@@ -102,15 +59,15 @@ $('.task-dropdown').click(function(event) {
 				"dataType" : "json",
 				"type" : "get",
 				"success" : function (data) {
-					menu.append('<li class="label"><a class="" href="#" data-value="0">(Remove assignee)</a></li>');
-					for (var id in data) {
-						collaborator = data[id];
-						menu.append('<li class="label"><a class="" href="#" data-value="'+id+'">'+collaborator+'</a></li>');
+					menu.append('<li class="label"><a class="" href="#" data-value="0">(Remove '+dataType+')</a></li>');
+					for (var idx in data) {
+						dataItem = data[idx];
+						menu.append('<li class="label"><a class="" href="#" data-value="'+dataItem.id+'">'+dataItem.title+'</a></li>');
 					}
 					activateLinksAndShow(menu, button);
 				},
 				"error" : function () {
-					alert("Failed to load collaborator list!");
+					alert("Failed to load "+dataType+" list!");
 				}
 			});
 
@@ -119,7 +76,8 @@ $('.task-dropdown').click(function(event) {
 			activateLinksAndShow(menu, button);
 		}
 	}
-
+	// Do not propagate click event through
+	return false;
 });
 
 // Show a dropdown menu, first making sure all its links do the Right Thing(tm)
@@ -129,11 +87,11 @@ function activateLinksAndShow(menu, button) {
 		var change = button.attr("data-change");
 		var newValue = $(event.currentTarget).attr("data-value");
 		var taskLozenge = button.closest('.task-lozenge');
-		var taskInfo = {};
-		taskInfo[change] = newValue;
+		var taskInfo = {'Task' : {}};
+		taskInfo['Task'][change] = newValue;
 		updateTask(taskLozenge, taskInfo);
 		menu.hide();
-		// Prevent the click from taking us to th etop of the page
+		// Prevent the click from taking us to the top of the page
 		return false;
 	});
 	menu.show();
@@ -167,6 +125,7 @@ function updateTask(taskLozenge, taskInfo) {
 	var prioTextLabel = prioLabel.find(".textlabel");
 	var typeLabel = taskLozenge.find(".tasktype");
 	var statusLabel = taskLozenge.find(".taskstatus");
+	var milestoneLabel = taskLozenge.find(".task-dropdown-milestone");
 
 	$.ajax(urlBase  + '/' + taskInfo.id, {
 		"data" : taskInfo,
@@ -179,34 +138,35 @@ function updateTask(taskLozenge, taskInfo) {
 			var currentColumn = taskLozenge.parent();
 			
 			if (data.error === "no_error") {
-			
+				taskInfo = data;
+
 				// Task type changed
-				if (taskInfo.type != null && typeLabel.size() == 1) {
+				if (taskInfo.TaskType != null && typeLabel.size() == 1) {
 
 					// Update lozenge to reflect the new type
-					typeLabel.html(taskTypeLabels[taskInfo.type] + ' <b class="caret"></b>');
+					typeLabel.html(taskInfo.TaskType.label+ ' <b class="caret"></b>');
 					typeLabel.removeClass(function(index, css){
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
-					typeLabel.addClass('label-' + taskTypeClasses[taskInfo.type]);
-					typeLabel.attr('title', 'Type: ' + taskInfo.type);
+					typeLabel.addClass('label-' + taskInfo.TaskType.class);
+					typeLabel.attr('title', 'Type: ' + taskInfo.TaskType.name).tooltip();
 
 				}
 				// Priority changed, fairly straightforward
-				if (taskInfo.priority != null) {
+				if (taskInfo.TaskPriority != null) {
 
 					// Update lozenge to reflect the new priority
-					var icon = '<i class="icon-'+taskPriorityIcons[ taskInfo.priority ]+' icon-white"> </i>';
+					var icon = '<i class="icon-'+taskInfo.TaskPriority.icon+' icon-white"> </i>';
 					if (prioTextLabel.size() > 0) {
-						prioLabel.html(icon + ' <span class="textlabel">'+taskPriorityLabels[taskInfo.priority]+'</span> <b class="caret"></b>');
+						prioLabel.html(icon + ' <span class="textlabel">'+taskInfo.TaskPriority.label+'</span> <b class="caret"></b>');
 					} else {
 						prioLabel.html(icon + ' <b class="caret"></b>');
 					}
-					prioLabel.attr('title', 'Priority: ' + taskInfo.priority);
+					prioLabel.attr('title', 'Priority: ' + taskInfo.TaskPriority.name).tooltip();
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
-					if (currentColumn.attr('data-taskpriority') != taskInfo.priority) {
-						toColumn = $('.sprintboard-droplist[data-taskpriority="'+taskInfo.priority+'"]');
+					if (currentColumn.attr('data-taskpriority') != taskInfo.TaskPriority.name) {
+						toColumn = $('.sprintboard-droplist[data-taskpriority="'+taskInfo.TaskPriority.name+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
 							equaliseColumns(toColumn);
@@ -216,20 +176,24 @@ function updateTask(taskLozenge, taskInfo) {
 				}
 
 				// Status changed, more fiddly due to the CSS class change...
-				if (taskInfo.status != null) {
-					statusLabel.html(taskStatusLabels[taskInfo.status].charAt(0) + ' <b class="caret"></b>');
+				if (taskInfo.TaskStatus != null) {
+					labelText = taskInfo.TaskStatus.label;
+					if (!statusLabel.attr('data-fulltext') || statusLabel.attr("data-fulltext") == "0") {
+						labelText = labelText.charAt(0);
+					}
+					statusLabel.html(labelText + ' <b class="caret"></b>');
 
 					// Remove any existing label-foo classes, cheers http://stackoverflow.com/questions/2644299/jquery-removeclass-wildcard
 					statusLabel.removeClass(function(index, css){
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
-					statusLabel.addClass(taskStatusLabelTypes[taskInfo.status]);
-					statusLabel.attr('title', 'Status: ' + taskInfo.status);
-					taskLozenge.attr('data-taskstatus', taskInfo.status);
+					statusLabel.addClass('label-'+taskInfo.TaskStatus.class);
+					statusLabel.attr('title', 'Status: ' + taskInfo.TaskStatus.label).tooltip();
+					taskLozenge.attr('data-taskstatus', taskInfo.TaskStatus.name);
 
 					// If there's a droplist for this status and the lozenge isn't in it, move it into place
-					if (currentColumn.attr('data-taskstatus') != taskInfo.status) {
-						toColumn = $('.sprintboard-droplist[data-taskstatus="'+taskInfo.status+'"]');
+					if (currentColumn.attr('data-taskstatus') != taskInfo.TaskStatus.name) {
+						toColumn = $('.sprintboard-droplist[data-taskstatus="'+taskInfo.TaskStatus.name+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
 							equaliseColumns(toColumn);
@@ -238,31 +202,51 @@ function updateTask(taskLozenge, taskInfo) {
 					}
 
 					// Make sure the task is the correct span width for this column
-					newspan = 'span' + currentColumn.attr('data-taskspan');
-					taskLozenge.removeClass(function(index, css){
-						return (css.match (/\bspan\d+/g) || []).join(' ');
-			   		});
-					taskLozenge.addClass(newspan);
-
+					newspan = currentColumn.attr('data-taskspan');
+					if (typeof newspan !== 'undefined') {
+						taskLozenge.removeClass(function(index, css){
+							return (css.match (/\bspan\d+/g) || []).join(' ');
+				   		});
+						taskLozenge.addClass('span'+newspan);
+					}
 					// It's a status change, so make sure we update the story point totals
 					refreshStoryPointTotals();
 				}
 
 				// Assignee changed - we need to change the gravatar image
 				// Note that it can be set to zero for "unassigned"...
-				if (typeof taskInfo.assignee_id !== 'undefined') {
+				if (typeof taskInfo.Assignee.id !== 'undefined') {
 					assigneeBox = $('.task-dropdown-assignee', taskLozenge);
-					assigneeLabel = assigneeBox.next();
+					assigneeLabel = assigneeBox.siblings('.assignee-full-label');
 					gravatarImage = $('img', assigneeBox);
-					gravatarImage.attr('src', data.assignee_gravatar+'&size='+gravatarImage.attr('width'));
-					if (taskInfo.assignee_id == 0) {
-						assigneeBox.attr('title', 'Not assigned');
+					gravatarImage.attr('src', taskInfo.Assignee.gravatar+'&size='+gravatarImage.attr('width'));
+					if (taskInfo.Assignee.id > 0) {
+						assigneeBox.attr('title', 'Assigned to: '+taskInfo.Assignee.name).tooltip();
+						gravatarImage.attr('alt', 'Assigned to: '+taskInfo.Assignee.name);
 					} else {
-						assigneeBox.attr('title', 'Assigned to: '+data.assignee_name);
+						assigneeBox.attr('title', 'Not assigned').tooltip();
+						gravatarImage.attr('alt', 'Not assigned');
 					}
 					if (assigneeLabel.hasClass('assignee-full-label')) {
-						assigneeLabel.text(data.assignee_name);
+						assigneeLabel.text(taskInfo.Assignee.name);
 					}
+				}
+
+				// Milestone changed
+				if (typeof taskInfo.Milestone.id !== 'undefined' && milestoneLabel.length > 0) {
+					label = milestoneLabel.siblings(".milestone-label");
+					label.empty();
+					if (taskInfo.Milestone.id > 0) {
+						milestoneLink = $(document.createElement('a'));
+						milestoneLink.attr('title',  "Milestone: "+taskInfo.Milestone.subject).tooltip();
+						milestoneLink.attr('href', taskInfo.Milestone.uri);
+						milestoneLink.text(taskInfo.Milestone.subject);
+						label.append("Milestone: ");
+						label.append(milestoneLink);
+					} else {
+						label.append("No milestone");
+					}
+					milestoneLabel.attr("title", "Milestone: "+taskInfo.Milestone.subject).tooltip();
 				}
 
 			} else {
@@ -336,18 +320,18 @@ function initTaskDroplists() {
 			var toPrio	  = $(this).attr('data-taskpriority');
 			var toMilestone = $(this).attr('data-milestone');
 
-			var taskInfo = {};
+			var taskInfo = {'Task' : {}};
 
 			if(typeof toPrio != 'undefined'){
-				taskInfo.priority = toPrio;
+				taskInfo.Task.priority = toPrio;
 			}
 
 			if(typeof toStatus != 'undefined'){
-				taskInfo.status = toStatus;
+				taskInfo.Task.status = toStatus;
 			}
 
 			if(typeof toMilestone != 'undefined'){
-				taskInfo.milestone_id = toMilestone;
+				taskInfo.Task.milestone_id = toMilestone;
 			}
 
 			updateTask(taskLozenge, taskInfo);
@@ -368,10 +352,10 @@ function setStoryPoints(button, difference) {
 	points = parseInt($(pointsBox).text());
 	points += difference;
 	if (points <= 0) {return;}
-	var taskInfo = {
+	var taskInfo = { 'Task' : {
 		id : taskId,
 		story_points : points
-	};
+	}};
 	$.ajax(apiUrl +'/' + taskId, {
 		"data" : taskInfo,
 		"dataType" : "json",
@@ -417,6 +401,54 @@ function refreshStoryPointTotals() {
 	totalBox.text(total);
 	completeBox.text(complete);
 
+}
+
+// Links the task dependency lists such that on form submit it picks up the new valules
+function linkDependencyLists(form, subtasksList, parentsList) {
+        form.submit(function(){
+                subtasksList.sortable('toArray').forEach(function(taskId){
+                        hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = 'data[DependsOn][]';
+                        hidden.value = taskId;
+                        $('form').append(hidden);
+                });
+
+                parentsList.sortable('toArray').forEach(function(taskId){
+                        hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = 'data[DependedOnBy][]';
+                        hidden.value = taskId;
+                        $('form').append(hidden);
+                });
+        });
+}
+
+// Adds callbacks to the dependency lists to change task dependencies via AJAX
+function ajaxDependencyLists(projectId, taskPublicId, subtasksList, othersList, parentsList) {
+	callback = function(event, ui) {
+		newSubtaskList = subtasksList.sortable('toArray');
+		newParentList = parentsList.sortable('toArray');
+		newTaskData = {Task: {}, DependsOn: [], DependedOnBy: []};
+		newTaskData['Task']['public_id'] = taskPublicId;
+		newTaskData['Task']['project_id'] = projectId;
+		newTaskData['DependsOn'] = newSubtaskList;
+		newTaskData['DependedOnBy'] = newParentList;
+		apiUrl = ui.sender.parents('[data-api-url]').attr('data-api-url');
+
+		$.ajax(apiUrl +'/' + taskPublicId, {
+			"data" : newTaskData,
+			"dataType" : "json",
+			"type" : "post",
+			"error" : function(data) {
+				$(ui.sender).sortable('cancel');
+				alert("Failed to update dependencies");
+			}
+		});
+	};
+	subtasksList.sortable({receive: callback}).disableSelection();
+	othersList.sortable({receive: callback}).disableSelection();
+	parentsList.sortable({receive: callback}).disableSelection();
 }
 
 // Activate the +/- buttons for story points

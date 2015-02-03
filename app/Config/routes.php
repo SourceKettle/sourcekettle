@@ -43,7 +43,9 @@
         Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'about'));
 
 		// User and Team kanban charts
+        Router::connect('/kanban/:max_age/*', array('controller' => 'tasks', 'action' => 'personal_kanban'), array('pass' => array('max_age'), 'max_age' => '[0-9]+'));
         Router::connect('/kanban/*', array('controller' => 'tasks', 'action' => 'personal_kanban'));
+        Router::connect('/team_kanban/:team/:max_age/*', array('controller' => 'tasks', 'action' => 'team_kanban'), array('pass' => array('team', 'max_age'), 'team' => '[0-9a-zA-Z_-]+', 'max_age' => '[0-9]+'));
         Router::connect('/team_kanban/:team/*', array('controller' => 'tasks', 'action' => 'team_kanban'), array('pass' => array('team'), 'team' => '[0-9a-zA-Z_-]+'));
         /*
          * The below routes allow all projects to be accessed at APP/project/project_name/[controller_to_use/]?[action/]?[params]?

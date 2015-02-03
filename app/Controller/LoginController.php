@@ -14,6 +14,7 @@
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppController', 'Controller');
 class LoginController extends AppController{
 
 	public $name = 'Login';
@@ -25,6 +26,7 @@ class LoginController extends AppController{
 		$this->Auth->allow('index', 'logout');
 	}
 
+
 /**
  * The login function.
  * Allows users to login using their username and password.
@@ -33,22 +35,21 @@ class LoginController extends AppController{
  * @return void
  */
 	public function index() {
-
-		// If they're already logged in, bounce them to the homepage
+		// If they're already logged in, bounce them to the dashboard
 		if ($this->Auth->loggedIn()) {
-			return $this->redirect($this->Auth->redirect());
+			return $this->redirect($this->Auth->redirectUrl());
 		}
 
-		// Only POST requests are authenticated, otherwise bounce to the homepage
+		// Only POST requests are authenticated, otherwise bounce to the default page
 		if (!$this->request->is('post')) {
-			return $this->redirect(array('controller' => 'pages', 'action' => 'home', 'api' => false, 'admin' => false));
+			return $this->redirect('/');
 		}
 
 		// First, try to authenticate them
 		if (!$this->Auth->login()) {
 			$this->log("[LoginController.index] Authentication failed using " . $this->request->data['User']['email'], 'sourcekettle');
 			$this->Flash->error($this->Auth->loginError);
-			return;
+			return $this->redirect('/');
 		}
 
 		$this->log("[LoginController.index] Authentication succeeded for " . $this->request->data['User']['email'], 'sourcekettle');
@@ -60,7 +61,7 @@ class LoginController extends AppController{
 		if (!$user['User']['is_active']) {
 			$this->log("[LoginController.index] user[" . $user['User']['id'] . "] denied access - account is not activated", 'sourcekettle');
 			$this->Flash->error($this->Auth->loginError);
-			return;
+			return $this->redirect('/');
 		}
 
 		// Authentication successful, everybody is happy! Let's log it to celebrate.

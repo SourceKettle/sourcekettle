@@ -69,7 +69,7 @@ class TaskHelper extends AppHelper {
 		if ($task == null) {
 			$button = '<span class="taskpriority label '.$class.'" title="'.$tooltip.'">'.$icon.' '.$label.'</span>';
 		} else {
-			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
 			$button = '<button class="taskpriority label '.$class.' task-dropdown" title="'.$tooltip.'" data-api-url="'.$apiUrl.'" data-change="priority" data-id="'.h($priorityId).'" data-toggle="task_priority_dropdown">'.$icon.' '.$label.' <span class="caret"></span></button>';
 		}
 		return $button;
@@ -105,16 +105,18 @@ class TaskHelper extends AppHelper {
 		}
 
 		// TODO display full length status name if the lozenge is large enough
+		$attr = 'data-fulltext="1" ';
 		if (!$full) {
 			$label = strtoupper(substr($label, 0, 1));
+			$attr = 'data-fulltext="0" ';
 		}
 
 		// If we've got no task ID, just render a label and no dropdown
 		if ($task == null) {
 			$button = '<span class="taskstatus label '.$class.'" title="'.$tooltip.'">'.h($label).'</span>';
 		} else {
-			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
-			$button = '<button class="taskstatus label '.$class.' task-dropdown" title="'.$tooltip.'" data-api-url="'.$apiUrl.'" data-change="status" data-id="'.h($statusId).'" data-toggle="task_status_dropdown">'.h($label).' <span class="caret"></span></button>';
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
+			$button = '<button '.$attr.'class="taskstatus label '.$class.' task-dropdown" title="'.$tooltip.'" data-api-url="'.$apiUrl.'" data-change="status" data-id="'.h($statusId).'" data-toggle="task_status_dropdown">'.h($label).' <span class="caret"></span></button>';
 		}
 		return $button;
 
@@ -152,8 +154,8 @@ class TaskHelper extends AppHelper {
 		if ($task == null) {
 			$button = '<span class="tasktype label '.$class.'">'.h($label).'</span>';
 		} else {
-			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name'], 'api' => true));
-			$button = '<button class="tasktype label '.$class.' task-dropdown" data-api-url="'.$apiUrl.'" data-change="type" data-id="'.h($typeId).'" data-toggle="task_type_dropdown">'.h($label).' <b class="caret"></b></button>';
+			$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
+			$button = '<button class="tasktype label '.$class.' task-dropdown" data-api-url="'.$apiUrl.'" data-change="type" data-id="'.h($typeId).'" data-toggle="task_type_dropdown" title="'.h($label).'">'.h($label).' <b class="caret"></b></button>';
 		}
 		return $button;
 
@@ -174,6 +176,38 @@ class TaskHelper extends AppHelper {
 		return $label;
 	}
 
+	public function milestoneDropdownMenu() {
+		return '<ul class="dropdown-menu task-dropdown-menu" id="task_milestone_dropdown"></ul>';
+	}
+
+	public function milestoneDropdownButton($task, $size = 90, $hasWrite = true) {
+		$icon = '<i class="icon-road icon-white"></i>';
+		$label = ' <span class="milestone-label">';
+		if($task['Task']['milestone_id'] != 0){
+			$tooltip = __("Milestone: %s", h($task['Milestone']['subject']));
+			$label .= $this->Html->link($task['Milestone']['subject'], array(
+				'controller' => 'milestones',
+				'action' => 'view',
+				'project' => $task['Project']['name'],
+				$task['Milestone']['id']
+			));
+
+		} else {
+			$tooltip = __("No milestone");
+			$label .= __("No milestone");
+		}
+		$label .= "</span>";
+
+		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_milestones', 'api' => true, 'project' => $task['Project']['name']));
+		if ($hasWrite) {
+			$button = '<button class="label task-dropdown task-dropdown-milestone" title="'.h($tooltip).'" data-type="milestone" data-api-url="'.$apiUrl.'" data-change="milestone_id" data-toggle="task_milestone_dropdown" data-source="'.$apiUrl.'">'.$icon.' <b class="caret"></b></button>';
+		} else {
+			$button = "$icon$label";
+		}
+
+		return $button;
+	}
+
 	public function storyPointsControl($task, $full = false) {
 		if (is_numeric($task)) {
 			$points = $task ?: 0;
@@ -185,7 +219,7 @@ class TaskHelper extends AppHelper {
 		$label = '';
 
 		if ($task) {
-			$label .= $this->Bootstrap->button("-", array('title' => __('Decrease story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
+			$label .= $this->Bootstrap->button("-", array('class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
 		}
 
 		$label .= $this->Bootstrap->button(__("<span class='points'>%d%s</span>", $points, $task?"":" SP"), array(
@@ -193,7 +227,7 @@ class TaskHelper extends AppHelper {
 			'title' => __n('%d story point', '%d story points', $points, $points)));
 		
 		if ($task) {
-			$label .= $this->Bootstrap->button("+", array('title' => __('Increase story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
+			$label .= $this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
 		}
 
 		if ($full) {
@@ -212,7 +246,7 @@ class TaskHelper extends AppHelper {
 		return '<ul class="dropdown-menu task-dropdown-menu" id="task_assignee_dropdown"></ul>';
 	}
 
-	public function assigneeDropdownButton($task, $size = 90, $hasWrite = true, $textLabel = false) {
+	public function assigneeDropdownButton($task, $size = 90, $hasWrite = true, $textLabel = false, $labelLeft = false) {
 		if(isset($task['Assignee']['email'])){
 			$tooltip = __("Assigned to: %s", h($task['Assignee']['name']));
 			$label = $this->Gravatar->image($task['Assignee']['email'], array('size' => $size), array('alt' => $tooltip, 'title' => $tooltip));
@@ -224,15 +258,15 @@ class TaskHelper extends AppHelper {
 
 		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_collaborators', 'api' => true, 'project' => $task['Project']['name']));
 		if ($hasWrite) {
-			$button = '<button class="label task-dropdown task-dropdown-assignee" title="'.h($tooltip).'" data-api-url="'.$apiUrl.'" data-change="assignee_id" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
+			$button = '<button class="label task-dropdown task-dropdown-assignee" title="'.h($tooltip).'" data-type="assignee" data-api-url="'.$apiUrl.'" data-change="assignee_id" data-toggle="task_assignee_dropdown" data-source="'.$apiUrl.'">'.$label.' <b class="caret"></b></button>';
 		} else {
 			$button = $label;
 		}
 
 		if ($textLabel) {
-			$button .= ' <span class="assignee-full-label">';
+			$textLabel = ' <span class="assignee-full-label">';
 			if ($task['Assignee']['id'] > 0) {
-				$button .= $this->Html->link(
+				$textLabel .= $this->Html->link(
 					$task['Assignee']['name'],
 					array(
 						'controller' => 'users',
@@ -241,9 +275,14 @@ class TaskHelper extends AppHelper {
 					)
 				);
 			} else {
-				$button .= h($task['Assignee']['name']);
+				$textLabel .= h($task['Assignee']['name']);
 			}
-			$button .= '</span>';
+			$textLabel .= '</span>';
+			if ($labelLeft) {
+				$button = "$textLabel $button";
+			} else {
+				$button .= $textLabel;
+			}
 		}
 		return $button;
 	}
@@ -275,6 +314,7 @@ class TaskHelper extends AppHelper {
 		return $this->typeDropdownMenu() .
 			$this->statusDropdownMenu() .
 			$this->priorityDropdownMenu() .
-			$this->assigneeDropdownMenu();
+			$this->assigneeDropdownMenu() .
+			$this->milestoneDropdownMenu();
 	}
 }

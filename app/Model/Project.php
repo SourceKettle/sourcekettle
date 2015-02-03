@@ -133,14 +133,14 @@ class Project extends AppModel {
 		'Collaborator' => array(
 			'className' => 'Collaborator',
 			'foreignKey' => 'project_id',
-			'dependent' => false,
+			'dependent' => true,
 		),
 
 		// Collaborating teams are teams of users mapped to projects with an access level
 		'CollaboratingTeam' => array(
 			'className' => 'CollaboratingTeam',
 			'foreignKey' => 'project_id',
-			'dependent' => false,
+			'dependent' => true,
 		),
 
 	);
@@ -526,7 +526,7 @@ class Project extends AppModel {
 		}
 
 		foreach ($members as $member) {
-			$users[$member['User']['id']] = "{$member['User']['name']} [{$member['User']['email']}]";
+			$users[] = array("id" => $member['User']['id'], "title" => "{$member['User']['name']} [{$member['User']['email']}]");
 		}
 
 		// Now get a list of any direct collaborators
@@ -536,11 +536,28 @@ class Project extends AppModel {
 		));
 
 		foreach ($collaborators as $collaborator) {
-			$users[$collaborator['User']['id']] = "{$collaborator['User']['name']} [{$collaborator['User']['email']}]";
+			$users[] = array("id" => $collaborator['User']['id'], "title" => "{$collaborator['User']['name']} [{$collaborator['User']['email']}]");
 		}
-			
+		
+		// Sort in ID order
+		usort($users, function($a, $b) {return ($a['id'] < $b['id']? -1: 1);});
 		return $users;
 
 	}
 
+	public function listMilestones($projectId) {
+		$milestones = array();
+		foreach ($this->Milestone->find('list', array(
+			'conditions' => array('Milestone.project_id' => $projectId),
+			'fields' => array('Milestone.id', 'Milestone.subject', 'Milestone.is_open'),
+			'order' => array('Milestone.is_open DESC', 'Milestone.starts'),
+			
+		)) as $isOpen => $list) {
+			foreach ($list as $id => $milestone) {
+				$milestones[] = array('id' => $id, "title" => __("(%s): %s", ($isOpen? "Open": "Closed"), $milestone));
+			}
+		}
+		
+		return $milestones;
+	}
 }

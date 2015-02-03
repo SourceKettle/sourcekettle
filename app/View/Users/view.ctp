@@ -1,7 +1,7 @@
 <?= $this->Bootstrap->page_header(h($user['User']['name'])); ?>
 <?= $this->Html->css('projects.index', null, array ('inline' => false)); ?>
 
-<div class="row">
+<div class="row-fluid">
 	<div class="span3">
 		<?= $this->Gravatar->image(
 			$user['User']['email'],
@@ -23,6 +23,9 @@
 		<dd>
 			<?= $this->Time->timeAgoInWords($user['User']['created'])?>
 		</dd>
+		<? if ($user['User']['id'] == $current_user['id']) { ?>
+			<dd><?= $this->Html->link(__('View kanban chart'), array('controller' => 'tasks', 'action' => 'personal_kanban'))?></dd>
+		<? } ?>
 		<dt>
 			<?= __("Teams") ?>
 		</dt>
@@ -37,21 +40,24 @@
 
 </div>
 
+
 <? if (!empty($shared_projects)) { ?>
 <hr>
 
-<div class="row">
+<div class="row-fluid">
 	<h4 class='span12'>
 		<?=__("%s collaborates on these projects:", h($user['User']['name']))?>
 	</h4>
-	<?foreach ($shared_projects as $project) {
-		echo $this->Element('Project/block', array('project' => $project));
-	}?>
 </div>
+<? $projects = $shared_projects; ?>
+<?= $this->Element("Project/projectgrid") ?>
 <? } ?>
 
+
 <hr>
-<div class="row">
+<? $projects = $shared_projects; ?>
+<?= $this->Element("Project/projectgrid") ?>
+<div class="row-fluid">
 	<?php
 	// Loop through all the projects that a user has access to
 	if (empty($projects)) {

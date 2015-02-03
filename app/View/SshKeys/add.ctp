@@ -16,22 +16,22 @@
 
 echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
 
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/users') ?>
     </div>
 
-    <div class="span6">
+    <div class="span7">
         <?php
         echo $this->Form->create('SshKey', array('class' => 'well form-horizontal', 'url' => array('controller' => 'sshKeys', 'action' => 'add')));
         echo '<h3>Add a new SSH key</h3>';
         echo $this->Bootstrap->input("key", array(
-            "input" => $this->Form->textarea("key", array("class" => "input-xlarge")),
+            "input" => $this->Form->textarea("key", array("class" => "span12 input-xlarge")),
             "label" => "Public SSH Key",
         ));
 
         echo $this->Bootstrap->input("comment", array(
-            "input" => $this->Form->text("comment", array("class" => "input-xlarge")),
+            "input" => $this->Form->text("comment", array("class" => "span12 input-xlarge")),
         ));
 
         echo $this->Bootstrap->button("Add", array("style" => "primary", "size" => "large", 'class' => 'controls'));
@@ -39,11 +39,11 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
         echo $this->Form->end();
         ?>
     </div>
-    <div class="span4">
+    <div class="span3">
         <h3>What be all the hype about SSH keys?</h3>
         <p>
             Here at SourceKettle, we think the world of computers moves pretty fast! It's hard for us to keep up with all the lastest and greatest tech, and as such,
-            if you would like to know about SSH keys and how they work on your device, please head over to Google.
+            if you would like to know about SSH keys and how they work on your device, please head over to Google*.
         </p>
         <p>
             You'll get far with a search such as:<br>'How to setup SSH Keys on [operating system here]'<br>
@@ -63,5 +63,6 @@ echo $this->Bootstrap->page_header($this->request->data['User']['name']); ?>
             </dd>
             </dl>
         </p>
+	<p><small>* Other search engines are available.</small></p>
     </div>
 </div>

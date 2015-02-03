@@ -46,17 +46,18 @@ $this->Html->scriptBlock("
 ?>
 
 <?= $this->DT->pHeader(__("Source code")) ?>
-<div class="row">
+<div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>
     </div>
-    <div class="row">
+	<div class="span10">
+    <div class="row-fluid">
         <?= $this->element('Source/topbar') ?>
-        <div class="span10">
-            <?= $this->element('Source/tree_commit_header_extended') ?>
-        </div>
-        <div class="span10">
-            <div class="row-fluid">
+	</div>
+	<div class="row-fluid">
+        <?= $this->element('Source/tree_commit_header_extended') ?>
+    </div>
+    <div class="row-fluid">
             <?php
                 $i = 0;
                 foreach ($commit['changeset'] as $file) {
@@ -71,7 +72,6 @@ $this->Html->scriptBlock("
                     }
                 }
             ?>
-            </div>
         </div>
     </div>
 </div>

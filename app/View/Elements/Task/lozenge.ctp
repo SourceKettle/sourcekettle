@@ -26,12 +26,7 @@ if(isset($span) && $span){
 } else {
 	$span="";
 }
-$apiUrl = $this->Html->url(array(
-  	'controller' => 'tasks',
-	'action' => 'update',
-	'project' => $task['Project']['name'],
-	'api' => true,
-));
+$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
 	if($draggable){
 		echo "<li class='task-lozenge draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl' data-taskStatus='".$task['TaskStatus']['name']."'>";

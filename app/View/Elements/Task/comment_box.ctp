@@ -14,8 +14,7 @@
  */
 ?>
 <div class="row-fluid">
-    <div class="span12">
-        <div class="well col comment" id="<?= $comment['TaskComment']['id'] ?>">
+        <div class="well span8 offset2 comment" id="<?= $comment['TaskComment']['id'] ?>">
             <?php if ($current_user['is_admin'] == 1 || $current_user['id'] == $comment['User']['id']): ?>
             	<button type="button" class="close delete"><?= $this->Bootstrap->icon('remove-circle'); ?></button>
                 <button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
@@ -40,6 +39,5 @@
 			<?= $this->Bootstrap->button(__("Update comment"), array("style" => "primary", 'class' => 'controls')); ?>
 			<?= $this->Form->end(); ?>
        </div>
-    </div>
 
 </div>

@@ -27,13 +27,16 @@ h1, h2, h3 {
     margin-left: 40px;
 }
 
-#footer, #footer a {
+#content-wrapper {
+}
+
+footer, footer a {
     text-align: center;
     font-size: small;
     color: #cccccc;
 }
 
-#footer a {
+footer a {
     padding-left: 15px;
     padding-right: 15px;
 }
