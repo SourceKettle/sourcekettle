@@ -612,16 +612,10 @@ class TasksController extends AppProjectController {
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
 			$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id"));
+			$data['DependsOn'] = @$this->request->data['DependsOn'];
+			$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
 			if (!isset($data['Task'])) {
 				$data['Task'] = array();
-			}
-
-			if (isset($this->request->data['DependsOn'])) {
-				$data['DependsOn'] = $this->_cleanPost(array("DependsOn"));
-			}
-
-			if (isset($this->request->data['DependedOnBy'])) {
-				$data['DependedOnBy'] = $this->_cleanPost(array("DependedOnBy"));
 			}
 
 			$data['Task']['project_id']	= $project['Project']['id'];
@@ -759,7 +753,6 @@ class TasksController extends AppProjectController {
 		$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id", "Task.status", "Task.priority", "Task.type"));
 		$data['DependsOn'] = @$this->request->data['DependsOn'];
 		$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
-
 		// Force the project ID to be correct
 		$data['Task']['project_id'] = $project['Project']['id'];
 

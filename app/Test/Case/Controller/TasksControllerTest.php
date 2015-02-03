@@ -354,8 +354,8 @@ class TasksControllerTest extends AppControllerTest {
 				'story_points' => 4,
 				'description' => 'Look ma, I created a task!',
 			),
-			'DependsOn' => array('DependsOn' => array(2, 4, 5)),
-			'DependedOnBy' => array('DependedOnBy' => array(3, 6, 7)),
+			'DependsOn' => array(2, 4, 11),
+			'DependedOnBy' => array(3, 6, 7),
 		);
 
 		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
@@ -371,8 +371,8 @@ class TasksControllerTest extends AppControllerTest {
 		unset($task['Task']['public_id']);
 		unset($task['Task']['dependenciesComplete']);
 		$this->assertEquals($postData['Task'], $task['Task']);
-		$this->assertEquals($postData['DependsOn']['DependsOn'], array_map(function($a) {return $a['public_id'];}, $task['DependsOn']));
-		$this->assertEquals($postData['DependedOnBy']['DependedOnBy'], array_map(function($a) {return $a['public_id'];}, $task['DependedOnBy']));
+		$this->assertEquals($postData['DependsOn'], array_map(function($a) {return $a['public_id'];}, $task['DependsOn']));
+		$this->assertEquals($postData['DependedOnBy'], array_map(function($a) {return $a['public_id'];}, $task['DependedOnBy']));
 	}
 
 	public function testEditTaskNotLoggedIn() {

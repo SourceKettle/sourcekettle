@@ -140,14 +140,14 @@ $this->Html->scriptBlock ("
 		$('#subtasks-list').sortable('toArray').forEach(function(taskId){
 			hidden = document.createElement('input');
 			hidden.type = 'hidden';
-			hidden.name = 'data[DependsOn][DependsOn][]';
+			hidden.name = 'data[DependsOn][]';
 			hidden.value = taskId;
 			$('form').append(hidden);
 		});
 		$('#parents-list').sortable('toArray').forEach(function(taskId){
 			hidden = document.createElement('input');
 			hidden.type = 'hidden';
-			hidden.name = 'data[DependedOnBy][DependedOnBy][]';
+			hidden.name = 'data[DependedOnBy][]';
 			hidden.value = taskId;
 			$('form').append(hidden);
 		});
