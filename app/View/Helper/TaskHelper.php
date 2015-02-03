@@ -219,7 +219,7 @@ class TaskHelper extends AppHelper {
 		$label = '';
 
 		if ($task) {
-			$label .= $this->Bootstrap->button("-", array('title' => __('Decrease story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
+			$label .= $this->Bootstrap->button("-", array('class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
 		}
 
 		$label .= $this->Bootstrap->button(__("<span class='points'>%d%s</span>", $points, $task?"":" SP"), array(
@@ -227,7 +227,7 @@ class TaskHelper extends AppHelper {
 			'title' => __n('%d story point', '%d story points', $points, $points)));
 		
 		if ($task) {
-			$label .= $this->Bootstrap->button("+", array('title' => __('Increase story points'), 'class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
+			$label .= $this->Bootstrap->button("+", array('class' => 'btn-inverse btn-storypoints btn-storypoints-control'));
 		}
 
 		if ($full) {
