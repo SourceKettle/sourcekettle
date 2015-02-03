@@ -77,21 +77,23 @@ class TimesController extends AppProjectController {
 		if ($this->request->is('ajax')) {
 			$this->autoRender = false;
 
-			$this->request->data['Time']['user_id'] = $this->Auth->user('id');
-			$this->request->data['Time']['project_id'] = $project['Project']['id'];
+			$data = $this->_cleanPost(array("Time.task_id", "Time.description", "Time.date", "Time.mins"));
+			$data['Time']['user_id'] = $this->Auth->user('id');
+			$data['Time']['project_id'] = $project['Project']['id'];
 
-			if ($this->Time->save($this->request->data)) {
+			if ($this->Time->save($data)) {
 				echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Time successfully logged.</div>';
 			} else {
 				echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not log time to the project. Please try again.</div>';
 			}
 		} else if ($this->request->is('post')) {
-			$origTime = $this->request->data['Time']['mins'];
+			$data = $this->_cleanPost(array("Time.task_id", "Time.description", "Time.date", "Time.mins"));
+			$origTime = $data['Time']['mins'];
 
-			$this->request->data['Time']['user_id'] = $this->Auth->user('id');
-			$this->request->data['Time']['project_id'] = $project['Project']['id'];
+			$data['Time']['user_id'] = $this->Auth->user('id');
+			$data['Time']['project_id'] = $project['Project']['id'];
 
-			$time = $this->Time->save($this->request->data);
+			$time = $this->Time->save($data);
 
 			if ($time) {
 				if ($this->request->data['Time']['task_id']) {
@@ -99,9 +101,9 @@ class TimesController extends AppProjectController {
 				} else {
 					$subject = __("the project");
 				}
-				$this->Flash->info(__("%s was logged to %s", $this->request->data['Time']['mins'], $subject));
-				if (@$this->request->data['Time']['task_id']){
-					return $this->redirect(array('controller' => 'tasks', 'project' => $project['Project']['name'], 'action' => 'view', $this->request->data['Time']['task_id']));
+				$this->Flash->info(__("%s was logged to %s", $time['Time']['mins'], $subject));
+				if (isset($time['Time']['task_id'])) {
+					return $this->redirect(array('controller' => 'tasks', 'project' => $project['Project']['name'], 'action' => 'view', $time['Time']['task_id']));
 				} else {
 					return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 				}
@@ -149,10 +151,11 @@ class TimesController extends AppProjectController {
 		$current_user = $this->viewVars['current_user'];
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$this->request->data['Time']['user_id'] = $current_user['id'];
-			$this->request->data['Time']['project_id'] = $project['Project']['id'];
+			$data = $this->_cleanPost(array("Time.task_id", "Time.description", "Time.date", "Time.mins"));
+			$data['Time']['user_id'] = $current_user['id'];
+			$data['Time']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->u($this->Time->save($this->request->data))) {
+			if ($this->Flash->u($this->Time->save($data))) {
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'index'));
 			}
 		} else {

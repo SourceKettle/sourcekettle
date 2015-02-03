@@ -490,12 +490,13 @@ class TasksController extends AppProjectController {
 		}
 
 		$this->Task->TaskComment->create();
+		$data = $this->_cleanPost(array("TaskComment.comment"));
 
-		$this->request->data['TaskComment']['task_id'] = $this->Task->id;
-		$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+		$data['TaskComment']['task_id'] = $this->Task->id;
+		$data['TaskComment']['user_id'] = $this->Auth->user('id');
 
 		// NB do not add a flash message, as they'll see the new task has been added
-		if ($this->Task->TaskComment->save($this->request->data)) {
+		if ($this->Task->TaskComment->save($data)) {
 			unset($this->request->data['TaskComment']);
 		} else {
 			$this->Flash->error(__('The comment could not be saved. Please try again.'));
@@ -564,16 +565,16 @@ class TasksController extends AppProjectController {
 		}
 
 		// Check we have new POST data for the comment...
+		// TODO change form etc. to not contain TaskCommentEdit, wtf
 		if (!$this->request->is('post') || !isset($this->request->data['TaskCommentEdit'])) {
 			return $this->redirect (array ('project' => $project['Project']['name'], 'action' => 'view', $taskId));
 		}
-		$this->request->data['TaskComment'] = array(
+		$data = array('TaskComment' => array(
 			'comment' => $this->request->data['TaskCommentEdit']['comment'],
 			'id' => $id,
-		);
-		unset($this->request->data['TaskCommentEdit']);
+		));
 
-		if ($this->Task->TaskComment->save($this->request->data)) {
+		if ($this->Task->TaskComment->save($data)) {
 			$this->Flash->info(__('The comment has been updated successfully'));
 			unset($this->request->data['TaskComment']);
 		} else {
@@ -610,30 +611,35 @@ class TasksController extends AppProjectController {
 
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
-
-			$this->request->data['Task']['project_id']		= $project['Project']['id'];
-			$this->request->data['Task']['owner_id']		= $current_user['id'];
-			$this->request->data['Task']['task_status_id']	= 1;
-
-			if (isset($this->request->data['Task']['milestone_id']) && $this->request->data['Task']['milestone_id'] == 0) {
-				$this->request->data['Task']['milestone_id'] = null;
-			}
-			if (isset($this->request->data['Task']['task_type_id']) && $this->request->data['Task']['task_type_id'] == 0) {
-				$this->request->data['Task']['task_type_id'] = 3;
+			$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id"));
+			$data['DependsOn'] = @$this->request->data['DependsOn'];
+			$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
+			if (!isset($data['Task'])) {
+				$data['Task'] = array();
 			}
 
+			$data['Task']['project_id']	= $project['Project']['id'];
+			$data['Task']['owner_id']	= $current_user['id'];
+			$data['Task']['task_status_id']	= 1;
+
+			if (isset($data['Task']['milestone_id']) && $data['Task']['milestone_id'] == 0) {
+				$data['Task']['milestone_id'] = null;
+			}
+			if (isset($data['Task']['task_type_id']) && $data['Task']['task_type_id'] == 0) {
+				$data['Task']['task_type_id'] = 3; // TODO configurable default
+			}
 
 			if ($this->request->is('ajax')) {
 				$this->autoRender = false;
 
-				if ($this->Task->saveAll($this->request->data)) {
+				if ($this->Task->saveAll($data)) {
 					echo '<div class="alert alert-success"><a class="close" data-dismiss="alert">x</a>Task successfully created.</div>';
 				} else {
 					echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not add task to the project. Please, try again.</div>';
 				}
 			} else if ($this->request->is('post')) {
 				// Do not redirect, allow them to save and add another task with the same details
-				if ($this->Task->saveAll($this->request->data)) {
+				if ($this->Task->saveAll($data)) {
 					$task = $this->Task->findById($this->Task->getLastInsertID());
 					unset($this->request->data['Task']['subject']);
 					unset($this->request->data['Task']['description']);
@@ -744,19 +750,16 @@ class TasksController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 
+		$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id", "Task.status", "Task.priority", "Task.type"));
+		$data['DependsOn'] = @$this->request->data['DependsOn'];
+		$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
 		// Force the project ID to be correct
-		$this->request->data['Task']['project_id'] = $project['Project']['id'];
-
-		// Ensure we never change the owner ID
-		unset($this->request->data['Task']['owner_id']);
+		$data['Task']['project_id'] = $project['Project']['id'];
 
 		// Set the real task ID for saving
-		$this->request->data['Task']['id'] = $this->Task->id;
-		unset($this->request->data['Task']['public_id']);
-		unset($this->request->data['Task']['project_id']);
+		$data['Task']['id'] = $this->Task->id;
 
-
-		$saved = $this->Task->save($this->request->data);
+		$saved = $this->Task->save($data);
 
 		// Re-load all info about the task to return
 		$task = $this->Task->findById($saved['Task']['id']);
@@ -814,17 +817,16 @@ class TasksController extends AppProjectController {
 		}
 		$this->request->data = $task;
 
-		// Convert dependency IDs from internal to public IDs
-		//$saved = $this->__publiciseDependencies($saved);
-
-		// Make sure we pass back th epublic ID for rendering
-		//$this->request->data['Task']['public_id'] = $public_id;
-
 		// Show a message on save and redirect back to the task
 		if ($this->request->is('ajax')) {
 			$this->layout = 'ajax';
 			$this->request->data['error'] = 'no_error';
-			$this->request->data['Assignee']['gravatar'] = Gravatar::url($this->request->data['Assignee']['email'], array('url_only' => true));
+			if (empty($this->request->data['Assignee']['email'])) {
+				$this->request->data['Assignee']['gravatar'] = Gravatar::url($this->request->data['Assignee']['email'], array('d' => 'mm', 'url_only' => true));
+			} else {
+				$this->request->data['Assignee']['gravatar'] = Gravatar::url($this->request->data['Assignee']['email'], array('url_only' => true));
+			}
+
 			$this->set('data', $this->request->data);
 			$this->render('/Elements/json');
 			return;
@@ -895,13 +897,14 @@ class TasksController extends AppProjectController {
 		}
 
 		// If a user has made a comment, add it
-		if ($success && isset($this->request->data['TaskComment']['comment']) && $this->request->data['TaskComment']['comment'] != '') {
+		$data = $this->_cleanPost(array("TaskComment.comment"));
+		if ($success && isset($data['TaskComment']['comment']) && $data['TaskComment']['comment'] != '') {
 			$this->Task->TaskComment->create();
 
-			$this->request->data['TaskComment']['task_id'] = $this->Task->id;
-			$this->request->data['TaskComment']['user_id'] = $this->Auth->user('id');
+			$data['TaskComment']['task_id'] = $this->Task->id;
+			$data['TaskComment']['user_id'] = $this->Auth->user('id');
 
-			if ($this->Task->TaskComment->save($this->request->data)) {
+			if ($this->Task->TaskComment->save($data)) {
 				$messages[] = __("Comment added to task %d", $public_id);
 				unset($this->request->data['TaskComment']);
 			} else {
@@ -982,8 +985,9 @@ class TasksController extends AppProjectController {
 		}
 
 		// Make sure we're operating  on the correct task ID...
-		$this->request->data['id'] = $task['Task']['id'];
-		$task = $this->Task->save($this->request->data);
+		$data = $this->_cleanPost(array("subject", "description", "task_priority_id", "task_status_id", "milestone_id", "task_type_id", "assignee_id", "time_estimate", "story_points", "story_id"));
+		$data['id'] = $task['Task']['id'];
+		$task = $this->Task->save($data);
 
 		if ($task) {
 			$this->response->statusCode(200);

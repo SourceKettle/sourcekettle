@@ -162,12 +162,13 @@ class MilestonesController extends AppProjectController {
 		if ($this->request->is('post')) {
 			$this->Milestone->create();
 
-			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
+			$data = $this->_cleanPost(array("Milestone.subject", "Milestone.description", "Milestone.starts", "Milestone.due"));
+			$data['Milestone']['project_id'] = $project['Project']['id'];
 
 			// Force new milestones into the 'open' state, this makes the most sense...
-			$this->request->data['Milestone']['is_open'] = true;
+			$data['Milestone']['is_open'] = true;
 
-			if ($this->Flash->c($this->Milestone->save($this->request->data))) {
+			if ($this->Flash->c($this->Milestone->save($data))) {
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
 			}
 		}
@@ -184,9 +185,10 @@ class MilestonesController extends AppProjectController {
 		$milestone = $this->Milestone->open($id);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$this->request->data['Milestone']['project_id'] = $project['Project']['id'];
+			$data = $this->_cleanPost(array("Milestone.subject", "Milestone.description", "Milestone.starts", "Milestone.due"));
+			$data['Milestone']['project_id'] = $project['Project']['id'];
 
-			if ($this->Flash->u($this->Milestone->save($this->request->data))) {
+			if ($this->Flash->u($this->Milestone->save($data))) {
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $id));
 			}
 		} else {

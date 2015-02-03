@@ -107,6 +107,6 @@ try {
 
     <!-- JavaScript! Placed at the end of the file for faster page loading -->
     <?= $this->Html->script('/jquery/jquery-1.11.0.min.js'); ?>
-    <?= $this->Html->script('/bootstrap/bootstrap.min') ?>
+    <?= $this->Html->script('/bootstrap/js/bootstrap.min') ?>
 </body>
 </html>

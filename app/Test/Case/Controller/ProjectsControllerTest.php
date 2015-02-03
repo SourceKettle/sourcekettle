@@ -631,7 +631,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$saved = $this->controller->Project->findById(3);
 		$this->testAction('/project/personal/delete', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Are you sure you want to delete?</h1>', $this->view);
+		$this->assertContains('<h1>Are you sure you want to delete "personal"?</h1>', $this->view);
 	}
 
 	public function testDeleteSystemAdmin() {
@@ -677,7 +677,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$saved = $this->controller->Project->findById(3);
 		$this->testAction('/admin/projects/personal/delete', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Are you sure you want to delete?</h1>', $this->view);
+		$this->assertContains('<h1>Are you sure you want to delete "personal"?</h1>', $this->view);
 	}
 
 	public function testAdminDeleteSystemAdmin() {

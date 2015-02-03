@@ -263,13 +263,19 @@ class Task extends AppModel {
 	// and remove the current task's ID if present.
 	// TODO a horrible, horrible fudge that should not exist.
 	private function __sanitiseDependencies($taskId, $projectId, $depList) {
-
-		// If it's a full on list of task "objects" instead of just IDs, crunch that a bit
-		if (isset($depList[0]['public_id'])) {
-			$depList = array_map(function($a) {return $a['public_id'];}, $depList);
-		} elseif (isset($depList[0]['id'])) {
-			$depList = array_map(function($a) {return $a['id'];}, $depList);
-		}
+		
+		// We'll normally have a list of public IDs, but if we get a list of objects,
+		// crunch them down
+		$depList = array_map(function($a) {
+			if (is_numeric($a)) {
+				return $a;
+			} elseif (is_array($a) && isset($a['public_id'])) {
+				return $a['public_id'];
+			} elseif (is_array($a) && isset($a['id'])) {
+				return $a['id'];
+			}
+			return null;
+		}, $depList);
 
 		// Now get unique values only...
 		$depList = array_unique(array_values($depList));

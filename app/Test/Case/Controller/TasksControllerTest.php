@@ -317,7 +317,7 @@ class TasksControllerTest extends AppControllerTest {
 				'task_priority_id' => 2,
 				'assignee_id' => 3,
 				'milestone_id' => 1,
-				'time_estimate' => 145,
+				'time_estimate' => '2h 25m',
 				'story_points' => 4,
 				'description' => 'Look ma, I created a task!',
 			)
@@ -326,11 +326,53 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// The subject and description should be removed, and we should end up with the "add a new task" form again
-		unset($postData['Task']['subject']);
-		unset($postData['Task']['description']);
 		$postData['Task']['owner_id'] = 2;
-		$this->assertEquals($postData, $this->controller->request->data);
+		$postData['Task']['story_id'] = null;
+		$postData['Task']['id'] = $this->controller->Task->getLastInsertId();
+		$postData['Task']['deleted_date'] = null;
+		$postData['Task']['deleted'] = 0;
+		$task = $this->controller->Task->findById($this->controller->Task->getLastInsertId());
+		unset($task['Task']['modified']);
+		unset($task['Task']['created']);
+		unset($task['Task']['public_id']);
+		unset($task['Task']['dependenciesComplete']);
+		$this->assertEquals($postData['Task'], $task['Task']);
+	}
+
+	public function testAddTaskWithDependencies() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Task' => array(
+				'subject' => 'new task for public project',
+				'project_id' => 2,
+				'task_type_id' => 2,
+				'task_status_id' => 1,
+				'task_priority_id' => 2,
+				'assignee_id' => 3,
+				'milestone_id' => 1,
+				'time_estimate' => "2h 25m",
+				'story_points' => 4,
+				'description' => 'Look ma, I created a task!',
+			),
+			'DependsOn' => array(2, 4, 11),
+			'DependedOnBy' => array(3, 6, 7),
+		);
+
+		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$postData['Task']['owner_id'] = 2;
+		$postData['Task']['story_id'] = null;
+		$postData['Task']['id'] = $this->controller->Task->getLastInsertId();
+		$postData['Task']['deleted_date'] = null;
+		$postData['Task']['deleted'] = 0;
+		$task = $this->controller->Task->findById($this->controller->Task->getLastInsertId());
+		unset($task['Task']['modified']);
+		unset($task['Task']['created']);
+		unset($task['Task']['public_id']);
+		unset($task['Task']['dependenciesComplete']);
+		$this->assertEquals($postData['Task'], $task['Task']);
+		$this->assertEquals($postData['DependsOn'], array_map(function($a) {return $a['public_id'];}, $task['DependsOn']));
+		$this->assertEquals($postData['DependedOnBy'], array_map(function($a) {return $a['public_id'];}, $task['DependedOnBy']));
 	}
 
 	public function testEditTaskNotLoggedIn() {
@@ -395,6 +437,89 @@ class TasksControllerTest extends AppControllerTest {
 
 		// We should be redirected to the task page
 		$this->assertRedirect('/project/public/tasks/view/1');
+	}
+
+	// Ensure tasks can be updated via AJAX, using the status/priority/task names
+	public function testEditTaskAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Task' => array(
+				'subject' => 'updated task for public project',
+				'type' => 'enhancement',
+				'status' => 'closed',
+				'priority' => 'blocker',
+				'assignee_id' => 3,
+				'milestone_id' => 1,
+				'time_estimate' => 145,
+				'story_points' => 4,
+				'description' => 'Look ma, I updated a task!',
+			)
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(
+			'id' => '1',
+			'project_id' => '2',
+			'owner_id' => '2',
+			'task_type_id' => '3',
+			'task_status_id' => '4',
+			'task_priority_id' => '4',
+			'assignee_id' => '3',
+			'milestone_id' => '1',
+			'story_id' => null,
+			'time_estimate' => '2h 25m',
+			'story_points' => '4',
+			'subject' => 'updated task for public project',
+			'description' => 'Look ma, I updated a task!',
+			'deleted' => '0',
+			'deleted_date' => null,
+			'public_id' => '1',
+			'dependenciesComplete' => '1',
+			'uri' => '/project/public/tasks/view/1'	,
+		), $returned['Task']);
+	}
+
+	// Ensure task dependencies can be updated via AJAX
+	public function testEditTaskDependsOnAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'DependsOn' => array(2, 3, 11),
+			'DependedOnBy' => array(5, 6, 7),
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(2, 3, 11), array_map(function($a) {return $a['public_id'];}, $returned['DependsOn']));
+	}
+
+	public function testEditTaskDependedOnByAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'DependedOnBy' => array(5, 6, 11),
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(5, 6, 11), array_map(function($a) {return $a['public_id'];}, $returned['DependedOnBy']));
 	}
 
 

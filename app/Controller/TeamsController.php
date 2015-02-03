@@ -81,7 +81,8 @@ class TeamsController extends AppController {
 		
 		if ($this->request->is('post')) {
 			$this->Team->create();
-			if ($this->Team->save($this->request->data)) {
+			$data = $this->_cleanPost(array("Team.name", "Team.description", "User"));
+			if ($this->Team->save($data)) {
 				$this->Session->setFlash(__('The team has been saved'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
@@ -101,7 +102,9 @@ class TeamsController extends AppController {
 		}
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Team->save($this->request->data)) {
+			$data = $this->_cleanPost(array("Team.name", "Team.description", "User"));
+			$data['Team']['id'] = $id;
+			if ($this->Team->save($data)) {
 				$this->Session->setFlash(__('The team has been saved'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
