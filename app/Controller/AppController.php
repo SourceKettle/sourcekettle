@@ -87,7 +87,7 @@ class AppController extends Controller {
 		// Take any fields present in the POST data and add them to our cleaned array
 		foreach ($allowedFields as $field) {
 			$value = array_pop(Hash::extract($this->request->data, $field));
-			if (!empty($value)) {
+			if (isset($value)) {
 				$data = Hash::insert($data, $field, $value);
 			}
 		}
