@@ -824,12 +824,6 @@ class TasksController extends AppProjectController {
 		}
 		$this->request->data = $task;
 
-		// Convert dependency IDs from internal to public IDs
-		//$saved = $this->__publiciseDependencies($saved);
-
-		// Make sure we pass back th epublic ID for rendering
-		//$this->request->data['Task']['public_id'] = $public_id;
-
 		// Show a message on save and redirect back to the task
 		if ($this->request->is('ajax')) {
 			$this->layout = 'ajax';
