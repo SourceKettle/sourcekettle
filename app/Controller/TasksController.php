@@ -834,7 +834,7 @@ class TasksController extends AppProjectController {
 		if ($this->request->is('ajax')) {
 			$this->layout = 'ajax';
 			$this->request->data['error'] = 'no_error';
-			$this->request->data['Assignee']['gravatar'] = Gravatar::url($this->request->data['Assignee']['email'], array('url_only' => true));
+			$this->request->data['Assignee']['gravatar'] = Gravatar::url($this->request->data['Assignee']['email'], array('d' => 'mm', 'url_only' => true));
 			$this->set('data', $this->request->data);
 			$this->render('/Elements/json');
 			return;
