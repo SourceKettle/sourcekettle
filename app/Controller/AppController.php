@@ -81,6 +81,19 @@ class AppController extends Controller {
 		return false;
 	}
 
+	// Cleans up POST data to retrieve only allowed fields
+	protected function _cleanPost($allowedFields = array()) {
+		$data = array();
+		// Take any fields present in the POST data and add them to our cleaned array
+		foreach ($allowedFields as $field) {
+			$value = array_pop(Hash::extract($this->request->data, $field));
+			if (!empty($value)) {
+				$data = Hash::insert($data, $field, $value);
+			}
+		}
+		return $data;
+	}
+
 /**
  * Before filter method acts first in the controller
  *

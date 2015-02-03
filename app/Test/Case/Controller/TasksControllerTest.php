@@ -317,7 +317,7 @@ class TasksControllerTest extends AppControllerTest {
 				'task_priority_id' => 2,
 				'assignee_id' => 3,
 				'milestone_id' => 1,
-				'time_estimate' => 145,
+				'time_estimate' => '2h 25m',
 				'story_points' => 4,
 				'description' => 'Look ma, I created a task!',
 			)
@@ -326,11 +326,53 @@ class TasksControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// The subject and description should be removed, and we should end up with the "add a new task" form again
-		unset($postData['Task']['subject']);
-		unset($postData['Task']['description']);
 		$postData['Task']['owner_id'] = 2;
-		$this->assertEquals($postData, $this->controller->request->data);
+		$postData['Task']['story_id'] = null;
+		$postData['Task']['id'] = $this->controller->Task->getLastInsertId();
+		$postData['Task']['deleted_date'] = null;
+		$postData['Task']['deleted'] = 0;
+		$task = $this->controller->Task->findById($this->controller->Task->getLastInsertId());
+		unset($task['Task']['modified']);
+		unset($task['Task']['created']);
+		unset($task['Task']['public_id']);
+		unset($task['Task']['dependenciesComplete']);
+		$this->assertEquals($postData['Task'], $task['Task']);
+	}
+
+	public function testAddTaskWithDependencies() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Task' => array(
+				'subject' => 'new task for public project',
+				'project_id' => 2,
+				'task_type_id' => 2,
+				'task_status_id' => 1,
+				'task_priority_id' => 2,
+				'assignee_id' => 3,
+				'milestone_id' => 1,
+				'time_estimate' => "2h 25m",
+				'story_points' => 4,
+				'description' => 'Look ma, I created a task!',
+			),
+			'DependsOn' => array('DependsOn' => array(2, 4, 5)),
+			'DependedOnBy' => array('DependedOnBy' => array(3, 6, 7)),
+		);
+
+		$this->testAction('/project/public/tasks/add', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		$this->assertAuthorized();
+		$postData['Task']['owner_id'] = 2;
+		$postData['Task']['story_id'] = null;
+		$postData['Task']['id'] = $this->controller->Task->getLastInsertId();
+		$postData['Task']['deleted_date'] = null;
+		$postData['Task']['deleted'] = 0;
+		$task = $this->controller->Task->findById($this->controller->Task->getLastInsertId());
+		unset($task['Task']['modified']);
+		unset($task['Task']['created']);
+		unset($task['Task']['public_id']);
+		unset($task['Task']['dependenciesComplete']);
+		$this->assertEquals($postData['Task'], $task['Task']);
+		$this->assertEquals($postData['DependsOn']['DependsOn'], array_map(function($a) {return $a['public_id'];}, $task['DependsOn']));
+		$this->assertEquals($postData['DependedOnBy']['DependedOnBy'], array_map(function($a) {return $a['public_id'];}, $task['DependedOnBy']));
 	}
 
 	public function testEditTaskNotLoggedIn() {

@@ -129,7 +129,6 @@ class UsersControllerTest extends AppControllerTest {
 			->expects($this->once())
 			->method('setFlash')
 			->with(__('Your changes have been saved.'), 'default', array(), 'success');
-
 		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
 		$this->assertAuthorized();
 
@@ -138,7 +137,6 @@ class UsersControllerTest extends AppControllerTest {
 			'fields' => array('name', 'email'),
 			'recursive' => -1,
 		));
-
 		$this->assertEquals($postData, $retrieved);
 	}
 
@@ -157,14 +155,14 @@ class UsersControllerTest extends AppControllerTest {
 		$this->testAction('/account/details', array('method' => 'post', 'return' => 'vars', 'data' => $postData));
 		$this->assertAuthorized();
 
-		// Check that the email address was not updated
-		$postData['User']['email'] = 'ldap-user@example.com';
 		$retrieved = $this->User->find('first', array(
 			'conditions' => array('id' => 23),
 			'fields' => array('name', 'email'),
 			'recursive' => -1,
 		));
 
+		// Check that the email address was not updated
+		$postData['User']['email'] = 'ldap-user@example.com';
 		$this->assertEquals($postData, $retrieved);
 	}
 
@@ -971,9 +969,7 @@ class UsersControllerTest extends AppControllerTest {
 
 	public function testSecurityNotSystemAdmin() {
 		$this->_fakeLogin(1);
-		debug("About to try, logged in");
 		$this->testAction('/users/security', array('method' => 'get', 'return' => 'vars'));
-		debug("Asserting auth'd");
 		$this->assertAuthorized();
 	}
 
@@ -1256,6 +1252,7 @@ class UsersControllerTest extends AppControllerTest {
 			'Another Perl developer [another-perl-dev@example.com]',
 			'An inactive admin user [inactive-admin@example.com]',
 			'An external account [ldap-user@example.com]',
+			'Account with real password [realperson@example.com]',
 		), $this->vars['data']['users']);
 
 		$this->testAction('/api/users/autocomplete?query=an');

@@ -86,7 +86,8 @@ class ProjectGroupsController extends AppController {
 	public function admin_add() {
 		if ($this->request->is('post')) {
 			$this->ProjectGroup->create();
-			if ($this->ProjectGroup->save($this->request->data)) {
+			$data = $this->_cleanPost(array("ProjectGroup.name", "ProjectGroup.description", "Project"));
+			if ($this->ProjectGroup->save($data)) {
 				$this->Session->setFlash(__('The project group has been saved'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
@@ -117,15 +118,21 @@ class ProjectGroupsController extends AppController {
 
 			// This is a fudge and a half... for anything where we're *changing* the level,
 			// there will be an existing entry in the database - retrieve the IDs.
-			if (isset($this->request->data['GroupCollaboratingTeam'])) {
-				foreach ($this->request->data['GroupCollaboratingTeam'] as $x => $gct) {
+			$data = $this->_cleanPost(array("ProjectGroup.name", "ProjectGroup.description"));
+			$data['ProjectGroup']['id'] = $id;
+	
+			// TODO better cleaning here
+			$data['GroupCollaboratingTeam'] = @$this->request->data['GroupCollaboratingTeam'];
+			$data['Project'] = $this->_cleanPost(array("Project"));
+			if (isset($data['GroupCollaboratingTeam'])) {
+				foreach ($data['GroupCollaboratingTeam'] as $x => $gct) {
 					$gct = $this->GroupCollaboratingTeam->findByTeamIdAndProjectGroupId($gct['team_id'], $id);
 					if (isset($gct['GroupCollaboratingTeam'])) {
-						$this->request->data['GroupCollaboratingTeam'][$x]['id'] = $gct['GroupCollaboratingTeam']['id'];
+						$data['GroupCollaboratingTeam'][$x]['id'] = $gct['GroupCollaboratingTeam']['id'];
 					}
 				}
 			}
-			if ($this->ProjectGroup->saveAll($this->request->data)) {
+			if ($this->ProjectGroup->saveAll($data)) {
 				$this->Session->setFlash(__('The project group has been saved'));
 				return $this->redirect(array('action' => 'index'));
 			} else {

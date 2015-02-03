@@ -162,7 +162,8 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_index() {
-		if ($this->request->is('post') && isset($this->request->data['Project']['name']) && $project = $this->request->data['Project']['name']) {
+		$data = $this->_cleanPost(array("Project.name"));
+		if ($this->request->is('post') && isset($data['Project']['name']) && $project = $data['Project']['name']) {
 			if ($project = $this->Project->findByName($project)) {
 				return $this->redirect(array(
 					'controller' => 'projects',
@@ -262,8 +263,9 @@ class ProjectsController extends AppProjectController {
 			$this->Project->create();
 
 			// Lets vet the data coming in
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
 			$requestData = array(
-				'Project' => $this->request->data['Project'],
+				'Project' => $data['Project'],
 				'Collaborator' => array(
 					array(
 						'user_id' => $current_user['id'],
@@ -313,7 +315,8 @@ class ProjectsController extends AppProjectController {
 		$current_user = $this->Auth->user();
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$saved = $this->Project->save($this->request->data);
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
+			$saved = $this->Project->save($data);
 			if ($this->Flash->u($saved)) {
 				$this->log("[ProjectController.edit] user[" . $current_user['id'] . "] edited project[" . $this->Project->id . "]", 'sourcekettle');
 				return $this->redirect(array('project' => $this->Project->field('name'), 'action' => '*'));
@@ -337,8 +340,9 @@ class ProjectsController extends AppProjectController {
 			$this->Project->create();
 
 			// Lets vet the data coming in
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
 			$requestData = array(
-				'Project' => $this->request->data['Project'],
+				'Project' => $data['Project'],
 				'Collaborator' => array(
 					array(
 						'user_id' => $this->Auth->user('id'),
@@ -389,7 +393,8 @@ class ProjectsController extends AppProjectController {
 		$current_user = $this->Auth->user();
 
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$saved = $this->Project->rename($this->Project->id, $this->request->data['Project']['name']);
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
+			$saved = $this->Project->rename($this->Project->id, $data['Project']['name']);
 			if ($this->Flash->u($saved)) {
 				$this->log("[ProjectController.rename] user[" . $current_user['id'] . "] renamed project[" . $this->Project->id . "]", 'sourcekettle');
 				return $this->redirect(array('project' => $this->Project->id, 'action' => 'view', 'admin' => false));
@@ -417,8 +422,9 @@ class ProjectsController extends AppProjectController {
 
 
 		if ($this->request->is('post') || $this->request->is('put')) {
+			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
 			// TODO transactions for great justice, this is just lazy
-			$saved = $this->Project->save($this->request->data);
+			$saved = $this->Project->save($data);
 			if ($this->Flash->u($saved)) {
 				$this->Project->Source->create();
 				$this->log("[ProjectController.add_repo] user[" . $current_user['id'] . "] added a repository to project[" . $this->Project->id . "]", 'sourcekettle');
@@ -475,7 +481,9 @@ class ProjectsController extends AppProjectController {
 
 		$code = 200;
 		$message = __("Settings updated.");
-		if (!$this->Project->ProjectSetting->saveSettingsTree($project, $this->request->data)) {
+		// Note that we don't do much cleaning here, saveSettingsTree already checks for known settings
+		$data = array('ProjectSetting' => @$this->request->data['ProjectSetting']);
+		if (!$this->Project->ProjectSetting->saveSettingsTree($project, $data)) {
 			$code = 500;
 			$message = __("Failed to change settings");
 		}

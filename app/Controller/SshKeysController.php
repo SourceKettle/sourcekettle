@@ -32,9 +32,10 @@ class SshKeysController extends AppController {
 		$current_user = $this->viewVars['current_user'];
 		if ($this->request->is('post')) {
 
-			$this->request->data['SshKey']['user_id'] = $current_user['id']; //Set the key to belong to the current user
 
-			if ($this->Flash->c($this->SshKey->save($this->request->data))) {
+			$data = $this->_cleanPost(array("SshKey.key", "SshKey.comment"));
+			$data['SshKey']['user_id'] = $current_user['id']; //Set the key to belong to the current user
+			if ($this->Flash->c($this->SshKey->save($data))) {
 				$this->Setting->syncRequired(); // Update the sync required flag
 
 				$this->log("[UsersController.addkey] sshkey[" . $this->SshKey->getLastInsertID() . "] added to user[" . $current_user['id'] . "]", 'sourcekettle');
