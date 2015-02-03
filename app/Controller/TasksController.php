@@ -756,7 +756,9 @@ class TasksController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 
-		$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id"));
+		$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id", "Task.status", "Task.priority", "Task.type"));
+		$data['DependsOn'] = @$this->request->data['DependsOn'];
+		$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
 
 		// Force the project ID to be correct
 		$data['Task']['project_id'] = $project['Project']['id'];

@@ -439,6 +439,89 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertRedirect('/project/public/tasks/view/1');
 	}
 
+	// Ensure tasks can be updated via AJAX, using the status/priority/task names
+	public function testEditTaskAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'Task' => array(
+				'subject' => 'updated task for public project',
+				'type' => 'enhancement',
+				'status' => 'closed',
+				'priority' => 'blocker',
+				'assignee_id' => 3,
+				'milestone_id' => 1,
+				'time_estimate' => 145,
+				'story_points' => 4,
+				'description' => 'Look ma, I updated a task!',
+			)
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(
+			'id' => '1',
+			'project_id' => '2',
+			'owner_id' => '2',
+			'task_type_id' => '3',
+			'task_status_id' => '4',
+			'task_priority_id' => '4',
+			'assignee_id' => '3',
+			'milestone_id' => '1',
+			'story_id' => null,
+			'time_estimate' => '2h 25m',
+			'story_points' => '4',
+			'subject' => 'updated task for public project',
+			'description' => 'Look ma, I updated a task!',
+			'deleted' => '0',
+			'deleted_date' => null,
+			'public_id' => '1',
+			'dependenciesComplete' => '1',
+			'uri' => '/project/public/tasks/view/1'	,
+		), $returned['Task']);
+	}
+
+	// Ensure task dependencies can be updated via AJAX
+	public function testEditTaskDependsOnAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'DependsOn' => array(2, 3, 11),
+			'DependedOnBy' => array(5, 6, 7),
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(2, 3, 11), array_map(function($a) {return $a['public_id'];}, $returned['DependsOn']));
+	}
+
+	public function testEditTaskDependedOnByAjax() {
+		$this->_fakeLogin(2);
+		$postData = array(
+			'DependedOnBy' => array(5, 6, 11),
+		);
+
+		$_ENV['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$returned = $this->testAction('/project/public/tasks/edit/1', array('return' => 'view', 'method' => 'post', 'data' => $postData));
+		unset($_ENV['HTTP_X_REQUESTED_WITH']);
+		$this->assertAuthorized();
+
+		$returned = json_decode($returned, true);
+		unset($returned['Task']['modified']);
+		unset($returned['Task']['created']);
+		$this->assertEquals(array(5, 6, 11), array_map(function($a) {return $a['public_id'];}, $returned['DependedOnBy']));
+	}
+
 
 	public function __testStatusChanges($url, $id, $status) {
 		// Perform the action, and check the user was authorized
