@@ -12,7 +12,7 @@ if (!empty($projects)){
 		$count++;
 	}
 	echo '</div>';
-	echo '<div class="row-fluid">'; 
+	echo '<div class="row-fluid">';
     	echo $this->element('pagination'); 
 	echo '</div>';
 } else {

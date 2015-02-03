@@ -21,9 +21,9 @@ class UsersController extends AppController {
 
 	public $helpers = array('Time');
 
-	public $components = array('Email');
+	public $components = array('Email', 'Paginator');
 
-	public $uses = array('User', 'Setting');
+	public $uses = array('User', 'Setting', 'Project');
 
 	public function isAuthorized($user) {
 
@@ -317,7 +317,26 @@ class UsersController extends AppController {
 		}
 
 		//Find the users projects they are working on
-		$this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
+		//$this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
+		$this->Paginator->settings = array(
+			'conditions' => array('Collaborator.user_id' => $id),
+			'joins' => array(
+			 	array('table' => 'collaborators',
+					'alias' => 'Collaborator',
+					'type' => 'INNER',
+					'conditions' => array(
+						'Collaborator.project_id = Project.id',
+					)
+				),
+			),
+			'limit' => 15,
+			'group' => array('Project.id'),
+			'order' => array('Project.modified DESC'),
+		);
+
+		$projects = $this->paginate('Project');
+		$this->set('projects', $projects);
+		$this->set('model', 'Project'); // For pagination thingy
 		$this->request->data = $this->User->read();
 		$this->request->data['User']['password'] = null;
 	}
