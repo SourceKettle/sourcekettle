@@ -105,6 +105,9 @@
 							}
 						?>
 						</ul>
+						<ul class="nav pull-right">
+							<li><a href="#" onclick="toggleDistractions(); return false;"><i class="icon-fullscreen icon-white"></i></a></li>
+						</ul>
 					</div>
 					<? } else { ?>
 						</ul>
@@ -131,14 +134,14 @@
 			if (isset($subTitle)) {
 				$header .= ' <small>'.h($subTitle).'</small>';
 			}
-			echo $this->TwitterBootstrap->page_header($header);
+			echo '<span class="distractions">'.$this->TwitterBootstrap->page_header($header)."</span>";
 	
 		} ?>
 		
 		<? // Optional sidebar
 		if (isset($sidebar)) {
 			echo '<div class="row-fluid">';
-			echo '<div class="span2" id="sidebar-area">';
+			echo '<div class="span2 distractions" id="sidebar-area">';
 			echo $this->element("Sidebar/$sidebar");
 			echo '</div>';
 			echo '<div class="span10" id="page-area">';
