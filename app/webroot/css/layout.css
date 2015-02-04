@@ -14,8 +14,13 @@
 */
 
 body{
-    padding-top: 60px;
+    padding-top: 45px;
     padding-bottom: 10px;
+}
+
+.page-header {
+	margin: 2px;
+	padding-bottom: 0px;
 }
 
 h1, h2, h3 {

@@ -138,10 +138,10 @@
 		<? // Optional sidebar
 		if (isset($sidebar)) {
 			echo '<div class="row-fluid">';
-			echo '<div class="span2">';
+			echo '<div class="span2" id="sidebar-area">';
 			echo $this->element("Sidebar/$sidebar");
 			echo '</div>';
-			echo '<div class="span10">';
+			echo '<div class="span10" id="page-area">';
 			echo $content_for_layout;
 			echo '</div>';
 		} else {
