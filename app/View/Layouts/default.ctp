@@ -122,7 +122,27 @@
 			<?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
 			<?= $this->Session->flash('email'); ?>
 		</span>
-		<?= $content_for_layout ?>
+
+		<?
+		$header = $pageTitle;
+		if (isset($subTitle)) {
+			$header .= ' <small>'.h($subTitle).'</small>';
+		}
+		echo $this->TwitterBootstrap->page_header($header);
+		?>
+		
+		<? // Optional sidebar
+		if (isset($sidebar)) {
+			echo '<div class="row-fluid">';
+			echo '<div class="span2">';
+			echo $this->element("Sidebar/$sidebar");
+			echo '</div>';
+			echo '<div class="span10">';
+			echo $content_for_layout;
+			echo '</div>';
+		} else {
+			echo $content_for_layout;
+		} ?>
 	</div>
 	<footer>
 		<hr>

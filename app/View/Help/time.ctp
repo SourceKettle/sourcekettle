@@ -92,8 +92,7 @@ $nextWeek = ((int)$start->format('w') + 1) % 52;
 $thisYear = (int)$start->format('Y');
 $prevYear = (int)$start->format('Y') - 1;
 $nextYear = (int)$start->format('Y') + 1;
-
-echo $this->Bootstrap->page_header('Help! <small>How do I log time?</small>'); ?>
+?>
 
 <div class="row-fluid">
 	<div class="span2">

@@ -14,7 +14,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header($title);
 echo $this->Html->css('projects.index', null, array ('inline' => false));
 ?>
 

@@ -16,7 +16,6 @@
 
 <?=$this->Html->script('/flot/jquery.flot.min', array('inline' => false))?>
 <?=$this->Html->script('/flot/jquery.flot.pie.min', array('inline' => false))?>
-<?=$this->Bootstrap->page_header('Administration <small>system overview</small>')?>
 
 <div class="row-fluid">
     <div class="span2">

@@ -15,7 +15,6 @@
  */
 ?>
 
-<?= $this->DT->pHeader(__("Time logged for the project")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

@@ -45,7 +45,6 @@ $this->Html->scriptBlock("
 ", array('inline' => false));
 ?>
 
-<?= $this->DT->pHeader(__("Source code")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

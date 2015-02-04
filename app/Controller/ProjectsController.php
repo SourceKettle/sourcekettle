@@ -55,6 +55,8 @@ class ProjectsController extends AppProjectController {
 	public function history($project) {
 		$project = $this->_getProject($project);
 
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("project history"));
 		$this->set('historyCount', 25);
 	}
 
@@ -64,7 +66,9 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function index() {
-		$this->set('title', __("My Projects <small>all the projects you care about</small>"));
+		$this->set('pageTitle', __("My Projects"));
+		$this->set('subTitle', __("all the projects you care about"));
+
 		$this->Paginator->settings = array(
 			'conditions' => array('Collaborator.user_id' => $this->Auth->user('id')),
 			'joins' => array(
@@ -85,7 +89,8 @@ class ProjectsController extends AppProjectController {
 
 	public function team_projects($page = 1) {
 
-		$this->set('title', __("Team Projects <small>we do what we must because we can</small>"));
+		$this->set('pageTitle', __("Team Projects"));
+		$this->set('subTitle', __("we do what we must because we can"));
 
 		// Teams the user is a member of
 		$teams = $this->Team->TeamsUser->find('list', array(
@@ -154,7 +159,8 @@ class ProjectsController extends AppProjectController {
 	}
 
 	public function public_projects() {
-		$this->set('title', __("Public Projects <small>projects people have shared</small>"));
+		$this->set('pageTitle', __("Public Projects"));
+		$this->set('subTitle', __("projects people have shared"));
 
 		$this->Paginator->settings = array(
 			'conditions' => array(
@@ -175,6 +181,8 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_index() {
+		$this->set('pageTitle', __("Administration"));
+		$this->set('subTitle', __("da vinci code locator"));
 		$data = $this->_cleanPost(array("Project.name"));
 		if ($this->request->is('post') && isset($data['Project']['name']) && $project = $data['Project']['name']) {
 			if ($project = $this->Project->findByName($project)) {
@@ -199,6 +207,9 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function view($name = null) {
+
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("project overview"));
 
 		$project = $this->_getProject($name);
 
@@ -253,6 +264,9 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function add() {
+		$this->set('pageTitle', __('New project'));
+		$this->set('subTitle', __('where baby projects are made'));
+
 		$repoTypes = $this->Project->RepoType->find('list');
 		$current_user = $this->viewVars['current_user'];
 
@@ -322,6 +336,9 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function edit($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("project settings"));
+
 		$project = $this->_getProject($project);
 		$repoNone = $this->RepoType->nameToId('None');
 		$this->set('noRepo',  ($project['Project']['repo_type'] == $repoNone));
@@ -341,6 +358,8 @@ class ProjectsController extends AppProjectController {
 	// NB this is called "clone" in the interface, but "clone" is a reserved word in PHP...
 	// TODO lots of copypasta from the add method, which should be consolidated in the Project model
 	public function fork($project = null) {
+		$this->set('pageTitle', __("Clone project"));
+		$this->set('subTitle', __("stand on the shoulders of giants"));
 		$project = $this->_getProject($project);
 
 		// Check the project has a git repo
@@ -402,6 +421,8 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function admin_rename($project = null) {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __("...they called it *what*??"));
 		$project = $this->_getProject($project);
 		$current_user = $this->Auth->user();
 
@@ -423,6 +444,8 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function add_repo($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("add a repository"));
 		$project = $this->_getProject($project);
 
 		$repoTypes = $this->Project->RepoType->find('list');
@@ -456,6 +479,7 @@ class ProjectsController extends AppProjectController {
  * @return void
  */
 	public function delete($project = null) {
+		$this->set('pageTitle', __('Are you sure you want to delete "%s"?', $this->request['project']));
 		$project = $this->_getProject($project);
 
 		$this->Flash->setUp();
@@ -472,6 +496,8 @@ class ProjectsController extends AppProjectController {
 
 	public function schedule($project = null) {
 
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("milestone schedule"));
 		$project = $this->_getProject($project);
 
 		$milestones = $this->Project->Milestone->find('all', array(

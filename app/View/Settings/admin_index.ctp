@@ -17,7 +17,6 @@
 $this->Html->css('pages/settings', null, array ('inline' => false));
 ?>
 
-<?= $this->Bootstrap->page_header('System-wide configuration') ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/admin') ?>

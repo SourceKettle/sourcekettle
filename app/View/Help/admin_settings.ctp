@@ -13,8 +13,7 @@
  * @since         SourceKettle v1.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-echo $this->Bootstrap->page_header('Help: System settings'); ?>
+?>
 	
 <div class="row-fluid">
     <div class="span2">

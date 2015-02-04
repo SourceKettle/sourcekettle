@@ -29,6 +29,8 @@ class SshKeysController extends AppController {
  * Add an SSH key for the current user
  */
 	public function add() {
+		$this->set('pageTitle', __('Add SSH key: %s', $this->Auth->user('name')));
+		$this->set('subTitle', __(''));
 		$current_user = $this->viewVars['current_user'];
 		if ($this->request->is('post')) {
 
@@ -80,6 +82,8 @@ class SshKeysController extends AppController {
  * Displays the ssh keys of the current user
  */
 	public function view() {
+		$this->set('pageTitle', __('SSH keys: %s', $this->Auth->user('name')));
+		$this->set('subTitle', __(''));
 		$this->SshKey->User->id = $this->Auth->user('id');
 		$this->request->data = $this->SshKey->User->read();
 		$this->request->data['User']['password'] = null;

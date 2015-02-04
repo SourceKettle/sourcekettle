@@ -50,6 +50,8 @@ class CollaboratorsController extends AppProjectController {
  * @return void
  */
 	public function index ($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('collaborators working on the project'));
 		$project = $this->_getProject($project);
 
 		$collaborators = array();

@@ -13,8 +13,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-echo $this->Bootstrap->page_header('Administration <small>da vinci code locator</small>'); ?>
+?>
 
 <div class="row-fluid">
     <div class="span2">

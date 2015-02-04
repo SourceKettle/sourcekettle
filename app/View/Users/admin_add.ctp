@@ -13,8 +13,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-echo $this->Bootstrap->page_header('Administration <small>add a new sheep to your flock</small>'); ?>
+?>
 
 <div class="row-fluid">
     <div class="span2">

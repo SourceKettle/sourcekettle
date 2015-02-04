@@ -151,6 +151,8 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	public function add($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('attach a file to the project'));
 		$project = $this->_getProject($project);
 
 		if (!empty($this->data)) {
@@ -190,6 +192,8 @@ class AttachmentsController extends AppProjectController{
  * @return void
  */
 	private function __attachmentWithRestrictions($project = null, $conditions = array()) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('files uploaded to the project'));
 		$project = $this->_getProject($project);
 		$conditions['Attachment.project_id'] = $project['Project']['id'];
 		$conditions['Attachment.model'] = null;

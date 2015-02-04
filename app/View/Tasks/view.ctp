@@ -21,7 +21,6 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 
 <?= $this->Task->allDropdownMenus() ?>
 
-<?= $this->DT->pHeader(__("Task card and log")) ?>
 <?= $this->Form->create('Task', array ('url' => array('controller' => 'tasks', 'action' => 'edit', 'project' => $project['Project']['name'], $task['Task']['public_id']))); ?>
 <div class="row-fluid">
     <div class="span2">

@@ -15,7 +15,6 @@
  */
 ?>
 
-<?= $this->DT->pHeader(__("Change your logged time")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

@@ -16,7 +16,6 @@
 
 ?>
 
-<?= $this->DT->pHeader(__("Files uploaded to the project")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

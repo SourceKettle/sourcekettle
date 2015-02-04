@@ -15,7 +15,6 @@
 $this->Html->css('deletable', null, array ('inline' => false));
 ?>
 
-<?= $this->Bootstrap->page_header(__('Are you sure you want to delete "%s"?', $object['name'])) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

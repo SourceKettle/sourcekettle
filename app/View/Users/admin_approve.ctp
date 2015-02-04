@@ -13,8 +13,7 @@
  * @since         SourceKettle v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-echo $this->Bootstrap->page_header('Administration <small></small>'); ?>
+?>
 
 <div class="row-fluid">
     <div class="span2">

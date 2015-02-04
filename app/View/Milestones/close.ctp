@@ -16,8 +16,6 @@
 $this->Html->css('milestones.index', null, array ('inline' => false));
 ?>
 
-<?= $this->Bootstrap->page_header(__("Close milestone")) ?>
-
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

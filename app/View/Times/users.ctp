@@ -15,7 +15,6 @@
  */
 ?>
 
-<?= $this->DT->pHeader(__("Project time summary")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

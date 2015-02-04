@@ -26,7 +26,6 @@ foreach (explode('/',$path) as $crumb) {
     $this->Bootstrap->add_crumb($crumb, $url);
 }
 ?>
-<?= $this->DT->pHeader(__("Source code")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

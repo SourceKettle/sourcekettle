@@ -20,7 +20,6 @@
 <?=$this->Html->script('projects.overview', array('inline' => false));?>
 
 
-<?= $this->DT->pHeader(__("Project overview")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

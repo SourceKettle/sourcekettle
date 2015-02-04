@@ -13,7 +13,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-  echo $this->Bootstrap->page_header(__("Dashboard") . " <small>" . __("welcome") . " " . h(strtolower($current_user['name'])) . "</small>");
 
   /*if ($DEBUG) {
     echo $this->element('beta_warning'); // TODO show this for dev versions

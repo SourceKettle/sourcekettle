@@ -17,7 +17,6 @@
 $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css('milestones.index', null, array ('inline' => false));
 ?>
-<?= $this->DT->pHeader(__("Milestone burn-down chart")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

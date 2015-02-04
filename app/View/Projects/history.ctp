@@ -15,7 +15,6 @@
  */
 ?>
 
-<?= $this->DT->pHeader(__("Project history")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

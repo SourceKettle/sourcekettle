@@ -1,4 +1,3 @@
- <?= $this->Bootstrap->page_header('Administration <small>who\'s working together?</small>'); ?>
 
 <div class="row-fluid">
     <div class="span2">

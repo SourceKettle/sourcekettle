@@ -14,7 +14,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header('Help! <small>What do all the project icons mean?</small>');
 $this->Html->script('help', array('inline' => false));
 
 // Example data

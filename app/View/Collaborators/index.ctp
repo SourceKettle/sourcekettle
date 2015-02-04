@@ -38,7 +38,6 @@ $_down_icon = $this->Bootstrap->icon('arrow-down');
 
 ?>
 
-<?= $this->DT->pHeader(__("Collaborators working on the project")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

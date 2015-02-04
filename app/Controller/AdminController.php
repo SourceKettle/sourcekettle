@@ -33,6 +33,9 @@ class AdminController extends AppController {
  */
 	public function admin_index() {
 
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('system overview'));
+
 		// TODO move to config
 		// Staleness thresholds in days
 		$recentThreshold = 7;

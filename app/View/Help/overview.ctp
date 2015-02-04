@@ -48,8 +48,7 @@ $milestone = array(
 	),
 );
 
-
-echo $this->Bootstrap->page_header('Help!<small> the project overview page...</small>'); ?>
+?>
 
 <div class="row-fluid">
 	<div class="span2">

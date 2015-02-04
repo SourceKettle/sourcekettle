@@ -16,8 +16,7 @@
 
 $this->Html->css('time.tempo', null, array ('inline' => false));
 $this->Html->css('pages/help', null, array ('inline' => false));
-
-echo $this->Bootstrap->page_header('Help! <small>How do I manage collaborators?</small>'); ?>
+?>
 
 <div class="row-fluid">
 	<div class="span2">

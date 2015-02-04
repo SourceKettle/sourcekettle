@@ -40,8 +40,7 @@ $project = array('Project' => array(
 	'id' => '0',
 	'name' => 'SourceKettle',
 ));
-
-echo $this->Bootstrap->page_header('Help! <small>How do I manage milestones?</small>'); ?>
+?>
 
 <div class="row-fluid">
 	<div class="span2">

@@ -18,7 +18,6 @@ $this->Html->css('tasks', null, array ('inline' => false));
 ?>
 <?= $this->Task->allDropdownMenus() ?>
 
-<?= $this->DT->pHeader(__('Things to Do...')) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

@@ -13,8 +13,7 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$smallText = " <small>Edit Project</small>";
-echo $this->Bootstrap->page_header($project['Project']['name'] . $smallText);?>
+?>
 
 <div class="row-fluid">
     <div class="span2">

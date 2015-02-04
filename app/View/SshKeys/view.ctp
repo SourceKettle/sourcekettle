@@ -14,8 +14,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-echo $this->Bootstrap->page_header($this->request->data['User']['name']);
-
 ?>
 
 <div class="row-fluid">

@@ -29,8 +29,7 @@ $details = array(
         'action' => 'admin_makeguest',
     ),
 );
-
-echo $this->Bootstrap->page_header('Administration <small>they called it *what*??</small>'); ?>
+?>
 
 <div class="row-fluid">
     <div class="span2">

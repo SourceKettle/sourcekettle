@@ -18,7 +18,6 @@ $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->script("tasks", array ('inline' => false));
 ?>
 
-<?= $this->DT->pHeader(__("Task dependency tree")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

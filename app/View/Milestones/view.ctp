@@ -25,7 +25,6 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 ?>
 <?= $this->Task->allDropdownMenus() ?>
 
-<?= $this->DT->pHeader(__("Milestone board: '%s'", $milestone['Milestone']['subject'])) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

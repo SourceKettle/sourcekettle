@@ -17,7 +17,6 @@
 $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css('projects.index', null, array ('inline' => false));
 ?>
-<?= $this->DT->pHeader(__("Milestone schedule")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

@@ -1,4 +1,3 @@
-<?=$this->Bootstrap->page_header($this->request->data['User']['name'])?>
 
 <div class="row-fluid">
     <div class="span2">

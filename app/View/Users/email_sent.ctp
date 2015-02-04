@@ -14,7 +14,6 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 ?>
-<h1>Register with SourceKettle</h1>
 
 <div class='hero-unit'>
     <h1>

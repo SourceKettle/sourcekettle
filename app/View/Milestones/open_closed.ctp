@@ -21,7 +21,6 @@ $status = preg_replace('/^view_/', '', $this->request['action']);
 
 ?>
 
-<?= $this->DT->pHeader(__(ucfirst($status)." Milestones")) ?>
 <div class="row-fluid">
     <div class="span2">
         <?= $this->element('Sidebar/project') ?>

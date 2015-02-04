@@ -12,7 +12,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<?= $this->DT->pHeader(__("Task time log"))?>
 <? $taskLink = $this->Html->link(__("#%s: %s", $task['Task']['public_id'], $task['Task']['subject']), array(
 	'controller' => 'tasks',
 	'action' => 'view',

@@ -1,4 +1,3 @@
- <?= $this->Bootstrap->page_header('Administration <small></small>'); ?>
 
 <div class="row-fluid">
     <div class="span2">
