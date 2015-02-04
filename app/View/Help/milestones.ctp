@@ -42,17 +42,9 @@ $project = array('Project' => array(
 ));
 ?>
 
+<!-- Section 1 -->
 <div class="row-fluid">
-	<div class="span2">
-		<?= $this->element('Sidebar/help') ?>
-	</div>
-
-	<div class="span10">
-
-
-		<!-- Section 1 -->
-		<div class="row-fluid">
-		<div class="well span12">
+	<div class="well span12">
           <h3>Milestones</h3>
           <p>
             Milestones divide a project up into short, manageable chunks with a specific goal (they are often referred to as "timeboxes" or "sprints" in agile terminology).  To view the milestones for your project, click the '<a href="#"><i class="icon-road"></i>Milestones</a>' link in the project sidebar.  Now let's see what milestones are all about...
@@ -96,14 +88,14 @@ $project = array('Project' => array(
 		       Exhibit 1: Milestone lozenge
 		    </div>
 
-		</div>
-		</div>
-		<!-- End exhibit 1 -->
+	</div>
+</div>
+<!-- End exhibit 1 -->
 
 
 
-		<!-- Section 2 -->
-		<div class="row-fluid">
+<!-- Section 2 -->
+<div class="row-fluid">
       	<div class="well span12">
 
         <h4>The Milestone board</h4>
@@ -229,13 +221,13 @@ $project = array('Project' => array(
 		       Exhibit 2: Milestone board
 		    </div>
 
-		</div>
-		</div>
-		<!-- End exhibit 2 -->
+	</div>
+</div>
+<!-- End exhibit 2 -->
 
-		<!-- Section 3 -->
-		<div class="row-fluid">
-		<div class="well span12">
+<!-- Section 3 -->
+<div class="row-fluid">
+	<div class="well span12">
 
         <p>
           As the milestone progresses, you may find that some tasks take longer than expected.  It is important to stay on track and finish the milestone on time, so you will need to drop some of the lower priority tasks - these will then end up in the icebox.
@@ -250,9 +242,6 @@ $project = array('Project' => array(
 		</p>
 
 
-		</div>
-		</div>
-		<!-- End section 3 -->
-
 	</div>
 </div>
+<!-- End section 3 -->

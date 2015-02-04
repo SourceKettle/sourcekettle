@@ -7,11 +7,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     SourceKettle Development Team 2012
- * @link          http://github.com/SourceKettle/sourcekettle
- * @package       SourceKettle.View.Source
- * @since         SourceKettle v 0.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	 SourceKettle Development Team 2012
+ * @link		  http://github.com/SourceKettle/sourcekettle
+ * @package	   SourceKettle.View.Source
+ * @since		 SourceKettle v 0.1
+ * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 $this->Html->css('pages/source', null, array ('inline' => false));
@@ -22,55 +22,48 @@ $this->Bootstrap->add_crumb($project['Project']['name'], $url);
 
 // Create the base url to be used for all links and add breadcrumbs
 foreach (explode('/',$path) as $crumb) {
-    $url[] = $crumb;
-    $this->Bootstrap->add_crumb($crumb, $url);
+	$url[] = $crumb;
+	$this->Bootstrap->add_crumb($crumb, $url);
 }
 ?>
 <div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/project') ?>
-    </div>
-    <div class="span10">
-		<div class="row-fluid">
-        <?= $this->element('Source/topbar') ?>
-		</div>
-        <div class="row-fluid">
-            <?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
-        </div>
-        <div class="row-fluid">
-                <?php
-                    $date = null;
-                    foreach ($commits as $commit) {
-                        $newDate = date('M d, Y', strtotime($commit['date']));
-                        if ($date != $newDate) {
-                            if ($date != null) {
-                                echo '</div>';
-                            }
-                            $date = $newDate;
-                            echo '<div class="well commits">';
-                            echo "<div class='dateHeader'><strong>$newDate</strong></div>";
-                        }
-                        echo $this->element('Source/commits_row', array('commit' => $commit));
-                    }
-                ?>
-            <ul class="pager">
-                <? if ($page > 1) : ?>
-                <li class="previous">
-                    <?= $this->Html->link('&larr; Newer',
-                        $this->Source->fetchHistoryUrl($project['Project']['name'], $branch, $path, $page - 1),
-                        array('escape' => false)
-                    ) ?>
-                </li>
-                <? endif; ?>
-                <? if ($more_pages) : ?>
-                <li class="next">
-                    <?= $this->Html->link('Older  &rarr;',
-                        $this->Source->fetchHistoryUrl($project['Project']['name'], $branch, $path, $page + 1),
-                        array('escape' => false)
-                    ) ?>
-                </li>
-                <? endif; ?>
-            </ul>
-        </div>
-    </div>
+<?= $this->element('Source/topbar') ?>
+</div>
+<div class="row-fluid">
+	<?= $this->Bootstrap->breadcrumbs(array("divider" => "/")) ?>
+</div>
+<div class="row-fluid">
+		<?php
+			$date = null;
+			foreach ($commits as $commit) {
+				$newDate = date('M d, Y', strtotime($commit['date']));
+				if ($date != $newDate) {
+					if ($date != null) {
+						echo '</div>';
+					}
+					$date = $newDate;
+					echo '<div class="well commits">';
+					echo "<div class='dateHeader'><strong>$newDate</strong></div>";
+				}
+				echo $this->element('Source/commits_row', array('commit' => $commit));
+			}
+		?>
+	<ul class="pager">
+		<? if ($page > 1) : ?>
+		<li class="previous">
+			<?= $this->Html->link('&larr; Newer',
+				$this->Source->fetchHistoryUrl($project['Project']['name'], $branch, $path, $page - 1),
+				array('escape' => false)
+			) ?>
+		</li>
+		<? endif; ?>
+		<? if ($more_pages) : ?>
+		<li class="next">
+			<?= $this->Html->link('Older  &rarr;',
+				$this->Source->fetchHistoryUrl($project['Project']['name'], $branch, $path, $page + 1),
+				array('escape' => false)
+			) ?>
+		</li>
+		<? endif; ?>
+	</ul>
 </div>

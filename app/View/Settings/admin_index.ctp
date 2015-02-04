@@ -18,16 +18,9 @@ $this->Html->css('pages/settings', null, array ('inline' => false));
 ?>
 
 <div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/admin') ?>
-    </div>
-    <div class="span10">
-        <div class="row-fluid">
-            <?= $this->element('Setting/admin_global') ?>
-            <?= $this->element('Setting/admin_ldap') ?>
-            <?= $this->element('Setting/admin_features') ?>
-            <?= $this->element('Setting/admin_interface') ?>
-            <?= $this->element('Setting/admin_repo') ?>
-        </div>
-    </div>
+    <?= $this->element('Setting/admin_global') ?>
+    <?= $this->element('Setting/admin_ldap') ?>
+    <?= $this->element('Setting/admin_features') ?>
+    <?= $this->element('Setting/admin_interface') ?>
+    <?= $this->element('Setting/admin_repo') ?>
 </div>

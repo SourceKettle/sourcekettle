@@ -15,24 +15,17 @@
  */
 ?>
 	
-<div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/admin_help') ?>
-    </div>
-    <div class="span10">
-        <div class="well">
-			SourceKettle system administrators have more options available to them
-			in the admin section of the site. As an admin, you are able to:
+<div class="well">
+		SourceKettle system administrators have more options available to them
+		in the admin section of the site. As an admin, you are able to:
 
-			<ul>
-			  <li>Configure global system options</li>
-			  <li>Enable and disable system features</li>
-			  <li>Edit the details of ANY project</li>
-			  <li>Delete ANY project</li>
-			  <li>Add and remove users to ANY project, or grant/revoke permissions</li>
-			  <li>Create new users</li>
-			  <li>Change any user's details, enable/disable accounts and grant/revoke admin status</li>
-			</ul>
-        </div>
-    </div>
+		<ul>
+		  <li>Configure global system options</li>
+		  <li>Enable and disable system features</li>
+		  <li>Edit the details of ANY project</li>
+		  <li>Delete ANY project</li>
+		  <li>Add and remove users to ANY project, or grant/revoke permissions</li>
+		  <li>Create new users</li>
+		  <li>Change any user's details, enable/disable accounts and grant/revoke admin status</li>
+		</ul>
 </div>

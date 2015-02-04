@@ -15,20 +15,13 @@
  */
 ?>
 	
-<div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/admin_help') ?>
-    </div>
-    <div class="span10">
-        <div class="well">
-			  <p>
-				The project search page gives a paginated list of all the projects in the system.
-			  </p>
-			  <ul>
-				<li>Clicking on the project link will take you to the 'edit details' page</li>
-				<li>Clicking on the delete button will delete the project</li>
-				<li>The search box is currently very limited; you need to type in exact project names :-( This is being worked on!</li>
-			  </ul>
-        </div>
-    </div>
+<div class="well">
+		  <p>
+			The project search page gives a paginated list of all the projects in the system.
+		  </p>
+		  <ul>
+			<li>Clicking on the project link will take you to the 'edit details' page</li>
+			<li>Clicking on the delete button will delete the project</li>
+			<li>The search box is currently very limited; you need to type in exact project names :-( This is being worked on!</li>
+		  </ul>
 </div>

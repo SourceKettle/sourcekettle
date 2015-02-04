@@ -43,6 +43,7 @@ class UsersController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+		$this->set('sidebar', 'users');
 
 		// Registration and other "setting your password" actions cannot
 		// require a login

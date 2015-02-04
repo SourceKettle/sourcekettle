@@ -26,6 +26,10 @@ class AdminController extends AppController {
 		'User',
 	);
 
+	public function beforeFilter() {
+		parent::beforeFilter();
+		$this->set('sidebar', 'admin');
+	}
 /**
  * index method
  *

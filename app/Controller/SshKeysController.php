@@ -25,6 +25,11 @@ class SshKeysController extends AppController {
 		return (isset($user) && !empty($user));
 	}
 
+	public function beforeFilter() {
+		parent::beforeFilter();
+		$this->set('sidebar', 'users');
+	}
+
 /**
  * Add an SSH key for the current user
  */

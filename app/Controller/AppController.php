@@ -101,6 +101,9 @@ class AppController extends Controller {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
+		if (isset($this->params['admin'])) {
+			$this->set('sidebar', 'admin');
+		}
 
 		// There are various database models that are simple lists - we will simply load them here
 		// so they can be used as lookups.

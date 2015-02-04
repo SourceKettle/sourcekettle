@@ -18,7 +18,7 @@
 <html>
 <head>
 	<title>
-		<?= h($sourcekettle_config['UserInterface']['alias']['value']) ?> - <?= h($title_for_layout) ?>
+		<?= h($sourcekettle_config['UserInterface']['alias']['value']) ?> - <?= h($pageTitle) ?>
 	</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
@@ -144,7 +144,7 @@
 			echo $content_for_layout;
 		} ?>
 	</div>
-	<footer>
+	<footer class="span12">
 		<hr>
 		<?=$this->Html->link("About SourceKettle $sourcekettleVersion", '/about');?>
 		<?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>

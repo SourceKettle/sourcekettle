@@ -15,19 +15,12 @@
  */
 ?>
   
-<div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/help') ?>
-    </div>
-    <div class="span10">
-        <div class="well">
-          <h3>Got a problem?</h3>
+<div class="well">
+  <h3>Got a problem?</h3>
 
-          <h5>You're in the right place!</h5>
+  <h5>You're in the right place!</h5>
 
-          <p>Click on the navigation links on the left to find the relevant section.</p> 
+  <p>Click on the navigation links on the left to find the relevant section.</p> 
 
-          <p>Still can't find what you're looking for? Ask us on Github <?= $this->Html->link("https://github.com/SourceKettle/sourcekettle", "https://github.com/SourceKettle/sourcekettle") ?></p>
-        </div>
-    </div>
+  <p>Still can't find what you're looking for? Ask us on Github <?= $this->Html->link("https://github.com/SourceKettle/sourcekettle", "https://github.com/SourceKettle/sourcekettle") ?></p>
 </div>

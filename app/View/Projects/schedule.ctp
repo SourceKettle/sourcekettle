@@ -17,12 +17,5 @@
 $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css('projects.index', null, array ('inline' => false));
 ?>
-<div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/project') ?>
-    </div>
-    <div class="span10">
-		<?=$this->element('gantt')?>
-    </div>
-</div>
+<?=$this->element('gantt')?>
 

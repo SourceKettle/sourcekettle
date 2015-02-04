@@ -27,6 +27,15 @@ class HelpController extends AppController{
 		'TaskStatus',
 	);
 
+	public function beforeFilter() {
+		parent::beforeFilter();
+		if (isset($this->params['admin'])) {
+			$this->set('sidebar', 'admin_help');
+		} else {
+			$this->set('sidebar', 'help');
+		}
+	}
+
 	// Dashboard - any user can see all actions
 	public function isAuthorized($user) {
 		if (isset($user['id'])) {

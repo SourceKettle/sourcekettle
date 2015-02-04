@@ -18,24 +18,17 @@ $this->Html->css('time.tempo', null, array ('inline' => false));
 $this->Html->css('pages/help', null, array ('inline' => false));
 ?>
 
-<div class="row-fluid">
-	<div class="span2">
-		<?= $this->element('Sidebar/help') ?>
-	</div>
-	<div class="span10">
-		<div class="well">
-          <h3>Attachments</h3>
-          <p>
-            Sometimes it may be helpful to add a file to the project, such as a design document of help video.  If the system administrator has enabled this feature, you can click the '<a href="#"><i class="icon-file"></i>Attachments</a>' link in the project sidebar to get started.
-          </p>
+<div class="well">
+  <h3>Attachments</h3>
+  <p>
+    Sometimes it may be helpful to add a file to the project, such as a design document of help video.  If the system administrator has enabled this feature, you can click the '<a href="#"><i class="icon-file"></i>Attachments</a>' link in the project sidebar to get started.
+  </p>
 
-          <p>
-            To upload a file, click the aptly-named <button class="btn btn-mini btn-primary">Upload file</button> button at the top right.  Simply select a file from your computer and click upload; however, it must be under the file size limit and must be of a known type.
-          </p>
+  <p>
+    To upload a file, click the aptly-named <button class="btn btn-mini btn-primary">Upload file</button> button at the top right.  Simply select a file from your computer and click upload; however, it must be under the file size limit and must be of a known type.
+  </p>
 
-          <p>
-            Once you have uploaded one or more files, they will appear in a list, easily filtered by file type.  You can click on the file to download it, or click on the delete button (<a href="#" class="btn btn-danger btn-mini"><i class="icon-eject icon-white"></i></a>) to remove it from the project.
-          </p>
-		</div>
-	</div>
+  <p>
+    Once you have uploaded one or more files, they will appear in a list, easily filtered by file type.  You can click on the file to download it, or click on the delete button (<a href="#" class="btn btn-danger btn-mini"><i class="icon-eject icon-white"></i></a>) to remove it from the project.
+  </p>
 </div>

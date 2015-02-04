@@ -15,22 +15,15 @@
  */
 ?>
   
-<div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/help') ?>
-    </div>
-    <div class="span10">
-        <div class="well">
-          <h3>Themes</h3>
+<div class="well">
+  <h3>Themes</h3>
 
-          <p>
-            Thanks to the awesome people at <?= $this->Html->link('BootSwatch', 'http://bootswatch.com')?>, you have access to a variety of interesting themes to make SourceKettle look Amazing and Wonderful<sup>TM</sup>!
-          </p>
+  <p>
+    Thanks to the awesome people at <?= $this->Html->link('BootSwatch', 'http://bootswatch.com')?>, you have access to a variety of interesting themes to make SourceKettle look Amazing and Wonderful<sup>TM</sup>!
+  </p>
 
-          <p>
-            Simply select a theme from the list and click 'Update' to change your theme.
-          </p>
+  <p>
+    Simply select a theme from the list and click 'Update' to change your theme.
+  </p>
 
-        </div>
-    </div>
 </div>

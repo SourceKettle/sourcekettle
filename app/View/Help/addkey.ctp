@@ -19,10 +19,6 @@ $this->Html->css('pages/help', null, array ('inline' => false));
 ?>
 
 <div class="row-fluid">
-	<div class="span2">
-		<?= $this->element('Sidebar/help') ?>
-	</div>
-	<div class="span10">
       <div class="well">
       <h3>Adding SSH keys</h3>
       <p>
@@ -83,5 +79,4 @@ $this->Html->css('pages/help', null, array ('inline' => false));
       </p>
       </div>
 
-	</div>
 </div>
