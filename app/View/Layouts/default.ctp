@@ -18,7 +18,10 @@
 <html>
 <head>
 	<title>
-		<?= h($sourcekettle_config['UserInterface']['alias']['value']) ?> - <?= h($pageTitle) ?>
+	<?= h($sourcekettle_config['UserInterface']['alias']['value']) ?>
+	<? if(isset($pageTitle)) {?>
+		 - <?= h($pageTitle) ?>
+	<? } ?>
 	</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
@@ -123,13 +126,14 @@
 			<?= $this->Session->flash('email'); ?>
 		</span>
 
-		<?
-		$header = $pageTitle;
-		if (isset($subTitle)) {
-			$header .= ' <small>'.h($subTitle).'</small>';
-		}
-		echo $this->TwitterBootstrap->page_header($header);
-		?>
+		<? if(isset($pageTitle)) {
+			$header = $pageTitle;
+			if (isset($subTitle)) {
+				$header .= ' <small>'.h($subTitle).'</small>';
+			}
+			echo $this->TwitterBootstrap->page_header($header);
+	
+		} ?>
 		
 		<? // Optional sidebar
 		if (isset($sidebar)) {
