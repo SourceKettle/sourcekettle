@@ -57,7 +57,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Cannot see the page when not logged in
 		$this->testAction('/projects', array('method' => 'get', 'return' => 'vars'));
-		$this->assertEquals($this->vars['projects'], array());
+		$this->assertNotAuthorized();
 	}
 
 	public function testIndexSystemAdmin() {
@@ -69,31 +69,13 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
-		$this->assertContains('<h1>My Projects', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/public\/." class="project-link">public<\/a>/', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/private\/." class="project-link">private<\/a>/', $this->view);
 
 		// Check the project list looks sane and has only the right entries/access levels
-		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
-
-		// Check each project 
-		foreach ($this->vars['projects'] as $project) {
-
-			// We should be a collaborator
-			if (!isset($project['User']) || $project['User']['id'] != 5) {
-				$this->assertTrue(false, "A project for another collaborator was found");
-			}
-
-			// We should only get these two, and with the correct access levels
-			if ($project['Project']['id'] == 1 && $project['Collaborator']['access_level'] == 2) {
-				$this->assertTrue(true, "Impossible to fail");
-			} elseif ($project['Project']['id'] == 2 && $project['Collaborator']['access_level'] == 1) {
-				$this->assertTrue(true, "Impossible to fail");
-			} else {
-				$this->assertTrue(false, "An unexpected project ID (".$project['Project']['id'].") or access level (".$project['Collaborator']['access_level'].") was retrieved");
-			}
-		}
+		$ids = array_map(function($a) {return $a['Project']['id'];}, $this->vars['projects']);
+		sort($ids);
+		$this->assertEqual(array(1, 2), $ids);
 	}
 
 	public function testIndexProjectGuest() {
@@ -104,21 +86,11 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/projects', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 		
-		$this->assertContains('<h1>My Projects', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/private\/." class="project-link">private<\/a>/', $this->view);
-
-		// Check the project list looks sane and has only the right entries/access levels
-		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
-
-		// Crunch to get the project ID, user ID and access level only
-		$ids = array_map(function($a) {return array('p' => $a['Project']['id'], 'u' => $a['User']['id'], 'l' => $a['Collaborator']['access_level']);}, $this->vars['projects']);
-
+		$ids = array_map(function($a) {return $a['Project']['id'];}, $this->vars['projects']);
+		sort($ids);
 		// Should have two projects, guest on both
-		$this->assertEquals(array(
-			array('p' => 1, 'u' => 3, 'l' => 0),
-			array('p' => 12, 'u' => 3, 'l' => 0),
-		), $ids);
+		$this->assertEquals(array(1, 12), $ids);
 
 	}
 
@@ -129,7 +101,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$this->testAction('/projects/public_projects', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Public Projects', $this->view);
 
 		$this->assertRegexp('/<a href=".*\/project\/public\/." class="project-link">public<\/a>/', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/personal_public\/." class="project-link">personal_public<\/a>/', $this->view);
@@ -150,7 +121,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$this->testAction('/projects/public_projects', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Public Projects', $this->view);
 
 		$this->assertRegexp('/<a href=".*\/project\/public\/." class="project-link">public<\/a>/', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/personal_public\/." class="project-link">personal_public<\/a>/', $this->view);
@@ -172,7 +142,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$this->testAction('/projects/team_projects', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Team Projects', $this->view);
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertEmpty($this->vars['projects']);
@@ -185,7 +154,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$this->testAction('/projects/team_projects', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Team Projects', $this->view);
 
 		$this->assertRegexp('/<a href=".*\/project\/perl-1\/." class="project-link">perl-1<\/a>/', $this->view);
 
@@ -206,7 +174,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$this->testAction('/projects/team_projects', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Team Projects', $this->view);
 
 		$this->assertRegexp('/<a href=".*\/project\/python-1\/." class="project-link">python-1<\/a>/', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/python-2\/." class="project-link">python-2<\/a>/', $this->view);
@@ -253,7 +220,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/project/private', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>private <small>Project overview</small></h1>', $this->view);
 		$this->assertNotNull($this->vars['project']);
 		
 	}
@@ -266,7 +232,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/project/personal', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>personal <small>Project overview</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['project']);
 		
@@ -279,7 +244,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/project/public', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>Project overview</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['project']);
 		
@@ -301,7 +265,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/project/private', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>private <small>Project overview</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['project']);
 		
@@ -631,7 +594,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$saved = $this->controller->Project->findById(3);
 		$this->testAction('/project/personal/delete', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Are you sure you want to delete "personal"?</h1>', $this->view);
 	}
 
 	public function testDeleteSystemAdmin() {
@@ -677,7 +639,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$saved = $this->controller->Project->findById(3);
 		$this->testAction('/admin/projects/personal/delete', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Are you sure you want to delete "personal"?</h1>', $this->view);
 	}
 
 	public function testAdminDeleteSystemAdmin() {
@@ -731,7 +692,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
-		$this->assertContains('<h1>Administration <small>da vinci code locator</small>', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/private\/view">private<\/a>/', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/public\/view">public<\/a>/', $this->view);
 		$this->assertRegexp('/<a href=".*\/project\/personal\/view">personal<\/a>/', $this->view);
@@ -789,7 +749,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 	public function testHistory() {
 		$this->_fakeLogin(7);
 		$this->testAction('/project/personal/history', array('return' => 'view', 'method' => 'get'));
-		$this->assertRegexp('/<a href=".*\/project\/personal\/view">/', $this->view);
 		$this->assertContains('<div id="histId', $this->view);
 	}
 	

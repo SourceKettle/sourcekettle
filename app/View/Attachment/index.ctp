@@ -7,33 +7,25 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     SourceKettle Development Team 2012
- * @link          http://github.com/SourceKettle/sourcekettle
- * @package       SourceKettle.View.Attachment
- * @since         SourceKettle v 0.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	 SourceKettle Development Team 2012
+ * @link		  http://github.com/SourceKettle/sourcekettle
+ * @package	   SourceKettle.View.Attachment
+ * @since		 SourceKettle v 0.1
+ * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 ?>
 
-<?= $this->DT->pHeader(__("Files uploaded to the project")) ?>
 <div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/project') ?>
-    </div>
-    <div class="span10">
-        <div class="row-fluid">
-            <?= $this->element('Attachment/topbar') ?>
-		</div>
-        <div class="row-fluid">
+	<?= $this->element('Attachment/topbar') ?>
+</div>
+<div class="row-fluid">
 
-            <?php if (!empty($attachments)) {
-                      echo $this->element('Attachment/full');
-                  } else {
-                      echo $this->element('Attachment/empty');
-                  }
-            ?>
+	<?php if (!empty($attachments)) {
+			  echo $this->element('Attachment/full');
+		  } else {
+			  echo $this->element('Attachment/empty');
+		  }
+	?>
 
-        </div>
-    </div>
 </div>

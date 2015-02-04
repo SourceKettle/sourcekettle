@@ -67,6 +67,8 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function open($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('open milestones'));
 		$project = $this->_getProject($project);
 		$milestones = $this->Milestone->getOpenMilestones();
 		$this->set('milestones', $milestones);
@@ -79,6 +81,8 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function closed($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('closed milestones'));
 		$project = $this->_getProject($project);
 		$milestones = $this->Milestone->getClosedMilestones();
 		$this->set('milestones', $milestones);
@@ -94,7 +98,8 @@ class MilestonesController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
-		$this->set('title_for_layout', $milestone['Milestone']['subject']);
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('Milestone board: "%s"', $milestone['Milestone']['subject']));
 
 		$open = $this->Milestone->tasksOfStatusForMilestone($id, 'open');
 		$inProgress = $this->Milestone->tasksOfStatusForMilestone($id, 'in progress');
@@ -136,7 +141,8 @@ class MilestonesController extends AppProjectController {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
-		$this->set('title_for_layout', $milestone['Milestone']['subject']);
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('Priority planner: "%s"', $milestone['Milestone']['subject']));
 
 		$mustHave   = $this->Milestone->tasksOfPriorityForMilestone($id, 'blocker');
 		$shouldHave = $this->Milestone->tasksOfPriorityForMilestone($id, 'urgent');
@@ -158,6 +164,8 @@ class MilestonesController extends AppProjectController {
  */
 	public function add($project = null) {
 		$project = $this->_getProject($project);
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('add a milestone'));
 
 		if ($this->request->is('post')) {
 			$this->Milestone->create();
@@ -181,6 +189,8 @@ class MilestonesController extends AppProjectController {
  * @return void
  */
 	public function edit($project = null, $id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('edit milestone'));
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
@@ -206,6 +216,8 @@ class MilestonesController extends AppProjectController {
 	public function close($project = null, $id = null) {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('close milestone'));
 		if (!$milestone['Milestone']['is_open']) {
 			throw new NotFoundException(__("Cannot close milestone - it is already closed!"));
 		}
@@ -267,6 +279,8 @@ class MilestonesController extends AppProjectController {
 	public function reopen($project = null, $id = null) {
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('re-open milestone'));
 
 		if($milestone['Milestone']['is_open']){
 			throw new NotFoundException(__("Cannot re-open milestone - it is already open!"));
@@ -296,6 +310,8 @@ class MilestonesController extends AppProjectController {
  */
 	public function delete($project = null, $id = null) {
 
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('delete milestone'));
 		$project = $this->_getProject($project);
 		$milestone = $this->Milestone->open($id);
 
@@ -341,6 +357,8 @@ class MilestonesController extends AppProjectController {
 	public function burndown($project = null, $id = null) {
 
 		$milestone = $this->Milestone->open($id);
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('burn-down chart: "%s"', $milestone['Milestone']['subject']));
 
 		$now = new DateTime();
 

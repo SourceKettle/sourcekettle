@@ -15,16 +15,8 @@
  */
 ?>
 
-<?= $this->DT->pHeader(__("Project history")) ?>
 <div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/project') ?>
-    </div>
-    <div class="span10">
-        <div class="row-fluid">
-            <div class="span12">
-                <?= $this->element('history_ajax', array('no_more'=>true)) ?>
-            </div>
-        </div>
+    <div class="span12">
+        <?= $this->element('history_ajax', array('no_more'=>true)) ?>
     </div>
 </div>

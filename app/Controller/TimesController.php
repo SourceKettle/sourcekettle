@@ -67,6 +67,8 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function add($project) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("log time to the project"));
 		$project = $this->_getProject($project);
 		$this->Time->create();
 
@@ -145,6 +147,8 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function edit($project, $id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("changing history"));
 		$project = $this->_getProject($project);
 		$time = $this->Time->open($id, true);
 		$this->set('time', $time);
@@ -175,6 +179,8 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function history($project = null, $year = null, $week = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("timesheets"));
 		$project = $this->_getProject($project);
 
 		// Validate the Year
@@ -288,6 +294,8 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function users($project) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("project time summary"));
 		$project = $this->_getProject($project);
 
 		$this->set('total_time', $this->Time->fetchTotalTimeForProject());
@@ -299,6 +307,8 @@ class TimesController extends AppProjectController {
  * Show a log for a specific user showing which tasks they have worked on and for how long
  */
 	public function userlog($project, $user_id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("where was your time spent?"));
 		$project = $this->_getProject($project);
 		$this->set('times', $this->Time->find('all', array(
 			'conditions' => array('user_id' => $user_id, 'Project.id' => $project['Project']['id']),
@@ -309,6 +319,8 @@ class TimesController extends AppProjectController {
 
 	// Show time log for a specific task
 	public function tasklog($project, $public_id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("task time log"));
 		$project = $this->_getProject($project);
 		$task = $this->Time->Task->findByProjectIdAndPublicId($project['Project']['id'], $public_id);
 		$this->set('task', $task);
@@ -326,6 +338,8 @@ class TimesController extends AppProjectController {
  * @return void
  */
 	public function view($project, $id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("time logged to the project"));
 		$project = $this->_getProject($project);
 		$time	= $this->Time->open($id);
 

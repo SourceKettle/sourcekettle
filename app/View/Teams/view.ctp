@@ -13,8 +13,7 @@
  * @since         SourceKettle v 1.5
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-echo $this->Bootstrap->page_header(__('Team: <small>%s</small>', h($team['Team']['name']))); ?>
+?>
 
 <div class="row-fluid">
 <div class="teams view">

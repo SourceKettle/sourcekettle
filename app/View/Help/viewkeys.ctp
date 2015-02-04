@@ -16,15 +16,9 @@
 
 $this->Html->css('time.tempo', null, array ('inline' => false));
 $this->Html->css('pages/help', null, array ('inline' => false));
+?>
 
-echo $this->Bootstrap->page_header('Help! <small>How do I manage my SSH keys?</small>'); ?>
-
-<div class="row-fluid">
-	<div class="span2">
-		<?= $this->element('Sidebar/help') ?>
-	</div>
-	<div class="span10">
-		<div class="well">
+<div class="well">
           <h3> Changing SSH keys</h3>
           <p>
             Given that SSH keys are just a line of text, there's not much point in being able to edit them individually - so, we only allow delete functionality.
@@ -37,6 +31,4 @@ echo $this->Bootstrap->page_header('Help! <small>How do I manage my SSH keys?</s
           <p>
             As when adding keys, this will take a little time to take effect as the keys are synced periodically (usually every minute or two).
           </p>
-		</div>
-	</div>
 </div>

@@ -26,12 +26,19 @@ class AdminController extends AppController {
 		'User',
 	);
 
+	public function beforeFilter() {
+		parent::beforeFilter();
+		$this->set('sidebar', 'admin');
+	}
 /**
  * index method
  *
  * @return void
  */
 	public function admin_index() {
+
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('system overview'));
 
 		// TODO move to config
 		// Staleness thresholds in days

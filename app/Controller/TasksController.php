@@ -137,6 +137,8 @@ class TasksController extends AppProjectController {
  */
 	public function index($project = null) {
 		$project = $this->_getProject($project);
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('things to do'));
 
 		// Convert from comma separated to arrays
 		$statuses   = preg_split('/\s*,\s*/', trim(@$this->request->query['statuses']),   null, PREG_SPLIT_NO_EMPTY);
@@ -301,6 +303,8 @@ class TasksController extends AppProjectController {
 	}
 
 	public function personal_kanban($maxAgeDays=30) {
+		$this->set('pageTitle', __("Personal kanban chart for %s", $this->Auth->user('name')));
+		$this->set('subTitle', null);
 
 		$open = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'open');
 		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
@@ -317,6 +321,8 @@ class TasksController extends AppProjectController {
 	}
 
 	public function team_kanban($team = null, $maxAgeDays=30) {
+		$this->set('pageTitle', __('Team kanban chart: %s', $team));
+		$this->set('subTitle', null);
 
 		// NB we check it's valid in the isAuthorized method, so no need to check again
 		$team = $this->Team->findByName($team);
@@ -341,6 +347,8 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function view($project = null, $public_id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('task card and log'));
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 		$current_user = $this->Auth->user();
@@ -591,6 +599,8 @@ class TasksController extends AppProjectController {
  */
 	public function add($project = null) {
 
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('create a task'));
 		$project = $this->_getProject($project);
 		$current_user = $this->viewVars['current_user'];
 
@@ -741,6 +751,8 @@ class TasksController extends AppProjectController {
 
 	public function edit($project = null, $public_id = null) {
 
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __(''));
 		// There is no separate edit form
 		if (!$this->request->is('post') && !$this->request->is('put')) {
 			throw new MethodNotAllowedException();
@@ -1030,6 +1042,8 @@ class TasksController extends AppProjectController {
 	}
 
 	public function tree($project = null, $public_id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('Task dependency tree'));
 		$project = $this->_getProject($project);
 		$tree = $this->Task->getTree($project['Project']['id'], $public_id);
 		$this->set('tree', $tree);

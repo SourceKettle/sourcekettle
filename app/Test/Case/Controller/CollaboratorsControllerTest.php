@@ -83,7 +83,6 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
-		$this->assertContains('<h1>private <small>Collaborators working on the project</small></h1>', $this->view);
 		$this->assertNotNull($this->vars['collaborators']);
 		$this->assertNotNull($this->vars['collaborators'][0]);
 		$this->assertNotNull($this->vars['collaborators'][1]);

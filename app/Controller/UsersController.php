@@ -21,9 +21,9 @@ class UsersController extends AppController {
 
 	public $helpers = array('Time');
 
-	public $components = array('Email');
+	public $components = array('Email', 'Paginator');
 
-	public $uses = array('User', 'Setting');
+	public $uses = array('User', 'Setting', 'Project');
 
 	public function isAuthorized($user) {
 
@@ -43,6 +43,7 @@ class UsersController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+		$this->set('sidebar', 'users');
 
 		// Registration and other "setting your password" actions cannot
 		// require a login
@@ -59,7 +60,8 @@ class UsersController extends AppController {
  * Function to allow users to register with the application
  */
 	public function register() {
-		$this->set('title_for_layout', 'Register');
+		$this->set('pageTitle', __('Register with %s', $this->sourcekettle_config['UserInterface']['alias']['value']));
+		$this->set('subTitle', __('Hello! Bonjour! Willkommen!..'));
 		$ok = true;
 
 		// Registration is disabled, render a message instead
@@ -161,6 +163,8 @@ class UsersController extends AppController {
  */
 	public function lost_password() {
 
+		$this->set('pageTitle', __('Lost password'));
+		$this->set('subTitle', __('correct horse battery staple'));
 		// GET request - render the lost password form
 		if ($this->request->is('get')) {	
 			$this->render('lost_password');
@@ -211,6 +215,9 @@ class UsersController extends AppController {
 	}
 
 	public function reset_password($key = null) {
+
+		$this->set('pageTitle', __('Reset password'));
+		$this->set('subTitle', __('hunter2'));
 
 		// No key yet - bounce to the lost_password form
 		if ($key == null) {
@@ -282,6 +289,8 @@ class UsersController extends AppController {
  * Allows admins to see all users
  */
 	public function admin_index() {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('search for persons of interest'));
 		// TODO nesting levels of doooom
 		if ($this->request->is('post') && isset($this->request->data['User']['name']) && $user = $this->request->data['User']['name']) {
 			if (preg_match('/[\[{\(](.+@.+)[\]}\)]/', $user, $matches)) {
@@ -310,6 +319,8 @@ class UsersController extends AppController {
  * @throws NotFoundException
  */
 	public function admin_view($id = null) {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('single out the stragglers'));
 		$this->User->id = $id;
 
 		if (!$this->User->exists()) {
@@ -317,12 +328,33 @@ class UsersController extends AppController {
 		}
 
 		//Find the users projects they are working on
-		$this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
+		//$this->set('projects', $this->User->Collaborator->findAllByUser_id($id));
+		$this->Paginator->settings = array(
+			'conditions' => array('Collaborator.user_id' => $id),
+			'joins' => array(
+			 	array('table' => 'collaborators',
+					'alias' => 'Collaborator',
+					'type' => 'INNER',
+					'conditions' => array(
+						'Collaborator.project_id = Project.id',
+					)
+				),
+			),
+			'limit' => 15,
+			'group' => array('Project.id'),
+			'order' => array('Project.modified DESC'),
+		);
+
+		$projects = $this->paginate('Project');
+		$this->set('projects', $projects);
+		$this->set('model', 'Project'); // For pagination thingy
 		$this->request->data = $this->User->read();
 		$this->request->data['User']['password'] = null;
 	}
 
 	public function admin_approve($key = null) {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('thumbs up'));
 
 		if ($this->request->is('get')) {
 			$this->set('users', $this->User->getPendingApprovals());
@@ -355,8 +387,10 @@ class UsersController extends AppController {
  * @throws NotFoundException
  */
 	public function view($id = null) {
-		$this->User->id = $id;
 		$current_user = $this->viewVars['current_user'];
+		$this->set('pageTitle', __('Profile: %s', $current_user['name']));
+		$this->set('subTitle', __(''));
+		$this->User->id = $id;
 
 		if (!$this->User->exists()) {
 			throw new NotFoundException(__('Invalid user'));
@@ -391,6 +425,8 @@ class UsersController extends AppController {
  * Create a new user
  */
 	public function admin_add() {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('add a new sheep to your flock'));
 		if ($this->request->is('post')) { // if data was posted therefore a submitted form
 			$this->User->create();
 
@@ -446,6 +482,8 @@ class UsersController extends AppController {
  * Edit the name and the email address of the current user
  */
 	public function details() {
+		$this->set('pageTitle', __('Edit profile: %s', $this->Auth->user('name')));
+		$this->set('subTitle', __(''));
 		$this->User->id = $this->Auth->user('id'); //get the current user
 
 		if ($this->request->is('post')) {
@@ -477,6 +515,8 @@ class UsersController extends AppController {
  * Edit the current users password
  */
 	public function security() {
+		$this->set('pageTitle', __('Change password: %s', $this->Auth->user('name')));
+		$this->set('subTitle', __(''));
 		$this->User->id = $this->Auth->user('id'); //get the current user
 		$user = $this->User->read(null, $this->User->id);
 		$user = $user['User'];
@@ -515,6 +555,8 @@ class UsersController extends AppController {
  * Edit the current users theme
  */
 	public function theme() {
+		$this->set('pageTitle', __('Change theme: %s', $this->Auth->user('name')));
+		$this->set('subTitle', __(''));
 		$model = ClassRegistry::init("UserSetting");
 		$currentTheme = $model->findByNameAndUserId("UserInterface.theme", $this->Auth->user('id'));
 		if ($this->request->is('post')) {
@@ -556,6 +598,8 @@ class UsersController extends AppController {
  * collaborators
  */
 	public function delete() {
+		$this->set('pageTitle', __('Delete your account'));
+		$this->set('subTitle', __('careful now...'));
 		// Check whether the user account is SourceKettle-managed (if not it's an LDAP
 		// account or similar, so we can't really delete it properly)
 		// TODO this is totally wrong and broken!

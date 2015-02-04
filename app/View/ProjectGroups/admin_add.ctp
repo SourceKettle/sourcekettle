@@ -13,20 +13,12 @@
  * @since         SourceKettle v 1.5
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-echo $this->Bootstrap->page_header('Administration <small>organise your code-y things</small>'); ?>
+?>
 
 <div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/admin') ?>
-    </div>
-    <div class="span10">
-        <div class="row-fluid">
-            <?php
-            echo $this->Form->create('ProjectGroup', array('class' => 'span12 well form-horizontal', 'action' => 'admin_add'));
-			echo $this->element("ProjectGroup/admin_form");
-            echo $this->Form->end();
-            ?>
-        </div>
-    </div>
+    <?php
+    echo $this->Form->create('ProjectGroup', array('class' => 'span12 well form-horizontal', 'action' => 'admin_add'));
+		echo $this->element("ProjectGroup/admin_form");
+    echo $this->Form->end();
+    ?>
 </div>

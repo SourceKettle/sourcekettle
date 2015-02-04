@@ -36,8 +36,7 @@ $hover_waffle = $this->Popover->popover(
      "</ul>".
     __("For example:<br><i>'A project management system using the CakePHP MVC'</i> (That's SourceKettle)")
 );
-
-echo $this->Bootstrap->page_header(__("Clone Project <small>Stand on the shoulders of giants</small>")); ?>
+?>
 
 <div class="row-fluid">
     <div class="span6">

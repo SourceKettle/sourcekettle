@@ -84,6 +84,8 @@
         /*
          * If no other controller is to be used, use the projects controller
          */
+        Router::connect('/projects/team_projects/*', array('controller' => 'projects', 'action' => 'team_projects'), array('pass' => array('page'), 'page' => '[0-9]+'));
+        Router::connect('/projects/public_projects/*', array('controller' => 'projects', 'action' => 'public_projects'), array('pass' => array('page'), 'page' => '[0-9]+'));
         Router::connect('/project/:project/clone/*', array('controller' => 'projects', 'action' => 'fork'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/:project/:action/*', array('controller' => 'projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
@@ -92,8 +94,6 @@
         Router::connect('/project/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
 		// Make sure our intended /projects/ links work, but you can also go to /projects/foo/edit as well as /project/foo/edit
-        Router::connect('/projects/team_projects/*', array('controller' => 'projects', 'action' => 'team_projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
-        Router::connect('/projects/public_projects/*', array('controller' => 'projects', 'action' => 'public_projects'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/add', array('controller' => 'projects', 'action' => 'add'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/projects/:project/*', array('controller' => 'projects', 'action' => 'view'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 		// This is a (fudgy!) fix to make submodules' links in the source view work. We may want to change this if we ever support HTTPS access to git.
