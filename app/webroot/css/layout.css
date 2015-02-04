@@ -28,6 +28,24 @@ body{
 	margin-right: 0px !important;
 }
 
+/* collapse navbar on small screens */
+#sourcekettle-sidebar-toggle {
+	display: none;
+}
+@media (max-width: 1000px) {
+	#sourcekettle-sidebar-toggle {
+		display: block;
+	}
+	#sidebar-area {
+		width: 100%;
+	}
+	#page-area {
+		width: 100%;
+		margin-left: 0px;
+	}
+	
+}
+
 h1, h2, h3 {
     margin-bottom: 10px;
 }
