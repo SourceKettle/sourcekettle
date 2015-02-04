@@ -152,7 +152,7 @@ $link_plan= $this->Html->link(
         </div>
 
         <hr>
-        <p><?= $this->DT->parse(h($milestone['Milestone']['description'])) ?></p>
+        <p><?= $this->Markitup->parse(h($milestone['Milestone']['description'])) ?></p>
         </div>
     </div>
 </div>
