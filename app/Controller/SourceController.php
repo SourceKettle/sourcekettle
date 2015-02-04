@@ -134,6 +134,8 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function commit($project = null, $hash = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project, $hash);
 
 		$commit = $this->Source->Commit->fetch($hash);
@@ -166,6 +168,8 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function commits($project = null, $branch = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project, $branch);
 		$path	= $this->__getPath();
 
@@ -211,6 +215,8 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function gettingStarted($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project);
 		$type	= $this->Source->getType();
 
@@ -232,6 +238,8 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function index($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('source code'));
 		return $this->redirect(array('action' => 'tree', 'project' => $project));
 	}
 
@@ -277,6 +285,8 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function tree($project = null, $branch = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('source code'));
 		try {
 			$project = $this->__initialiseResources($project, $branch);
 			$path	= $this->__getPath();

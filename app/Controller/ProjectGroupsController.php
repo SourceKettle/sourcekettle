@@ -43,6 +43,8 @@ class ProjectGroupsController extends AppController {
  * @return void
  */
 	public function admin_index() {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('project groups'));
 		$this->ProjectGroup->recursive = 0;
 		$this->set('projectGroups', $this->paginate());
 	}
@@ -64,6 +66,8 @@ class ProjectGroupsController extends AppController {
 		if (empty($projectGroup)) {
 			throw new NotFoundException(__('Invalid group'));
 		}
+		$this->set('pageTitle', __('Project group'));
+		$this->set('subTitle', $projectGroup['ProjectGroup']['name']);
 
 		// TODO should really be pulled in by the model
 		foreach ($projectGroup['GroupCollaboratingTeam'] as $i => $ct) {
@@ -84,6 +88,8 @@ class ProjectGroupsController extends AppController {
  * @return void
  */
 	public function admin_add() {
+		$this->set('pageTitle', __('Project group'));
+		$this->set('subTitle', __('add a project group'));
 		if ($this->request->is('post')) {
 			$this->ProjectGroup->create();
 			$data = $this->_cleanPost(array("ProjectGroup.name", "ProjectGroup.description", "Project"));
@@ -111,6 +117,8 @@ class ProjectGroupsController extends AppController {
  * @return void
  */
 	public function admin_edit($id = null) {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('organise your projects'));
 		if (!$this->ProjectGroup->exists($id)) {
 			throw new NotFoundException(__('Invalid project group'));
 		}

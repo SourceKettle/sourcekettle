@@ -29,27 +29,19 @@ $details = array(
         'action' => 'admin_makeguest',
     ),
 );
-
-echo $this->Bootstrap->page_header('Administration <small>they called it *what*??</small>'); ?>
+?>
 
 <div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/admin') ?>
-    </div>
-    <div class="span10">
-        <div class="row-fluid">
-            <?=$this->Form->create('Project', array('class' => 'span7 well form-horizontal')); ?>
+    <?=$this->Form->create('Project', array('class' => 'span8 offset2 well form-horizontal')); ?>
 
-            <h3>Rename project</h3>
+    <h3>Rename project</h3>
 
-            <?=$this->Bootstrap->input("New name", array(
-                "input" => $this->Form->text("name", array("class" => "span11")),
-            ));?>
+    <?=$this->Bootstrap->input("New name", array(
+        "input" => $this->Form->text("name", array("class" => "span11")),
+    ));?>
 
-            <?=$this->Bootstrap->button("Rename project", array("style" => "primary", "size" => "large", 'class' => 'controls'));?>
+    <?=$this->Bootstrap->button("Rename project", array("style" => "primary", "size" => "large", 'class' => 'controls'));?>
 
-            <?=$this->Form->end();?>
-     	</div>
-    </div>
+    <?=$this->Form->end();?>
 </div>
 <style type="text/css">.btn-group {float: right; margin-right: 10px;}</style>

@@ -127,7 +127,6 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
-		$this->assertContains('<h1>public <small>Things to Do...</small></h1>', $this->view);
 		$this->assertContains('<h2>Task list</h2>', $this->view);
 
 		// Check correct tasks are returned
@@ -237,7 +236,6 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		// Check the page content looks roughly OK
-		$this->assertContains('<h1>public <small>Task card and log</small></h1>', $this->view);
 
 		// Check we've got the right stuff back
 		$this->assertEquals($this->vars['task']['Task']['id'], 1);

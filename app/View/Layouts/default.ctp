@@ -18,7 +18,10 @@
 <html>
 <head>
 	<title>
-		<?= h($sourcekettle_config['UserInterface']['alias']['value']) ?> - <?= h($title_for_layout) ?>
+	<?= h($sourcekettle_config['UserInterface']['alias']['value']) ?>
+	<? if(isset($pageTitle)) {?>
+		 - <?= h($pageTitle) ?>
+	<? } ?>
 	</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
@@ -102,6 +105,9 @@
 							}
 						?>
 						</ul>
+						<ul class="nav pull-right">
+							<li><a href="#" onclick="toggleDistractions(); return false;"><i class="icon-fullscreen icon-white"></i></a></li>
+						</ul>
 					</div>
 					<? } else { ?>
 						</ul>
@@ -122,9 +128,30 @@
 			<?= $this->Bootstrap->flashes(array('auth' => true, 'closable' => true)); //Bootstrap equivalent of $this->Session->flash() ?>
 			<?= $this->Session->flash('email'); ?>
 		</span>
-		<?= $content_for_layout ?>
+
+		<? if(isset($pageTitle)) {
+			$header = $pageTitle;
+			if (isset($subTitle)) {
+				$header .= ' <small>'.h($subTitle).'</small>';
+			}
+			echo '<span class="distractions">'.$this->TwitterBootstrap->page_header($header)."</span>";
+	
+		} ?>
+		
+		<? // Optional sidebar
+		if (isset($sidebar)) {
+			echo '<div class="row-fluid">';
+			echo '<div class="span2 distractions" id="sidebar-area">';
+			echo $this->element("Sidebar/$sidebar");
+			echo '</div>';
+			echo '<div class="span10" id="page-area">';
+			echo $content_for_layout;
+			echo '</div>';
+		} else {
+			echo $content_for_layout;
+		} ?>
 	</div>
-	<footer>
+	<footer class="span12">
 		<hr>
 		<?=$this->Html->link("About SourceKettle $sourcekettleVersion", '/about');?>
 		<?=$this->Html->link('Git help', 'http://git-scm.com/book/en/Getting-Started-Git-Basics');?>

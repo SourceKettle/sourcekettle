@@ -35,8 +35,7 @@ $hover_waffle = $this->Popover->popover(
      </ul>
      For example:<br><i>'A project management system using the CakePHP MVC'</i> (That's SourceKettle)"
 );
-
-echo $this->Bootstrap->page_header("New Project <small>where baby projects are made</small>"); ?>
+?>
 
 <div class="row-fluid">
     <div class="span8">

@@ -114,7 +114,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/open', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>Open Milestones</small></h1>', $this->view);
 		$this->assertRegexp('|<a href=".*'.Router::url('/project/public/milestones/view/1').'"|', $this->view);
 		$this->assertRegexp('|<a href=".*'.Router::url('/project/public/milestones/view/3').'"|', $this->view);
 
@@ -156,7 +155,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/closed', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>Closed Milestones</small></h1>', $this->view);
 		$this->assertRegexp('|<a href=".*'.Router::url('/project/public/milestones/view/2').'"|', $this->view);
 
 		$this->assertNotNull($this->vars['milestones']);
@@ -187,7 +185,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/view/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>'.h(__("Milestone board: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['open']);
 		$this->assertEquals(2, count($this->vars['open']));
@@ -207,7 +204,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/view/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>'.h(__("Milestone board: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['open']);
 		$this->assertEquals(2, count($this->vars['open']));
@@ -245,7 +241,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/plan/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>'.h(__("Milestone planner: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['mustHave']);
 		$this->assertEquals(2, count($this->vars['mustHave']));
@@ -264,7 +259,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/plan/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>'.h(__("Milestone planner: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['mustHave']);
 		$this->assertEquals(2, count($this->vars['mustHave']));
@@ -283,7 +277,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->testAction('/project/public/milestones/plan/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
 
-		$this->assertContains('<h1>public <small>'.h(__("Milestone planner: '%s'", $this->vars['milestone']['Milestone']['subject'])).'</small></h1>', $this->view);
 
 		$this->assertNotNull($this->vars['mustHave']);
 		$this->assertEquals(2, count($this->vars['mustHave']));
@@ -318,7 +311,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->_fakeLogin(1);
 		$this->testAction('/project/public/milestones/add', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>public <small>New Milestone</small></h1>', $this->view);
 		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/milestones/add').'"|', $this->view);
 	}
 
@@ -440,7 +432,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->_fakeLogin(1);
 		$this->testAction('/project/public/milestones/edit/1', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>public <small>Edit a Milestone</small></h1>', $this->view);
 		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/milestones/edit/1').'"|', $this->view);
 	}
 
@@ -570,7 +561,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->_fakeLogin(1);
 		$this->testAction('/project/public/milestones/close/3', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Close milestone</h1>', $this->view);
 		$this->assertRegexp('|<form action=".*'.Router::url('/project/public/milestones/close/3').'"|', $this->view);
 	}
 
@@ -741,7 +731,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->_fakeLogin(1);
 		$this->testAction('/project/private/milestones/reopen/5', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Re-open milestone</h1>', $this->view);
 		$this->assertRegexp('|<form action=".*'.Router::url('/project/private/milestones/reopen/5').'"|', $this->view);
 	}
 
@@ -833,7 +822,6 @@ class MilestonesControllerTest extends AppControllerTest {
 		$this->_fakeLogin(1);
 		$this->testAction('/project/private/milestones/delete/5', array('method' => 'get', 'return' => 'contents'));
 		$this->assertAuthorized();
-		$this->assertContains('<h1>Delete milestone</h1>', $this->view);
 		$this->assertRegexp('|<form action=".*'.Router::url('/project/private/milestones/delete/5').'"|', $this->view);
 	}
 

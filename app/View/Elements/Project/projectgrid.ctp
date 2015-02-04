@@ -12,6 +12,9 @@ if (!empty($projects)){
 		$count++;
 	}
 	echo '</div>';
+	echo '<div class="row-fluid">';
+    	echo $this->element('pagination'); 
+	echo '</div>';
 } else {
 	echo $this->element('Project/noprojectsalert', array('span' => true));
 }

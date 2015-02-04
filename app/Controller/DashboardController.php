@@ -30,6 +30,9 @@ class DashboardController extends AppController {
 	}
 
 	public function index() {
+		$current_user = $this->viewVars['current_user'];
+  		$this->set('pageTitle', __("Dashboard"));
+		$this->set('subTitle',  __("welcome %s", strtolower($current_user['name'])));
 		$this->set('projects', $this->__getRecentProjects());
 		$this->set('history', $this->__getProjectsHistory());
 		$this->set('tasks', $this->__getUserTasks());

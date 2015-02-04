@@ -101,6 +101,9 @@ class AppController extends Controller {
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
+		if (isset($this->params['admin'])) {
+			$this->set('sidebar', 'admin');
+		}
 
 		// There are various database models that are simple lists - we will simply load them here
 		// so they can be used as lookups.
@@ -258,7 +261,7 @@ class AppController extends Controller {
 
 		// Set config and version
 		$this->set('sourcekettle_config', $this->sourcekettle_config);
-		$this->set('sourcekettleVersion', 'v1.6.0');
+		$this->set('sourcekettleVersion', 'v1.6.1');
 
 
 	}

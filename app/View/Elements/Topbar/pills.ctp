@@ -16,10 +16,10 @@
 ?>
 
 <? if (isset($span)){
-	echo "<div class='span" . $span . "'>";
+	echo "<div id='topbar' class='span" . $span . "'>";
 } else {
 	?>
-	<div class="span12">
+	<div id="topbar" class="span12">
 	<?
 } ?>
 	<ul class="nav nav-pills">

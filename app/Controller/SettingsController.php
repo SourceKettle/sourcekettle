@@ -24,6 +24,8 @@ class SettingsController extends AppController {
  * @return void
  */
 	public function admin_index() {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('system settings'));
 		// Slight hack to make theme form work properly...
 		$settings = $this->Setting->loadConfigSettings();
 		$this->request->data = array('Setting' => array('UserInterface' => array('theme' => $settings['UserInterface']['theme']['value'])));

@@ -12,8 +12,8 @@
  * @since         SourceKettle v 1.5
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+?>
 
-echo $this->Bootstrap->page_header(__('Project group: <small>%s</small>', h($projectGroup['ProjectGroup']['name']))); ?>
 <div>
   <h4><?=__('Member projects')?></h4>
   <ul>

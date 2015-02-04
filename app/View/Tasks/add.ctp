@@ -7,11 +7,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     SourceKettle Development Team 2012
- * @link          http://github.com/SourceKettle/sourcekettle
- * @package       SourceKettle.View.Tasks
- * @since         SourceKettle v 0.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	 SourceKettle Development Team 2012
+ * @link		  http://github.com/SourceKettle/sourcekettle
+ * @package	   SourceKettle.View.Tasks
+ * @since		 SourceKettle v 0.1
+ * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 $this->Html->css('tasks', null, array ('inline' => false));
@@ -24,70 +24,64 @@ $this->Html->scriptBlock ("
 	", array ("inline" => false));
 
 ?>
-<?= $this->DT->pHeader(__("Create a task")) ?>
 <div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/project') ?>
-    </div>
-    <div class="span10">
-        <div class="row-fluid">
-            <div class="span10 offset1">
+	<div class="span10 offset1">
 
-<?= $this->Form->create('Task', array('class' => 'well form-horizontal')) ?>
-<div class="row-fluid">
-    <div class="span10">
-        <?php
-        echo $this->Bootstrap->input("subject", array(
-            "input" => $this->Form->text("subject", array("class" => "span9", "placeholder" => __('Quick, yet informative, description'), "maxlength" => 50, "autofocus" => "")),
-            "label" => __('Subject'),
-            "help_inline" => __("50 characters max")
-        ));
+	<?= $this->Form->create('Task', array('class' => 'well form-horizontal')) ?>
+	<div class="row-fluid">
+	<div class="span10">
+		<?php
+		echo $this->Bootstrap->input("subject", array(
+			"input" => $this->Form->text("subject", array("class" => "span9", "placeholder" => __('Quick, yet informative, description'), "maxlength" => 50, "autofocus" => "")),
+			"label" => __('Subject'),
+			"help_inline" => __("50 characters max")
+		));
 
-        echo $this->Bootstrap->input("milestone_id", array(
-            "input" => $this->Form->input("milestone_id", array(
-                "label" => false,
-                "class" => "span5"
-            )),
-            "label" => __('Milestone').' '.$this->Bootstrap->icon('road'),
-        ));
+		echo $this->Bootstrap->input("milestone_id", array(
+			"input" => $this->Form->input("milestone_id", array(
+				"label" => false,
+				"class" => "span5"
+			)),
+			"label" => __('Milestone').' '.$this->Bootstrap->icon('road'),
+		));
 
-        echo $this->Bootstrap->input("task_priority_id", array(
-            "input" => $this->Form->input("task_priority_id", array(
-                "label"   => false,
-                "default" => "2",
-                "class"   => "span5"
-            )),
-            "label" => __('Priority'),
-        ));
-        echo $this->Bootstrap->input("assignee_id", array(
-            "input" => $this->Form->input("assignee_id", array(
-                "label"   => false,
-                "default" => "2",
-                "class"   => "span5",
-            )),
-            "label" => __('Assigned to')
-        ));
+		echo $this->Bootstrap->input("task_priority_id", array(
+			"input" => $this->Form->input("task_priority_id", array(
+				"label"   => false,
+				"default" => "2",
+				"class"   => "span5"
+			)),
+			"label" => __('Priority'),
+		));
+		echo $this->Bootstrap->input("assignee_id", array(
+			"input" => $this->Form->input("assignee_id", array(
+				"label"   => false,
+				"default" => "2",
+				"class"   => "span5",
+			)),
+			"label" => __('Assigned to')
+		));
 
-        echo $this->Bootstrap->input("time_estimate", array(
-            "input" => $this->Form->input("time_estimate", array(
+		echo $this->Bootstrap->input("time_estimate", array(
+			"input" => $this->Form->input("time_estimate", array(
 				// Force text field, as we convert  time string to integer
 				"type" => "text",
-                "label" => false,
-                "class" => "span3",
+				"label" => false,
+				"class" => "span3",
 				"placeholder" => "e.g. 2d 4h 3m",
 			)),
 			"help_inline" => __("Roughly how much time will the task take to finish?"),
-            "label" => __('Time Estimate'),
-        ));
+			"label" => __('Time Estimate'),
+		));
 
-        echo $this->Bootstrap->input("story_points", array(
-            "input" => $this->Form->input("story_points", array(
-                "label" => false,
-                "class" => "span3",
-            )),
+		echo $this->Bootstrap->input("story_points", array(
+			"input" => $this->Form->input("story_points", array(
+				"label" => false,
+				"class" => "span3",
+			)),
 			"help_inline" => __("An abstract estimate of how complex the task is to implement"),
-            "label" => __('Story Points'),
-        ));
+			"label" => __('Story Points'),
+		));
 		
 		echo $this->Bootstrap->input("description", array( 
 			"input" => $this->Markitup->editor("description", array(
@@ -109,30 +103,30 @@ $this->Html->scriptBlock ("
 			),
 		));
 		echo "</div>";
-        echo $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls'));
-        ?>
-    </div>
-    <div class="span2 sidebarRight">
-        <?= $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls span12'));?>
-        <h5><?= __('Issue type') ?></h5>
-        <?php
+		echo $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls'));
+		?>
+	</div>
+	<div class="span2 sidebarRight">
+		<?= $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls span12'));?>
+		<h5><?= __('Issue type') ?></h5>
+		<?php
 
 		// TODO set default type based on config
-        if (!isset($this->request->data['Task']['task_type_id'])) {
+		if (!isset($this->request->data['Task']['task_type_id'])) {
 			$this->request->data['Task']['task_type_id'] = 1;
 		}
-        
+		
 		$options = array();
 		foreach ($task_types as $id => $type) {
 			$options[$id] = '<div class="tasktype label label-'.$type['class'].'">'.$type['name'].'</div>';
 		}
-        echo $this->Bootstrap->radio("task_type_id", array(
-            "options" => $options,
-            "label" => false,
-            "control" => false
-        ));
-        ?>
-    </div>
+		echo $this->Bootstrap->radio("task_type_id", array(
+			"options" => $options,
+			"label" => false,
+			"control" => false
+		));
+		?>
+	</div>
 </div>
 <?= $this->Form->end() ?>
 <?= $this->Html->scriptBlock("
@@ -153,7 +147,5 @@ $this->Html->scriptBlock ("
 		});
 	});
 ", array('inline' => false)); ?>
-            </div>
-        </div>
-    </div>
-</div>
+			</div>
+		</div>

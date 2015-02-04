@@ -50,6 +50,8 @@ class TeamsController extends AppController {
 		if (empty($team)) {
 			throw new NotFoundException(__('Invalid team'));
 		}
+		$this->set('pageTitle', __('Team:'));
+		$this->set('subTitle', $team['Team']['name']);
 
 		// TODO this should really be picked up by the model...
 		foreach ($team['CollaboratingTeam'] as $i => $ct) {
@@ -67,6 +69,8 @@ class TeamsController extends AppController {
 	}
 
 	public function admin_index() {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __("who's working together?"));
 		$this->Paginator->settings = $this->paginate;
 		$teams = $this->Paginator->paginate('Team');
 		$this->set('teams', $teams);
@@ -78,6 +82,8 @@ class TeamsController extends AppController {
 	}
 
 	public function admin_add() {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('organise your hackers'));
 		
 		if ($this->request->is('post')) {
 			$this->Team->create();
@@ -97,6 +103,8 @@ class TeamsController extends AppController {
 	}
 
 	public function admin_edit($id = null) {
+		$this->set('pageTitle', __('Administration'));
+		$this->set('subTitle', __('organise your hackers'));
 		if (!$this->Team->exists($id)) {
 			throw new NotFoundException(__('Invalid team'));
 		}

@@ -1,4 +1,3 @@
-<?= $this->Bootstrap->page_header(h($user['User']['name'])); ?>
 <?= $this->Html->css('projects.index', null, array ('inline' => false)); ?>
 
 <div class="row-fluid">

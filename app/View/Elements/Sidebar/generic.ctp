@@ -15,7 +15,7 @@
  */
 ?>
 
-<ul id="sourcekettle-sidebar" class="well nav nav-list" style="padding: 8px 14px;">
+<ul id="sourcekettle-sidebar" class="well nav nav-list nav-collapse" style="padding: 8px 14px;">
 <?php
     $c1 = $this->request['controller'];
     $a1 = $this->request['action'];
@@ -24,7 +24,11 @@
         $help = $options['help'];
         unset($options['help']);
     }
-
+?>
+	<a id="sourcekettle-sidebar-toggle" data-toggle="collapse" data-target="#sourcekettle-sidebar">
+	<?=__("Show/hide sidebar")?>
+	</a>
+<? 
     foreach ($options as $title => $section) {
 
         echo '<li class="nav-header">'.h($title).'</li>';

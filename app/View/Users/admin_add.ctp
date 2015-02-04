@@ -13,40 +13,32 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-echo $this->Bootstrap->page_header('Administration <small>add a new sheep to your flock</small>'); ?>
+?>
 
 <div class="row-fluid">
-    <div class="span2">
-        <?= $this->element('Sidebar/admin') ?>
-    </div>
-    <div class="span10">
-        <div class="row-fluid">
-            <?php
-            echo $this->Form->create('User', array('class' => 'span7 well form-horizontal', 'action' => 'admin_add'));
+    <?php
+    echo $this->Form->create('User', array('class' => 'span7 well form-horizontal', 'action' => 'admin_add'));
 
-            echo '<h3>New users details</h3>';
+    echo '<h3>New users details</h3>';
 
-            echo $this->Bootstrap->input("name", array(
-                "input" => $this->Form->text("name", array("class" => "span11")),
-            ));
+    echo $this->Bootstrap->input("name", array(
+        "input" => $this->Form->text("name", array("class" => "span11")),
+    ));
 
-            echo $this->Bootstrap->input("email", array(
-                "input" => $this->Form->text("email", array("class" => "span11")),
-            ));
+    echo $this->Bootstrap->input("email", array(
+        "input" => $this->Form->text("email", array("class" => "span11")),
+    ));
 
-            echo $this->Bootstrap->input("System Admin", array(
-                "input" => $this->Form->checkbox("is_admin"),
-            ));
+    echo $this->Bootstrap->input("System Admin", array(
+        "input" => $this->Form->checkbox("is_admin"),
+    ));
 
-            echo $this->Bootstrap->input("Account Active", array(
-                "input" => $this->Form->checkbox("is_active", array("checked" => true)),
-            ));
+    echo $this->Bootstrap->input("Account Active", array(
+        "input" => $this->Form->checkbox("is_active", array("checked" => true)),
+    ));
 
-            echo $this->Bootstrap->button("Create", array("style" => "primary", "size" => "large", 'class' => 'controls'));
+    echo $this->Bootstrap->button("Create", array("style" => "primary", "size" => "large", 'class' => 'controls'));
 
-            echo $this->Form->end();
-            ?>
-        </div>
-    </div>
+    echo $this->Form->end();
+    ?>
 </div>

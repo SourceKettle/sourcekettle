@@ -179,7 +179,6 @@ class UsersControllerTest extends AppControllerTest {
 
 		// Now make sure we get the registration form
 		$this->testAction('/register', array('method' => 'get', 'return' => 'view'));
-		$this->assertContains("<h1>Register with ".$this->controller->sourcekettle_config['UserInterface']['alias']['value']." <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
 	}
 
 	public function testRegisterLoggedIn() {
@@ -187,7 +186,6 @@ class UsersControllerTest extends AppControllerTest {
 
 		// Now make sure we get the registration form
 		$this->testAction('/register', array('method' => 'get', 'return' => 'vars'));
-		$this->assertContains("<h1>Register with ".$this->controller->sourcekettle_config['UserInterface']['alias']['value']." <small>Hello! Bonjour! Willkommen!..</small></h1>", $this->view);
 	}
 
 	private function __testRegister($postData, $expectSuccess = true) {

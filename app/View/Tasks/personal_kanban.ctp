@@ -20,7 +20,6 @@ $this->Html->css("milestones.index", array ('inline' => false));
 ?>
 
 <?= $this->Task->allDropdownMenus() ?>
-<?= $this->DT->pHeader(__("My kanban chart")) ?>
 
 	
 <div class="row-fluid">
