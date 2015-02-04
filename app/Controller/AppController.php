@@ -277,26 +277,4 @@ class AppController extends Controller {
 		}
 	}
 
-	protected function _apiAuthLevel() {
-		$_userModel = ClassRegistry::init('User');
-
-		if (array_key_exists('key', $this->request->query)) {
-			$apiKey = $this->request->query['key'];
-		} else {
-			$apiKey = null;
-		}
-
-		// Check if an admin cookie exists
-		if (!($userId = $this->Auth->user('id'))) {
-			// Get User with this API key
-			$userId = $_userModel->ApiKey->field('user_id', array('key' => $apiKey));
-		}
-
-		$user = $_userModel->findById($userId);
-
-		if ($user != false && $user['User']['is_admin']) {
-			return 1;
-		}
-		return 0;
-	}
 }
