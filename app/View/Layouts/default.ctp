@@ -88,8 +88,11 @@
 								'kanban' => __('My Kanban'),
 								'help' => __('Help'),
 							);
-							if($current_user && $current_user['is_admin'] == 1){
+							if ($current_user && $current_user['is_admin'] == 1){
 								$navItems['admin'] = __('Administration');
+							}
+							if ($this->params['admin']) {
+								unset($navItems['kanban']);
 							}
 
 							// Make the projects nav element highlighted if the current page is anything to do with a project
