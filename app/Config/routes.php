@@ -81,6 +81,8 @@
         Router::connect('/project/:project/attachment/:action/*', array('controller' => 'attachments'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/attachment/*', array('controller' => 'attachments'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
+        Router::connect('/project/:project/stories/:action/*', array('controller' => 'stories'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/project/:project/stories/*', array('controller' => 'stories'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         /*
          * If no other controller is to be used, use the projects controller
          */

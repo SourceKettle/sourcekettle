@@ -726,28 +726,6 @@ class TasksController extends AppProjectController {
  * @param string $id
  * @return void
  */
-	// Converts a dependency list from private task IDs to public task IDs
-	private function __publiciseDependencies($task) {
-		
-		if (isset($task['DependsOn'])) {
-			$task['DependsOn'] = array_values($this->Task->find('list', array(
-				'conditions' => array(
-					'Task.id' => $task['DependsOn']
-				),
-				'fields' => array('Task.public_id'),
-			)));
-		}
-
-		if (isset($task['DependedOnBy'])) {
-			$task['DependedOnBy'] = array_values($this->Task->find('list', array(
-				'conditions' => array(
-					'Task.id' => $task['DependedOnBy']
-				),
-				'fields' => array('Task.public_id'),
-			)));
-		}
-		return $task;
-	}
 
 	public function edit($project = null, $public_id = null) {
 

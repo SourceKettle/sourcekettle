@@ -28,7 +28,7 @@ class TaskHelper extends AppHelper {
 				$priority['icon'],
 				"white"
 			);
-			$dropdown .= '<li><a class="label" title="'.__("Set priority: %s", h($priority['label'])).'" data-value="'.h($priority['name']).'" href="#">'.$priorityIcon.' '.$priority['label'].'</a></li>';
+			$dropdown .= '<li><a class="label" data-value="'.h($priority['name']).'" href="#">'.$priorityIcon.' '.$priority['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 		return $dropdown;
@@ -79,7 +79,7 @@ class TaskHelper extends AppHelper {
 		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_status_dropdown">';
 
 		foreach ($this->_View->viewVars['task_statuses'] as $statusId => $status) {
-			$dropdown .= '<li><a class="label label-'.$status['class'].'" data-value="'.h($status['name']).'" title="'.__("Set status: %s", $status['label']).'" href="#">'.$status['label'].'</a></li>';
+			$dropdown .= '<li><a class="label label-'.$status['class'].'" data-value="'.h($status['name']).'" href="#">'.$status['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 
@@ -126,7 +126,7 @@ class TaskHelper extends AppHelper {
 		$dropdown = '<ul class="dropdown-menu task-dropdown-menu" id="task_type_dropdown">';
 
 		foreach ($this->_View->viewVars['task_types'] as $typeId => $type) {
-			$dropdown .= '<li><a class="label label-'.$type['class'].'" data-value="'.h($type['name']).'" title="'.__("Set type: %s", $type['label']).'" href="#">'.$type['label'].'</a></li>';
+			$dropdown .= '<li><a class="label label-'.$type['class'].'" data-value="'.h($type['name']).'" href="#">'.$type['label'].'</a></li>';
 		}
 		$dropdown .= '</ul>';
 
