@@ -16,3 +16,6 @@
 [submodule "app/Plugin/ChangeLogger"]
 	path = app/Plugin/ChangeLogger
 	url = git://github.com/pwhittlesea/ChangeLogger.git
+[submodule "app/Plugin/Migrations"]
+	path = app/Plugin/Migrations
+	url = https://github.com/CakeDC/migrations.git
