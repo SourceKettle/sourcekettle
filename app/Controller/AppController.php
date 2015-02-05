@@ -26,7 +26,6 @@ App::import('Model', 'User');
 class AppController extends Controller {
 
 	public $helpers = array(
-		'DT',
 		'Js',
 		'Html',
 		'Text',
