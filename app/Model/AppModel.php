@@ -26,6 +26,8 @@ class AppModel extends Model {
 	// Is this an API request?
 	public $_is_api = false;
 
+	public $actsAs = array("Containable");
+
 /**
  * Fix for deletable plugin
  */
