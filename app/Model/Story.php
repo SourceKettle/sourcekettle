@@ -24,6 +24,11 @@ class Story extends AppModel {
 				'rule' => array('numeric'),
 			),
 		),
+		'points_estimate' => array(
+			'numeric' => array(
+				'rule' => array('numeric'),
+			),
+		),
 	);
 
 
@@ -55,4 +60,23 @@ class Story extends AppModel {
 		)
 	);
 
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		// Get the DB table prefix from our database config, for if
+		// we have multiple systems in the same DB or fixtures have a prefix
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$table_prefix = $db->config['prefix'];
+
+		$this->virtualFields = array(
+			'public_id' => "(SELECT ".
+				"COUNT(`{$table_prefix}{$this->table}`.`id`) ".
+			"FROM ".
+				"`{$table_prefix}{$this->table}` ".
+			"WHERE ".
+				"`{$table_prefix}{$this->table}`.`id` <= `{$this->alias}`.`id` ".
+			"AND ".
+				"`{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
+		);
+	}
 }
