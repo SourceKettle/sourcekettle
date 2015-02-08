@@ -75,13 +75,14 @@ class SourceController extends AppProjectController {
 		$this->Source->init();
 
 		$branches = $this->Source->getBranches();
+		$tags = $this->Source->getTags();
 		if (empty($branches) && $this->request['action'] != 'gettingStarted') {
 			return $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
 		}
 		$this->set('branches', $branches);
-
+		$this->set('tags', $tags);
 		if ($ref != null) {
-			if (!in_array($ref, $branches) && !$this->Source->Commit->exists($ref)) {
+			if (!in_array($ref, $branches) && !in_array($ref, $tags) && !$this->Source->Commit->exists($ref)) {
 				throw new NotFoundException(__('Invalid Ref'));
 			}
 			$this->set('branchDetail', $this->Source->Commit->fetch($ref));
@@ -172,9 +173,12 @@ class SourceController extends AppProjectController {
 		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project, $branch);
 		$path	= $this->__getPath();
-
 		if ($branch == null) {
-			return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+			return $this->redirect(array('project' => $project['Project']['name'], $this->Source->getDefaultBranch()));
+		}
+
+		if ($branchpath != null) {
+			$branch = "$branchpath/$branch";
 		}
 
 		$numPerPage = 10;
@@ -292,9 +296,8 @@ class SourceController extends AppProjectController {
 			$path	= $this->__getPath();
 
 			if ($branch == null) {
-				return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+				return $this->redirect(array('project' => $project['Project']['name'], $this->Source->getDefaultBranch()));
 			}
-
 			$blob = $this->Source->Blob->fetch($branch, $path);
 			if (!in_array($blob['type'], array('tree', 'blob'))) {
 				throw new NotFoundException(__('Invalid Location'));

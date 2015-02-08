@@ -16,6 +16,9 @@ $renderableBranches = array();
 foreach ($branches as $branch) {
 	$renderableBranches[] = array('text' => $branch, 'url' => array('project' => $project['Project']['name'], 'action' => 'tree', $branch));
 }
+foreach ($tags as $tag) {
+	$renderableBranches[] = array('text' => "tags/$tag", 'url' => array('project' => $project['Project']['name'], 'action' => 'tree', "tags/$tag"));
+}
 
  $options = array(
 	'links' => array(
@@ -24,7 +27,7 @@ foreach ($branches as $branch) {
 			'url' => array(
 				'action' => 'tree',
 				'controller' => 'source',
-				'branch' => $branch,
+				$branch,
 			),
 		),
 		array(
@@ -32,7 +35,7 @@ foreach ($branches as $branch) {
 			'url' => array(
 				'action' => 'commits',
 				'controller' => 'source',
-				'branch' => $branch,
+				$branch,
 			),
 		),
 		array(
