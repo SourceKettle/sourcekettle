@@ -29,6 +29,7 @@ class SourceFixture extends CakeTestFixture {
 		array(
 			'id' => 1,
 			'project_id' => 1
+			
 		),
 	);
 }
