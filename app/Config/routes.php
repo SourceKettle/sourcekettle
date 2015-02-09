@@ -73,7 +73,7 @@
 
         //Router::connect('/project/:project/source/:action/:branchpath/:branch/*', array('controller' => 'source', 'action' => 'tree'), array('pass' => array('project', 'branch'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/source/:action/**', array('controller' => 'source'), array('pass' => array('project', 'branch'), 'project' => '[0-9a-zA-Z_-]+'));
-        Router::connect('/project/:project/source/', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/project/:project/source', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         //Router::connect('/project/:project/source/:action/:branch/*', array('controller' => 'source', 'action' => 'tree'), array('pass' => array('project', 'branch'), 'project' => '[0-9a-zA-Z_-]+'));
         //Router::connect('/project/:project/source/:action/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         //:Router::connect('/project/:project/source/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));

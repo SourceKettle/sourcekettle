@@ -177,10 +177,6 @@ class SourceController extends AppProjectController {
 			return $this->redirect(array('project' => $project['Project']['name'], $this->Source->getDefaultBranch()));
 		}
 
-		if ($branchpath != null) {
-			$branch = "$branchpath/$branch";
-		}
-
 		$numPerPage = 10;
 
 		// Lets make sure its a valid int
