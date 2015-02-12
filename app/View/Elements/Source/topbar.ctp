@@ -14,10 +14,10 @@
  */
 $renderableBranches = array(__('Branches') => array(), __('Tags') => array());
 foreach ($branches as $br) {
-	$renderableBranches[__('Branches')][] = array('text' => $br, 'url' => array('project' => $project['Project']['name'], $br));
+	$renderableBranches[__('Branches')][] = array('text' => $br, 'url' => array('project' => $project['Project']['name'], '?' => array("branch" => $br)));
 }
 foreach ($tags as $tag) {
-	$renderableBranches[__('Tags')][] = array('text' => "$tag", 'url' => array('project' => $project['Project']['name'], "tags/$tag"));
+	$renderableBranches[__('Tags')][] = array('text' => "$tag", 'url' => array('project' => $project['Project']['name'], '?' => array("branch" => "tags/$tag")));
 }
 
 // Set title of current branch/tag
