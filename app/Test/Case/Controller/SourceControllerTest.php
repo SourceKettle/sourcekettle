@@ -177,49 +177,49 @@ class SourceControllerTestCase extends AppControllerTest {
 
 
 	public function testTreeNotLoggedIn() {
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testTreeNotCollaborator() {
 		$this->_fakeLogin(23);
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testTreeProjectGuest() {
 		$this->_fakeLogin(3);
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testTreeProjectUser() {
 		$this->_fakeLogin(4);
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testTreeProjectAdmin() {
 		$this->_fakeLogin(1);
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testTreeSystemAdmin() {
 		$this->_fakeLogin(9);
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testTreeInactiveSystemAdmin() {
 		$this->_fakeLogin(22);
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testTreeTopLevel() {
 		$this->_fakeLogin(3);
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 
 		$this->assertEquals('master', $this->vars['branch']);
@@ -244,52 +244,60 @@ class SourceControllerTestCase extends AppControllerTest {
 		$this->assertEquals('1436052fb1244a045981392e20efa03f39e0737a', $this->vars['tree']['content'][2]['updated']['hash']);
 	}
 
+	public function testTreeSpecificFile() {
+		$this->_fakeLogin(3);
+		$this->testAction('/project/private/source/tree/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertEquals("#include <stdio.h>\nint main(void) {\n	printf(\"Hello, world!\\n\");\n	\n	// Much less overengineered than the previous version\n	int i;\n	for (i = 0; i < 20; i++) {\n		printf(\"I: %d Foo: %d\\n\", i, i);\n	}\n}", $this->vars['tree']['content']);
+		
+	}
 
+	
 
 	public function testCommitsNotLoggedIn() {
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testCommitsNotCollaborator() {
 		$this->_fakeLogin(23);
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testCommitsProjectGuest() {
 		$this->_fakeLogin(3);
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testCommitsProjectUser() {
 		$this->_fakeLogin(4);
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testCommitsProjectAdmin() {
 		$this->_fakeLogin(1);
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testCommitsSystemAdmin() {
 		$this->_fakeLogin(9);
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testCommitsInactiveSystemAdmin() {
 		$this->_fakeLogin(22);
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testCommitsTopLevel() {
 		$this->_fakeLogin(3);
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 		$this->assertEquals('master', $this->vars['branch']);
 		
@@ -359,49 +367,49 @@ class SourceControllerTestCase extends AppControllerTest {
 
 
 	public function testGettingStartedNotLoggedIn() {
-		$this->testAction('/project/private/source/gettingStarted/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testGettingStartedNotCollaborator() {
 		$this->_fakeLogin(23);
-		$this->testAction('/project/private/source/gettingStarted/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testGettingStartedProjectGuest() {
 		$this->_fakeLogin(3);
-		$this->testAction('/project/private/source/gettingStarted/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testGettingStartedProjectUser() {
 		$this->_fakeLogin(4);
-		$this->testAction('/project/private/source/gettingStarted/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testGettingStartedProjectAdmin() {
 		$this->_fakeLogin(1);
-		$this->testAction('/project/private/source/gettingStarted/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testGettingStartedSystemAdmin() {
 		$this->_fakeLogin(9);
-		$this->testAction('/project/private/source/gettingStarted/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 	}
 
 	public function testGettingStartedInactiveSystemAdmin() {
 		$this->_fakeLogin(22);
-		$this->testAction('/project/private/source/gettingStarted/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testGettingStartedGit() {
 		$this->_fakeLogin(3);
-		$this->testAction('/project/private/source/gettingStarted/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 		$this->assertContains('git init', $this->view);
 	}

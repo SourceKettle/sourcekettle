@@ -99,6 +99,10 @@ class Source extends AppModel {
 		return $this->Blob->getBranches();
 	}
 
+	public function getTags() {
+		return $this->Blob->getTags();
+	}
+
 /**
  * getDefaultBranch function.
  * Fetch the default branch for the repo

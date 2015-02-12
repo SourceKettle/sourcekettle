@@ -130,3 +130,6 @@ background-color: #c50000;
 	margin-bottom: 0px;
 }
 
+ul.dropdown-menu ul {
+	list-style-type: none;
+}

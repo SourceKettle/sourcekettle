@@ -49,18 +49,6 @@ class SourceController extends AppProjectController {
 
 		return parent::isAuthorized($user);
 	}
-/**
- * __getPath function.
- *
- * @access private
- * @return void
- */
-	private function __getPath() {
-		$route = $this->params['pass'];
-		unset($route[0]); // Project name
-		unset($route[1]); // Branch name
-		return implode('/',$route);
-	}
 
 /**
  * __initialiseResources function.
@@ -75,13 +63,14 @@ class SourceController extends AppProjectController {
 		$this->Source->init();
 
 		$branches = $this->Source->getBranches();
+		$tags = $this->Source->getTags();
 		if (empty($branches) && $this->request['action'] != 'gettingStarted') {
 			return $this->redirect(array('project' => $name, 'controller' => 'source', 'action' => 'gettingStarted'));
 		}
 		$this->set('branches', $branches);
-
+		$this->set('tags', $tags);
 		if ($ref != null) {
-			if (!in_array($ref, $branches) && !$this->Source->Commit->exists($ref)) {
+			if (!in_array($ref, $branches) && !in_array($ref, $tags) && !$this->Source->Commit->exists($ref)) {
 				throw new NotFoundException(__('Invalid Ref'));
 			}
 			$this->set('branchDetail', $this->Source->Commit->fetch($ref));
@@ -134,6 +123,15 @@ class SourceController extends AppProjectController {
  * @return void
  */
 	public function commit($project = null, $hash = null) {
+
+		if (isset($this->request->query['branch'])) {
+			$branch = urldecode($this->request->query['branch']);
+		} else {
+			$branch = "master"; //$this->Source->getDefaultBranch();
+		}
+
+		
+
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project, $hash);
@@ -154,7 +152,7 @@ class SourceController extends AppProjectController {
 			$commit['diff'][$file] = $this->Source->Commit->diff($commit['hash'], $commit['parent'], $file);
 		}
 
-		$this->set("branch", null);
+		$this->set("branch", $branch);
 		$this->set("commit", $commit);
 		$this->set("lazyLoad", $lazyLoad);
 	}
@@ -167,21 +165,26 @@ class SourceController extends AppProjectController {
  * @param mixed $branch (default: null)
  * @return void
  */
-	public function commits($project = null, $branch = null) {
+	public function commits($project = null, $path = null) {
+
+		if (isset($this->request->query['branch'])) {
+			$branch = urldecode($this->request->query['branch']);
+		} else {
+			$branch = "master"; //$this->Source->getDefaultBranch();
+		}
+
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project, $branch);
-		$path	= $this->__getPath();
-
 		if ($branch == null) {
-			return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+			return $this->redirect(array('project' => $project['Project']['name'], $this->Source->getDefaultBranch()));
 		}
 
 		$numPerPage = 10;
 
 		// Lets make sure its a valid int
-		if (isset($this->params['named']['page'])) {
-			$page = $this->params['named']['page'];
+		if (isset($this->request->query['page'])) {
+			$page = $this->request->query['page'];
 
 			if (!is_numeric($page) || $page < 1 || $page > 1000) {
 				$page = 1;
@@ -252,16 +255,16 @@ class SourceController extends AppProjectController {
  * @throws NotFoundException
  * @return void
  */
-	public function raw($project = null, $branch = null) {
+	public function raw($project = null, $path = null) {
 		$this->layout = 'ajax';
 
-		$project = $this->__initialiseResources($project, $branch);
-		$path	= $this->__getPath();
-
-		if ($branch == null) {
-			throw new NotFoundException(__('Invalid Branch'));
+		if (isset($this->request->query['branch'])) {
+			$branch = urldecode($this->request->query['branch']);
+		} else {
+			$branch = "master"; //$this->Source->getDefaultBranch();
 		}
 
+		$project = $this->__initialiseResources($project, $branch);
 		$blob = $this->Source->Blob->fetch($branch, $path);
 
 		if ($blob['type'] != 'blob') {
@@ -284,17 +287,23 @@ class SourceController extends AppProjectController {
  * @throws NotFoundException
  * @return void
  */
-	public function tree($project = null, $branch = null) {
-		$this->set('pageTitle', $this->request['project']);
-		$this->set('subTitle', __('source code'));
+	public function tree($project = null, $path = null) {
+		if (isset($this->request->query['branch'])) {
+			$branch = urldecode($this->request->query['branch']);
+		} else {
+			$branch = "master"; //$this->Source->getDefaultBranch();
+		}
+
 		try {
 			$project = $this->__initialiseResources($project, $branch);
-			$path	= $this->__getPath();
+		} catch (UnsupportedRepositoryType $e) {
+			$this->render('GettingStarted/none');
+		}
 
-			if ($branch == null) {
-				return $this->redirect(array('project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
-			}
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('source code'));
 
+		try {
 			$blob = $this->Source->Blob->fetch($branch, $path);
 			if (!in_array($blob['type'], array('tree', 'blob'))) {
 				throw new NotFoundException(__('Invalid Location'));
