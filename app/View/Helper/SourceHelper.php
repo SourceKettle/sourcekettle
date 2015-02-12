@@ -64,8 +64,7 @@ class SourceHelper extends AppHelper {
 			'project' => $repo,
 			'action'	=> 'commits',
 			'ajax'	=> false,
-			'?' => array('branch'	=> $branch),
-			'page' => $page,
+			'?' => array('branch'	=> $branch, 'page' => $page),
 			$file
 		), $full);
 		return $url;

@@ -170,7 +170,7 @@ class SourceController extends AppProjectController {
 		if (isset($this->request->query['branch'])) {
 			$branch = urldecode($this->request->query['branch']);
 		} else {
-			$branch = $this->Source->getDefaultBranch();
+			$branch = "master"; //$this->Source->getDefaultBranch();
 		}
 
 		$this->set('pageTitle', $this->request['project']);
@@ -183,8 +183,8 @@ class SourceController extends AppProjectController {
 		$numPerPage = 10;
 
 		// Lets make sure its a valid int
-		if (isset($this->params['named']['page'])) {
-			$page = $this->params['named']['page'];
+		if (isset($this->request->query['page'])) {
+			$page = $this->request->query['page'];
 
 			if (!is_numeric($page) || $page < 1 || $page > 1000) {
 				$page = 1;
@@ -255,15 +255,16 @@ class SourceController extends AppProjectController {
  * @throws NotFoundException
  * @return void
  */
-	public function raw($project = null, $branch = null) {
+	public function raw($project = null, $path = null) {
 		$this->layout = 'ajax';
 
-		$project = $this->__initialiseResources($project, $branch);
-
-		if ($branch == null) {
-			throw new NotFoundException(__('Invalid Branch'));
+		if (isset($this->request->query['branch'])) {
+			$branch = urldecode($this->request->query['branch']);
+		} else {
+			$branch = "master"; //$this->Source->getDefaultBranch();
 		}
 
+		$project = $this->__initialiseResources($project, $branch);
 		$blob = $this->Source->Blob->fetch($branch, $path);
 
 		if ($blob['type'] != 'blob') {

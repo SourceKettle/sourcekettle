@@ -34,7 +34,7 @@ if (preg_match("/^tags\/(.+)$/", $branch, $matches)) {
 			'url' => array(
 				'action' => 'tree',
 				'controller' => 'source',
-				$branch,
+				'?' => array('branch' => $branch),
 			),
 		),
 		array(
@@ -42,7 +42,7 @@ if (preg_match("/^tags\/(.+)$/", $branch, $matches)) {
 			'url' => array(
 				'action' => 'commits',
 				'controller' => 'source',
-				$branch,
+				'?' => array('branch' => $branch),
 			),
 		),
 		array(
