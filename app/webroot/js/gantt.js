@@ -81,15 +81,6 @@ $('.gantt-outer').each(function(index, outer) {
 
 	chartbox.plot(data, options);
 
-	// When clicking one of the milestones, go to the milestone view
-	chartbox.bind("plotclick", function (event, pos, item) {
-		if (item == null) {
-			return;
-		}
-		var point = item.series.data[item.dataIndex];
-		var milestoneId = point[4];
-		window.location = milestoneUrl + '/' + milestoneId;
-	});
 
 	// When dragging out the milestone ends, change the start or end date
 	chartbox.bind("datadrop", function(event, pos, item){
@@ -103,39 +94,55 @@ $('.gantt-outer').each(function(index, outer) {
 		}
 
 		// data is the (original) milestone data - id, start/end date etc.
-		var data = item.series.data[ item.dataIndex[0] ];
-		var milestoneId = data[4];
+		var milestone = item.series.data[ item.dataIndex[0] ];
+		var milestoneId = milestone[4];
 
 		// Work out which end of the milestone we're changing
 		if(item.dataIndex[1] == 1){
 			which = 'starts';
+			whichIndex = 0;
 		}
 		else{
 			which = 'due';
+			whichIndex = 2;
 		}
 
 		// Get the new date
 		var newDate = new Date(parseInt(pos.x1));
-		newDate = newDate.getUTCFullYear() + '-' + (newDate.getUTCMonth()+1) + '-' + newDate.getUTCDate();
+		newDateString = newDate.getUTCFullYear() + '-' + (newDate.getUTCMonth()+1) + '-' + newDate.getUTCDate();
 
 		// Save milestone data
 		var milestoneInfo = {
 			'id' : milestoneId,
 		};
-		milestoneInfo[which] = newDate;
+		milestoneInfo[which] = newDateString;
 
-		
 		$.ajax(apiUrl+"/"+milestoneId, {
 			"dataType" : "json",
 			"type" : "post",
 			"data" : {Milestone: milestoneInfo},
-			"success" : function (data) {
+			"success" : function (newData) {
+				data[item.seriesIndex][0][whichIndex] = newDate;
+				chartbox.plot(data, options);
 			},
 			"error" : function () {
 				alert("Failed to change milestone "+which+" date!");
 			}
 		});
+
 	});
 
+	// When clicking one of the milestones, go to the milestone view
+	chartbox.bind("plotclick", function (event, pos, item) {
+		if (item == null) {
+			return;
+		}
+		var point = item.series.data[item.dataIndex];
+		if (point == null) {
+			return;
+		}
+		var milestoneId = point[4];
+		window.location = milestoneUrl + '/' + milestoneId;
+	});
 });
 
