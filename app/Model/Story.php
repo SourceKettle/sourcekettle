@@ -44,6 +44,13 @@ class Story extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Project' => array(
+			'className' => 'Project',
+			'foreignKey' => 'project_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
 	);
 
@@ -78,5 +85,27 @@ class Story extends AppModel {
 			"AND ".
 				"`{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
 		);
+	}
+
+	public function afterFind($results, $primary = false) {
+		foreach ($results as $i => $story) {
+			$results[$i] = $this->__parseDescription($story);
+		}
+		return $results;
+	}
+
+	private function __parseDescription($story) {
+		if (isset($story['Story']['description']) && 
+		preg_match("/\s*as an?\s+(.+)\s+I(( want)|( would like)|('d like))\s+(.+)\s+so that\s+(.+)/i", $story['Story']['description'], $matches)) {
+			$story['Story']['as-a'] = trim($matches[1]);
+			$story['Story']['i-want'] = trim($matches[6]);
+			$story['Story']['so-that'] = trim($matches[7]);
+			
+		} else {
+			$story['Story']['as-a'] = null;
+			$story['Story']['action'] = null;
+			$story['Story']['reason'] = null;
+		}
+		return $story;
 	}
 }
