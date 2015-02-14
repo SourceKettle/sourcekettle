@@ -55,14 +55,14 @@
                     'project' => $this->params['project'],
                 ),
 	    ),
-            __('User Stories') => array(
+            /*__('User Stories') => array(
                 'icon' => 'book',
                 'url' => array(
                     'action' => array('*'),
                     'controller' => 'stories',
                     'project' => $this->params['project'],
                 ),
-	    ),
+	    ),*/
 		    __('My tasks') => array(
                 'icon' => 'heart',
 		        'url' => array(
