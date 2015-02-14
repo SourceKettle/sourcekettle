@@ -26,6 +26,12 @@ $('.gantt-outer').each(function(index, outer) {
 	var data = [];
 	var yaxis = [];
 
+	// Current date
+	var today = new Date();
+	today.setHours(0);
+	today.setMinutes(0);
+	today.setSeconds(0);
+
 	var milestoneUrl = chartbox.attr('data-milestone-url');
 	var apiUrl = chartbox.attr('data-api-url');
 	$(rows).each(function(index, row) {
@@ -63,7 +69,13 @@ $('.gantt-outer').each(function(index, outer) {
 			max: max_x,
     	},
 		yaxis: {min: 0, max: max_y+1, ticks:yaxis},
-    	grid:   { clickable: true}//, editable: true} //TODO...
+    	grid:   {
+		markings: [
+			{color: '#f46', lineWidth: 3, xaxis: {from: today, to: today}}
+		],
+		clickable: true
+		//, editable: true} //TODO...
+	}
 		
 	};
 
