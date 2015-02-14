@@ -197,8 +197,28 @@ class MilestonesController extends AppProjectController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$data = $this->_cleanPost(array("Milestone.subject", "Milestone.description", "Milestone.starts", "Milestone.due"));
 			$data['Milestone']['project_id'] = $project['Project']['id'];
+			if (isset($id)) {
+				$this->Milestone->contain(array());
+				$existing = $this->Milestone->findById($id);
+				$data['Milestone'] = array_merge($existing['Milestone'], $data['Milestone']);
+			}
+			$saved = $this->Milestone->save($data);
+			if ($this->request->is('ajax')) {
+				$this->layout = 'ajax';
+				
+				if ($saved) {
+					$this->request->data = $saved;
+					$this->request->data['message'] = 'no_error';
+				} else {
+					$this->response->statusCode(500);
+					$this->request->data = array('error' => 500, 'message' => __('Save failed'));
+				}
+				$this->set('data', $this->request->data);
+				$this->render('/Elements/json');
+				return;
+			}
 
-			if ($this->Flash->u($this->Milestone->save($data))) {
+			if ($this->Flash->u($saved)) {
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $id));
 			}
 		} else {
