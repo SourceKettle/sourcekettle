@@ -54,6 +54,18 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 			<?= $this->Task->milestoneDropdownButton($task, 23, true, true)?>
 		</p>
 
+		<p class="task-story"><small class="story-label">
+		<?=isset($task['Story']['subject'])? __("Story: %s", $this->Html->link(
+			$task['Story']['subject'], array(
+				'controller' => 'stories',
+				'project' => $task['Project']['name'],
+				'action' => 'view',
+				$task['Story']['public_id']
+		))): __("No story")?>
+		</small>
+			<?= $this->Task->storyDropdownButton($task, 23, true, true)?>
+		</p>
+
 	</h3>
 
 	</div>

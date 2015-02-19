@@ -1,0 +1,9 @@
+table.story-map td,th{
+	min-width: 200px;
+	height: 100%;
+	margin-bottom: 0px;
+}
+
+.story-block {
+	height: 100%;
+}

@@ -15,16 +15,60 @@ class StoriesController extends AppProjectController {
  */
 	public $components = array('Paginator');
 
+	// Which actions need which authorization levels (read-access, write-access, admin-access)
+	protected function _getAuthorizationMapping() {
+
+		return array(
+			'index'  => 'read',
+			'view'   => 'read',
+			'add'   => 'write',
+			'edit'   => 'write',
+			'delete'   => 'write',
+		);
+	}
 /**
  * index method
  *
  * @return void
  */
 	public function index($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('User stories'));
 		$project = $this->_getProject($project);
-		$this->Story->contain(array('Project' => array('name')));
-		$conditions = array("Story.project_id" => $project['Project']['id']);
-		$this->set('stories', $this->paginate($this->Story, $conditions));
+		$this->Story->contain(array(
+			'Project' => array(
+				'name',
+			),
+			'Task' => array(
+				'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
+				'TaskStatus' => array('id', 'name'),
+				'TaskType' => array('id', 'name'),
+				'TaskPriority' => array('id', 'name'),
+			),
+		));
+
+		$this->set('stories', $this->Story->find("all", array(
+			"conditions" => array("Story.project_id" => $project['Project']['id']),
+			"order" => array("id"),
+		)));
+
+
+		$this->set('milestones', $this->Story->Project->Milestone->find("all", array(
+			"conditions" => array("is_open" => true),
+			"fields" => array("id", "subject", "starts", "due"),
+			"contain" => array('Task' => array(
+				'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
+				'TaskStatus' => array('id', 'name'),
+				'TaskType' => array('id', 'name'),
+				'TaskPriority' => array('id', 'name'),
+				'Milestone' => array(
+					'subject', 'id', 'starts', 'due', 'is_open',
+					'order' => array('starts', 'due'),
+				),
+			)),
+			"order" => array("starts", "due"),
+		)));
+
 	}
 
 /**
@@ -35,12 +79,15 @@ class StoriesController extends AppProjectController {
  * @return void
  */
 	public function view($project = null, $id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('User stories'));
 		$project = $this->_getProject($project);
-		if (!$this->Story->exists($id)) {
+		$this->Story->contain(array('Project' => array('name'), 'Creator' => array('name', 'email', 'id')));
+		$story = $this->Story->findByProjectIdAndPublicId($project['Project']['id'], $id);
+		if (!$story) {
 			throw new NotFoundException(__('Invalid story'));
 		}
-		$this->Story->contain(array('Project' => array('name'), 'Creator' => array('name', 'email', 'id')));
-		$this->set('story', $this->Story->findByProjectIdAndPublicId($project['Project']['id'], $id));
+		$this->set('story', $story);
 	}
 
 /**
@@ -49,6 +96,8 @@ class StoriesController extends AppProjectController {
  * @return void
  */
 	public function add($project = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('User stories'));
 		$project = $this->_getProject($project);
 		if ($this->request->is('post')) {
 			$this->Story->create();
@@ -71,20 +120,29 @@ class StoriesController extends AppProjectController {
  * @param string $id
  * @return void
  */
-	public function edit($id = null) {
-		if (!$this->Story->exists($id)) {
+	public function edit($project = null, $id = null) {
+
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('User stories'));
+		$project = $this->_getProject($project);
+		$story = $this->Story->findByProjectIdAndPublicId($project['Project']['id'], $id);
+		$this->Story->id = $story['Story']['id'];
+		if (!$story) {
 			throw new NotFoundException(__('Invalid story'));
 		}
 		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Story->save($this->request->data)) {
-				return $this->flash(__('The story has been saved.'), array('action' => 'index'));
+			$data = $this->_cleanPost(array("Story.subject", "Story.description"));
+			$saved = $this->Story->save($data);
+			if ($saved) {
+				$saved = $this->Story->findByProjectIdAndPublicId($project['Project']['id'], $id);
+				$this->Flash->info (__('The story \'<a href="%s">%s</a>\' has been updated.', Router::url(array('action' => 'view', 'project' => $project['Project']['name'], $saved['Story']['public_id'])), $saved['Story']['subject']));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $id));
 			}
 		} else {
 			$options = array('conditions' => array('Story.' . $this->Story->primaryKey => $id));
 			$this->request->data = $this->Story->find('first', $options);
 		}
-		$creators = $this->Story->Creator->find('list');
-		$this->set(compact('creators'));
+		return $this->render("add");
 	}
 
 /**
@@ -94,9 +152,12 @@ class StoriesController extends AppProjectController {
  * @param string $id
  * @return void
  */
-	public function delete($id = null) {
-		$this->Story->id = $id;
-		if (!$this->Story->exists()) {
+	public function delete($project = null, $id = null) {
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __('User stories'));
+		$project = $this->_getProject($project);
+		$story = $this->Story->findByProjectIdAndPublicId($project['Project']['id'], $id);
+		if (!$story) {
 			throw new NotFoundException(__('Invalid story'));
 		}
 		$this->request->allowMethod('post', 'delete');

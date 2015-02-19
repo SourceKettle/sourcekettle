@@ -560,4 +560,19 @@ class Project extends AppModel {
 		
 		return $milestones;
 	}
+
+	public function listStorys($projectId) {
+		$stories = array();
+		foreach ($this->Story->find('list', array(
+			'conditions' => array('Story.project_id' => $projectId),
+			'fields' => array('Story.id', 'Story.subject'),
+			
+		)) as $id => $list) {
+			foreach ($list as $id => $story) {
+				$stories[] = array('id' => $id, "title" => $story);
+			}
+		}
+		
+		return $stories;
+	}
 }

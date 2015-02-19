@@ -128,6 +128,10 @@ class Task extends AppModel {
 		'Milestone' => array(
 			'className' => 'Milestone',
 			'foreignKey' => 'milestone_id',
+		),
+		'Story' => array(
+			'className' => 'Story',
+			'foreignKey' => 'story_id',
 		)
 	);
 

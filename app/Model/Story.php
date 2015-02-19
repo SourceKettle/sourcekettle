@@ -108,4 +108,23 @@ class Story extends AppModel {
 		}
 		return $story;
 	}
+
+	public function listStoryOptions() {
+
+		$stories = array(
+			__('No assigned story'),
+			__('Open') => $this->find('list', array(
+				'conditions' => array(
+					'project_id' => $this->Project->id,
+				),
+				'fields' => array(
+					'Story.id',
+					'Story.subject',
+				),
+				'contain' => array(),
+			)),
+
+		);
+		return $stories;
+	}
 }
