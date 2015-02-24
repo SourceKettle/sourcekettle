@@ -362,6 +362,7 @@ class TaskHelper extends AppHelper {
 			$this->statusDropdownMenu() .
 			$this->priorityDropdownMenu() .
 			$this->assigneeDropdownMenu() .
+			$this->storyDropdownMenu() .
 			$this->milestoneDropdownMenu();
 	}
 }

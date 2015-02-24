@@ -645,6 +645,8 @@ class TasksController extends AppProjectController {
 			}
 			if (isset($data['Task']['story_id']) && $data['Task']['story_id'] == 0) {
 				$data['Task']['story_id'] = null;
+			} else {
+				$data['Task']['story_id'] = $this->Story->field('id', array('project_id' => $project['Project']['id'], 'public_id' => $data['Task']['story_id']));
 			}
 			if (isset($data['Task']['task_type_id']) && $data['Task']['task_type_id'] == 0) {
 				$data['Task']['task_type_id'] = 3; // TODO configurable default

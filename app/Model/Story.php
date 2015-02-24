@@ -111,20 +111,19 @@ class Story extends AppModel {
 
 	public function listStoryOptions() {
 
-		$stories = array(
-			__('No assigned story'),
-			__('Open') => $this->find('list', array(
-				'conditions' => array(
-					'project_id' => $this->Project->id,
-				),
-				'fields' => array(
-					'Story.id',
-					'Story.subject',
-				),
-				'contain' => array(),
-			)),
+		$stories = $this->find('list', array(
+			'conditions' => array(
+				'project_id' => $this->Project->id,
+			),
+			'fields' => array(
+				'Story.public_id',
+				'Story.subject',
+			),
+			'contain' => array(),
 
-		);
+		));
+		$stories[0] = __('No assigned story');
+		ksort($stories);
 		return $stories;
 	}
 }

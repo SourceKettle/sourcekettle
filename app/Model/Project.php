@@ -101,6 +101,11 @@ class Project extends AppModel {
 			'foreignKey' => 'project_id',
 			'dependent' => false,
 		),
+		'Story' => array(
+			'className' => 'Story',
+			'foreignKey' => 'project_id',
+			'dependent' => true,
+		),
 		'Time' => array(
 			'className' => 'Time',
 			'foreignKey' => 'project_id',
@@ -561,18 +566,14 @@ class Project extends AppModel {
 		return $milestones;
 	}
 
-	public function listStorys($projectId) {
+	public function listStories($projectId) {
 		$stories = array();
 		foreach ($this->Story->find('list', array(
 			'conditions' => array('Story.project_id' => $projectId),
-			'fields' => array('Story.id', 'Story.subject'),
-			
-		)) as $id => $list) {
-			foreach ($list as $id => $story) {
-				$stories[] = array('id' => $id, "title" => $story);
-			}
+			'fields' => array('Story.public_id', 'Story.subject'),
+		)) as $id => $subject) {
+			$stories[] = array('id' => $id, "title" => $subject);
 		}
-		
 		return $stories;
 	}
 }

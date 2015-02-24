@@ -318,7 +318,8 @@ function initTaskDroplists() {
 			var toStatus	= $(this).attr('data-taskstatus');
 			//var fromStatus  = $(ui.sender).attr('data-taskstatus');
 			var toPrio	  = $(this).attr('data-taskpriority');
-			var toMilestone = $(this).attr('data-milestone');
+			var toMilestone   = $(this).attr('data-milestone');
+			var toStory       = $(this).attr('data-story');
 
 			var taskInfo = {'Task' : {}};
 
@@ -332,6 +333,10 @@ function initTaskDroplists() {
 
 			if(typeof toMilestone != 'undefined'){
 				taskInfo.Task.milestone_id = toMilestone;
+			}
+
+			if(typeof toStory != 'undefined'){
+				taskInfo.Task.story_id = toStory;
 			}
 
 			updateTask(taskLozenge, taskInfo);

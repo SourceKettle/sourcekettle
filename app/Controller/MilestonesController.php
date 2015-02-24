@@ -167,6 +167,10 @@ class MilestonesController extends AppProjectController {
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('add a milestone'));
 
+		if ($this->request->is('get') && isset($this->request->query['Task'])) {
+			$this->request->data['Task'] = array_values(array_filter($this->request->query['Task'], function($a) {return ($a != 0);}));
+		}
+
 		if ($this->request->is('post')) {
 			$this->Milestone->create();
 
@@ -177,6 +181,17 @@ class MilestonesController extends AppProjectController {
 			$data['Milestone']['is_open'] = true;
 
 			if ($this->Flash->c($this->Milestone->save($data))) {
+				foreach ($this->request->data['Task'] as $publicId) {
+					if (!is_numeric($publicId)) {
+						continue;
+					}
+					$task = $this->Milestone->Task->findByProjectIdAndPublicId($project['Project']['id'], $publicId);
+					if (!$task) {
+						continue;
+					}
+					$this->Milestone->Task->id = $task['Task']['id'];
+					$this->Milestone->Task->saveField('milestone_id', $this->Milestone->id);
+				}
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
 			}
 		}

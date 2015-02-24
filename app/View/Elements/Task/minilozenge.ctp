@@ -26,30 +26,37 @@ if(isset($span) && $span){
 } else {
 	$span="";
 }
+
+if (!isset($checkbox)) {
+	$checkbox = false;
+}
+$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $projectName));
 $url = $this->Html->url(array('controller' => 'tasks', 'action' => 'view', 'project' => $projectName, $task['Task']['public_id']));
 if ($draggable) {
-	echo "<li class='task-lozenge draggable$span'>";
-} else {
-	echo "<li class='task-lozenge $span'>";
+	$span="draggable$span";
 }
+echo "<li class='task-minilozenge $span' data-api-url='$apiUrl' data-taskid='".h($task['Task']['public_id'])."'>";
 ?>
 
-<div id="task_<?= $task['Task']['public_id'] ?>" 
+<div id="task_<?= h($task['Task']['public_id']) ?>" 
   class="task-container">
 	<div class="task">
-		<div class="well taskwell type_bar_<?= h($task['Task']['TaskType']['name']) ?>">
+		<div class="well taskwell">
 			<div class="row-fluid">
-
-					<p class="span12">
-						<?= $this->Html->link(
-							'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
-							$url,
-							array(
-								'escape' => false,
-								'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
-							)
-						) ?>
-					</p>
+				<p class="span12">
+				<? if ($checkbox) {
+					echo $this->Form->checkbox("Task[]", array("hiddenField" => false, "value" => $task['Task']['public_id']));
+				} ?>
+				<?= $this->Task->priorityDropdownButton($task['Task']['task_priority_id'], false) ?>
+				<?= $this->Html->link(
+					'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
+					$url,
+					array(
+						'escape' => false,
+						'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
+					)
+				) ?>
+				</p>
 
 			</div>
 		</div>
