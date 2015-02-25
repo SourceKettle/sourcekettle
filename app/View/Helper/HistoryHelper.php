@@ -36,6 +36,8 @@ class HistoryHelper extends AppHelper {
 		$user = new User();
 		App::import("Model", "Milestone");  
 		$milestone = new Milestone();
+		App::import("Model", "Story");  
+		$story = new Story();
 
 		/*
 		 * Stores the display preferences for the activity blocks
@@ -46,6 +48,7 @@ class HistoryHelper extends AppHelper {
 			'Source'	   => array('icon' => 'pencil', 'color' => 'success'),
 			'Task'		   => array('icon' => 'file',   'color' => 'important'),
 			'Milestone'	   => array('icon' => 'road',   'color' => ''),
+			'Story'	           => array('icon' => 'book',   'color' => ''),
 		);
 		
 		// Optionally print the date. Usually we won't do this, we'll
@@ -186,12 +189,14 @@ class HistoryHelper extends AppHelper {
 						$actioner, $subject, $assignee
 					);
 					break;
+
 				} elseif ($field == 'assignee_id') {
 					$log_string = __(
 						"%s de-assigned %s",
 						$actioner, $subject
 					);
 					break;
+
 				} elseif ($field == 'milestone_id') {
 					$oldMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $old), 'recursive' => -1));
 					$newMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $new), 'recursive' => -1));
@@ -232,6 +237,49 @@ class HistoryHelper extends AppHelper {
 							$new
 						));
 						$log_string = __("%s moved task '%s' from milestone '%s' to milestone '%s'", $actioner, $subject, $oldMilestone, $newMilestone);
+					}
+					break;
+					
+				} elseif ($field == 'story_id') {
+					$oldStory = $story->find('first', array('fields' => array('subject'), 'conditions' => array('Story.id' => $old), 'recursive' => -1));
+					$newStory = $story->find('first', array('fields' => array('subject'), 'conditions' => array('Story.id' => $new), 'recursive' => -1));
+					if (empty($oldStory) && empty($newStory)) {
+						$log_string = __("%s changed the story ID from %d to %d - no story info is available, one or both may have been deleted since then",
+							$actioner, $old, $new);
+					} elseif (empty($newStory)) {
+						$oldStory = $this->Html->link($oldStory['Story']['subject'], array(
+							'controller' => 'storys',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$old
+						));
+						$log_string = __("%s removed task '%s' from story '%s'", $actioner, $subject, $oldStory);
+					} elseif (empty($oldStory)) {
+						$newStory = $this->Html->link($newStory['Story']['subject'], array(
+							'controller' => 'storys',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$new
+						));
+						$log_string = __("%s added task '%s' to story '%s'", $actioner, $subject, $newStory);
+					} else {
+						$oldStory = $this->Html->link($oldStory['Story']['subject'], array(
+							'controller' => 'storys',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$old
+						));
+						$newStory = $this->Html->link($newStory['Story']['subject'], array(
+							'controller' => 'storys',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$new
+						));
+						$log_string = __("%s moved task '%s' from story '%s' to story '%s'", $actioner, $subject, $oldStory, $newStory);
 					}
 					break;
 					
