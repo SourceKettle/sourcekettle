@@ -643,15 +643,17 @@ class TasksController extends AppProjectController {
 			if (isset($data['Task']['milestone_id']) && $data['Task']['milestone_id'] == 0) {
 				$data['Task']['milestone_id'] = null;
 			}
+
 			if (isset($data['Task']['story_id']) && $data['Task']['story_id'] == 0) {
 				$data['Task']['story_id'] = null;
-			} else {
+			} elseif(isset($data['Task']['story_id'])) {
 				$data['Task']['story_id'] = $this->Story->field('id', array('project_id' => $project['Project']['id'], 'public_id' => $data['Task']['story_id']));
 			}
+
 			if (isset($data['Task']['task_type_id']) && $data['Task']['task_type_id'] == 0) {
 				$data['Task']['task_type_id'] = 3; // TODO configurable default
 			}
-
+exit(0);
 			if ($this->request->is('ajax')) {
 				$this->autoRender = false;
 
@@ -761,6 +763,13 @@ class TasksController extends AppProjectController {
 		$task = $this->Task->open($public_id);
 
 		$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id", "Task.status", "Task.priority", "Task.type"));
+
+		if (isset($data['Task']['story_id']) && $data['Task']['story_id'] == 0) {
+			$data['Task']['story_id'] = null;
+		} elseif(isset($data['Task']['story_id'])) {
+			$data['Task']['story_id'] = $this->Story->field('id', array('project_id' => $project['Project']['id'], 'public_id' => $data['Task']['story_id']));
+		}
+
 		$data['DependsOn'] = @$this->request->data['DependsOn'];
 		$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
 		// Force the project ID to be correct
@@ -801,6 +810,12 @@ class TasksController extends AppProjectController {
 			'controller' => 'users',
 			'action' => 'view',
 			$task['Owner']['id']));
+
+		$task['Story']['uri'] = Router::url(array(
+			'controller' => 'stories',
+			'action' => 'view',
+			'project' => $task['Project']['name'],
+			$task['Story']['public_id']));
 
 		foreach ($task['Time'] as $idx => $time) {
 			$task['Time'][$idx]['uri'] = Router::url(array(
