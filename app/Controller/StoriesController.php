@@ -26,6 +26,28 @@ class StoriesController extends AppProjectController {
 			'delete'   => 'write',
 		);
 	}
+
+	public function isAuthorized($user) {
+
+		if (!$this->sourcekettle_config['Features']['task_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['task_enabled']['source'] == "Project-specific settings") {
+				throw new ForbiddenException(__('This project does not have task tracking enabled. Please contact a project administrator to enable task tracking.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow task tracking. Please contact a system administrator to enable task tracking.'));
+			}
+		}
+
+		if (!$this->sourcekettle_config['Features']['story_enabled']['value']) {
+			if ($this->sourcekettle_config['Features']['story_enabled']['source'] == "Project-specific settings") {
+				throw new ForbiddenException(__('This project does not have user stories enabled. Please contact a project administrator to enable user stories.'));
+			} else {
+				throw new ForbiddenException(__('This system does not allow user stories. Please contact a system administrator to enable user stories.'));
+			}
+		}
+
+		return parent::isAuthorized($user);
+	}
+
 /**
  * index method
  *

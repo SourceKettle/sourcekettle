@@ -65,6 +65,17 @@
             </tr>
             <tr>
                 <td>
+                    <h4><?= __('User stories') ?> <small>- <?= __('Allow creation of user stories (NB will be unavailable if task tracking is disabled!)') ?></small></h4>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'story-enabled', 'name' => 'Setting.Features.story_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'storySection', 'value' => $sourcekettle_config['Features']['story_enabled']['value'])) ?>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'task-enabled', 'name' => 'Setting.Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <h4><?= __('File uploads') ?> <small>- <?= __('allow users to upload files to projects') ?></small></h4>
                 </td>
                 <td>

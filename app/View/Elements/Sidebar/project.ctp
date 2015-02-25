@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * Element for displaying the project sidebar for the SourceKettle system
@@ -135,6 +134,11 @@
 		unset($options[__('Features')][__('My tasks')]);
 		unset($options[__('Features')][__('Chart')]);
 		unset($options[__('Features')][__('Milestones')]);
+		unset($options[__('Features')][__('User Stories')]);
+	}
+
+	if (!$sourcekettle_config['Features']['story_enabled']['value']) {
+		unset($options[__('Features')][__('User Stories')]);
 	}
 
 	if (!$sourcekettle_config['Features']['source_enabled']['value']) {
