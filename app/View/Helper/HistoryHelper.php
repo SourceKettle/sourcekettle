@@ -48,7 +48,7 @@ class HistoryHelper extends AppHelper {
 			'Source'	   => array('icon' => 'pencil', 'color' => 'success'),
 			'Task'		   => array('icon' => 'file',   'color' => 'important'),
 			'Milestone'	   => array('icon' => 'road',   'color' => ''),
-			'Story'	           => array('icon' => 'book',   'color' => ''),
+			'Story'	           => array('icon' => 'book',   'color' => 'success'),
 		);
 		
 		// Optionally print the date. Usually we won't do this, we'll
@@ -241,43 +241,43 @@ class HistoryHelper extends AppHelper {
 					break;
 					
 				} elseif ($field == 'story_id') {
-					$oldStory = $story->find('first', array('fields' => array('subject'), 'conditions' => array('Story.id' => $old), 'recursive' => -1));
-					$newStory = $story->find('first', array('fields' => array('subject'), 'conditions' => array('Story.id' => $new), 'recursive' => -1));
+					$oldStory = $story->find('first', array('fields' => array('subject', 'public_id'), 'conditions' => array('Story.id' => $old), 'recursive' => -1));
+					$newStory = $story->find('first', array('fields' => array('subject', 'public_id'), 'conditions' => array('Story.id' => $new), 'recursive' => -1));
 					if (empty($oldStory) && empty($newStory)) {
 						$log_string = __("%s changed the story ID from %d to %d - no story info is available, one or both may have been deleted since then",
 							$actioner, $old, $new);
 					} elseif (empty($newStory)) {
 						$oldStory = $this->Html->link($oldStory['Story']['subject'], array(
-							'controller' => 'storys',
+							'controller' => 'stories',
 							'action' => 'view',
 							'project' => $event['Project']['name'],
 							'api' => false,
-							$old
+							$oldStory['Story']['public_id']
 						));
 						$log_string = __("%s removed task '%s' from story '%s'", $actioner, $subject, $oldStory);
 					} elseif (empty($oldStory)) {
 						$newStory = $this->Html->link($newStory['Story']['subject'], array(
-							'controller' => 'storys',
+							'controller' => 'stories',
 							'action' => 'view',
 							'project' => $event['Project']['name'],
 							'api' => false,
-							$new
+							$newStory['Story']['public_id']
 						));
 						$log_string = __("%s added task '%s' to story '%s'", $actioner, $subject, $newStory);
 					} else {
 						$oldStory = $this->Html->link($oldStory['Story']['subject'], array(
-							'controller' => 'storys',
+							'controller' => 'stories',
 							'action' => 'view',
 							'project' => $event['Project']['name'],
 							'api' => false,
-							$old
+							$oldStory['Story']['public_id']
 						));
 						$newStory = $this->Html->link($newStory['Story']['subject'], array(
-							'controller' => 'storys',
+							'controller' => 'stories',
 							'action' => 'view',
 							'project' => $event['Project']['name'],
 							'api' => false,
-							$new
+							$newStory['Story']['public_id']
 						));
 						$log_string = __("%s moved task '%s' from story '%s' to story '%s'", $actioner, $subject, $oldStory, $newStory);
 					}
