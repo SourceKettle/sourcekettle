@@ -87,6 +87,11 @@ class HelpController extends AppController{
 		$this->set('types', $this->TaskType->find('list', array()));
 	}
 
+	public function stories() {
+		$this->set('pageTitle', __('Help!'));
+		$this->set('subTitle', __('user stories'));
+	}
+
 	public function milestones() {
 		$this->set('pageTitle', __('Help!'));
 		$this->set('subTitle', __('how do I manage milestones?'));
