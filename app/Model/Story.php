@@ -96,11 +96,11 @@ class Story extends AppModel {
 
 	private function __parseDescription($story) {
 		if (isset($story['Story']['description']) && 
-		preg_match("/\s*as an?\s+(.+)\s+I(( want)|( would like)|('d like))\s+(.+)\s+so that\s+(.+)/i", $story['Story']['description'], $matches)) {
-			$story['Story']['as-a'] = trim($matches[1]);
-			$story['Story']['i-want'] = trim($matches[6]);
-			$story['Story']['so-that'] = trim($matches[7]);
-			
+		preg_match("/\s*(?P<asatag>as an?\s+)(?P<asa>.+)(?P<iwanttag>(,|\s)+I(( want)|( would like)|('d like))\s+)(?P<iwant>.+)(?P<sothattag>(,|\s)+so that\s+)(?P<sothat>.+)\s*$/i", $story['Story']['description'], $matches)) {
+			$story['Story']['as-a'] = trim($matches['asa']);
+			$story['Story']['i-want'] = trim($matches['iwant']);
+			$story['Story']['so-that'] = trim($matches['sothat']);
+			$story['Story']['formatted'] = "<strong>".$matches['asatag']."</strong>".$matches['asa']."<strong>".$matches['iwanttag']."</strong>".$matches['iwant']."<strong>".$matches['sothattag']."</strong>".$matches['sothat'];
 		} else {
 			$story['Story']['as-a'] = null;
 			$story['Story']['action'] = null;
