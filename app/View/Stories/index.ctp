@@ -32,12 +32,6 @@ $this->Html->css('stories', null, array ('inline' => false));
 	</th>
 	<? foreach ($stories as $story) { ?>
 		<td>
-		<?/*=$this->Html->link($this->Bootstrap->icon('file'), array(
-			'controller' => 'tasks',
-			'action' => 'add',
-			'project' => $project['Project']['name'],
-			'?' => array('story' => $story['Story']['public_id'], 'milestone' => $milestone['Milestone']['id']),
-		), array('escape' => false))*/?>
 		<ul class="well sprintboard-droplist" data-milestone="<?=h($milestone['Milestone']['id'])?>" data-story="<?=h($story['Story']['public_id'])?>">
 		<? foreach ($milestone['Task'] as $task) {
 			if ($task['story_id'] != $story['Story']['id']) {
@@ -57,12 +51,12 @@ $this->Html->css('stories', null, array ('inline' => false));
 	<th><?=__("No milestone")?> <?=$this->Form->submit(__("New milestone"))?></th>
 	<? foreach ($stories as $story) { ?>
 		<td>
-		<ul class="sprintboard-droplist" data=milestone="0" data-story="<?=h($story['Story']['public_id'])?>">
+		<ul class="well sprintboard-droplist" data-milestone="0" data-story="<?=h($story['Story']['public_id'])?>">
 		<? foreach ($story['Task'] as $task) {
 			if ($task['milestone_id'] != 0) {
 				continue;
 			}
-			echo $this->element("Task/minilozenge", array("checkbox" => true, "span" => 12, "projectName" => $project['Project']['name'], "task" => array('Task'=>$task)));
+			echo $this->element("Task/minilozenge", array("checkbox" => true, "span" => 12, "projectName" => $project['Project']['name'], "task" => array('Task'=>$task), "draggable" => true));
 		} ?>
 		</ul>
 		</td>
