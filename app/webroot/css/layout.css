@@ -121,7 +121,16 @@ color: #000000;
 background-color: #c50000;
 }
 
-.navbar-login input{
+.navbar-login form {
+	margin-bottom: 0px;
+}
+
+.navbar-login input {
 	margin-top: 6px;
 	margin-bottom: 0px;
 }
+
+ul.dropdown-menu ul {
+	list-style-type: none;
+}
+
