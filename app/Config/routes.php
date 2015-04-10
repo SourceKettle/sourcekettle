@@ -140,7 +140,7 @@
  */
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
-        Router::parseExtensions("json");
+        //Router::parseExtensions("json");
 
 /**
  * Load all plugin routes.  See the CakePlugin documentation on
