@@ -14,10 +14,18 @@
  */
 $renderableBranches = array();
 foreach ($branches as $branchOption) {
-	$renderableBranches[] = array('text' => $branchOption, 'url' => array('project' => $project['Project']['name'], 'action' => 'tree', $branchOption));
+	$renderableBranches[] = array(
+		'text' => $branchOption,
+		'url' => array(
+			'project' => $project['Project']['name'],
+			'controller' => $this->params['controller'],
+			'action' => $this->params['action'],
+			$branchOption
+		)
+	);
 }
 
- $options = array(
+$options = array(
 	'links' => array(
 		array(
 			'text' => __("Source"),
