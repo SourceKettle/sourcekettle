@@ -13,8 +13,8 @@
  * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 $renderableBranches = array();
-foreach ($branches as $branch) {
-	$renderableBranches[] = array('text' => $branch, 'url' => array('project' => $project['Project']['name'], 'action' => 'tree', $branch));
+foreach ($branches as $branchOption) {
+	$renderableBranches[] = array('text' => $branchOption, 'url' => array('project' => $project['Project']['name'], 'action' => 'tree', $branchOption));
 }
 
  $options = array(
