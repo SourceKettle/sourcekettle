@@ -3,9 +3,10 @@
 $('.collapse').collapse();
 
 // Add nice bootstrap tooltips to anything that wants one
-$('*[title]').tooltip({
+// DISABLED for now, as it's about 99.9% certain that the damn things will flicker annoyingly
+/*$('*[title]').tooltip({
 	delay: { "show": 0, "hide": 100 }
-});
+});*/
 
 // distraction-free mode - hide the sidebar, topbar and title
 function toggleDistractions() {
