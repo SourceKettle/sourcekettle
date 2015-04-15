@@ -27,7 +27,7 @@ if (preg_match("/^tags\/(.+)$/", $branch, $matches)) {
 	$branchTitle = __("Branch: <strong>%s</strong>", $branch);
 }
 
- $options = array(
+$options = array(
 	'links' => array(
 		array(
 			'text' => __("Source"),
