@@ -14,8 +14,55 @@ class GitShell extends AppShell {
 	private $read_commands  = array('git-upload-pack',  'git upload-pack');
 	private $write_commands = array('git-receive-pack', 'git receive-pack');
 
+	/*public function __construct($stdout = null, $stderr = null, $stdin = null) {
+		Configure::write('Cache.disable', true);
+		parent::__construct($stdout, $stderr, $stdin);
+	}*/
+
 	public function main() {
 		$this->out("You need to specify a command. Try 'sync_keys' or 'serve'.");
+	}
+
+	// Prints out an authorized_keys file to STDOUT for all users' keys
+	public function authorized_keys() {
+
+		$sourcekettleConfig = $this->getSourceKettleConfig();
+		$requestedUser = $this->args[0];
+
+		// Not the git repo user, bomb out
+		if ($requestedUser !== $sourcekettleConfig['SourceRepository']['user']['value']) {
+			exit(0);
+		}
+
+		// We will auto-run out git serve command when the git user logs in, and we should disable any
+		// features that may be used for nefarious purposes
+		$template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s'."\n";
+
+		// This is the git-serve command that will be run when git logs in
+		// CAKE/Console/cake is the cakephp console command, APP is our application dir, and git serve is the sourcekettle console command
+		$cmd = CAKE . 'Console' . DS . 'cake -app \'' . APP . '\'' . ' git serve';
+
+		// Now list all SSH keys
+		foreach ($this->SshKey->find('all') as $key) {
+			$sshkey = $key['SshKey']['key'];
+			$userid = $key['User']['id'];
+
+			// Sanity check the user ID
+			if (!isset($userid) || $userid <= 0) {
+				continue;
+			}
+
+			// Sanity check the key
+			if (strlen($sshkey) <= 40) {
+				continue;
+			}
+
+			// Remove newlines if they've added any
+			$content = trim(str_replace(array("\n", "\r"), '', $sshkey));
+		
+			// ...and print the key + command
+			printf($template, $cmd, $userid, $content);
+		}
 	}
 
 	/**
@@ -26,7 +73,7 @@ class GitShell extends AppShell {
 		$sourcekettle_config = $this->getSourceKettleConfig();
 
 		// Don't bother unless a key's actually been changed...
-	    if ($sourcekettle_config['Status']['sync_required']['value'] != 1) {
+		if ($sourcekettle_config['Status']['sync_required']['value'] != 1) {
 			exit(0);
 		}
 
@@ -38,7 +85,7 @@ class GitShell extends AppShell {
 		// Sanity check #1, fail if the user doesn't exist...
 		if(!$git_details){
 			$this->err(__("Cannot sync keys - git user '$git_user' does not exist - have you set up SourceKettle properly?"));
-            exit(1);
+			exit(1);
 		}
 
 		// Get their homedir
@@ -47,7 +94,7 @@ class GitShell extends AppShell {
 		// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
 		if(!is_dir($git_homedir.'/.ssh')){
 			$this->err(__("Cannot sync keys - $git_homedir/.ssh not found - have you set up SourceKettle properly?"));
-            exit(1);
+			exit(1);
 		}
 
 		// Now we know where to write to...
@@ -61,13 +108,9 @@ class GitShell extends AppShell {
 		// features that may be used for nefarious purposes
 		$template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
 
-		// This seems dubious... TODO
-		$app_path = App::path('Controller');
-		$app_path = $app_path[0];
-		$app_path = str_replace('/app/Controller', '', $app_path);
-
 		// This is the git-serve command that will be run when git logs in
-		$cmd = $app_path . 'scm-scripts/git-serve.py';
+		// CAKE/Console/cake is the cakephp console command, APP is our application dir, and git serve is the sourcekettle console command
+		$cmd = CAKE . 'Console' . DS . 'cake -app \'' . APP . '\'' . ' git serve';
 
 		// Build up a list of SSH keys to write to file
 		// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...
@@ -174,7 +217,6 @@ class GitShell extends AppShell {
 		// Remove any quotes around the command arguments (go go gadget irregular expressions!)
 		$args	= preg_replace('/^(\'|\")(.+)\\1/', '\\2', $matches[3]);
 
-
 		// Check if it's a valid git command to start with...
 		if (!$this->isValidGitCommand($command)) {
 			$this->err("Error: Unknown command");
@@ -194,8 +236,6 @@ class GitShell extends AppShell {
 
 		$_proj_name = $matches[2];
 		
-
-
 		// Try and get project info, if it doesn't exist then don't give that fact away...
 		$project = $this->Project->getProject($_proj_name, true);
 		if (empty ($project)){
@@ -205,11 +245,12 @@ class GitShell extends AppShell {
 
 		// We don't need to set all the details, just the ID so we can call hasRead/hasWrite
 		$this->Project->id = $project['Project']['id'];
-        $rt = $this->Project->RepoType->find(
-          'first', array(
-            'conditions' => array('RepoType.id' => $project['Project']['repo_type']),
-            'recursive'  => -1
-        ));
+
+		$rt = $this->Project->RepoType->find(
+	 		'first', array(
+			'conditions' => array('RepoType.id' => $project['Project']['repo_type']),
+			'recursive'  => -1
+		));
 
 		// Get the repository location
 		$sourcekettle_config = $this->getSourceKettleConfig();
@@ -221,24 +262,22 @@ class GitShell extends AppShell {
 			exit(1);
 		}
 
-		//Now check if the user has the correct permissions for the operation they are trying to perform
+		// We already know th ecommand is valid, so it's either a read or a write command...
 
-		// Read requested and they have permission, serve the request
-		if ($this->isReadCommand($command) and ($this->Project->hasRead($userid))) {
-			print "$command '$repo_path'";
-			exit(0);
-
-		// Write requested and they have permission, serve the request
-		} else if ($this->isWriteCommand($command) and ($this->Project->hasWrite($userid))) {
-			print "$command '$repo_path'";
-			exit(0);
-
-		// They do not have permission
-		} else {
+		// Check read permission
+		if ($this->isReadCommand($command) and !$this->Project->hasRead($userid)) {
 			$this->err("Error: You do not have the necessary permissions");
 			exit(1);
+
+		// Check write permission
+		} else if ($this->isWriteCommand($command) and !$this->Project->hasWrite($userid)) {
+			$this->err("Error: You do not have the necessary permissions");
+			exit(1);
+
 		}
 
+		// Sanity checks complete. Pass through to the git command.
+		passthru("$command ".escapeshellarg($repo_path));
 	}
 
 	/**
