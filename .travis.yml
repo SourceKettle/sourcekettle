@@ -9,16 +9,7 @@ before_script:
   - git submodule update --recursive
   - sh -c "mysql -e 'CREATE DATABASE sourcekettle_citest;'"
   - chmod -R 777 ./app/tmp
-  - echo "<?php
-    class DATABASE_CONFIG {
-    public \$test = array(
-      'datasource' => 'Database/Mysql',
-      'database' => 'sourcekettle_citest',
-      'host' => '0.0.0.0',
-      'login' => 'travis',
-      'persistent' => false,
-    );
-    }" > ./app/Config/database.php
+  - echo "<?php class DATABASE_CONFIG { public \$test = array('datasource' => 'Database/Mysql', 'database' => 'sourcekettle_citest', 'host' => 'localhost', 'login' => 'travis', 'persistent' => false);}" > ./app/Config/database.php
    - ./app/Console/cake schema create
    - ./app/Console/cake schema update
 script:
