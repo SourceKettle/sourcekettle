@@ -8,7 +8,8 @@ before_script:
   - git submodule init
   - git submodule update --recursive
   - sh -c "mysql -e 'CREATE DATABASE sourcekettle_citest;'"
-  - chmod -R 777 ./app/tmp
+  - cd app/
+  - chmod -R 777 ./tmp
   - echo "<?php
     class DATABASE_CONFIG {
     public \$test = array(
@@ -18,9 +19,9 @@ before_script:
       'login' => 'travis',
       'persistent' => false,
     );
-    }" > ./app/Config/database.php
-  - ./app/Console/cake schema create
-  - ./app/Console/cake schema update
+    }" > ./Config/database.php
+  - /bin/echo -ne 'y\ny\n' | ./Console/cake schema create -q
+  - /bin/echo -ne 'y\ny\n' | ./Console/cake schema update -q
 script:
   - ./app/Console/cake -app app test app AllTests
  
