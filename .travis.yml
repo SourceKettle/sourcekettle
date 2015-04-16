@@ -35,10 +35,10 @@ script:
   #- ./Console/cake test --help
 #  - ./Console/cake test app AllModelTests --stderr
 #  - ./Console/cake test app AllControllerTests --stderr
-  - ./Console/cake test app Model/SshKey
-  - strace -ff -o /tmp/skwat.ffs -- ./Console/cake test app Model/SshKey
-  - which bash
-  - env
-  - cat /tmp/skwat.ffs*
+  - ./Console/cake test app Model/SshKey 2>&1
+  #- strace -ff -o /tmp/skwat.ffs -- ./Console/cake test app Model/SshKey
+  #- which bash
+  #- env
+  #- cat /tmp/skwat.ffs*
 notifications:
   email: false
