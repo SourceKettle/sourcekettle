@@ -23,7 +23,8 @@ before_script:
   - /bin/echo -ne 'y\ny\n' | ./Console/cake schema create -q
   - /bin/echo -ne 'y\ny\n' | ./Console/cake schema update -q
 script:
-  - ./Console/cake test app AllTests
+  - ./Console/cake test app AllModelTests --stderr
+  - ./Console/cake test app AllControllerTests --stderr
  
 notifications:
   email: false
