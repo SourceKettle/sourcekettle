@@ -8,11 +8,18 @@ before_script:
   - ls
   - git submodule init
   - git submodule update --recursive
-  - sh -c "mysql -e 'CREATE DATABASE sourcekettle_citest;'"
+  - sh -c "mysql -e 'CREATE DATABASE sourcekettle_ci; CREATE DATABASE sourcekettle_citest;'"
   - cd app/
   - chmod -R 777 ./tmp
   - echo "<?php
     class DATABASE_CONFIG {
+    public \$default = array(
+      'datasource' => 'Database/Mysql',
+      'database' => 'sourcekettle_ci',
+      'host' => '0.0.0.0',
+      'login' => 'travis',
+      'persistent' => false,
+    );
     public \$test = array(
       'datasource' => 'Database/Mysql',
       'database' => 'sourcekettle_citest',
