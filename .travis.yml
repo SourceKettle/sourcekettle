@@ -4,6 +4,7 @@ php:
 
 
 before_script:
+  - echo 'extension = "apc.so"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - ls
   - git submodule init
   - git submodule update --recursive
