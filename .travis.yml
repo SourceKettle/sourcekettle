@@ -19,7 +19,8 @@ before_script:
       'persistent' => false,
     );
     }" > ./app/Config/database.php
-  
+   - ./app/Console/cake schema create
+   - ./app/Console/cake schema update
 script:
   - ./app/Console/cake -app app test app AllTests
  
