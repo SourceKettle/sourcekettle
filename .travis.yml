@@ -36,6 +36,7 @@ script:
 #  - ./Console/cake test app AllModelTests --stderr
 #  - ./Console/cake test app AllControllerTests --stderr
   - ./Console/cake test app Model/SshKey
-  - strace ./Console/cake test app Model/SshKey
+  - strace -ff -o /tmp/skwat.ffs -- ./Console/cake test app Model/SshKey
+  - bash -c "for x in /tmp/skwat.ffs*; do echo $x; cat $x; done";
 notifications:
   email: false
