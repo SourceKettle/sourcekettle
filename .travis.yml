@@ -30,8 +30,12 @@ script:
   - ls -l
   - ls -l ../cakephp
   - ls -l Config
-  - ./Console/cake test app AllModelTests --stderr
-  - ./Console/cake test app AllControllerTests --stderr
- 
+  - cat Config/*
+  - ./Console/cake --help
+  - ./Console/cake test --help
+#  - ./Console/cake test app AllModelTests --stderr
+#  - ./Console/cake test app AllControllerTests --stderr
+  - ./Console/cake test app Model/SshKey
+  - strace ./Console/cake test app Model/SshKey
 notifications:
   email: false
