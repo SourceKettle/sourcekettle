@@ -20,6 +20,10 @@ before_script:
       'persistent' => false,
     );
     }" > ./Config/database.php
+  - cp Config/global.php.template Config/global.php
+  - sed -i 's/__SALT__/SALTYSALTYSALTSALT/' Config/global.php
+  - sed -i 's/__SEED__/53325332533253321234123412341234/' Config/global.php
+  - sed -i 's/DEBUG_LEVEL = 1/DEBUG_LEVEL = 2/' Config/global.php
   - /bin/echo -ne 'y\ny\n' | ./Console/cake schema create -q
   - /bin/echo -ne 'y\ny\n' | ./Console/cake schema update -q
 script:
