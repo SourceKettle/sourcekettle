@@ -4,8 +4,8 @@ php:
 
 
 before_script:
-  - echo 'extension = "apc.so"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  - ls
+  - echo -e 'extension = "apc.so"\nshort_open_tag = On\napc.cli_enabled = On\n' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - phpunit --version
   - git submodule init
   - git submodule update --recursive
   - sh -c "mysql -e 'CREATE DATABASE sourcekettle_ci; CREATE DATABASE sourcekettle_citest;'"
