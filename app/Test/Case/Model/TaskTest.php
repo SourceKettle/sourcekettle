@@ -279,8 +279,6 @@ class TaskTest extends CakeTestCase {
 		$this->assertNotNull($saved['Task']['modified'], "Modify date was null");
 		unset($saved['Task']['modified']);
 
-		debug($this->Task->findById(13));
-
 		$this->assertEqual($saved, array(
 			'Task' => array(
 				'id' => 13,
