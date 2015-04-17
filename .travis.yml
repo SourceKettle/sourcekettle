@@ -6,6 +6,8 @@ php:
 before_script:
   - echo -e 'extension = "apc.so"\nshort_open_tag = On\napc.cli_enabled = On\n' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer install --dev
+  - export PATH=~/.composer/vendor/bin/:$PATH
+  - which phpunit
   - phpunit --version
   - git submodule init
   - git submodule update --recursive
