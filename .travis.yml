@@ -12,7 +12,10 @@ before_script:
   # Fudge factor 11 :-( Installing the older PHPunit has no effect as the newer one is on $PATH.
   # Set the $PATH and PHP include path so it can work with the older PHPunit for CakePHP 2.
   - export PATH=./vendor/phpunit/phpunit/composer/bin:$PATH
+  - echo '<?php echo get_include_path();?>' | php
   - echo 'include_path = "$PWD/vendor/phpunit/phpunit:'$(echo '<?php echo get_include_path();?>' | php)'"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo '<?php echo get_include_path();?>' | php
+  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - which phpunit
   - phpunit --version
   #- find vendor/phpunit
