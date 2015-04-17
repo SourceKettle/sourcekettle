@@ -13,7 +13,7 @@ before_script:
   # Set the $PATH and PHP include path so it can work with the older PHPunit for CakePHP 2.
   - export PATH=./vendor/phpunit/phpunit/composer/bin:$PATH
   - echo '<?php echo get_include_path();?>' | php
-  - echo 'include_path = "$PWD/vendor/phpunit/phpunit:'$(echo '<?php echo get_include_path();?>' | php)'"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'include_path = "'$PWD'/vendor/phpunit/phpunit:'$(echo '<?php echo get_include_path();?>' | php)'"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo '<?php echo get_include_path();?>' | php
   - cat ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - which phpunit
