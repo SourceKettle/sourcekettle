@@ -6,10 +6,12 @@ php:
 before_script:
   - echo -e 'extension = "apc.so"\nshort_open_tag = On\napc.cli_enabled = On\n' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer install --dev
-  - export PATH=~/.composer/vendor/bin/:$PATH
-  - find / -type f -name phpunit
   - which phpunit
   - phpunit --version
+  - ls -l /home/travis/.phpenv/shims/phpunit
+  - ls -l /home/travis/build/SourceKettle/sourcekettle/vendor/phpunit/phpunit/composer/bin/phpunit
+  - cat /home/travis/.phpenv/shims/phpunit
+  - cat /home/travis/build/SourceKettle/sourcekettle/vendor/phpunit/phpunit/composer/bin/phpunit
   - git submodule init
   - git submodule update --recursive
   - sh -c "mysql -e 'CREATE DATABASE sourcekettle_ci; CREATE DATABASE sourcekettle_citest;'"
