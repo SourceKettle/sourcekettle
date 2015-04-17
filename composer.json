@@ -1,4 +1,3 @@
-/* NB we're not actually using Composer yet, this is largely to install the right version of PHPunit in Travis... */
 {
     "name": "SourceKettle/sourcekettle",
     "description": "SourceKettle is an open source agile project management and source code management tool.",
@@ -8,7 +7,7 @@
             "email": "amn@ecs.soton.ac.uk"
         },
         {
-            "name": "Phill Whittlesea",
+            "name": "Phill Whittlesea"
         }
     ],
     "require": {
