@@ -2,7 +2,7 @@ language: php
 php:
   - 5.3
 git:
-  - submodules: false
+  submodules: false
 before_script:
 
   # Get all submodules
