@@ -1,8 +1,15 @@
 language: php
 php:
   - 5.3
-
+git:
+  - submodules: false
 before_script:
+
+  # Get all submodules
+  - git submodule update --init --recursive
+  - ls app/Plugin/GitCake/
+  - ls app/Plugin/GitCake/Vendor/
+  - ls app/Plugin/GitCake/Vendor/Git/
   # Activate APC for web and CLI, allow short open tags (SK PHP config)
   - echo -e 'extension = "apc.so"\nshort_open_tag = On\napc.cli_enabled = On\n' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   # Install dependencies (currently just an older version of PHPunit)
@@ -13,10 +20,6 @@ before_script:
   # Set the $PATH and PHP include path so it can work with the older PHPunit for CakePHP 2.
   - export PATH=./vendor/phpunit/phpunit/composer/bin:$PATH
   - echo 'include_path = "'$PWD'/vendor/phpunit/phpunit:'$(echo '<?php echo get_include_path();?>' | php)'"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  
-  # Get all submodules
-  - git submodule init
-  - git submodule update --recursive
   
   # Create DB and configure settings for it
   - sh -c "mysql -e 'CREATE DATABASE sourcekettle_ci; CREATE DATABASE sourcekettle_citest;'"
