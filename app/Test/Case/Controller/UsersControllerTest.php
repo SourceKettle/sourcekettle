@@ -712,7 +712,6 @@ class UsersControllerTest extends AppControllerTest {
 		try{
 			$this->testAction('/admin/users/view/999', array('method' => 'get', 'return' => 'vars'));
 		} catch (NotFoundException $e) {
-			debug($e);
 			$this->assertTrue(true, "Correct exception thrown");
 			return;
 		} catch (Exception $e) {
