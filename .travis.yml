@@ -2,13 +2,13 @@ language: php
 php:
   - 5.3
 
-
 before_script:
   - echo -e 'extension = "apc.so"\nshort_open_tag = On\napc.cli_enabled = On\n' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer install --dev
   - export PATH=./vendor/phpunit/phpunit/composer/bin:$PATH
   - which phpunit
   - phpunit --version
+  - find vendor/phpunit
   - git submodule init
   - git submodule update --recursive
   - sh -c "mysql -e 'CREATE DATABASE sourcekettle_ci; CREATE DATABASE sourcekettle_citest;'"
