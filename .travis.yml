@@ -1,0 +1,59 @@
+language: php
+php:
+  - 5.3
+git:
+  submodules: false
+before_script:
+
+  # Get all submodules
+  - git submodule update --init --recursive
+  - ls app/Plugin/GitCake/
+  - ls app/Plugin/GitCake/Vendor/
+  - ls app/Plugin/GitCake/Vendor/Git/
+  # Activate APC for web and CLI, allow short open tags (SK PHP config)
+  - echo -e 'extension = "apc.so"\nshort_open_tag = On\napc.cli_enabled = On\n' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  # Install dependencies (currently just an older version of PHPunit)
+  - composer install --dev
+  - phpenv rehash
+
+  # Fudge factor 11 :-( Installing the older PHPunit has no effect as the newer one is on $PATH.
+  # Set the $PATH and PHP include path so it can work with the older PHPunit for CakePHP 2.
+  - export PATH=./vendor/phpunit/phpunit/composer/bin:$PATH
+  - echo 'include_path = "'$PWD'/vendor/phpunit/phpunit:'$(echo '<?php echo get_include_path();?>' | php)'"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  
+  # Create DB and configure settings for it
+  - sh -c "mysql -e 'CREATE DATABASE sourcekettle_ci; CREATE DATABASE sourcekettle_citest;'"
+  - cd app/
+  - chmod -R 777 ./tmp
+  - echo "<?php
+    class DATABASE_CONFIG {
+    public \$default = array(
+      'datasource' => 'Database/Mysql',
+      'database' => 'sourcekettle_ci',
+      'host' => '0.0.0.0',
+      'login' => 'travis',
+      'persistent' => false,
+    );
+    public \$test = array(
+      'datasource' => 'Database/Mysql',
+      'database' => 'sourcekettle_citest',
+      'host' => '0.0.0.0',
+      'login' => 'travis',
+      'persistent' => false,
+    );
+    }" > ./Config/database.php
+
+  # Configure global settings for SK
+  - cp Config/global.php.template Config/global.php
+  - sed -i 's/__SALT__/SALTYSALTYSALTSALT/' Config/global.php
+  - sed -i 's/__SEED__/53325332533253321234123412341234/' Config/global.php
+  - sed -i 's/DEBUG_LEVEL = 1/DEBUG_LEVEL = 2/' Config/global.php
+
+  # Create DB schema
+  - /bin/echo -ne 'y\ny\n' | ./Console/cake schema create -q
+  - /bin/echo -ne 'y\ny\n' | ./Console/cake schema update -q
+script:
+  - ./Console/cake test app AllModelTests --stderr
+  - ./Console/cake test app AllControllerTests --stderr
+notifications:
+  email: false

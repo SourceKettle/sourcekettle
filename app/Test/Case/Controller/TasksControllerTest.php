@@ -480,7 +480,12 @@ class TasksControllerTest extends AppControllerTest {
 			'deleted_date' => null,
 			'public_id' => '1',
 			'dependenciesComplete' => '1',
-			'uri' => '/project/public/tasks/view/1'	,
+			'uri' => Router::url(array(
+				'controller' => 'tasks',
+				'action' => 'view',
+				'project' => 'public',
+				'1'
+			))
 		), $returned['Task']);
 	}
 
@@ -1235,8 +1240,9 @@ class TasksControllerTest extends AppControllerTest {
 		// This will break...
 		try{
 			$this->testAction('/team_kanban/java_developers_with_hats', array('return' => 'view', 'method' => 'get'));
+			$this->assertTrue(false, "Failed to throw exception");
 		} catch(Exception $e) {
-			debug($e->getMessage());
+			$this->assertTrue(true, "Exception thrown OK");
 		}
 
 		// This will actually check and throw an exception
