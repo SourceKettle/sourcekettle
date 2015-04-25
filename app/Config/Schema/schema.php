@@ -1,112 +1,13 @@
 <?php 
 class AppSchema extends CakeSchema {
 
-	public $file = 'schema.php';
+	public $file = 'schema_1.php';
 
 	public function before($event = array()) {
-		// Do not cache sources - this lets us use model classes in the after() function
-		$db = ConnectionManager::getDataSource($this->connection);
-		$db->cacheSources = false;
 		return true;
 	}
 
 	public function after($event = array()) {
-		if (!isset($event['create'])) {
-			return true;
-		}
-
-		switch ($event['create']) {
-			case 'users':
-
-				// Default admin user
-				$user = ClassRegistry::init('User');
-				$user->create();
-				$user->save(array(
-					'name' => 'System Administrator',
-					'email' => 'root@localhost.local',
-					'is_admin' => 1,
-					'is_active' => 1,
-					'password' => Security::hash('sourcekettle', null, true),
-				));
-				break;
-			case 'settings':
-				$setting = ClassRegistry::init('Setting');
-				$setting->create();
-				$setting->saveMany(array(
-					array('name' => 'Users.register_enabled',     'value' => '1'),
-					array('name' => 'Users.sysadmin_email',       'value' => 'sysadmin@example.com'),
-					array('name' => 'Users.send_email_from',      'value' => 'sysadmin@example.com'),
-					array('name' => 'Status.sync_required',       'value' => '0'),
-					array('name' => 'Features.time_enabled',       'value' => '1'),
-					array('name' => 'Features.source_enabled',     'value' => '1'),
-					array('name' => 'Features.task_enabled',       'value' => '1'),
-					array('name' => 'Features.attachment_enabled', 'value' => '0'),
-					array('name' => 'Ldap.enabled',               'value' => '0'),
-					array('name' => 'Ldap.url',                   'value' => ''),
-					array('name' => 'Ldap.bind_dn',               'value' => ''),
-					array('name' => 'Ldap.bind_pw',               'value' => ''),
-					array('name' => 'Ldap.base_dn',               'value' => ''),
-					array('name' => 'Ldap.filter',                'value' => 'mail=%USERNAME%'),
-					array('name' => 'SourceRepository.user',      'value' => 'git'),
-					array('name' => 'SourceRepository.base',      'value' => '/var/sourcekettle/repositories'),
-					array('name' => 'SourceRepository.default',   'value' => 'Git'),
-					array('name' => 'UserInterface.alias',        'value' => 'SourceKettle'),
-					array('name' => 'UserInterface.theme',        'value' => 'default'),
-					array('name' => 'UserInterface.terminology',  'value' => 'default'),
-				));
-				break;
-
-			case 'repo_types':
-				$type = ClassRegistry::init('RepoType');
-				$type->create();
-				$type->saveMany( array(
-					array('name' => 'None'),
-					array('name' => 'Git'),
-					array('name' => 'SVN')
-				));
-				break;
-
-			case 'task_types':
-				$type = ClassRegistry::init('TaskType');
-				$type->create();
-				$type->saveMany( array(
-					array('name' => 'bug',           'label' => 'Bug',           'icon' => '', 'class' => 'important'),
-					array('name' => 'duplicate',     'label' => 'Duplicate',     'icon' => '', 'class' => 'warning'),
-					array('name' => 'enhancement',   'label' => 'Enhancement',   'icon' => '', 'class' => 'success'),
-					array('name' => 'invalid',       'label' => 'Invalid',       'icon' => '', 'class' => ''),
-					array('name' => 'question',      'label' => 'Question',      'icon' => '', 'class' => 'info'),
-					array('name' => 'wontfix',       'label' => 'Won\'t Fix',    'icon' => '', 'class' => 'inverse'),
-					array('name' => 'documentation', 'label' => 'Documentation', 'icon' => '', 'class' => 'info'),
-					array('name' => 'meeting',       'label' => 'Meeting',       'icon' => '', 'class' => 'info'),
-					array('name' => 'maintenance',   'label' => 'Maintenance Work', 'icon' => '', 'class' => 'warning'),
-					array('name' => 'testing',       'label' => 'Testing',       'icon' => '', 'class' => 'success')
-				));
-				break;
-
-			case 'task_statuses':
-				$status = ClassRegistry::init('TaskStatus');
-				$status->create();
-				$status->saveMany( array(
-					array('name' => 'open',        'label' => 'Open',        'icon' => '', 'class' => 'important'),
-					array('name' => 'in progress', 'label' => 'In Progress', 'icon' => '', 'class' => 'warning'),
-					array('name' => 'resolved',    'label' => 'Resolved',    'icon' => '', 'class' => 'success'),
-					array('name' => 'closed',      'label' => 'Closed',      'icon' => '', 'class' => 'info'),
-					array('name' => 'dropped',     'label' => 'Dropped',     'icon' => '', 'class' => '')
-				));
-				break;
-
-			case 'task_priorities':
-				$prio = ClassRegistry::init('TaskPriority');
-				$prio->create();
-				$prio->saveMany( array(
-					array('name' => 'minor',   'level' => 1, 'label' => 'Minor',   'icon' => 'minus',       'class' => ''),
-					array('name' => 'major',   'level' => 2, 'label' => 'Major',   'icon' => 'stop',         'class' => ''),
-					array('name' => 'urgent',  'level' => 3, 'label' => 'Urgent',  'icon' => 'warning-sign', 'class' => ''),
-					array('name' => 'blocker', 'level' => 4, 'label' => 'Blocker', 'icon' => 'ban-circle',       'class' => '')
-				));
-				break;
-
-		}
 	}
 
 	public $api_keys = array(
@@ -180,6 +81,22 @@ class AppSchema extends CakeSchema {
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'user_id' => array('column' => 'user_id', 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
+	);
+
+	public $epics = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
+		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'description' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
+		'creator_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'project_id' => array('column' => 'project_id', 'unique' => 0),
+			'creator_id' => array('column' => 'creator_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);
@@ -392,6 +309,8 @@ class AppSchema extends CakeSchema {
 
 	public $stories = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'project_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
+		'epic_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index'),
 		'subject' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'description' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_bin', 'charset' => 'utf8'),
 		'creator_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
@@ -400,7 +319,9 @@ class AppSchema extends CakeSchema {
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'creator_id' => array('column' => 'creator_id', 'unique' => 0)
+			'creator_id' => array('column' => 'creator_id', 'unique' => 0),
+			'project_id' => array('column' => 'project_id', 'unique' => 0),
+			'fk_epic_id' => array('column' => 'epic_id', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_bin', 'engine' => 'InnoDB')
 	);

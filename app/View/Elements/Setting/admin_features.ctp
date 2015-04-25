@@ -71,7 +71,18 @@
                     <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'story-enabled', 'name' => 'Setting.Features.story_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'storySection', 'value' => $sourcekettle_config['Features']['story_enabled']['value'])) ?>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'task-enabled', 'name' => 'Setting.Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'story-enabled', 'name' => 'Setting.Features.story_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'storySection', 'value' => $sourcekettle_config['Features']['story_enabled']['locked'])) ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h4><?= __('Epics') ?> <small>- <?= __('Allow creation of epics for grouping stories - enables story map view') ?></small></h4>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'epic-enabled', 'name' => 'Setting.Features.epic_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'epicSection', 'value' => $sourcekettle_config['Features']['epic_enabled']['value'])) ?>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'epic-enabled', 'name' => 'Setting.Features.epic_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'epicSection', 'value' => $sourcekettle_config['Features']['epic_enabled']['locked'])) ?>
                 </td>
             </tr>
             <tr>

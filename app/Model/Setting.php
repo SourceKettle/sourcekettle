@@ -165,7 +165,9 @@ class Setting extends AppModel {
 				// Allow task tracking
 				'task_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Allow user stories
-				'story_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
+				'story_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
+				// Allow epics, for grouping stories
+				'epic_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
 				// Allow attachment uploads
 				'attachment_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Use 4-column kanban chart?

@@ -39,7 +39,12 @@ $link_remove = $this->Html->link(
 		'escape' => false
 	)
 );
-$points = array_sum(array_map(function($a){return $a['story_points'];}, $story['Task']));
+$pointsTotal = array_sum(array_map(function($a){return $a['story_points'];}, $story['Task']));
+$pointsComplete = array_sum(array_map(function($a){
+	if(in_array($a['TaskStatus']['name'], array('resolved', 'closed'))) {
+		return $a['story_points'];
+	}
+}, $story['Task']));
 ?>
 
 <div class="story-block well">
@@ -59,6 +64,6 @@ $points = array_sum(array_map(function($a){return $a['story_points'];}, $story['
 		<?=h($this->Text->truncate($story['Story']['description'], 100))?>
 	</p>
 	<p>
-		<?=__("%d story points", $points)?>
+		<?=__("%d/%d story points complete", $pointsComplete, $pointsTotal)?>
 	</p>
 </div>

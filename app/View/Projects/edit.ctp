@@ -68,6 +68,14 @@
 	</dl>
 	<dl>
 		<dt>
+			<h4><?= __('Epics') ?> <small>- <?= __('Allow creation of epics for grouping stories - enables story map view') ?></small></h4>
+		</dt>
+		<dd>
+			<?= $this->element('Setting/switch', array('lock' => false, 'id' => 'epic-enabled', 'name' => 'ProjectSetting.Features.epic_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'epicSection', 'value' => $sourcekettle_config['Features']['epic_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['epic_enabled']['locked'])) ?>
+		</dd>
+	</dl>
+	<dl>
+		<dt>
 			<h4><?= __('4-column Kanban chart') ?> <small>- <?= __('Do you want to use a 4-column kanban chart (resolved and closed states seperate), or the simplified 3-column chart (open/in progress/completed)?') ?></small></h4>
 		</dt>
 		<dd>
