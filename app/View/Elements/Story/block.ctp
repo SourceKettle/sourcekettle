@@ -2,8 +2,9 @@
 $link_edit = $this->Html->link(
 	$this->Bootstrap->icon('pencil'),
 	array(
-		'project' => $story['Project']['name'],
+		'controller' => 'stories',
 		'action' => 'edit',
+		'project' => $story['Project']['name'],
 		$story['Story']['public_id']
 	),
 	array(
@@ -29,8 +30,9 @@ $link_addtask = $this->Html->link(
 $link_remove = $this->Html->link(
 	$this->Bootstrap->icon('remove-circle'),
 	array(
-		'project' => $story['Project']['name'],
+		'controller' => 'stories',
 		'action' => 'delete',
+		'project' => $story['Project']['name'],
 		$story['Story']['public_id']
 	),
 	array(
@@ -66,4 +68,10 @@ $pointsComplete = array_sum(array_map(function($a){
 	<p>
 		<?=__("%d/%d story points complete", $pointsComplete, $pointsTotal)?>
 	</p>
+
+	<? if (@$includeTasks) {?>
+		<? foreach($story['Task'] as $task) {?>
+			<?=$this->element('Task/minilozenge', array('task' => array('Task' => $task, 'Project' => $project['Project'])))?>
+		<? } ?>
+	<? } ?>
 </div>

@@ -30,8 +30,8 @@ if(isset($span) && $span){
 if (!isset($checkbox)) {
 	$checkbox = false;
 }
-$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $projectName));
-$url = $this->Html->url(array('controller' => 'tasks', 'action' => 'view', 'project' => $projectName, $task['Task']['public_id']));
+$apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
+$url = $this->Html->url(array('controller' => 'tasks', 'action' => 'view', 'project' => $task['Project']['name'], $task['Task']['public_id']));
 if ($draggable) {
 	$span="draggable$span";
 }

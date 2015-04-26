@@ -38,6 +38,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 <div id="task_<?= $task['Task']['public_id'] ?>" 
   class="task-container"
   data-taskid="<?= $task['Task']['public_id'] ?>">
+	<a name="task_<?= $task['Task']['public_id'] ?>"></a>
 	<div class="task">
 		<div class="well taskwell type_bar_<?= h($task['TaskType']['name']) ?>">
 			<div class="row-fluid">
@@ -63,6 +64,7 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						<?= $this->Task->storyPointsControl($draggable? $task: $task['Task']['story_points']) ?>
 						<?= $this->Task->priorityDropdownButton($draggable? $task: $task['Task']['task_priority_id'], false) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
+						<?= $this->Task->storyLabel($task, $localStoryLink) ?>
 						</span>
 						</span>
 					</div>

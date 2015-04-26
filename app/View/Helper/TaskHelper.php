@@ -208,17 +208,23 @@ class TaskHelper extends AppHelper {
 		return $button;
 	}
 
-	public function storyLabel($task) {
-		$label = "";
-		if (isset($task['Story']['id'])){
-			$label .= "<span class='label' title='".__('Story: %s', $task['Story']['subject'])."'>";
-			$label .= $this->Html->link($this->Bootstrap->icon("road", "white"), array(
+	public function storyLabel($task, $localLink = false) {
+		// Page-local link - just an anchor to the story within the page
+		if ($localLink) {
+			$link = $this->Html->link($this->Bootstrap->icon("book", "white"), "#story_".$task['Story']['public_id'], array('escape' => false));
+		// Full link to story's own page
+		} else {
+			$link = $this->Html->link($this->Bootstrap->icon("book", "white"), array(
 				'controller' => 'stories',
 				'action' => 'view',
 				'project' => $task['Project']['name'],
-				$task['Story']['id'],
+				$task['Story']['public_id'],
 			), array('escape' => false));
-			$label .= "</span>";
+		}
+
+		$label = "";
+		if (isset($task['Story']['id'])){
+			$label = "<span class='label' title='".__('Story: %s', $task['Story']['subject'])."'>$link</span>";
 		}
 		return $label;
 	}

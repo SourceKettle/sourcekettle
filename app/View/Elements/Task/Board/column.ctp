@@ -50,11 +50,13 @@ if (isset($icon)) {
 	$icon = "";
 }
 
+$localStoryLink = isset($localStoryLink)?: false;
+
 echo "<ul class='well span$span sprintboard-droplist $classes' data-taskspan='$task_span' $dtStatus $dtPriority $dtMilestone>\n";
 echo "<h2$tooltip>$icon$title</h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {
-    echo $this->element('Task/lozenge', array('task' => $task, 'draggable' => $draggable, 'span' => $task_span));
+    echo $this->element('Task/lozenge', array('task' => $task, 'draggable' => $draggable, 'span' => $task_span, 'localStoryLink' => $localStoryLink));
 }
 if (isset($addLink) && $addLink) {
 	$params = array();
