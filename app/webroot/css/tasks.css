@@ -75,6 +75,7 @@ form {
   padding: 0px;
   float: left;
   margin: 0px;
+  margin-bottom: 5px;
   width: 100%;
   min-height: 20px;
   max-height: 400px;
