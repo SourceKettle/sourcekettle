@@ -21,18 +21,23 @@ if (!isset($draggable)){
 		$draggable = $task['__hasWrite'];
 	}
 }
+
 if(isset($span) && $span){
 	$span=" span$span";
 } else {
 	$span="";
 }
+
+$localStoryLink = isset($localStoryLink) ?: false;
+
 $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
-	if($draggable){
-		echo "<li class='task-lozenge draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl' data-taskStatus='".$task['TaskStatus']['name']."'>";
-	} else {
-		echo "<li class='task-lozenge $span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
-	}
+
+if($draggable){
+	echo "<li class='task-lozenge draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl' data-taskStatus='".$task['TaskStatus']['name']."'>";
+} else {
+	echo "<li class='task-lozenge $span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
+}
 ?>
 
 <div id="task_<?= $task['Task']['public_id'] ?>" 
