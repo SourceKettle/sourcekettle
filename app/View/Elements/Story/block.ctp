@@ -62,16 +62,24 @@ $pointsComplete = array_sum(array_map(function($a){
 	<?=$link_addtask?>
 	<?=$link_edit?>
 	</h4>
-	<p>
+	<div class="row-fluid">
+	<p class="span12">
 		<?=h($this->Text->truncate($story['Story']['description'], 100))?>
 	</p>
-	<p>
+	</div>
+	<div class="row-fluid">
+	<p class="span12">
 		<?=__("%d/%d story points complete", $pointsComplete, $pointsTotal)?>
 	</p>
+	</div>
 
 	<? if (@$includeTasks) {?>
+	<div class="row-fluid">
+	<ul class="sprintboard-droplist span12">
 		<? foreach($story['Task'] as $task) {?>
-			<?=$this->element('Task/minilozenge', array('task' => array('Task' => $task, 'Project' => $project['Project'])))?>
+			<?=$this->element('Task/minilozenge', array('task' => array('Task' => $task, 'Project' => $project['Project']), 'span' => 3))?>
 		<? } ?>
+	</ul>
+	</div>
 	<? } ?>
 </div>
