@@ -57,52 +57,26 @@ class StoriesController extends AppProjectController {
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('User stories'));
 		$project = $this->_getProject($project);
-		/*$this->Story->contain(array(
-			'Project' => array(
-				'name',
-			),
-			'Task' => array(
-				'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
-				'TaskStatus' => array('id', 'name'),
-				'TaskType' => array('id', 'name'),
-				'TaskPriority' => array('id', 'name'),
-			),
-		));*/
 
-		$stories = $this->Story->find("all", array(
-			"conditions" => array("Story.project_id" => $project['Project']['id']),
-			"order" => array("id"),
-			"contain" => array(
-				'Project' => array(
-					'name',
+		if ($this->sourcekettle_config['Features']['story_enabled']['value']) {
+			$stories = $this->Story->find("all", array(
+				"conditions" => array("Story.project_id" => $project['Project']['id']),
+				"order" => array("id"),
+				"contain" => array(
+					'Project' => array(
+						'name',
+					),
+					'Task' => array(
+						'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
+						'TaskStatus' => array('id', 'name'),
+						'TaskType' => array('id', 'name'),
+						'TaskPriority' => array('id', 'name', 'level'),
+					),
 				),
-				'Task' => array(
-					'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
-					'TaskStatus' => array('id', 'name'),
-					'TaskType' => array('id', 'name'),
-					'TaskPriority' => array('id', 'name', 'level'),
-				),
-			),
-		));
-
-		// Sort the tasks in priority order so higher priority is at the top; then by public ID so lowest is at the top
-		foreach ($stories as $x => $story) {
-			usort($story['Task'], function($a, $b) {
-				if ($a['TaskPriority']['level'] < $b['TaskPriority']['level']) {
-					return 1;
-				} elseif ($a['TaskPriority']['level'] > $b['TaskPriority']['level']) {
-					return -1;
-				} elseif ($a['public_id'] > $b['public_id']) {
-					return 1;
-				} elseif ($a['public_id'] < $b['public_id']) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
-			$stories[$x] = $story;
+			));
+	
+			$this->set('stories', $stories);
 		}
-		$this->set('stories', $stories);
 
 
 		$this->set('milestones', $this->Story->Project->Milestone->find("all", array(

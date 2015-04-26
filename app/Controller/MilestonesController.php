@@ -110,6 +110,7 @@ class MilestonesController extends AppProjectController {
 			
 		} else {
 			$resolved = $this->Milestone->tasksOfStatusForMilestone($id, array('resolved', 'closed'));
+			$closed = array();
 		}
 		$dropped = $this->Milestone->tasksOfStatusForMilestone($id, 'dropped');
 
@@ -130,6 +131,11 @@ class MilestonesController extends AppProjectController {
 
 		$this->set('milestone', $milestone);
 		$this->set(compact('open', 'inProgress', 'resolved', 'dropped', 'points_complete', 'points_todo', 'points_total'));
+
+		if ($this->sourcekettle_config['Features']['story_enabled']['value']) {
+			$stories = $this->Milestone->storiesForMilestone($milestone['Milestone']['id']);
+			$this->set('stories', $stories);
+		}
 	}
 
 /**
