@@ -653,7 +653,7 @@ class TasksController extends AppProjectController {
 			if (isset($data['Task']['task_type_id']) && $data['Task']['task_type_id'] == 0) {
 				$data['Task']['task_type_id'] = 3; // TODO configurable default
 			}
-exit(0);
+
 			if ($this->request->is('ajax')) {
 				$this->autoRender = false;
 
