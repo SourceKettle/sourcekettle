@@ -128,6 +128,8 @@ class SettingTestCase extends CakeTestCase {
 				'task_enabled' => array('value' => true, 'source' => 'System settings', 'locked' => false),
 				'time_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
 				'source_enabled' => array('value' => false, 'source' => 'System settings', 'locked' => true),
+				'story_enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),
+				'epic_enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),
 				'attachment_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
 				'4col_kanban_enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),
 			),
