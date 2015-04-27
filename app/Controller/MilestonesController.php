@@ -186,17 +186,20 @@ class MilestonesController extends AppProjectController {
 			// Force new milestones into the 'open' state, this makes the most sense...
 			$data['Milestone']['is_open'] = true;
 
+			// TODO indent levels of doom
 			if ($this->Flash->c($this->Milestone->save($data))) {
-				foreach ($this->request->data['Task'] as $publicId) {
-					if (!is_numeric($publicId)) {
-						continue;
+				if (isset($this->request->data['Task'])) {
+					foreach ($this->request->data['Task'] as $publicId) {
+						if (!is_numeric($publicId)) {
+							continue;
+						}
+						$task = $this->Milestone->Task->findByProjectIdAndPublicId($project['Project']['id'], $publicId);
+						if (!$task) {
+							continue;
+						}
+						$this->Milestone->Task->id = $task['Task']['id'];
+						$this->Milestone->Task->saveField('milestone_id', $this->Milestone->id);
 					}
-					$task = $this->Milestone->Task->findByProjectIdAndPublicId($project['Project']['id'], $publicId);
-					if (!$task) {
-						continue;
-					}
-					$this->Milestone->Task->id = $task['Task']['id'];
-					$this->Milestone->Task->saveField('milestone_id', $this->Milestone->id);
 				}
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
 			}
