@@ -39,7 +39,8 @@ class TeamTest extends CakeTestCase {
 		'app.project_burndown_log',
 		'app.project_group',
 		'app.group_collaborating_team',
-		'app.project_groups_project'
+		'app.project_groups_project',
+		'app.story',
 	);
 
 /**
