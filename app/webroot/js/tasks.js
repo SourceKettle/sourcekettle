@@ -149,7 +149,7 @@ function updateTask(taskLozenge, taskInfo) {
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
 					typeLabel.addClass('label-' + taskInfo.TaskType.class);
-					typeLabel.attr('title', 'Type: ' + taskInfo.TaskType.name).tooltip();
+					typeLabel.attr('title', 'Type: ' + taskInfo.TaskType.name);
 
 				}
 				// Priority changed, fairly straightforward
@@ -162,10 +162,10 @@ function updateTask(taskLozenge, taskInfo) {
 					} else {
 						prioLabel.html(icon + ' <b class="caret"></b>');
 					}
-					prioLabel.attr('title', 'Priority: ' + taskInfo.TaskPriority.name).tooltip();
+					prioLabel.attr('title', 'Priority: ' + taskInfo.TaskPriority.name);
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
-					if (currentColumn.attr('data-taskpriority') != taskInfo.TaskPriority.name) {
+					if (currentColumn.attr('data-milestone') != 0 && currentColumn.attr('data-taskpriority') != taskInfo.TaskPriority.name) {
 						toColumn = $('.sprintboard-droplist[data-taskpriority="'+taskInfo.TaskPriority.name+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
@@ -188,11 +188,11 @@ function updateTask(taskLozenge, taskInfo) {
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
 					statusLabel.addClass('label-'+taskInfo.TaskStatus.class);
-					statusLabel.attr('title', 'Status: ' + taskInfo.TaskStatus.label).tooltip();
+					statusLabel.attr('title', 'Status: ' + taskInfo.TaskStatus.label);
 					taskLozenge.attr('data-taskstatus', taskInfo.TaskStatus.name);
 
 					// If there's a droplist for this status and the lozenge isn't in it, move it into place
-					if (currentColumn.attr('data-taskstatus') != taskInfo.TaskStatus.name) {
+					if (currentColumn.attr('data-milestone') != 0 && currentColumn.attr('data-taskstatus') != taskInfo.TaskStatus.name) {
 						toColumn = $('.sprintboard-droplist[data-taskstatus="'+taskInfo.TaskStatus.name+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
@@ -221,10 +221,10 @@ function updateTask(taskLozenge, taskInfo) {
 					gravatarImage = $('img', assigneeBox);
 					gravatarImage.attr('src', taskInfo.Assignee.gravatar+'&size='+gravatarImage.attr('width'));
 					if (taskInfo.Assignee.id > 0) {
-						assigneeBox.attr('title', 'Assigned to: '+taskInfo.Assignee.name).tooltip();
+						assigneeBox.attr('title', 'Assigned to: '+taskInfo.Assignee.name);
 						gravatarImage.attr('alt', 'Assigned to: '+taskInfo.Assignee.name);
 					} else {
-						assigneeBox.attr('title', 'Not assigned').tooltip();
+						assigneeBox.attr('title', 'Not assigned');
 						gravatarImage.attr('alt', 'Not assigned');
 					}
 					if (assigneeLabel.hasClass('assignee-full-label')) {
@@ -238,7 +238,7 @@ function updateTask(taskLozenge, taskInfo) {
 					label.empty();
 					if (taskInfo.Milestone.id > 0) {
 						milestoneLink = $(document.createElement('a'));
-						milestoneLink.attr('title',  "Milestone: "+taskInfo.Milestone.subject).tooltip();
+						milestoneLink.attr('title',  "Milestone: "+taskInfo.Milestone.subject);
 						milestoneLink.attr('href', taskInfo.Milestone.uri);
 						milestoneLink.text(taskInfo.Milestone.subject);
 						label.append("Milestone: ");
@@ -246,7 +246,7 @@ function updateTask(taskLozenge, taskInfo) {
 					} else {
 						label.append("No milestone");
 					}
-					milestoneLabel.attr("title", "Milestone: "+taskInfo.Milestone.subject).tooltip();
+					milestoneLabel.attr("title", "Milestone: "+taskInfo.Milestone.subject);
 				}
 
 			} else {

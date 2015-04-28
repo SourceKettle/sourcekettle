@@ -177,7 +177,7 @@ class MilestonesController extends AppProjectController {
 			$data['Milestone']['is_open'] = true;
 
 			if ($this->Flash->c($this->Milestone->save($data))) {
-				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'plan', $this->Milestone->id));
 			}
 		}
 	}
