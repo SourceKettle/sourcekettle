@@ -54,6 +54,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'classes' => 'sprintboard-column',
 		'addLink' => false,
 		'draggable' => $hasWrite,
+		'total' => array_reduce($mightHave, function($t, $a){ $t += $a['Task']['story_points']; return $t;}, 0),
 	)
 ) ?>
 <?= $this->element('Task/Board/column',
@@ -68,6 +69,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'classes' => 'sprintboard-column',
 		'addLink' => false,
 		'draggable' => $hasWrite,
+		'total' => array_reduce($couldHave, function($t, $a){ $t += $a['Task']['story_points']; return $t;}, 0),
 	)
 ) ?>	
 
@@ -84,6 +86,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'classes' => 'sprintboard-column',
 		'addLink' => false,
 		'draggable' => $hasWrite,
+		'total' => array_reduce($shouldHave, function($t, $a){ $t += $a['Task']['story_points']; return $t;}, 0),
 	)
 ) ?>
 <?= $this->element('Task/Board/column',
@@ -98,6 +101,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'classes' => 'sprintboard-column',
 		'addLink' => false,
 		'draggable' => $hasWrite,
+		'total' => array_reduce($mustHave, function($t, $a){ $t += $a['Task']['story_points']; return $t;}, 0),
 	)
 ) ?>	
 

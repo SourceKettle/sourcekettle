@@ -52,8 +52,14 @@ if (isset($icon)) {
 
 $localStoryLink = isset($localStoryLink)?: false;
 
+if (!isset($total)) {
+	$total = "";
+} else {
+	$total = "$total pt";
+}
+
 echo "<ul class='well span$span sprintboard-droplist $classes' data-taskspan='$task_span' $dtStatus $dtPriority $dtMilestone>\n";
-echo "<h2$tooltip>$icon$title</h2>\n";
+echo "<h2$tooltip>$icon$title<small>$total</small></h2>\n";
 echo "<hr />\n";
 foreach ($tasks as $task) {
     echo $this->element('Task/lozenge', array('task' => $task, 'draggable' => $draggable, 'span' => $task_span, 'localStoryLink' => $localStoryLink));

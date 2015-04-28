@@ -330,7 +330,7 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		// We should be redirected to the milestone page
 		$id = $this->controller->Milestone->getLastInsertId();
-		$this->assertRedirect('/project/public/milestones/view/'.$id);
+		$this->assertRedirect('/project/public/milestones/plan/'.$id);
 
 		// Check that it's been created properly
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'starts', 'due'), 'recursive' => -1));
@@ -353,7 +353,7 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		// We should be redirected to the milestone page
 		$id = $this->controller->Milestone->getLastInsertId();
-		$this->assertRedirect('/project/private/milestones/view/'.$id);
+		$this->assertRedirect('/project/private/milestones/plan/'.$id);
 
 		// Check that it's been created properly
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'starts', 'due'), 'recursive' => -1));
@@ -377,7 +377,7 @@ class MilestonesControllerTest extends AppControllerTest {
 
 		// We should be redirected to the milestone page
 		$id = $this->controller->Milestone->getLastInsertId();
-		$this->assertRedirect('/project/personal/milestones/view/'.$id);
+		$this->assertRedirect('/project/personal/milestones/plan/'.$id);
 
 		// Check that it's been created properly
 		$milestone = $this->controller->Milestone->find('first', array('conditions' => array('id' => $id), 'fields' => array('subject', 'description', 'starts', 'due'), 'recursive' => -1));

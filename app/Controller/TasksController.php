@@ -654,6 +654,7 @@ class TasksController extends AppProjectController {
 				$data['Task']['task_type_id'] = 3; // TODO configurable default
 			}
 
+			// TODO what's going on here?
 			if ($this->request->is('ajax')) {
 				$this->autoRender = false;
 
@@ -669,12 +670,26 @@ class TasksController extends AppProjectController {
 					unset($this->request->data['Task']['subject']);
 					unset($this->request->data['Task']['description']);
 					unset($this->request->data['DependsOn']);
-					$this->Flash->info(__("Task '%s' has been created", '<a href="'.Router::url(array(
+
+					$taskLink = '<a href="'.Router::url(array(
 						'controller' => 'tasks',
 						'action' => 'view',
 						'project' => $task['Project']['name'],
 						$task['Task']['public_id']
-					)).'">'.h($task['Task']['subject'])."</a>"));
+					)).'">'.h($task['Task']['subject'])."</a>";
+
+					if ($this->request->data['Task']['milestone_id']) {
+						$milestoneLink = '<a href="'.Router::url(array(
+							'controller' => 'milestones',
+							'action' => 'view',
+							'project' => $task['Project']['name'],
+							$task['Task']['milestone_id']
+						)).'">'.__("view milestone").'</a>';
+						$this->Flash->info(__("Task '%s' has been created (%s)", $taskLink, $milestoneLink));
+					} else {
+						$this->Flash->info(__("Task '%s' has been created", $taskLink));
+					}
+
 				} else {
 					$this->Flash->error(__("The task could not be saved. Please try again."));
 				}

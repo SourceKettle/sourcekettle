@@ -201,7 +201,7 @@ class MilestonesController extends AppProjectController {
 						$this->Milestone->Task->saveField('milestone_id', $this->Milestone->id);
 					}
 				}
-				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'view', $this->Milestone->id));
+				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'plan', $this->Milestone->id));
 			}
 		}
 	}

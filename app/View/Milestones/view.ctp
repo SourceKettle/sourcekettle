@@ -50,6 +50,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 	'milestoneID' => $milestone['Milestone']['id'], 
 	'addLink' => false,
 	'localStoryLink' => true,
+	'total' => $milestone['Tasks']['open']['points'],
 )) ?>
 
 <?= $this->element('Task/Board/column', array(
@@ -62,19 +63,23 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 	'classes' => 'sprintboard-column', 
 	'draggable' => $hasWrite,
 	'localStoryLink' => true,
+	'total' => $milestone['Tasks']['in progress']['points'],
 )) ?>
-<?= $this->element('Task/Board/column', array(
-	'tasks' => $resolved, 
-	'status' => 'resolved', 
-	'title' => __('Resolved'), 
-	'tooltip' => __('Tasks that are finished'), 
-	'span' => $colSpan, 
-	'task_span' => 12, 
-	'classes' => 'sprintboard-column', 
-	'draggable' => $hasWrite,
-	'localStoryLink' => true,
-))?>
+
 <? if ($sourcekettle_config['Features']['4col_kanban_enabled']['value']) {
+	echo $this->element('Task/Board/column', array(
+		'tasks' => $resolved, 
+		'status' => 'resolved', 
+		'title' => __('Resolved'), 
+		'tooltip' => __('Tasks that are finished'), 
+		'span' => $colSpan, 
+		'task_span' => 12, 
+		'classes' => 'sprintboard-column', 
+		'draggable' => $hasWrite,
+		'localStoryLink' => true,
+		'total' => $milestone['Tasks']['resolved']['points'],
+	));
+
 	echo $this->element('Task/Board/column', array(
 		'tasks' => $closed, 
 		'status' => 'closed', 
@@ -85,7 +90,22 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 		'classes' => 'sprintboard-column', 
 		'draggable' => $hasWrite,
 		'localStoryLink' => true,
+		'total' => $milestone['Tasks']['closed']['points'],
 	));
+} else {
+	echo $this->element('Task/Board/column', array(
+		'tasks' => $resolved, 
+		'status' => 'resolved', 
+		'title' => __('Resolved'), 
+		'tooltip' => __('Tasks that are finished'), 
+		'span' => $colSpan, 
+		'task_span' => 12, 
+		'classes' => 'sprintboard-column', 
+		'draggable' => $hasWrite,
+		'localStoryLink' => true,
+		'total' => $milestone['Tasks']['resolved']['points'] + $milestone['Tasks']['closed']['points'],
+	));
+
 } ?>
 
 </div>

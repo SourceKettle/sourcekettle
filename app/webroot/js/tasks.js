@@ -167,7 +167,7 @@ function updateTask(taskLozenge, taskInfo) {
 					prioLabel.attr('title', 'Priority: ' + taskInfo.TaskPriority.name);
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
-					if (currentColumn.attr('data-taskpriority') != taskInfo.TaskPriority.name) {
+					if (currentColumn.attr('data-milestone') != 0 && currentColumn.attr('data-taskpriority') != taskInfo.TaskPriority.name) {
 						toColumn = $('.sprintboard-droplist[data-taskpriority="'+taskInfo.TaskPriority.name+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
@@ -194,7 +194,7 @@ function updateTask(taskLozenge, taskInfo) {
 					taskLozenge.attr('data-taskstatus', taskInfo.TaskStatus.name);
 
 					// If there's a droplist for this status and the lozenge isn't in it, move it into place
-					if (currentColumn.attr('data-taskstatus') != taskInfo.TaskStatus.name) {
+					if (currentColumn.attr('data-milestone') != 0 && currentColumn.attr('data-taskstatus') != taskInfo.TaskStatus.name) {
 						toColumn = $('.sprintboard-droplist[data-taskstatus="'+taskInfo.TaskStatus.name+'"]');
 						if (toColumn.size() == 1) {
 							taskLozenge.appendTo(toColumn);
