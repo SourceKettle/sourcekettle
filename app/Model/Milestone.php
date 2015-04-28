@@ -497,4 +497,31 @@ class Milestone extends AppModel {
 		return $log;
 
 	}
+
+	function storiesForMilestone($milestoneId) {
+	
+		$storyIds = $this->Task->find("list", array(
+			'conditions' => array(
+				'Task.milestone_id' => $milestoneId,
+				'Task.story_id !=' => null,
+			),
+			'fields' => array('Task.story_id'),
+		));
+
+		return $this->Task->Story->find("all", array(
+			'conditions' => array('Story.id' => $storyIds),
+			'order' => array('id'),
+			'contain' => array(
+				'Project' => array(
+					'name',
+				),
+				'Task' => array(
+					'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
+					'TaskStatus' => array('id', 'name'),
+					'TaskType' => array('id', 'name'),
+					'TaskPriority' => array('id', 'name', 'level'),
+				),
+			),
+		));
+	}
 }

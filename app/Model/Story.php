@@ -44,6 +44,13 @@ class Story extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Project' => array(
+			'className' => 'Project',
+			'foreignKey' => 'project_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
 	);
 
@@ -78,5 +85,45 @@ class Story extends AppModel {
 			"AND ".
 				"`{$table_prefix}{$this->table}`.`project_id` = `{$this->alias}`.`project_id`)",
 		);
+	}
+
+	public function afterFind($results, $primary = false) {
+		foreach ($results as $i => $story) {
+			$results[$i] = $this->__parseDescription($story);
+		}
+		return $results;
+	}
+
+	private function __parseDescription($story) {
+		if (isset($story['Story']['description']) && 
+		preg_match("/\s*(?P<asatag>as an?\s+)(?P<asa>.+)(?P<iwanttag>(,|\s)+I(( want)|( would like)|('d like))\s+)(?P<iwant>.+)(?P<sothattag>(,|\s)+so that\s+)(?P<sothat>.+)\s*$/i", $story['Story']['description'], $matches)) {
+			$story['Story']['as-a'] = trim($matches['asa']);
+			$story['Story']['i-want'] = trim($matches['iwant']);
+			$story['Story']['so-that'] = trim($matches['sothat']);
+			$story['Story']['formatted'] = "<strong>".$matches['asatag']."</strong>".$matches['asa']."<strong>".$matches['iwanttag']."</strong>".$matches['iwant']."<strong>".$matches['sothattag']."</strong>".$matches['sothat'];
+		} else {
+			$story['Story']['as-a'] = null;
+			$story['Story']['action'] = null;
+			$story['Story']['reason'] = null;
+		}
+		return $story;
+	}
+
+	public function listStoryOptions() {
+
+		$stories = $this->find('list', array(
+			'conditions' => array(
+				'project_id' => $this->Project->id,
+			),
+			'fields' => array(
+				'Story.public_id',
+				'Story.subject',
+			),
+			'contain' => array(),
+
+		));
+		$stories[0] = __('No assigned story');
+		ksort($stories);
+		return $stories;
 	}
 }

@@ -34,6 +34,7 @@ class TasksController extends AppProjectController {
 		'TaskPriority',
 		'User',
 		'Milestone',
+		'Story',
 		'Collaborator',
 		'Team',
 	);
@@ -611,6 +612,13 @@ class TasksController extends AppProjectController {
 			$selected_milestone_id = 0;
 		}
 
+		// Ditto for user story
+		if (!empty($this->request->query['story'])) {
+			$selected_story_id = preg_replace('/[^\d]/', '', $this->request->query['story']);
+		} else {
+			$selected_story_id = 0;
+		}
+
 		// Pre-selected priority
 		$selectedPriority = 0;
 		if (!empty($this->request->query['priority'])) {
@@ -621,7 +629,7 @@ class TasksController extends AppProjectController {
 
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
-			$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id"));
+			$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.story_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id"));
 			$data['DependsOn'] = @$this->request->data['DependsOn'];
 			$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
 			if (!isset($data['Task'])) {
@@ -635,6 +643,13 @@ class TasksController extends AppProjectController {
 			if (isset($data['Task']['milestone_id']) && $data['Task']['milestone_id'] == 0) {
 				$data['Task']['milestone_id'] = null;
 			}
+
+			if (isset($data['Task']['story_id']) && $data['Task']['story_id'] == 0) {
+				$data['Task']['story_id'] = null;
+			} elseif(isset($data['Task']['story_id'])) {
+				$data['Task']['story_id'] = $this->Story->field('id', array('project_id' => $project['Project']['id'], 'public_id' => $data['Task']['story_id']));
+			}
+
 			if (isset($data['Task']['task_type_id']) && $data['Task']['task_type_id'] == 0) {
 				$data['Task']['task_type_id'] = 3; // TODO configurable default
 			}
@@ -681,9 +696,16 @@ class TasksController extends AppProjectController {
 			} else{
 				$this->request->data['Task']['milestone_id'] = null;
 			}
+
+			if ($selected_story_id) {
+				$this->request->data['Task']['story_id'] = $selected_story_id;
+			} else{
+				$this->request->data['Task']['story_id'] = null;
+			}
 		}
 
 		$milestones = $this->Milestone->listMilestoneOptions();
+		$stories = $this->Story->listStoryOptions();
 
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
@@ -717,7 +739,7 @@ class TasksController extends AppProjectController {
 		$assignees[0] = "None";
 		ksort($assignees);
 
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'assignees'));
+		$this->set(compact('taskPriorities', 'milestones', 'stories', 'availableTasks', 'subTasks', 'parentTasks', 'assignees'));
 	}
 
 /**
@@ -741,6 +763,13 @@ class TasksController extends AppProjectController {
 		$task = $this->Task->open($public_id);
 
 		$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id", "Task.status", "Task.priority", "Task.type"));
+
+		if (isset($data['Task']['story_id']) && $data['Task']['story_id'] == 0) {
+			$data['Task']['story_id'] = null;
+		} elseif(isset($data['Task']['story_id'])) {
+			$data['Task']['story_id'] = $this->Story->field('id', array('project_id' => $project['Project']['id'], 'public_id' => $data['Task']['story_id']));
+		}
+
 		$data['DependsOn'] = @$this->request->data['DependsOn'];
 		$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
 		// Force the project ID to be correct
@@ -781,6 +810,12 @@ class TasksController extends AppProjectController {
 			'controller' => 'users',
 			'action' => 'view',
 			$task['Owner']['id']));
+
+		$task['Story']['uri'] = Router::url(array(
+			'controller' => 'stories',
+			'action' => 'view',
+			'project' => $task['Project']['name'],
+			$task['Story']['public_id']));
 
 		foreach ($task['Time'] as $idx => $time) {
 			$task['Time'][$idx]['uri'] = Router::url(array(

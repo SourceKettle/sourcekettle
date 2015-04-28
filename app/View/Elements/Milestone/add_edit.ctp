@@ -3,6 +3,13 @@
         <?php
         echo $this->Form->create('Milestone', array('class' => 'well form-horizontal'));
 
+	// If we've been given a list of tasks to be added, add hidden fields for them
+	if (isset($this->request->data['Task'])) {
+		foreach ($this->request->data['Task'] as $publicId) {
+			echo $this->Form->hidden("Task", array("name" => "data[Task][]", "value" => $publicId));
+		}
+	}
+
         echo $this->Bootstrap->input("subject", array(
             "input" => $this->Form->text("subject", array("class" => "span12", "placeholder" => __("e.g. Sprint 1"), "autofocus" => "")),
             "label" => __("Short name"),

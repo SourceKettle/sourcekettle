@@ -48,6 +48,7 @@ class ProjectsController extends AppProjectController {
 			'api_history' => 'read',
 			'api_list_collaborators' => 'read',
 			'api_list_milestones' => 'read',
+			'api_list_stories' => 'read',
 			'api_autocomplete' => 'login',
 		);
 	}
@@ -655,6 +656,24 @@ class ProjectsController extends AppProjectController {
 
 		$project = $this->_getProject($project);
 		$this->set('data', $this->Project->listMilestones($project['Project']['id']));
+		$this->render('/Elements/json');
+	}
+
+	public function api_list_stories($project = null) {
+			
+		if (!isset($project)  || !$project) {
+			$this->response->statusCode(400);
+			$data['error'] = 400;
+			$data['message'] = 'Bad request, no project specified.';
+
+			$this->layout = 'ajax';
+			$this->set('data',$data);
+			$this->render('/Elements/json');
+			return;
+		}
+
+		$project = $this->_getProject($project);
+		$this->set('data', $this->Project->listStories($project['Project']['id']));
 		$this->render('/Elements/json');
 	}
 }

@@ -30,6 +30,7 @@ $('.task-view-description').find(':button.edit').bind('click', function() {
 	description.find('.edit-form').show();
 	$(this).hide();
 });
+
 // Task dropdown menus - DIY dropdowns...
 // Why? Because lozenges have overflow:hidden which hides the dropdown
 // menu part of a "normal" bootstrap dropdown, and removing overflow:hidden
@@ -126,6 +127,7 @@ function updateTask(taskLozenge, taskInfo) {
 	var typeLabel = taskLozenge.find(".tasktype");
 	var statusLabel = taskLozenge.find(".taskstatus");
 	var milestoneLabel = taskLozenge.find(".task-dropdown-milestone");
+	var storyLabel = taskLozenge.find(".task-dropdown-story");
 
 	$.ajax(urlBase  + '/' + taskInfo.id, {
 		"data" : taskInfo,
@@ -149,7 +151,7 @@ function updateTask(taskLozenge, taskInfo) {
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
 					typeLabel.addClass('label-' + taskInfo.TaskType.class);
-					typeLabel.attr('title', 'Type: ' + taskInfo.TaskType.name).tooltip();
+					typeLabel.attr('title', 'Type: ' + taskInfo.TaskType.name);
 
 				}
 				// Priority changed, fairly straightforward
@@ -162,7 +164,7 @@ function updateTask(taskLozenge, taskInfo) {
 					} else {
 						prioLabel.html(icon + ' <b class="caret"></b>');
 					}
-					prioLabel.attr('title', 'Priority: ' + taskInfo.TaskPriority.name).tooltip();
+					prioLabel.attr('title', 'Priority: ' + taskInfo.TaskPriority.name);
 
 					// If there's a droplist for this priority and the lozenge isn't in it, move it into place
 					if (currentColumn.attr('data-taskpriority') != taskInfo.TaskPriority.name) {
@@ -188,7 +190,7 @@ function updateTask(taskLozenge, taskInfo) {
 						return (css.match (/\blabel-\S+/g) || []).join(' ');
 					});
 					statusLabel.addClass('label-'+taskInfo.TaskStatus.class);
-					statusLabel.attr('title', 'Status: ' + taskInfo.TaskStatus.label).tooltip();
+					statusLabel.attr('title', 'Status: ' + taskInfo.TaskStatus.label);
 					taskLozenge.attr('data-taskstatus', taskInfo.TaskStatus.name);
 
 					// If there's a droplist for this status and the lozenge isn't in it, move it into place
@@ -221,10 +223,10 @@ function updateTask(taskLozenge, taskInfo) {
 					gravatarImage = $('img', assigneeBox);
 					gravatarImage.attr('src', taskInfo.Assignee.gravatar+'&size='+gravatarImage.attr('width'));
 					if (taskInfo.Assignee.id > 0) {
-						assigneeBox.attr('title', 'Assigned to: '+taskInfo.Assignee.name).tooltip();
+						assigneeBox.attr('title', 'Assigned to: '+taskInfo.Assignee.name);
 						gravatarImage.attr('alt', 'Assigned to: '+taskInfo.Assignee.name);
 					} else {
-						assigneeBox.attr('title', 'Not assigned').tooltip();
+						assigneeBox.attr('title', 'Not assigned');
 						gravatarImage.attr('alt', 'Not assigned');
 					}
 					if (assigneeLabel.hasClass('assignee-full-label')) {
@@ -238,7 +240,7 @@ function updateTask(taskLozenge, taskInfo) {
 					label.empty();
 					if (taskInfo.Milestone.id > 0) {
 						milestoneLink = $(document.createElement('a'));
-						milestoneLink.attr('title',  "Milestone: "+taskInfo.Milestone.subject).tooltip();
+						milestoneLink.attr('title',  "Milestone: "+taskInfo.Milestone.subject);
 						milestoneLink.attr('href', taskInfo.Milestone.uri);
 						milestoneLink.text(taskInfo.Milestone.subject);
 						label.append("Milestone: ");
@@ -246,7 +248,24 @@ function updateTask(taskLozenge, taskInfo) {
 					} else {
 						label.append("No milestone");
 					}
-					milestoneLabel.attr("title", "Milestone: "+taskInfo.Milestone.subject).tooltip();
+					milestoneLabel.attr("title", "Milestone: "+taskInfo.Milestone.subject);
+				}
+
+				// Story changed
+				if (typeof taskInfo.Story.id !== 'undefined' && storyLabel.length > 0) {
+					label = storyLabel.siblings(".story-label");
+					label.empty();
+					if (taskInfo.Story.id > 0) {
+						storyLink = $(document.createElement('a'));
+						storyLink.attr('title',  "Story: "+taskInfo.Story.subject);
+						storyLink.attr('href', taskInfo.Story.uri);
+						storyLink.text(taskInfo.Story.subject);
+						label.append("Story: ");
+						label.append(storyLink);
+					} else {
+						label.append("No story");
+					}
+					storyLabel.attr("title", "Story: "+taskInfo.Story.subject);
 				}
 
 			} else {
@@ -318,7 +337,8 @@ function initTaskDroplists() {
 			var toStatus	= $(this).attr('data-taskstatus');
 			//var fromStatus  = $(ui.sender).attr('data-taskstatus');
 			var toPrio	  = $(this).attr('data-taskpriority');
-			var toMilestone = $(this).attr('data-milestone');
+			var toMilestone   = $(this).attr('data-milestone');
+			var toStory       = $(this).attr('data-story');
 
 			var taskInfo = {'Task' : {}};
 
@@ -332,6 +352,10 @@ function initTaskDroplists() {
 
 			if(typeof toMilestone != 'undefined'){
 				taskInfo.Task.milestone_id = toMilestone;
+			}
+
+			if(typeof toStory != 'undefined'){
+				taskInfo.Task.story_id = toStory;
 			}
 
 			updateTask(taskLozenge, taskInfo);

@@ -75,9 +75,10 @@ form {
   padding: 0px;
   float: left;
   margin: 0px;
+  margin-bottom: 5px;
   width: 100%;
   min-height: 20px;
-  max-height: 400px;
+  max-height: 420px;
   overflow-x: hidden;
   overflow-y: auto;
   border-radius: 5px 5px 5px 5px;
@@ -391,4 +392,23 @@ form {
 
 .nav-pills {
 	margin: 0px;
+}
+
+.task-minilozenge .task > .well {
+	padding:3px 5px;
+
+	/* Fix the height so lozenges aren't irregular */
+	height: 1.5em;
+
+	/* Anything that doesn't fit in the lozenge, just hide it... */
+	overflow: hidden;
+	background: #d3d3d3; /* TODO: doesn't work properly with Bootswatch themes */
+
+	-webkit-border-radius:4px 0 0 4px;
+	-moz-border-radius:4px 0 0 4px;
+	border-radius:14px;
+	margin-bottom: 7px;
+
+}
+	
 }

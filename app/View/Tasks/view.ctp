@@ -42,7 +42,8 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 		<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
 		</span>
 
-		<p class="task-milestone"><small class="milestone-label">
+		<p>
+		<span class="task-milestone"><small class="milestone-label">
 		<?=isset($task['Milestone']['subject'])? __("Milestone: %s", $this->Html->link(
 			$task['Milestone']['subject'], array(
 				'controller' => 'milestones',
@@ -52,6 +53,19 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 		))): __("No milestone")?>
 		</small>
 			<?= $this->Task->milestoneDropdownButton($task, 23, true, true)?>
+		</span>
+
+		<span class="task-story"><small class="story-label">
+		<?=isset($task['Story']['subject'])? __("Story: %s", $this->Html->link(
+			$task['Story']['subject'], array(
+				'controller' => 'stories',
+				'project' => $task['Project']['name'],
+				'action' => 'view',
+				$task['Story']['public_id']
+		))): __("No story")?>
+		</small>
+			<?= $this->Task->storyDropdownButton($task, 23, true, true)?>
+		</span>
 		</p>
 
 	</h3>

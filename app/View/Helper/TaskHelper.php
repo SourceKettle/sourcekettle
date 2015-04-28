@@ -208,6 +208,59 @@ class TaskHelper extends AppHelper {
 		return $button;
 	}
 
+	public function storyLabel($task, $localLink = false) {
+		// Page-local link - just an anchor to the story within the page
+		if ($localLink) {
+			$link = $this->Html->link($this->Bootstrap->icon("book", "white"), "#story_".$task['Story']['public_id'], array('escape' => false));
+		// Full link to story's own page
+		} else {
+			$link = $this->Html->link($this->Bootstrap->icon("book", "white"), array(
+				'controller' => 'stories',
+				'action' => 'view',
+				'project' => $task['Project']['name'],
+				$task['Story']['public_id'],
+			), array('escape' => false));
+		}
+
+		$label = "";
+		if (isset($task['Story']['id'])){
+			$label = "<span class='label' title='".__('Story: %s', $task['Story']['subject'])."'>$link</span>";
+		}
+		return $label;
+	}
+
+	public function storyDropdownMenu() {
+		return '<ul class="dropdown-menu task-dropdown-menu" id="task_story_dropdown"></ul>';
+	}
+
+	public function storyDropdownButton($task, $size = 90, $hasWrite = true) {
+		$icon = '<i class="icon-book icon-white"></i>';
+		$label = ' <span class="story-label">';
+		if($task['Task']['story_id'] != 0){
+			$tooltip = __("Story: %s", h($task['Story']['subject']));
+			$label .= $this->Html->link($task['Story']['subject'], array(
+				'controller' => 'stories',
+				'action' => 'view',
+				'project' => $task['Project']['name'],
+				$task['Story']['id']
+			));
+
+		} else {
+			$tooltip = __("No story");
+			$label .= __("No story");
+		}
+		$label .= "</span>";
+
+		$apiUrl = $this->Html->url(array('controller' => 'projects', 'action' => 'list_stories', 'api' => true, 'project' => $task['Project']['name']));
+		if ($hasWrite) {
+			$button = '<button class="label task-dropdown task-dropdown-story" title="'.h($tooltip).'" data-type="story" data-api-url="'.$apiUrl.'" data-change="story_id" data-toggle="task_story_dropdown" data-source="'.$apiUrl.'">'.$icon.' <b class="caret"></b></button>';
+		} else {
+			$button = "$icon$label";
+		}
+
+		return $button;
+	}
+
 	public function storyPointsControl($task, $full = false) {
 		if (is_numeric($task)) {
 			$points = $task ?: 0;
@@ -315,6 +368,7 @@ class TaskHelper extends AppHelper {
 			$this->statusDropdownMenu() .
 			$this->priorityDropdownMenu() .
 			$this->assigneeDropdownMenu() .
+			$this->storyDropdownMenu() .
 			$this->milestoneDropdownMenu();
 	}
 }

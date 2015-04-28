@@ -1,11 +1,12 @@
 <?php
 App::uses('StoriesController', 'Controller');
+require_once(__DIR__ . DS . 'AppControllerTest.php');
 
 /**
  * StoriesController Test Case
  *
  */
-class StoriesControllerTest extends ControllerTestCase {
+class StoriesControllerTest extends AppControllerTest {
 
 /**
  * Fixtures
@@ -13,46 +14,138 @@ class StoriesControllerTest extends ControllerTestCase {
  * @var array
  */
 	public $fixtures = array(
+		'core.cake_session',
 		'app.story',
-		'app.user',
-		'app.collaborator',
+		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
 		'app.project',
+		'app.project_history',
 		'app.repo_type',
+		'app.collaborator',
+		'app.user',
 		'app.task',
 		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
 		'app.task_status',
 		'app.task_priority',
-		'app.milestone',
-		'app.milestone_burndown_log',
-		'app.task_comment',
 		'app.time',
-		'app.task_dependency',
-		'app.source',
-		'app.blob',
-		'app.commit',
-		'app.project_history',
 		'app.attachment',
-		'app.project_burndown_log',
-		'app.project_setting',
-		'app.collaborating_team',
-		'app.team',
-		'app.group_collaborating_team',
-		'app.project_group',
-		'app.project_groups_project',
-		'app.teams_user',
+		'app.source',
+		'app.milestone',
 		'app.email_confirmation_key',
 		'app.ssh_key',
 		'app.api_key',
-		'app.lost_password_key'
+		'app.lost_password_key',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
+
+	public function setUp() {
+		parent::setUp("Stories");
+	}
 
 /**
  * testIndex method
  *
  * @return void
  */
-	public function testIndex() {
-		$this->markTestIncomplete('testIndex not implemented.');
+	public function testIndexFeatureDisabledOnSystem() {
+
+		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('story_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/stories', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testIndexFeatureDisabledOnProject() {
+
+		ClassRegistry::init("ProjectSetting")->saveSettingsTree('private', array('ProjectSetting' => array('Features' => array('story_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/stories', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testIndexTasksDisabledOnSystem() {
+
+		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('task_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/stories', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testIndexTasksDisabledOnProject() {
+
+		ClassRegistry::init("ProjectSetting")->saveSettingsTree('private', array('ProjectSetting' => array('Features' => array('task_enabled' => false))));
+
+		// Cannot see the page when not logged in
+		try{
+			$this->testAction('/project/private/stories', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testIndexNotLoggedIn() {
+
+		// Cannot see the page when not logged in
+		$this->testAction('/project/private/stories', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testIndexInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/private/stories', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testIndexInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/private/stories', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
 	}
 
 /**
