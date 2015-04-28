@@ -39,18 +39,22 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 <div class="row-fluid">
 
 <?= $this->element('Task/Board/column',
-	array('tasks' => $open, 'status' => 'open', 'title' => __('Open'), 'tooltip' => __('Tasks that are not complete'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite, 'milestoneID' => $milestone['Milestone']['id'], 'addLink' => false)
+	array('tasks' => $open, 'status' => 'open', 'title' => __('Open'), 'tooltip' => __('Tasks that are not complete'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite, 'milestoneID' => $milestone['Milestone']['id'], 'addLink' => false, 'total' => $milestone['Tasks']['open']['points'])
 ) ?>
 
 <?= $this->element('Task/Board/column',
-	array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'tooltip' => __('Tasks the team are working on'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite)
-) ?>
-<?= $this->element('Task/Board/column',
-	array('tasks' => $resolved, 'status' => 'resolved', 'title' => __('Resolved'), 'tooltip' => __('Tasks that are finished'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite)
+	array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'tooltip' => __('Tasks the team are working on'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite, 'total' => $milestone['Tasks']['in progress']['points'])
 ) ?>
 <? if ($sourcekettle_config['Features']['4col_kanban_enabled']['value']) {
+	echo $this->element('Task/Board/column',
+		array('tasks' => $resolved, 'status' => 'resolved', 'title' => __('Resolved'), 'tooltip' => __('Tasks that are finished'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite, 'total' => $milestone['Tasks']['resolved']['points'])
+	);
 	echo $this->element('Task/Board/column', array(
-		'tasks' => $closed, 'status' => 'closed', 'title' => __('Closed'), 'tooltip' => __('Tasks that have been tested and signed off'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite)
+		'tasks' => $closed, 'status' => 'closed', 'title' => __('Closed'), 'tooltip' => __('Tasks that have been tested and signed off'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite, 'total' => $milestone['Tasks']['closed']['points'])
+	);
+} else {
+	echo $this->element('Task/Board/column',
+		array('tasks' => $resolved, 'status' => 'resolved', 'title' => __('Resolved'), 'tooltip' => __('Tasks that are finished'), 'span' => $colSpan, 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => $hasWrite, 'total' => $milestone['Tasks']['resolved']['points'] + $milestone['Tasks']['closed']['points'])
 	);
 } ?>
 
