@@ -114,6 +114,7 @@ class TasksControllerTest extends AppControllerTest {
 	private function __checkTaskList($tasks, $expectedTasks) {
 		$this->assertTrue(is_array($tasks));
 		$task_ids = array_map(function($a){return $a['Task']['id'];},$tasks);
+		sort($task_ids);
 		$this->assertEquals($expectedTasks, $task_ids, "Incorrect task list returned");
 	}
 
