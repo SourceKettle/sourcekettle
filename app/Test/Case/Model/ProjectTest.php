@@ -417,7 +417,8 @@ class ProjectTestCase extends CakeTestCase {
 		$this->Project->read();
 		$backlog = $this->Project->getProjectBacklog();
 		$backlog = array_map(function($a){return $a['Task']['id'];}, $backlog);
-		$this->assertEquals(array(14, 15, 3, 13, 16, 17, 20), $backlog);
+		sort($backlog);
+		$this->assertEquals(array(3, 13, 14, 15, 16, 17, 20), $backlog);
 	}
 
 	public function testFetchEventsForProject() {

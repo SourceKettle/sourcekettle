@@ -1,3 +1,4 @@
+
 SourceKettle is a multi-user project management and source code management tool.
 
 The feature list includes:
@@ -14,3 +15,5 @@ The feature list includes:
 * Configurable options and themes
 * and more...
 
+
+[![Build Status](https://travis-ci.org/SourceKettle/sourcekettle.svg?branch=master)](https://travis-ci.org/SourceKettle/sourcekettle)

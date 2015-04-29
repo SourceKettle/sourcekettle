@@ -704,6 +704,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		$projects = array_map(function($a){return array('id' => $a['Project']['id'], 'repo_type' => $a['RepoType']['name']);}, $this->vars['projects']);
 
+		usort($projects, function($a, $b) {if ($a['id'] == $b['id']) {return 0;} return ($a['id'] < $b['id'] ? -1: 1);});
+
 		$this->assertEquals(array(
 			array('id' => 1, 'repo_type' => 'Git'),
 			array('id' => 2, 'repo_type' => 'None'),
