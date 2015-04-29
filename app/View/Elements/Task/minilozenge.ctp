@@ -27,11 +27,19 @@ if(isset($span) && $span){
 	$span="";
 }
 
+$localTaskLink = isset($localTaskLink) ?: false;
+
 if (!isset($checkbox)) {
 	$checkbox = false;
 }
 $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
-$url = $this->Html->url(array('controller' => 'tasks', 'action' => 'view', 'project' => $task['Project']['name'], $task['Task']['public_id']));
+
+if ($localTaskLink) {
+	$url = $this->Html->url(array('controller' => 'tasks', 'action' => 'view', 'project' => $task['Project']['name'], $task['Task']['public_id']));
+} else {
+	$url = "#task_".$task['Task']['public_id'];
+}
+
 if ($draggable) {
 	$span="draggable$span";
 }

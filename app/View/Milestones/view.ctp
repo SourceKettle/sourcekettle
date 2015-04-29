@@ -135,6 +135,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 		<?= $this->element('Story/block', array(
 			'story' => $story,
 			'includeTasks' => true,
+			'localTaskLink' => true,
 		)) ?>
 		</div>
 	<? } ?>

@@ -47,6 +47,7 @@ $pointsComplete = array_sum(array_map(function($a){
 		return $a['story_points'];
 	}
 }, $story['Task']));
+$localTaskLink = isset($localTaskLink) ?: false;
 ?>
 
 <div class="story-block well">
@@ -77,7 +78,7 @@ $pointsComplete = array_sum(array_map(function($a){
 	<div class="row-fluid">
 	<ul class="sprintboard-droplist span12">
 		<? foreach($story['Task'] as $task) {?>
-			<?=$this->element('Task/minilozenge', array('task' => array('Task' => $task, 'Project' => $project['Project']), 'span' => 3))?>
+			<?=$this->element('Task/minilozenge', array('task' => array('Task' => $task, 'Project' => $project['Project']), 'span' => 3, $localTaskLink))?>
 		<? } ?>
 	</ul>
 	</div>
