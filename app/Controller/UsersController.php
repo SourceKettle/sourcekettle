@@ -397,8 +397,8 @@ class UsersController extends AppController {
 		}
 
 		// Find the users public projects or public projects they are working on
-		$this->User->Collaborator->contain();
-		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
+		$this->User->Collaborator->contain('Project');
+		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'Project.public' => true))));
 		$this->set('user', $this->User->read(null, $id));
 		
 		$you	= $current_user['id'];

@@ -197,7 +197,7 @@ class ProjectsController extends AppProjectController {
 				$this->Flash->error('The specified Project does not exist. Please try again.');
 			}
 		}
-		$this->Project->contain();
+		$this->Project->contain('RepoType');
 		$this->set('projects', $this->paginate());
 	}
 
