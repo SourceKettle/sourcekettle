@@ -322,7 +322,6 @@ class Task extends AppModel {
 		$task = $this->find('first', array(
 			'conditions' => array('Task.id' => $this->id),
 			'fields' => array('Task.project_id', 'Task.milestone_id'),
-			//'recursive' => -1,
 		));
 
 		// Creating the task...
@@ -489,8 +488,8 @@ class Task extends AppModel {
 					'Task.project_id' => $this->Project->id,
 					'Task.assignee_id' => $userId,
 				),
+				'contain' => array('TaskStatus'),
 				'fields' => array('Task.public_id', 'Task.subject'),
-				'recursive' => 1,
 			)
 		);
 
@@ -502,8 +501,8 @@ class Task extends AppModel {
 					'Task.project_id' => $this->Project->id,
 					'Task.assignee_id !=' => $userId,
 				),
+				'contain' => array('TaskStatus'),
 				'fields' => array('Task.public_id', 'Task.subject'),
-				'recursive' => 1,
 			)
 		);
 

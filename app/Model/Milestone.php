@@ -161,7 +161,7 @@ class Milestone extends AppModel {
 				'milestone_id' => $this->id,
 				'TaskStatus.name =' => array('open', 'in progress')
 			),
-			'recursive' => 1,
+			'contain' => array('TaskStatus'),
 		));
 
 		foreach ($tasks as $task) {
@@ -213,7 +213,7 @@ class Milestone extends AppModel {
 					'milestone_id =' => $id
 				),
 				'group' => 'TaskStatus.name',
-				'recursive' => 0,
+				'contain' => array('TaskStatus'),
 			)
 		);
 
@@ -257,7 +257,7 @@ class Milestone extends AppModel {
 				'Milestone.starts',
 				'Milestone.due',
 			),
-			'recursive' => 0,
+			'contain' => false,
 		));
 
 		foreach ($milestones as $id => $milestone) {
@@ -316,7 +316,7 @@ class Milestone extends AppModel {
 					'Milestone.id',
 					'Milestone.subject',
 				),
-				'recursive' => 0,
+				'contain' => false,
 			)),
 
 			__('Closed') => $this->find('list', array(
@@ -328,7 +328,7 @@ class Milestone extends AppModel {
 					'Milestone.id',
 					'Milestone.subject',
 				),
-				'recursive' => 0,
+				'contain' => false,
 			)),
 		);
 		return $milestones;
@@ -351,9 +351,8 @@ class Milestone extends AppModel {
 			return false;
 		}
 
-		// Retrieve Milestone; recurse to 2 models so we get TaskStatuses
-		// so we can check the status by name
-		$this->recursive = 2;
+		// Make sure we pull in the TaskStatus so we can check by name instead of status ID
+		$this->contain(array('Task.TaskStatus'));
 		$milestone = $this->open($id);
 
 		// Now update all related tasks to attach them to the new milestone (or no milestone)
@@ -403,7 +402,7 @@ class Milestone extends AppModel {
 				'closed_points_count',
 			),
 			'order' => array('timestamp'),
-			'recursive' => -1,
+			'contain' => false,
 		));
 
 		foreach ($entries as $entry) {
@@ -442,7 +441,7 @@ class Milestone extends AppModel {
 				'closed_points_count',
 			),
 			'order' => array('timestamp DESC'),
-			'recursive' => -1,
+			'contain' => false,
 		));
 
 		if (!empty($startingLog)) {

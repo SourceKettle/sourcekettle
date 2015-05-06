@@ -44,7 +44,7 @@ class ProjectBurndownLog extends AppModel {
 		$lastLog = $this->find('first', array(
 			'conditions' => array('project_id' => $this->data['ProjectBurndownLog']['project_id']),
 			'order' => array('timestamp DESC'),
-			'recursive' => -1,
+			'contain' => false,
 			'fields' => $fields,
 		));
 

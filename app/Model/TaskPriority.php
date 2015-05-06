@@ -45,7 +45,7 @@ class TaskPriority extends AppModel {
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 
-		$ts = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'level', 'icon', 'class')));
+		$ts = $this->find('all', array('contain' => false, 'fields' => array('id', 'name', 'label', 'level', 'icon', 'class')));
 		foreach ($ts as $s) {
 			$this->__byId[ $s['TaskPriority']['id'] ] = $s['TaskPriority'];
 			$this->__byName[ $s['TaskPriority']['name'] ] = $s['TaskPriority'];

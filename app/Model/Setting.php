@@ -284,8 +284,9 @@ class Setting extends AppModel {
 				'conditions' => array(
 					'OR' => array('name' => $project, 'id' => $project),
 				),
-				'recursive' => -1,
+				'contain' => false,
 			));
+
 			if (empty($project)) {
 				return $settings;
 			}
