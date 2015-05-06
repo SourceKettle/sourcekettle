@@ -261,7 +261,7 @@ class AppController extends Controller {
 
 		// Set config and version
 		$this->set('sourcekettle_config', $this->sourcekettle_config);
-		$this->set('sourcekettleVersion', 'v1.6.3');
+		$this->set('sourcekettleVersion', 'v1.6.4');
 
 
 	}
