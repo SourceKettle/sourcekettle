@@ -125,7 +125,7 @@ class CollaboratorsController extends AppProjectController {
 		}
 
 		// Check for existant user
-		$this->Collaborator->User->recursive = -1;
+		$this->Collaborator->User->contain();
 
 		// Redirect if they supplied no data
 		if (empty($this->data) || !isset($this->request->data['Collaborator'])) {
@@ -182,7 +182,7 @@ class CollaboratorsController extends AppProjectController {
 		}
 
 		// Check for existant team
-		$this->CollaboratingTeam->recursive = -1;
+		$this->CollaboratingTeam->contain();
 
 		// Redirect if they supplied no data
 		if (empty($this->data) || !isset($this->request->data['Collaborator'])) {

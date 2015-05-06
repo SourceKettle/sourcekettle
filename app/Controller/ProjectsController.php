@@ -197,7 +197,7 @@ class ProjectsController extends AppProjectController {
 				$this->Flash->error('The specified Project does not exist. Please try again.');
 			}
 		}
-		$this->Project->recursive = 0;
+		$this->Project->contain();
 		$this->set('projects', $this->paginate());
 	}
 
@@ -508,7 +508,7 @@ class ProjectsController extends AppProjectController {
 			'order' => array(
 				'Milestone.starts',
 			),
-			'recursive' => -1,
+			'contain' => false,
 		));
 
 		$this->set(compact('project', 'milestones'));

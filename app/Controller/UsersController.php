@@ -302,7 +302,7 @@ class UsersController extends AppController {
 				
 			}
 		}
-		$this->User->recursive = 0;
+		$this->User->contain();
 		$this->set('users', $this->paginate());
 	}
 
@@ -397,7 +397,7 @@ class UsersController extends AppController {
 		}
 
 		// Find the users public projects or public projects they are working on
-		$this->User->Collaborator->Project->Collaborator->recursive = 0;
+		$this->User->Collaborator->contain();
 		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
 		$this->set('user', $this->User->read(null, $id));
 		
@@ -896,7 +896,7 @@ class UsersController extends AppController {
 	public function api_autocomplete() {
 		$this->layout = 'ajax';
 
-		$this->User->recursive = -1;
+		$this->User->contain();
 		$data = array('users' => array());
 
 		if (isset($this->request->query['query'])

@@ -45,7 +45,7 @@ class ProjectGroupsController extends AppController {
 	public function admin_index() {
 		$this->set('pageTitle', __('Administration'));
 		$this->set('subTitle', __('project groups'));
-		$this->ProjectGroup->recursive = 0;
+		$this->ProjectGroup->contain();
 		$this->set('projectGroups', $this->paginate());
 	}
 
@@ -211,7 +211,7 @@ class ProjectGroupsController extends AppController {
 	public function api_autocomplete() {
 		$this->layout = 'ajax';
 
-		$this->User->recursive = -1;
+		$this->User->contain();
 		$data = array('projectGroups' => array());
 
 		if (isset($this->request->query['query'])

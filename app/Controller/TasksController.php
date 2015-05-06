@@ -380,7 +380,7 @@ class TasksController extends AppProjectController {
 
 		// Fetch any additional users that may be needed
 		$changeUsers = array(0 => array('(Not assigned)', null));
-		$this->Task->Assignee->recursive = -1;
+		$this->Task->Assignee->contain();
 		foreach ($changes as $change) {
 			if ($change['ProjectHistory']['row_field'] == 'assignee_id') {
 				$_old = $change['ProjectHistory']['row_field_old'];
@@ -440,7 +440,7 @@ class TasksController extends AppProjectController {
 		$backlog = $this->Task->find('all', array(
 			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
 			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
-			'recursive' => -1,
+			'contain' => false,
 		));
 		$availableTasks = array();
 		foreach ($backlog as $t) {
@@ -727,7 +727,7 @@ class TasksController extends AppProjectController {
 		$backlog = $this->Task->find('all', array(
 			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
 			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
-			'recursive' => -1,
+			'contain' => false,
 		));
 		$availableTasks = array();
 		foreach ($backlog as $t) {
