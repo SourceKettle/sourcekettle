@@ -198,8 +198,9 @@ class HistoryHelper extends AppHelper {
 					break;
 
 				} elseif ($field == 'milestone_id') {
-					$oldMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $old), 'recursive' => -1));
-					$newMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $new), 'recursive' => -1));
+					$oldMilestone = $milestone->find('first', array('contain' => false, 'fields' => array('subject'), 'conditions' => array('Milestone.id' => $old)));
+					$newMilestone = $milestone->find('first', array('contain' => false, 'fields' => array('subject'), 'conditions' => array('Milestone.id' => $new)));
+
 					if (empty($oldMilestone) && empty($newMilestone)) {
 						$log_string = __("%s changed the milestone ID from %d to %d - no milestone info is available, one or both may have been deleted since then",
 							$actioner, $old, $new);
@@ -241,8 +242,9 @@ class HistoryHelper extends AppHelper {
 					break;
 					
 				} elseif ($field == 'story_id') {
-					$oldStory = $story->find('first', array('fields' => array('subject', 'public_id'), 'conditions' => array('Story.id' => $old), 'recursive' => -1));
-					$newStory = $story->find('first', array('fields' => array('subject', 'public_id'), 'conditions' => array('Story.id' => $new), 'recursive' => -1));
+					$oldStory = $story->find('first', array('contain' => false, 'fields' => array('subject', 'public_id'), 'conditions' => array('Story.id' => $old)));
+					$newStory = $story->find('first', array('contain' => false, 'fields' => array('subject', 'public_id'), 'conditions' => array('Story.id' => $new)));
+
 					if (empty($oldStory) && empty($newStory)) {
 						$log_string = __("%s changed the story ID from %d to %d - no story info is available, one or both may have been deleted since then",
 							$actioner, $old, $new);
