@@ -138,6 +138,9 @@ class SourceController extends AppProjectController {
 		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project, $hash);
 
+		if ($hash == null) {
+			return $this->redirect(array('action' => 'commits', 'project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+		}
 		$commit = $this->Source->Commit->fetch($hash);
 
 		$maxDiffSize = 20;

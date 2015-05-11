@@ -35,7 +35,7 @@ foreach (explode('/',$path) as $crumb) {
 <div class="row-fluid">
 
 <?// TODO This is a quick and dirty git-specific hack, should really have a way to specify a git or svn URL ?>
-	<code><?=__("Checkout URI")?>: <?= $sourcekettle_config['SourceRepository']['user']['value'] ?>@<?= gethostname() ?>:projects/<?= h($project['Project']['name']) ?>.git</code>
+	<code><?=__("Checkout URI")?>: <?= $sourcekettle_config['SourceRepository']['user']['value'] ?>@<?= h($_SERVER['HTTP_HOST']) ?>:projects/<?= h($project['Project']['name']) ?>.git</code>
 </div>
 
 <div class="row-fluid">
