@@ -442,6 +442,23 @@ class ProjectTestCase extends CakeTestCase {
 			array(
 				'Type' => 'Source',
 				'project_id' => '1',
+				'actioner_id' => '-1',
+				'subject_id' => '0b20ced61a6edb811ddbe3c502b931b0450f3a61',
+				'subject_title' => 'make a change on the new thing branch',
+				'change_field' => '+',
+				'change_field_old' => null,
+				'change_field_new' => null,
+				'url' => array(
+					'api' => false,
+					'project' => 'private',
+					'controller' => 'source',
+					'action' => 'commit',
+					0 => '0b20ced61a6edb811ddbe3c502b931b0450f3a61'
+				)
+			),
+			array(
+				'Type' => 'Source',
+				'project_id' => '1',
 				'actioner_id' => '2',
 				'subject_id' => '2325c49ec93a7164bbcbd4a3c0594170d4d9e121',
 				'subject_title' => 'stop overengineering',
@@ -545,23 +562,6 @@ class ProjectTestCase extends CakeTestCase {
 				'change_field_old' => '',
 				'change_field_new' => '',
 				'url' => null,
-			),
-			array(
-				'Type' => 'Collaborator',
-				'project_id' => '1',
-				'actioner_id' => '1',
-				'subject_id' => '2',
-				'subject_title' => 'Mr Admin',
-				'change_field' => 'access_level',
-				'change_field_old' => '1',
-				'change_field_new' => '2',
-				'url' => array(
-					'api' => false,
-					'admin' => false,
-					'controller' => 'users',
-					'action' => 'view',
-					0 => '5'
-				)
 			),
 		), $events);
 

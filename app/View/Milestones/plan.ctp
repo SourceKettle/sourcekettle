@@ -28,7 +28,6 @@ $this->Html->css("milestones.index", array ('inline' => false));
 	array(
 		'tasks' => $wontHave,
 		'milestoneID' => 0,
-		'status' => 'dropped',
 		'title' => __('Backlog - tasks not in this milestone'),
 		'tooltip' => __('These tasks are not attached to a milestone, so we have not planned to do them'),
 		'span' => '12',

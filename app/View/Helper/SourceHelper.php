@@ -113,4 +113,29 @@ class SourceHelper extends AppHelper {
 
 		return $linked;
 	}
+
+	public function scmUri($project, $protocol = 'ssh') {
+
+		// Usually use $_SERVER but if unavailable (e.g. command line testing) then call gethostname() instead (may not give the same answer!)
+		if (isset($_SERVER['HTTP_HOST'])) {
+			$hostname = $_SERVER['HTTP_HOST'];
+		} else {
+			$hostname = gethostname();
+		}
+
+		$sourcekettle_config = $this->_View->viewVars['sourcekettle_config'];
+
+		// TODO hard-coded git type
+		if ($project['Project']['repo_type'] == 2) {
+			if ($protocol == 'http' || $protocol == 'https') {
+				$uri = "$protocol://" . h($hostname) . '/projects/' . h($project['Project']['name']) . '.git';
+			} else {
+				$uri = $sourcekettle_config['SourceRepository']['user']['value'] . '@' . h($hostname) . ':projects/' . h($project['Project']['name']) . '.git';
+			}
+		} else {
+			$uri = "(unsupported)";
+		}
+
+		return $uri;
+	}
 }
