@@ -178,8 +178,8 @@ class Source extends AppModel {
 		$branches = $this->getBranches();
 		$project = $this->Project->getProject($project);
 		if (!empty ($branches)) {
+			// TODO we are getting history from ALL branches, which gives us duplicates...
 			foreach ($branches as $branch) {
-
 				foreach ($this->Commit->history($branch, $number, $offset, '') as $a => $commit) {
 					// No more events are available, we've gone past the end...
 					if (!isset($commit) || !$commit) {

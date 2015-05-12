@@ -31,7 +31,7 @@ $public_key = $this->Popover->popover(
 		<h3><?= $this->Bootstrap->label('1', 'info', array('style'=>'font-size:18px')) ?> Getting started:</h3>
 		<p><?= $this->Bootstrap->label('Whoa there!', 'important') ?> Have you <?=$this->Html->link('uploaded',array('controller'=>'sshKeys','action'=>'add'))?> your <?=$public_key?>? Step 1 wont work if you haven't!</p>
 
-		<pre>svn checkout svn+ssh://<?= $sourcekettle_config['SourceRepository']['user']['value'] ?>@<?= gethostname() ?>:projects/<?= h($project['Project']['name']) ?>.svn</pre>
+		<pre>svn checkout svn+ssh://<?= $sourcekettle_config['SourceRepository']['user']['value'] ?>@<?= h($_SERVER['HTTP_HOST']) ?>:projects/<?= h($project['Project']['name']) ?>.svn</pre>
 
 	</div>
 

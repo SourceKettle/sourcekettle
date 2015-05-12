@@ -331,12 +331,20 @@ class TasksControllerTest extends AppControllerTest {
 		$postData['Task']['id'] = $this->controller->Task->getLastInsertId();
 		$postData['Task']['deleted_date'] = null;
 		$postData['Task']['deleted'] = 0;
+
 		$task = $this->controller->Task->findById($this->controller->Task->getLastInsertId());
+
+		// Check that the new task appears on the list of available subtasks for the next 'add' operation
+		$this->assertContains('#'.$task['Task']['public_id'].' new task for public project', $this->vars['availableTasks']);
+
 		unset($task['Task']['modified']);
 		unset($task['Task']['created']);
 		unset($task['Task']['public_id']);
 		unset($task['Task']['dependenciesComplete']);
+
+		// Check that the right data ended up in the database
 		$this->assertEquals($postData['Task'], $task['Task']);
+
 	}
 
 	public function testAddTaskWithDependencies() {
