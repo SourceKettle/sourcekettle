@@ -401,7 +401,6 @@ class SourceTest extends CakeTestCase {
 			'848f3fe7032a76b180e9831d53e4152fd4da85d9',
 			'848f3fe7032a76b180e9831d53e4152fd4da85d9',
 		), $history);
->>>>>>> hotfix/1.6.4-bugs
 	}
 
 	public function testCreateRepository() {
