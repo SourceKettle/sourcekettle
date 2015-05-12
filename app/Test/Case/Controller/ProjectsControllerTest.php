@@ -925,6 +925,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 		$events = $this->__crunchHistory($this->vars['events']);
 		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => -1, 'subject' => 'make a change on the new thing branch', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
@@ -938,8 +939,8 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 		$events = $this->__crunchHistory($this->vars['events']);
 		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => -1, 'subject' => 'make a change on the new thing branch', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
-			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
 		), $events);
 	}
 
@@ -949,6 +950,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 		$events = $this->__crunchHistory($this->vars['events']);
 		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => -1, 'subject' => 'make a change on the new thing branch', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
@@ -962,6 +964,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 		$events = $this->__crunchHistory($this->vars['events']);
 		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => -1, 'subject' => 'make a change on the new thing branch', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
@@ -975,6 +978,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 		$events = $this->__crunchHistory($this->vars['events']);
 		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => -1, 'subject' => 'make a change on the new thing branch', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),
@@ -988,6 +992,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 		$events = $this->__crunchHistory($this->vars['events']);
 		$this->assertEqual(array(
+			array('project' => 12, 'actioner' => -1, 'subject' => 'make a change on the new thing branch', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 2, 'subject' => 'stop overengineering', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'third checkin ermagerd', 'field' => '+', 'old' => null, 'new' => null),
 			array('project' => 12, 'actioner' => 1, 'subject' => 'second checkin', 'field' => '+', 'old' => null, 'new' => null),

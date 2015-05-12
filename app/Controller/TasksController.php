@@ -703,7 +703,7 @@ class TasksController extends AppProjectController {
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
 		$backlog = $this->Task->find('all', array(
-			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
+			'conditions' => array('project_id' => $project['Project']['id']),
 			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
 			'recursive' => -1,
 		));

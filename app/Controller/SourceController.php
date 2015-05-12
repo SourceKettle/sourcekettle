@@ -28,7 +28,6 @@ class SourceController extends AppProjectController {
 	// Which actions need which authorization levels (read-access, write-access, admin-access)
 	protected function _getAuthorizationMapping() {
 		return array(
-			'ajax_diff'  => 'read',
 			'commit'  => 'read',
 			'commits'  => 'read',
 			'gettingStarted'  => 'read',
@@ -90,40 +89,6 @@ class SourceController extends AppProjectController {
 		return $project;
 	}
 
-/**
- * ajax_diff function.
- *
- * @access public
- * @param mixed $project (default: null)
- * @throws NotFoundException
- * @return void
- */
-	public function ajax_diff($project = null) {
-		$this->layout = 'ajax';
-
-		if ($project == null && isset($this->request->params['named'])) {
-			$project = $this->request->params['named'];
-		}
-		$project = $this->__initialiseResources($project);
-
-		if (!isset($this->request->data['file']) || !isset($this->request->data['parent']) || !isset($this->request->data['hash'])) {
-			throw new NotFoundException(__('Invalid Parameters'));
-		}
-
-		$hash	= $this->request->data['hash'];
-		$parent = $this->request->data['parent'];
-		$file	= $this->request->data['file'];
-
-		if (($parent != '' && !$this->Source->Commit->exists($parent)) || !$this->Source->Commit->exists($hash)) {
-			throw new NotFoundException(__('Invalid HashRefs'));
-		}
-
-		$this->set('file', $file);
-		$this->set('commit', array('hash' => $hash));
-		$this->set('diff', $this->Source->Commit->diff($hash, $parent, $file));
-
-		$this->render('/Elements/Source/commit_changeset_item');
-	}
 
 /**
  * commit function.
@@ -138,6 +103,9 @@ class SourceController extends AppProjectController {
 		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project, $hash);
 
+		if ($hash == null) {
+			return $this->redirect(array('action' => 'commits', 'project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+		}
 		$commit = $this->Source->Commit->fetch($hash);
 
 		$maxDiffSize = 20;

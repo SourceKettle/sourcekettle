@@ -351,7 +351,7 @@ function setStoryPoints(button, difference) {
 	pointsBox = $($(button).siblings('.disabled')[0]).find('.points');
 	points = parseInt($(pointsBox).text());
 	points += difference;
-	if (points <= 0) {return;}
+	if (points < 0) {points = 0;}
 	var taskInfo = { 'Task' : {
 		id : taskId,
 		story_points : points

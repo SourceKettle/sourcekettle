@@ -33,9 +33,7 @@ foreach (explode('/',$path) as $crumb) {
 <?= $this->element('Source/topbar') ?>
 </div>
 <div class="row-fluid">
-
-<?// TODO This is a quick and dirty git-specific hack, should really have a way to specify a git or svn URL ?>
-	<code><?=__("Checkout URI")?>: <?= $sourcekettle_config['SourceRepository']['user']['value'] ?>@<?= gethostname() ?>:projects/<?= h($project['Project']['name']) ?>.git</code>
+	<code><?=__("Checkout URI")?>: <?= $this->DT->scmUri($project) ?></code>
 </div>
 
 <div class="row-fluid">

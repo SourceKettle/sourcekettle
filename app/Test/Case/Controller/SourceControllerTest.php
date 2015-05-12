@@ -1,5 +1,6 @@
 <?php
 App::uses('SourceController', 'Controller');
+require_once(__DIR__ . DS . 'AppControllerTest.php');
 
 /**
  * TestSourceController *
@@ -31,14 +32,46 @@ class TestSourceController extends SourceController {
  * SourceController Test Case
  *
  */
-class SourceControllerTestCase extends CakeTestCase {
+class SourceControllerTestCase extends AppControllerTest {
 
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('app.source', 'app.project', 'app.repo_type', 'app.collaborator', 'app.user', 'app.email_confirmation_key', 'app.ssh_key', 'app.lost_password_key');
+	public $fixtures = array(
+		'core.cake_session',
+		'app.setting',
+		'app.user_setting',
+		'app.project_setting',
+		'app.project',
+		'app.project_history',
+		'app.repo_type',
+		'app.collaborator',
+		'app.user',
+		'app.task',
+		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
+		'app.task_status',
+		'app.task_priority',
+		'app.time',
+		'app.attachment',
+		'app.source',
+		'app.milestone',
+		'app.email_confirmation_key',
+		'app.ssh_key',
+		'app.api_key',
+		'app.lost_password_key',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
+		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
+	);
 
 /**
  * setUp method
@@ -46,9 +79,33 @@ class SourceControllerTestCase extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		parent::setUp();
-		$this->Source = new TestSourceController();
-		$this->Source->constructClasses();
+		parent::setUp("Source");
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'time_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'task_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'attachment_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'SourceRepository' => array(
+					'base' => array('source' => 'defaults', 'locked' => 0, 'value' => dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories'),
+					'user' => array('source' => 'defaults', 'locked' => 0, 'value' => 'gituser'), // Non-standard username
+				),
+			)));
 	}
 
 /**
@@ -58,7 +115,6 @@ class SourceControllerTestCase extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->Source);
-
 		parent::tearDown();
 	}
 
@@ -67,35 +123,672 @@ class SourceControllerTestCase extends CakeTestCase {
  *
  * @return void
  */
-	public function testIndex() {
+	public function testIndexSourceControlDisabledOnSystem() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+			)));
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
 	}
-/**
- * testView method
- *
- * @return void
- */
-	public function testView() {
+
+	public function testIndexSourceControlDisabledOnProject() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'Project-specific settings', 'locked' => 0, 'value' => false),
+				),
+			)));
+
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
 	}
-/**
- * testAdd method
- *
- * @return void
- */
-	public function testAdd() {
+
+	public function testIndexNotLoggedIn() {
+
+		$this->testAction('/project/private/source', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
 	}
-/**
- * testEdit method
- *
- * @return void
- */
-	public function testEdit() {
+
+	public function testIndexNotUser() {
+
+		$this->_fakeLogin(8);
+		$this->testAction('/project/private/source', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
 	}
-/**
- * testDelete method
- *
- * @return void
- */
-	public function testDelete() {
+
+	public function testIndexSystemAdmin() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
+
+	}
+
+	public function testIndexProjectAdmin() {
+
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
+
+	}
+
+	public function testIndexProjectUser() {
+
+		$this->_fakeLogin(4);
+		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
+
+	}
+
+	public function testIndexProjectGuest() {
+
+		$this->_fakeLogin(3);
+		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
+
+	}
+
+	public function testTreeSourceControlDisabledOnSystem() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+			)));
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testTreeSourceControlDisabledOnProject() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'Project-specific settings', 'locked' => 0, 'value' => false),
+				),
+			)));
+
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testTreeNotLoggedIn() {
+
+		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testTreeNotUser() {
+
+		$this->_fakeLogin(8);
+		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testTreeSystemAdmin() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testTreeProjectAdmin() {
+
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testTreeProjectUser() {
+
+		$this->_fakeLogin(4);
+		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testTreeProjectGuest() {
+
+		$this->_fakeLogin(3);
+		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testTreeNoBranch() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'view'));
+		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private', 'branch' => 'master'));
+
+	}
+
+	public function testTreeMasterBranch() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testTreeSomeNewThingBranch() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/tree/some_new_thing', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitsSourceControlDisabledOnSystem() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+			)));
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testCommitsSourceControlDisabledOnProject() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'Project-specific settings', 'locked' => 0, 'value' => false),
+				),
+			)));
+
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testCommitsNotLoggedIn() {
+
+		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testCommitsNotUser() {
+
+		$this->_fakeLogin(8);
+		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testCommitsSystemAdmin() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitsProjectAdmin() {
+
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitsProjectUser() {
+
+		$this->_fakeLogin(4);
+		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitsProjectGuest() {
+
+		$this->_fakeLogin(3);
+		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitsNoBranch() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'view'));
+		$this->assertRedirect(array('controller' => 'source', 'action' => 'commits', 'project' => 'private', 'branch' => 'master'));
+
+	}
+
+	public function testCommitsMasterBranch() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitsSomeNewThingBranch() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/commits/some_new_thing', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitSourceControlDisabledOnSystem() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+			)));
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testCommitSourceControlDisabledOnProject() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'Project-specific settings', 'locked' => 0, 'value' => false),
+				),
+			)));
+
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		} catch (Exception $e){
+			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testCommitNotLoggedIn() {
+
+		$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testCommitNotUser() {
+
+		$this->_fakeLogin(8);
+		$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testCommitSystemAdmin() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitProjectAdmin() {
+
+		$this->_fakeLogin(1);
+		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitProjectUser() {
+
+		$this->_fakeLogin(4);
+		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitProjectGuest() {
+
+		$this->_fakeLogin(3);
+		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitNoHash() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/commit', array('method' => 'get', 'return' => 'view'));
+		$this->assertRedirect(array('controller' => 'source', 'action' => 'commits', 'project' => 'private', 'branch' => 'master'));
+
+	}
+
+	public function testCommitMasterBranch() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/commit/04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testCommitSomeNewThingBranch() {
+
+		$this->_fakeLogin(5);
+		$ret = $this->testAction('/project/private/source/commit/0b20ced61a6edb811ddbe3c502b931b0450f3a61', array('method' => 'get', 'return' => 'view'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testRawSourceControlDisabledOnSystem() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+			)));
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testRawSourceControlDisabledOnProject() {
+
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'Project-specific settings', 'locked' => 0, 'value' => false),
+				),
+			)));
+
+		$this->_fakeLogin(5);
+		try{
+			$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+			$this->assertNotAuthorized();
+		} catch (ForbiddenException $e){
+			$this->assertTrue(true, "Correct exception thrown");
+			return;
+		}
+		$this->assertTrue(false, "No exception thrown");
+	}
+
+	public function testRawNotLoggedIn() {
+
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testRawNotUser() {
+
+		$this->_fakeLogin(8);
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testRawSystemAdmin() {
+
+		$this->_fakeLogin(5);
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testRawProjectAdmin() {
+
+		$this->_fakeLogin(1);
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testRawProjectUser() {
+
+		$this->_fakeLogin(4);
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+
+	}
+
+	public function testRawProjectGuest() {
+
+		// Log in as a guest on one project
+		$this->_fakeLogin(3);
+
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertEquals('text/x-c; charset=us-ascii', $this->vars['mimeType']);
+		$this->assertEquals(
+		"#include <stdio.h>\n" .
+		"#include <stdlib.h>\n" .
+		"int main(void) {\n" .
+		"	printf(\"Hello, world!\\n\");\n" .
+		"	\n" .
+		"	int i;\n" .
+		"	int *foo = (int *) malloc(sizeof(int) * 20);\n" .
+		"	for (i = 0; i < 20; i++) {\n" .
+		"		foo[i] = i;\n" .
+		"	}\n" .
+		"	for (i = 0; i < 20; i++) {\n" .
+		"		printf(\"I: %d Foo: %d\\n\", i, foo[i]);\n" .
+		"	}\n" .
+		"}", $this->vars['sourceFile']);
+
 	}
 
 }
