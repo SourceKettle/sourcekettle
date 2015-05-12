@@ -196,7 +196,6 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testIndexNotLoggedIn() {
 
-		// Cannot see the page when not logged in
 		$this->testAction('/project/private/source', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
@@ -210,10 +209,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testIndexSystemAdmin() {
 
-		// Log in as a system administrator - we should still only see "my" projects, not everyone's
 		$this->_fakeLogin(5);
-
-		// Perform the action, and check the user was authorized
 		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
@@ -222,9 +218,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testIndexProjectAdmin() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(1);
-
 		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
@@ -233,9 +227,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testIndexProjectUser() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(4);
-
 		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
@@ -244,9 +236,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testIndexProjectGuest() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(3);
-
 		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
@@ -326,7 +316,6 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testTreeNotLoggedIn() {
 
-		// Cannot see the page when not logged in
 		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
@@ -340,10 +329,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testTreeSystemAdmin() {
 
-		// Log in as a system administrator - we should still only see "my" projects, not everyone's
 		$this->_fakeLogin(5);
-
-		// Perform the action, and check the user was authorized
 		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -351,9 +337,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testTreeProjectAdmin() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(1);
-
 		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -361,9 +345,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testTreeProjectUser() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(4);
-
 		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -371,9 +353,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testTreeProjectGuest() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(3);
-
 		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -476,7 +456,6 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitsNotLoggedIn() {
 
-		// Cannot see the page when not logged in
 		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
@@ -490,10 +469,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitsSystemAdmin() {
 
-		// Log in as a system administrator - we should still only see "my" projects, not everyone's
 		$this->_fakeLogin(5);
-
-		// Perform the action, and check the user was authorized
 		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -501,9 +477,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitsProjectAdmin() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(1);
-
 		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -511,9 +485,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitsProjectUser() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(4);
-
 		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -521,9 +493,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitsProjectGuest() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(3);
-
 		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -626,7 +596,6 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitNotLoggedIn() {
 
-		// Cannot see the page when not logged in
 		$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
@@ -640,10 +609,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitSystemAdmin() {
 
-		// Log in as a system administrator - we should still only see "my" projects, not everyone's
 		$this->_fakeLogin(5);
-
-		// Perform the action, and check the user was authorized
 		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -651,9 +617,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitProjectAdmin() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(1);
-
 		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -661,9 +625,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitProjectUser() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(4);
-
 		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -671,9 +633,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitProjectGuest() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(3);
-
 		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
@@ -703,155 +663,6 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	}
 
-	public function testAjaxDiffSourceControlDisabledOnSystem() {
-
-		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
-		$this->controller->Setting
-			->expects($this->any())
-			->method('loadConfigSettings')
-			->will($this->returnValue(array(
-				'UserInterface' => array(
-					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
-					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
-				),
-				'SourceRepository' => array(
-					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
-				),
-				'Ldap' => array(
-					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
-				),
-				'Features' => array(
-					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
-				),
-			)));
-		$this->_fakeLogin(5);
-		try{
-			$this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'vars'));
-			$this->assertNotAuthorized();
-		} catch (ForbiddenException $e){
-			$this->assertTrue(true, "Correct exception thrown");
-			return;
-		} catch (Exception $e){
-			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
-			return;
-		}
-		$this->assertTrue(false, "No exception thrown");
-	}
-
-	public function testAjaxDiffSourceControlDisabledOnProject() {
-
-		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
-		$this->controller->Setting
-			->expects($this->any())
-			->method('loadConfigSettings')
-			->will($this->returnValue(array(
-				'UserInterface' => array(
-					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
-					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
-				),
-				'SourceRepository' => array(
-					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
-				),
-				'Ldap' => array(
-					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
-				),
-				'Features' => array(
-					'source_enabled' => array('source' => 'Project-specific settings', 'locked' => 0, 'value' => false),
-				),
-			)));
-
-		$this->_fakeLogin(5);
-		try{
-			$this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'vars'));
-			$this->assertNotAuthorized();
-		} catch (ForbiddenException $e){
-			$this->assertTrue(true, "Correct exception thrown");
-			return;
-		} catch (Exception $e){
-			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
-			return;
-		}
-		$this->assertTrue(false, "No exception thrown");
-	}
-
-	public function testAjaxDiffNotLoggedIn() {
-
-		// Cannot see the page when not logged in
-		$this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'vars'));
-		$this->assertNotAuthorized();
-	}
-
-	public function testAjaxDiffNotUser() {
-
-		$this->_fakeLogin(8);
-		$this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'vars'));
-		$this->assertNotAuthorized();
-	}
-
-	public function testAjaxDiffSystemAdmin() {
-
-		// Log in as a system administrator - we should still only see "my" projects, not everyone's
-		$this->_fakeLogin(5);
-
-		// Perform the action, and check the user was authorized
-		$ret = $this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-
-	}
-
-	public function testAjaxDiffProjectAdmin() {
-
-		// Log in as a guest on one project
-		$this->_fakeLogin(1);
-
-		$ret = $this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-
-	}
-
-	public function testAjaxDiffProjectUser() {
-
-		// Log in as a guest on one project
-		$this->_fakeLogin(4);
-
-		$ret = $this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-
-	}
-
-	public function testAjaxDiffProjectGuest() {
-
-		// Log in as a guest on one project
-		$this->_fakeLogin(3);
-
-		$ret = $this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-
-	}
-
-	public function testAjaxDiffNoBranch() {
-
-		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/ajax_diff', array('method' => 'get', 'return' => 'view'));
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'ajax_diff', 'project' => 'private', 'branch' => 'master'));
-
-	}
-
-	public function testAjaxDiffMasterBranch() {
-
-		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/ajax_diff/master', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-
-	}
-
-	public function testAjaxDiffSomeNewThingBranch() {
-
-		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/ajax_diff/some_new_thing', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-	}
-
 	public function testRawSourceControlDisabledOnSystem() {
 
 		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
@@ -875,16 +686,13 @@ class SourceControllerTestCase extends AppControllerTest {
 			)));
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
 			return;
-		//} catch (Exception $e){
-		//	$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
-		//	return;
 		}
-		//$this->assertTrue(false, "No exception thrown");
+		$this->assertTrue(false, "No exception thrown");
 	}
 
 	public function testRawSourceControlDisabledOnProject() {
@@ -911,13 +719,10 @@ class SourceControllerTestCase extends AppControllerTest {
 
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
-			return;
-		} catch (Exception $e){
-			$this->assertTrue(false, "Incorrect exception thrown: ".$e->getMessage());
 			return;
 		}
 		$this->assertTrue(false, "No exception thrown");
@@ -925,45 +730,37 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testRawNotLoggedIn() {
 
-		// Cannot see the page when not logged in
-		$this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testRawNotUser() {
 
 		$this->_fakeLogin(8);
-		$this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testRawSystemAdmin() {
 
-		// Log in as a system administrator - we should still only see "my" projects, not everyone's
 		$this->_fakeLogin(5);
-
-		// Perform the action, and check the user was authorized
-		$ret = $this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'view'));
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 
 	}
 
 	public function testRawProjectAdmin() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(1);
-
-		$ret = $this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'view'));
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 
 	}
 
 	public function testRawProjectUser() {
 
-		// Log in as a guest on one project
 		$this->_fakeLogin(4);
-
-		$ret = $this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'view'));
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 
 	}
@@ -973,31 +770,25 @@ class SourceControllerTestCase extends AppControllerTest {
 		// Log in as a guest on one project
 		$this->_fakeLogin(3);
 
-		$ret = $this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'view'));
+		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
+		$this->assertEquals('text/x-c; charset=us-ascii', $this->vars['mimeType']);
+		$this->assertEquals(
+		"#include <stdio.h>\n" .
+		"#include <stdlib.h>\n" .
+		"int main(void) {\n" .
+		"	printf(\"Hello, world!\\n\");\n" .
+		"	\n" .
+		"	int i;\n" .
+		"	int *foo = (int *) malloc(sizeof(int) * 20);\n" .
+		"	for (i = 0; i < 20; i++) {\n" .
+		"		foo[i] = i;\n" .
+		"	}\n" .
+		"	for (i = 0; i < 20; i++) {\n" .
+		"		printf(\"I: %d Foo: %d\\n\", i, foo[i]);\n" .
+		"	}\n" .
+		"}", $this->vars['sourceFile']);
 
 	}
 
-	public function testRawNoBranch() {
-
-		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/raw', array('method' => 'get', 'return' => 'view'));
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'raw', 'project' => 'private', 'branch' => 'master'));
-
-	}
-
-	public function testRawMasterBranch() {
-
-		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/raw/master', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-
-	}
-
-	public function testRawSomeNewThingBranch() {
-
-		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/raw/some_new_thing', array('method' => 'get', 'return' => 'view'));
-		$this->assertAuthorized();
-	}
 }
