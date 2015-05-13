@@ -50,6 +50,33 @@ class StoriesControllerTest extends AppControllerTest {
 
 	public function setUp() {
 		parent::setUp("Stories");
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'story_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'time_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'task_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'attachment_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'SourceRepository' => array(
+					'base' => array('source' => 'defaults', 'locked' => 0, 'value' => dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories'),
+					'user' => array('source' => 'defaults', 'locked' => 0, 'value' => 'gituser'), // Non-standard username
+				),
+			)));
 	}
 
 /**
@@ -59,7 +86,33 @@ class StoriesControllerTest extends AppControllerTest {
  */
 	public function testIndexFeatureDisabledOnSystem() {
 
-		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('story_enabled' => false))));
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'story_enabled' => array('source' => 'System settings', 'locked' => 0, 'value' => false),
+					'time_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'task_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'attachment_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'SourceRepository' => array(
+					'base' => array('source' => 'defaults', 'locked' => 0, 'value' => dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories'),
+					'user' => array('source' => 'defaults', 'locked' => 0, 'value' => 'gituser'), // Non-standard username
+				),
+			)));
 
 		// Cannot see the page when not logged in
 		try{
@@ -77,7 +130,33 @@ class StoriesControllerTest extends AppControllerTest {
 
 	public function testIndexFeatureDisabledOnProject() {
 
-		ClassRegistry::init("ProjectSetting")->saveSettingsTree('private', array('ProjectSetting' => array('Features' => array('story_enabled' => false))));
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'story_enabled' => array('source' => 'Project-specific settings', 'locked' => 0, 'value' => false),
+					'time_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'task_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'attachment_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'SourceRepository' => array(
+					'base' => array('source' => 'defaults', 'locked' => 0, 'value' => dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories'),
+					'user' => array('source' => 'defaults', 'locked' => 0, 'value' => 'gituser'), // Non-standard username
+				),
+			)));
 
 		// Cannot see the page when not logged in
 		try{
@@ -95,7 +174,33 @@ class StoriesControllerTest extends AppControllerTest {
 
 	public function testIndexTasksDisabledOnSystem() {
 
-		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Features' => array('task_enabled' => false))));
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'story_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'time_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'task_enabled' => array('source' => 'System settings', 'locked' => 0, 'value' => false),
+					'attachment_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'SourceRepository' => array(
+					'base' => array('source' => 'defaults', 'locked' => 0, 'value' => dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories'),
+					'user' => array('source' => 'defaults', 'locked' => 0, 'value' => 'gituser'), // Non-standard username
+				),
+			)));
 
 		// Cannot see the page when not logged in
 		try{
@@ -113,7 +218,33 @@ class StoriesControllerTest extends AppControllerTest {
 
 	public function testIndexTasksDisabledOnProject() {
 
-		ClassRegistry::init("ProjectSetting")->saveSettingsTree('private', array('ProjectSetting' => array('Features' => array('task_enabled' => false))));
+		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
+		$this->controller->Setting
+			->expects($this->any())
+			->method('loadConfigSettings')
+			->will($this->returnValue(array(
+				'UserInterface' => array(
+					'alias' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'SourceKettle'),
+					'theme' => array('source' => 'Defaults', 'locked' => 0, 'value' => 'default'),
+				),
+				'SourceRepository' => array(
+					'default' => array('source' => 'defaults', 'locked' => 0, 'value' => 'Git'),
+				),
+				'Ldap' => array(
+					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'Features' => array(
+					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'story_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'time_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'task_enabled' => array('source' => 'Project-specific settings', 'locked' => 0, 'value' => false),
+					'attachment_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+				),
+				'SourceRepository' => array(
+					'base' => array('source' => 'defaults', 'locked' => 0, 'value' => dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories'),
+					'user' => array('source' => 'defaults', 'locked' => 0, 'value' => 'gituser'), // Non-standard username
+				),
+			)));
 
 		// Cannot see the page when not logged in
 		try{
@@ -153,8 +284,23 @@ class StoriesControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testView() {
-		$this->markTestIncomplete('testView not implemented.');
+	public function testViewNotLoggedIn() {
+
+		// Cannot see the page when not logged in
+		$this->testAction('/project/public/stories/view/1', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testViewInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/stories/view/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testViewInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/stories/view/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
 	}
 
 /**
@@ -162,8 +308,23 @@ class StoriesControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testAdd() {
-		$this->markTestIncomplete('testAdd not implemented.');
+	public function testAddNotLoggedIn() {
+
+		// Cannot see the page when not logged in
+		$this->testAction('/project/private/stories/add', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/private/stories/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testAddInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/private/stories/add', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
 	}
 
 /**
@@ -171,8 +332,23 @@ class StoriesControllerTest extends AppControllerTest {
  *
  * @return void
  */
-	public function testEdit() {
-		$this->markTestIncomplete('testEdit not implemented.');
+	public function testEditNotLoggedIn() {
+
+		// Cannot see the page when not logged in
+		$this->testAction('/project/public/stories/edit/1', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testEditInactiveUser() {
+		$this->_fakeLogin(6);
+		$this->testAction('/project/public/stories/edit/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testEditInactiveAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/public/stories/edit/1', array('return' => 'view', 'method' => 'get'));
+		$this->assertNotAuthorized();
 	}
 
 /**
@@ -184,49 +360,5 @@ class StoriesControllerTest extends AppControllerTest {
 		$this->markTestIncomplete('testDelete not implemented.');
 	}
 
-/**
- * testAdminIndex method
- *
- * @return void
- */
-	public function testAdminIndex() {
-		$this->markTestIncomplete('testAdminIndex not implemented.');
-	}
-
-/**
- * testAdminView method
- *
- * @return void
- */
-	public function testAdminView() {
-		$this->markTestIncomplete('testAdminView not implemented.');
-	}
-
-/**
- * testAdminAdd method
- *
- * @return void
- */
-	public function testAdminAdd() {
-		$this->markTestIncomplete('testAdminAdd not implemented.');
-	}
-
-/**
- * testAdminEdit method
- *
- * @return void
- */
-	public function testAdminEdit() {
-		$this->markTestIncomplete('testAdminEdit not implemented.');
-	}
-
-/**
- * testAdminDelete method
- *
- * @return void
- */
-	public function testAdminDelete() {
-		$this->markTestIncomplete('testAdminDelete not implemented.');
-	}
 
 }

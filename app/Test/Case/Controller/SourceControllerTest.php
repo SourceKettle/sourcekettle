@@ -143,7 +143,7 @@ class SourceControllerTestCase extends AppControllerTest {
 					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
 				),
 				'Features' => array(
-					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+					'source_enabled' => array('source' => 'System settings', 'locked' => 0, 'value' => false),
 				),
 			)));
 		$this->_fakeLogin(5);
