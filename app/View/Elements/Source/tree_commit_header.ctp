@@ -3,7 +3,7 @@
             <div class="well well-small">
                 <div class="row-fluid">
                     <div class="span1">
-                        <?= $this->Gravatar->image($commit['author']['email'], array(), array('class' => 'span10 pull-right thumbnail')) ?>
+                        <?= $this->Gravatar->image($commit['author']['email'], array('size' => 100), array('class' => 'pull-right thumbnail')) ?>
                     </div>
                     <div class="span11">
                         <h4>

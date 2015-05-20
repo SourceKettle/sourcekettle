@@ -139,5 +139,16 @@ class CollaboratorFixture extends CakeTestFixture {
             'created' => '2012-06-01 12:32:15',
             'modified' => '2012-06-01 12:32:15'
         ),
+
+	// This user collaborates on perl-2 and is in the perl dev team which also collaborates on the project
+	// Test that they are only listed once!
+        array(
+            'id' => 17,
+            'project_id' => 13,
+            'user_id' => 20,
+            'access_level' => 0,
+            'created' => '2015-06-01 12:32:15',
+            'modified' => '2015-06-01 12:32:15'
+        ),
     );
 }

@@ -725,4 +725,13 @@ class ProjectTestCase extends CakeTestCase {
 			array('id' => 19, 'title' => 'A PHP, Python and Java developer [php-python-and-java-dev@example.com]'),
 		), $collabs);
 	}
+
+	public function testListCollaboratorsOverlapping() {
+		$collabs = $this->Project->listCollaborators(13);
+		// perl-dev is a direct collaborator AND a collaborator via the perl dev team, should only be listed once
+		$this->assertEquals(array(
+			array('id' => 20, 'title' => 'A Perl developer [perl-dev@example.com]'),
+			array('id' => 21, 'title' => 'Another Perl developer [another-perl-dev@example.com]'),
+		), $collabs);
+	}
 }
