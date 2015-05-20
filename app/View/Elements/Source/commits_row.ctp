@@ -1,6 +1,6 @@
 <div class="row-fluid commitsRow">
     <div class="span1">
-        <?= $this->Gravatar->image($commit['author']['email'], array(), array('class' => 'span10 pull-right thumbnail')) ?>
+        <?= $this->Gravatar->image($commit['author']['email'], array('size' => 64), array('class' => 'thumbnail')) ?>
     </div>
     <div class="span9">
         <p>

@@ -156,14 +156,15 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertAuthorized();
 
 		$this->assertRegexp('/<a href=".*\/project\/perl-1\/." class="project-link">perl-1<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/perl-2\/." class="project-link">perl-2<\/a>/', $this->view);
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(count($this->vars['projects']), 1, "Incorrect number of projects returned");
+		$this->assertEqual(count($this->vars['projects']), 2, "Incorrect number of projects returned");
 
 		// Crunch down to just the project IDs
 		$ids = array_map(function($a){return $a['Project']['id'];}, $this->vars['projects']);
-		$this->assertEquals(array(12), $ids);
+		$this->assertEquals(array(12, 13), $ids);
 	}
 
 	public function testCollaboratingTeamGroupProjects() {
@@ -175,11 +176,6 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->testAction('/projects/team_projects', array('return' => 'view', 'method' => 'get'));
 		$this->assertAuthorized();
 
-		$this->assertRegexp('/<a href=".*\/project\/python-1\/." class="project-link">python-1<\/a>/', $this->view);
-		$this->assertRegexp('/<a href=".*\/project\/python-2\/." class="project-link">python-2<\/a>/', $this->view);
-		$this->assertRegexp('/<a href=".*\/project\/java-1\/." class="project-link">java-1<\/a>/', $this->view);
-		$this->assertRegexp('/<a href=".*\/project\/java-2\/." class="project-link">java-2<\/a>/', $this->view);
-
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
 		$this->assertEqual(count($this->vars['projects']), 4, "Incorrect number of projects returned");
@@ -187,6 +183,11 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		// Crunch down to just the project IDs
 		$ids = array_map(function($a){return $a['Project']['id'];}, $this->vars['projects']);
 		$this->assertEquals(array(8, 9, 10, 11), $ids);
+		$this->assertRegexp('/<a href=".*\/project\/python-1\/." class="project-link">python-1<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/python-2\/." class="project-link">python-2<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/java-1\/." class="project-link">java-1<\/a>/', $this->view);
+		$this->assertRegexp('/<a href=".*\/project\/java-2\/." class="project-link">java-2<\/a>/', $this->view);
+
 	}
 
 /**
@@ -699,7 +700,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 
 		// Check the project list looks sane and has only the right entries/access levels
 		$this->assertNotNull($this->vars['projects']);
-		$this->assertEqual(12, count($this->vars['projects']), "Incorrect number of projects returned");
+		$this->assertEqual(13, count($this->vars['projects']), "Incorrect number of projects returned");
 
 		$projects = array_map(function($a){return array('id' => $a['Project']['id'], 'repo_type' => $a['RepoType']['name']);}, $this->vars['projects']);
 
@@ -718,6 +719,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 			array('id' => 10, 'repo_type' => 'None'),
 			array('id' => 11, 'repo_type' => 'None'),
 			array('id' => 12, 'repo_type' => 'None'),
+			array('id' => 13, 'repo_type' => 'None'),
 		), $projects);
 
 	}
@@ -1041,7 +1043,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(3);
 		$this->testAction('/api/projects/autocomplete?query=p');
 		$this->assertAuthorized();
-		$this->assertEquals(array('private', 'public', 'personal', 'personal_public', 'php-1', 'php-2', 'python-1', 'python-2', 'perl-1'), $this->vars['data']['projects']);
+		$this->assertEquals(array('private', 'public', 'personal', 'personal_public', 'php-1', 'php-2', 'python-1', 'python-2', 'perl-1', 'perl-2'), $this->vars['data']['projects']);
 
 		$this->testAction('/api/projects/autocomplete?query=py');
 		$this->assertAuthorized();

@@ -155,7 +155,8 @@ class TeamsControllerTest extends AppControllerTest {
 
 		$this->assertEquals(array(), $groups);
 		$this->assertEquals(array(
-			'perl-1'
+			'perl-1',
+			'perl-2'
 		), $projects);
 	}
 
