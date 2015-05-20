@@ -25,6 +25,14 @@ class CollaboratingTeamFixture extends CakeTestFixture {
 			'project_id' => 12,
 			'access_level' => 2
 		),
+
+		// Group mapping with an overlapping direct collaborator
+		array(
+			'id' => 2,
+			'team_id' => 4,
+			'project_id' => 13,
+			'access_level' => 2
+		),
 	);
 
 }
