@@ -488,6 +488,7 @@ class Project extends AppModel {
 
 		$users = array();
 
+		$foundIds = array();
 
 		// Get a list of teams that are collaborating on any of our project groups
 		$groups = array_values($this->ProjectGroupsProject->find('list', array(
@@ -526,6 +527,13 @@ class Project extends AppModel {
 		}
 
 		foreach ($members as $member) {
+
+			if (array_key_exists($member['User']['id'], $foundIds)) {
+				continue;
+			}
+
+			$foundIds[ $member['User']['id'] ] = true;
+
 			$users[] = array("id" => $member['User']['id'], "title" => "{$member['User']['name']} [{$member['User']['email']}]");
 		}
 
@@ -536,6 +544,12 @@ class Project extends AppModel {
 		));
 
 		foreach ($collaborators as $collaborator) {
+			if (array_key_exists($collaborator['User']['id'], $foundIds)) {
+				continue;
+			}
+
+			$foundIds[ $collaborator['User']['id'] ] = true;
+
 			$users[] = array("id" => $collaborator['User']['id'], "title" => "{$collaborator['User']['name']} [{$collaborator['User']['email']}]");
 		}
 		
