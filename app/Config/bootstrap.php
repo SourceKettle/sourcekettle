@@ -155,4 +155,5 @@ CakePlugin::load('GitCake');
 CakePlugin::load('TwitterBootswatch');
 CakePlugin::load('LDAPAuthCake');
 CakePlugin::load('Migrations');
+CakePlugin::load('CakeDCUtils');
 

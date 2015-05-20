@@ -19,3 +19,6 @@
 [submodule "app/Plugin/Migrations"]
 	path = app/Plugin/Migrations
 	url = https://github.com/CakeDC/migrations.git
+[submodule "app/Plugin/CakeDCUtils"]
+	path = app/Plugin/CakeDCUtils
+	url = git@github.com:CakeDC/utils.git

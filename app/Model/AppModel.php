@@ -41,4 +41,12 @@ class AppModel extends Model {
 	public function __deleteLinks($id) {
 		$this->_deleteLinks($id);
 	}
+
+	public function exists($id = null) {
+		if ($this->Behaviors->attached('SoftDelete')) {
+			return $this->existsAndNotDeleted($id);
+		} else {
+			return parent::exists($id);
+		}
+	}
 }
