@@ -114,9 +114,8 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 	<?= $this->element('Task/Board/column', array(
 		'tasks' => $dropped, 
 		'status' => 'dropped', 
-		'title' => __('Dropped tasks'), 
-		'tooltip' => __('Tasks that we did not have time for, 
-		they will not be worked on in this milestone'), 
+		'title' => __('Deferred tasks'), 
+		'tooltip' => __('Tasks that we did not have time for, we will work on them in a later milestone'), 
 		'span' => '12', 
 		'task_span' => $colSpan, 
 		'classes' => 'sprintboard-icebox', 
