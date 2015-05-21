@@ -162,7 +162,13 @@ class TasksController extends AppProjectController {
 		$statuses      = $this->TaskStatus->find('list', array());
 		$priorities    = $this->TaskPriority->find('list', array());
 		$types         = $this->TaskType->find('list', array());
-		$collaborators = $this->Project->listCollaborators();
+
+		// TODO needs fixing maybe? listCollaborators now returns a list of {id, nanme} pairs instead of listing by ID
+		$collaborators = array();
+		foreach ($this->Project->listCollaborators() as $collab) {
+			$collaborators[$collab['id']] = $collab['title'];
+		}
+		
 
 		// Combine the data for easily generating URLs for the task filter bar
 		// Yes, this is horrible.
