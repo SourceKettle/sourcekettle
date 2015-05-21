@@ -374,6 +374,9 @@ form {
 	min-height: 150px !important;
 	text-align: center;
 }
+.task-description-text {
+	text-align: left;
+}
 .task-view-selectors {
 	text-align: center;
 }
