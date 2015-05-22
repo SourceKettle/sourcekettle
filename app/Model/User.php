@@ -109,6 +109,7 @@ class User extends AppModel {
 		'FilterValid' => array(
 			'nameField' => 'email',
 		),
+		//'CakeDCUtils.SoftDelete',
 	);
 
 	public function __construct($id = false, $table = null, $ds = null) {

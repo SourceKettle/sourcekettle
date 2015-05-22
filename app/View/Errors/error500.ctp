@@ -28,6 +28,7 @@ $this->layout = 'error';
 </div>
 <?php
 if (Configure::read('debug') > 0 ):
+	echo "Error message: ".$error->getMessage();
 	echo $this->element('exception_stack_trace');
 endif;
 ?>

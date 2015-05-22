@@ -33,6 +33,7 @@ class Milestone extends AppModel {
 		'FilterValid' => array(
 			'nameField' => 'subject',
 		),
+		'CakeDCUtils.SoftDelete',
 	);
 
 /**
@@ -352,8 +353,7 @@ class Milestone extends AppModel {
 		}
 
 		// Make sure we pull in the TaskStatus so we can check by name instead of status ID
-		$this->contain(array('Task.TaskStatus'));
-		$milestone = $this->open($id);
+		$milestone = $this->open($id, array('Task' => array('TaskStatus')));
 
 		// Now update all related tasks to attach them to the new milestone (or no milestone)
 		$tasks = array();

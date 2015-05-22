@@ -23,7 +23,8 @@ class Attachment extends AppModel {
  */
 	public $actsAs = array(
 		'ProjectComponent',
-		'ProjectHistory'
+		'ProjectHistory',
+		'CakeDCUtils.SoftDelete',
 	);
 
 /**

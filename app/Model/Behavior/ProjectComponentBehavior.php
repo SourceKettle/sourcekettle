@@ -34,7 +34,7 @@ class ProjectComponentBehavior extends ModelBehavior {
  * @throws NotFoundException
  * @throws ForbiddenException
  */
-	public function open(Model $Model, $id = null) {
+	public function open(Model $Model, $id = null, $contain = array()) {
 
 		// Override the ID if we were specifically given one
 		if ($id != null) {
@@ -45,6 +45,8 @@ class ProjectComponentBehavior extends ModelBehavior {
 			throw new NotFoundException(__('Invalid ' . $Model->name));
 		}
 
+		$Model->contain($contain);
+
 		// Enable when public_id's are used
 		if ($Model->hasField('public_id', true) && $_virtual = $Model->findByPublicIdAndProjectId($id, $Model->Project->id)) {
 		    $Model->id = $_virtual[$Model->name]['id'];
@@ -54,6 +56,7 @@ class ProjectComponentBehavior extends ModelBehavior {
 			throw new NotFoundException(__('Invalid ' . $Model->name));
 		}
 
+		$Model->contain($contain);
 		$object = $Model->findById($Model->id);
 
 		if ($Model->Project->id && ($object[$Model->name]['project_id'] != $Model->Project->id)) {

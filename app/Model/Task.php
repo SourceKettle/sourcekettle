@@ -29,6 +29,7 @@ class Task extends AppModel {
 	public $actsAs = array(
 		'ProjectComponent',
 		'ProjectHistory',
+		//'CakeDCUtils.SoftDelete',
 	);
 
 /**

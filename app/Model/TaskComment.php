@@ -20,6 +20,9 @@ App::uses('AppModel', 'Model');
 
 class TaskComment extends AppModel {
 
+	public $actsAs = array(
+		'CakeDCUtils.SoftDelete',
+	);
 /**
  * Display field
  */

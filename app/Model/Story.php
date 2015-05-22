@@ -8,6 +8,10 @@ App::uses('AppModel', 'Model');
  */
 class Story extends AppModel {
 
+	public $actsAs = array(
+		'CakeDCUtils.SoftDelete',
+	);
+
 /**
  * Validation rules
  *

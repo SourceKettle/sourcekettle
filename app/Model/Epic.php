@@ -9,6 +9,9 @@ App::uses('AppModel', 'Model');
  */
 class Epic extends AppModel {
 
+	public $actsAs = array(
+		'CakeDCUtils.SoftDelete',
+	);
 /**
  * Validation rules
  *

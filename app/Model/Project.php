@@ -29,7 +29,8 @@ class Project extends AppModel {
  * actsAs behaviours
  */
 	public $actsAs = array(
-		'ProjectDeletable'
+		'ProjectDeletable',
+		//'CakeDCUtils.SoftDelete',
 	);
 
 /**
