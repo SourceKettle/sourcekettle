@@ -128,7 +128,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 
 <? if($sourcekettle_config['Features']['story_enabled']['value']) {?>
 
-	<h3><?=__("User stories")?></h3>
+	<h3><?=__("User stories related to this milestone")?></h3>
 	<? foreach ($stories as $story) { ?>
 		<div class="row-fluid">
 		<a name="story_<?=$story['Story']['public_id']?>"></a>
@@ -136,6 +136,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 			'story' => $story,
 			'includeTasks' => true,
 			'localTaskLink' => true,
+			'milestoneId' => $milestone['Milestone']['id'],
 		)) ?>
 		</div>
 	<? } ?>

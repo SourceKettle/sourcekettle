@@ -48,11 +48,12 @@ $pointsComplete = array_sum(array_map(function($a){
 	}
 }, $story['Task']));
 $localTaskLink = isset($localTaskLink) ?: false;
+$milestoneId = isset($milestoneId) ?: 0;
 ?>
 
 <div class="story-block well">
 	<h4><?=$this->Html->link(
-		h($this->Text->truncate($story['Story']['subject'], 20)), array(
+		h($story['Story']['subject']), array(
 			"controller" => "stories",
 			"action" => "view",
 			"project" => $story['Project']['name'],
@@ -65,7 +66,7 @@ $localTaskLink = isset($localTaskLink) ?: false;
 	</h4>
 	<div class="row-fluid">
 	<p class="span12">
-		<?=h($this->Text->truncate($story['Story']['description'], 100))?>
+		<?=h($story['Story']['description'])?>
 	</p>
 	</div>
 	<div class="row-fluid">
@@ -77,9 +78,14 @@ $localTaskLink = isset($localTaskLink) ?: false;
 	<? if (@$includeTasks) {?>
 	<div class="row-fluid">
 	<ul class="sprintboard-droplist span12">
-		<? foreach($story['Task'] as $task) {?>
-			<?=$this->element('Task/minilozenge', array('task' => array('Task' => $task, 'Project' => $project['Project']), 'span' => 3, $localTaskLink))?>
-		<? } ?>
+		<? foreach($story['Task'] as $task) {
+			echo $this->element('Task/minilozenge', array(
+				'task' => array('Task' => $task, 'Project' => $project['Project']),
+				'span' => 3,
+				'milestoneId' => $milestoneId,
+				$localTaskLink,
+			));
+		} ?>
 	</ul>
 	</div>
 	<? } ?>

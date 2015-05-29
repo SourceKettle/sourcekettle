@@ -28,6 +28,11 @@ if(isset($span) && $span){
 }
 
 $localTaskLink = isset($localTaskLink) ?: false;
+$milestoneId = isset($milestoneId) ?: 0;
+
+// True if the task is from "another" milestone. Used in story blocks when viewed from the milestone kanban
+// chart to indicate which tasks are in both the milestone and the story.
+$isOtherMilestone = ($milestoneId > 0 && $milestoneId != $task['Task']['milestone_id']);
 
 if (!isset($checkbox)) {
 	$checkbox = false;
@@ -49,21 +54,31 @@ echo "<li class='task-minilozenge $span' data-api-url='$apiUrl' data-taskid='".h
 <div id="task_<?= h($task['Task']['public_id']) ?>" 
   class="task-container">
 	<div class="task">
-		<div class="well taskwell">
+		<div class="well taskwell<?=($isOtherMilestone ? ' other-milestone':'')?>">
 			<div class="row-fluid">
 				<p class="span12">
 				<? if ($checkbox) {
 					echo $this->Form->checkbox("Task[]", array("hiddenField" => false, "value" => $task['Task']['public_id']));
+				} 
+				if ($isOtherMilestone) {
+					echo $this->Html->link(
+						'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
+						$this->Html->url(array('controller' => 'tasks', 'action' => 'view', 'project' => $task['Project']['name'], $task['Task']['public_id'])),
+						array(
+							'escape' => false,
+							'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
+						)
+					);
+				} else {
+					echo $this->Html->link(
+						'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
+						$url,
+						array(
+							'escape' => false,
+							'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
+						)
+					);
 				} ?>
-				<?= $this->Task->priorityDropdownButton($task['Task']['task_priority_id'], false) ?>
-				<?= $this->Html->link(
-					'<strong>#'.h($task['Task']['public_id']).'</strong> - '.h($task['Task']['subject']),
-					$url,
-					array(
-						'escape' => false,
-						'title' => '#'.h($task['Task']['public_id']).' - '.h($task['Task']['subject']),
-					)
-				) ?>
 				</p>
 
 			</div>

@@ -394,8 +394,12 @@ form {
 	margin: 0px;
 }
 
+.task-minilozenge .task a {
+	vertical-align: middle;
+}
+
 .task-minilozenge .task > .well {
-	padding:3px 5px;
+	padding:4px 5px;
 
 	/* Fix the height so lozenges aren't irregular */
 	height: 1.5em;
@@ -404,11 +408,10 @@ form {
 	overflow: hidden;
 	background: #d3d3d3; /* TODO: doesn't work properly with Bootswatch themes */
 
-	-webkit-border-radius:4px 0 0 4px;
-	-moz-border-radius:4px 0 0 4px;
 	border-radius:14px;
-	margin-bottom: 7px;
-
 }
-	
+
+.task-minilozenge .task > .well.other-milestone {
+	border: 1px dashed black;
+	opacity: 0.4;
 }
