@@ -351,7 +351,17 @@ class TasksController extends AppProjectController {
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('task card and log'));
 		$project = $this->_getProject($project);
-		$task = $this->Task->open($public_id);
+		$task = $this->Task->open($public_id, array(
+			'TaskType',
+			'TaskStatus',
+			'TaskPriority',
+			'Project' => array('id', 'name'),
+			'Milestone' => array('id', 'subject'),
+			'DependsOn',
+			'DependedOnBy',
+			'Owner' => array('id', 'name', 'email'),
+			'Assignee' => array('id', 'name', 'email'),
+		));
 		$current_user = $this->Auth->user();
 
 		$this->set('task', $task);

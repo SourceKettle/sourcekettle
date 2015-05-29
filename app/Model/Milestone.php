@@ -33,7 +33,7 @@ class Milestone extends AppModel {
 		'FilterValid' => array(
 			'nameField' => 'subject',
 		),
-		'CakeDCUtils.SoftDelete',
+		//'CakeDCUtils.SoftDelete',
 	);
 
 /**
