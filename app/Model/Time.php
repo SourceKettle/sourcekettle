@@ -57,7 +57,7 @@ class Time extends AppModel {
 	public $actsAs = array(
 		'ProjectComponent',
 		'ProjectHistory',
-		'CakeDCUtils.SoftDelete',
+		//'CakeDCUtils.SoftDelete',
 	);
 
 /**
