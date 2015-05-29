@@ -131,10 +131,10 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 	<h3><?=__("User stories related to this milestone")?></h3>
 	<? foreach ($stories as $story) { ?>
 		<div class="row-fluid">
-		<a name="story_<?=$story['Story']['public_id']?>"></a>
 		<?= $this->element('Story/block', array(
 			'story' => $story,
 			'includeTasks' => true,
+			'includeAnchor' => true,
 			'localTaskLink' => true,
 			'milestoneId' => $milestone['Milestone']['id'],
 		)) ?>
