@@ -58,42 +58,23 @@ class StoriesController extends AppProjectController {
 		$this->set('subTitle', __('User stories'));
 		$project = $this->_getProject($project);
 
-		if ($this->sourcekettle_config['Features']['story_enabled']['value']) {
-			$stories = $this->Story->find("all", array(
-				"conditions" => array("Story.project_id" => $project['Project']['id']),
-				"order" => array("id"),
-				"contain" => array(
-					'Project' => array(
-						'name',
-					),
-					'Task' => array(
-						'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
-						'TaskStatus' => array('id', 'name'),
-						'TaskType' => array('id', 'name'),
-						'TaskPriority' => array('id', 'name', 'level'),
-					),
+		$stories = $this->Story->find("all", array(
+			"conditions" => array("Story.project_id" => $project['Project']['id']),
+			"order" => array("id"),
+			"contain" => array(
+				'Project' => array(
+					'name',
 				),
-			));
-	
-			$this->set('stories', $stories);
-		}
-
-
-		$this->set('milestones', $this->Story->Project->Milestone->find("all", array(
-			"conditions" => array("project_id" => $project['Project']['id'], "is_open" => true),
-			"fields" => array("id", "subject", "starts", "due"),
-			"contain" => array('Task' => array(
-				'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
-				'TaskStatus' => array('id', 'name'),
-				'TaskType' => array('id', 'name'),
-				'TaskPriority' => array('id', 'name'),
-				'Milestone' => array(
-					'subject', 'id', 'starts', 'due', 'is_open',
-					'order' => array('starts', 'due'),
+				'Task' => array(
+					'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
+					'TaskStatus' => array('id', 'name'),
+					'TaskType' => array('id', 'name'),
+					'TaskPriority' => array('id', 'name', 'level'),
 				),
-			)),
-			"order" => array("starts", "due"),
-		)));
+			),
+		));
+
+		$this->set('stories', $stories);
 
 	}
 

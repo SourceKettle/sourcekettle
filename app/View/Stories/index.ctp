@@ -8,11 +8,14 @@ $this->Html->css('stories', null, array ('inline' => false));
     <?= $this->Element("Story/topbar") ?>
 </div>
 
-<table class="story-map table">
+<div class="row-fluid">
+<?
+$i = 0;
+foreach ($stories as $story) {
+	if ($i++ % 4 == 0) {
+		echo '</div><div class="row-fluid">';
+	}
+	echo $this->element('Story/block', array('story' => $story, 'span' => 3));
+}?>
 
-<? foreach ($stories as $story) { ?>
-	<?=$this->element('Story/block', array('story' => $story))?>
-<? } ?>
-
-
-</table>
+</div>

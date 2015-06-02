@@ -49,9 +49,9 @@ $pointsComplete = array_sum(array_map(function($a){
 }, $story['Task']));
 $localTaskLink = isset($localTaskLink) ?: false;
 $milestoneId = isset($milestoneId) ?: 0;
+$span = isset($span) ? $span : 12;
 ?>
-
-<div class="story-block well" id="story_<?=$story['Story']['public_id']?>">
+<div class="story-block well span<?=$span?>" id="story_<?=$story['Story']['public_id']?>">
 	<a name="story_<?=$story['Story']['public_id']?>"></a>
 	<h4><?=$this->Html->link(
 		h($story['Story']['subject']), array(
