@@ -1154,4 +1154,29 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		$this->assertEquals(0, $found['Features']['time_enabled']['value']);
 	}
 
+	public function testApiListCollaborators() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/projects/private/list_collaborators');
+		$this->assertAuthorized();
+		$list = json_decode($this->view, true);
+		$this->assertEquals(array(
+			array('id' => 10, 'title' => 'Another user [another-user@example.com]'),
+			array('id' => 5, 'title' => 'Mr Admin [mr.admin@example.com]'),
+			array('id' => 1, 'title' => 'Mr Smith [Mr.Smith@example.com]'),
+			array('id' => 4, 'title' => 'Mr User [mr.user@example.com]'),
+			array('id' => 3, 'title' => 'Mrs Guest [mrs.guest@example.com]'),
+		), $list);
+	}
+
+	public function testApiListMilestones() {
+		$this->_fakeLogin(3);
+		$this->testAction('/api/projects/private/list_milestones');
+		$this->assertAuthorized();
+		$list = json_decode($this->view, true);
+		$this->assertEquals(array(
+			array('id' => 4, 'title' => '(Open): Longer <i>subject</i>'),
+			array('id' => 5, 'title' => '(Closed): Longer <i>subject</i>'),
+		), $list);
+	}
+
 }
