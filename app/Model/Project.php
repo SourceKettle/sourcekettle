@@ -553,8 +553,8 @@ class Project extends AppModel {
 			$users[] = array("id" => $collaborator['User']['id'], "title" => "{$collaborator['User']['name']} [{$collaborator['User']['email']}]");
 		}
 		
-		// Sort in ID order
-		usort($users, function($a, $b) {return ($a['id'] < $b['id']? -1: 1);});
+		// Sort alphabetically
+		usort($users, function($a, $b) { return strcmp($a["title"], $b["title"]); });
 		return $users;
 
 	}
