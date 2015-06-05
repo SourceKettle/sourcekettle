@@ -290,6 +290,9 @@ form {
 	padding-top: 2px;
 	padding-bottom: 1px;
 	width: auto;
+	/* TODO - this is a fixed height */
+	max-height: 300px;
+	overflow-y: scroll;
 }
 
 .task-dropdown-menu li {
@@ -373,6 +376,9 @@ form {
 .task-view-description {
 	min-height: 150px !important;
 	text-align: center;
+}
+.task-description-text {
+	text-align: left;
 }
 .task-view-selectors {
 	text-align: center;

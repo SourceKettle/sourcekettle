@@ -94,7 +94,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 	</small>
 	<h4><?=__("Description")?></h4>
 		<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
-		<div class="task-description-text"><?= $this->Markitup->parse($task['Task']['description']) ?></div>
+		<div class="well task-description-text"><?= $this->Markitup->parse($task['Task']['description']) ?></div>
 	
 	<span class="edit-form hide">
 			<?= $this->Form->textarea("description", array("class" => "task-description-input", "rows" => 10)); ?>
