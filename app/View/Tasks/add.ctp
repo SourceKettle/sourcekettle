@@ -70,7 +70,8 @@ $this->Html->scriptBlock ("
 			"label" => __('Assigned to')
 		));
 
-		echo $this->Bootstrap->input("time_estimate", array(
+		// Deprecated I guess? We're not actually displaying it anywhere, and story points are a lot more useful
+		/*echo $this->Bootstrap->input("time_estimate", array(
 			"input" => $this->Form->input("time_estimate", array(
 				// Force text field, as we convert  time string to integer
 				"type" => "text",
@@ -80,7 +81,7 @@ $this->Html->scriptBlock ("
 			)),
 			"help_inline" => __("Roughly how much time will the task take to finish?"),
 			"label" => __('Time Estimate'),
-		));
+		));*/
 
 		echo $this->Bootstrap->input("story_points", array(
 			"input" => $this->Form->input("story_points", array(
