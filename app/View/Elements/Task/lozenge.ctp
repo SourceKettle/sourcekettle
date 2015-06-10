@@ -69,7 +69,9 @@ if($draggable){
 						<?= $this->Task->storyPointsControl($draggable? $task: $task['Task']['story_points']) ?>
 						<?= $this->Task->priorityDropdownButton($draggable? $task: $task['Task']['task_priority_id'], false) ?>
 						<?= $this->Task->milestoneLabel($task) ?>
-						<?= $this->Task->storyLabel($task, $localStoryLink) ?>
+						<? if ($sourcekettle_config['Features']['story_enabled']['value']) { ?>
+							<?= $this->Task->storyLabel($task, $localStoryLink) ?>
+						<? } ?>
 						</span>
 						</span>
 					</div>
