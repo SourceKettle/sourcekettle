@@ -137,6 +137,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function index($project = null) {
+		// TODO this entire action is awful!
 		$project = $this->_getProject($project);
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('things to do'));
@@ -374,7 +375,7 @@ class TasksController extends AppProjectController {
 		$this->request->data = $task;
 
 		// Fetch the changes that will have happened
-		$changes	= $this->Task->Project->ProjectHistory->find(
+		$changes = $this->Task->Project->ProjectHistory->find(
 			'all',
 			array(
 				'conditions' => array(
@@ -615,7 +616,6 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function add($project = null) {
-
 		// TODO this action is horrible, it needs a lot of cleaning up and most of this code should probably be moved to a model class
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('create a task'));
