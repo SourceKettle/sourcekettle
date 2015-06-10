@@ -66,12 +66,12 @@ $milestoneId = isset($milestoneId) ?: 0;
 	<?=$link_edit?>
 	</h4>
 	<div class="row-fluid">
-	<p class="span12">
+	<p class="story span12">
 		<?=h($story['Story']['description'])?>
 	</p>
 	</div>
 	<div class="row-fluid">
-	<p class="span12">
+	<p class="points span12">
 		<?=__("%d/%d story points complete", $pointsComplete, $pointsTotal)?>
 	</p>
 	</div>

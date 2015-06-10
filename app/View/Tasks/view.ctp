@@ -25,7 +25,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 <div class="row-fluid">
 	<div class="span12 well task-lozenge task-card" data-taskid="<?=h($task['Task']['public_id'])?>" data-api-url="<?=$apiUrl?>">
 
-		<div class="row-fluid task-view-top">
+	<div class="row-fluid task-view-top">
 	<div class="span3 task-view-priority">
 			<h5><?= __("Priority") ?></h5>
 	<?= $this->Task->priorityDropdownButton($task, true) ?>
@@ -38,7 +38,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 				<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
 
 		<span class="edit-form input-append hide">
-			<?= $this->Form->textarea("subject", array("rows" => 1)); ?>
+		<?= $this->Form->textarea("subject", array("rows" => 1)); ?>
 		<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
 		</span>
 

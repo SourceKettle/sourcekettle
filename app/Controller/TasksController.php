@@ -616,6 +616,7 @@ class TasksController extends AppProjectController {
  */
 	public function add($project = null) {
 
+		// TODO this action is horrible, it needs a lot of cleaning up and most of this code should probably be moved to a model class
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('create a task'));
 		$project = $this->_getProject($project);
@@ -654,7 +655,7 @@ class TasksController extends AppProjectController {
 
 			$data['Task']['project_id']	= $project['Project']['id'];
 			$data['Task']['owner_id']	= $current_user['id'];
-			$data['Task']['task_status_id']	= 1;
+			$data['Task']['task_status_id']	= 1; // TODO hard coded ID
 
 			if (isset($data['Task']['milestone_id']) && $data['Task']['milestone_id'] == 0) {
 				$data['Task']['milestone_id'] = null;
@@ -667,7 +668,7 @@ class TasksController extends AppProjectController {
 			}
 
 			if (isset($data['Task']['task_type_id']) && $data['Task']['task_type_id'] == 0) {
-				$data['Task']['task_type_id'] = 3; // TODO configurable default
+				$data['Task']['task_type_id'] = $this->TaskType->nameToID('enhancement'); // TODO configurable default
 			}
 
 			// TODO what's going on here?
@@ -712,7 +713,7 @@ class TasksController extends AppProjectController {
 			}
 		} else {
 			// GET request: set default priority, type and assignment
-			$this->request->data['Task']['task_type_id'] = 1;
+			$this->request->data['Task']['task_type_id'] = $this->TaskType->nameToID('enhancement');
 			$this->request->data['Task']['assignee_id'] = 0;
 
 			// TODO hard coded default, also clean this up and allow params to be passed for status/type etc.
@@ -789,12 +790,27 @@ class TasksController extends AppProjectController {
 			throw new MethodNotAllowedException();
 		}
 
-		// Retrieve the projcet and task
+		// Retrieve the project and task
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 
-		$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id", "Task.status", "Task.priority", "Task.type"));
+		$data = $this->_cleanPost(array(
+			"Task.subject",
+			"Task.description",
+			"Task.task_priority_id",
+			"Task.task_status_id",
+			"Task.milestone_id",
+			"Task.task_type_id",
+			"Task.assignee_id",
+			"Task.time_estimate",
+			"Task.story_points",
+			"Task.story_id",
+			"Task.status",
+			"Task.priority",
+			"Task.type",
+		));
 
+		// Convert story public ID to real ID
 		if (isset($data['Task']['story_id']) && $data['Task']['story_id'] == 0) {
 			$data['Task']['story_id'] = null;
 		} elseif(isset($data['Task']['story_id'])) {

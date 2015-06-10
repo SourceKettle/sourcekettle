@@ -514,6 +514,63 @@ class ProjectsController extends AppProjectController {
 		$this->set(compact('project', 'milestones'));
 	}
 
+	public function resourcing($project = null) {
+
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("collaborator resourcing"));
+		$project = $this->_getProject($project);
+
+		// Allow date range from/to any date, default from the middle of last month to end of next month
+		if (isset($this->params->query['from']) && preg_match('/^\s*(\d{4}\-\d{2}\-\d{2})\s*$/', $this->params->query['from'], $matches)) {
+			$earliest = $matches[1];
+		} else {
+			$earliest = date('Y') . '-' . (date('m') - 1) . '-15';
+		}
+
+		if (isset($this->params->query['to']) && preg_match('/^\s*(\d{4}\-\d{2}\-\d{2})\s*$/', $this->params->query['to'], $matches)) {
+			$latest = $matches[1];
+		} else {
+			$latest = date('Y') . '-' . (date('m') + 2) . '-01';
+		}
+
+		$includeClosed = (isset($this->params->query['include_closed']) && preg_match('/^1|yes|true$/i', $this->params->query['include_closed']));
+
+		$this->set(compact('project', 'earliest', 'latest', 'includeClosed'));
+
+		if ($this->request->is('ajax')) {
+			// Project schedule maps user => list of milestones they are on
+			// Due to the way the gantt charts are rendered, we need a list of users for the Y axis
+			// and each milestone has to be its own series so that it's coloured per milestone.
+			$schedule = $this->Project->getProjectSchedule($project['Project']['id'], $earliest, $latest, $includeClosed);
+
+			// List of all users
+			$userList = array_values(array_map(function($a) {return $a['User'];}, $schedule));
+			
+			// Map of user ID => index in $userList
+			$userToIndex = array_flip(array_map(function($a) {return $a['id'];}, $userList));
+
+			// List of all milestones
+			$milestonesByUser = array_map(function($a) {return $a['Milestone'];}, $schedule);
+			
+			// Build list of milestone => user indexes
+			$milestones = array();
+			foreach ($milestonesByUser as $userId => $userMilestones) {
+				foreach ($userMilestones as $msId => $ms) {
+
+					if (!isset($milestones[$msId])) {
+						$milestones[$msId] = $ms;
+						$milestones[$msId]['User'] = array();
+					}
+					$milestones[$msId]['User'][] = $userToIndex[$userId];
+				}
+			}
+
+			$this->set('data', array('code' => 200, 'users' => $userList, 'by_user' => $schedule, 'by_milestone' => $milestones));
+			$this->render('/Elements/json');
+			return;
+		}
+	}
+
 	public function changeSetting($project) {
 		if (!$this->request->is('post')) {
 			return $this->redirect(array('project' => $project, 'action' => 'edit'));

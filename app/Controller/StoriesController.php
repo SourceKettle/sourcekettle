@@ -127,7 +127,7 @@ class StoriesController extends AppProjectController {
 		$project = $this->_getProject($project);
 		if ($this->request->is('post')) {
 			$this->Story->create();
-			$data = $this->_cleanPost(array("Story.subject", "Story.description"));
+			$data = $this->_cleanPost(array("Story.subject", "Story.description", "Story.acceptance_criteria"));
 			$data['Story']['project_id'] = $project['Project']['id'];
 			$data['Story']['creator_id'] = $this->Auth->user('id');
 			$saved = $this->Story->save($data);
