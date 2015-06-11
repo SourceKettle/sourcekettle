@@ -47,6 +47,7 @@ $pointsComplete = array_sum(array_map(function($a){
 		return $a['story_points'];
 	}
 }, $story['Task']));
+$pointsPct = ($pointsTotal == 0 ? 0 : (int) ($pointsComplete/$pointsTotal * 100));
 $localTaskLink = isset($localTaskLink) ?: false;
 $milestoneId = isset($milestoneId) ?: 0;
 $span = isset($span) ? $span : 12;
@@ -65,16 +66,11 @@ $span = isset($span) ? $span : 12;
 	<?=$link_addtask?>
 	<?=$link_edit?>
 	</h4>
-	<div class="row-fluid">
-	<p class="story span12">
-		<?=h($story['Story']['description'])?>
-	</p>
-	</div>
-	<div class="row-fluid">
-	<p class="points span12">
-		<?=__("%d/%d story points complete", $pointsComplete, $pointsTotal)?>
-	</p>
-	</div>
+    <ul class="unstyled">
+	<li><?=h($story['Story']['description'])?></li>
+	<li><?=__("%d/%d story points complete (%d%%)", $pointsComplete, $pointsTotal, $pointsPct) ?></li>
+       	<li><?= $this->Bootstrap->progress(array("width" => $pointsPct, "striped" => true)) ?></li>
+    </ul>
 
 	<? if (@$includeTasks) {?>
 	<div class="row-fluid">
