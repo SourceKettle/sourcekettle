@@ -211,7 +211,7 @@ class TaskHelper extends AppHelper {
 	public function storyLabel($task, $localLink = false) {
 
 		// No story to link
-		if (!isset($task['Story']) && !isset($task['Story']['id'])){
+		if (!isset($task['Story']) || !isset($task['Story']['id']) || $task['Story']['id'] < 1 ){
 			return '';
 		}
 
