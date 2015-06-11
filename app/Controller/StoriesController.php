@@ -143,7 +143,7 @@ class StoriesController extends AppProjectController {
 			throw new NotFoundException(__('Invalid story'));
 		}
 		if ($this->request->is(array('post', 'put'))) {
-			$data = $this->_cleanPost(array("Story.subject", "Story.description"));
+			$data = $this->_cleanPost(array("Story.subject", "Story.description", "Story.acceptance_criteria"));
 			$saved = $this->Story->save($data);
 			if ($saved) {
 				$saved = $this->Story->findByProjectIdAndPublicId($project['Project']['id'], $publicId);

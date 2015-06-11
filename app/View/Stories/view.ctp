@@ -3,6 +3,10 @@
 <?=$this->Html->css('stories', null, array ('inline' => false))?>
 <?=$this->Html->script("stories", array ('inline' => false))?>
 <?=$this->Html->script("tasks", array ('inline' => false))?>
+<?=$this->Html->css('/prettify/prettify', null, array ('inline' => false))?>
+<?=$this->Html->script('/prettify/prettify', array('block' => 'scriptBottom'))?>
+<?=$this->Html->script('/prettify/lang-gherkin', array('block' => 'scriptBottom'))?>
+<?=$this->Html->scriptBlock("prettyPrint()", array('inline' => false))?>
 
 <div class="row">
 <div class="well span8 offset2">
@@ -35,7 +39,7 @@
 <div class="row">
 <div class="well span8 offset2">
 	<h3 class="story-title"><?=__("Acceptance criteria")?></h3>
-	<p class="story-acceptance-criteria"><?= h($story['Story']['acceptance_criteria']) ?></p>
+	<pre class="story-acceptance-criteria prettyprint lang-gherkin"><?= h($story['Story']['acceptance_criteria']) ?></pre>
 	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
 	<span class="edit-form input-append hide">
 		<?= $this->Form->textarea("acceptance_criteria", array("rows" => 1)); ?>
