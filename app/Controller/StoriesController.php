@@ -89,7 +89,12 @@ class StoriesController extends AppProjectController {
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('User stories'));
 		$project = $this->_getProject($project);
-		$this->Story->contain(array('Project' => array('name'), 'Creator' => array('name', 'email', 'id')));
+		$this->Story->contain(array(
+			'Project' => array('name'),
+			'Creator' => array('name', 'email', 'id'),
+			'Task' => array('Owner', 'Assignee', 'Project', 'TaskStatus', 'TaskType', 'TaskPriority', 'Milestone'),
+		));
+
 		$story = $this->Story->findByProjectIdAndPublicId($project['Project']['id'], $id);
 		if (!$story) {
 			throw new NotFoundException(__('Invalid story'));

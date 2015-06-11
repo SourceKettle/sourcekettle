@@ -209,6 +209,12 @@ class TaskHelper extends AppHelper {
 	}
 
 	public function storyLabel($task, $localLink = false) {
+
+		// No story to link
+		if (!isset($task['Story']) && !isset($task['Story']['id'])){
+			return '';
+		}
+
 		// Page-local link - just an anchor to the story within the page
 		if ($localLink) {
 			$link = $this->Html->link($this->Bootstrap->icon("book", "white"), "#story_".$task['Story']['public_id'], array('escape' => false));
@@ -222,10 +228,7 @@ class TaskHelper extends AppHelper {
 			), array('escape' => false));
 		}
 
-		$label = "";
-		if (isset($task['Story']['id'])){
-			$label = "<span class='label' title='".__('Story: %s', $task['Story']['subject'])."'>$link</span>";
-		}
+		$label = "<span class='label' title='".__('Story: %s', $task['Story']['subject'])."'>$link</span>";
 		return $label;
 	}
 
@@ -236,7 +239,7 @@ class TaskHelper extends AppHelper {
 	public function storyDropdownButton($task, $size = 90, $hasWrite = true) {
 		$icon = '<i class="icon-book icon-white"></i>';
 		$label = ' <span class="story-label">';
-		if($task['Task']['story_id'] != 0){
+		if (isset($task['Task']['Story']) && isset($task['Story']['id'])) {
 			$tooltip = __("Story: %s", h($task['Story']['subject']));
 			$label .= $this->Html->link($task['Story']['subject'], array(
 				'controller' => 'stories',

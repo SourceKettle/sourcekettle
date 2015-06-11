@@ -368,6 +368,7 @@ class TasksController extends AppProjectController {
 			'DependedOnBy',
 			'Owner' => array('id', 'name', 'email'),
 			'Assignee' => array('id', 'name', 'email'),
+			'Story' => array('id', 'public_id', 'subject'),
 		));
 		$current_user = $this->Auth->user();
 
