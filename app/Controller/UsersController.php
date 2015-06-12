@@ -227,19 +227,19 @@ class UsersController extends AppController {
 		// Invalid key
 		$passwordkey = $this->User->LostPasswordKey->findByKey($key);
 		if (empty($passwordkey)) {
-			$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
+			$this->Session->setFlash(__("The key given was invalid"), 'default', array(), 'error');
 			return $this->redirect('/lost_password');
 		}
 
 		// Bomb out if the key has expired
-		// TODO hard-coded expiry time, should be in config
+		$maxAge = $this->sourcekettle_config['Users']['max_activation_key_age']['value'];
 		$keyTime = new DateTime($passwordkey['LostPasswordKey']['created'], new DateTimeZone('UTC'));
 		$expiryTime = new DateTime('now', new DateTimeZone('UTC'));
-		$expiryTime->sub(new DateInterval('PT18000S'));
+		$expiryTime->sub(new DateInterval("PT{$maxAge}S"));
 
 		if ($keyTime < $expiryTime) {
 			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
-			$this->Session->setFlash("The key given has expired", 'default', array(), 'error');
+			$this->Session->setFlash(__("The key given has expired"), 'default', array(), 'error');
 			return $this->redirect('/lost_password');
 		}
 
@@ -252,7 +252,7 @@ class UsersController extends AppController {
 		$data = $this->_cleanPost(array("User.password", "User.password_confirm"));
 		// Passwords don't match, re-render password form
 		if (@$data['User']['password'] != @$data['User']['password_confirm']) {
-			$this->Session->setFlash("Your passwords do not match. Please try again.", 'default', array(), 'error');
+			$this->Session->setFlash(__("Your passwords do not match. Please try again."), 'default', array(), 'error');
 			$this->render('reset_password');
 			return;
 		}
