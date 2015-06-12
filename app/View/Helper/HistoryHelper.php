@@ -57,7 +57,7 @@ class HistoryHelper extends AppHelper {
 			$date = strtotime($event['modified']);
 			echo '<strong>' . date('Y-m-d H:i:s', $date) . '</strong>';
 		}
-	
+
 		// Create Actioner String/Link if exists
 		if ( $event['Actioner']['exists'] ) {
 			$actioner = $this->Html->link(
@@ -349,6 +349,27 @@ class HistoryHelper extends AppHelper {
 			case 'milestone.delete':
 				$log_string  = __(
 					"%s deleted milestone %s from the project",
+					$actioner, $subject
+				);
+			break;
+
+			case 'story.create':
+				$log_string  = __(
+					"%s added story %s to the project",
+					$actioner, $subject
+				);
+			break;
+
+			case 'story.update':
+				$log_string = __(
+					"%s updated story %s &rarr; '%s' changed from '%s' to '%s'",
+					$actioner, $subject, $field, $old, $new
+				);
+			break;
+
+			case 'story.delete':
+				$log_string  = __(
+					"%s deleted story %s from the project",
 					$actioner, $subject
 				);
 			break;

@@ -415,7 +415,7 @@ class Project extends AppModel {
 		$events = array();
 
 		// Types of event to collect
-		$_types = array('Collaborator', 'Time', 'Task', 'Milestone');
+		$_types = array('Collaborator', 'Time', 'Task', 'Milestone', 'Story');
 
 		try {
 			$this->Source->init();

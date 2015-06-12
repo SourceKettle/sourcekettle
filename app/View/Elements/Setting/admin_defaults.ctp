@@ -32,20 +32,24 @@
 						'label' => __('Task type'),
 						'description' => __('When adding a new task, which task type is pre-selected'),
 						'value' => $sourcekettle_config['Defaults']['task_type']['value'],
+						'locked' => $sourcekettle_config['Defaults']['task_type']['locked'],
 					),
 					array(
 						'name' => 'Setting.Defaults.task_priority',
 						'label' => __('Task priority'),
 						'description' => __('When adding a new task, which priority is pre-selected'),
 						'value' => $sourcekettle_config['Defaults']['task_priority']['value'],
+						'locked' => $sourcekettle_config['Defaults']['task_priority']['locked'],
 					),
 					array(
 						'name' => 'Setting.Defaults.task_status',
 						'label' => __('Task status'),
 						'description' => __('When adding a new task, which task status is pre-selected'),
 						'value' => $sourcekettle_config['Defaults']['task_status']['value'],
+						'locked' => $sourcekettle_config['Defaults']['task_status']['locked'],
 					),
 				),
+				'addLock' => true,
 			)) ?>
 
         </tbody>

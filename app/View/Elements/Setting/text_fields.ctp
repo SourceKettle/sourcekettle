@@ -5,6 +5,11 @@
 		<td>
         <?= $this->Form->text($item['name'], array('id' => $item['name'], 'class' => 'xlarge', "value" => $item['value'])) ?>
 		</td>
+		<? if (isset($addLock) && $addLock) { ?>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => '', 'name' => $item['name'], 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => '', 'value' => $item['locked'])) ?>
+                </td>
+		<? } ?>
 	</tr>
 	<? } ?>
 	<tr>

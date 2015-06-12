@@ -109,8 +109,8 @@ class Story extends AppModel {
 			$story['Story']['formatted'] = "<strong>".$matches['asatag']."</strong>".$matches['asa']."<strong>".$matches['iwanttag']."</strong>".$matches['iwant']."<strong>".$matches['sothattag']."</strong>".$matches['sothat'];
 		} else {
 			$story['Story']['as-a'] = null;
-			$story['Story']['action'] = null;
-			$story['Story']['reason'] = null;
+			$story['Story']['i-want'] = null;
+			$story['Story']['so-that'] = null;
 		}
 		return $story;
 	}
@@ -132,4 +132,22 @@ class Story extends AppModel {
 		ksort($stories);
 		return $stories;
 	}
+
+	public function fetchHistory($project = '', $number = 10, $offset = 0, $user = -1, $query = array()) {
+		$events = $this->Project->ProjectHistory->fetchHistory($project, $number, $offset, $user, 'story');
+		return $events;
+	}
+
+	public function getTitleForHistory($id = null) {
+		if ($id == null) {
+			$id = $this->id;
+		}
+		$this->id = $id;
+		if (!$this->exists()) {
+			return null;
+		} else {
+			return '#' . $this->field('public_id') . " (" . $this->field('subject') . ")";
+		}
+	}
+
 }

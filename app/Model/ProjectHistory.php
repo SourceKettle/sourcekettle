@@ -42,7 +42,7 @@ class ProjectHistory extends AppModel {
 		'model' => array(
 			'inlist' => array(
 				// TODO Bad idea - hard coded :-(
-				'rule' => array('inlist', array('collaborator','task','milestone','source','time','projectattachment')),
+				'rule' => array('inlist', array('collaborator','task','milestone','source','time','projectattachment','story','epic')),
 			),
 		),
 		'model_id' => array(
@@ -135,7 +135,6 @@ class ProjectHistory extends AppModel {
 
 		// Fetch the objects in question
 		$results = $this->find('all', $search);
-
 		foreach ($results as $a => $result) {
 
 			$events[$a] = array();
@@ -200,6 +199,10 @@ class ProjectHistory extends AppModel {
 				// Tasks: swap out the real task ID for its public ID
 				case 'Task':
 					$events[$a]['Subject']['id'] = $this->Project->Task->field('public_id', array('id' => $events[$a]['Subject']['id']));
+					break;
+
+				case 'Story':
+					$events[$a]['Subject']['id'] = $this->Project->Story->field('public_id', array('id' => $events[$a]['Subject']['id']));
 					break;
 			}
 		}
