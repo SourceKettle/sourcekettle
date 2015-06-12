@@ -43,6 +43,7 @@ class ProjectsController extends AppProjectController {
 			'add_repo'   => 'admin',
 			'delete' => 'write',
 			'schedule' => 'read',
+			'resourcing' => 'read',
 			'markupPreview'  => 'read',
 			'changeSetting' => 'admin',
 			'api_history' => 'read',
