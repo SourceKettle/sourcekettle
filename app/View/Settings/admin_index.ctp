@@ -21,6 +21,7 @@ $this->Html->css('pages/settings', null, array ('inline' => false));
     <?= $this->element('Setting/admin_global') ?>
     <?= $this->element('Setting/admin_ldap') ?>
     <?= $this->element('Setting/admin_features') ?>
+    <?= $this->element('Setting/admin_defaults') ?>
     <?= $this->element('Setting/admin_interface') ?>
     <?= $this->element('Setting/admin_repo') ?>
 </div>
