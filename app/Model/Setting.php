@@ -201,6 +201,15 @@ class Setting extends AppModel {
 				// Default repository type
 				'default' => array('source' => 'Defaults', 'locked' => false, 'value' => 'Git'),
 			),
+
+			// Default options for new items
+			'Defaults' => array(
+				// Task defaults
+				'task_type' => array('source' => 'Defaults', 'locked' => false, 'value' => 'enhancement'),
+				'task_priority' => array('source' => 'Defaults', 'locked' => false, 'value' => 'major'),
+				'task_status' => array('source' => 'Defaults', 'locked' => false, 'value' => 'open'),
+				'task_assignee_id' => array('source' => 'Defaults', 'locked' => false, 'value' => '0'),
+			),
 		);
 	}
 

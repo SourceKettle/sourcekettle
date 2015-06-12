@@ -41,6 +41,10 @@ class ProjectSetting extends AppModel {
 		'Features.attachment_enabled',
 		'Features.4col_kanban_enabled',
 		'UserInterface.terminology',
+		'Defaults.task_type',
+		'Defaults.task_priority',
+		'Defaults.task_status',
+		'Defaults.task_assignee_id',
 	);
 
 	public function isValidName($name) {

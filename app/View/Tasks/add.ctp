@@ -61,6 +61,7 @@ $this->Html->scriptBlock ("
 			)),
 			"label" => __('Priority'),
 		));
+
 		echo $this->Bootstrap->input("assignee_id", array(
 			"input" => $this->Form->input("assignee_id", array(
 				"label"   => false,
@@ -119,11 +120,6 @@ $this->Html->scriptBlock ("
 		<?= $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls span12'));?>
 		<h5><?= __('Issue type') ?></h5>
 		<?php
-
-		// TODO set default type based on config
-		if (!isset($this->request->data['Task']['task_type_id'])) {
-			$this->request->data['Task']['task_type_id'] = 1;
-		}
 		
 		$options = array();
 		foreach ($task_types as $id => $type) {

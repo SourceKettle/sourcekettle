@@ -9,6 +9,8 @@ App::uses('AppModel', 'Model');
 class Story extends AppModel {
 
 	public $actsAs = array(
+		'ProjectComponent',
+		'ProjectHistory',
 		//'CakeDCUtils.SoftDelete',
 	);
 

@@ -625,24 +625,50 @@ class TasksController extends AppProjectController {
 
 		// Milestone pre-selected - parse and store
 		if (!empty($this->request->query['milestone'])) {
-			$selected_milestone_id = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
+			$selectedMilestoneId = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
 		} else {
-			$selected_milestone_id = 0;
+			$selectedMilestoneId = 0;
 		}
 
 		// Ditto for user story
 		if (!empty($this->request->query['story'])) {
-			$selected_story_id = preg_replace('/[^\d]/', '', $this->request->query['story']);
+			$selectedStoryId = preg_replace('/[^\d]/', '', $this->request->query['story']);
 		} else {
-			$selected_story_id = 0;
+			$selectedStoryId = 0;
 		}
 
 		// Pre-selected priority
-		$selectedPriority = 0;
 		if (!empty($this->request->query['priority'])) {
-			$selectedPriority = $this->TaskPriority->nameToID($this->request->query['priority']);
+			$selectedPriorityId = $this->TaskPriority->nameToID($this->request->query['priority']);
 		} elseif (isset($this->request->data['Task']['task_priority_id'])) {
-			$selectedPriority = $this->TaskPriority->nameToID($this->request->data['Task']['task_priority_id']);
+			$selectedPriorityId = $this->TaskPriority->nameToID($this->request->data['Task']['task_priority_id']);
+		} else {
+			$selectedPriorityId = $this->TaskPriority->nameToID($this->sourcekettle_config['Defaults']['task_priority']['value']);
+		}
+
+		// Pre-selected status
+		if (!empty($this->request->query['status'])) {
+			$selectedStatusId = $this->TaskStatus->nameToID($this->request->query['status']);
+		} elseif (isset($this->request->data['Task']['task_status_id'])) {
+			$selectedStatusId = $this->TaskStatus->nameToID($this->request->data['Task']['task_status_id']);
+		} else {
+			$selectedStatusId = $this->TaskStatus->nameToID($this->sourcekettle_config['Defaults']['task_status']['value']);
+		}
+
+		// Pre-selected type
+		if (!empty($this->request->query['type'])) {
+			$selectedTypeId = $this->TaskType->nameToID($this->request->query['type']);
+		} elseif (isset($this->request->data['Task']['task_type_id'])) {
+			$selectedTypeId = $this->TaskType->nameToID($this->request->data['Task']['task_type_id']);
+		} else {
+			$selectedTypeId = $this->TaskType->nameToID($this->sourcekettle_config['Defaults']['task_type']['value']);
+		}
+
+		// Pre-selected assignee
+		if (isset($this->request->data['Task']['task_assignee_id'])) {
+			$selectedAssigneeId = $this->request->data['Task']['task_assignee_id'];
+		} else {
+			$selectedAssigneeId = $this->sourcekettle_config['Defaults']['task_assignee_id']['value'];
 		}
 
 		if ($this->request->is('ajax') || $this->request->is('post')) {
@@ -681,7 +707,9 @@ class TasksController extends AppProjectController {
 				} else {
 					echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not add task to the project. Please, try again.</div>';
 				}
+
 			} else if ($this->request->is('post')) {
+
 				// Do not redirect, allow them to save and add another task with the same details
 				if ($this->Task->saveAll($data)) {
 					$task = $this->Task->findById($this->Task->getLastInsertID());
@@ -714,24 +742,19 @@ class TasksController extends AppProjectController {
 			}
 		} else {
 			// GET request: set default priority, type and assignment
-			$this->request->data['Task']['task_type_id'] = $this->TaskType->nameToID('enhancement');
-			$this->request->data['Task']['assignee_id'] = 0;
+			$this->request->data['Task']['task_priority_id'] = $selectedPriorityId;
+			$this->request->data['Task']['task_status_id'] = $selectedStatusId;
+			$this->request->data['Task']['task_type_id'] = $selectedTypeId;
+			$this->request->data['Task']['assignee_id'] = $selectedAssigneeId;
 
-			// TODO hard coded default, also clean this up and allow params to be passed for status/type etc.
-			if (!$selectedPriority) {
-				$selectedPriority = $this->TaskPriority->nameToID('major');
-			}
-
-			$this->request->data['Task']['task_priority_id'] = $selectedPriority;
-
-			if ($selected_milestone_id) {
-				$this->request->data['Task']['milestone_id'] = $selected_milestone_id;
+			if ($selectedMilestoneId) {
+				$this->request->data['Task']['milestone_id'] = $selectedMilestoneId;
 			} else{
 				$this->request->data['Task']['milestone_id'] = null;
 			}
 
-			if ($selected_story_id) {
-				$this->request->data['Task']['story_id'] = $selected_story_id;
+			if ($selectedStoryId) {
+				$this->request->data['Task']['story_id'] = $selectedStoryId;
 			} else{
 				$this->request->data['Task']['story_id'] = null;
 			}
