@@ -139,6 +139,8 @@ class Setting extends AppModel {
 				'sysadmin_email' => array('source' => 'Defaults', 'locked' => false, 'value' => 'sysadmin@example.com'),
 				// From: address for any emails sent by the system
 				'send_email_from' => array('source' => 'Defaults', 'locked' => false, 'value' => 'sysadmin@example.com'),
+				// Maximum age of lost password and confirmation keys (5 hours)
+				'max_activation_key_age' => array('source' => 'Defaults', 'locked' => false, 'value' => 5 * 60 * 60),
 			),
 
 			// LDAP authentication settings
