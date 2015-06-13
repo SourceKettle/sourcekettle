@@ -399,31 +399,44 @@ function setStoryPoints(button, difference) {
 // Triggered when task statuses or point counts change.
 function refreshStoryPointTotals() {
 	
-	totalBox = $('#points_total');
-	completeBox = $('#points_complete');
-
-	// Skip if we have no points boxes
-	if (!totalBox || !completeBox) {
-		return;
-	}
-
-	total = 0;
-	complete = 0;
+	// First count points for each status
+	var totals = {
+		"open" : 0,
+		"in progress" : 0,
+		"resolved" : 0,
+		"closed" : 0,
+	};
+	var total = 0;
 
 	$.each($('li.task-lozenge .points'), function(idx, points){
 		status = $(points).closest('li.task-lozenge').attr('data-taskstatus');
+		if (status == "dropped") return;
 		points = parseInt($(points).text(), 10);
-		if (status == 'closed' || status == 'resolved') {
-			complete += points;
-		}
-
-		if (status != 'dropped') {
-			total += points;
-		}
+		totals[status] += points;
+		total += points;
 	});
 
-	totalBox.text(total);
-	completeBox.text(complete);
+	// If there are no story points in total, zero out the widths of all bars and show the "no points" bar
+	if (total == 0) {
+		$('#points-none').width('100%');
+		for (var status in totals) {
+			$('#points-'+status.replace(' ', '')).width('0%');
+		}
+	// Otherwise hide the "no points" bar and adjust widths
+	} else {
+		$('#points-none').width('0%');
+		dbg = 0;
+		for (var status in totals) {
+			var points = totals[status];
+			var pct =  (points/total) * 100;
+			dbg += pct;
+			var bar = $('#points-'+status.replace(' ', ''));
+			bar.text(points + 'pt '+status);
+			bar.attr('title', points + ' story points '+status);
+			bar.width(pct + '%');
+		}
+	}
+
 
 }
 

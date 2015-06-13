@@ -20,6 +20,20 @@ if ($sourcekettle_config['Features']['4col_kanban_enabled']['value']) {
 	$colSpan = 4;
 }
 
+// TODO cleanup
+$o = $milestone['Tasks']['open']['points'];
+$i = $milestone['Tasks']['in progress']['points'];
+$r = $milestone['Tasks']['resolved']['points'];
+$c = $milestone['Tasks']['closed']['points'];
+$t = $points_total;
+
+$percent_o = ($t == 0) ? 0 : $o / $t * 100;
+$percent_i = ($t == 0) ? 0 : $i / $t * 100;
+$percent_r = ($t == 0) ? 0 : $r / $t * 100;
+$percent_c = ($t == 0) ? 0 : $c / $t * 100;
+
+$percent_none = ($t == 0) ? 100 : 0;
+
 $this->Html->css('tasks', null, array ('inline' => false));
 $this->Html->css("milestones.index", null, array ('inline' => false));
 ?>
@@ -31,8 +45,14 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 
 	
 <div class="row-fluid">
-	<div class="span2 offset5">
-	<span class="label">Story points complete: <span id="points_complete"><?=$points_complete?></span> / <span id="points_total"><?=$points_total?></span></span>
+	<div class="span12">
+		<div class="progress progress-striped">
+                    <div id="points-open" class="bar bar-danger"  style="width: <?= $percent_o ?>%;" title="<?=__('%d story points open', $o)?>"><?= ($o > 0)  ? __('%dpt open', $o) : ''?></div>
+                    <div id="points-inprogress" class=" bar bar-warning" style="width: <?= $percent_i ?>%;" title="<?=__('%d story points in progress', $i)?>"><?= ($i > 0)  ? __('%dpt in progress', $i) : ''?></div>
+                    <div id="points-resolved" class="bar bar-success" style="width: <?= $percent_r ?>%;" title="<?=__('%d story points resolved', $r)?>"><?= ($r > 0)  ? __('%dpt resolved', $r) : ''?></div>
+                    <div id="points-closed" class="bar bar-info"    style="width: <?= $percent_c ?>%;" title="<?=__('%d story points closed', $c)?>"><?= ($c > 0)  ? __('%dpt closed', $c) : ''?></div>
+                    <div id="points-none" class="bar bar-inactive"    style="width: <?= $percent_none?>%;"><?=__('No tasks with story points in this milestone')?></div>
+                </div>
 	</div>
 </div>
 

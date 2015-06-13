@@ -427,3 +427,8 @@ form {
 	border-color: #9ecaed;
 	box-shadow: 0 0 10px #99ff99;
 }
+
+.progress .bar-inactive {
+	background-color: #cfcfcf;
+	color: #8f8f8f;
+}

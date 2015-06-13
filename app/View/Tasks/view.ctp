@@ -45,7 +45,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 		<p>
 		<span class="task-milestone"><small class="milestone-label">
 		<?=isset($task['Milestone']['subject'])? __("Milestone: %s", $this->Html->link(
-			$task['Milestone']['subject'], array(
+			$this->Text->truncate($task['Milestone']['subject'], 20), array(
 				'controller' => 'milestones',
 				'project' => $task['Project']['name'],
 				'action' => 'view',
@@ -57,7 +57,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 
 		<span class="task-story"><small class="story-label">
 		<?=isset($task['Story']['subject'])? __("Story: %s", $this->Html->link(
-			$task['Story']['subject'], array(
+			$this->Text->truncate($task['Story']['subject'], 50), array(
 				'controller' => 'stories',
 				'project' => $task['Project']['name'],
 				'action' => 'view',
