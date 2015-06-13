@@ -7,6 +7,7 @@
 <?=$this->Html->script('/prettify/prettify', array('block' => 'scriptBottom'))?>
 <?=$this->Html->script('/prettify/lang-gherkin', array('block' => 'scriptBottom'))?>
 <?=$this->Html->scriptBlock("prettyPrint()", array('inline' => false))?>
+<?=$this->Task->allDropdownMenus() ?>
 
 <div class="row">
 <div class="well span8 offset2">
@@ -17,15 +18,7 @@
 		<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
 	</span>
 	<p class="story-description-text">
-	<? if ($story['Story']['as-a']) {?>
-		<ul>
-		<li><?=__("<strong>As a:</strong> %s", $story['Story']['as-a'])?></li>
-		<li><?=__("<strong>I want:</strong> %s", $story['Story']['i-want'])?></li>
-		<li><?=__("<strong>So that:</strong> %s", $story['Story']['so-that'])?></li>
-		</ul>
-	<? } else { ?>
 		<?=h($story['Story']['description'])?>
-	<? } ?>
 	</p>
 	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
 

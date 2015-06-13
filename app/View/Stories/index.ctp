@@ -12,10 +12,10 @@ $this->Html->css('stories', null, array ('inline' => false));
 <?
 $i = 0;
 foreach ($stories as $story) {
-	if ($i++ % 4 == 0) {
+	if ($i++ % 2 == 0) {
 		echo '</div><div class="row-fluid">';
 	}
-	echo $this->element('Story/block', array('story' => $story, 'span' => 3));
+	echo $this->element('Story/block', array('story' => $story, 'span' => 6));
 }?>
 
 </div>

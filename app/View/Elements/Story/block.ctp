@@ -53,9 +53,10 @@ $milestoneId = isset($milestoneId) ?: 0;
 $span = isset($span) ? $span : 12;
 ?>
 <div class="story-block well span<?=$span?>" id="story_<?=$story['Story']['public_id']?>">
+       	<?= $this->Bootstrap->progress(array("width" => $pointsPct, "striped" => true)) ?>
 	<a name="story_<?=$story['Story']['public_id']?>"></a>
 	<h4><?=$this->Html->link(
-		h($story['Story']['subject']), array(
+		h($this->Text->truncate($story['Story']['subject'], 50)), array(
 			"controller" => "stories",
 			"action" => "view",
 			"project" => $story['Project']['name'],
@@ -67,9 +68,8 @@ $span = isset($span) ? $span : 12;
 	<?=$link_edit?>
 	</h4>
     <ul class="unstyled">
-	<li><?=h($story['Story']['description'])?></li>
-	<li><?=__("%d/%d story points complete (%d%%)", $pointsComplete, $pointsTotal, $pointsPct) ?></li>
-       	<li><?= $this->Bootstrap->progress(array("width" => $pointsPct, "striped" => true)) ?></li>
+	<li><?=h($this->Text->truncate($story['Story']['description']), 150)?></li>
+	<li><em><?=__("%d/%d story points complete (%d%%)", $pointsComplete, $pointsTotal, $pointsPct) ?></em></li>
     </ul>
 
 	<? if (@$includeTasks) {?>
