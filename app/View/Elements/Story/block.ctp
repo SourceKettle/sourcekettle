@@ -49,7 +49,7 @@ $pointsComplete = array_sum(array_map(function($a){
 }, $story['Task']));
 $pointsPct = ($pointsTotal == 0 ? 0 : (int) ($pointsComplete/$pointsTotal * 100));
 $localTaskLink = isset($localTaskLink) ?: false;
-$milestoneId = isset($milestoneId) ?: 0;
+$milestoneId = isset($milestoneId) ? $milestoneId : 0;
 $span = isset($span) ? $span : 12;
 ?>
 <div class="story-block well span<?=$span?>" id="story_<?=$story['Story']['public_id']?>">

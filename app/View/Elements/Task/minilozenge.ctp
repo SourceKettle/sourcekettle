@@ -28,11 +28,12 @@ if(isset($span) && $span){
 }
 
 $localTaskLink = isset($localTaskLink) ?: false;
-$milestoneId = isset($milestoneId) ?: 0;
+$milestoneId = isset($milestoneId) ? $milestoneId : 0;
 
 // True if the task is from "another" milestone. Used in story blocks when viewed from the milestone kanban
 // chart to indicate which tasks are in both the milestone and the story.
 $isOtherMilestone = ($milestoneId > 0 && $milestoneId != $task['Task']['milestone_id']);
+
 
 if (!isset($checkbox)) {
 	$checkbox = false;
