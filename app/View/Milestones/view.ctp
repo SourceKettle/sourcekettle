@@ -45,7 +45,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 
 	
 <div class="row-fluid">
-	<div class="span12">
+	<div class="span12 progress-milestone">
 		<div class="progress progress-striped">
                     <div id="points-open" class="bar bar-danger"  style="width: <?= $percent_o ?>%;" title="<?=__('%d story points open', $o)?>"><?= ($o > 0)  ? __('%dpt open', $o) : ''?></div>
                     <div id="points-inprogress" class=" bar bar-warning" style="width: <?= $percent_i ?>%;" title="<?=__('%d story points in progress', $i)?>"><?= ($i > 0)  ? __('%dpt in progress', $i) : ''?></div>

@@ -432,3 +432,8 @@ form {
 	background-color: #cfcfcf;
 	color: #8f8f8f;
 }
+
+.progress-milestone, .progress-milestone .progress {
+	margin-bottom: 0px;
+}
+
