@@ -1,4 +1,5 @@
 <?php
+$milestoneId = isset($milestoneId) ? $milestoneId : 0;
 $link_edit = $this->Html->link(
 	$this->Bootstrap->icon('pencil'),
 	array(
@@ -19,7 +20,7 @@ $link_addtask = $this->Html->link(
 		'project' => $story['Project']['name'],
 		'controller' => 'tasks',
 		'action' => 'add',
-		'?' => array('story' => $story['Story']['public_id']),
+		'?' => array('story' => $story['Story']['public_id'], 'milestone' => $milestoneId),
 	),
 	array(
 		'class' => 'close edit',
@@ -49,7 +50,6 @@ $pointsComplete = array_sum(array_map(function($a){
 }, $story['Task']));
 $pointsPct = ($pointsTotal == 0 ? 0 : (int) ($pointsComplete/$pointsTotal * 100));
 $localTaskLink = isset($localTaskLink) ?: false;
-$milestoneId = isset($milestoneId) ? $milestoneId : 0;
 $span = isset($span) ? $span : 12;
 ?>
 <div class="story-block well span<?=$span?>" id="story_<?=$story['Story']['public_id']?>">
