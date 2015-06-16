@@ -56,7 +56,7 @@ $span = isset($span) ? $span : 12;
        	<?= $this->Bootstrap->progress(array("width" => $pointsPct, "striped" => true)) ?>
 	<a name="story_<?=$story['Story']['public_id']?>"></a>
 	<h4><?=$this->Html->link(
-		h($this->Text->truncate($story['Story']['subject'], 50)), array(
+		h($story['Story']['subject']), array(
 			"controller" => "stories",
 			"action" => "view",
 			"project" => $story['Project']['name'],
