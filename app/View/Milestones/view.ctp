@@ -44,17 +44,6 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 </div>
 
 	
-<div class="row-fluid">
-	<div class="span12 progress-milestone">
-		<div class="progress progress-striped">
-                    <div id="points-open" class="bar bar-danger"  style="width: <?= $percent_o ?>%;" title="<?=__('%d story points open', $o)?>"><?= ($o > 0)  ? __('%dpt open', $o) : ''?></div>
-                    <div id="points-inprogress" class=" bar bar-warning" style="width: <?= $percent_i ?>%;" title="<?=__('%d story points in progress', $i)?>"><?= ($i > 0)  ? __('%dpt in progress', $i) : ''?></div>
-                    <div id="points-resolved" class="bar bar-success" style="width: <?= $percent_r ?>%;" title="<?=__('%d story points resolved', $r)?>"><?= ($r > 0)  ? __('%dpt resolved', $r) : ''?></div>
-                    <div id="points-closed" class="bar bar-info"    style="width: <?= $percent_c ?>%;" title="<?=__('%d story points closed', $c)?>"><?= ($c > 0)  ? __('%dpt closed', $c) : ''?></div>
-                    <div id="points-none" class="bar bar-inactive"    style="width: <?= $percent_none?>%;"><?=__('No tasks with story points in this milestone')?></div>
-                </div>
-	</div>
-</div>
 
 <div class="row-fluid">
 
@@ -145,6 +134,17 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 
 </div>
 
+<div class="row-fluid">
+	<div class="span12 progress-milestone">
+		<div class="progress progress-striped">
+                    <div id="points-open" class="bar bar-danger"  style="width: <?= $percent_o ?>%;" title="<?=__('%d story points open', $o)?>"><?= ($o > 0)  ? __('%dpt open', $o) : ''?></div>
+                    <div id="points-inprogress" class=" bar bar-warning" style="width: <?= $percent_i ?>%;" title="<?=__('%d story points in progress', $i)?>"><?= ($i > 0)  ? __('%dpt in progress', $i) : ''?></div>
+                    <div id="points-resolved" class="bar bar-success" style="width: <?= $percent_r ?>%;" title="<?=__('%d story points resolved', $r)?>"><?= ($r > 0)  ? __('%dpt resolved', $r) : ''?></div>
+                    <div id="points-closed" class="bar bar-info"    style="width: <?= $percent_c ?>%;" title="<?=__('%d story points closed', $c)?>"><?= ($c > 0)  ? __('%dpt closed', $c) : ''?></div>
+                    <div id="points-none" class="bar bar-inactive"    style="width: <?= $percent_none?>%;"><?=__('No tasks with story points in this milestone')?></div>
+                </div>
+	</div>
+</div>
 <? if($sourcekettle_config['Features']['story_enabled']['value']) {?>
 
 	<h3><?=__("User stories related to this milestone")?></h3>
