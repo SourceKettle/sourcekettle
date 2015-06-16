@@ -254,8 +254,9 @@ class ProjectsController extends AppProjectController {
 		}
 
 		$numCollab = count($this->Project->Collaborator->findAllByProjectId($project['Project']['id']));
+		$numTeamCollab = count($this->Project->CollaboratingTeam->findAllByProjectId($project['Project']['id']));
 
-		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab'));
+		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab', 'numTeamCollab'));
 		$this->set('historyCount', 8);
 	}
 

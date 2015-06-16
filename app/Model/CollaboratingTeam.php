@@ -24,4 +24,11 @@ class CollaboratingTeam extends AppModel {
 			'order' => ''
 		)
 	);
+
+	public function findAllByProjectId($projectId) {
+		return $this->find('all', array(
+			'contain' => array('Project', 'Team' => array('User')),
+			'conditions' => array('Project.id' => $projectId),
+		));
+	}
 }
