@@ -26,18 +26,22 @@
         </thead>
         <tbody>
 			<?= $this->element('Setting/text_fields', array(
+				'model' => 'Setting',
+				'url' => array('controller' => 'settings', 'action' => 'set', 'admin' => true),
 				'items' => array(
 					array(
-						'name' => 'Setting.SourceRepository.base',
+						'name' => 'SourceRepository.base',
 						'label' => __('Repository location'),
 						'description' => __('Where the repositories are stored on disk'),
 						'value' => $sourcekettle_config['SourceRepository']['base']['value'],
+						'readOnly' => false,
 					),
 					array(
-						'name' => 'Setting.SourceRepository.user',
+						'name' => 'SourceRepository.user',
 						'label' => __('SSH user'),
 						'description' => __('Users will connect to their repositories via SSH using this username and their SSH key'),
 						'value' => $sourcekettle_config['SourceRepository']['user']['value'],
+						'readOnly' => false,
 					),
 				),
 			)) ?>

@@ -13,6 +13,16 @@
  * @since         SourceKettle v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+// Little helper function to convert list of task types etc. to a form-compatible array
+// TODO probably shouldn't be here, do it better later...
+function getOptions($array) {
+	$ret = array();
+	foreach ($array as $item) {
+		$ret[$item['name']] = $item['label'];
+	}
+	return $ret;
+}
 ?>
 <div class="well">
     <h3><?= __('Default values') ?></h3>
@@ -24,33 +34,55 @@
             </tr>
         </thead>
         <tbody>
-			<? // TODO should be dropdown lists of the available things ?>
-			<?= $this->element('Setting/text_fields', array(
-				'items' => array(
-					array(
-						'name' => 'Setting.Defaults.task_type',
-						'label' => __('Task type'),
-						'description' => __('When adding a new task, which task type is pre-selected'),
-						'value' => $sourcekettle_config['Defaults']['task_type']['value'],
-						'locked' => $sourcekettle_config['Defaults']['task_type']['locked'],
-					),
-					array(
-						'name' => 'Setting.Defaults.task_priority',
-						'label' => __('Task priority'),
-						'description' => __('When adding a new task, which priority is pre-selected'),
-						'value' => $sourcekettle_config['Defaults']['task_priority']['value'],
-						'locked' => $sourcekettle_config['Defaults']['task_priority']['locked'],
-					),
-					array(
-						'name' => 'Setting.Defaults.task_status',
-						'label' => __('Task status'),
-						'description' => __('When adding a new task, which task status is pre-selected'),
-						'value' => $sourcekettle_config['Defaults']['task_status']['value'],
-						'locked' => $sourcekettle_config['Defaults']['task_status']['locked'],
-					),
+		<?= $this->element('Setting/dropdown_fields', array(
+			'model' => 'Setting',
+			'url' => array('controller' => 'settings', 'action' => 'set', 'admin' => true),
+			'items' => array(
+				array(
+					'name' => 'Defaults.task_type',
+					'label' => __('Task type'),
+					'description' => __('When adding a new task, which task type is pre-selected'),
+					'value' => $sourcekettle_config['Defaults']['task_type']['value'],
+					'options' => getOptions($task_types),
+					'locked' => $sourcekettle_config['Defaults']['task_type']['locked'],
+					'readOnly' => false,
 				),
-				'addLock' => true,
-			)) ?>
+				array(
+					'name' => 'Defaults.task_priority',
+					'label' => __('Task priority'),
+					'description' => __('When adding a new task, which priority is pre-selected'),
+					'value' => $sourcekettle_config['Defaults']['task_priority']['value'],
+					'options' => getOptions($task_priorities),
+					'locked' => $sourcekettle_config['Defaults']['task_priority']['locked'],
+					'readOnly' => false,
+				),
+				array(
+					'name' => 'Defaults.task_status',
+					'label' => __('Task status'),
+					'description' => __('When adding a new task, which task status is pre-selected'),
+					'value' => $sourcekettle_config['Defaults']['task_status']['value'],
+					'options' => getOptions($task_statuses),
+					'locked' => $sourcekettle_config['Defaults']['task_status']['locked'],
+					'readOnly' => false,
+				),
+			),
+			'addLock' => true,
+		)) ?>
+		<?/*= $this->element('Setting/text_fields', array(
+			'model' => 'Setting',
+			'url' => array('controller' => 'settings', 'action' => 'set', 'admin' => true),
+			'items' => array(
+				array(
+					'name' => 'Defaults.time_minutes',
+					'label' => __('Time length'),
+					'description' => __('When logging time, default number of minutes to select'),
+					'value' => $sourcekettle_config['Defaults']['time_minutes']['value'],
+					'locked' => $sourcekettle_config['Defaults']['time_minutes']['locked'],
+					'readOnly' => false,
+				),
+			),
+			'addLock' => true,
+		)) */?>
 
         </tbody>
     </table>
