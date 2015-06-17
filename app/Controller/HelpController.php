@@ -14,6 +14,7 @@
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('TimeString', 'Time');
 class HelpController extends AppController{
 
 /**
