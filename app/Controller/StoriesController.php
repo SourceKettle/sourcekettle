@@ -123,6 +123,7 @@ class StoriesController extends AppProjectController {
 				return $this->redirect(array('project' => $project['Project']['name'], 'action' => 'add'));
 			}
 		}
+		$this->set('title', __('Create a user story'));
 	}
 
 /**
@@ -153,6 +154,7 @@ class StoriesController extends AppProjectController {
 		} else {
 			$this->request->data = $story;
 		}
+		$this->set('title', __('Edit story details'));
 		return $this->render("add");
 	}
 

@@ -1,4 +1,4 @@
-	<h3><?=__('Create a user story')?></h3>
+	<h3><?=$title?></h3>
 		<?php
 		echo $this->Form->create('Story', array('class' => 'well form-horizontal'));
 		echo $this->Bootstrap->input("subject", array(

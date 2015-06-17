@@ -9,23 +9,17 @@
 <?=$this->Html->scriptBlock("prettyPrint()", array('inline' => false))?>
 <?=$this->Task->allDropdownMenus() ?>
 
+<div class="row-fluid">
+	<?= $this->element('Story/topbar_view', array('name' => $story['Story']['subject'], 'id' => $story['Story']['public_id'])) ?>
+</div>
+
 <div class="row">
 <div class="well span8 offset2">
 	<h3 class="story-title story-subject-text"> #<?=h($story['Story']['public_id'])?>: <?=h($story['Story']['subject'])?></h3>
-	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
-	<span class="edit-form input-append hide">
-		<?= $this->Form->textarea("subject", array("rows" => 1)); ?>
-		<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
-	</span>
 	<p class="story-description-text">
 		<?=h($story['Story']['description'])?>
 	</p>
-	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
 
-	<span class="edit-form input-append hide">
-		<?= $this->Form->textarea("description", array("rows" => 1)); ?>
-		<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
-	</span>
 </div>
 </div>
 
@@ -33,11 +27,6 @@
 <div class="well span8 offset2">
 	<h3 class="story-title"><?=__("Acceptance criteria")?></h3>
 	<pre class="story-acceptance-criteria prettyprint lang-gherkin"><?= h($story['Story']['acceptance_criteria']) ?></pre>
-	<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
-	<span class="edit-form input-append hide">
-		<?= $this->Form->textarea("acceptance_criteria", array("rows" => 1)); ?>
-		<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
-	</span>
 </div>
 </div>
 
