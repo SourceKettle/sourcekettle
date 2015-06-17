@@ -18,6 +18,7 @@ class AllControllerTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'Controller/SettingsControllerTest.php');
 		$suite->addTestFile($path . 'Controller/SourceControllerTest.php');
 		$suite->addTestFile($path . 'Controller/SshKeysControllerTest.php');
+		$suite->addTestFile($path . 'Controller/StoriesControllerTest.php');
 		$suite->addTestFile($path . 'Controller/TasksControllerTest.php');
 		$suite->addTestFile($path . 'Controller/TeamsControllerTest.php');
 		$suite->addTestFile($path . 'Controller/TimesControllerTest.php');

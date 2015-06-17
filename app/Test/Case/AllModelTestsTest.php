@@ -21,6 +21,7 @@ class AllModelTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'Model/SettingTest.php');
 		$suite->addTestFile($path . 'Model/SourceTest.php');
 		$suite->addTestFile($path . 'Model/SshKeyTest.php');
+		$suite->addTestFile($path . 'Model/StoryTest.php');
 		$suite->addTestFile($path . 'Model/TaskCommentTest.php');
 		$suite->addTestFile($path . 'Model/TaskPriorityTest.php');
 		$suite->addTestFile($path . 'Model/TaskStatusTest.php');
