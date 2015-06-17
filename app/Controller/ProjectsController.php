@@ -246,6 +246,35 @@ class ProjectsController extends AppProjectController {
 			$percentOfTasks = round($numberOfClosedTasks / $numberOfTasks * 100, 1);
 		}
 
+
+		// Story point totals
+		$numberOfPointsTotal = $this->Project->Task->find('first', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+			),
+			'fields' => array('SUM(Task.story_points) AS pointsTotal'),
+		));
+		$numberOfPointsTotal = $numberOfPointsTotal[0]['pointsTotal'];
+
+		$numberOfFinishedPoints = $this->Project->Task->find('first', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('resolved', 'closed')
+			),
+			'fields' => array('SUM(Task.story_points) AS pointsTotal'),
+		));
+		$numberOfFinishedPoints = $numberOfFinishedPoints[0]['pointsTotal'];
+
+		$pctFinishedPoints = ($numberOfPointsTotal < 1 ? 0 : (int)(($numberOfFinishedPoints / $numberOfPointsTotal) * 100));
+
+		$timeTotal = $this->Project->Time->find('first', array(
+			'conditions' => array(
+				'Time.project_id' => $project['Project']['id'],
+			),
+			'fields' => array('SUM(Time.mins) AS timeTotal'),
+		));
+		$timeTotal = $timeTotal[0]['timeTotal'];
+
 		$openMilestones = $this->Project->Milestone->getOpenMilestones();
 		if (empty($openMilestones)) {
 			$milestone = null;
@@ -256,7 +285,7 @@ class ProjectsController extends AppProjectController {
 		$numCollab = count($this->Project->Collaborator->findAllByProjectId($project['Project']['id']));
 		$numTeamCollab = count($this->Project->CollaboratingTeam->findAllByProjectId($project['Project']['id']));
 
-		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab', 'numTeamCollab'));
+		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numberOfPointsTotal', 'numberOfFinishedPoints', 'pctFinishedPoints', 'timeTotal', 'numCollab', 'numTeamCollab'));
 		$this->set('historyCount', 8);
 	}
 
@@ -346,6 +375,11 @@ class ProjectsController extends AppProjectController {
 		$repoNone = $this->RepoType->nameToId('None');
 		$this->set('noRepo',  ($project['Project']['repo_type'] == $repoNone));
 		$current_user = $this->Auth->user();
+		$collaborators = array(0 => __('(None)'));
+		foreach ($this->Project->listCollaborators() as $collab) {
+			$collaborators[$collab['id']] = $collab['title'];
+		}
+		$this->set('collaborators', $collaborators);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
@@ -595,8 +629,9 @@ class ProjectsController extends AppProjectController {
 			$this->Flash->info(__('Settings updated.'));
 		} else {
 			$this->Flash->error(__('There was a problem updating the settings.'));
+			
 		}
-		return $this->redirect (array ('action' => 'index'));
+		return $this->redirect (array('project' => $project, 'action' => 'edit'));
 	}
 
 	/* ************************************************ *
