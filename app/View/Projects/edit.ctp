@@ -13,15 +13,6 @@
  * @since		 SourceKettle v 0.1
  * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-// Little helper function to convert list of task types etc. to a form-compatible array
-// TODO probably shouldn't be here, do it better later...
-function getOptions($array) {
-	$ret = array();
-	foreach ($array as $item) {
-		$ret[$item['name']] = $item['label'];
-	}
-	return $ret;
-}
 ?>
 
 <div class="row-fluid">
@@ -132,7 +123,7 @@ function getOptions($array) {
 						'label' => __('Task type'),
 						'description' => __('When adding a new task, which task type is pre-selected'),
 						'value' => $sourcekettle_config['Defaults']['task_type']['value'],
-						'options' => getOptions($task_types),
+						'options' => $task_types,
 						'locked' => $sourcekettle_config['Defaults']['task_type']['locked'],
 						'readOnly' => $sourcekettle_config['Defaults']['task_type']['locked'],
 					),
@@ -141,7 +132,7 @@ function getOptions($array) {
 						'label' => __('Task priority'),
 						'description' => __('When adding a new task, which priority is pre-selected'),
 						'value' => $sourcekettle_config['Defaults']['task_priority']['value'],
-						'options' => getOptions($task_priorities),
+						'options' => $task_priorities,
 						'locked' => $sourcekettle_config['Defaults']['task_priority']['locked'],
 						'readOnly' => $sourcekettle_config['Defaults']['task_priority']['locked'],
 					),
@@ -150,7 +141,7 @@ function getOptions($array) {
 						'label' => __('Task status'),
 						'description' => __('When adding a new task, which task status is pre-selected'),
 						'value' => $sourcekettle_config['Defaults']['task_status']['value'],
-						'options' => getOptions($task_statuses),
+						'options' => $task_statuses,
 						'locked' => $sourcekettle_config['Defaults']['task_status']['locked'],
 						'readOnly' => $sourcekettle_config['Defaults']['task_status']['locked'],
 					),

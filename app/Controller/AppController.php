@@ -93,6 +93,15 @@ class AppController extends Controller {
 		return $data;
 	}
 
+	// Little helper function to convert list of task types etc. to a form-compatible array
+	// TODO probably shouldn't be here, do it better later...
+	protected function _listToForm($array) {
+		$ret = array();
+		foreach ($array as $item) {
+			$ret[$item['name']] = $item['label'];
+		}
+		return $ret;
+	}
 /**
  * Before filter method acts first in the controller
  *

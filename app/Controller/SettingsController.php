@@ -30,6 +30,9 @@ class SettingsController extends AppController {
 		$settings = $this->Setting->loadConfigSettings();
 		$this->request->data = array('Setting' => array('UserInterface' => array('theme' => $settings['UserInterface']['theme']['value'])));
 		$this->set('systemWide', true);
+		$this->set('task_types', $this->_listToForm($this->viewVars['task_types']));
+		$this->set('task_priorities', $this->_listToForm($this->viewVars['task_priorities']));
+		$this->set('task_statuses', $this->_listToForm($this->viewVars['task_statuses']));
 	}
 
 	public function admin_set($locked = false) {

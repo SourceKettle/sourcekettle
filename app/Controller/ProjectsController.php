@@ -370,6 +370,9 @@ class ProjectsController extends AppProjectController {
 	public function edit($project = null) {
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __("project settings"));
+		$this->set('task_types', $this->_listToForm($this->viewVars['task_types']));
+		$this->set('task_priorities', $this->_listToForm($this->viewVars['task_priorities']));
+		$this->set('task_statuses', $this->_listToForm($this->viewVars['task_statuses']));
 
 		$project = $this->_getProject($project);
 		$repoNone = $this->RepoType->nameToId('None');
