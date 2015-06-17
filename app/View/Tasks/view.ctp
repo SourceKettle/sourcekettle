@@ -55,6 +55,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 			<?= $this->Task->milestoneDropdownButton($task, 23, true, true)?>
 		</span>
 
+		<? if ($sourcekettle_config['Features']['story_enabled']['value']) { ?>
 		<span class="task-story"><small class="story-label">
 		<?=isset($task['Story']['subject'])? __("Story: %s", $this->Html->link(
 			$this->Text->truncate($task['Story']['subject'], 50), array(
@@ -66,6 +67,8 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 		</small>
 			<?= $this->Task->storyDropdownButton($task, 23, true, true)?>
 		</span>
+		<? } ?>
+
 		</p>
 
 	</h3>
