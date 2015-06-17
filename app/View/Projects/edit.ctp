@@ -172,12 +172,27 @@ function getOptions($array) {
 
 <div class="row-fluid">
 	<div class="span8 offset2">
-			<? if ($noRepo) {?>
-			<div class="well">
-				<h3><?=__("Project is repository-less!")?></h3>
-				<?=__("Need to add a repository? %s", $this->Html->link(__('Go here!'), array('controller' => 'projects', 'action' => 'add_repo', 'project' => $project['Project']['name'])))?>
-			</div>
-			<? } ?>
+	<? if ($noRepo) {?>
+		<div class="well">
+			<h3><?=__("Project is repository-less!")?></h3>
+			<?=__("Need to add a repository? %s", $this->Html->link(__('Go here!'), array('controller' => 'projects', 'action' => 'add_repo', 'project' => $project['Project']['name'])))?>
+		</div>
+	<? } else { ?>
+		<div class="well">
+			<dl>
+				<dt>
+					<h3><?= __('Repository access') ?> <small>- <?= __('Enable/disable access to source code repository - you should probably leave this switched on!') ?></small></h3>
+				</dt>
+				<dd>
+					<?= $this->element('Setting/switch', array('lock' => false, 'id' => 'attachment-enabled', 'model' => 'ProjectSetting', 'name' => 'Features.source_enabled', 'url' => $this->Html->url(array('controller' => 'projects', 'action' => 'changeSetting', 'project' => $project['Project']['name'])), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['source_enabled']['value'], 'readOnly' => $sourcekettle_config['Features']['source_enabled']['locked'])) ?>
+				</dd>
+			</dl>
+		</div>
+	<? } ?>
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="span8 offset2">
 
 		<div class="well">
 			<h3><?=__("Delete this project")?></h3>

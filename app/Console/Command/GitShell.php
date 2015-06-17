@@ -288,13 +288,24 @@ class GitShell extends AppShell {
 		));
 
 		// Get the repository location
-		$sourcekettle_config = $this->getSourceKettleConfig();
-		$repo_path = $sourcekettle_config['SourceRepository']['base']['value'] . "/$_proj_name.git";
+		$sourcekettleConfig = $this->getSourceKettleConfig(null, $this->Project->id);
+		$repo_path = $sourcekettleConfig['SourceRepository']['base']['value'] . "/$_proj_name.git";
 
 		// Make sure there's actually a git repository for this project...
 		if (strtolower($rt['RepoType']['name']) != 'git' or !is_dir($repo_path)) {
 			$this->err(__("Error: You do not have the necessary permissions to access this git repository."));
 			exit(1);
+		}
+
+		// If source control is disabled, give them an appropriate error message
+		if (!$sourcekettleConfig['Features']['source_enabled']['value']) {
+			if ($sourcekettleConfig['Features']['source_enabled']['source'] == 'Project-specific settings') {
+				$this->err(__("Error: Source repository access is disabled for this project. Please contact a project administrator to enable it."));
+				exit(1);
+			} else {
+				$this->err(__("Error: Source repository access is disabled system-wide. Please contact a system administrator to enable it."));
+				exit(1);
+			}
 		}
 
 		// We already know the command is valid, so it's either a read or a write command...
