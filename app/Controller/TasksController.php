@@ -316,7 +316,8 @@ class TasksController extends AppProjectController {
 
 		$open = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'open');
 		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
-		$resolved = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'), $maxAgeDays);
+		$resolved = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'resolved', $maxAgeDays);
+		$closed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'closed', $maxAgeDays);
 
 		// Calculate number of points complete/total for the milestone
 		$points_todo = array_reduce($open, function($v, $t){return $v + $t['Task']['story_points'];});
@@ -324,7 +325,7 @@ class TasksController extends AppProjectController {
 		$points_complete = array_reduce($resolved, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_total = $points_todo + $points_complete;
 
-		$this->set(compact('open', 'inProgress', 'resolved', 'points_total', 'points_todo', 'points_complete'));
+		$this->set(compact('open', 'inProgress', 'resolved', 'closed', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 
@@ -337,14 +338,15 @@ class TasksController extends AppProjectController {
 
 		$open = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'open');
 		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
-		$resolved = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'), $maxAgeDays);
+		$resolved = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'resolved', $maxAgeDays);
+		$closed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'closed', $maxAgeDays);
 
 		// Calculate number of points complete/total for the milestone
 		$points_todo = array_reduce($open, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_todo = array_reduce($inProgress, function($v, $t){return $v + $t['Task']['story_points'];}, $points_todo);
 		$points_complete = array_reduce($resolved, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_total = $points_todo + $points_complete;
-		$this->set(compact('team', 'open', 'inProgress', 'resolved', 'points_total', 'points_todo', 'points_complete'));
+		$this->set(compact('team', 'open', 'inProgress', 'resolved', 'closed', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 
