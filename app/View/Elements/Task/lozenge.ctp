@@ -28,6 +28,7 @@ if(isset($span) && $span){
 	$span="";
 }
 
+$includeMilestoneLabel = isset($includeMilestoneLabel) ? $includeMilestoneLabel : true;
 $localStoryLink = isset($localStoryLink) ?: false;
 
 $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
@@ -68,7 +69,7 @@ if($draggable){
 						<?= $this->Task->statusDropdownButton($draggable? $task: $task['Task']['task_status_id']) ?>
 						<?= $this->Task->storyPointsControl($draggable? $task: $task['Task']['story_points']) ?>
 						<?= $this->Task->priorityDropdownButton($draggable? $task: $task['Task']['task_priority_id'], false) ?>
-						<?= $this->Task->milestoneLabel($task) ?>
+						<? if ($includeMilestoneLabel) { echo $this->Task->milestoneLabel($task); } ?>
 						<? if ($sourcekettle_config['Features']['story_enabled']['value']) { ?>
 							<?= $this->Task->storyLabel($task, $localStoryLink) ?>
 						<? } ?>

@@ -58,6 +58,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 	'draggable' => $hasWrite, 
 	'milestoneID' => $milestone['Milestone']['id'], 
 	'addLink' => false,
+	'includeMilestoneLabel' => false,
 	'localStoryLink' => true,
 	'total' => $milestone['Tasks']['open']['points'],
 )) ?>
@@ -71,6 +72,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 	'task_span' => 12, 
 	'classes' => 'sprintboard-column', 
 	'draggable' => $hasWrite,
+	'includeMilestoneLabel' => false,
 	'localStoryLink' => true,
 	'total' => $milestone['Tasks']['in progress']['points'],
 )) ?>
@@ -85,6 +87,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 		'task_span' => 12, 
 		'classes' => 'sprintboard-column', 
 		'draggable' => $hasWrite,
+		'includeMilestoneLabel' => false,
 		'localStoryLink' => true,
 		'total' => $milestone['Tasks']['resolved']['points'],
 	));
@@ -98,6 +101,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 		'task_span' => 12, 
 		'classes' => 'sprintboard-column', 
 		'draggable' => $hasWrite,
+		'includeMilestoneLabel' => false,
 		'localStoryLink' => true,
 		'total' => $milestone['Tasks']['closed']['points'],
 	));
@@ -111,6 +115,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 		'task_span' => 12, 
 		'classes' => 'sprintboard-column', 
 		'draggable' => $hasWrite,
+		'includeMilestoneLabel' => false,
 		'localStoryLink' => true,
 		'total' => $milestone['Tasks']['resolved']['points'] + $milestone['Tasks']['closed']['points'],
 	));
@@ -129,6 +134,7 @@ $this->Html->css("milestones.index", null, array ('inline' => false));
 		'task_span' => $colSpan, 
 		'classes' => 'sprintboard-icebox', 
 		'draggable' => $hasWrite,
+		'includeMilestoneLabel' => false,
 		'localStoryLink' => true,
 	)) ?>
 
