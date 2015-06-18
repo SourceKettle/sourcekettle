@@ -17,28 +17,51 @@
 $this->Html->css('tasks', array ('inline' => false));
 $this->Html->css("milestones.index", array ('inline' => false));
 
+// TODO cleanup
+$o = array_reduce($open, function($sum, $a) {return $sum + ($a['Task']['story_points'] == null? 0 : $a['Task']['story_points']);}, 0);
+$i = array_reduce($inProgress, function($sum, $a) {return $sum + ($a['Task']['story_points'] == null? 0 : $a['Task']['story_points']);}, 0);
+$r = array_reduce($resolved, function($sum, $a) {return $sum + ($a['Task']['story_points'] == null? 0 : $a['Task']['story_points']);}, 0);
+$c = array_reduce($closed, function($sum, $a) {return $sum + ($a['Task']['story_points'] == null? 0 : $a['Task']['story_points']);}, 0);
+$t = $o + $i + $r + $c;
+
+$percent_o = ($t == 0) ? 0 : $o / $t * 100;
+$percent_i = ($t == 0) ? 0 : $i / $t * 100;
+$percent_r = ($t == 0) ? 0 : $r / $t * 100;
+$percent_c = ($t == 0) ? 0 : $c / $t * 100;
+
+$percent_none = ($t == 0) ? 100 : 0;
+
 ?>
 
 <?= $this->Task->allDropdownMenus() ?>
 
-	
 <div class="row-fluid">
-	<div class="span2 offset5">
-	<span class="label">Story points complete: <span id="points_complete"><?=$points_complete?></span> / <span id="points_total"><?=$points_total?></span></span>
+	<div class="span12 progress-milestone">
+		<div class="progress progress-striped">
+                    <div id="points-open" class="bar bar-danger"  style="width: <?= $percent_o ?>%;" title="<?=__('%d story points open', $o)?>"><?= ($o > 0)  ? __('%dpt open', $o) : ''?></div>
+                    <div id="points-inprogress" class=" bar bar-warning" style="width: <?= $percent_i ?>%;" title="<?=__('%d story points in progress', $i)?>"><?= ($i > 0)  ? __('%dpt in progress', $i) : ''?></div>
+                    <div id="points-resolved" class="bar bar-success" style="width: <?= $percent_r ?>%;" title="<?=__('%d story points resolved', $r)?>"><?= ($r > 0)  ? __('%dpt resolved', $r) : ''?></div>
+                    <div id="points-closed" class="bar bar-info"    style="width: <?= $percent_c ?>%;" title="<?=__('%d story points closed', $c)?>"><?= ($c > 0)  ? __('%dpt closed', $c) : ''?></div>
+                    <div id="points-none" class="bar bar-inactive"    style="width: <?= $percent_none?>%;"><?=__('No tasks with story points in this milestone')?></div>
+                </div>
 	</div>
 </div>
 	
+	
 
 <div class="row-fluid">
         <?= $this->element('Task/Board/column',
-            array('tasks' => $open, 'status' => 'open', 'title' => __('Open'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
+            array('tasks' => $open, 'status' => 'open', 'title' => __('Open'), 'span' => '3', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
         ) ?>
 
         <?= $this->element('Task/Board/column',
-            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
+            array('tasks' => $inProgress, 'status' => 'in progress', 'title' => __('In Progress'), 'span' => '3', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
         ) ?>
         <?= $this->element('Task/Board/column',
-            array('tasks' => $resolved, 'status' => 'resolved', 'title' => __('Resolved'), 'span' => '4', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
+            array('tasks' => $resolved, 'status' => 'resolved', 'title' => __('Resolved'), 'span' => '3', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
+        ) ?>
+        <?= $this->element('Task/Board/column',
+            array('tasks' => $closed, 'status' => 'closed', 'title' => __('Closed'), 'span' => '3', 'task_span' => 12, 'classes' => 'sprintboard-column', 'draggable' => true)
         ) ?>
 
 </div>

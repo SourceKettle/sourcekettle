@@ -227,19 +227,19 @@ class UsersController extends AppController {
 		// Invalid key
 		$passwordkey = $this->User->LostPasswordKey->findByKey($key);
 		if (empty($passwordkey)) {
-			$this->Session->setFlash("The key given was invalid", 'default', array(), 'error');
+			$this->Session->setFlash(__("The key given was invalid"), 'default', array(), 'error');
 			return $this->redirect('/lost_password');
 		}
 
 		// Bomb out if the key has expired
-		// TODO hard-coded expiry time, should be in config
+		$maxAge = $this->sourcekettle_config['Users']['max_activation_key_age']['value'];
 		$keyTime = new DateTime($passwordkey['LostPasswordKey']['created'], new DateTimeZone('UTC'));
 		$expiryTime = new DateTime('now', new DateTimeZone('UTC'));
-		$expiryTime->sub(new DateInterval('PT18000S'));
+		$expiryTime->sub(new DateInterval("PT{$maxAge}S"));
 
 		if ($keyTime < $expiryTime) {
 			$this->User->LostPasswordKey->delete($passwordkey['LostPasswordKey']);
-			$this->Session->setFlash("The key given has expired", 'default', array(), 'error');
+			$this->Session->setFlash(__("The key given has expired"), 'default', array(), 'error');
 			return $this->redirect('/lost_password');
 		}
 
@@ -252,7 +252,7 @@ class UsersController extends AppController {
 		$data = $this->_cleanPost(array("User.password", "User.password_confirm"));
 		// Passwords don't match, re-render password form
 		if (@$data['User']['password'] != @$data['User']['password_confirm']) {
-			$this->Session->setFlash("Your passwords do not match. Please try again.", 'default', array(), 'error');
+			$this->Session->setFlash(__("Your passwords do not match. Please try again."), 'default', array(), 'error');
 			$this->render('reset_password');
 			return;
 		}
@@ -302,7 +302,7 @@ class UsersController extends AppController {
 				
 			}
 		}
-		$this->User->recursive = 0;
+		$this->User->contain();
 		$this->set('users', $this->paginate());
 	}
 
@@ -397,8 +397,8 @@ class UsersController extends AppController {
 		}
 
 		// Find the users public projects or public projects they are working on
-		$this->User->Collaborator->Project->Collaborator->recursive = 0;
-		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'public' => true))));
+		$this->User->Collaborator->contain('Project');
+		$this->set('projects', $this->User->Collaborator->find('all', array('conditions' => array('Collaborator.user_id' => $id, 'Project.public' => true))));
 		$this->set('user', $this->User->read(null, $id));
 		
 		$you	= $current_user['id'];
@@ -896,7 +896,7 @@ class UsersController extends AppController {
 	public function api_autocomplete() {
 		$this->layout = 'ajax';
 
-		$this->User->recursive = -1;
+		$this->User->contain();
 		$data = array('users' => array());
 
 		if (isset($this->request->query['query'])

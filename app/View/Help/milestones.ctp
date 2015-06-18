@@ -105,7 +105,7 @@ $project = array('Project' => array(
             <li><strong>Backlog:</strong> All the tasks that nobody has started working on yet</li>
             <li><strong>In Progress:</strong> Everything your team is working on at the moment</li>
             <li><strong>Completed:</strong> Everything that's done and dusted</li>
-            <li><strong>Ice Box:</strong> Planned tasks for the milestone that will <em>not</em> be completed due to time constraints</li>
+            <li><strong>Deferred tasks:</strong> Planned tasks for the milestone that will <em>not</em> be completed due to time constraints</li>
           </ol>
         </p>
 
@@ -199,10 +199,10 @@ $project = array('Project' => array(
 						<div class="row-fluid">
 						<div class="span10">
 							<p><a href="#" title="Click to go to the task"><strong>#3</strong> - Won't do this</a></p>
-							<span class="label label-inverse" title="Severity">Minor <i class="icon-download icon-white"></i></span> <span class="label taskstatus" title="Status (changes when dragged between columns)">Dropped</span>
+							<span class="label label-inverse" title="Severity">Minor <i class="icon-download icon-white"></i></span> <span class="label taskstatus" title="Status (changes when dragged between columns)">Deferred tasks</span>
 						</div>
 
-						<div class="span2">
+						<div class="span3">
 							<img src="https://secure.gravatar.com/avatar/placeholder.jpg?d=mm" alt="Not assigned" title="Nobody is assigned to the task" height="80" width="80"/>
 						</div>
 						</div>
@@ -230,11 +230,11 @@ $project = array('Project' => array(
 	<div class="well span12">
 
         <p>
-          As the milestone progresses, you may find that some tasks take longer than expected.  It is important to stay on track and finish the milestone on time, so you will need to drop some of the lower priority tasks - these will then end up in the icebox.
+          As the milestone progresses, you may find that some tasks take longer than expected.  It is important to stay on track and finish the milestone on time, so you will need to drop some of the lower priority tasks - these will then end up in the "Deferred tasks" section.
         </p>
 
         <p>
-          On the other hand, it may turn out you burn through the tasks a lot faster than expected! If this happens, you may want to pull some tasks out of the ice box.  Hooray for productivity!
+          On the other hand, it may turn out you burn through the tasks a lot faster than expected! If this happens, you may want to pull out some deferred tasks and start working on them.  Hooray for productivity!
         </p>
 
 		<p>

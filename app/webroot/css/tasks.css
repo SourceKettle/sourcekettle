@@ -78,7 +78,7 @@ form {
   margin-bottom: 5px;
   width: 100%;
   min-height: 20px;
-  max-height: 400px;
+  max-height: 420px;
   overflow-x: hidden;
   overflow-y: auto;
   border-radius: 5px 5px 5px 5px;
@@ -399,3 +399,41 @@ form {
 .nav-pills {
 	margin: 0px;
 }
+
+.task-minilozenge .task a {
+	vertical-align: middle;
+}
+
+.task-minilozenge .task > .well {
+	padding:4px 5px;
+
+	/* Fix the height so lozenges aren't irregular */
+	height: 1.5em;
+
+	/* Anything that doesn't fit in the lozenge, just hide it... */
+	overflow: hidden;
+	background: #d3d3d3; /* TODO: doesn't work properly with Bootswatch themes */
+
+	border-radius:14px;
+}
+
+.task-minilozenge .task > .well.other-milestone {
+	border: 1px dashed black;
+	opacity: 0.4;
+}
+
+
+.task-container:target, .story-block:target {
+	border-color: #9ecaed;
+	box-shadow: 0 0 10px #99ff99;
+}
+
+.progress .bar-inactive {
+	background-color: #cfcfcf;
+	color: #8f8f8f;
+}
+
+.progress-milestone, .progress-milestone .progress {
+	margin-bottom: 0px;
+}
+

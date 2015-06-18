@@ -56,7 +56,8 @@ class Time extends AppModel {
  */
 	public $actsAs = array(
 		'ProjectComponent',
-		'ProjectHistory'
+		'ProjectHistory',
+		//'CakeDCUtils.SoftDelete',
 	);
 
 /**
@@ -460,7 +461,8 @@ class Time extends AppModel {
 			throw new InvalidArgumentException("Could not print undefined time element");
 		}
 
-		$this->recursive = -1;
+		$this->contain();
+
 		$time = $this->findById($id);
 		if (!array_key_exists('Time', $time)) {
 			throw new InvalidArgumentException("Could not find time with ID '$id'");

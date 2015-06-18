@@ -45,6 +45,14 @@ $this->Html->scriptBlock ("
 			"label" => __('Milestone').' '.$this->Bootstrap->icon('road'),
 		));
 
+		echo $this->Bootstrap->input("story_id", array(
+			"input" => $this->Form->input("story_id", array(
+				"label" => false,
+				"class" => "span5"
+			)),
+			"label" => __('User Story').' '.$this->Bootstrap->icon('book'),
+		));
+
 		echo $this->Bootstrap->input("task_priority_id", array(
 			"input" => $this->Form->input("task_priority_id", array(
 				"label"   => false,
@@ -53,6 +61,7 @@ $this->Html->scriptBlock ("
 			)),
 			"label" => __('Priority'),
 		));
+
 		echo $this->Bootstrap->input("assignee_id", array(
 			"input" => $this->Form->input("assignee_id", array(
 				"label"   => false,
@@ -62,7 +71,8 @@ $this->Html->scriptBlock ("
 			"label" => __('Assigned to')
 		));
 
-		echo $this->Bootstrap->input("time_estimate", array(
+		// Deprecated I guess? We're not actually displaying it anywhere, and story points are a lot more useful
+		/*echo $this->Bootstrap->input("time_estimate", array(
 			"input" => $this->Form->input("time_estimate", array(
 				// Force text field, as we convert  time string to integer
 				"type" => "text",
@@ -72,7 +82,7 @@ $this->Html->scriptBlock ("
 			)),
 			"help_inline" => __("Roughly how much time will the task take to finish?"),
 			"label" => __('Time Estimate'),
-		));
+		));*/
 
 		echo $this->Bootstrap->input("story_points", array(
 			"input" => $this->Form->input("story_points", array(
@@ -110,11 +120,6 @@ $this->Html->scriptBlock ("
 		<?= $this->Bootstrap->button(__('Save'), array("style" => "primary", 'class' => 'controls span12'));?>
 		<h5><?= __('Issue type') ?></h5>
 		<?php
-
-		// TODO set default type based on config
-		if (!isset($this->request->data['Task']['task_type_id'])) {
-			$this->request->data['Task']['task_type_id'] = 1;
-		}
 		
 		$options = array();
 		foreach ($task_types as $id => $type) {

@@ -36,6 +36,8 @@ class HistoryHelper extends AppHelper {
 		$user = new User();
 		App::import("Model", "Milestone");  
 		$milestone = new Milestone();
+		App::import("Model", "Story");  
+		$story = new Story();
 
 		/*
 		 * Stores the display preferences for the activity blocks
@@ -46,6 +48,7 @@ class HistoryHelper extends AppHelper {
 			'Source'	   => array('icon' => 'pencil', 'color' => 'success'),
 			'Task'		   => array('icon' => 'file',   'color' => 'important'),
 			'Milestone'	   => array('icon' => 'road',   'color' => ''),
+			'Story'	           => array('icon' => 'book',   'color' => 'success'),
 		);
 		
 		// Optionally print the date. Usually we won't do this, we'll
@@ -54,7 +57,7 @@ class HistoryHelper extends AppHelper {
 			$date = strtotime($event['modified']);
 			echo '<strong>' . date('Y-m-d H:i:s', $date) . '</strong>';
 		}
-	
+
 		// Create Actioner String/Link if exists
 		if ( $event['Actioner']['exists'] ) {
 			$actioner = $this->Html->link(
@@ -186,15 +189,18 @@ class HistoryHelper extends AppHelper {
 						$actioner, $subject, $assignee
 					);
 					break;
+
 				} elseif ($field == 'assignee_id') {
 					$log_string = __(
 						"%s de-assigned %s",
 						$actioner, $subject
 					);
 					break;
+
 				} elseif ($field == 'milestone_id') {
-					$oldMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $old), 'recursive' => -1));
-					$newMilestone = $milestone->find('first', array('fields' => array('subject'), 'conditions' => array('Milestone.id' => $new), 'recursive' => -1));
+					$oldMilestone = $milestone->find('first', array('contain' => false, 'fields' => array('subject'), 'conditions' => array('Milestone.id' => $old)));
+					$newMilestone = $milestone->find('first', array('contain' => false, 'fields' => array('subject'), 'conditions' => array('Milestone.id' => $new)));
+
 					if (empty($oldMilestone) && empty($newMilestone)) {
 						$log_string = __("%s changed the milestone ID from %d to %d - no milestone info is available, one or both may have been deleted since then",
 							$actioner, $old, $new);
@@ -232,6 +238,50 @@ class HistoryHelper extends AppHelper {
 							$new
 						));
 						$log_string = __("%s moved task '%s' from milestone '%s' to milestone '%s'", $actioner, $subject, $oldMilestone, $newMilestone);
+					}
+					break;
+					
+				} elseif ($field == 'story_id') {
+					$oldStory = $story->find('first', array('contain' => false, 'fields' => array('subject', 'public_id'), 'conditions' => array('Story.id' => $old)));
+					$newStory = $story->find('first', array('contain' => false, 'fields' => array('subject', 'public_id'), 'conditions' => array('Story.id' => $new)));
+
+					if (empty($oldStory) && empty($newStory)) {
+						$log_string = __("%s changed the story ID from %d to %d - no story info is available, one or both may have been deleted since then",
+							$actioner, $old, $new);
+					} elseif (empty($newStory)) {
+						$oldStory = $this->Html->link($oldStory['Story']['subject'], array(
+							'controller' => 'stories',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$oldStory['Story']['public_id']
+						));
+						$log_string = __("%s removed task '%s' from story '%s'", $actioner, $subject, $oldStory);
+					} elseif (empty($oldStory)) {
+						$newStory = $this->Html->link($newStory['Story']['subject'], array(
+							'controller' => 'stories',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$newStory['Story']['public_id']
+						));
+						$log_string = __("%s added task '%s' to story '%s'", $actioner, $subject, $newStory);
+					} else {
+						$oldStory = $this->Html->link($oldStory['Story']['subject'], array(
+							'controller' => 'stories',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$oldStory['Story']['public_id']
+						));
+						$newStory = $this->Html->link($newStory['Story']['subject'], array(
+							'controller' => 'stories',
+							'action' => 'view',
+							'project' => $event['Project']['name'],
+							'api' => false,
+							$newStory['Story']['public_id']
+						));
+						$log_string = __("%s moved task '%s' from story '%s' to story '%s'", $actioner, $subject, $oldStory, $newStory);
 					}
 					break;
 					
@@ -299,6 +349,27 @@ class HistoryHelper extends AppHelper {
 			case 'milestone.delete':
 				$log_string  = __(
 					"%s deleted milestone %s from the project",
+					$actioner, $subject
+				);
+			break;
+
+			case 'story.create':
+				$log_string  = __(
+					"%s added story %s to the project",
+					$actioner, $subject
+				);
+			break;
+
+			case 'story.update':
+				$log_string = __(
+					"%s updated story %s &rarr; '%s' changed from '%s' to '%s'",
+					$actioner, $subject, $field, $old, $new
+				);
+			break;
+
+			case 'story.delete':
+				$log_string  = __(
+					"%s deleted story %s from the project",
 					$actioner, $subject
 				);
 			break;

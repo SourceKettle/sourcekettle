@@ -40,31 +40,34 @@ class SourceHelper extends AppHelper {
 	public function fetchTreeUrl($repo, $branch, $file, $full = true) {
 		$url = $this->Html->url(array(
 			'project' => $repo,
-			'branch'	=> $branch,
-			'action'	=> 'tree',
-			'ajax'	=> false,
+			'action'  => 'tree',
+			'ajax'	  => false,
+			'?' => array('branch'	=> $branch),
+			$file
 		), $full);
-		return "{$url}/{$file}";
+		return $url;
 	}
 
 	public function fetchRawUrl($repo, $branch, $file, $full = true) {
 		$url = $this->Html->url(array(
 			'project' => $repo,
-			'branch'	=> $branch,
 			'action'	=> 'raw',
 			'ajax'	=> false,
+			'?' => array('branch'	=> $branch),
+			$file
 		), $full);
-		return "{$url}/{$file}";
+		return $url;
 	}
 
 	public function fetchHistoryUrl($repo, $branch, $file, $page = 1, $full = true) {
 		$url = $this->Html->url(array(
 			'project' => $repo,
-			'branch'	=> $branch,
 			'action'	=> 'commits',
 			'ajax'	=> false,
+			'?' => array('branch'	=> $branch, 'page' => $page),
+			$file
 		), $full);
-		return "{$url}/{$file}/page:$page";
+		return $url;
 	}
 
 	// Given a string (such as a commit subject), find any occurrences of "#<number>"
@@ -109,5 +112,30 @@ class SourceHelper extends AppHelper {
 		$linked .= join("", $escapedParts);
 
 		return $linked;
+	}
+
+	public function scmUri($project, $protocol = 'ssh') {
+
+		// Usually use $_SERVER but if unavailable (e.g. command line testing) then call gethostname() instead (may not give the same answer!)
+		if (isset($_SERVER['HTTP_HOST'])) {
+			$hostname = $_SERVER['HTTP_HOST'];
+		} else {
+			$hostname = gethostname();
+		}
+
+		$sourcekettle_config = $this->_View->viewVars['sourcekettle_config'];
+
+		// TODO hard-coded git type
+		if ($project['Project']['repo_type'] == 2) {
+			if ($protocol == 'http' || $protocol == 'https') {
+				$uri = "$protocol://" . h($hostname) . '/projects/' . h($project['Project']['name']) . '.git';
+			} else {
+				$uri = $sourcekettle_config['SourceRepository']['user']['value'] . '@' . h($hostname) . ':projects/' . h($project['Project']['name']) . '.git';
+			}
+		} else {
+			$uri = "(unsupported)";
+		}
+
+		return $uri;
 	}
 }

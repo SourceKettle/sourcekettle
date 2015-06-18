@@ -33,6 +33,7 @@ class Milestone extends AppModel {
 		'FilterValid' => array(
 			'nameField' => 'subject',
 		),
+		//'CakeDCUtils.SoftDelete',
 	);
 
 /**
@@ -161,7 +162,7 @@ class Milestone extends AppModel {
 				'milestone_id' => $this->id,
 				'TaskStatus.name =' => array('open', 'in progress')
 			),
-			'recursive' => 1,
+			'contain' => array('TaskStatus'),
 		));
 
 		foreach ($tasks as $task) {
@@ -213,7 +214,7 @@ class Milestone extends AppModel {
 					'milestone_id =' => $id
 				),
 				'group' => 'TaskStatus.name',
-				'recursive' => 0,
+				'contain' => array('TaskStatus'),
 			)
 		);
 
@@ -257,7 +258,7 @@ class Milestone extends AppModel {
 				'Milestone.starts',
 				'Milestone.due',
 			),
-			'recursive' => 0,
+			'contain' => false,
 		));
 
 		foreach ($milestones as $id => $milestone) {
@@ -316,7 +317,7 @@ class Milestone extends AppModel {
 					'Milestone.id',
 					'Milestone.subject',
 				),
-				'recursive' => 0,
+				'contain' => false,
 			)),
 
 			__('Closed') => $this->find('list', array(
@@ -328,7 +329,7 @@ class Milestone extends AppModel {
 					'Milestone.id',
 					'Milestone.subject',
 				),
-				'recursive' => 0,
+				'contain' => false,
 			)),
 		);
 		return $milestones;
@@ -351,10 +352,8 @@ class Milestone extends AppModel {
 			return false;
 		}
 
-		// Retrieve Milestone; recurse to 2 models so we get TaskStatuses
-		// so we can check the status by name
-		$this->recursive = 2;
-		$milestone = $this->open($id);
+		// Make sure we pull in the TaskStatus so we can check by name instead of status ID
+		$milestone = $this->open($id, array('Task' => array('TaskStatus')));
 
 		// Now update all related tasks to attach them to the new milestone (or no milestone)
 		$tasks = array();
@@ -403,7 +402,7 @@ class Milestone extends AppModel {
 				'closed_points_count',
 			),
 			'order' => array('timestamp'),
-			'recursive' => -1,
+			'contain' => false,
 		));
 
 		foreach ($entries as $entry) {
@@ -442,7 +441,7 @@ class Milestone extends AppModel {
 				'closed_points_count',
 			),
 			'order' => array('timestamp DESC'),
-			'recursive' => -1,
+			'contain' => false,
 		));
 
 		if (!empty($startingLog)) {
@@ -496,5 +495,32 @@ class Milestone extends AppModel {
 		ksort($log);
 		return $log;
 
+	}
+
+	function storiesForMilestone($milestoneId) {
+	
+		$storyIds = $this->Task->find("list", array(
+			'conditions' => array(
+				'Task.milestone_id' => $milestoneId,
+				'Task.story_id !=' => null,
+			),
+			'fields' => array('Task.story_id'),
+		));
+
+		return $this->Task->Story->find("all", array(
+			'conditions' => array('Story.id' => $storyIds),
+			'order' => array('id'),
+			'contain' => array(
+				'Project' => array(
+					'name',
+				),
+				'Task' => array(
+					'id', 'public_id', 'subject', 'story_points', 'story_id', 'milestone_id',
+					'TaskStatus' => array('id', 'name'),
+					'TaskType' => array('id', 'name'),
+					'TaskPriority' => array('id', 'name', 'level'),
+				),
+			),
+		));
 	}
 }

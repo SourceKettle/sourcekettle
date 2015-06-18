@@ -28,42 +28,49 @@
 					<h4><?= __('Enable LDAP authentication') ?></h4>
 				</td>
 				<td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'ldap-enabled', 'name' => 'Setting.Ldap.enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'ldapSection', 'value' => $sourcekettle_config['Ldap']['enabled']['value'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'ldap-enabled', 'model' => 'Setting', 'name' => 'Ldap.enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'ldapSection', 'value' => $sourcekettle_config['Ldap']['enabled']['value'])) ?>
 				</td>
 			</tr>
         </thead>
         <tbody id="ldapSection">
 			<?= $this->element('Setting/text_fields', array(
+				'model' => 'Setting',
+				'url' => array('controller' => 'settings', 'action' => 'set', 'admin' => true),
 				'items' => array(
 					array(
-						'name' => 'Setting.Ldap.url',
+						'name' => 'Ldap.url',
 						'label' => __('LDAP server URL'),
 						'description' => __('e.g. ldaps://ldap.example.com'),
 						'value' => $sourcekettle_config['Ldap']['url']['value'],
+						'readOnly' => false,
 					),
 					array(
-						'name' => 'Setting.Ldap.base_dn',
+						'name' => 'Ldap.base_dn',
 						'label' => __('Base DN for looking up user accounts'),
 						'description' => __('e.g. ou=Users,dc=example,dc=com'),
 						'value' => $sourcekettle_config['Ldap']['base_dn']['value'],
+						'readOnly' => false,
 					),
 					array(
-						'name' => 'Setting.Ldap.filter',
+						'name' => 'Ldap.filter',
 						'label' => __('LDAP filter'),
 						'description' => __('e.g. mail=%USERNAME% (%USERNAME% will be replaced with the email address field)'),
 						'value' => $sourcekettle_config['Ldap']['filter']['value'],
+						'readOnly' => false,
 					),
 					array(
-						'name' => 'Setting.Ldap.bind_dn',
+						'name' => 'Ldap.bind_dn',
 						'label' => __('Bind DN'),
 						'description' => __('e.g. cn=lookup,ou=Users,dc=example,dc=com'),
 						'value' => $sourcekettle_config['Ldap']['bind_dn']['value'],
+						'readOnly' => false,
 					),
 					array(
-						'name' => 'Setting.Ldap.bind_pw',
+						'name' => 'Ldap.bind_pw',
 						'label' => __('Bind password'),
 						'description' => __('...the password for connecting to LDAP'),
 						'value' => $sourcekettle_config['Ldap']['bind_pw']['value'],
+						'readOnly' => false,
 					),
 				),
 			)) ?>

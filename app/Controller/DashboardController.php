@@ -44,7 +44,7 @@ class DashboardController extends AppController {
 		return $this->Project->Collaborator->find(
 			'all', array(
 			'conditions' => array('Collaborator.user_id' => $current_user['id']),
-			'recursive' => 0,
+			'contain' => array('Project'),
 			'order' => array('Project.modified DESC'),
 			'limit' => 3
 			)
@@ -58,7 +58,7 @@ class DashboardController extends AppController {
 				'Task.assignee_id' => $current_user['id'],
 				'TaskStatus.name <>' => array('closed', 'resolved', 'dropped')
 			),
-			'recursive' => 0,
+			'contain' => array('Project', 'TaskStatus', 'TaskPriority', 'TaskType'),
 			'order' => array('task_priority_id DESC', 'task_status_id ASC'),
 			'limit' => 7
 		));

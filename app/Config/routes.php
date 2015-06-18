@@ -71,9 +71,12 @@
         Router::connect('/project/:project/time/userlog/:user/*', array('controller' => 'times', 'action' => 'userlog'), array('pass' => array('project', 'user'), 'project' => '[0-9a-zA-Z_-]+', 'user' => '[0-9]+'));
         Router::connect('/project/:project/time/*', array('controller' => 'times'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
-        Router::connect('/project/:project/source/:action/:branch/*', array('controller' => 'source', 'action' => 'tree'), array('pass' => array('project', 'branch'), 'project' => '[0-9a-zA-Z_-]+'));
-        Router::connect('/project/:project/source/:action/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
-        Router::connect('/project/:project/source/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        //Router::connect('/project/:project/source/:action/:branchpath/:branch/*', array('controller' => 'source', 'action' => 'tree'), array('pass' => array('project', 'branch'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/project/:project/source/:action/**', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/project/:project/source', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        //Router::connect('/project/:project/source/:action/:branch/*', array('controller' => 'source', 'action' => 'tree'), array('pass' => array('project', 'branch'), 'project' => '[0-9a-zA-Z_-]+'));
+        //Router::connect('/project/:project/source/:action/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        //:Router::connect('/project/:project/source/*', array('controller' => 'source'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
         Router::connect('/project/:project/collaborators/:action/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/collaborators/*', array('controller' => 'collaborators'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
@@ -81,6 +84,8 @@
         Router::connect('/project/:project/attachment/:action/*', array('controller' => 'attachments'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         Router::connect('/project/:project/attachment/*', array('controller' => 'attachments'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
 
+        Router::connect('/project/:project/stories/:action/*', array('controller' => 'stories'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
+        Router::connect('/project/:project/stories/*', array('controller' => 'stories'), array('pass' => array('project'), 'project' => '[0-9a-zA-Z_-]+'));
         /*
          * If no other controller is to be used, use the projects controller
          */

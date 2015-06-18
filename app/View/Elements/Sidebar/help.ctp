@@ -66,6 +66,13 @@
                     'controller' => 'help',
                 ),
             ),
+            'User Stories' => array(
+                'icon' => 'book',
+                'url' => array(
+                    'action' => array('stories'),
+                    'controller' => 'help',
+                ),
+            ),
             'Milestones' => array(
                 'icon' => 'road',
                 'url' => array(

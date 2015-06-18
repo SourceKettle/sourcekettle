@@ -6,7 +6,7 @@ $this->Html->script('/JUMFlot/JUMFlot.min', array('inline' => false));
 $this->Html->script ("gantt", array ('inline' => false));
 
 $milestoneUrl = $this->Html->url(array('controller' => 'milestones', 'project' => $project['Project']['name'], 'action' => 'view'));
-$apiUrl = "";
+$apiUrl = $this->Html->url(array('controller' => 'milestones', 'project' => $project['Project']['name'], 'action' => 'edit'));
 ?>
 
 <div class="row-fluid gantt-outer">

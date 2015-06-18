@@ -39,7 +39,7 @@
 
                 <li class="dropped-tasks" data-numtasks="<?=h($numberOfDroppedTasks)?>" data-taskstatus="<?=h(__('Dropped'))?>">
                   <?= $this->Html->link(
-                    "$numberOfDroppedTasks - ".__("dropped tasks"),
+                    "$numberOfDroppedTasks - ".__("deferred tasks"),
                    array(
                      'project'    => $project['Project']['name'],
                      'controller' => 'tasks',

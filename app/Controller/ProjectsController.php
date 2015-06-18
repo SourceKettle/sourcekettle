@@ -43,11 +43,13 @@ class ProjectsController extends AppProjectController {
 			'add_repo'   => 'admin',
 			'delete' => 'write',
 			'schedule' => 'read',
+			'resourcing' => 'read',
 			'markupPreview'  => 'read',
 			'changeSetting' => 'admin',
 			'api_history' => 'read',
 			'api_list_collaborators' => 'read',
 			'api_list_milestones' => 'read',
+			'api_list_stories' => 'read',
 			'api_autocomplete' => 'login',
 		);
 	}
@@ -196,7 +198,7 @@ class ProjectsController extends AppProjectController {
 				$this->Flash->error('The specified Project does not exist. Please try again.');
 			}
 		}
-		$this->Project->recursive = 0;
+		$this->Project->contain('RepoType');
 		$this->set('projects', $this->paginate());
 	}
 
@@ -244,6 +246,35 @@ class ProjectsController extends AppProjectController {
 			$percentOfTasks = round($numberOfClosedTasks / $numberOfTasks * 100, 1);
 		}
 
+
+		// Story point totals
+		$numberOfPointsTotal = $this->Project->Task->find('first', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+			),
+			'fields' => array('SUM(Task.story_points) AS pointsTotal'),
+		));
+		$numberOfPointsTotal = $numberOfPointsTotal[0]['pointsTotal'];
+
+		$numberOfFinishedPoints = $this->Project->Task->find('first', array(
+			'conditions' => array(
+				'Task.project_id' => $project['Project']['id'],
+				'TaskStatus.name' => array('resolved', 'closed')
+			),
+			'fields' => array('SUM(Task.story_points) AS pointsTotal'),
+		));
+		$numberOfFinishedPoints = $numberOfFinishedPoints[0]['pointsTotal'];
+
+		$pctFinishedPoints = ($numberOfPointsTotal < 1 ? 0 : (int)(($numberOfFinishedPoints / $numberOfPointsTotal) * 100));
+
+		$timeTotal = $this->Project->Time->find('first', array(
+			'conditions' => array(
+				'Time.project_id' => $project['Project']['id'],
+			),
+			'fields' => array('SUM(Time.mins) AS timeTotal'),
+		));
+		$timeTotal = $timeTotal[0]['timeTotal'];
+
 		$openMilestones = $this->Project->Milestone->getOpenMilestones();
 		if (empty($openMilestones)) {
 			$milestone = null;
@@ -252,8 +283,9 @@ class ProjectsController extends AppProjectController {
 		}
 
 		$numCollab = count($this->Project->Collaborator->findAllByProjectId($project['Project']['id']));
+		$numTeamCollab = count($this->Project->CollaboratingTeam->findAllByProjectId($project['Project']['id']));
 
-		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numCollab'));
+		$this->set(compact('milestone', 'numberOfOpenTasks', 'numberOfInProgressTasks', 'numberOfClosedTasks', 'numberOfDroppedTasks', 'numberOfTasks', 'percentOfTasks', 'numberOfPointsTotal', 'numberOfFinishedPoints', 'pctFinishedPoints', 'timeTotal', 'numCollab', 'numTeamCollab'));
 		$this->set('historyCount', 8);
 	}
 
@@ -338,11 +370,19 @@ class ProjectsController extends AppProjectController {
 	public function edit($project = null) {
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __("project settings"));
+		$this->set('task_types', $this->_listToForm($this->viewVars['task_types']));
+		$this->set('task_priorities', $this->_listToForm($this->viewVars['task_priorities']));
+		$this->set('task_statuses', $this->_listToForm($this->viewVars['task_statuses']));
 
 		$project = $this->_getProject($project);
 		$repoNone = $this->RepoType->nameToId('None');
 		$this->set('noRepo',  ($project['Project']['repo_type'] == $repoNone));
 		$current_user = $this->Auth->user();
+		$collaborators = array(0 => __('(None)'));
+		foreach ($this->Project->listCollaborators() as $collab) {
+			$collaborators[$collab['id']] = $collab['title'];
+		}
+		$this->set('collaborators', $collaborators);
 
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$data = $this->_cleanPost(array("Project.name", "Project.description", "Project.repo_type", "Project.public"));
@@ -507,10 +547,67 @@ class ProjectsController extends AppProjectController {
 			'order' => array(
 				'Milestone.starts',
 			),
-			'recursive' => -1,
+			'contain' => false,
 		));
 
 		$this->set(compact('project', 'milestones'));
+	}
+
+	public function resourcing($project = null) {
+
+		$this->set('pageTitle', $this->request['project']);
+		$this->set('subTitle', __("collaborator resourcing"));
+		$project = $this->_getProject($project);
+
+		// Allow date range from/to any date, default from the middle of last month to end of next month
+		if (isset($this->params->query['from']) && preg_match('/^\s*(\d{4}\-\d{2}\-\d{2})\s*$/', $this->params->query['from'], $matches)) {
+			$earliest = $matches[1];
+		} else {
+			$earliest = date('Y') . '-' . (date('m') - 1) . '-15';
+		}
+
+		if (isset($this->params->query['to']) && preg_match('/^\s*(\d{4}\-\d{2}\-\d{2})\s*$/', $this->params->query['to'], $matches)) {
+			$latest = $matches[1];
+		} else {
+			$latest = date('Y') . '-' . (date('m') + 2) . '-01';
+		}
+
+		$includeClosed = (isset($this->params->query['include_closed']) && preg_match('/^1|yes|true$/i', $this->params->query['include_closed']));
+
+		$this->set(compact('project', 'earliest', 'latest', 'includeClosed'));
+
+		if ($this->request->is('ajax')) {
+			// Project schedule maps user => list of milestones they are on
+			// Due to the way the gantt charts are rendered, we need a list of users for the Y axis
+			// and each milestone has to be its own series so that it's coloured per milestone.
+			$schedule = $this->Project->getProjectSchedule($project['Project']['id'], $earliest, $latest, $includeClosed);
+
+			// List of all users
+			$userList = array_values(array_map(function($a) {return $a['User'];}, $schedule));
+			
+			// Map of user ID => index in $userList
+			$userToIndex = array_flip(array_map(function($a) {return $a['id'];}, $userList));
+
+			// List of all milestones
+			$milestonesByUser = array_map(function($a) {return $a['Milestone'];}, $schedule);
+			
+			// Build list of milestone => user indexes
+			$milestones = array();
+			foreach ($milestonesByUser as $userId => $userMilestones) {
+				foreach ($userMilestones as $msId => $ms) {
+
+					if (!isset($milestones[$msId])) {
+						$milestones[$msId] = $ms;
+						$milestones[$msId]['User'] = array();
+					}
+					$milestones[$msId]['User'][] = $userToIndex[$userId];
+				}
+			}
+
+			$this->set('data', array('code' => 200, 'users' => $userList, 'by_user' => $schedule, 'by_milestone' => $milestones));
+			$this->render('/Elements/json');
+			return;
+		}
 	}
 
 	public function changeSetting($project) {
@@ -535,8 +632,9 @@ class ProjectsController extends AppProjectController {
 			$this->Flash->info(__('Settings updated.'));
 		} else {
 			$this->Flash->error(__('There was a problem updating the settings.'));
+			
 		}
-		return $this->redirect (array ('action' => 'index'));
+		return $this->redirect (array('project' => $project, 'action' => 'edit'));
 	}
 
 	/* ************************************************ *
@@ -655,6 +753,24 @@ class ProjectsController extends AppProjectController {
 
 		$project = $this->_getProject($project);
 		$this->set('data', $this->Project->listMilestones($project['Project']['id']));
+		$this->render('/Elements/json');
+	}
+
+	public function api_list_stories($project = null) {
+			
+		if (!isset($project)  || !$project) {
+			$this->response->statusCode(400);
+			$data['error'] = 400;
+			$data['message'] = 'Bad request, no project specified.';
+
+			$this->layout = 'ajax';
+			$this->set('data',$data);
+			$this->render('/Elements/json');
+			return;
+		}
+
+		$project = $this->_getProject($project);
+		$this->set('data', $this->Project->listStories($project['Project']['id']));
 		$this->render('/Elements/json');
 	}
 }

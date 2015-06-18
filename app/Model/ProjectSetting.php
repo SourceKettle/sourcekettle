@@ -35,10 +35,16 @@ class ProjectSetting extends AppModel {
 	private $validNames = array(
 		'Features.time_enabled',
 		'Features.task_enabled',
+		'Features.story_enabled',
+		'Features.epic_enabled',
 		'Features.source_enabled',
 		'Features.attachment_enabled',
 		'Features.4col_kanban_enabled',
 		'UserInterface.terminology',
+		'Defaults.task_type',
+		'Defaults.task_priority',
+		'Defaults.task_status',
+		'Defaults.task_assignee_id',
 	);
 
 	public function isValidName($name) {

@@ -12,17 +12,19 @@
  * @since		 SourceKettle v 0.1
  * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$renderableBranches = array();
-foreach ($branches as $branchOption) {
-	$renderableBranches[] = array(
-		'text' => $branchOption,
-		'url' => array(
-			'project' => $project['Project']['name'],
-			'controller' => $this->params['controller'],
-			'action' => $this->params['action'],
-			$branchOption
-		)
-	);
+$renderableBranches = array(__('Branches') => array(), __('Tags') => array());
+foreach ($branches as $br) {
+	$renderableBranches[__('Branches')][] = array('text' => $br, 'url' => array('project' => $project['Project']['name'], '?' => array("branch" => $br)));
+}
+foreach ($tags as $tag) {
+	$renderableBranches[__('Tags')][] = array('text' => "$tag", 'url' => array('project' => $project['Project']['name'], '?' => array("branch" => "tags/$tag")));
+}
+
+// Set title of current branch/tag
+if (preg_match("/^tags\/(.+)$/", $branch, $matches)) {
+	$branchTitle = __("Tag: <strong>%s</strong>", $matches[1]);
+} else {
+	$branchTitle = __("Branch: <strong>%s</strong>", $branch);
 }
 
 $options = array(
@@ -32,7 +34,7 @@ $options = array(
 			'url' => array(
 				'action' => 'tree',
 				'controller' => 'source',
-				'branch' => $branch,
+				'?' => array('branch' => $branch),
 			),
 		),
 		array(
@@ -40,11 +42,11 @@ $options = array(
 			'url' => array(
 				'action' => 'commits',
 				'controller' => 'source',
-				'branch' => $branch,
+				'?' => array('branch' => $branch),
 			),
 		),
 		array(
-			'text' => __("Branch: ")."<strong>".$branch."</strong>",
+			'text' => $branchTitle,
 			'dropdown' => $renderableBranches,
 			'pull-right' => true,
 		),

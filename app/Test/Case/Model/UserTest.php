@@ -51,6 +51,7 @@ class UserTestCase extends CakeTestCase {
 		'app.teams_user',
 		'app.project_group',
 		'app.project_groups_project',
+		'app.story',
     );
 
     /**

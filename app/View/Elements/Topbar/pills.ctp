@@ -59,11 +59,20 @@
 			$properties["class"] = "dropdown-toggle";
 
 			echo "<ul class='dropdown-menu'>";
-			foreach ($option['dropdown'] as $choice) {
+			foreach ($option['dropdown'] as $title => $choice) {
 				$choiceIcon = '';
 				if (isset($choice['icon-white'])) $icon = $this->Bootstrap->icon($choice['icon-white'], 'white');
 				elseif (isset($choice['icon'])) $icon = $this->Bootstrap->icon($choice['icon']);
-				echo "<li>".$this->Html->link($choiceIcon.$choice['text'], $choice['url'])."</li>";
+				if (is_array($choice)) {
+					echo "<strong>$title</strong>";
+					echo "<ul>";
+					foreach ($choice as $c) {
+						echo "<li>".$this->Html->link($choiceIcon.$c['text'], $c['url'])."</li>";
+					}
+					echo "</ul>";
+				} else {
+					echo "<li>".$this->Html->link($choiceIcon.$choice['text'], $choice['url'])."</li>";
+				}
 			}
 
 			echo "</ul>";

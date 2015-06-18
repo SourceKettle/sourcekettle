@@ -88,8 +88,11 @@
 								'kanban' => __('My Kanban'),
 								'help' => __('Help'),
 							);
-							if($current_user && $current_user['is_admin'] == 1){
+							if ($current_user && $current_user['is_admin'] == 1){
 								$navItems['admin'] = __('Administration');
+							}
+							if ($this->params['admin']) {
+								unset($navItems['kanban']);
 							}
 
 							// Make the projects nav element highlighted if the current page is anything to do with a project
@@ -111,13 +114,13 @@
 					</div>
 					<? } else { ?>
 						</ul>
-							<div class="form-group navbar-login">
+						<div class="form-group navbar-login">
         						<?= $this->Form->create('User', array('url' => array('controller' => 'login', 'action' => 'index'))) ?>
 							<?=$this->Form->text("email", array("placeholder" => __("email address"), 'tabindex'=>'1', 'autofocus' => ''))?>
 							<?=$this->Form->password("password", array("placeholder" => __("password"), 'tabindex'=>'2'))?>
 							<?=$this->Form->button("Log in", array('type' => 'submit', 'class' => 'btn btn-primary', 'tabindex'=>'3'))?>
-							</div>
-						</form>
+							</form>
+						</div>
 					<? } ?>
 				</div>
 			</div>

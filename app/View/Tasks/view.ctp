@@ -25,7 +25,7 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 <div class="row-fluid">
 	<div class="span12 well task-lozenge task-card" data-taskid="<?=h($task['Task']['public_id'])?>" data-api-url="<?=$apiUrl?>">
 
-		<div class="row-fluid task-view-top">
+	<div class="row-fluid task-view-top">
 	<div class="span3 task-view-priority">
 			<h5><?= __("Priority") ?></h5>
 	<?= $this->Task->priorityDropdownButton($task, true) ?>
@@ -38,13 +38,14 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 				<button type="button" class="close edit"><?= $this->Bootstrap->icon('pencil'); ?></button>
 
 		<span class="edit-form input-append hide">
-			<?= $this->Form->textarea("subject", array("rows" => 1)); ?>
+		<?= $this->Form->textarea("subject", array("rows" => 1)); ?>
 		<?= $this->Bootstrap->button(__("Update"), array("style" => "primary")); ?>
 		</span>
 
-		<p class="task-milestone"><small class="milestone-label">
+		<p>
+		<span class="task-milestone"><small class="milestone-label">
 		<?=isset($task['Milestone']['subject'])? __("Milestone: %s", $this->Html->link(
-			$task['Milestone']['subject'], array(
+			$this->Text->truncate($task['Milestone']['subject'], 20), array(
 				'controller' => 'milestones',
 				'project' => $task['Project']['name'],
 				'action' => 'view',
@@ -52,6 +53,22 @@ $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'p
 		))): __("No milestone")?>
 		</small>
 			<?= $this->Task->milestoneDropdownButton($task, 23, true, true)?>
+		</span>
+
+		<? if ($sourcekettle_config['Features']['story_enabled']['value']) { ?>
+		<span class="task-story"><small class="story-label">
+		<?=isset($task['Story']['subject'])? __("Story: %s", $this->Html->link(
+			$this->Text->truncate($task['Story']['subject'], 50), array(
+				'controller' => 'stories',
+				'project' => $task['Project']['name'],
+				'action' => 'view',
+				$task['Story']['public_id']
+		))): __("No story")?>
+		</small>
+			<?= $this->Task->storyDropdownButton($task, 23, true, true)?>
+		</span>
+		<? } ?>
+
 		</p>
 
 	</h3>

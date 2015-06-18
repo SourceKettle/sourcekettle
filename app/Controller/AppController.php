@@ -26,7 +26,6 @@ App::import('Model', 'User');
 class AppController extends Controller {
 
 	public $helpers = array(
-		'DT',
 		'Js',
 		'Html',
 		'Text',
@@ -94,6 +93,15 @@ class AppController extends Controller {
 		return $data;
 	}
 
+	// Little helper function to convert list of task types etc. to a form-compatible array
+	// TODO probably shouldn't be here, do it better later...
+	protected function _listToForm($array) {
+		$ret = array();
+		foreach ($array as $item) {
+			$ret[$item['name']] = $item['label'];
+		}
+		return $ret;
+	}
 /**
  * Before filter method acts first in the controller
  *
@@ -261,7 +269,7 @@ class AppController extends Controller {
 
 		// Set config and version
 		$this->set('sourcekettle_config', $this->sourcekettle_config);
-		$this->set('sourcekettleVersion', 'v1.6.7');
+		$this->set('sourcekettleVersion', 'v1.7.0');
 
 
 	}
@@ -277,26 +285,4 @@ class AppController extends Controller {
 		}
 	}
 
-	protected function _apiAuthLevel() {
-		$_userModel = ClassRegistry::init('User');
-
-		if (array_key_exists('key', $this->request->query)) {
-			$apiKey = $this->request->query['key'];
-		} else {
-			$apiKey = null;
-		}
-
-		// Check if an admin cookie exists
-		if (!($userId = $this->Auth->user('id'))) {
-			// Get User with this API key
-			$userId = $_userModel->ApiKey->field('user_id', array('key' => $apiKey));
-		}
-
-		$user = $_userModel->findById($userId);
-
-		if ($user != false && $user['User']['is_admin']) {
-			return 1;
-		}
-		return 0;
-	}
 }

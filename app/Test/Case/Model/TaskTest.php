@@ -18,18 +18,19 @@ class TaskTest extends CakeTestCase {
 		'app.repo_type',
 		'app.collaborator',
 		'app.user',
-		'app.task',
 		'app.task_type',
 		'app.task_dependency',
 		'app.task_comment',
 		'app.task_status',
 		'app.task_priority',
+		'app.task',
 		'app.time',
 		'app.attachment',
 		'app.source',
 		'app.milestone',
 		'app.milestone_burndown_log',
 		'app.project_burndown_log',
+		'app.story',
 	);
 
 /**

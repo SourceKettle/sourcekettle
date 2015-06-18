@@ -29,7 +29,8 @@ class Project extends AppModel {
  * actsAs behaviours
  */
 	public $actsAs = array(
-		'ProjectDeletable'
+		'ProjectDeletable',
+		//'CakeDCUtils.SoftDelete',
 	);
 
 /**
@@ -100,6 +101,11 @@ class Project extends AppModel {
 			'className' => 'Source',
 			'foreignKey' => 'project_id',
 			'dependent' => false,
+		),
+		'Story' => array(
+			'className' => 'Story',
+			'foreignKey' => 'project_id',
+			'dependent' => true,
 		),
 		'Time' => array(
 			'className' => 'Time',
@@ -267,9 +273,9 @@ class Project extends AppModel {
 
 		$project = null;
 		if (is_numeric($key)) {
-			$project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.id' => $key)));
+			$project = $this->find('first', array('contain' => false, 'conditions' => array('Project.id' => $key)));
 		} else {
-			$project = $this->find('first', array('recursive' => -1, 'conditions' => array('Project.name' => $key)));
+			$project = $this->find('first', array('contain' => false, 'conditions' => array('Project.name' => $key)));
 		}
 		if (empty($project)) {
 			throw new NotFoundException("Project could not be found with reference {$key}");
@@ -409,7 +415,7 @@ class Project extends AppModel {
 		$events = array();
 
 		// Types of event to collect
-		$_types = array('Collaborator', 'Time', 'Task', 'Milestone');
+		$_types = array('Collaborator', 'Time', 'Task', 'Milestone', 'Story');
 
 		try {
 			$this->Source->init();
@@ -573,5 +579,16 @@ class Project extends AppModel {
 		}
 		
 		return $milestones;
+	}
+
+	public function listStories($projectId) {
+		$stories = array();
+		foreach ($this->Story->find('list', array(
+			'conditions' => array('Story.project_id' => $projectId),
+			'fields' => array('Story.public_id', 'Story.subject'),
+		)) as $id => $subject) {
+			$stories[] = array('id' => $id, "title" => $subject);
+		}
+		return $stories;
 	}
 }

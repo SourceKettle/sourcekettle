@@ -30,7 +30,7 @@ class TaskStatus extends AppModel {
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 
-		$ts = $this->find('all', array('recursive' => -1, 'fields' => array('id', 'name', 'label', 'icon', 'class')));
+		$ts = $this->find('all', array('contain' => false, 'fields' => array('id', 'name', 'label', 'icon', 'class')));
 		foreach ($ts as $s) {
 			$this->__byId[ $s['TaskStatus']['id'] ] = $s['TaskStatus'];
 			$this->__byName[ $s['TaskStatus']['name'] ] = $s['TaskStatus'];

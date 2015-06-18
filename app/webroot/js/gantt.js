@@ -26,6 +26,12 @@ $('.gantt-outer').each(function(index, outer) {
 	var data = [];
 	var yaxis = [];
 
+	// Current date
+	var today = new Date();
+	today.setHours(0);
+	today.setMinutes(0);
+	today.setSeconds(0);
+
 	var milestoneUrl = chartbox.attr('data-milestone-url');
 	var apiUrl = chartbox.attr('data-api-url');
 	$(rows).each(function(index, row) {
@@ -33,7 +39,7 @@ $('.gantt-outer').each(function(index, outer) {
 		// This is all the data we have about each milestone, load it...
 		var milestoneId = $(row).find('td:eq(0)').attr('data-milestone-id');
 		var subject = $(row).find('td:eq(0)').text();
-		var is_open = $(row).find('td:eq(1)').text();
+		var is_open = ($(row).find('td:eq(1)').text() == 'true');
 		var starts = $(row).find('td:eq(2)').text();
 		var due = $(row).find('td:eq(3)').text();
 		var open_tasks = $(row).find('td:eq(4)').text();
@@ -53,8 +59,8 @@ $('.gantt-outer').each(function(index, outer) {
 
 	options = {
 	    series:{
-		//editMode: 'x', // TODO
-		//editable:true,
+		editMode: 'x',
+		editable:true,
             	gantt: {active:true,show:true,barHeight:.5 }
     	    },
 	    xaxis:{
@@ -63,52 +69,80 @@ $('.gantt-outer').each(function(index, outer) {
 			max: max_x,
     	},
 		yaxis: {min: 0, max: max_y+1, ticks:yaxis},
-    	grid:   { clickable: true}//, editable: true} //TODO...
+    	grid:   {
+		markings: [
+			{color: '#f46', lineWidth: 3, xaxis: {from: today, to: today}}
+		],
+		clickable: true,
+		editable: true
+	}
 		
 	};
 
 	chartbox.plot(data, options);
 
+
+	// When dragging out the milestone ends, change the start or end date
+	chartbox.bind("datadrop", function(event, pos, item){
+
+		if (item == null) {
+			return;
+		}
+
+		if(!item.dataIndex.length) {
+			return;
+		}
+
+		// data is the (original) milestone data - id, start/end date etc.
+		var milestone = item.series.data[ item.dataIndex[0] ];
+		var milestoneId = milestone[4];
+
+		// Work out which end of the milestone we're changing
+		if(item.dataIndex[1] == 1){
+			which = 'starts';
+			whichIndex = 0;
+		}
+		else{
+			which = 'due';
+			whichIndex = 2;
+		}
+
+		// Get the new date
+		var newDate = new Date(parseInt(pos.x1));
+		newDateString = newDate.getUTCFullYear() + '-' + (newDate.getUTCMonth()+1) + '-' + newDate.getUTCDate();
+
+		// Save milestone data
+		var milestoneInfo = {
+			'id' : milestoneId,
+		};
+		milestoneInfo[which] = newDateString;
+
+		$.ajax(apiUrl+"/"+milestoneId, {
+			"dataType" : "json",
+			"type" : "post",
+			"data" : {Milestone: milestoneInfo},
+			"success" : function (newData) {
+				data[item.seriesIndex][0][whichIndex] = newDate;
+				chartbox.plot(data, options);
+			},
+			"error" : function () {
+				alert("Failed to change milestone "+which+" date!");
+			}
+		});
+
+	});
+
+	// When clicking one of the milestones, go to the milestone view
 	chartbox.bind("plotclick", function (event, pos, item) {
 		if (item == null) {
 			return;
 		}
 		var point = item.series.data[item.dataIndex];
+		if (point == null) {
+			return;
+		}
 		var milestoneId = point[4];
 		window.location = milestoneUrl + '/' + milestoneId;
 	});
-
-	// TODO
-	/*
-	chartbox.bind("datadrop", function(event, pos, item){
-		if (item == null) {
-			return;
-		}
-
-		var dI,data,fromLabel;
-		if(item.dataIndex.length) {
-			dI = item.dataIndex[0];
-		} else {
-			return;
-		}
-
-		data = item.series.data[dI];
-		var milestoneId = data[4];
-
-		var newDate;
-		if(item.dataIndex[1] == 1){
-			which = 'starts';
-			newDate = new Date(data[0]);
-		}
-		else{
-			which = 'due';
-			newDate = new Date(data[2]);
-		}
-		var milestoneInfo = {
-			'id' : milestoneId,
-		};
-		milestoneInfo[which] = newDate;
-	});*/
-
 });
 

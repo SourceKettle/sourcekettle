@@ -34,6 +34,7 @@ class TasksController extends AppProjectController {
 		'TaskPriority',
 		'User',
 		'Milestone',
+		'Story',
 		'Collaborator',
 		'Team',
 	);
@@ -136,6 +137,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function index($project = null) {
+		// TODO this entire action is awful!
 		$project = $this->_getProject($project);
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('things to do'));
@@ -314,7 +316,8 @@ class TasksController extends AppProjectController {
 
 		$open = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'open');
 		$inProgress = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'in progress');
-		$resolved = $this->User->tasksOfStatusForUser($this->Auth->user('id'), array('resolved', 'closed'), $maxAgeDays);
+		$resolved = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'resolved', $maxAgeDays);
+		$closed = $this->User->tasksOfStatusForUser($this->Auth->user('id'), 'closed', $maxAgeDays);
 
 		// Calculate number of points complete/total for the milestone
 		$points_todo = array_reduce($open, function($v, $t){return $v + $t['Task']['story_points'];});
@@ -322,7 +325,7 @@ class TasksController extends AppProjectController {
 		$points_complete = array_reduce($resolved, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_total = $points_todo + $points_complete;
 
-		$this->set(compact('open', 'inProgress', 'resolved', 'points_total', 'points_todo', 'points_complete'));
+		$this->set(compact('open', 'inProgress', 'resolved', 'closed', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 
@@ -335,14 +338,15 @@ class TasksController extends AppProjectController {
 
 		$open = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'open');
 		$inProgress = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'in progress');
-		$resolved = $this->Team->tasksOfStatusForTeam($team['Team']['id'], array('resolved', 'closed'), $maxAgeDays);
+		$resolved = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'resolved', $maxAgeDays);
+		$closed = $this->Team->tasksOfStatusForTeam($team['Team']['id'], 'closed', $maxAgeDays);
 
 		// Calculate number of points complete/total for the milestone
 		$points_todo = array_reduce($open, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_todo = array_reduce($inProgress, function($v, $t){return $v + $t['Task']['story_points'];}, $points_todo);
 		$points_complete = array_reduce($resolved, function($v, $t){return $v + $t['Task']['story_points'];});
 		$points_total = $points_todo + $points_complete;
-		$this->set(compact('team', 'open', 'inProgress', 'resolved', 'points_total', 'points_todo', 'points_complete'));
+		$this->set(compact('team', 'open', 'inProgress', 'resolved', 'closed', 'points_total', 'points_todo', 'points_complete'));
 
 	}
 
@@ -356,14 +360,25 @@ class TasksController extends AppProjectController {
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('task card and log'));
 		$project = $this->_getProject($project);
-		$task = $this->Task->open($public_id);
+		$task = $this->Task->open($public_id, array(
+			'TaskType',
+			'TaskStatus',
+			'TaskPriority',
+			'Project' => array('id', 'name'),
+			'Milestone' => array('id', 'subject'),
+			'DependsOn',
+			'DependedOnBy',
+			'Owner' => array('id', 'name', 'email'),
+			'Assignee' => array('id', 'name', 'email'),
+			'Story' => array('id', 'public_id', 'subject'),
+		));
 		$current_user = $this->Auth->user();
 
 		$this->set('task', $task);
 		$this->request->data = $task;
 
 		// Fetch the changes that will have happened
-		$changes	= $this->Task->Project->ProjectHistory->find(
+		$changes = $this->Task->Project->ProjectHistory->find(
 			'all',
 			array(
 				'conditions' => array(
@@ -385,7 +400,7 @@ class TasksController extends AppProjectController {
 
 		// Fetch any additional users that may be needed
 		$changeUsers = array(0 => array('(Not assigned)', null));
-		$this->Task->Assignee->recursive = -1;
+		$this->Task->Assignee->contain();
 		foreach ($changes as $change) {
 			if ($change['ProjectHistory']['row_field'] == 'assignee_id') {
 				$_old = $change['ProjectHistory']['row_field_old'];
@@ -445,7 +460,7 @@ class TasksController extends AppProjectController {
 		$backlog = $this->Task->find('all', array(
 			'conditions' => array('project_id =' => $project['Project']['id'], 'id !=' => $this->Task->id),
 			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
-			'recursive' => -1,
+			'contain' => false,
 		));
 		$availableTasks = array();
 		foreach ($backlog as $t) {
@@ -604,7 +619,7 @@ class TasksController extends AppProjectController {
  * @return void
  */
 	public function add($project = null) {
-
+		// TODO this action is horrible, it needs a lot of cleaning up and most of this code should probably be moved to a model class
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('create a task'));
 		$project = $this->_getProject($project);
@@ -612,22 +627,55 @@ class TasksController extends AppProjectController {
 
 		// Milestone pre-selected - parse and store
 		if (!empty($this->request->query['milestone'])) {
-			$selected_milestone_id = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
+			$selectedMilestoneId = preg_replace('/[^\d]/', '', $this->request->query['milestone']);
 		} else {
-			$selected_milestone_id = 0;
+			$selectedMilestoneId = 0;
+		}
+
+		// Ditto for user story
+		if (!empty($this->request->query['story'])) {
+			$selectedStoryId = preg_replace('/[^\d]/', '', $this->request->query['story']);
+		} else {
+			$selectedStoryId = 0;
 		}
 
 		// Pre-selected priority
-		$selectedPriority = 0;
 		if (!empty($this->request->query['priority'])) {
-			$selectedPriority = $this->TaskPriority->nameToID($this->request->query['priority']);
+			$selectedPriorityId = $this->TaskPriority->nameToID($this->request->query['priority']);
 		} elseif (isset($this->request->data['Task']['task_priority_id'])) {
-			$selectedPriority = $this->TaskPriority->nameToID($this->request->data['Task']['task_priority_id']);
+			$selectedPriorityId = $this->request->data['Task']['task_priority_id'];
+		} else {
+			$selectedPriorityId = $this->TaskPriority->nameToID($this->sourcekettle_config['Defaults']['task_priority']['value']);
+		}
+
+		// Pre-selected status
+		if (!empty($this->request->query['status'])) {
+			$selectedStatusId = $this->TaskStatus->nameToID($this->request->query['status']);
+		} elseif (isset($this->request->data['Task']['task_status_id'])) {
+			$selectedStatusId = $this->request->data['Task']['task_status_id'];
+		} else {
+			$selectedStatusId = $this->TaskStatus->nameToID($this->sourcekettle_config['Defaults']['task_status']['value']);
+		}
+
+		// Pre-selected type
+		if (!empty($this->request->query['type'])) {
+			$selectedTypeId = $this->TaskType->nameToID($this->request->query['type']);
+		} elseif (isset($this->request->data['Task']['task_type_id'])) {
+			$selectedTypeId = $this->request->data['Task']['task_type_id'];
+		} else {
+			$selectedTypeId = $this->TaskType->nameToID($this->sourcekettle_config['Defaults']['task_type']['value']);
+		}
+
+		// Pre-selected assignee
+		if (isset($this->request->data['Task']['task_assignee_id'])) {
+			$selectedAssigneeId = $this->request->data['Task']['task_assignee_id'];
+		} else {
+			$selectedAssigneeId = $this->sourcekettle_config['Defaults']['task_assignee_id']['value'];
 		}
 
 		if ($this->request->is('ajax') || $this->request->is('post')) {
 			$this->Task->create();
-			$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id"));
+			$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.story_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id"));
 			$data['DependsOn'] = @$this->request->data['DependsOn'];
 			$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
 			if (!isset($data['Task'])) {
@@ -636,13 +684,20 @@ class TasksController extends AppProjectController {
 
 			$data['Task']['project_id']	= $project['Project']['id'];
 			$data['Task']['owner_id']	= $current_user['id'];
-			$data['Task']['task_status_id']	= 1;
+			$data['Task']['task_status_id']	= $selectedStatusId;
 
 			if (isset($data['Task']['milestone_id']) && $data['Task']['milestone_id'] == 0) {
 				$data['Task']['milestone_id'] = null;
 			}
+
+			if (isset($data['Task']['story_id']) && $data['Task']['story_id'] == 0) {
+				$data['Task']['story_id'] = null;
+			} elseif(isset($data['Task']['story_id'])) {
+				$data['Task']['story_id'] = $this->Story->field('id', array('project_id' => $project['Project']['id'], 'public_id' => $data['Task']['story_id']));
+			}
+
 			if (isset($data['Task']['task_type_id']) && $data['Task']['task_type_id'] == 0) {
-				$data['Task']['task_type_id'] = 3; // TODO configurable default
+				$data['Task']['task_type_id'] = $selectedTypeId;
 			}
 
 			// TODO what's going on here?
@@ -654,7 +709,9 @@ class TasksController extends AppProjectController {
 				} else {
 					echo '<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a>Could not add task to the project. Please, try again.</div>';
 				}
+
 			} else if ($this->request->is('post')) {
+
 				// Do not redirect, allow them to save and add another task with the same details
 				if ($this->Task->saveAll($data)) {
 					$task = $this->Task->findById($this->Task->getLastInsertID());
@@ -687,31 +744,33 @@ class TasksController extends AppProjectController {
 			}
 		} else {
 			// GET request: set default priority, type and assignment
-			$this->request->data['Task']['task_type_id'] = 1;
-			$this->request->data['Task']['assignee_id'] = 0;
+			$this->request->data['Task']['task_priority_id'] = $selectedPriorityId;
+			$this->request->data['Task']['task_status_id'] = $selectedStatusId;
+			$this->request->data['Task']['task_type_id'] = $selectedTypeId;
+			$this->request->data['Task']['assignee_id'] = $selectedAssigneeId;
 
-			// TODO hard coded default, also clean this up and allow params to be passed for status/type etc.
-			if (!$selectedPriority) {
-				$selectedPriority = $this->TaskPriority->nameToID('major');
-			}
-
-			$this->request->data['Task']['task_priority_id'] = $selectedPriority;
-
-			if ($selected_milestone_id) {
-				$this->request->data['Task']['milestone_id'] = $selected_milestone_id;
+			if ($selectedMilestoneId) {
+				$this->request->data['Task']['milestone_id'] = $selectedMilestoneId;
 			} else{
 				$this->request->data['Task']['milestone_id'] = null;
+			}
+
+			if ($selectedStoryId) {
+				$this->request->data['Task']['story_id'] = $selectedStoryId;
+			} else{
+				$this->request->data['Task']['story_id'] = null;
 			}
 		}
 
 		$milestones = $this->Milestone->listMilestoneOptions();
+		$stories = $this->Story->listStoryOptions();
 
 		$taskPriorities	= $this->Task->TaskPriority->find('list', array('fields' => array('id', 'label'), 'order' => 'level DESC'));
 
 		$backlog = $this->Task->find('all', array(
 			'conditions' => array('project_id' => $project['Project']['id']),
 			'fields' => array('Task.public_id', 'Task.subject', 'Task.id'),
-			'recursive' => -1,
+			'contain' => false,
 		));
 		$availableTasks = array();
 		foreach ($backlog as $t) {
@@ -738,7 +797,7 @@ class TasksController extends AppProjectController {
 		$assignees[0] = "None";
 		ksort($assignees);
 
-		$this->set(compact('taskPriorities', 'milestones', 'availableTasks', 'subTasks', 'parentTasks', 'assignees'));
+		$this->set(compact('taskPriorities', 'milestones', 'stories', 'availableTasks', 'subTasks', 'parentTasks', 'assignees'));
 	}
 
 /**
@@ -747,28 +806,6 @@ class TasksController extends AppProjectController {
  * @param string $id
  * @return void
  */
-	// Converts a dependency list from private task IDs to public task IDs
-	private function __publiciseDependencies($task) {
-		
-		if (isset($task['DependsOn'])) {
-			$task['DependsOn'] = array_values($this->Task->find('list', array(
-				'conditions' => array(
-					'Task.id' => $task['DependsOn']
-				),
-				'fields' => array('Task.public_id'),
-			)));
-		}
-
-		if (isset($task['DependedOnBy'])) {
-			$task['DependedOnBy'] = array_values($this->Task->find('list', array(
-				'conditions' => array(
-					'Task.id' => $task['DependedOnBy']
-				),
-				'fields' => array('Task.public_id'),
-			)));
-		}
-		return $task;
-	}
 
 	public function edit($project = null, $public_id = null) {
 
@@ -779,11 +816,33 @@ class TasksController extends AppProjectController {
 			throw new MethodNotAllowedException();
 		}
 
-		// Retrieve the projcet and task
+		// Retrieve the project and task
 		$project = $this->_getProject($project);
 		$task = $this->Task->open($public_id);
 
-		$data = $this->_cleanPost(array("Task.subject", "Task.description", "Task.task_priority_id", "Task.task_status_id", "Task.milestone_id", "Task.task_type_id", "Task.assignee_id", "Task.time_estimate", "Task.story_points", "Task.story_id", "Task.status", "Task.priority", "Task.type"));
+		$data = $this->_cleanPost(array(
+			"Task.subject",
+			"Task.description",
+			"Task.task_priority_id",
+			"Task.task_status_id",
+			"Task.milestone_id",
+			"Task.task_type_id",
+			"Task.assignee_id",
+			"Task.time_estimate",
+			"Task.story_points",
+			"Task.story_id",
+			"Task.status",
+			"Task.priority",
+			"Task.type",
+		));
+
+		// Convert story public ID to real ID
+		if (isset($data['Task']['story_id']) && $data['Task']['story_id'] == 0) {
+			$data['Task']['story_id'] = null;
+		} elseif(isset($data['Task']['story_id'])) {
+			$data['Task']['story_id'] = $this->Story->field('id', array('project_id' => $project['Project']['id'], 'public_id' => $data['Task']['story_id']));
+		}
+
 		$data['DependsOn'] = @$this->request->data['DependsOn'];
 		$data['DependedOnBy'] = @$this->request->data['DependedOnBy'];
 		// Force the project ID to be correct
@@ -824,6 +883,12 @@ class TasksController extends AppProjectController {
 			'controller' => 'users',
 			'action' => 'view',
 			$task['Owner']['id']));
+
+		$task['Story']['uri'] = Router::url(array(
+			'controller' => 'stories',
+			'action' => 'view',
+			'project' => $task['Project']['name'],
+			$task['Story']['public_id']));
 
 		foreach ($task['Time'] as $idx => $time) {
 			$task['Time'][$idx]['uri'] = Router::url(array(

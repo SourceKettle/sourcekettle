@@ -7,6 +7,10 @@ App::uses('AppModel', 'Model');
  */
 class Team extends AppModel {
 
+	public $actsAs = array(
+		//'CakeDCUtils.SoftDelete',
+	);
+
 	public $displayField = 'name';
 
 	public $validate = array(

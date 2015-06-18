@@ -30,6 +30,7 @@ $('.task-view-description').find(':button.edit').bind('click', function() {
 	description.find('.edit-form').show();
 	$(this).hide();
 });
+
 // Task dropdown menus - DIY dropdowns...
 // Why? Because lozenges have overflow:hidden which hides the dropdown
 // menu part of a "normal" bootstrap dropdown, and removing overflow:hidden
@@ -126,6 +127,7 @@ function updateTask(taskLozenge, taskInfo) {
 	var typeLabel = taskLozenge.find(".tasktype");
 	var statusLabel = taskLozenge.find(".taskstatus");
 	var milestoneLabel = taskLozenge.find(".task-dropdown-milestone");
+	var storyLabel = taskLozenge.find(".task-dropdown-story");
 
 	$.ajax(urlBase  + '/' + taskInfo.id, {
 		"data" : taskInfo,
@@ -249,6 +251,23 @@ function updateTask(taskLozenge, taskInfo) {
 					milestoneLabel.attr("title", "Milestone: "+taskInfo.Milestone.subject);
 				}
 
+				// Story changed
+				if (typeof taskInfo.Story.id !== 'undefined' && storyLabel.length > 0) {
+					label = storyLabel.siblings(".story-label");
+					label.empty();
+					if (taskInfo.Story.id > 0) {
+						storyLink = $(document.createElement('a'));
+						storyLink.attr('title',  "Story: "+taskInfo.Story.subject);
+						storyLink.attr('href', taskInfo.Story.uri);
+						storyLink.text(taskInfo.Story.subject);
+						label.append("Story: ");
+						label.append(storyLink);
+					} else {
+						label.append("No story");
+					}
+					storyLabel.attr("title", "Story: "+taskInfo.Story.subject);
+				}
+
 			} else {
 				alert("Problem: "+data.errorDescription);
 				$(ui.sender).sortable('cancel');
@@ -318,7 +337,8 @@ function initTaskDroplists() {
 			var toStatus	= $(this).attr('data-taskstatus');
 			//var fromStatus  = $(ui.sender).attr('data-taskstatus');
 			var toPrio	  = $(this).attr('data-taskpriority');
-			var toMilestone = $(this).attr('data-milestone');
+			var toMilestone   = $(this).attr('data-milestone');
+			var toStory       = $(this).attr('data-story');
 
 			var taskInfo = {'Task' : {}};
 
@@ -332,6 +352,10 @@ function initTaskDroplists() {
 
 			if(typeof toMilestone != 'undefined'){
 				taskInfo.Task.milestone_id = toMilestone;
+			}
+
+			if(typeof toStory != 'undefined'){
+				taskInfo.Task.story_id = toStory;
 			}
 
 			updateTask(taskLozenge, taskInfo);
@@ -375,31 +399,44 @@ function setStoryPoints(button, difference) {
 // Triggered when task statuses or point counts change.
 function refreshStoryPointTotals() {
 	
-	totalBox = $('#points_total');
-	completeBox = $('#points_complete');
-
-	// Skip if we have no points boxes
-	if (!totalBox || !completeBox) {
-		return;
-	}
-
-	total = 0;
-	complete = 0;
+	// First count points for each status
+	var totals = {
+		"open" : 0,
+		"in progress" : 0,
+		"resolved" : 0,
+		"closed" : 0,
+	};
+	var total = 0;
 
 	$.each($('li.task-lozenge .points'), function(idx, points){
 		status = $(points).closest('li.task-lozenge').attr('data-taskstatus');
+		if (status == "dropped") return;
 		points = parseInt($(points).text(), 10);
-		if (status == 'closed' || status == 'resolved') {
-			complete += points;
-		}
-
-		if (status != 'dropped') {
-			total += points;
-		}
+		totals[status] += points;
+		total += points;
 	});
 
-	totalBox.text(total);
-	completeBox.text(complete);
+	// If there are no story points in total, zero out the widths of all bars and show the "no points" bar
+	if (total == 0) {
+		$('#points-none').width('100%');
+		for (var status in totals) {
+			$('#points-'+status.replace(' ', '')).width('0%');
+		}
+	// Otherwise hide the "no points" bar and adjust widths
+	} else {
+		$('#points-none').width('0%');
+		dbg = 0;
+		for (var status in totals) {
+			var points = totals[status];
+			var pct =  (points/total) * 100;
+			dbg += pct;
+			var bar = $('#points-'+status.replace(' ', ''));
+			bar.text(points + 'pt '+status);
+			bar.attr('title', points + ' story points '+status);
+			bar.width(pct + '%');
+		}
+	}
+
 
 }
 

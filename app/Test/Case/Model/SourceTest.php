@@ -13,18 +13,37 @@ class SourceTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.source',
-		'app.project',
-		'app.repo_type',
+		'core.cake_session',
 		'app.setting',
-		'app.user',
+		'app.user_setting',
+		'app.project_setting',
+		'app.project',
+		'app.project_history',
+		'app.repo_type',
 		'app.collaborator',
+		'app.user',
+		'app.task',
+		'app.task_type',
+		'app.task_dependency',
+		'app.task_comment',
+		'app.task_status',
+		'app.task_priority',
+		'app.time',
+		'app.attachment',
+		'app.source',
+		'app.milestone',
 		'app.email_confirmation_key',
 		'app.ssh_key',
 		'app.api_key',
 		'app.lost_password_key',
-		'app.teams_user',
+		'app.milestone_burndown_log',
+		'app.project_burndown_log',
+		'app.collaborating_team',
+		'app.group_collaborating_team',
 		'app.team',
+		'app.teams_user',
+		'app.project_group',
+		'app.project_groups_project',
 	);
 
 	private $REPO_BASE;
@@ -35,7 +54,7 @@ class SourceTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-	 	$this->REPO_BASE = dirname(dirname(dirname(__DIR__))).'/Test/Fixture/repositories';
+		$this->repoDir = realpath(__DIR__.'/../../Fixture').'/repositories';
 		$this->Source = ClassRegistry::init('Source');
 	}
 
@@ -49,56 +68,29 @@ class SourceTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
-/**
- * testInit method
- *
- * @return void
- */
-	public function testInit() {
+	private function __loadRepo($projectId) {
+		$this->Source->Project->id = $projectId;
 		$this->Source->init();
 	}
-/**
- * testGetType method
- *
- * @return void
- */
+
 	public function testGetType() {
-		$this->Source->init();
-		$this->Source->Project->id = 1;
+		$this->__loadRepo(1);
 		$this->assertEquals(RepoTypes::GIT, $this->Source->getType());
 	}
 
-/**
- * testGetBranches method
- *
- * @return void
- */
 	public function testGetBranches() {
-		$this->Source->init();
-		$this->Source->Project->id = 1;
+		$this->__loadRepo(1);
 		$this->assertEquals(array('master', 'some_new_thing'), $this->Source->getBranches());
 	}
 
-/**
- * testGetDefaultBranch method
- *
- * @return void
- */
 	public function testGetDefaultBranch() {
-		$this->Source->init();
-		$this->Source->Project->id = 1;
+		$this->__loadRepo(1);
 		$this->assertEquals('master', $this->Source->getDefaultBranch());
 	}
 
-/**
- * testGetRepositoryLocation method
- *
- * @return void
- */
 	public function testGetRepositoryLocation() {
-		$this->Source->init();
-		$this->Source->Project->id = 1;
-		$this->assertEquals($this->REPO_BASE.'/private.git/', $this->Source->getRepositoryLocation());
+		$this->__loadRepo(1);
+		$this->assertEquals($this->repoDir.'/private.git/', $this->Source->getRepositoryLocation());
 	}
 
 
@@ -108,8 +100,7 @@ class SourceTest extends CakeTestCase {
  * @return void
  */
 	public function testFetchHistory() {
-		$this->Source->init();
-		$this->Source->Project->id = 1;
+		$this->__loadRepo(1);
 		$history = $this->Source->fetchHistory();
 		$this->assertEquals(array(
 			array(

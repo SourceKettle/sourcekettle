@@ -30,28 +30,33 @@
                     <h4><?= __('Allow Registration') ?> <small>- <?= __('allow new users to create accounts') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'register-enabled', 'name' => 'Setting.Users.register_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => true)), 'value' => $sourcekettle_config['Users']['register_enabled']['value'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'register-enabled', 'model' => 'Setting', 'name' => 'Users.register_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => true)), 'value' => $sourcekettle_config['Users']['register_enabled']['value'])) ?>
                 </td>
             </tr>
 			<?= $this->element('Setting/text_fields', array(
+				'url' => array('controller' => 'settings', 'action' => 'set', 'admin' => true),
+				'model' => 'Setting',
 				'items' => array(
 					array(
-						'name' => 'Setting.Users.sysadmin_email',
+						'name' => 'Users.sysadmin_email',
 						'label' => __('Support email address'),
 						'description' => __('Users will be told to email this address for tech support'),
 						'value' => $sourcekettle_config['Users']['sysadmin_email']['value'],
+						'readOnly' => false,
 					),
 					array(
-						'name' => 'Setting.Users.send_email_from',
+						'name' => 'Users.send_email_from',
 						'label' => __('Sending email address'),
 						'description' => __('Emails sent by the system will come from this address'),
 						'value' => $sourcekettle_config['Users']['send_email_from']['value'],
+						'readOnly' => false,
 					),
 					array(
-						'name' => 'Setting.UserInterface.alias',
+						'name' => 'UserInterface.alias',
 						'label' => __('System alias'),
 						'description' => __("Update the system name, if you prefer not to call it 'SourceKettle'"),
 						'value' => $sourcekettle_config['UserInterface']['alias']['value'],
+						'readOnly' => false,
 					),
 				),
 			)) ?>

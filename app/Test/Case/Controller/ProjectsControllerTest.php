@@ -46,6 +46,7 @@ class ProjectsControllerTestCase extends AppControllerTest {
 		'app.teams_user',
 		'app.project_group',
 		'app.project_groups_project',
+		'app.story',
 	);
 
 	public function setUp() {

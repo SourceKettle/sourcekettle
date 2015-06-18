@@ -46,7 +46,7 @@ git config --global user.email <?= h($user['email']) ?></pre>
 
 		<p>
 		You can simply clone your empty repository:
-		<pre>git clone <?= $this->DT->scmUri($project) ?></pre>
+		<pre>git clone <?= $this->Source->scmUri($project) ?></pre>
 		...then create some code and start checking it in!
 		</p>
 
@@ -59,7 +59,7 @@ git init
 touch README
 git add README
 git commit -m 'First Commit'
-git remote add origin <?= $this->DT->scmUri($project) ?> 
+git remote add origin <?= $this->Source->scmUri($project) ?> 
 git push -u origin master</pre>
 
 		(Here we add an empty README file. You should add some useful documentation here once the code's going strong!)
@@ -67,7 +67,7 @@ git push -u origin master</pre>
 		<h4><?= $this->Bootstrap->label('2b', 'info', array('style'=>'font-size:15px')) ?> Existing Git Repo?</h4>
 
 <pre>cd existing_git_repo
-git remote add origin <?= $this->DT->scmUri($project) ?> 
+git remote add origin <?= $this->Source->scmUri($project) ?> 
 git push -u origin master</pre>
 				<p><?= $this->Bootstrap->label('Not sure?', 'warning') ?> If you don't quite get some of the commands above, head over to the Git documentation at <?= $this->Html->link('http://git-scm.com/docs', 'http://git-scm.com/docs') ?></p>
 
@@ -85,7 +85,7 @@ git push -u origin master</pre>
 		<h4><?= $this->Bootstrap->label('2d', 'info', array('style'=>'font-size:18px')) ?> Need to check out your code?</h4>
 		<p>
 		You and your collaborators can clone the repository like so:
-		<pre>git clone <?= $this->DT->scmUri($project) ?></pre>
+		<pre>git clone <?= $this->Source->scmUri($project) ?></pre>
 		</p>
 	</div>
 </div>

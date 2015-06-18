@@ -15,6 +15,5 @@
  */
 $this->Html->css('milestones.index', null, array ('inline' => false));
 ?>
-
 <?= $this->element('Milestone/add_edit') ?>
 

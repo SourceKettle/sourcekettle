@@ -71,6 +71,7 @@ class SourceControllerTestCase extends AppControllerTest {
 		'app.teams_user',
 		'app.project_group',
 		'app.project_groups_project',
+		'app.story',
 	);
 
 /**
@@ -97,6 +98,7 @@ class SourceControllerTestCase extends AppControllerTest {
 				),
 				'Features' => array(
 					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
+					'story_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
 					'time_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
 					'task_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => true),
 					'attachment_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
@@ -141,7 +143,7 @@ class SourceControllerTestCase extends AppControllerTest {
 					'enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
 				),
 				'Features' => array(
-					'source_enabled' => array('source' => 'defaults', 'locked' => 0, 'value' => false),
+					'source_enabled' => array('source' => 'System settings', 'locked' => 0, 'value' => false),
 				),
 			)));
 		$this->_fakeLogin(5);
@@ -194,17 +196,54 @@ class SourceControllerTestCase extends AppControllerTest {
 		$this->assertTrue(false, "No exception thrown");
 	}
 
-	public function testIndexNotLoggedIn() {
 
-		$this->testAction('/project/private/source', array('method' => 'get', 'return' => 'vars'));
+
+	public function testGettingStartedNotLoggedIn() {
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
-	public function testIndexNotUser() {
-
-		$this->_fakeLogin(8);
-		$this->testAction('/project/private/source', array('method' => 'get', 'return' => 'vars'));
+	public function testGettingStartedNotCollaborator() {
+		$this->_fakeLogin(23);
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
+	}
+
+	public function testGettingStartedProjectGuest() {
+		$this->_fakeLogin(3);
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
+
+	public function testGettingStartedProjectUser() {
+		$this->_fakeLogin(4);
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
+
+	public function testGettingStartedProjectAdmin() {
+		$this->_fakeLogin(1);
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
+
+	public function testGettingStartedSystemAdmin() {
+		$this->_fakeLogin(9);
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
+
+	public function testGettingStartedInactiveSystemAdmin() {
+		$this->_fakeLogin(22);
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testGettingStartedGit() {
+		$this->_fakeLogin(3);
+		$this->testAction('/project/private/source/gettingStarted', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertContains('git init', $this->view);
 	}
 
 	public function testIndexSystemAdmin() {
@@ -266,7 +305,7 @@ class SourceControllerTestCase extends AppControllerTest {
 			)));
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
@@ -302,7 +341,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
@@ -316,21 +355,21 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testTreeNotLoggedIn() {
 
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testTreeNotUser() {
 
 		$this->_fakeLogin(8);
-		$this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testTreeSystemAdmin() {
 
 		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -338,7 +377,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testTreeProjectAdmin() {
 
 		$this->_fakeLogin(1);
-		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -346,7 +385,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testTreeProjectUser() {
 
 		$this->_fakeLogin(4);
-		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -354,7 +393,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testTreeProjectGuest() {
 
 		$this->_fakeLogin(3);
-		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -363,14 +402,14 @@ class SourceControllerTestCase extends AppControllerTest {
 
 		$this->_fakeLogin(5);
 		$ret = $this->testAction('/project/private/source/tree', array('method' => 'get', 'return' => 'view'));
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private', 'branch' => 'master'));
+		$this->assertAuthorized();
 
 	}
 
 	public function testTreeMasterBranch() {
 
 		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/tree/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/tree?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -378,7 +417,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testTreeSomeNewThingBranch() {
 
 		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/tree/some_new_thing', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/tree?branch=some_new_thing', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -406,7 +445,7 @@ class SourceControllerTestCase extends AppControllerTest {
 			)));
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
@@ -442,7 +481,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
@@ -456,21 +495,21 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitsNotLoggedIn() {
 
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testCommitsNotUser() {
 
 		$this->_fakeLogin(8);
-		$this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testCommitsSystemAdmin() {
 
 		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -478,7 +517,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testCommitsProjectAdmin() {
 
 		$this->_fakeLogin(1);
-		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -486,7 +525,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testCommitsProjectUser() {
 
 		$this->_fakeLogin(4);
-		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -494,7 +533,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testCommitsProjectGuest() {
 
 		$this->_fakeLogin(3);
-		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -503,14 +542,14 @@ class SourceControllerTestCase extends AppControllerTest {
 
 		$this->_fakeLogin(5);
 		$ret = $this->testAction('/project/private/source/commits', array('method' => 'get', 'return' => 'view'));
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'commits', 'project' => 'private', 'branch' => 'master'));
+		$this->assertAuthorized();
 
 	}
 
 	public function testCommitsMasterBranch() {
 
 		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/commits/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commits?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -518,7 +557,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testCommitsSomeNewThingBranch() {
 
 		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/commits/some_new_thing', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commits?branch=some_new_thing', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -546,7 +585,7 @@ class SourceControllerTestCase extends AppControllerTest {
 			)));
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/commit?branch=master', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
@@ -582,7 +621,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/commit?branch=master', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
@@ -596,21 +635,21 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testCommitNotLoggedIn() {
 
-		$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commit?branch=master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testCommitNotUser() {
 
 		$this->_fakeLogin(8);
-		$this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/commit?branch=master', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testCommitSystemAdmin() {
 
 		$this->_fakeLogin(5);
-		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commit?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -618,7 +657,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testCommitProjectAdmin() {
 
 		$this->_fakeLogin(1);
-		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commit?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -626,7 +665,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testCommitProjectUser() {
 
 		$this->_fakeLogin(4);
-		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commit?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -634,7 +673,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testCommitProjectGuest() {
 
 		$this->_fakeLogin(3);
-		$ret = $this->testAction('/project/private/source/commit/master', array('method' => 'get', 'return' => 'view'));
+		$ret = $this->testAction('/project/private/source/commit?branch=master', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
 
 	}
@@ -686,7 +725,7 @@ class SourceControllerTestCase extends AppControllerTest {
 			)));
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/raw/hello.c?branch=04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
@@ -719,7 +758,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 		$this->_fakeLogin(5);
 		try{
-			$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+			$this->testAction('/project/private/source/raw/hello.c?branch=04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'vars'));
 			$this->assertNotAuthorized();
 		} catch (ForbiddenException $e){
 			$this->assertTrue(true, "Correct exception thrown");
@@ -730,21 +769,21 @@ class SourceControllerTestCase extends AppControllerTest {
 
 	public function testRawNotLoggedIn() {
 
-		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/raw/hello.c?branch=04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testRawNotUser() {
 
 		$this->_fakeLogin(8);
-		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/raw/hello.c?branch=04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertNotAuthorized();
 	}
 
 	public function testRawSystemAdmin() {
 
 		$this->_fakeLogin(5);
-		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/raw/hello.c?branch=04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 
 	}
@@ -752,7 +791,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testRawProjectAdmin() {
 
 		$this->_fakeLogin(1);
-		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/raw/hello.c?branch=04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 
 	}
@@ -760,7 +799,7 @@ class SourceControllerTestCase extends AppControllerTest {
 	public function testRawProjectUser() {
 
 		$this->_fakeLogin(4);
-		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/raw/hello.c?branch=04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 
 	}
@@ -770,7 +809,7 @@ class SourceControllerTestCase extends AppControllerTest {
 		// Log in as a guest on one project
 		$this->_fakeLogin(3);
 
-		$this->testAction('/project/private/source/raw/04022f5b0b7c9f635520f68a511cccfad4330da3/hello.c', array('method' => 'get', 'return' => 'vars'));
+		$this->testAction('/project/private/source/raw/hello.c?branch=04022f5b0b7c9f635520f68a511cccfad4330da3', array('method' => 'get', 'return' => 'vars'));
 		$this->assertAuthorized();
 		$this->assertEquals('text/x-c; charset=us-ascii', $this->vars['mimeType']);
 		$this->assertEquals(

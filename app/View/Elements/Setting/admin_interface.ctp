@@ -45,6 +45,7 @@
 						'label' => __('Terminology'),
 						'description' => __('use the terminology from your favourite agile methodology'),
 						'value' => $sourcekettle_config['UserInterface']['terminology']['value'],
+						'readOnly' => false,
 					),
 				)
 			))*/?>

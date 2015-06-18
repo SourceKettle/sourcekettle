@@ -52,10 +52,10 @@ $milestone = array(
 
 <div class="well">
 	<h3>Project overview</h3>
-	<p>The front page of a project contains a large amount of data, firstly, we are going to cover the status bar. The status bar consists of 3 major components, the task breakdown, the latest open milestone and some additional facts about the project.</p>
+	<p>The front page of a project contains a large amount of data. Firstly, we are going to cover the status bar. The status bar consists of 3 major components, the task breakdown, the latest open milestone and some additional facts about the project.</p>
 
 	<h4>The task breakdown</h4>
-	<p>The task breakdown (highlighted in <strong>exhibit 1</strong>) shows the statuses of all the tasks that have been created for the project. These tasks are grouped by status.  '<span class="open-tasks"><a href='#'>open</a></span>' covers 'open' and 'in progress' tasks, whereas '<span class="closed-tasks"><a href='#'>closed</a></span>' covers 'resolved' and 'closed' tasks.</p>
+	<p>The task breakdown (highlighted in <strong>exhibit 1</strong>) shows the statuses of all the tasks that have been created for the project. These tasks are grouped by status (NB for brevity, "resolved" and "closed" tasks are grouped together as "finished" tasks)</p>
 </div>
 
 <div class="row-fluid">
@@ -83,6 +83,11 @@ $milestone = array(
 				'span' => 4,
 				'grey' => 1,
 				'numCollab' => 3,
+				'numTeamCollab' => 1,
+				'numberOfPointsTotal' => 50,
+				'numberOfFinishedPoints' => 15,
+				'pctFinishedPoints' => (int)((15/50)*100),
+				'timeTotal' => 1234,
 				'project' => $project,
 			));?>
 			</div>
@@ -123,6 +128,11 @@ $milestone = array(
 					'span' => 4,
 					'grey' => 1,
 					'numCollab' => 3,
+					'numTeamCollab' => 1,
+					'numberOfPointsTotal' => 50,
+					'numberOfFinishedPoints' => 15,
+					'pctFinishedPoints' => (int)((15/50)*100),
+					'timeTotal' => 1234,
 					'project' => $project,
 				));?>
 			</div>
@@ -135,7 +145,7 @@ $milestone = array(
 
 <div class="well">
 	<h4>Additional project information</h4>
-	<p>Finally, on the far right we have additional information about the project (highlighted in <strong>exhibit 1</strong>). This traditionally includes the last time activity was seen on the project and how many people are working on it.</p>
+	<p>Finally, on the far right we have additional information about the project (highlighted in <strong>exhibit 1</strong>). This shows how many users and teams are collaborating on the project, when the last activity occurred, and a summary of the story point progress and time logged.</p>
 </div>
 
 <div class="row-fluid">
@@ -163,6 +173,11 @@ $milestone = array(
 					'span' => 4,
 					'grey' => 0,
 					'numCollab' => 3,
+					'numTeamCollab' => 1,
+					'numberOfPointsTotal' => 50,
+					'numberOfFinishedPoints' => 15,
+					'pctFinishedPoints' => (int)((15/50)*100),
+					'timeTotal' => 1234,
 					'project' => $project,
 				));?>
 			</div>

@@ -8,6 +8,10 @@ App::uses('AppModel', 'Model');
  */
 class ProjectGroup extends AppModel {
 
+	public $actsAs = array(
+		//'CakeDCUtils.SoftDelete',
+	);
+
 	public $displayField = 'name';
 
 	public $validate = array(

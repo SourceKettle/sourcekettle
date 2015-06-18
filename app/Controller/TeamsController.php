@@ -158,7 +158,7 @@ class TeamsController extends AppController {
 	public function api_autocomplete() {
 		$this->layout = 'ajax';
 
-		$this->User->recursive = -1;
+		$this->User->contain();
 		$data = array('teams' => array());
 
 		if (isset($this->request->query['query'])

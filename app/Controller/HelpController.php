@@ -14,6 +14,7 @@
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('TimeString', 'Time');
 class HelpController extends AppController{
 
 /**
@@ -85,6 +86,11 @@ class HelpController extends AppController{
 		$this->set('statuses', $this->TaskStatus->find('list', array()));
 		$this->set('priorities', $this->TaskPriority->find('list', array()));
 		$this->set('types', $this->TaskType->find('list', array()));
+	}
+
+	public function stories() {
+		$this->set('pageTitle', __('Help!'));
+		$this->set('subTitle', __('user stories'));
 	}
 
 	public function milestones() {

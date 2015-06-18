@@ -46,6 +46,7 @@ class CollaboratorsControllerTestCase extends AppControllerTest {
 		'app.project_burndown_log',
 		'app.project_group',
 		'app.project_groups_project',
+		'app.story',
 	);
 
 	public function setUp() {

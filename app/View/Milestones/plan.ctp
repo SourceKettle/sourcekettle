@@ -34,6 +34,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'task_span' => '4',
 		'classes' => 'sprintboard-icebox',
 		'draggable' => $hasWrite,
+		'includeMilestoneLabel' => false,
 	)
 ) ?>
 
@@ -54,6 +55,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'addLink' => false,
 		'draggable' => $hasWrite,
 		'total' => array_reduce($mightHave, function($t, $a){ $t += $a['Task']['story_points']; return $t;}, 0),
+		'includeMilestoneLabel' => false,
 	)
 ) ?>
 <?= $this->element('Task/Board/column',
@@ -69,6 +71,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'addLink' => false,
 		'draggable' => $hasWrite,
 		'total' => array_reduce($couldHave, function($t, $a){ $t += $a['Task']['story_points']; return $t;}, 0),
+		'includeMilestoneLabel' => false,
 	)
 ) ?>	
 
@@ -86,6 +89,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'addLink' => false,
 		'draggable' => $hasWrite,
 		'total' => array_reduce($shouldHave, function($t, $a){ $t += $a['Task']['story_points']; return $t;}, 0),
+		'includeMilestoneLabel' => false,
 	)
 ) ?>
 <?= $this->element('Task/Board/column',
@@ -101,6 +105,7 @@ $this->Html->css("milestones.index", array ('inline' => false));
 		'addLink' => false,
 		'draggable' => $hasWrite,
 		'total' => array_reduce($mustHave, function($t, $a){ $t += $a['Task']['story_points']; return $t;}, 0),
+		'includeMilestoneLabel' => false,
 	)
 ) ?>	
 

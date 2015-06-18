@@ -37,7 +37,7 @@ $project = array('Project' => array(
 		<h4>Already a git wizard?</h4>
 		<p>
 		If you already know what you're doing and just want a git URL, it will look like:
-		<pre><?= $this->DT->scmUri($project) ?></pre>
+		<pre><?= $this->Source->scmUri($project) ?></pre>
 		</p>
 		<p>
 		If you have created a brand, spanking new project but haven't yet checked anything in, click on the '<a href='#'><i class="icon-pencil"></i>Source</a>' link in your project's sidebar for instructions on how to get started (it'll tell you all the project-specific stuff so you can pretty much copy-and-paste lines into a terminal).
@@ -51,7 +51,7 @@ $project = array('Project' => array(
 		<h3>Checking out an existing repository</h3>
 		<p>
 		If you've got an existing project full of code-y goodness, at some point you will probably want to check out a copy somewhere else! You will need to run:
-		<pre>git checkout <?= $this->DT->scmUri($project) ?></pre>
+		<pre>git checkout <?= $this->Source->scmUri($project) ?></pre>
 	
 		...with your actual project name, of course! The URI for your actual repository is displayed on the source page for easy copy-and-pasting.
 		</p>

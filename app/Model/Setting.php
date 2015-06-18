@@ -139,6 +139,8 @@ class Setting extends AppModel {
 				'sysadmin_email' => array('source' => 'Defaults', 'locked' => false, 'value' => 'sysadmin@example.com'),
 				// From: address for any emails sent by the system
 				'send_email_from' => array('source' => 'Defaults', 'locked' => false, 'value' => 'sysadmin@example.com'),
+				// Maximum age of lost password and confirmation keys (5 hours)
+				'max_activation_key_age' => array('source' => 'Defaults', 'locked' => false, 'value' => 5 * 60 * 60),
 			),
 
 			// LDAP authentication settings
@@ -164,6 +166,10 @@ class Setting extends AppModel {
 				'source_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Allow task tracking
 				'task_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
+				// Allow user stories
+				'story_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
+				// Allow epics, for grouping stories
+				'epic_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
 				// Allow attachment uploads
 				'attachment_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => true),
 				// Use 4-column kanban chart?
@@ -194,6 +200,15 @@ class Setting extends AppModel {
 				'base' => array('source' => 'Defaults', 'locked' => false, 'value' => '/var/sourcekettle/repositories'),
 				// Default repository type
 				'default' => array('source' => 'Defaults', 'locked' => false, 'value' => 'Git'),
+			),
+
+			// Default options for new items
+			'Defaults' => array(
+				// Task defaults
+				'task_type' => array('source' => 'Defaults', 'locked' => false, 'value' => 'enhancement'),
+				'task_priority' => array('source' => 'Defaults', 'locked' => false, 'value' => 'major'),
+				'task_status' => array('source' => 'Defaults', 'locked' => false, 'value' => 'open'),
+				'task_assignee_id' => array('source' => 'Defaults', 'locked' => false, 'value' => '0'),
 			),
 		);
 	}
@@ -280,8 +295,9 @@ class Setting extends AppModel {
 				'conditions' => array(
 					'OR' => array('name' => $project, 'id' => $project),
 				),
-				'recursive' => -1,
+				'contain' => false,
 			));
+
 			if (empty($project)) {
 				return $settings;
 			}

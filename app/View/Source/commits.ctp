@@ -17,7 +17,7 @@
 $this->Html->css('pages/source', null, array ('inline' => false));
 
 // Base url for the view
-$url = array('project' => $project['Project']['name'], 'action' => 'tree', $branch);
+$url = array('project' => $project['Project']['name'], 'action' => 'tree', '?' => array('branch' => $branch));
 $this->Bootstrap->add_crumb($project['Project']['name'], $url);
 
 // Create the base url to be used for all links and add breadcrumbs

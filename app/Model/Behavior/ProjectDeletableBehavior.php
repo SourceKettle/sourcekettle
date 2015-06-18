@@ -54,9 +54,8 @@ class ProjectDeletableBehavior extends ModelBehavior {
  * @return void
  */
 	private function __preDeleteR($Model, $conditions = array()) {
-		$Model->recursive = -1;
 
-		$objects = array($Model->name => $Model->find('list', array('conditions' => $conditions)));
+		$objects = array($Model->name => $Model->find('list', array('contain' => false, 'conditions' => $conditions)));
 		$_list = array_values($Model->find('list', array('conditions' => $conditions, 'fields' => array('id'))));
 		foreach ($Model->hasMany as $key => $value) {
 			if ($value['dependent']) {

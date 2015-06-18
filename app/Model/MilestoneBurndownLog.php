@@ -44,7 +44,7 @@ class MilestoneBurndownLog extends AppModel {
 		$lastLog = $this->find('first', array(
 			'conditions' => array('milestone_id' => $this->data['MilestoneBurndownLog']['milestone_id']),
 			'order' => array('timestamp DESC'),
-			'recursive' => -1,
+			'contain' => false,
 			'fields' => $fields,
 		));
 

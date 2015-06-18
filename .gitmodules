@@ -1,18 +1,24 @@
 [submodule "cakephp"]
 	path = cakephp
-	url = git://github.com/cakephp/cakephp.git
+	url = https://github.com/cakephp/cakephp.git
 [submodule "app/Plugin/TwitterBootstrap"]
 	path = app/Plugin/TwitterBootstrap
-	url = git://github.com/loadsys/twitter-bootstrap-helper.git
+	url = https://github.com/loadsys/twitter-bootstrap-helper.git
 [submodule "app/Plugin/GitCake"]
 	path = app/Plugin/GitCake
-	url = git://github.com/SourceKettle/GitCake.git
+	url = https://github.com/SourceKettle/GitCake.git
 [submodule "app/Plugin/TwitterBootswatch"]
 	path = app/Plugin/TwitterBootswatch
-	url = git://github.com/SourceKettle/TwitterBootswatchHelper.git
+	url = https://github.com/SourceKettle/TwitterBootswatchHelper.git
 [submodule "app/Plugin/LDAPAuthCake"]
 	path = app/Plugin/LDAPAuthCake
-	url = git://github.com/amn-ecs/LDAPAuthCake.git
+	url = https://github.com/amn-ecs/LDAPAuthCake.git
 [submodule "app/Plugin/ChangeLogger"]
 	path = app/Plugin/ChangeLogger
-	url = git://github.com/pwhittlesea/ChangeLogger.git
+	url = https://github.com/pwhittlesea/ChangeLogger.git
+[submodule "app/Plugin/Migrations"]
+	path = app/Plugin/Migrations
+	url = https://github.com/CakeDC/migrations.git
+[submodule "app/Plugin/CakeDCUtils"]
+	path = app/Plugin/CakeDCUtils
+	url = https://github.com/CakeDC/utils.git

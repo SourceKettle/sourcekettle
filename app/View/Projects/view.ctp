@@ -45,6 +45,16 @@
 				'controller' => 'tasks',
 				'action'	 => 'add'
 			))?>
+				<? if ($sourcekettle_config['Features']['story_enabled']['value']) {?>
+					<?=$this->Bootstrap->icon('book')?>
+				<?= $this->Html->link(
+				  __('Create a story'),
+				  array(
+					'project'	=> $project['Project']['name'],
+					'controller' => 'stories',
+					'action'	 => 'add'
+					))?>
+					<?}?>
 				<?}?>
 				</div>
 				<div class="span4">

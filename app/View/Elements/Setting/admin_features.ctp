@@ -35,10 +35,10 @@
                     <h4><?= __('Time tracking') ?> <small>- <?= __('allow logging of time to projects and tasks') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'time-enabled', 'name' => 'Setting.Features.time_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'timeSection', 'value' => $sourcekettle_config['Features']['time_enabled']['value'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'time-enabled', 'model' => 'Setting', 'name' => 'Features.time_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'timeSection', 'value' => $sourcekettle_config['Features']['time_enabled']['value'])) ?>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'time-enabled', 'name' => 'Setting.Features.time_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'timeSection', 'value' => $sourcekettle_config['Features']['time_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'time-enabled', 'model' => 'Setting', 'name' => 'Features.time_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'timeSection', 'value' => $sourcekettle_config['Features']['time_enabled']['locked'])) ?>
                 </td>
             </tr>
             <tr>
@@ -46,10 +46,10 @@
                     <h4><?= __('Source code management') ?> <small>- <?= __('allow creation of a source code repository for a project') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'source-enabled', 'name' => 'Setting.Features.source_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['value'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'source-enabled', 'model' => 'Setting', 'name' => 'Features.source_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['value'])) ?>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'source-enabled', 'name' => 'Setting.Features.source_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'source-enabled', 'model' => 'Setting', 'name' => 'Features.source_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'sourceSection', 'value' => $sourcekettle_config['Features']['source_enabled']['locked'])) ?>
                 </td>
             </tr>
             <tr>
@@ -57,21 +57,43 @@
                     <h4><?= __('Task management') ?> <small>- <?= __('allow users to add tasks and milestones to track progress') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'task-enabled', 'name' => 'Setting.Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['value'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'task-enabled', 'model' => 'Setting', 'name' => 'Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['value'])) ?>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'task-enabled', 'name' => 'Setting.Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'task-enabled', 'model' => 'Setting', 'name' => 'Features.task_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'taskSection', 'value' => $sourcekettle_config['Features']['task_enabled']['locked'])) ?>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <h4><?= __('User stories') ?> <small>- <?= __('Allow creation of user stories (NB will be unavailable if task tracking is disabled!)') ?></small></h4>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'story-enabled', 'model' => 'Setting', 'name' => 'Features.story_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'storySection', 'value' => $sourcekettle_config['Features']['story_enabled']['value'])) ?>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'story-enabled', 'model' => 'Setting', 'name' => 'Features.story_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'storySection', 'value' => $sourcekettle_config['Features']['story_enabled']['locked'])) ?>
+                </td>
+            </tr>
+            <?/*<tr>
+                <td>
+                    <h4><?= __('Epics') ?> <small>- <?= __('Allow creation of epics for grouping stories - enables story map view') ?></small></h4>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'epic-enabled', 'model' => 'Setting', 'name' => 'Features.epic_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'epicSection', 'value' => $sourcekettle_config['Features']['epic_enabled']['value'])) ?>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'epic-enabled', 'model' => 'Setting', 'name' => 'Features.epic_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'epicSection', 'value' => $sourcekettle_config['Features']['epic_enabled']['locked'])) ?>
+                </td>
+            </tr>*/?>
             <tr>
                 <td>
                     <h4><?= __('File uploads') ?> <small>- <?= __('allow users to upload files to projects') ?></small></h4>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'attachment-enabled', 'name' => 'Setting.Features.attachment_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['attachment_enabled']['value'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'attachment-enabled', 'model' => 'Setting', 'name' => 'Features.attachment_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true')), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['attachment_enabled']['value'])) ?>
                 </td>
                 <td>
-                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'attachment-enabled', 'name' => 'Setting.Features.attachment_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['attachment_enabled']['locked'])) ?>
+                    <?= $this->element('Setting/switch', array('lock' => true, 'id' => 'attachment-enabled', 'model' => 'Setting', 'name' => 'Features.attachment_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => 'true', 'lock')), 'sectionHide' => 'attachmentSection', 'value' => $sourcekettle_config['Features']['attachment_enabled']['locked'])) ?>
                 </td>
             </tr>
         </tbody>

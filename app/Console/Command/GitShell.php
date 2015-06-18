@@ -14,87 +14,170 @@ class GitShell extends AppShell {
 	private $read_commands  = array('git-upload-pack',  'git upload-pack');
 	private $write_commands = array('git-receive-pack', 'git receive-pack');
 
+	/*public function __construct($stdout = null, $stderr = null, $stdin = null) {
+		Configure::write('Cache.disable', true);
+		parent::__construct($stdout, $stderr, $stdin);
+	}*/
+
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+
+		$parser->addSubCommand('authorizedKeys', array(
+			'help' => __('Prints out authorized SSH public keys for SourceKettle git access via SSH'),
+			'parser' => array(
+				'description' => array(
+					__('This command can be called by sshd using the AuthorizedKeysCommand option'),
+				),
+				'arguments' => array(
+					'username' => array(
+						'help' => __('The username to sync keys for - NB to work nicely with sshd, this command will only take effect if the git username is supplied, or with no username.'),
+						'required' => false,
+					),
+				),
+				'options' => array(
+					'sync' => array(
+						'help' => __('Sync the real authorized_keys file. This will be used by default if you cannot use AuthorizedKeysCommand. Needs to be called on cron.'),
+						'boolean' => true,
+					),
+				),
+			),
+		));
+
+		return $parser;
+	}
+
 	public function main() {
-		$this->out("You need to specify a command. Try 'sync_keys' or 'serve'.");
+		$this->out("You need to specify a command. Try 'authorizedKeys' or 'serve'.");
+	}
+
+	// Generates an authorized_keys file from the SSH keys in the database.
+	// Can be used directly from sshd using the AuthorizedKeysCommand option,
+	// and can be periodically called from cron to sync the real authorized_keys file.
+	public function authorizedKeys() {
+
+		$sourcekettleConfig = $this->getSourceKettleConfig();
+
+		// sshd will give us a username, we will sanity check that it's the git user
+		// We need to print nothing if it's for another user on the system
+		if (count($this->args) > 0) {
+			
+			$requestedUser = $this->args[0];
+
+			if ($requestedUser !== $sourcekettleConfig['SourceRepository']['user']['value']) {
+				exit(0);
+			}
+		// No username given (e.g. we're syncing the real keys file), default to git user
+		} else {
+			$requestedUser = $sourcekettleConfig['SourceRepository']['user']['value'];
+		}
+
+		// If we've been given the --sync option,
+		// we need to make sure the git user's home directory and .ssh dir exist etc.
+		$sync = $this->params['sync'];
+		
+		if ($sync) {
+
+			// No need to sync if no keys have changed
+			if ($sourcekettleConfig['Status']['sync_required']['value'] != 1) {
+				exit(0);
+			}
+
+			$requestedUser = $sourcekettleConfig['SourceRepository']['user']['value'];
+			$gitDetails = posix_getpwnam($requestedUser);
+
+			// Sanity check #1, fail if the user doesn't exist...
+			if(!$gitDetails){
+				$this->err(__("Cannot sync keys - git user '$requestedUser' does not exist - have you set up SourceKettle properly?"));
+				exit(1);
+			}
+
+			// Get their homedir
+			$gitHomedir = $gitDetails['dir'];
+	
+			// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
+			if(!is_dir($gitHomedir.'/.ssh')){
+				$this->err(__("Cannot sync keys - $gitHomedir/.ssh not found - have you set up SourceKettle properly?"));
+				exit(1);
+			}
+	
+			// Now we know where to write to...
+			$sshKeyfile = $gitHomedir.'/.ssh/authorized_keys';
+
+			// Sigh, flock() isn't ideal for this... open for append to avoid
+			// zeroing out the existing file if it's locked...
+			$outfile = fopen($sshKeyfile, "a");
+
+			// Attempt to get a write lock
+			if(!flock($outfile,LOCK_EX|LOCK_NB)) {
+				fclose($outfile);
+				$this->error("Failed to lock $sshKeyfile!");
+				exit(0);
+			}
+
+			// We have the lock, zero out the file
+			if (!ftruncate($outfile, 0)) {
+				flock($outfile,LOCK_UN);
+				fclose($outfile);
+				$this->error("Failed to overwrite $sshKeyfile!");
+				exit(0);
+			}
+		}
+
+		// We will auto-run out git serve command when the git user logs in, and we should disable any
+		// features that may be used for nefarious purposes
+		$template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s'."\n";
+
+		// This is the git-serve command that will be run when git logs in
+		// CAKE/Console/cake is the cakephp console command, APP is our application dir, and git serve is the sourcekettle console command
+		$cmd = CAKE . 'Console' . DS . 'cake -app \'' . APP . '\'' . ' git serve';
+
+		// Now list all SSH keys
+		foreach ($this->SshKey->find('all') as $key) {
+			$sshkey = $key['SshKey']['key'];
+			$userid = $key['User']['id'];
+
+			// Sanity check the user ID
+			if (!isset($userid) || $userid <= 0) {
+				continue;
+			}
+
+			// Sanity check the key
+			if (strlen($sshkey) <= 40) {
+				continue;
+			}
+
+			// Remove newlines if they've added any
+			$content = trim(str_replace(array("\n", "\r"), '', $sshkey));
+		
+			// ...and print the key + command
+			if ($sync) {
+				fprintf($outfile, $template, $cmd, $userid, $content);
+			} else {
+				printf($template, $cmd, $userid, $content);
+			}
+		}
+		
+		if ($sync) {
+
+			// Release the hounds^Wlock
+			flock($outfile,LOCK_UN);
+			fclose($outfile);
+
+			// Make sure it's only readable/writable by the git user
+			chmod($sshKeyfile, 0600);
+			chown($sshKeyfile, $requestedUser);
+
+			// Don't sync again unless keys have changed
+			$this->Setting->syncRequired(false);
+		}
 	}
 
 	/**
 	 * Syncs all of the SSH keys to the git user's authorized_keys file to allow for ssh access
 	 */
 	public function sync_keys() {
-
-		$sourcekettle_config = $this->getSourceKettleConfig();
-
-		// Don't bother unless a key's actually been changed...
-	    if ($sourcekettle_config['Status']['sync_required']['value'] != 1) {
-			exit(0);
-		}
-
-
-		// Get username from config, and get info from the passwd file (or other entry)
-		$git_user	= $sourcekettle_config['SourceRepository']['user']['value'];
-		$git_details = posix_getpwnam($git_user);
-
-		// Sanity check #1, fail if the user doesn't exist...
-		if(!$git_details){
-			$this->err(__("Cannot sync keys - git user '$git_user' does not exist - have you set up SourceKettle properly?"));
-            exit(1);
-		}
-
-		// Get their homedir
-		$git_homedir = $git_details['dir'];
-
-		// Sanity check #2, make sure they have a .ssh directory - we *could* auto-create this, but I'd rather fail safe
-		if(!is_dir($git_homedir.'/.ssh')){
-			$this->err(__("Cannot sync keys - $git_homedir/.ssh not found - have you set up SourceKettle properly?"));
-            exit(1);
-		}
-
-		// Now we know where to write to...
-		$ssh_keyfile = $git_homedir.'/.ssh/authorized_keys';
-
-		// Get all of the SSH keys from the database
-		$keys = $this->SshKey->find('all');
-		$prepared_keys = array();
-
-		// We will auto-run out git serve command when the git user logs in, and we should disable any
-		// features that may be used for nefarious purposes
-		$template = 'command="%s %s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %s';
-
-		// This seems dubious... TODO
-		$app_path = App::path('Controller');
-		$app_path = $app_path[0];
-		$app_path = str_replace('/app/Controller', '', $app_path);
-
-		// This is the git-serve command that will be run when git logs in
-		$cmd = $app_path . 'scm-scripts/git-serve.py';
-
-		// Build up a list of SSH keys to write to file
-		// NOTE - very small risk of memory exhaustion, it'd take a huge number of keys though...
-		$out = '';
-		foreach ($keys as $key) {
-			$sshkey = $key['SshKey']['key'];
-			$userid = $key['User']['id'];
-			if (!isset($userid) || $userid <= 0) {
-				$this->out("Bad key detected! ($sshkey has no userid $userid)");
-				continue;
-			}
-
-			// Sanity check the key
-			if (strlen($sshkey) > 40) {
-				$content = trim(str_replace(array("\n", "\r"), '', $sshkey));
-				$out .= sprintf($template, $cmd, $userid, $content) . "\n";
-			}
-		}
-
-		// Write to the file, making sure we get an exclusive lock to prevent corruption
-		file_put_contents($ssh_keyfile, $out, LOCK_EX);
-
-		// Make sure it's only readable/writable by the git user
-		chmod($ssh_keyfile, 0600);
-
-		// Don't sync again unless keys have changed
-		$this->Setting->syncRequired(false);
+		$this->runCommand("authorizedKeys", array("authorizedKeys", "--sync"));
+		exit(0);
 	}
 
 	// Helper functions to validate git commands
@@ -112,23 +195,18 @@ class GitShell extends AppShell {
 	
 		// Some background info on how this function is called...
 		// * User logs in using an SSH key
-		// * The authorized_keys file generated by the function above ensures that a very
-		//   specific command is run when that key is used - git-serve.py {userid associated with key}
-		// * The git-serve.py script does some sanity checking and runs this command via CakePHP,
-		//   passing it the user ID as an argument - the SSH_ORIGINAL_COMMAND environment var is
-		//   available as we're being run via SSH
-		// * This command does a LOT of sanity and permission checks, then returns the validated command
-		//   for the git user to run
-		// * git-serve.py then runs that command and the remote git program starts pulling/pushing data
+		// * The authorized_keys file generated by the function above ensures that this command
+		//   is called with one argument, the user ID associated with the key
+		// * This command does a LOT of sanity and permission checks, and runs the original
+		//   git command (stored in SSH_ORIGINAL_COMMAND)
 		//
-		// ... got it?
 
 
 		// Firstly, get the SSH_ORIGINAL_COMMAND and other useful variables from environment
 		$vars = array_merge($_SERVER, $_ENV);
 
 		if (!isset($vars['SSH_ORIGINAL_COMMAND']) or !isset($vars['argv'])) {
-			$this->err("Error: Required environment variables are not defined");
+			$this->err(__("Error: Required environment variables are not defined. Please contact the system administrator."));
 			exit(1);
 		}
 
@@ -138,13 +216,13 @@ class GitShell extends AppShell {
 
 		// User ID must be numeric and greater than zero
 		if (!preg_match('/^\s*(\d+)\s*$/', $userid, $matches)) {
-			$this->err("Error: You do not have the necessary permissions");
+			$this->err(__("Error: You do not have the necessary permissions to access this git repository."));
 			exit(1);
 		}
 		$userid = $matches[1];
 
 		if ($userid <= 0) {
-			$this->err("Error: You do not have the necessary permissions");
+			$this->err(__("Error: You do not have the necessary permissions to access this git repository."));
 			exit(1);
 		}
 
@@ -152,7 +230,7 @@ class GitShell extends AppShell {
 
 		// Check if SSH_ORIGINAL_COMMAND contains newlines and bomb out early (nice easy sanity check)
 		if (strpos($ssh_original_command, "\n") !== false) { //!=== as it may also return non-boolean values that evaluate to false
-			$this->err("Error: SSH_ORIGINAL_COMMAND contains newlines");
+			$this->err(__("Error: invalid git command (are you actually connecting using git?)"));
 			exit(1);
 		}
 		
@@ -164,7 +242,7 @@ class GitShell extends AppShell {
 		// Match both forms; command will be in $1, command args will be in $3
 		// Bomb out if the command doesn't match
 		if (!preg_match('/^\s*(git(\s+|\-)\S+)\s+(.+)$/', $ssh_original_command, $matches)) {
-			$this->err("Error: Command is not a valid git command");
+			$this->err(__("Error: invalid git command (are you actually connecting using git?)"));
 			exit(1);
 		}
 
@@ -174,10 +252,9 @@ class GitShell extends AppShell {
 		// Remove any quotes around the command arguments (go go gadget irregular expressions!)
 		$args	= preg_replace('/^(\'|\")(.+)\\1/', '\\2', $matches[3]);
 
-
 		// Check if it's a valid git command to start with...
 		if (!$this->isValidGitCommand($command)) {
-			$this->err("Error: Unknown command");
+			$this->err(__("Error: invalid git command (are you actually connecting using git?)"));
 			exit(1);
 		}
 
@@ -188,57 +265,65 @@ class GitShell extends AppShell {
 		// then make sure it's a valid unix username with '.git' on the end.
 		// NB project names are always valid unix usernames
 		if (!preg_match('#^(.*/)?([a-zA-Z0-9][a-zA-Z0-9@._-]*).git$#', $args, $matches)) {
-			$this->err("Error: Malformed repository name");
+			$this->err(__("Error: Malformed repository name (are you actually connecting using git?)"));
 			exit(1);
 		}
 
 		$_proj_name = $matches[2];
 		
-
-
 		// Try and get project info, if it doesn't exist then don't give that fact away...
 		$project = $this->Project->getProject($_proj_name, true);
 		if (empty ($project)){
-			$this->err("Error: You do not have the necessary permissions");
+			$this->err(__("Error: You do not have the necessary permissions to access this git repository."));
 			exit(1);
 		}
 
 		// We don't need to set all the details, just the ID so we can call hasRead/hasWrite
 		$this->Project->id = $project['Project']['id'];
-        $rt = $this->Project->RepoType->find(
-          'first', array(
-            'conditions' => array('RepoType.id' => $project['Project']['repo_type']),
-            'recursive'  => -1
-        ));
+
+		$rt = $this->Project->RepoType->find(
+	 		'first', array(
+			'conditions' => array('RepoType.id' => $project['Project']['repo_type']),
+			'recursive'  => -1
+		));
 
 		// Get the repository location
-		$sourcekettle_config = $this->getSourceKettleConfig();
-		$repo_path = $sourcekettle_config['SourceRepository']['base']['value'] . "/$_proj_name.git";
+		$sourcekettleConfig = $this->getSourceKettleConfig(null, $this->Project->id);
+		$repo_path = $sourcekettleConfig['SourceRepository']['base']['value'] . "/$_proj_name.git";
 
 		// Make sure there's actually a git repository for this project...
 		if (strtolower($rt['RepoType']['name']) != 'git' or !is_dir($repo_path)) {
-			$this->err(__("Error: You do not have the necessary permissions"));
+			$this->err(__("Error: You do not have the necessary permissions to access this git repository."));
 			exit(1);
 		}
 
-		//Now check if the user has the correct permissions for the operation they are trying to perform
-
-		// Read requested and they have permission, serve the request
-		if ($this->isReadCommand($command) and ($this->Project->hasRead($userid))) {
-			print "$command '$repo_path'";
-			exit(0);
-
-		// Write requested and they have permission, serve the request
-		} else if ($this->isWriteCommand($command) and ($this->Project->hasWrite($userid))) {
-			print "$command '$repo_path'";
-			exit(0);
-
-		// They do not have permission
-		} else {
-			$this->err("Error: You do not have the necessary permissions");
-			exit(1);
+		// If source control is disabled, give them an appropriate error message
+		if (!$sourcekettleConfig['Features']['source_enabled']['value']) {
+			if ($sourcekettleConfig['Features']['source_enabled']['source'] == 'Project-specific settings') {
+				$this->err(__("Error: Source repository access is disabled for this project. Please contact a project administrator to enable it."));
+				exit(1);
+			} else {
+				$this->err(__("Error: Source repository access is disabled system-wide. Please contact a system administrator to enable it."));
+				exit(1);
+			}
 		}
 
+		// We already know the command is valid, so it's either a read or a write command...
+
+		// Check read permission
+		if ($this->isReadCommand($command) and !$this->Project->hasRead($userid)) {
+			$this->err(__("Error: You do not have the necessary permissions to access this git repository."));
+			exit(1);
+
+		// Check write permission
+		} else if ($this->isWriteCommand($command) and !$this->Project->hasWrite($userid)) {
+			$this->err(__("Error: You do not have the necessary permissions to access this git repository."));
+			exit(1);
+
+		}
+
+		// Sanity checks complete. Pass through to the git command.
+		passthru("$command ".escapeshellarg($repo_path));
 	}
 
 	/**

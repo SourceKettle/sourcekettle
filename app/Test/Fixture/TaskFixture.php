@@ -32,6 +32,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 12,
 			'subject' => 'Resolved Major Task 1 for milestone 2',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 2,
@@ -46,6 +48,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 0,
 			'subject' => 'Open Minor Task 2 for milestone 1',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 3,
@@ -60,6 +64,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 0,
 			'subject' => 'In Progress Urgent Task 3 for no milestone',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 4,
@@ -74,6 +80,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 0,
 			'subject' => 'In progress Urgent Task 4 for milestone 1',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 5,
@@ -88,6 +96,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 0,
 			'subject' => 'Open Urgent Task 5 for milestone 1',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 6,
@@ -102,6 +112,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 0,
 			'subject' => 'In Progress Blocker Task 7 for milestone 1',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 7,
@@ -116,6 +128,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 0,
 			'subject' => 'Resolved Major Task 7 for milestone 1',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 8,
@@ -130,6 +144,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 0,
 			'subject' => 'Closed Blocker Task 8 for milestone 1',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 9,
@@ -144,6 +160,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 0,
 			'subject' => 'Dropped Minor Task 9 for milestone 1',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 10,
@@ -158,6 +176,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'In Progress Major Task 1 for milestone 2',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 11,
@@ -172,6 +192,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Task 1 for private project',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 12,
@@ -186,6 +208,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Task 2 for private project',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 13,
@@ -200,6 +224,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Task with differing public ID',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 14,
@@ -214,6 +240,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Java dev task 1 open',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 15,
@@ -228,6 +256,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Java dev task 2 open',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 16,
@@ -242,6 +272,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Java dev task 3 in progress',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 17,
@@ -256,6 +288,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Java dev task 4 in progress',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 18,
@@ -270,6 +304,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Java dev task 5 resolved',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 19,
@@ -284,6 +320,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Java dev task 6 closed',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 20,
@@ -298,6 +336,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Java dev task 7 dropped',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 21,
@@ -312,6 +352,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Dependency loop top',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 22,
@@ -326,6 +368,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Dependency loop second',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 23,
@@ -340,6 +384,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Dependency loop third with loop',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 		array(
 			'id' => 24,
@@ -354,6 +400,8 @@ class TaskFixture extends CakeTestFixture {
 			'story_points' => 14,
 			'subject' => 'Dependency loop fourth',
 			'description' => 'lorem ipsum dolor sit amet',
+			'deleted' => 0,
+			'deleted_date' => null,
 		),
 	);
 

@@ -45,6 +45,7 @@ class TasksControllerTest extends AppControllerTest {
 		'app.teams_user',
 		'app.project_group',
 		'app.project_groups_project',
+		'app.story',
 	);
 
 	public function setUp() {
@@ -1217,6 +1218,9 @@ class TasksControllerTest extends AppControllerTest {
 
 		$resolved = array_map(function($a){return $a['Task']['id'];}, $this->vars['resolved']);
 		$this->assertEquals(array(), $resolved);
+
+		$closed = array_map(function($a){return $a['Task']['id'];}, $this->vars['closed']);
+		$this->assertEquals(array(), $closed);
 	}
 
 	public function testPersonalKanbanHugeMaxAge() {
@@ -1234,6 +1238,9 @@ class TasksControllerTest extends AppControllerTest {
 
 		$resolved = array_map(function($a){return $a['Task']['id'];}, $this->vars['resolved']);
 		$this->assertEquals(array(1), $resolved);
+
+		$closed = array_map(function($a){return $a['Task']['id'];}, $this->vars['closed']);
+		$this->assertEquals(array(), $closed);
 	}
 
 	public function testTeamKanbanNotLoggedIn() {
@@ -1314,6 +1321,9 @@ class TasksControllerTest extends AppControllerTest {
 
 		$resolved = array_map(function($a){return $a['Task']['id'];}, $this->vars['resolved']);
 		$this->assertEquals(array(), $resolved);
+
+		$closed = array_map(function($a){return $a['Task']['id'];}, $this->vars['closed']);
+		$this->assertEquals(array(), $closed);
 	}
 	
 	public function testTeamKanbanHugeMaxAge() {
@@ -1330,7 +1340,10 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertEquals(array(16, 17), $inProgress);
 
 		$resolved = array_map(function($a){return $a['Task']['id'];}, $this->vars['resolved']);
-		$this->assertEquals(array(18, 19), $resolved);
+		$this->assertEquals(array(18), $resolved);
+
+		$closed = array_map(function($a){return $a['Task']['id'];}, $this->vars['closed']);
+		$this->assertEquals(array(19), $closed);
 	}
 	
 }

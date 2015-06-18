@@ -97,7 +97,9 @@ class AttachmentTest extends CakeTestCase {
 		
 		// Creation date will change with every test run, make sure it exists then remove for comparison
 		$this->assertNotNull($saved['Attachment']['created']);
+		$this->assertNotNull($saved['Attachment']['modified']);
 		unset($saved['Attachment']['created']);
+		unset($saved['Attachment']['modified']);
 		
 		$this->assertEquals($saved, array(
 			'Attachment' => array(
@@ -109,7 +111,8 @@ class AttachmentTest extends CakeTestCase {
 			'project_id' => 2,
 			'model' => 'Project',
 			'model_id' => 2,
-			'id' => '11'
+			'id' => '11',
+			'deleted' => 0,
 			)
 		));
 

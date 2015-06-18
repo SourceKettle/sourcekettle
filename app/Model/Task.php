@@ -29,6 +29,7 @@ class Task extends AppModel {
 	public $actsAs = array(
 		'ProjectComponent',
 		'ProjectHistory',
+		//'CakeDCUtils.SoftDelete',
 	);
 
 /**
@@ -128,6 +129,10 @@ class Task extends AppModel {
 		'Milestone' => array(
 			'className' => 'Milestone',
 			'foreignKey' => 'milestone_id',
+		),
+		'Story' => array(
+			'className' => 'Story',
+			'foreignKey' => 'story_id',
 		)
 	);
 
@@ -318,7 +323,6 @@ class Task extends AppModel {
 		$task = $this->find('first', array(
 			'conditions' => array('Task.id' => $this->id),
 			'fields' => array('Task.project_id', 'Task.milestone_id'),
-			//'recursive' => -1,
 		));
 
 		// Creating the task...
@@ -485,8 +489,8 @@ class Task extends AppModel {
 					'Task.project_id' => $this->Project->id,
 					'Task.assignee_id' => $userId,
 				),
+				'contain' => array('TaskStatus'),
 				'fields' => array('Task.public_id', 'Task.subject'),
-				'recursive' => 1,
 			)
 		);
 
@@ -498,8 +502,8 @@ class Task extends AppModel {
 					'Task.project_id' => $this->Project->id,
 					'Task.assignee_id !=' => $userId,
 				),
+				'contain' => array('TaskStatus'),
 				'fields' => array('Task.public_id', 'Task.subject'),
-				'recursive' => 1,
 			)
 		);
 
@@ -522,52 +526,40 @@ class Task extends AppModel {
 			$conditions['Task.modified >'] = $minDate->format('Y-m-d');
 		}
 
-		return $this->find(
-			'all',
-			array(
-				'fields' => array(
-					'Milestone.id',
-					'Milestone.subject',
-					'Task.*',
-					'TaskPriority.name',
-					'TaskStatus.name',
-					'TaskType.name',
-					'Assignee.email',
-					'Assignee.name',
-					'Project.name',
-				),
-				'conditions' => $conditions,
-				'order' => 'TaskPriority.level DESC',
-				'recursive' => 0,
-			)
-		);
+		return $this->find('all', array(
+			'contain' => array(
+				'Milestone' => array('id', 'subject'),
+				'TaskPriority' => array('name'),
+				'TaskStatus' => array('name'),
+				'TaskType' => array('name'),
+				'Assignee' => array('name', 'email'),
+				'Project' => array('name'),
+				'Story' => array('id', 'public_id', 'subject', 'description'),
+			), 
+			'conditions' => $conditions,
+			'order' => 'TaskPriority.level DESC',
+		));
 
 	}
 
 	public function listTasksOfPriorityFor($priority = 'major', $relatedClass = 'Milestone', $id = null) {
 
-		return $this->find(
-			'all',
-			array(
-				'fields' => array(
-					'Milestone.id',
-					'Milestone.subject',
-					'Task.*',
-					'TaskPriority.name',
-					'TaskStatus.name',
-					'TaskType.name',
-					'Assignee.email',
-					'Assignee.name',
-					'Project.name',
-				),
-				'conditions' => array(
-					'TaskPriority.name =' => $priority,
-					$relatedClass.'.id =' => $id
-				),
-				'order' => 'TaskPriority.level DESC',
-				'recursive' => 0,
-			)
-		);
+		return $this->find('all', array(
+			'contain' => array(
+				'Milestone' => array('id', 'subject'),
+				'TaskPriority' => array('name'),
+				'TaskStatus' => array('name'),
+				'TaskType' => array('name'),
+				'Assignee' => array('name', 'email'),
+				'Project' => array('name'),
+				'Story' => array('id', 'public_id', 'subject', 'description'),
+			),
+			'conditions' => array(
+				'TaskPriority.name =' => $priority,
+				$relatedClass.'.id =' => $id
+			),
+			'order' => 'TaskPriority.level DESC',
+		));
 	}
 
 	public function getTree($projectId, $publicId, $seen = array()) {

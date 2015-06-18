@@ -21,23 +21,30 @@ if (!isset($draggable)){
 		$draggable = $task['__hasWrite'];
 	}
 }
+
 if(isset($span) && $span){
 	$span=" span$span";
 } else {
 	$span="";
 }
+
+$includeMilestoneLabel = isset($includeMilestoneLabel) ? $includeMilestoneLabel : true;
+$localStoryLink = isset($localStoryLink) ?: false;
+
 $apiUrl = $this->Html->url(array('controller' => 'tasks', 'action' => 'edit', 'project' => $task['Project']['name']));
 $url = array('api' => false, 'project' => $task['Project']['name'], 'controller' => 'tasks', 'action' => 'view', $task['Task']['public_id']);
-	if($draggable){
-		echo "<li class='task-lozenge draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl' data-taskStatus='".$task['TaskStatus']['name']."'>";
-	} else {
-		echo "<li class='task-lozenge $span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
-	}
+
+if($draggable){
+	echo "<li class='task-lozenge draggable$span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl' data-taskStatus='".$task['TaskStatus']['name']."'>";
+} else {
+	echo "<li class='task-lozenge $span' data-taskid='".h($task['Task']['public_id'])."' data-api-url='$apiUrl'>";
+}
 ?>
 
 <div id="task_<?= $task['Task']['public_id'] ?>" 
   class="task-container"
   data-taskid="<?= $task['Task']['public_id'] ?>">
+	<a name="task_<?= $task['Task']['public_id'] ?>"></a>
 	<div class="task">
 		<div class="well taskwell type_bar_<?= h($task['TaskType']['name']) ?>">
 			<div class="row-fluid">
@@ -62,7 +69,10 @@ $url = array('api' => false, 'project' => $task['Project']['name'], 'controller'
 						<?= $this->Task->statusDropdownButton($draggable? $task: $task['Task']['task_status_id']) ?>
 						<?= $this->Task->storyPointsControl($draggable? $task: $task['Task']['story_points']) ?>
 						<?= $this->Task->priorityDropdownButton($draggable? $task: $task['Task']['task_priority_id'], false) ?>
-						<?= $this->Task->milestoneLabel($task) ?>
+						<? if ($includeMilestoneLabel) { echo $this->Task->milestoneLabel($task); } ?>
+						<? if ($sourcekettle_config['Features']['story_enabled']['value']) { ?>
+							<?= $this->Task->storyLabel($task, $localStoryLink) ?>
+						<? } ?>
 						</span>
 						</span>
 					</div>

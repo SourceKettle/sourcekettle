@@ -109,6 +109,7 @@ class User extends AppModel {
 		'FilterValid' => array(
 			'nameField' => 'email',
 		),
+		//'CakeDCUtils.SoftDelete',
 	);
 
 	public function __construct($id = false, $table = null, $ds = null) {
@@ -246,6 +247,7 @@ class User extends AppModel {
 			'conditions' => array(
 				'User.is_active' => false,
 			),
+			'contain' => array('User'),
 			'fields' => array(
 				'EmailConfirmationKey.key',
 				'User.id',
@@ -253,7 +255,6 @@ class User extends AppModel {
 				'User.email',
 				'User.is_active',
 			),
-			'recursive' => 1,
 		));
 		return $userList;
 	}
@@ -265,6 +266,7 @@ class User extends AppModel {
 				'EmailConfirmationKey.key' => $key,
 				'User.is_active' => false,
 			),
+			'contain' => array('User'),
 			'fields' => array(
 				'EmailConfirmationKey.key',
 				'User.id',
@@ -272,7 +274,6 @@ class User extends AppModel {
 				'User.email',
 				'User.is_active',
 			),
-			'recursive' => 1,
 		));
 		return $user;
 	}

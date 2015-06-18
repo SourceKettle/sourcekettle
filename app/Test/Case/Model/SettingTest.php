@@ -123,11 +123,14 @@ class SettingTestCase extends CakeTestCase {
 				'sysadmin_email' => array('value' => 'admin@example.org', 'source' => 'System settings', 'locked' => false),
 				'send_email_from' => array('value' => 'sysadmin@example.com', 'source' => 'Defaults', 'locked' => false),
 				'register_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
+				'max_activation_key_age' => array('source' => 'Defaults', 'locked' => false, 'value' => 5 * 60 * 60),
 			),
 			'Features' => array(
 				'task_enabled' => array('value' => true, 'source' => 'System settings', 'locked' => false),
 				'time_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
 				'source_enabled' => array('value' => false, 'source' => 'System settings', 'locked' => true),
+				'story_enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),
+				'epic_enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),
 				'attachment_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
 				'4col_kanban_enabled' => array('value' => false, 'source' => 'Defaults', 'locked' => false),
 			),
@@ -138,6 +141,12 @@ class SettingTestCase extends CakeTestCase {
 				'bind_pw' => array('value' => 'some_password', 'source' => 'Defaults', 'locked' => false),
 				'base_dn' => array('value' => 'ou=Users,dc=example,dc=com', 'source' => 'Defaults', 'locked' => false),
 				'filter' => array('value' => 'mail=%USERNAME%', 'source' => 'Defaults', 'locked' => false),
+			),
+			'Defaults' => array(
+				'task_type' => array('source' => 'Defaults', 'locked' => false, 'value' => 'enhancement'),
+				'task_priority' => array('source' => 'Defaults', 'locked' => false, 'value' => 'major'),
+				'task_status' => array('source' => 'Defaults', 'locked' => false, 'value' => 'open'),
+				'task_assignee_id' => array('source' => 'Defaults', 'locked' => false, 'value' => '0'),
 			),
 		), $settings, "Incorrect settings returned");
 	}

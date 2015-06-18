@@ -1,0 +1,23 @@
+table.story-map td,th{
+	min-width: 250px;
+	max-width: 250px;
+	height: 100%;
+	margin-bottom: 0px;
+}
+
+.story-block {
+	height: 250px;
+}
+
+.story-block .story {
+	overflow: hidden;
+}
+
+.story-title {
+	text-align: center;
+}
+
+.story-acceptance-criteria {
+	white-space: pre-wrap;
+	text-align: left;
+}

@@ -14,7 +14,6 @@ class StoryTest extends CakeTestCase {
  */
 	public $fixtures = array(
 		'app.story',
-		'app.creator',
 		'app.task',
 		'app.project',
 		'app.repo_type',
@@ -27,8 +26,6 @@ class StoryTest extends CakeTestCase {
 		'app.milestone',
 		'app.milestone_burndown_log',
 		'app.source',
-		'app.blob',
-		'app.commit',
 		'app.time',
 		'app.project_history',
 		'app.attachment',
@@ -59,6 +56,26 @@ class StoryTest extends CakeTestCase {
 		unset($this->Story);
 
 		parent::tearDown();
+	}
+
+	public function testFindByPublicId() {
+		$story = $this->Story->findByProjectIdAndPublicId(2, 3);
+		$this->assertEquals('3', $story['Story']['id']);
+		$this->assertEquals('3', $story['Story']['public_id']);
+
+		$story = $this->Story->findByProjectIdAndPublicId(3, 1);
+		$this->assertEquals('4', $story['Story']['id']);
+		$this->assertEquals('1', $story['Story']['public_id']);
+	}
+
+	public function testListStoryOptions() {
+		$this->Story->Project->id = 3;
+		$options = $this->Story->listStoryOptions();
+		$this->assertEquals(array(
+			0 => __('No assigned story'),
+			1 => 'First story',
+			2 => 'Last story',
+		), $options);
 	}
 
 }
