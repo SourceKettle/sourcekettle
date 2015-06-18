@@ -643,7 +643,7 @@ class TasksController extends AppProjectController {
 		if (!empty($this->request->query['priority'])) {
 			$selectedPriorityId = $this->TaskPriority->nameToID($this->request->query['priority']);
 		} elseif (isset($this->request->data['Task']['task_priority_id'])) {
-			$selectedPriorityId = $this->TaskPriority->nameToID($this->request->data['Task']['task_priority_id']);
+			$selectedPriorityId = $this->request->data['Task']['task_priority_id'];
 		} else {
 			$selectedPriorityId = $this->TaskPriority->nameToID($this->sourcekettle_config['Defaults']['task_priority']['value']);
 		}
@@ -652,7 +652,7 @@ class TasksController extends AppProjectController {
 		if (!empty($this->request->query['status'])) {
 			$selectedStatusId = $this->TaskStatus->nameToID($this->request->query['status']);
 		} elseif (isset($this->request->data['Task']['task_status_id'])) {
-			$selectedStatusId = $this->TaskStatus->nameToID($this->request->data['Task']['task_status_id']);
+			$selectedStatusId = $this->request->data['Task']['task_status_id'];
 		} else {
 			$selectedStatusId = $this->TaskStatus->nameToID($this->sourcekettle_config['Defaults']['task_status']['value']);
 		}
@@ -661,7 +661,7 @@ class TasksController extends AppProjectController {
 		if (!empty($this->request->query['type'])) {
 			$selectedTypeId = $this->TaskType->nameToID($this->request->query['type']);
 		} elseif (isset($this->request->data['Task']['task_type_id'])) {
-			$selectedTypeId = $this->TaskType->nameToID($this->request->data['Task']['task_type_id']);
+			$selectedTypeId = $this->request->data['Task']['task_type_id'];
 		} else {
 			$selectedTypeId = $this->TaskType->nameToID($this->sourcekettle_config['Defaults']['task_type']['value']);
 		}
@@ -684,7 +684,7 @@ class TasksController extends AppProjectController {
 
 			$data['Task']['project_id']	= $project['Project']['id'];
 			$data['Task']['owner_id']	= $current_user['id'];
-			$data['Task']['task_status_id']	= 1; // TODO hard coded ID
+			$data['Task']['task_status_id']	= $selectedStatusId;
 
 			if (isset($data['Task']['milestone_id']) && $data['Task']['milestone_id'] == 0) {
 				$data['Task']['milestone_id'] = null;
@@ -697,7 +697,7 @@ class TasksController extends AppProjectController {
 			}
 
 			if (isset($data['Task']['task_type_id']) && $data['Task']['task_type_id'] == 0) {
-				$data['Task']['task_type_id'] = $this->TaskType->nameToID('enhancement'); // TODO configurable default
+				$data['Task']['task_type_id'] = $selectedTypeId;
 			}
 
 			// TODO what's going on here?
