@@ -47,7 +47,7 @@ class LoginControllerTest extends AppControllerTest {
 		'app.project_groups_project',
 	);
 
-	public function setUp() {
+	public function setUp($controllerName = null) {
 		ControllerTestCase::setUp();
 		$this->controller = $this->generate('Login', array(
 			'methods' => array(
