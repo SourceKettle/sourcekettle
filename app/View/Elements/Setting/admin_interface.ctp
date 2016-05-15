@@ -26,7 +26,7 @@
             </tr>
         </thead>
         <tbody>
-			<?= $this->Form->create('Setting', array('action'=>'set')) ?>
+			<?= $this->Form->create('Setting', array('url' => array('action'=>'set'))) ?>
             <tr>
                 <td>
                     <h4><?= __('Theme') ?> <small>- <?= __('Customise the appearance of %s', $sourcekettle_config['UserInterface']['alias']['value']) ?></small></h4>

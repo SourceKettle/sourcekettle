@@ -17,7 +17,7 @@
 
 <div class="row-fluid">
     <?php
-    echo $this->Form->create('User', array('class' => 'span7 well form-horizontal', 'action' => 'admin_edit'));
+    echo $this->Form->create('User', array('class' => 'span7 well form-horizontal', 'url' => array('action' => 'admin_edit')));
 
     echo '<h3>Edit users details</h3>';
 

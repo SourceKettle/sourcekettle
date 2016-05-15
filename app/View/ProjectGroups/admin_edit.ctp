@@ -17,7 +17,7 @@
 
 <div class="row-fluid">
     <?php
-    echo $this->Form->create('ProjectGroup', array('class' => 'span12 well form-horizontal', 'action' => 'admin_edit'));
+    echo $this->Form->create('ProjectGroup', array('class' => 'span12 well form-horizontal', 'url' => array('action' => 'admin_edit')));
 		echo $this->element("ProjectGroup/admin_form");
     echo $this->Form->end();
     ?>
