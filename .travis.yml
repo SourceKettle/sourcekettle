@@ -1,6 +1,9 @@
 language: php
 php:
   - 5.3
+  - 5.4
+  - 5.5
+  - 5.6
 git:
   submodules: false
 before_script:
@@ -12,15 +15,7 @@ before_script:
   - ls app/Plugin/GitCake/Vendor/Git/
   # Activate APC for web and CLI, allow short open tags (SK PHP config)
   - echo -e 'extension = "apc.so"\nshort_open_tag = On\napc.cli_enabled = On\n' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  # Install dependencies (currently just an older version of PHPunit)
-  - composer install --dev
-  - phpenv rehash
 
-  # Fudge factor 11 :-( Installing the older PHPunit has no effect as the newer one is on $PATH.
-  # Set the $PATH and PHP include path so it can work with the older PHPunit for CakePHP 2.
-  - export PATH=./vendor/phpunit/phpunit/composer/bin:$PATH
-  - echo 'include_path = "'$PWD'/vendor/phpunit/phpunit:'$(echo '<?php echo get_include_path();?>' | php)'"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  
   # Create DB and configure settings for it
   - sh -c "mysql -e 'CREATE DATABASE sourcekettle_ci; CREATE DATABASE sourcekettle_citest;'"
   - cd app/
