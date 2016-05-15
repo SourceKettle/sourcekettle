@@ -32,13 +32,12 @@
     foreach ($options as $title => $section) {
 
         echo '<li class="nav-header">'.h($title).'</li>';
-
         // Iterate over the sidebar options in $sshkey
         foreach ( $section as $feature => $options ){
 
             // Logic to figure out if we are in the right place
-            $c2 = $options['url']['controller'];
-            $a2 = $options['url']['action'];
+            $c2 = @$options['url']['controller'];
+            $a2 = @$options['url']['action'];
             $isFeat = false;
 
             // If the option is for more then one action
@@ -61,7 +60,7 @@
             if ($isFeat) echo 'class="active"';
             echo ">";
 
-            if ($options['url']['action'] == '*') {
+            if (is_array($options['url']) && $options['url']['action'] == '*') {
                 $options['url']['action'] = '.';
             }
 
