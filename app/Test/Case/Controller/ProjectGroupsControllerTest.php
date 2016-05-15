@@ -43,7 +43,7 @@ class ProjectGroupsControllerTest extends AppControllerTest {
 		'app.project_groups_project',
 	);
 
-	public function setUp() {
+	public function setUp($controllerName = null) {
 		parent::setUp("ProjectGroups");
 	}
 

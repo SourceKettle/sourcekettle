@@ -40,7 +40,7 @@ class PagesControllerTest extends AppControllerTest {
 		'app.lost_password_key',
 	);
 
-	public function setUp() {
+	public function setUp($controllerName = null) {
 		parent::setUp("Pages");
 	}
 /**

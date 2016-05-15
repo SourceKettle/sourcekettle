@@ -48,7 +48,7 @@ class UsersControllerTest extends AppControllerTest {
 		'app.story',
 	);
 
-	public function setUp() {
+	public function setUp($controllerName = null) {
 		parent::setUp("Users");
 		$this->Setting = ClassRegistry::init("Setting");
 		$this->User = ClassRegistry::init("User");

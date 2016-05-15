@@ -47,7 +47,7 @@ class SettingsControllerTest extends AppControllerTest {
 		'app.project_groups_project',
 	);
 
-	public function setUp() {
+	public function setUp($controllerName = null) {
 		parent::setUp("Settings");
 	}
 

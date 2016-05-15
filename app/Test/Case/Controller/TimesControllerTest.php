@@ -43,7 +43,7 @@ class TimesControllerTestCase extends AppControllerTest {
 		'app.story',
 	);
 
-	public function setUp() {
+	public function setUp($controllerName = null) {
 		parent::setUp("Times");
 	}
 

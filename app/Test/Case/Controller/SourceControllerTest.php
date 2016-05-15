@@ -79,7 +79,7 @@ class SourceControllerTestCase extends AppControllerTest {
  *
  * @return void
  */
-	public function setUp() {
+	public function setUp($controllerName = null) {
 		parent::setUp("Source");
 		$this->controller->Setting = $this->getMockForModel('Setting', array('loadConfigSettings'));
 		$this->controller->Setting
