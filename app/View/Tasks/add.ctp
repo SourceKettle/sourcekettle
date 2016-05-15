@@ -45,13 +45,16 @@ $this->Html->scriptBlock ("
 			"label" => __('Milestone').' '.$this->Bootstrap->icon('road'),
 		));
 
-		echo $this->Bootstrap->input("story_id", array(
-			"input" => $this->Form->input("story_id", array(
-				"label" => false,
-				"class" => "span5"
-			)),
-			"label" => __('User Story').' '.$this->Bootstrap->icon('book'),
-		));
+		if ($sourcekettle_config['Features']['story_enabled']['value']) {
+
+			echo $this->Bootstrap->input("story_id", array(
+				"input" => $this->Form->input("story_id", array(
+					"label" => false,
+					"class" => "span5"
+				)),
+				"label" => __('User Story').' '.$this->Bootstrap->icon('book'),
+			));
+		}
 
 		echo $this->Bootstrap->input("task_priority_id", array(
 			"input" => $this->Form->input("task_priority_id", array(
