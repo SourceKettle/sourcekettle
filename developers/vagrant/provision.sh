@@ -4,35 +4,34 @@
 # so having a fairly noddy root password should be fine. Change if this bothers you. Don't set it to anything you care about people seeing on the web.
 MYROOTPASS="shoes";
 
+# Database name and repo dir to use (probably don't use the default, it may help to dig up bugs...)
+MYDBNAME="skettle";
+DATADIR="/var/skettle";
 
-#Pre-set mysql root password
-debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYROOTPASS"
-debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYROOTPASS"
-
-# Install dependencies
-apt-get update
-apt-get install -y apache2 php5 mysql-client mysql-server git build-essential python-mysqldb vim php-apc php5-mysql php-pear php5-xdebug
-a2enmod rewrite
-
-pear config-set auto_discover 1
-pear channel-discover pear.phpunit.de
-pear install phpunit/PHPUnit-3.7.35
-
-# Move /var/www to our vagrant directory
-rm -rf /var/www
-ln -fs /vagrant /var/www
+# Install useful packages
+yum -y remove php53*
+yum -y install vim nano git npm php56u php56u-mysql php56u-mbstring php56u-ldap php56u-pecl-apc php56u-pecl-xdebug MySQL-python
+npm install -g less
+npm install -g less-plugin-clean-css
+ln -s /usr/lib/node_modules/less-plugin-clean-css/node_modules/clean-css/bin/cleancss /usr/bin/cleancss
 
 # Stop apache, we're about to mess with it...
-service apache2 stop
+service httpd stop
 
-# Run apache as the 'vagrant' user, and stick logfiles in our persistent /vagrant/apache-logs dir
-# so we can easily get at them without ssh-ing to the VM
-sed -i 's/www-data/vagrant/g' /etc/apache2/envvars
-sed -i 's|APACHE_LOG_DIR=.*$|APACHE_LOG_DIR=/vagrant/apache-logs|' /etc/apache2/envvars
-chown -R vagrant:vagrant /var/lock/apache2
+# Configure PHP with settings needed for SourceKettle to work
+# The APC garbage collection TTL is to ensure the tests run properly, not needed in production
+cat >/etc/php.d/sourcekettle.ini <<EOF
+[PHP]
+short_open_tag = On
+apc.cli_enabled = On
+apc.enable_cli = On
+apc.gc_ttl=10000
+date.timezone=UTC
+EOF
 
 # Wedge in some apache config with all the right directories set
-cat >/etc/apache2/sites-available/default <<EOF
+sed -i 's/\/var\/www\/public/\/var\/www\/sourcekettle/g' /etc/httpd/conf/httpd.conf
+cat >/etc/httpd/conf.d/sourcekettle.conf <<EOF
 <VirtualHost *:80>
         ServerAdmin webmaster@localhost
 
@@ -48,52 +47,79 @@ cat >/etc/apache2/sites-available/default <<EOF
                 allow from all
         </Directory>
 
-        ErrorLog \${APACHE_LOG_DIR}/error.log
+        ErrorLog /var/www/apache-logs/error.log
 
         # Possible values include: debug, info, notice, warn, error, crit,
         # alert, emerg.
         LogLevel warn
 
-        CustomLog \${APACHE_LOG_DIR}/access.log combined
+        CustomLog /var/www/apache-logs/access.log combined
 
 
 </VirtualHost>
 EOF
 
+# Testing installer page
+service httpd start; #exit 0;
+
 # Run the sourcekettle setup script to create the database, repo dir etc.
 cd /var/www/sourcekettle
-./scm-scripts/sourcekettle-setup.py --db-rootpass=$MYROOTPASS --db-name=skettle --create-test-db --test-db-name=skettle_test --repo-dir=/var/skettle/repositories --scm-user=git --scm-group=gitkettle --www-user=vagrant
-chown -R vagrant:vagrant /var/skettle
-cd /vagrant/sourcekettle/app
+./scm-scripts/sourcekettle-setup.py --db-rootpass='' --db-name=${MYDBNAME} --create-test-db --test-db-name=${MYDBNAME}_test --repo-dir=${DATADIR}/repositories --scm-user=git --scm-group=gitkettle --www-user=vagrant
+chown -R vagrant:vagrant ${DATADIR}
+cd /var/www/sourcekettle/app
+
+# Configure repo dir
+./Console/cake setting set SourceRepository.base ${DATADIR}/repositories
 
 # Create some users
-./Console/cake user add root@localhost.local "System Administrator" -a -p adminPassword
+./Console/cake user add admin@localhost.local "System Administrator" -a -p adminPassword
 ./Console/cake user add user@localhost.local "Project user"  -p userPassword
 ./Console/cake user add guest@localhost.local "Project guest"  -p guestPassword
 
 # Create a project or two...
-./Console/cake project add private_project -a root@localhost.local -u user@localhost.local -g guest@localhost.local
-./Console/cake project add public_project -p -a root@localhost.local -u user@localhost.local -g guest@localhost.local
+./Console/cake project add private_project -a admin@localhost.local -u user@localhost.local -g guest@localhost.local
+./Console/cake project add public_project -p -a admin@localhost.local -u user@localhost.local -g guest@localhost.local
 
 # Add some project milestones...
 ./Console/cake milestone add private_project "Do something soon"
 ./Console/cake milestone add private_project "Do something later"
 ./Console/cake milestone add private_project "Do something even later"
-./Console/cake milestone add public_project "Read the Tea Leaves"
-./Console/cake milestone add public_project "Read the Coffee Grounds"
-./Console/cake milestone add public_project "Read the Red Bull Cans"
+./Console/cake milestone add public_project "ODN scheduled maintenance"
+./Console/cake milestone add public_project "Warp core scheduled maintenance"
+./Console/cake milestone add public_project "Shakedown cruise"
 
 # Populate the private project with tasks attached to milestones
-./Console/cake task add private_project "Fix first thing for private project"  -p blocker -o 1 -a 2 -m 1
-./Console/cake task add private_project "Fix second thing for private project" -p urgent  -o 2 -a 3 -m 1
-./Console/cake task add private_project "Fix third thing for private project"  -p major   -o 3 -a 1 -m 1
-./Console/cake task add private_project "Fix fourth thing for private project" -p minor   -o 1 -a 2 -m 1
+./Console/cake task add private_project "Fix first thing for private project"  -p blocker -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix second thing for private project" -p urgent  -o user@localhost.local -a guest@localhost.local -m 1
+./Console/cake task add private_project "Fix third thing for private project"  -p major   -o guest@localhost.local -a admin@localhost.local -m 1
+./Console/cake task add private_project "Fix fourth thing for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
+./Console/cake task add private_project "Fix many things for private project" -p minor   -o admin@localhost.local -a user@localhost.local -m 1
 
 # Populate the public milestone with unattached tasks
-./Console/cake task add public_project "Fix first thing for public project"  -p blocker -o 1 -a 2
-./Console/cake task add public_project "Fix second thing for public project" -p urgent  -o 2 -a 3
-./Console/cake task add public_project "Fix third thing for public project"  -p major   -o 3 -a 1
-./Console/cake task add public_project "Fix fourth thing for public project" -p minor   -o 1 -a 2
+./Console/cake task add public_project "Fix first thing for public project"  -p blocker -o admin@localhost.local -a user@localhost.local
+./Console/cake task add public_project "Fix second thing for public project" -p urgent  -o user@localhost.local -a guest@localhost.local
+./Console/cake task add public_project "Fix third thing for public project"  -p major   -o guest@localhost.local -a admin@localhost.local
+./Console/cake task add public_project "Fix fourth thing for public project" -p minor   -o admin@localhost.local -a user@localhost.local
 
 # Start the webserver, we're ready to rock!
-service apache2 start
+service httpd start
