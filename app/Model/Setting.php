@@ -27,15 +27,15 @@ class Setting extends AppModel {
  */
 	public $validate = array(
 		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		// NB values may be empty.
 	);
 
 	// Helper function to flatten out the settings tree into a flat 'foo.bar.baz' => 'quux' format
-	public static function flattenTree($data, $soFar = null, $output = array()) {
+	public static function flattenTree($data, $soFar = null, &$output = array()) {
 
 		if (!is_array($data)) {
 			// Flags for featuers etc. - convert to boolean from string true/false
@@ -50,7 +50,7 @@ class Setting extends AppModel {
 				} else {
 					$newKey = $key;
 				}
-				self::flattenTree($value, $newKey, &$output);
+				self::flattenTree($value, $newKey, $output);
 			}
 		}
 

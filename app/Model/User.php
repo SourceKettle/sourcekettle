@@ -27,8 +27,8 @@ class User extends AppModel {
  */
 	public $validate = array(
 		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Please enter your name',
 			),
 		),
@@ -43,8 +43,8 @@ class User extends AppModel {
 			),
 		),
 		'password' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Please enter a password',
 			),
 			'minlength' => array(
@@ -117,7 +117,7 @@ class User extends AppModel {
 
 		// Get the DB table prefix from our database config, for if
 		// we have multiple systems in the same DB or fixtures have a prefix
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		$table_prefix = $db->config['prefix'];
 
 		$this->virtualFields = array(

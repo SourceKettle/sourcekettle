@@ -15,8 +15,8 @@ class Team extends AppModel {
 
 	public $validate = array(
 		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Please enter a name for the team',
 			),
 			'isUnique' => array(

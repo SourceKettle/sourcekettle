@@ -27,8 +27,8 @@ class RepoType extends AppModel {
  */
 	public $validate = array(
 		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'A valid name was not given for repo type',
 			),
 		),

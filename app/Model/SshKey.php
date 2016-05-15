@@ -36,16 +36,16 @@ class SshKey extends AppModel {
 			),
 		),
 		'key' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Please enter your SSH key',
 				'allowEmpty' => false,
 				'required' => true,
 			),
 		),
 		'comment' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Please enter a comment for the SSH key to identify it',
 				'allowEmpty' => false,
 				'required' => false,
@@ -122,7 +122,7 @@ class SshKey extends AppModel {
 		return true;
 	}
 
-	public function afterFind($results, $primary) {
+	public function afterFind($results, $primary = false) {
 
 		$correct = array();
 		while ($result = array_shift($results)) {

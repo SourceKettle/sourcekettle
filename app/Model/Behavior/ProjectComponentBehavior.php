@@ -73,7 +73,7 @@ class ProjectComponentBehavior extends ModelBehavior {
  * @param bool $created (default: false)
  * @return void
  */
-	public function afterSave(Model $Model, $created = false) {
+	public function afterSave(Model $Model, $created = false, $options = array()) {
 		// TODO this avoids creating spurious empty projects all over the place but sometimes won't update the project
 		// e.g. when saving tasks via api_update
 		if (isset($Model->Project->id) && $Model->Project->id != false) {

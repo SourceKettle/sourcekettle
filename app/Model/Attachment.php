@@ -40,8 +40,8 @@ class Attachment extends AppModel {
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'size' => array(

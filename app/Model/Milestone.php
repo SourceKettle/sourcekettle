@@ -44,13 +44,13 @@ class Milestone extends AppModel {
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'subject' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 			'maxLength' => array(
 				'rule' => array('maxLength', 50),
@@ -63,8 +63,8 @@ class Milestone extends AppModel {
 			),
 		),
 		'starts' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 			'checkRange' => array(
 				'rule' => array('checkRange'),
@@ -72,8 +72,8 @@ class Milestone extends AppModel {
 			),
 		),
 		'due' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 			'checkRange' => array(
 				'rule' => array('checkRange'),

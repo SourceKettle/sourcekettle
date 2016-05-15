@@ -32,7 +32,7 @@ class ProjectBurndownLog extends AppModel {
 		)
 	);
 
-	public function beforeSave($options) {
+	public function beforeSave($options = array()) {
 
 		// Before we save a log entry, make sure the counts have actually changed
 		$fields = array(

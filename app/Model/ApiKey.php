@@ -33,16 +33,16 @@ class ApiKey extends AppModel {
 			),
 		),
 		'key' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Please enter your API key',
 				'allowEmpty' => false,
 				'required' => false,
 			),
 		),
 		'comment' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Please enter a comment for the API key to identify it',
 				'allowEmpty' => false,
 				'required' => false,

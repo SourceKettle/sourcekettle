@@ -21,8 +21,8 @@ class Story extends AppModel {
  */
 	public $validate = array(
 		'subject' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'creator_id' => array(
@@ -78,7 +78,7 @@ class Story extends AppModel {
 
 		// Get the DB table prefix from our database config, for if
 		// we have multiple systems in the same DB or fixtures have a prefix
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		$table_prefix = $db->config['prefix'];
 
 		$this->virtualFields = array(

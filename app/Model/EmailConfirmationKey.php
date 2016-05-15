@@ -28,8 +28,8 @@ class EmailConfirmationKey extends AppModel {
 			),
 		),
 		'key' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'A key was not given',
 			),
 		),

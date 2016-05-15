@@ -72,7 +72,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
  * @return void
  * @throws
  */
-	public function beforeSave(Model $Model) {
+	public function beforeSave(Model $Model, $options = array()) {
 		$exception = false;
 		$this->prepare($Model);
 
@@ -94,7 +94,7 @@ class ProjectHistoryBehavior extends ModelBehavior {
  * @param bool $created (default: false)
  * @return void
  */
-	public function afterSave(Model $Model, $created = false) {
+	public function afterSave(Model $Model, $created = false, $options = array()) {
 		if (!$created) {
 			// Some fields have been updated
 			foreach ($this->_cache[$Model->name][$Model->id] as $field => $old) {

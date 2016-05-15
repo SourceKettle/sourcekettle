@@ -36,21 +36,21 @@ class TaskComment extends AppModel {
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'user_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'comment' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Comments cannot be empty',
 			),
 		),

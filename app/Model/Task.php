@@ -40,40 +40,40 @@ class Task extends AppModel {
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'owner_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'task_type_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'task_status_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'task_priority_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
 			),
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 			),
 		),
 		'time_estimate' => array(
@@ -91,8 +91,8 @@ class Task extends AppModel {
 			),
 		),
 		'subject' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+			'notblank' => array(
+				'rule' => array('notblank'),
 				'message' => 'Subject cannot be empty',
 			),
 		),
@@ -200,7 +200,7 @@ class Task extends AppModel {
 
 		// Get the DB table prefix from our database config, for if
 		// we have multiple systems in the same DB or fixtures have a prefix
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		$table_prefix = $db->config['prefix'];
 
 		$this->virtualFields = array(
