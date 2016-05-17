@@ -6,7 +6,7 @@ class TimeString{
 
 	// Given a time in minutes, render it as
 	// a nicely formatted time interval e.g. "2h 6m"
-	function renderTime($minutes, $field = 'all'){
+	static function renderTime($minutes, $field = 'all'){
 		if ($minutes == null) {
 			$minutes = 0;
 		}
@@ -63,7 +63,7 @@ class TimeString{
 
 	// Given a string representing a time interval,
 	// parse it and return a number of minutes.
-	function parseTime($timeString){
+	static function parseTime($timeString){
 
 		// Easy case - just a number of minutes :-)
 		if(is_numeric($timeString)){
