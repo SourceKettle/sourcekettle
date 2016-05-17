@@ -9,7 +9,7 @@ git:
 before_script:
 
   # Install apc.so via pecl (needed on Travis' 5.5 and 5.6 builds)
-  - echo -e "\n\n\n\n\n\n" | pecl install apc
+  - echo -e '\n\n\n\n\n\n' | pecl install apc
 
   # Get all submodules
   - git submodule update --init --recursive
