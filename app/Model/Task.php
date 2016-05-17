@@ -361,6 +361,8 @@ class Task extends AppModel {
  * afterSave function - logs project/milestone burndown chart updates
  */
 	public function afterSave($created, $options = array()) {
+	    $db = $this->getDataSource();
+
 		if ($created) {
 			$project_id = $this->__burndownLog[0]['project_id'];
 			$milestone_id = $this->__burndownLog[0]['milestone_id'];
@@ -371,7 +373,7 @@ class Task extends AppModel {
 
 		$counts = $this->__getBurndownCounts(array("Task.project_id" => $project_id));
 		$counts['project_id'] = $project_id;
-		$counts['timestamp'] = DboSource::expression('NOW()');
+		$counts['timestamp'] = $db->expression('NOW()');
 		$this->Project->ProjectBurndownLog->save(array(
 			'ProjectBurndownLog' => $counts,
 		));
@@ -381,7 +383,7 @@ class Task extends AppModel {
 
 			$counts = $this->__getBurndownCounts(array("Task.milestone_id" => $milestone_id));
 			$counts['milestone_id'] = $milestone_id;
-			$counts['timestamp'] = DboSource::expression('NOW()');
+			$counts['timestamp'] = $db->expression('NOW()');
 
 			$this->Milestone->MilestoneBurndownLog->save(array(
 				'MilestoneBurndownLog' => $counts,
