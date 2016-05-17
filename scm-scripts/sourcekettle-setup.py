@@ -497,7 +497,8 @@ line = db_tpl.readline()
 while line:
     line = line.replace('__DB_HOST__', db_host)
     line = line.replace('__DB_NAME__', db_name)
-    line = line.replace('__TEST_DB_NAME__', test_db_name)
+    if create_test_db:
+        line = line.replace('__TEST_DB_NAME__', test_db_name)
     line = line.replace('__DB_PASS__', db_pass)
     db.write(line)
     line = db_tpl.readline()
