@@ -13,6 +13,12 @@ You will need to install the following packages before you start:
 * mod_php (PHP >= 5.2.8)
 * MySQL (>= 5.1)
 * mod_ssl, if you wish to use a secure connection (definitely do this for a production setup!)
+* php apc (you can avoid this step but its easier not to sudo apt-get install php-apc)
+
+You will also need to add the following to your php.ini file for both web servering and commandline
+extension = "apc.so"
+short_open_tag = On
+apc.cli_enabled = On
 
 What to know in advance
 -----------------------

@@ -44,7 +44,7 @@ echo $this->Html->scriptBlock("
 		$('#members-list').sortable('toArray').forEach(function(id){
 			hidden = document.createElement('input');
 			hidden.type = 'hidden';
-			hidden.name = 'data[User][]';
+			hidden.name = 'data[User][id][]';
 			hidden.value = id;
 			$('form').append(hidden);
 		});
