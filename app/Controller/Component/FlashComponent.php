@@ -148,5 +148,9 @@ class FlashComponent extends Component {
 			$this->_name = @$this->Model->data[$this->name][$this->Model->displayField];
 		}
 	}
+
+	public function set($message, $options = array()) {
+		$self->message($message);
+	}
 }
 
