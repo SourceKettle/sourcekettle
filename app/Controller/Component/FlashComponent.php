@@ -150,7 +150,7 @@ class FlashComponent extends Component {
 	}
 
 	public function set($message, $options = array()) {
-		$self->message($message);
+		$this->message($message);
 	}
 }
 
