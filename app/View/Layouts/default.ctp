@@ -116,7 +116,7 @@
 						</ul>
 						<div class="form-group navbar-login">
         						<?= $this->Form->create('User', array('url' => array('controller' => 'login', 'action' => 'index'))) ?>
-							<?=$this->Form->text("email", array("placeholder" => __("email address"), 'tabindex'=>'1', 'autofocus' => ''))?>
+							<?=$this->Form->text("email", array("placeholder" => __("email address"), 'tabindex'=>'1', 'autofocus' => 'autofocus'))?>
 							<?=$this->Form->password("password", array("placeholder" => __("password"), 'tabindex'=>'2'))?>
 							<?=$this->Form->button("Log in", array('type' => 'submit', 'class' => 'btn btn-primary', 'tabindex'=>'3'))?>
 							</form>
