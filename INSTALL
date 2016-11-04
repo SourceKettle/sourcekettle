@@ -14,6 +14,8 @@ You will need to install the following packages before you start:
 * MySQL (>= 5.1)
 * mod_ssl, if you wish to use a secure connection (definitely do this for a production setup!)
 * php apc (you can avoid this step but its easier not to sudo apt-get install php-apc)
+* Python 2.x
+* MySQL interface for Python (python-mysqldb)
 
 You will also need to add the following to your php.ini file for both web servering and commandline
 extension = "apc.so"
@@ -46,7 +48,7 @@ Getting the code
 Webserver setup
 ---------------
 
-* Point apache at the sourcekettle directory (/var/www/sourcekettle in our example; you may want to use a separate VirtualHost for this)
+* Point apache at the sourcekettle app/webroot directory (/var/www/sourcekettle/app/webroot in our example; you may want to use a separate VirtualHost for this)
 * Make sure your apache config allows the use of .htaccess files
 * Optional, but recommended: set up SSL
 
