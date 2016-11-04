@@ -36,6 +36,7 @@ class AppSchema extends CakeSchema {
 					array('name' => 'Users.register_enabled',     'value' => '1'),
 					array('name' => 'Users.sysadmin_email',       'value' => 'sysadmin@example.com'),
 					array('name' => 'Users.send_email_from',      'value' => 'sysadmin@example.com'),
+                    array('name' => 'Users.allow_invites',      'value' => '0'),
 					array('name' => 'Status.sync_required',       'value' => '0'),
 					array('name' => 'Features.time_enabled',       'value' => '1'),
 					array('name' => 'Features.source_enabled',     'value' => '1'),
