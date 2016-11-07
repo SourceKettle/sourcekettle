@@ -33,7 +33,7 @@ class UsersController extends AppController {
 		}
 
         // Only internal users can invite
-        if (('invite' === $this->action) && !$user['is_internal']) {
+        if (('invite' === $this->action) && $user['is_internal']) {
             $this->Session->setFlash("You are not allowed to invite users. Please speak to an admin for more information.");
             return false;
         }

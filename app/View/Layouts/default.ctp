@@ -74,7 +74,7 @@
 							<ul class="dropdown-menu">
 								<li><?= $this->Html->link(__('View profile'), array ('admin' => false, 'controller' => 'users', 'action' => 'view', $current_user['id'])) ?></li>
 								<li><?= $this->Html->link(__('Account settings'), array ('admin' => false, 'controller' => 'users', 'action' => 'index')) ?></li>
-								<? if ($current_user['is_internal'] && $sourcekettle_config['Users']['invites_enabled']['value'] == '1') {?>
+								<? if (!$current_user['is_internal'] && $sourcekettle_config['Users']['invites_enabled']['value'] == '1') {?>
 									<li><?= $this->Html->link(__('Invite external user'), array ('admin' => false, 'controller' => 'users', 'action' => 'invite')) ?></li>
 								<? } ?>
 								<li class="divider"></li>
