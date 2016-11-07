@@ -142,7 +142,7 @@ class Setting extends AppModel {
 				// Maximum age of lost password and confirmation keys (5 hours)
 				'max_activation_key_age' => array('source' => 'Defaults', 'locked' => false, 'value' => 5 * 60 * 60),
                 // Can normal users add external users
-                'allow_invites' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
+                'invites_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
 			),
 
 			// LDAP authentication settings
