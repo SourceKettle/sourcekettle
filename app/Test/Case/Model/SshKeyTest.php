@@ -27,6 +27,11 @@ class SshKeyTestCase extends CakeTestCase {
     public $fixtures = array('app.ssh_key', 'app.user');
 
     /**
+     * @var SshKey
+     */
+    private $SshKey;
+
+    /**
      * setUp function.
      * Run before each unit test.
      * Corrrecly sets up the test environment.
@@ -280,4 +285,18 @@ class SshKeyTestCase extends CakeTestCase {
 		$this->assertEqual($saved['SshKey']['comment'], 'somebody@localhost', 'Failed to save DSA SSH key');
 		
 	}
+
+	public function testAddingADuplicateKeyFails()
+    {
+        $arrayKeysToKeep = array_flip(array('user_id', 'key', 'comment'));
+
+        $SshKeysInDb = $this->SshKey->find('all');
+        $rawSshKeyToSave = $SshKeysInDb[0]['SshKey'];
+
+        $keyToSave = array_intersect_key($rawSshKeyToSave, $arrayKeysToKeep);
+
+        $saved = $this->SshKey->save($keyToSave);
+
+        $this->assertFalse($saved, "Key was saved even though it already exists in the database");
+    }
 }
