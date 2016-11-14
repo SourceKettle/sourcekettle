@@ -32,11 +32,11 @@ class UsersController extends AppController {
 			return false;
 		}
 
-        // Only internal users can invite
-        if (('invite' === $this->action) && $user['is_internal']) {
-            $this->Session->setFlash("You are not allowed to invite users. Please speak to an admin for more information.");
-            return false;
-        }
+		// Only internal users can invite
+		if (('invite' === $this->action) && $user['is_internal']) {
+			$this->Session->setFlash("You are not allowed to invite users. Please speak to an admin for more information.");
+			return false;
+		}
 
 		// Sysadmins only for admin actions
 		if (preg_match('/^admin_/', $this->action) && !$user['is_admin']) {
@@ -427,77 +427,78 @@ class UsersController extends AppController {
 		return $this->redirect('register');
 	}
 
-    /**
-     * Create a new user and invite them to Sourcekettle
-     */
-    public function invite() {
-        $this->set('pageTitle', __('Invite'));
-        $this->set('subTitle', __('Invite an external collaborator'));
+	/**
+	 * Create a new user and invite them to Sourcekettle
+	 */
+	public function invite() {
+		$this->set('pageTitle', __('Invite'));
+		$this->set('subTitle', __('Invite an external collaborator'));
 
-        if (!$this->request->is('post')) { // If not a submitted form
-            return;
-        }
-        $user_id = $this->createUserAccount(array("User.name", "User.email"), '__sendInvitedUserMail');
-        if ($user_id) {
-            $this->log("[UsersController.invite] user[${user_id}] created by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
-            $this->Session->setFlash(__('New User invited successfully.'), 'default', array(), 'success');
-            return $this->redirect('/');
-        } else {
-            $this->Session->setFlash("<h4 class='alert-heading'>".__("Error")."</h4>".__("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
-        }
+		if (!$this->request->is('post')) { // If not a submitted form
+			return;
+		}
+		$user_id = $this->createUserAccount(array("User.name", "User.email"), '__sendInvitedUserMail');
+		if ($user_id) {
+			$this->log("[UsersController.invite] user[${user_id}] created by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
+			$this->Session->setFlash(__('New User invited successfully.'), 'default', array(), 'success');
+			return $this->redirect('/');
+		} else {
+			$this->Session->setFlash("<h4 class='alert-heading'>" . __("Error") . "</h4>" . __("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+		}
 
-    }
+	}
 
 
-    /**
-     * Create a new user
-     */
+	/**
+	 * Create a new user
+	 */
 	public function admin_add() {
 		$this->set('pageTitle', __('Administration'));
 		$this->set('subTitle', __('add a new sheep to your flock'));
 
-        if (!$this->request->is('post')) { // If not a submitted form
-            return;
-        }
-        $user_id = $this->createUserAccount(array("User.name", "User.email", "User.is_admin", "User.is_active"), '__sendAdminCreatedUserMail');
-        if ($user_id) {
-            $this->log("[UsersController.admin_add] user[${id}] created by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
-            $this->Session->setFlash(__('New User added successfully.'), 'default', array(), 'success');
-            return $this->redirect('/');
-        } else {
-            $this->Session->setFlash("<h4 class='alert-heading'>".__("Error")."</h4>".__("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
-        }
+		if (!$this->request->is('post')) { // If not a submitted form
+			return;
+		}
+		$user_id = $this->createUserAccount(array("User.name", "User.email", "User.is_admin", "User.is_active"), '__sendAdminCreatedUserMail');
+		if ($user_id) {
+			$this->log("[UsersController.admin_add] user[${id}] created by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
+			$this->Session->setFlash(__('New User added successfully.'), 'default', array(), 'success');
+			return $this->redirect('/');
+		} else {
+			$this->Session->setFlash("<h4 class='alert-heading'>" . __("Error") . "</h4>" . __("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+		}
 	}
 
-    /**
-     *  Create a new user
-     *  Returns the user id, or null if unsuccessful.
-     * @param $fields An array of the fields which should be read from the request
-     * @param $mailFunction The mail function to call on success
-     * @return integer | null
-     */
-	private function createUserAccount($fields, $mailFunction){
-        $this->User->create();
-        $data = $this->_cleanPost($fields);
-        // Fudge in a random password to stop it looking like an external account
-        $data['User']['password'] = $this->__generateKey(25);
-        if ($this->User->save($data)) {
-            $user_id = $this->User->getLastInsertID();
+	/**
+	 *  Create a new user
+	 *  Returns the user id, or null if unsuccessful.
+	 * @param $fields An array of the fields which should be read from the request
+	 * @param $mailFunction The mail function to call on success
+	 * @return integer | null
+	 */
+	private function createUserAccount($fields, $mailFunction) {
+		$this->User->create();
+		$data = $this->_cleanPost($fields);
+		// Fudge in a random password to stop it looking like an external account
+		$data['User']['password'] = $this->__generateKey(25);
+		if ($this->User->save($data)) {
+			$user_id = $this->User->getLastInsertID();
 
-            //Now to create the key and send the email
-            $this->User->LostPasswordKey->save(
-                array('LostPasswordKey' => array(
-                    'user_id' => $user_id,
-                    'key' => $this->__generateKey(25),
-                ))
-            );
-            call_user_func(array($this, $mailFunction), $user_id, $this->User->LostPasswordKey->getLastInsertID());
-            return $user_id;
-        }
-        else {
-            return null;
-        }
-    }
+			//Now to create the key and send the email
+			$this->User->LostPasswordKey->save(
+				array(
+					'LostPasswordKey' => array(
+						'user_id' => $user_id,
+						'key' => $this->__generateKey(25),
+					)
+				)
+			);
+			call_user_func(array($this, $mailFunction), $user_id, $this->User->LostPasswordKey->getLastInsertID());
+			return $user_id;
+		} else {
+			return null;
+		}
+	}
 
 /**
  * Edit the name and the email address of a user
@@ -926,36 +927,36 @@ class UsersController extends AppController {
 	}
 
 
-    /**
-     * @param $userId
-     * @param $keyId
-     * @return bool
-     */
-    private function __sendInvitedUserMail($userId, $keyId) {
-        // No sending emails in debug mode
-        if ( Configure::read('debug') > 1 ) {
-            $this->Email->delivery = 'debug';
-        }
-        $User	= $this->User->read(null, $userId);
-        $Key	= $this->User->LostPasswordKey->read(null, $keyId);
-        $Addr = $this->sourcekettle_config['Users']['send_email_from']['value'];
+	/**
+	 * @param $userId
+	 * @param $keyId
+	 * @return bool
+	 */
+	private function __sendInvitedUserMail($userId, $keyId) {
+		// No sending emails in debug mode
+		if (Configure::read('debug') > 1) {
+			$this->Email->delivery = 'debug';
+		}
+		$User = $this->User->read(null, $userId);
+		$Key = $this->User->LostPasswordKey->read(null, $keyId);
+		$Addr = $this->sourcekettle_config['Users']['send_email_from']['value'];
 
-        $this->Email->to		= $User['User']['email'];
-        $this->Email->subject	= __('You\'ve been invited to Sourcekettle!', $this->sourcekettle_config['UserInterface']['alias']['value']);
-        $this->Email->replyTo	= $Addr;
-        $this->Email->from		= __('%s Admin <%s>', $this->sourcekettle_config['UserInterface']['alias']['value'], $Addr);
-        $this->Email->template	= 'email_invite';
+		$this->Email->to = $User['User']['email'];
+		$this->Email->subject = __('You\'ve been invited to Sourcekettle!', $this->sourcekettle_config['UserInterface']['alias']['value']);
+		$this->Email->replyTo = $Addr;
+		$this->Email->from = __('%s Admin <%s>', $this->sourcekettle_config['UserInterface']['alias']['value'], $Addr);
+		$this->Email->template = 'email_invite';
 
-        $this->Email->sendAs = 'text'; // because we hate to send pretty mail
+		$this->Email->sendAs = 'text'; // because we hate to send pretty mail
 
-        // Set view variables as normal
-        $this->set('User', $User);
-        $this->set('Key', $Key);
-        if ($this->Email->send()) {
-            return true;
-        }
-        return false;
-    }
+		// Set view variables as normal
+		$this->set('User', $User);
+		$this->set('Key', $Key);
+		if ($this->Email->send()) {
+			return true;
+		}
+		return false;
+	}
 
 	/* ************************************************* *
 	 *													 *

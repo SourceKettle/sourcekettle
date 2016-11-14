@@ -124,8 +124,8 @@ class SettingTestCase extends CakeTestCase {
 				'send_email_from' => array('value' => 'sysadmin@example.com', 'source' => 'Defaults', 'locked' => false),
 				'register_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
 				'max_activation_key_age' => array('source' => 'Defaults', 'locked' => false, 'value' => 5 * 60 * 60),
-                'invites_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
-            ),
+				'invites_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
+			),
 			'Features' => array(
 				'task_enabled' => array('value' => true, 'source' => 'System settings', 'locked' => false),
 				'time_enabled' => array('value' => true, 'source' => 'Defaults', 'locked' => false),
