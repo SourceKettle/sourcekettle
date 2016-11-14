@@ -33,7 +33,7 @@ class UsersController extends AppController {
 		}
 
 		// Only internal users can invite
-		if (('invite' === $this->action) && $user['is_internal']) {
+		if ('invite' === $this->action && ($user['is_internal'] || $this->sourcekettle_config['Users']['invites_enabled']['value'] != '1')) {
 			$this->Session->setFlash("You are not allowed to invite users. Please speak to an admin for more information.");
 			return false;
 		}
@@ -461,9 +461,9 @@ class UsersController extends AppController {
 		}
 		$user_id = $this->createUserAccount(array("User.name", "User.email", "User.is_admin", "User.is_active"), '__sendAdminCreatedUserMail');
 		if ($user_id) {
-			$this->log("[UsersController.admin_add] user[${id}] created by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
+			$this->log("[UsersController.admin_add] user[${user_id}] created by user[" . $this->Auth->user('id') . "]", 'sourcekettle');
 			$this->Session->setFlash(__('New User added successfully.'), 'default', array(), 'success');
-			return $this->redirect('/');
+			return $this->redirect(array('action' => 'view', $user_id));
 		} else {
 			$this->Session->setFlash("<h4 class='alert-heading'>" . __("Error") . "</h4>" . __("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
 		}
