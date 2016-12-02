@@ -169,4 +169,13 @@ class AppControllerTest extends ControllerTestCase {
 			$this->assertTrue(false, "Please add authorization mappings for: ".implode(",", $bad));
 		}
 	}
+
+	/**
+	 * User invitation tests.
+	 *
+	 * prefix: testUserInvite
+	 */
+	protected function _invitesEnabled($state = true) {
+		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Users' => array('invites_enabled' => $state))));
+	}
 }

@@ -141,6 +141,8 @@ class Setting extends AppModel {
 				'send_email_from' => array('source' => 'Defaults', 'locked' => false, 'value' => 'sysadmin@example.com'),
 				// Maximum age of lost password and confirmation keys (5 hours)
 				'max_activation_key_age' => array('source' => 'Defaults', 'locked' => false, 'value' => 5 * 60 * 60),
+				// Can normal users add external users
+				'invites_enabled' => array('source' => 'Defaults', 'locked' => false, 'value' => false),
 			),
 
 			// LDAP authentication settings
