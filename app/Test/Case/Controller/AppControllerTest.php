@@ -115,7 +115,7 @@ class AppControllerTest extends ControllerTestCase {
 	public function assertRedirect($url) {
 		$this->assertNotNull($this->headers, "Expected a redirect, but we have no headers");
 		$this->assertNotNull(@$this->headers['Location'], "Expected a redirect, but we did not get one");
-		$this->assertEquals(Router::url($url, true), $this->headers['Location']);
+        $this->assertTextEndsWith($url, $this->headers['Location']);
 	}
 
 
