@@ -1296,4 +1296,101 @@ class UsersControllerTest extends AppControllerTest {
 
 	}
 
+
+	public function testUserInviteNotLoggedIn() {
+		$this->_invitesEnabled();
+		$this->testAction('/users/invite', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUserInviteInternalNotSystemAdmin() {
+		$this->_invitesEnabled();
+		$this->_fakeLogin(1);
+		$this->testAction('/users/invite', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUserInviteInternalSystemAdmin() {
+		$this->_invitesEnabled();
+		$this->_fakeLogin(5);
+		$this->testAction('/users/invite', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUserInviteInternalInactiveUser() {
+		$this->_invitesEnabled();
+		$this->_fakeLogin(11);
+		$this->testAction('/users/invite', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUserInviteExternalInactiveUser() {
+		$this->_invitesEnabled();
+		$this->_fakeLogin(6);
+		$this->testAction('/users/invite', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUserInviteInternalInactiveAdmin() {
+		$this->_invitesEnabled();
+		$this->_fakeLogin(22);
+		$this->testAction('/users/invite', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUserInviteUserOKWithInvitesDisabled() {
+		$this->_invitesEnabled(false);
+		$this->_fakeLogin(23);
+		$this->testAction('/users/invite', array('method' => 'get', 'return' => 'vars'));
+		$this->assertNotAuthorized();
+	}
+
+	public function testUserInviteUserOK() {
+		$this->_invitesEnabled();
+		$this->_fakeLogin(23);
+		$this->testAction('/users/invite', array('method' => 'get', 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRegexp('|<form action=".*'.Router::url('/users/invite').'"|', $this->view);
+	}
+
+	public function testUserInviteAddUserOK() {
+		$this->_invitesEnabled();
+		$postData = array('User' => array(
+			'name' => 'Someone new',
+			'email' => 'newbie@example.lab',
+		));
+		$this->_fakeLogin(23);
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with(__("New User invited successfully."));
+		$this->testAction('/users/invite', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+		$this->assertRedirect("/");
+
+		$user = $this->controller->User->findById($this->controller->User->getLastInsertId());
+		$this->assertEquals('Someone new', $user['User']['name']);
+		$this->assertEquals('newbie@example.lab', $user['User']['email']);
+	}
+
+	public function testUserInviteAddUserFail() {
+		$this->_invitesEnabled();
+		$postData = array('User' => array(
+			'name' => 'Someone new',
+			'email' => 'newbie@example.lab',
+		));
+		$this->_fakeLogin(23);
+		$this->controller->User = $this->getMockForModel('User', array('save'));
+		$this->controller->User
+			->expects($this->once())
+			->method('save')
+			->will($this->returnValue(false));
+		$this->controller->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with("<h4 class='alert-heading'>".__("Error")."</h4>".__("One or more fields were not filled in correctly. Please try again."), 'default', array(), 'error');
+
+		$this->testAction('/users/invite', array('method' => 'post', 'data' => $postData, 'return' => 'vars'));
+		$this->assertAuthorized();
+	}
 }

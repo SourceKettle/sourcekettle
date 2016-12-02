@@ -99,6 +99,45 @@ class PagesControllerTest extends AppControllerTest {
 		$this->assertContains($this->controller->sourcekettle_config['UserInterface']['alias']['value'].' uses cookies!', $this->view);
 	}
 
+	/**
+	 * test invite menu item
+	 */
+
+	public function testInviteShownForExternalUserWhileInvitesActive() {
+		$this->_fakeLogin(23);
+		$this->_invitesEnabled();
+
+		$rendered = $this->testAction('/pages/home', array('return' => 'contents', 'method' => 'get'));
+
+		$this->assertContains('<a href="/users/invite">Invite external user</a>', $rendered);
+	}
+
+	public function testInviteNotShownForExternalUserWhileInvitesInactive() {
+		$this->_fakeLogin(23);
+		$this->_invitesEnabled(false);
+
+		$rendered = $this->testAction('/pages/home', array('return' => 'contents', 'method' => 'get'));
+
+		$this->assertNotContains('<a href="/users/invite">Invite external user</a>', $rendered);
+	}
+
+	public function testInviteNotShownForInternalUserWhileInvitesActive() {
+		$this->_fakeLogin(2);
+		$this->_invitesEnabled();
+
+		$rendered = $this->testAction('/pages/home', array('return' => 'contents', 'method' => 'get'));
+
+		$this->assertNotContains('<a href="/users/invite">Invite external user</a>', $rendered);
+	}
+
+	public function testInviteNotShownForInternalUserWhileInvitesInactive() {
+		$this->_fakeLogin(2);
+		$this->_invitesEnabled(false);
+
+		$rendered = $this->testAction('/pages/home', array('return' => 'contents', 'method' => 'get'));
+
+		$this->assertNotContains('<a href="/users/invite">Invite external user</a>', $rendered);
+	}
 /**
  * testAbout method
  *

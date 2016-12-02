@@ -115,7 +115,7 @@ class AppControllerTest extends ControllerTestCase {
 	public function assertRedirect($url) {
 		$this->assertNotNull($this->headers, "Expected a redirect, but we have no headers");
 		$this->assertNotNull(@$this->headers['Location'], "Expected a redirect, but we did not get one");
-		$this->assertEquals(Router::url($url, true), $this->headers['Location']);
+        $this->assertTextEndsWith($url, $this->headers['Location']);
 	}
 
 
@@ -168,5 +168,14 @@ class AppControllerTest extends ControllerTestCase {
 		if (!empty($bad)) {
 			$this->assertTrue(false, "Please add authorization mappings for: ".implode(",", $bad));
 		}
+	}
+
+	/**
+	 * User invitation tests.
+	 *
+	 * prefix: testUserInvite
+	 */
+	protected function _invitesEnabled($state = true) {
+		ClassRegistry::init("Setting")->saveSettingsTree(array('Setting' => array('Users' => array('invites_enabled' => $state))));
 	}
 }

@@ -85,8 +85,9 @@ class SshKeysControllerTest extends AppControllerTest {
 
 	public function testAddKeyInternalOK() {
 		$this->_fakeLogin(1);
+        $key = 'ssh-dss MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgHiDAQfzXeLZNCOAnynfQy9wU5FF3ul6mZ/8vsJX49FhnJPocRLKOUcFhSebAdtfbyd+JKgo3jeNrprTojxx33eBQImnmqRA+7VYDkd1BlfM6dBf6Rp0dokViuuo0g9pDeFRxU1OJNv3EhVu2QCYeBq0oCqQcFzDMhRpXpOFk15zAgMBAAE=';
 		$postData = array('SshKey' => array(
-			'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA==',
+			'key' => $key,
 			'comment' => 'A new SSH key',
 		));
 
@@ -100,7 +101,7 @@ class SshKeysControllerTest extends AppControllerTest {
 		$this->assertRedirect('/account/sshkeys/view');
 
 		$retrieved = $this->controller->SshKey->find('first', array(
-			'conditions' => array('user_id' => 1, 'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA=='),
+			'conditions' => array('user_id' => 1, 'key' => $key),
 			'fields' => array('key', 'comment'),
 			'recursive' => -1,
 		));
@@ -110,8 +111,9 @@ class SshKeysControllerTest extends AppControllerTest {
 
 	public function testAddKeyExternalOK() {
 		$this->_fakeLogin(6);
+        $key = 'ssh-dss MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgHiDAQfzXeLZNCOAnynfQy9wU5FF3ul6mZ/8vsJX49FhnJPocRLKOUcFhSebAdtfbyd+JKgo3jeNrprTojxx33eBQImnmqRA+7VYDkd1BlfM6dBf6Rp0dokViuuo0g9pDeFRxU1OJNv3EhVu2QCYeBq0oCqQcFzDMhRpXpOFk15zAgMBAAE=';
 		$postData = array('SshKey' => array(
-			'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA==',
+			'key' => $key,
 			'comment' => 'A new SSH key',
 		));
 
@@ -124,7 +126,7 @@ class SshKeysControllerTest extends AppControllerTest {
 		$this->assertRedirect('/account/sshkeys/view');
 
 		$retrieved = $this->controller->SshKey->find('first', array(
-			'conditions' => array('user_id' => 6, 'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA=='),
+			'conditions' => array('user_id' => 6, 'key' => $key),
 			'fields' => array('key', 'comment'),
 			'recursive' => -1,
 		));
@@ -134,8 +136,9 @@ class SshKeysControllerTest extends AppControllerTest {
 
 	public function testAddKeySystemAdminOK() {
 		$this->_fakeLogin(5);
+		$key = 'ssh-dss MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgHiDAQfzXeLZNCOAnynfQy9wU5FF3ul6mZ/8vsJX49FhnJPocRLKOUcFhSebAdtfbyd+JKgo3jeNrprTojxx33eBQImnmqRA+7VYDkd1BlfM6dBf6Rp0dokViuuo0g9pDeFRxU1OJNv3EhVu2QCYeBq0oCqQcFzDMhRpXpOFk15zAgMBAAE=';
 		$postData = array('SshKey' => array(
-			'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA==',
+			'key' => $key,
 			'comment' => 'A new SSH key',
 		));
 
@@ -148,7 +151,7 @@ class SshKeysControllerTest extends AppControllerTest {
 		$this->assertRedirect('/account/sshkeys/view');
 
 		$retrieved = $this->controller->SshKey->find('first', array(
-			'conditions' => array('user_id' => 5, 'key' => 'ssh-dss AAAAB3NzaC1kc3MAAACBAIL6C57bq8sk+yhZUi5UBb5uc0uWEdCvtQ8gKnbtBrp9DVzDVE/js+LwwiQZ2+t608Y0ImVT/hUc3+W2tD/33F9eyJnNEWPWgj2nzHRA0+Z65OFQDUjxduF1dp9xdKj3EsL29ggU5OKNPwN9V9EFZdnDiM7UH/tbW9gQSmwdjcyHAAAAFQDxiBX3Aq7mwB4jVesCl+AIHvaFxwAAAIBvMGEVYtYms6OabQwkdb7uz47z4kYGcEYTmn9htY9RwdWBSTt6h48NuivTClWcVTBylFS/h77RMGC42Og25xj6qrwBF+hjMNofkQScD0hhrcZMNo2cPnnBGZCpSwmVMw2WLbNKgqGdLmcbj09Lfgm9t82XTmOkCzxa+7nwna0P8wAAAIAcZuaHOM1g7Wnlohwl2OoOw+u1Wt5dCJt5uKJN8PIIXY9LoZYG1xTvmQJ/mb5FcW9Ewiz3YIAMPwHvj7A3ZcZs8PyFNjhP7i7Trtg9+PqTpASPm8HMpzge6QD2S2rgvKEbY9Pe4TgqQUmNqlS4Mofnh1voFnwdOedFjLHuVdFSvA=='),
+			'conditions' => array('user_id' => 5, 'key' => $key),
 			'fields' => array('key', 'comment'),
 			'recursive' => -1,
 		));

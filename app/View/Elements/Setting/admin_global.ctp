@@ -27,10 +27,18 @@
         <tbody>
             <tr>
                 <td>
-                    <h4><?= __('Allow Registration') ?> <small>- <?= __('allow new users to create accounts') ?></small></h4>
+                    <h4><?= __('Allow Registration') ?> <small><?= __('allow new users to create accounts') ?></small></h4>
                 </td>
                 <td>
                     <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'register-enabled', 'model' => 'Setting', 'name' => 'Users.register_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => true)), 'value' => $sourcekettle_config['Users']['register_enabled']['value'])) ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h4><?= __('Allow Invites') ?> <small><?= __('allow LDAP users to invite remote users to have a local account') ?></small></h4>
+                </td>
+                <td>
+                    <?= $this->element('Setting/switch', array('lock' => false, 'id' => 'invites_enabled', 'model' => 'Setting', 'name' => 'Users.invites_enabled', 'url' => $this->Html->url(array('controller' => 'settings', 'action' => 'set', 'admin' => true)), 'value' => $sourcekettle_config['Users']['invites_enabled']['value'])) ?>
                 </td>
             </tr>
 			<?= $this->element('Setting/text_fields', array(

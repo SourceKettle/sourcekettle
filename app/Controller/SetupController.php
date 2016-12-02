@@ -135,25 +135,27 @@ class SetupController extends AppController {
 		}
 
 		// Check GIT
-		$config = Configure::read('sourcekettle');
-		if (isset($config['repo']['user']) && !empty($config['repo']['user'])) {
+		$repoBase = $this->sourcekettle_config['SourceRepository']['base']['value'];
+		$repoUser = $this->sourcekettle_config['SourceRepository']['user']['value'];
+
+		if (isset($repoUser) && !empty($repoUser)) {
 			$this->set('gitUserSet' , true);
-			$this->set('gitUser', $config['repo']['user']);
+			$this->set('gitUser', $repoUser);
 		} else {
 			$this->set('gitUserSet' , false);
 			$complete = false;
 		}
 
-		if (isset($config['repo']['base']) && !empty($config['repo']['base'])) {
+		if (isset($repoBase) && !empty($repoBase)) {
 			$this->set('gitRepoSet' , true);
-			$this->set('gitRepoSetBase', $config['repo']['base']);
-			if (is_writable($config['repo']['base'])) {
+			$this->set('gitRepoSetBase', $repoBase);
+			if (is_writable($repoBase)) {
 				$this->set('gitRepoWritable' , true);
 			} else {
 				$this->set('gitRepoWritable' , false);
 				$complete = false;
 			}
-			if (is_readable($config['repo']['base'])) {
+			if (is_readable($repoBase)) {
 				$this->set('gitRepoReadable' , true);
 			} else {
 				$this->set('gitRepoReadable' , false);
