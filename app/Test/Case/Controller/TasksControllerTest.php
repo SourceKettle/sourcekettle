@@ -470,8 +470,13 @@ class TasksControllerTest extends AppControllerTest {
 		$this->assertAuthorized();
 
 		$returned = json_decode($returned, true);
+
+        $returnedTaskUri = $returned['Task']['uri'];
 		unset($returned['Task']['modified']);
 		unset($returned['Task']['created']);
+        unset($returned['Task']['uri']);
+
+
 		$this->assertEquals(array(
 			'id' => '1',
 			'project_id' => '2',
@@ -490,13 +495,10 @@ class TasksControllerTest extends AppControllerTest {
 			'deleted_date' => null,
 			'public_id' => '1',
 			'dependenciesComplete' => '1',
-			'uri' => Router::url(array(
-				'controller' => 'tasks',
-				'action' => 'view',
-				'project' => 'public',
-				'1'
-			))
 		), $returned['Task']);
+
+		// this is done separately because of bug in Router::Url
+		$this->assertTextEndsWith('/project/public/tasks/view/1', $returnedTaskUri);
 	}
 
 	// Ensure task dependencies can be updated via AJAX

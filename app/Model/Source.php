@@ -96,6 +96,10 @@ class Source extends AppModel {
  * Fetch the branches.
  */
 	public function getBranches() {
+        $type = $this->getType();
+        $location = $this->getRepositoryLocation();
+
+        $this->Blob->open($type, $location);
 		return $this->Blob->getBranches();
 	}
 

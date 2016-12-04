@@ -170,7 +170,10 @@ class SshKeysControllerTest extends AppControllerTest {
 		$this->_fakeLogin(4);
 		$this->testAction('/account/sshkeys/view', array('method' => 'get', 'return' => 'view'));
 	    $this->assertAuthorized();
-		$this->assertContains('Nothing here yet! <a href="'.Router::url('/account/sshkeys/add').'">Add a key here...</a>', $this->view);
+		$this->assertContains('Nothing here yet!' , $this->view);
+		$this->assertContains('/account/sshkeys/add', $this->view);
+        $this->assertContains('/account/sshkeys/add', $this->view);
+        $this->assertContains('Add a key here...', $this->view);
 	}
 
 	public function testViewWithKeys() {

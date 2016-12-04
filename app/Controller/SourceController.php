@@ -92,17 +92,15 @@ class SourceController extends AppProjectController {
 		if (isset($this->request->query['branch'])) {
 			$branch = urldecode($this->request->query['branch']);
 		} else {
-			$branch = "master"; //$this->Source->getDefaultBranch();
+			$branch = $this->Source->getDefaultBranch();
 		}
-
-		
 
 		$this->set('pageTitle', $this->request['project']);
 		$this->set('subTitle', __('source code'));
 		$project = $this->__initialiseResources($project, $hash);
 
 		if ($hash == null) {
-			return $this->redirect(array('action' => 'commits', 'project' => $project['Project']['name'], 'branch' => $this->Source->getDefaultBranch()));
+			return $this->redirect(array('action' => 'commits', 'project' => $project['Project']['name'], '?' => array('branch' => $this->Source->getDefaultBranch())));
 		}
 		$commit = $this->Source->Commit->fetch($hash);
 

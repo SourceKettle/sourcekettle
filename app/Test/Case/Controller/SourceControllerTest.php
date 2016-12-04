@@ -251,7 +251,7 @@ class SourceControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(5);
 		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
+		$this->assertRedirect('/project/private/source/tree');
 
 	}
 
@@ -260,7 +260,7 @@ class SourceControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(1);
 		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
+        $this->assertRedirect('/project/private/source/tree');
 
 	}
 
@@ -269,7 +269,7 @@ class SourceControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(4);
 		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
+        $this->assertRedirect('/project/private/source/tree');
 
 	}
 
@@ -278,7 +278,7 @@ class SourceControllerTestCase extends AppControllerTest {
 		$this->_fakeLogin(3);
 		$ret = $this->testAction('/project/private/source', array('method' => 'get', 'return' => 'view'));
 		$this->assertAuthorized();
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'tree', 'project' => 'private'));
+        $this->assertRedirect('/project/private/source/tree');
 
 	}
 
@@ -682,7 +682,7 @@ class SourceControllerTestCase extends AppControllerTest {
 
 		$this->_fakeLogin(5);
 		$ret = $this->testAction('/project/private/source/commit', array('method' => 'get', 'return' => 'view'));
-		$this->assertRedirect(array('controller' => 'source', 'action' => 'commits', 'project' => 'private', 'branch' => 'master'));
+		$this->assertRedirect('/project/private/source/commits?branch=master');
 
 	}
 

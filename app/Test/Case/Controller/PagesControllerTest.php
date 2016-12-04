@@ -53,7 +53,7 @@ class PagesControllerTest extends AppControllerTest {
 		// We should be redirected to the home page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/', true), $this->headers['Location']);
+		$this->assertRedirect('/');
 	}
 
 	public function testDisplayEmptyLoggedIn() {
@@ -63,7 +63,7 @@ class PagesControllerTest extends AppControllerTest {
 		// We should be redirected to the home page
 		$this->assertNotNull($this->headers);
 		$this->assertNotNull(@$this->headers['Location']);
-		$this->assertEquals(Router::url('/', true), $this->headers['Location']);
+		$this->assertRedirect('/');
 	}
 
 
@@ -109,7 +109,7 @@ class PagesControllerTest extends AppControllerTest {
 
 		$rendered = $this->testAction('/pages/home', array('return' => 'contents', 'method' => 'get'));
 
-		$this->assertContains('<a href="/users/invite">Invite external user</a>', $rendered);
+		$this->assertContains('/users/invite">Invite external user</a>', $rendered);
 	}
 
 	public function testInviteNotShownForExternalUserWhileInvitesInactive() {
@@ -118,7 +118,7 @@ class PagesControllerTest extends AppControllerTest {
 
 		$rendered = $this->testAction('/pages/home', array('return' => 'contents', 'method' => 'get'));
 
-		$this->assertNotContains('<a href="/users/invite">Invite external user</a>', $rendered);
+		$this->assertNotContains('/users/invite">Invite external user</a>', $rendered);
 	}
 
 	public function testInviteNotShownForInternalUserWhileInvitesActive() {
@@ -127,7 +127,7 @@ class PagesControllerTest extends AppControllerTest {
 
 		$rendered = $this->testAction('/pages/home', array('return' => 'contents', 'method' => 'get'));
 
-		$this->assertNotContains('<a href="/users/invite">Invite external user</a>', $rendered);
+		$this->assertNotContains('/users/invite">Invite external user</a>', $rendered);
 	}
 
 	public function testInviteNotShownForInternalUserWhileInvitesInactive() {
